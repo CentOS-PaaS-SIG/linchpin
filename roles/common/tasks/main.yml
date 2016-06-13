@@ -1,0 +1,22 @@
+---
+# This playbook contains common play that will be ran before the provisioning starts.
+
+- name: "Schema Check for given file"
+  schema_check: 
+    data: "{{ data }}"
+    schema: "{{ schema }}"
+  register: output
+  tags: schema_validation
+
+#- name: "Set facts for Openstack"
+#  set_fact:
+#    os_res: ""
+#    aws_res: ""
+
+- name: "Filtering the output for only os_server(openstack_vms) res_type"
+  set_fact: 
+    os_res: "{{ output.output.data.resources| selectattr('res_type', 'equalto', 'os_server') | list }}"
+
+- name: "Filtering the output for only awsec2 res_type"
+  set_fact:
+    aws_res: "{{ output.output.data.resources| selectattr('res_type', 'equalto', 'aws_ec2') | list }}"

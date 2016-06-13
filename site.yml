@@ -1,0 +1,14 @@
+---
+# This playbook provisions given topology.  
+- name: "Apply schema validation and Resource breakdown"
+  hosts : localhost
+  remote_user: root
+  roles:
+    - common
+
+- name:  "Provisioning resources based on type"
+  hosts: localhost 
+  remote_user: root
+  roles:
+    - { role: openstack, os_res: "{{ os_res }}" }
+    - { role: aws, aws_res: "{{ awsec2_res  }}"}

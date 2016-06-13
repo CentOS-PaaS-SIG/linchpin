@@ -1,0 +1,6 @@
+---
+# This playbook will  provision resources on AWS.
+# Implementation in progress 
+- name: "Provisioning aws resources"
+  debug:
+    msg: "Currently Provisioning aws_res is {{ aws_res }} "

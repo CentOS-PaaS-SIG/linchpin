@@ -1,0 +1,8 @@
+---
+# This playbook will create the openstack resources .
+- name: "Openstack resources list"
+  debug:
+    msg: "Currently provisioning the resources under list os_res {{ os_res }}"
+- name: "Starting of Provisioning openstack resources"
+  include: provision_os_server.yml server_var={{ item }}
+  with_items: os_res

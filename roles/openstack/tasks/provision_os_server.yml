@@ -1,0 +1,63 @@
+- name: "Provisioning os_server {{ server_var['resource_name'] }}"
+  debug:
+    msg: "The current server obj is {{ server_var }}"
+
+- name: "Including credentials of current resource {{ server_var['resource_name'] }} "
+  include_vars: "../vars/{{ server_var['res_def']['assoc_creds'] }}.yml"
+  no_log: true
+
+#- name: "Checking for the credentials"
+#  debug:
+#    msg: "Credentials included for the resource are {{ server_var }}  endpoint: {{ endpoint }} , project : {{ project }} , username:{{ username }},  password:{{ password }}"
+
+- name: "Register resource count"
+  shell: python -c "print [x for x in range( 0, {{ server_var['count'] }} )]"
+  register: res_count
+
+# Debug task 
+#- name: "Checking value of res_count "
+#  debug: 
+#    msg: "Value of res_count is {{ res_count.stdout }}"
+
+# debug task 
+#- name: "illustration of looping resource for given count "
+#  debug:
+#    msg: "Credentials included for the resource are {{ item.0 }} {{ item.1 }} {{ item.2 }} {{ item.3 }} {{ item.4 }} {{ item.5 }} {{ item.6 }} {{ item.7 }} {{ item.8 }} {{ item.9 }} "
+#  with_nested:
+#    - ["{{ endpoint }}"]
+#    - ["{{ username }}"]
+#    - ["{{ password }}"]
+#    - ["{{ project }}"]
+#    - ["{{ server_var['res_def']['image'] }}"]
+#    - ["{{ server_var['res_def']['keypair']  }}"]
+#    - ["{{ server_var['res_def']['flavor']  }}"]
+#    - ["{{ server_var['res_def']['networks'][0] }}"]
+#    - ["{{ server_var['resource_name'] }}"]
+#    - "{{ res_count.stdout }}"
+
+- name: "Provision resource looping on count"
+  os_server:
+    state: "{{ item.4 }}"
+    auth:
+      auth_url: "{{ item.0 }}"
+      username: "{{ item.1 }}"
+      password: "{{ item.2 }}"
+      project_name: "{{ item.3 }}"
+    name: "{{ item.9 }}-{{ item.10 }}"
+    image: "{{ item.5 }}"
+    key_name: "{{ item.6  }}"
+    api_timeout: 300
+    flavor: "{{ item.7 }}"
+    network: "{{ item.8 }}"
+  with_nested:
+    - ["{{ endpoint }}"]
+    - ["{{ username }}"]
+    - ["{{ password }}"]
+    - ["{{ project }}"]
+    - ["{{ state }}"]
+    - ["{{ server_var['res_def']['image'] }}"]
+    - ["{{ server_var['res_def']['keypair']  }}"]
+    - ["{{ server_var['res_def']['flavor']  }}"]
+    - ["{{ server_var['res_def']['networks'][0] }}"]
+    - ["{{ server_var['resource_name'] }}"]
+    - "{{ res_count.stdout }}"
