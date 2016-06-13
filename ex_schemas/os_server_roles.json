@@ -15,7 +15,7 @@
         },
         "infra_type": {
             "description": "type of infrastructure ",
-            "enum": [ "aws_ec2", "os_server", "gce", "beaker_bm" ]
+            "enum": [ "aws", "openstack", "gce", "beaker_bm" ]
         },
         "site": {
             "description": "site of provisioning ",
