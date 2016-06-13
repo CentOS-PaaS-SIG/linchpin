@@ -108,15 +108,15 @@ cd linch-pin/library
 ## Usage
 ### Provision a topology
 ```
-ansible-playbook -vvv site.yml -e "{'data':'path_to_topolgy_file', 'schema':'path_to_schema_file', 'state':'present'}"
+command: ansible-playbook -vvv site.yml -e "{'data':'path_to_topolgy_file', 'schema':'path_to_schema_file', 'state':'present'}"
 
-example : ansible-playbook -vvv site.yml -e "{'data':'ex_topo/ex_data_os_server.yml', 'schema':'ex_schemas/os_server_roles.json', 'state':'present'}"
+example: ansible-playbook -vvv site.yml -e "{'data':'ex_topo/ex_data_os_server.yml', 'schema':'ex_schemas/os_server_roles.json', 'state':'present'}"
 ```
 
 ### De-Provision a topology
 ```
-ansible-playbook -vvv site.yml -e "{'data':'path_to_topolgy_file', 'schema':'path_to_schema_file', 'state':'present'}"
-ansible-playbook -vvv site.yml -e "{'data':'ex_topo/ex_data_os_server.yml', 'schema':'ex_schemas/os_server_roles.json', 'state':'absent'}"
+command: ansible-playbook -vvv site.yml -e "{'data':'path_to_topolgy_file', 'schema':'path_to_schema_file', 'state':'present'}"
+example: ansible-playbook -vvv site.yml -e "{'data':'ex_topo/ex_data_os_server.yml', 'schema':'ex_schemas/os_server_roles.json', 'state':'absent'}"
 ```
 
 
