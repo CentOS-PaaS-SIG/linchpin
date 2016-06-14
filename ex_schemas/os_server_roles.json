@@ -99,12 +99,6 @@
     "definitions":{
          "email": {
           "type":"string" 
-         },
-         "ermid":{
-          "type":"string"
-         },
-         "buyer_acc":{
-         "type":"string"
          }
      }
 }
