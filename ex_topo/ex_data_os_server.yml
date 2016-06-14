@@ -28,7 +28,6 @@
       count: 4
       res_def:
         flavor: "m1.small"
-        count: 1
         image: "centos_image"
         keypair: "ex_keypair"
         networks:
