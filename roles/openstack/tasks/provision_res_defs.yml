@@ -1,0 +1,73 @@
+- name: "Provisioning res_def {{ res_def  }}"
+  debug:
+    msg: "The current server obj is {{ res_def }}"
+
+#- name: "Checking whether the credentials included or not "
+#  debug:
+#    msg: "Credentials included for the resource are   endpoint: {{ endpoint }} , project : {{ project }} , username:{{ username }},  password:{{ password }} {{ res_def }}"
+
+# debug task
+#- name: Provision resource when the resource type is os_server
+#  debug:
+#    msg: "resource when the res_def type is os_server {{ res_def }} and res_grp_name {{ res_grp_name  }}"
+#  when: res_def['res_type'] == 'os_server'
+
+
+- name: "Register resource count"
+  shell: python -c "print [x for x in range( 0, {{ res_def['count'] }} )]"
+  register: res_count
+
+# Debug task 
+#- name: "Checking value of res_count "
+#  debug: 
+#    msg: "Value of res_count is {{ res_count.stdout }}"
+
+#debug task 
+#- name: "illustration of looping resource for given count "
+#  debug:
+#    msg: "Credentials included for the resource are {{ instance.0 }} {{ instance.1 }} {{ instance.2 }} {{ instance.3 }} {{ instance.4 }} {{ instance.5 }} {{ instance.6 }} {{ instance.7 }}  {{ instance.8 }}-{{ instance.9 }}-{{ instance.10 }}"
+#  with_nested:
+#    - ["{{ endpoint }}"]
+#    - ["{{ username }}"]
+#    - ["{{ password }}"]
+#    - ["{{ project }}"]
+#    - ["{{ res_def['image'] }}"]
+#    - ["{{ res_def['keypair'] }}"]
+#    - ["{{ res_def['flavor']  }}"]
+#    - ["{{ res_def['networks'][0] }}"]
+#    - ["{{ res_grp_name  }}"]
+#    - ["{{ res_def['res_name'] }}"]
+#    - "{{ res_count.stdout }}"
+#  loop_control:
+#    loop_var: instance
+#
+- name: "Provision os_server resources by looping on count"
+  os_server:
+    state: "{{ instance.4 }}"
+    auth:
+      auth_url: "{{ instance.0 }}"
+      username: "{{ instance.1 }}"
+      password: "{{ instance.2 }}"
+      project_name: "{{ instance.3 }}"
+    name: "{{ instance.9 }}_{{ instance.10 }}_{{ instance.11 }}"
+    image: "{{ instance.5 }}"
+    key_name: "{{ instance.6  }}"
+    api_timeout: 300
+    flavor: "{{ instance.7 }}"
+    network: "{{ instance.8 }}"
+  with_nested:
+    - ["{{ endpoint }}"]
+    - ["{{ username }}"]
+    - ["{{ password }}"]
+    - ["{{ project }}"]
+    - ["{{ state }}"]
+    - ["{{ res_def['image'] }}"]
+    - ["{{ res_def['keypair']  }}"]
+    - ["{{ res_def['flavor']  }}"]
+    - ["{{ res_def['networks'][0] }}"]
+    - ["{{ res_grp_name }}"]
+    - ["{{ res_def['res_name'] }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: instance
+  when: res_def['res_type']=="os_server"

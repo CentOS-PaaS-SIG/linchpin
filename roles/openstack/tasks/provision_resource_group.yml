@@ -1,0 +1,70 @@
+- name: "Provisioning resource group {{ res_grp }}"
+  debug:
+    msg: "The current server obj is {{ res_grp }} \n groups vars are {{ r_grp_vars }} "
+
+- name: "Including credentials of current resource {{ res_grp['resource_group_name'] }} "
+  include_vars: "../vars/{{ res_grp['assoc_creds'] }}.yml"
+  no_log: false 
+
+- name: "Checking res_grp "
+  debug:
+    msg: " res_grp {{ res_grp }}"
+
+- name: "Provision resource definitions"
+  include: provision_res_defs.yml res_def={{ outer_item.0 }} res_grp_name={{ outer_item.1 }}
+  with_nested:
+    - "{{ res_grp['res_defs'] }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: outer_item
+#- name: "Register resource count"
+#  shell: python -c "print [x for x in range( 0, {{ server_var['count'] }} )]"
+#  register: res_count
+
+# Debug task 
+#- name: "Checking value of res_count "
+#  debug: 
+#    msg: "Value of res_count is {{ res_count.stdout }}"
+
+# debug task 
+#- name: "illustration of looping resource for given count "
+#  debug:
+#    msg: "Credentials included for the resource are {{ item.0 }} {{ item.1 }} {{ item.2 }} {{ item.3 }} {{ item.4 }} {{ item.5 }} {{ item.6 }} {{ item.7 }} {{ item.8 }} {{ item.9 }} "
+#  with_nested:
+#    - ["{{ endpoint }}"]
+#    - ["{{ username }}"]
+#    - ["{{ password }}"]
+#    - ["{{ project }}"]
+#    - ["{{ server_var['res_def']['image'] }}"]
+#    - ["{{ server_var['res_def']['keypair']  }}"]
+#    - ["{{ server_var['res_def']['flavor']  }}"]
+#    - ["{{ server_var['res_def']['networks'][0] }}"]
+#    - ["{{ server_var['resource_name'] }}"]
+#    - "{{ res_count.stdout }}"
+
+#- name: "Provision resource looping on count"
+#  os_server:
+#    state: "{{ item.4 }}"
+#    auth:
+#      auth_url: "{{ item.0 }}"
+#      username: "{{ item.1 }}"
+#      password: "{{ item.2 }}"
+#      project_name: "{{ item.3 }}"
+#    name: "{{ item.9 }}-{{ item.10 }}"
+#    image: "{{ item.5 }}"
+#    key_name: "{{ item.6  }}"
+#    api_timeout: 300
+#    flavor: "{{ item.7 }}"
+#    network: "{{ item.8 }}"
+#  with_nested:
+#    - ["{{ endpoint }}"]
+#    - ["{{ username }}"]
+#    - ["{{ password }}"]
+#    - ["{{ project }}"]
+#    - ["{{ state }}"]
+#    - ["{{ server_var['res_def']['image'] }}"]
+#    - ["{{ server_var['res_def']['keypair']  }}"]
+#    - ["{{ server_var['res_def']['flavor']  }}"]
+#    - ["{{ server_var['res_def']['networks'][0] }}"]
+#    - ["{{ server_var['resource_name'] }}"]
+#    - "{{ res_count.stdout }}"

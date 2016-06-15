@@ -6,9 +6,9 @@
   roles:
     - common
 
-- name:  "Provisioning resources based on type"
+- name:  "Provisioning resources based on resource group type"
   hosts: localhost 
   remote_user: root
   roles:
-    - { role: openstack, os_res: "{{ os_res }}" }
-    - { role: aws, aws_res: "{{ awsec2_res  }}"}
+    - { role: openstack, os_res_grps: "{{ os_res_grps }}" }
+#    - { role: aws, aws_res: "{{ awsec2_res  }}"}
