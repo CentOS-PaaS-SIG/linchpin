@@ -115,7 +115,7 @@ example: ansible-playbook -vvv site.yml -e "{'data':'ex_topo/ex_data_os_server.y
 
 ### De-Provision a topology
 ```
-command: ansible-playbook -vvv site.yml -e "{'data':'path_to_topolgy_file', 'schema':'path_to_schema_file', 'state':'present'}"
+command: ansible-playbook -vvv site.yml -e "{'data':'path_to_topolgy_file', 'schema':'path_to_schema_file', 'state':'absent'}"
 example: ansible-playbook -vvv site.yml -e "{'data':'ex_topo/ex_data_os_server.yml', 'schema':'ex_schemas/os_server_roles.json', 'state':'absent'}"
 ```
 
