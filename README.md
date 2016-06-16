@@ -59,7 +59,7 @@ sudo dnf install ansible
 
 git clone https://github.com/CentOS-PaaS-SIG/linch-pin
 cd linch-pin/library
-#append the linch-pin/library path to library variable in ansible.cfg 
+### append the linch-pin/library path to library variable in ansible.cfg 
 
 ## Example Topology file 
 ```
