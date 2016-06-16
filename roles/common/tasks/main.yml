@@ -1,36 +1,40 @@
 ---
 # This playbook contains common play that will be ran before the provisioning starts.
 
-- name: "Schema Check for given file"
+- name: "schema check for given topology file"
   schema_check: 
     data: "{{ data }}"
     schema: "{{ schema }}"
   register: output
   tags: schema_validation
 
-- name: check the registered output 
+- name: "DEBUG:: checking the registered output of schema validation"
   debug:
     msg: "{{ item }}"
   with_dict: "{{ output }}"
 
-- name: "Filtering the output for openstack resource groups"
+- name: "filtering the output for openstack resource groups"
   set_fact: 
     os_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'openstack') | list }}"
+
+- name: "filtering the output for aws resource groups"
+  set_fact:
+    aws_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'aws') | list }}"
 
 - name: "Registering resource group vars from topology"
   set_fact:
     res_grp_vars: "{{ output.output.data.resource_group_vars }}"
 
-- name: checking the registered output of os_res_grps
+- name: "DEBUG:: checking registered output of os_res_grps"
   debug:
     msg: "{{ item }}"
   with_items: "{{ os_res_grps }}"
 
-- name: "Filtering the output for awsec2 resource_groups"
+- name: "filtering the output for awsec2 resource groups"
   set_fact:
     aws_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'aws') | list }}"
 
-- name: check the registered output of os_res_grps
+- name: "DEBUG:: checking registered output of aws_res_grps"
   debug:
     msg: "{{ item }}"
   with_items: "{{ aws_res_grps }}"

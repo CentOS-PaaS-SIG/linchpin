@@ -1,22 +1,12 @@
 ---
 # This playbook will initiate provisioning for the openstack resources groups.
-- name: "Openstack resource group list"
+- name: "DEBUG:: Openstack resource group list"
   debug:
     msg: "Currently provisioning the resources under list os_res_grps {{ os_res_grps }}"
 
-#- set_fact:
-#    os_res_grp_vars:
-#      "testavar1": "hello msg testvar1"
-#      "testavar2": "hello msg testvar1"
-
-
-- name: "Initiate Provisioning"
+- name: "Initiating  Provisioning of resources Openstack resource group"
   include: provision_resource_group.yml res_grp={{ item.0 }} r_grp_vars={{ item.1 }}
   when: item.0['resource_group_name'] == item.1['resource_group_name']
   with_nested:
     - "{{ os_res_grps }}"
     - "{{ res_grp_vars }}"
-
-#- name: "Starting of Provisioning openstack resources"
-#  include: provision_os_server.yml server_var={{ item }}
-#  with_items: os_res
