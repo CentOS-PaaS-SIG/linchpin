@@ -1,0 +1,100 @@
+{  "description": "Infra Topology for openstack",
+
+    "type": "object",
+    "properties": {
+        "topology_name": { 
+            "description": "The unique identifier for topology",
+            "type": "string"
+        },
+        "date": {
+            "description": "Date of creation",
+            "type": "string"
+        },
+        "site": {
+            "description": "site of provisioning ",
+            "type": "string"
+        },
+        "credentials": {
+             "description": "contains various credential_vaults names",
+             "type": "array",
+             "items":{
+                "type":"string"
+             },
+             "minimum":1
+        },
+        "resource_groups": {
+             "description": "contains list of resources ",
+             "type": "array",
+             "items":{
+                "properties": {
+                   "resource_group_name": {
+                       "type":"string"
+                    },
+                    "resource_group_type": {
+                       "type":"string"
+                    },
+                    "res_defs":{
+                         "type": "array",
+                         "items" : {
+                             "oneOf" :
+                                 [
+                                   {"$ref": "#/definitions/os_server"},
+                                   {"$ref": "#/definitions/ex_res"}
+                                     
+                                 ]
+                            }
+                    },
+                    "associated_creds":{
+                        "description":"contains creds file associated to this resource",
+                        "type":"string"
+                    }
+                },
+                "required":["resource_group_name","res_defs"],
+                 "additionalProperties": true
+             },
+             "minimum":1,
+              "additionalitems": true
+        }
+    },
+    "required": ["topology_name","credentials"],
+    "definitions":{
+         "email": {
+          "type":"string"
+         },
+         "os_server": {
+             "type" : "object",
+             "properties" : {
+                "flavor": {
+                  "type":"string"
+                },
+                "res_type": {
+                  "type":"string"
+                },
+                "image": {
+                  "type":"string"
+                },
+                "count": {
+                  "type":"number"
+                },
+                "keypair": {
+                  "type":"string"
+                }
+              },
+             "required":["flavor","res_type","image","count","keypair"]
+          },
+         "ex_res": {
+             "type" : "object",
+             "properties" : {
+                 "ex_prop": {
+                     "type":"string"
+                     },
+                  "keypair": {
+                     "type":"string"
+                   }
+             },
+             "required":["ex_prop","keypair"]
+         }
+           
+    }
+}
+   
