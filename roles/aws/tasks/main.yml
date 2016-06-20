@@ -3,4 +3,11 @@
 # Implementation in progress 
 - name: "Provisioning aws resources"
   debug:
-    msg: "Currently Provisioning aws_res is {{ aws_res }} "
+    msg: "Currently Provisioning aws_res is {{ aws_res_grps }} "
+
+- name: "Initiating  Provisioning of resources aws resource group"
+  include: provision_resource_group.yml res_grp={{ item.0 }} r_grp_vars={{ item.1 }}
+  when: item.0['resource_group_name'] == item.1['resource_group_name']
+  with_nested:
+    - "{{ aws_res_grps }}"
+    - "{{ res_grp_vars }}"
