@@ -1,0 +1,35 @@
+#- name: "################DEBUG: resource def"
+#  debug:
+#   msg: "Resource Definition {{ res_def }}"
+
+#- name: "DEBUG:: tp_output"
+#  debug:
+#    msg: " Topology output {{ tp_out }}"
+
+#- name: "################DEBUG:: Resource Group Name "
+#  debug:
+#    msg: " Topology output {{ res_grp_name }}"
+
+- name: "DeProvisioning AWS_EC2 Resource"
+  ec2:
+    aws_access_key: "{{ res_def_item.0 }}"
+    aws_secret_key: "{{  res_def_item.1 }}"
+    instance_ids: "{{ res_def_item.2 }}"
+    state: 'absent'
+    region: "{{ res_def_item.3 }}"
+    wait: yes
+  when: res_def_item.4 == res_def_item.5
+  with_together:
+    - "{{ aws_access_key_id | default(omit) }}"
+    - "{{ aws_secret_access_key | default(omit) }}"
+    - "{{ tp_out.instance_ids | join(',') }}"
+    - "{{ res_def['region'] }}"
+    - "{{ tp_out['instances'][0]['tags']['resource_group_name'] }}"
+    - "{{ res_grp_name }}"
+  loop_control:
+    loop_var: res_def_item
+  register: outputitem
+  
+- name: "################ out of deprov "
+  debug:
+    msg: "{{ outputitem }}"
