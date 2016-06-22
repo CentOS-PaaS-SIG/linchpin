@@ -17,8 +17,3 @@
   loop_control:
     loop_var: res_def_item
   register: output_item
-
-- name: "Deprovision status output"
-  debug:
-    var: "{{ output_item }}"
-  
