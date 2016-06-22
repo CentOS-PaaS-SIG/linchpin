@@ -5,7 +5,6 @@
   remote_user: root
   roles:
     - { role: 'common' }
-
  
 - name:  "provisioning resources based on resource group type"
   hosts: localhost 
@@ -13,5 +12,3 @@
   roles:
     - { role: 'openstack', os_res_grps: "{{ os_res_grps }}" }
     - { role: 'aws', aws_res: "{{ aws_res_grps  }}" }
-    
-
