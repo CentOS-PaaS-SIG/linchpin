@@ -1,15 +1,3 @@
-#- name: "################DEBUG: resource def"
-#  debug:
-#   msg: "Resource Definition {{ res_def }}"
-
-#- name: "DEBUG:: tp_output"
-#  debug:
-#    msg: " Topology output {{ tp_out }}"
-
-#- name: "################DEBUG:: Resource Group Name "
-#  debug:
-#    msg: " Topology output {{ res_grp_name }}"
-
 - name: "DeProvisioning AWS_EC2 Resource"
   ec2:
     aws_access_key: "{{ res_def_item.0 }}"
@@ -28,8 +16,9 @@
     - "{{ res_grp_name }}"
   loop_control:
     loop_var: res_def_item
-  register: outputitem
-  
-- name: "################ out of deprov "
+  register: output_item
+
+- name: "Deprovision status output"
   debug:
-    msg: "{{ outputitem }}"
+    var: "{{ output_item }}"
+  

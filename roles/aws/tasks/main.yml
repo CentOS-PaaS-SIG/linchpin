@@ -1,13 +1,25 @@
 ---
 # This playbook will  provision resources on AWS.
-# Implementation in progress 
 - name: "Provisioning aws resources"
   debug:
     msg: "Currently Provisioning aws_res is {{ aws_res_grps }} "
 
 - name: "Initiating  Provisioning of resources aws resource group"
-  include: provision_resource_group.yml res_grp={{ item.0 }} r_grp_vars={{ item.1 }}
-  when: item.0['resource_group_name'] == item.1['resource_group_name']
+  include: provision_resource_group.yml res_grp={{ item }} 
+  with_items:
+    - "{{ aws_res_grps }}"
+  when: state == "present"
+
+- name: "writing topology_contents to template"
+  template:
+     src: "../templates/output_formatter.j2"
+     dest: "{{ topology_output_file }}"
+  when: state == "present"
+
+- name: "Initiating  DeProvisioning of resources aws resource group"
+  include: deprovision_resource_group.yml res_grp={{ item.0 }} topo_output_file={{ item.1 }}
   with_nested:
     - "{{ aws_res_grps }}"
-    - "{{ res_grp_vars }}"
+    - ["{{ topology_output_file }}"]
+  when: state == "absent"
+

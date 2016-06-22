@@ -1,6 +1,6 @@
 - name: "DEBUG:: provisioning resource group {{ res_grp }}"
   debug:
-    msg: "The current server obj is {{ res_grp }} \n groups vars are {{ r_grp_vars }} "
+    msg: "The current Resource Group obj is {{ res_grp }} "
 
 - name: "Including credentials of current resource {{ res_grp['resource_group_name'] }} "
   include_vars: "../vars/{{ res_grp['assoc_creds'] }}.yml"
