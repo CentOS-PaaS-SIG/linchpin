@@ -5,8 +5,6 @@
     msg: "Currently provisioning the resources under list os_res_grps {{ os_res_grps }}"
 
 - name: "Initiating  Provisioning of resources Openstack resource group"
-  include: provision_resource_group.yml res_grp={{ item.0 }} r_grp_vars={{ item.1 }}
-  when: item.0['resource_group_name'] == item.1['resource_group_name']
-  with_nested:
+  include: provision_resource_group.yml res_grp={{ item }} 
+  with_items:
     - "{{ os_res_grps }}"
-    - "{{ res_grp_vars }}"

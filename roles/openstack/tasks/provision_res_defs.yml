@@ -13,7 +13,7 @@
     name: "{{ instance.9 }}_{{ instance.10 }}_{{ instance.11 }}"
     image: "{{ instance.5 }}"
     key_name: "{{ instance.6  }}"
-    api_timeout: 300
+    api_timeout: 99999 
     flavor: "{{ instance.7 }}"
     network: "{{ instance.8 }}"
   with_nested:
@@ -31,4 +31,5 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: instance
+  register: outputitem
   when: res_def['res_type']=="os_server"
