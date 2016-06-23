@@ -105,14 +105,30 @@ cd linch-pin/library
             - "ex_network3"
       assoc_creds: "ex_os_creds"
     - 
-      resource_group_name: "testgroup3"
-      res_group_type: "aws"
-      res_defs:
-        - 
-          ex_prop: "m1.small"
-          res_type: "aws_ec2"
-          keypair: "ex_keypair_awsec2"
-      assoc_creds: "ex_aws_creds"
+        resource_group_name: "testgroup3"
+        res_group_type: "aws"
+        res_defs:
+          - 
+            res_name: "ha_inst3"
+            flavor: "t2.micro"
+            res_type: "aws_ec2"
+            region: "us-east-1"
+            image: "ami-fce3c696"
+            count: 2
+            keypair: "ex_keypair_name"
+        assoc_creds: "ex_aws_creds"
+    - 
+        resource_group_name: "testgroup4"
+        res_group_type: "gcloud"
+        res_defs:
+          - 
+            res_name: "testvmgce"  # note gce resource names should not contain '_' characters 
+            flavor: "n1-standard-1"
+            res_type: "gcloud_gce"
+            region: "us-central1-a"
+            image: "debian-7"
+            count: 2
+        assoc_creds: "ex_gcloud_creds" 
   resource_group_vars:
     - 
       resource_group_name : "testgroup1"
@@ -129,19 +145,27 @@ cd linch-pin/library
       test_var1: "test_var1 msg is grp3 hello"
       test_var2: "test_var2 msg is grp3 hello"
       test_var3: "test_var3 msg is grp3 hello"
+    -
+      resource_group_name : "testgroup4"
+      test_var1: "test_var1 msg is grp4 hello"
+      test_var2: "test_var2 msg is grp4 hello"
+      test_var3: "test_var3 msg is grp4 hello"
 
 ```
 
 ## Usage
 ### Provision a topology
 ```
-command: ansible-playbook -vvv site.yml -e "{'data':'path_to_topolgy_file', 'schema':'path_to_schema_file', 'state':'present'}"
+command: ansible-playbook -vvv site.yml -e "{'data':'path_to_topolgy_file', 'schema':'path_to_schema_file', 'state':'present', 'topology_output_file':'path_to_output_file'}"
 
-example: ansible-playbook -vvv site.yml -e "{'data':'ex_topo/ex_data.yml', 'schema':'ex_schemas/schema_v2.json', 'state':'present'}"
+example: ansible-playbook -vvv site.yml -e "{'data':'ex_topo/ex_data.yml', 'schema':'ex_schemas/schema_v2.json', 'state':'present', 'topology_output_file':'/tmp/ex_data_output.yaml'}"
 ```
 
 ### De-Provision a topology
 ```
-command: ansible-playbook -vvv site.yml -e "{'data':'path_to_topolgy_file', 'schema':'path_to_schema_file', 'state':'absent'}"
-example: ansible-playbook -vvv site.yml -e "{'data':'ex_topo/ex_data.yml', 'schema':'ex_schemas/schema_v2.json', 'state':'absent'}"
+command: ansible-playbook -vvv site.yml -e "{'data':'path_to_topolgy_file', 'schema':'path_to_schema_file', 'state':'absent', 'topology_output_file':'path_to_output_file'}"
+example: ansible-playbook -vvv site.yml -e "{'data':'ex_topo/ex_data.yml', 'schema':'ex_schemas/schema_v2.json', 'state':'absent', 'topology_output_file':'/tmp/ex_data_output.yaml'}"
+```
+```
+note: In both Provision/Deprovision commands the topology_output_file should be specified.
 ```
