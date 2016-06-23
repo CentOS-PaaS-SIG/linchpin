@@ -24,5 +24,5 @@
     tmp: ["{{ outputitem }}"]
 
 - name: "Append outputitem to topology_outputs"
-  set_fact: 
-    topology_outputs: "{{ topology_outputs + tmp }}"
+  set_fact:
+    topology_outputs_aws: "{{ topology_outputs_aws + tmp }}"
