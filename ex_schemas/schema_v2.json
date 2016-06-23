@@ -40,8 +40,8 @@
                                  [
                                    {"$ref": "#/definitions/os_server"},
                                    {"$ref": "#/definitions/aws_ec2"},
+                                   {"$ref": "#/definitions/gcloud_gce"},
                                    {"$ref": "#/definitions/ex_res"}
-                                     
                                  ]
                             }
                     },
@@ -106,6 +106,32 @@
                    }
              },
              "required":["flavor","res_type","count","keypair"]
+         },
+         "gcloud_gce": {
+             "type" : "object",
+             "properties" : {
+                 "res_type": {
+                     "type":"string",
+                     "pattern":"gcloud_gce"
+                     },
+                  "flavor": {
+                     "type":"string"
+                   },
+                  "res_name": {
+                     "type":"string"
+                   },
+                   "region": {
+                     "type":"string"
+                   },
+                   "image": {
+                     "type":"string"
+                   },
+                  "count": {
+                     "type":"number"
+                   }
+                  
+             },
+             "required":["res_type","flavor","count","region","image","res_name"]
          },
          "ex_res": {
              "type" : "object",
