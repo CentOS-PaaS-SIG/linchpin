@@ -21,7 +21,7 @@
   set_fact:
     aws_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'aws') | list }}"
 
-- name: "filtering the output for aws resource groups"
+- name: "filtering the output for google cloud resource groups"
   set_fact:
     gcloud_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'gcloud') | list }}"
 
