@@ -1,0 +1,4 @@
+--- # gcloud credentials example
+service_account_email: "XXXXXXXXXXXXXXX.iam.gserviceaccount.com" 
+project_id: "XXXXXXXXXXXXXX" 
+credentials_file: "absolute_path_to_json_file"
