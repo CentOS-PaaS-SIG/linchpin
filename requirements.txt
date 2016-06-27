@@ -4,4 +4,7 @@ ipaddress==1.0.16
 pyasn1==0.1.9
 pycparser==2.14
 six==1.10.0
+pyopenssl
+ndg-httpsclient
+pyasn1
 ansible==2.1.0
