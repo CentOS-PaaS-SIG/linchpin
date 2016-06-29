@@ -4,7 +4,14 @@
   debug:
     msg: "Currently provisioning the resources under list os_res_grps {{ os_res_grps }}"
 
+- name: "declaring output vars"
+  set_fact:
+    topology_outputs_os: []
+
 - name: "Initiating  Provisioning of resources Openstack resource group"
   include: provision_resource_group.yml res_grp={{ item }} 
   with_items:
     - "{{ os_res_grps }}"
+  register: resource_grps_output
+
+

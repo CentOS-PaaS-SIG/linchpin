@@ -14,17 +14,16 @@
     - "{{ aws_res_grps }}"
   when: state == "present"
 
-- name: "Updating topology_outputs"
-  set_fact:
-    topology_outputs:
-      aws_ec2_res: "{{ topology_outputs_aws }}"
+#- name: "Updating topology_outputs"
+#  set_fact:
+#    topology_outputs:
+#      aws_ec2_res: "{{ topology_outputs_aws }}"
 
-- name: "writing topology_contents to template"
-  template:
-     src: "../templates/output_formatter.j2"
-     dest: "{{ topology_output_file }}"
-  when: state == "present"
-
+#- name: "writing topology_contents to template"
+#  template:
+#     src: "../templates/output_formatter.j2"
+#     dest: "{{ topology_output_file }}"
+#  when: state == "present"
 
 
 - name: "Initiating  DeProvisioning of resources aws resource group"

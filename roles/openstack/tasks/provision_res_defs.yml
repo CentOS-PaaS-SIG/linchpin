@@ -31,5 +31,14 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: instance
-  register: outputitem
   when: res_def['res_type']=="os_server"
+  register: res_def_output
+
+- name: "set tmp var"
+  set_fact:
+    tmp: "{{ res_def_output.results }}"
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os: "{{ topology_outputs_os + tmp }}"
+

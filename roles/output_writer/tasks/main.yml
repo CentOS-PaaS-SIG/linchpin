@@ -1,0 +1,21 @@
+---
+# This playbook contains common play that will be ran before the provisioning starts.
+
+#  debug:
+#    msg: "{{ item }}"
+#  with_items: "{{ aws_res_grps }}"
+
+
+- name: "Updating topology_outputs"
+  set_fact:
+    topology_outputs:
+      os_server_res: "{{ topology_outputs_os }}"
+      aws_ec2_res: "{{ topology_outputs_aws }}"
+
+
+- name: "output vars"
+  template:
+    src: "../templates/output_formatter.j2"
+    dest: "{{ topology_output_file }}"
+  when: state == "present"
+
