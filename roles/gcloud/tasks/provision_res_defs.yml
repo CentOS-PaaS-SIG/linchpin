@@ -24,5 +24,14 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: instance
-  register: outputitem
   when: res_def['res_type']=="gcloud_gce"
+  register: res_def_output
+
+- name: "set tmp var"
+  set_fact:
+    tmp: "{{ res_def_output.results }}"
+
+- name: "Appendng outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_gce: "{{ topology_outputs_gce + tmp }}"
+
