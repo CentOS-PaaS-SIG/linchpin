@@ -52,10 +52,12 @@ Where , multiple Infrastructure resource types can be defined with a single topo
 ### System Dependencies
 Python 2.7.x  or higher
 #### Centos
-sudo yum install ansible  
+sudo yum install python-setuptools
+sudo pip install ansible  
 
 #### Fedore 23 and above
-sudo dnf install ansible 
+sudo dnf install python-setuptools
+sudo pip install ansible 
 
 git clone https://github.com/CentOS-PaaS-SIG/linch-pin
 cd linch-pin/library
