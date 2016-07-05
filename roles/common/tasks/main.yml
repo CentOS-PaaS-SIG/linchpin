@@ -25,6 +25,9 @@
   set_fact:
     gcloud_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'gcloud') | list }}"
 
+- name: "filtering the output for duffy resource groups"
+  set_fact: 
+    duffy_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'duffy') | list }}"
 
 - name: "Registering resource group vars from topology"
   set_fact:

@@ -13,6 +13,7 @@
     - { role: 'openstack', os_res_grps: "{{ os_res_grps }}" }
     - { role: 'aws', aws_res_grps: "{{ aws_res_grps  }}" }
     - { role: 'gcloud', gce_res_grps: "{{ gcloud_res_grps }}" }
+    - { role: 'duffy', duffy_res_grps: "{{ duffy_res_grps }}" }
 
 - name: "Writing contents to file"
   hosts: localhost
