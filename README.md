@@ -63,6 +63,37 @@ git clone https://github.com/CentOS-PaaS-SIG/linch-pin
 cd linch-pin/library
 ### append the linch-pin/library path to library variable in ansible.cfg 
 
+# Example Credential file formats:
+Each Infra type should be maintaining a credential file in yaml format inside their respective vars folder, 
+which will be referred by the topology file.
+Example formats of the credentail files are as follows:
+### Openstack credential file format: 
+#### path: roles/openstack/vars/ex_os_creds.yml
+```
+--- # openstack credentials example
+endpoint: http://example.com:5000/v2.0/
+project: example
+username: example
+password: example
+```
+### AWS credential file format:
+#### path: roles/aws/vars/ex_aws_creds.yml
+```
+--- # AWS credentials example
+aws_access_key_id: XXXXXXXXXXXXXXXXXXXXXX
+aws_secret_access_key: XXXXXXXXXXXXXXXXXXXXXX
+```
+### GCE credential file format:
+#### path: roles/openstack/vars/ex_gce_creds.yml
+```
+--- # gcloud credentials example
+service_account_email: "XXXXXXXXXXXXXXX.iam.gserviceaccount.com" 
+project_id: "XXXXXXXXXXXXXX" 
+credentials_file: "absolute_path_to_json_file"
+```
+### Note:
+For GCE the absolute path of the service account json file should be provided
+
 ## Example Topology file 
 ```
 ---
@@ -154,7 +185,6 @@ cd linch-pin/library
       test_var3: "test_var3 msg is grp4 hello"
 
 ```
-
 ## Usage
 ### Provision a topology
 ```
