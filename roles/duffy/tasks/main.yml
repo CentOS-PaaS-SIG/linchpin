@@ -8,7 +8,15 @@
   set_fact:
     topology_outputs_duffy: []
 
-- name: "Initiating  Provisioning of resources duffy resource group"
+- name: "Initiating Provisioning of duffy resource group"
   include: provision_resource_group.yml res_grp={{ item }}
   with_items:
     - "{{ duffy_res_grps }}"
+  when: state == "present"
+
+- name: "Initiating Teardown of duffy resource group"
+  include: teardown_resource_group.yml res_grp={{ item.0 }} topo_output_file={{ item.1 }}
+  with_nested:
+    - "{{ duffy_res_grps }}"
+    - ["{{ topology_output_file }}"]
+  when: state == "absent"
