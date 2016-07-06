@@ -1,0 +1,18 @@
+- name: "Provision duffy resources by looping on count"
+  duffy:
+    state: "{{ state }}"
+    name: "{{ res_def['res_name'] }}"
+    version: "{{ res_def['version'] }}"
+    arch: "{{ res_def['arch'] }}"
+    count: "{{ res_def['count'] }}"
+  register: outputitem
+  when: res_def['res_type']=="duffy"
+
+- name: "set tmp var"
+  set_fact:
+    tmp: ["{{ outputitem }}"]
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_duffy: "{{ topology_outputs_duffy + tmp }}"
+

@@ -26,6 +26,7 @@
           keypair: "ex_keypair_os"
           networks:
             - "ex_network2"
+      assoc_creds: "ex_os_creds"
     - 
       resource_group_name: "testgroup2"
       res_group_type: "openstack"

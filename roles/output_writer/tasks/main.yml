@@ -12,7 +12,7 @@
       os_server_res: "{{ topology_outputs_os }}"
       aws_ec2_res: "{{ topology_outputs_aws }}"
       gcloud_gce_res: "{{ topology_outputs_gce }}"
-
+      duffy_res: "{{ topology_outputs_duffy }}"
 
 - name: "output vars"
   template:
