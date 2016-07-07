@@ -1,3 +1,4 @@
 *.retry
 *.pyc
 ansible.cfg
+*.swp
