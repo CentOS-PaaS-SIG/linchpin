@@ -6,4 +6,7 @@ pycparser==2.14
 six==1.10.0
 pyopenssl
 ndg-httpsclient
+boto==2.40.0
+apache-libcloud==0.20.1
+sphinx==1.4.4
 ansible==2.1.0
