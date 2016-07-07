@@ -1,47 +1,47 @@
-{  "description": "Infra Topology for openstack",                                                                                                                                                    
-                                                                                                                                                                                                     
-    "type": "object",                                                                                                                                                                                
-    "properties": {                                                                                                                                                                                  
-        "topology_name": {                                                                                                                                                                           
-            "description": "The unique identifier for topology",                                                                                                                                                                  
-            "type": "string"                                                                                                                                                                                                      
-        },                                                                                                                                                                                                                        
-        "date": {                                                                                                                                                                                                                 
-            "description": "Date of creation",                                                                                                                                                                                    
-            "type": "string"                                                                                                                                                                                                      
-        },                                                                                                                                                                                                                        
-        "site": {                                                                                                                                                                                                                 
-            "description": "site of provisioning ",                                                                                                                                                                                                                                                                         
-            "type": "string"                                                                                                                                                                                                                                                                                                
-        },                                                                                                                                                                                                                                                                                                                  
-        "credentials": {                                                                                                                                                                                                                                                                                                    
-             "description": "contains various credential_vaults names",                                                                                                                                                                                                                                                     
-             "type": "array",                                                                                                                                                                                                                                                                                               
-             "items":{                                                                                                                                                                                                                                                                                                      
-                "type":"string"                                                                                                                                                                                                                                                                                             
-             },                                                                                                                                                                                                                                                                                                             
-             "minimum":1                                                                                                                                                                                                                                                                                                    
-        },                                                                                                                                                                                                                                                                                                                  
-        "resource_groups": {                                                                                                                                                                                                                                                                                                
-             "description": "contains list of resources ",                                                                                                                                                                                                                                                                  
-             "type": "array",                                                                                                                                                                                                                                                                                               
-             "items":{                                                                                                                                                                                                                                                                                                      
-                "properties": {                                                                                                                                                                                                                                                                                             
-                   "resource_group_name": {                                                                                                                                                                                                                                                                                 
-                       "type":"string"                                                                                                                                                                                                                                                                                      
-                    },                                                                                                                                                                                                                                                                                                      
-                    "resource_group_type": {                                                                                                                                                                                                                                                                                
-                       "type":"string"                                                                                                                                                                                                                                                                                      
-                    },                                                                                                                                                                                                                                                                                                      
-                    "res_defs":{                                                                                                                                                                                                                                                                                            
-                         "type": "array",                                                                                                                                                                                                                                                                                   
-                         "items" : {                                                                                                                                                                                                                                                                                        
-                             "oneOf" :                                                                                                                                                                                                                                                                                      
+{  "description": "Infra Topology for openstack",
+    "type": "object",
+    "properties": {
+        "topology_name": {
+            "description": "The unique identifier for topology",
+            "type": "string"
+        },
+        "date": {
+            "description": "Date of creation",
+            "type": "string"
+        },
+        "site": {
+            "description": "site of provisioning ",
+            "type": "string"
+        },
+        "credentials": {
+             "description": "contains various credential_vaults names",
+             "type": "array",
+             "items":{
+                "type":"string"
+             },
+             "minimum":1
+        },
+        "resource_groups": {
+             "description": "contains list of resources ",
+             "type": "array",
+             "items":{
+                "properties": {
+                   "resource_group_name": {
+                       "type":"string"
+                    },
+                    "resource_group_type": {
+                       "type":"string"
+                    },
+                    "res_defs":{
+                         "type": "array",
+                         "items" : {
+                             "oneOf" :
                                  [
                                    {"$ref": "#/definitions/os_server"},
                                    {"$ref": "#/definitions/aws_ec2"},
                                    {"$ref": "#/definitions/gcloud_gce"},
-                                   {"$ref": "#/definitions/ex_res"}
+                                   {"$ref": "#/definitions/ex_res"},
+                                   {"$ref": "#/definitions/duffy"}
                                  ]
                             }
                     },
@@ -129,9 +129,30 @@
                   "count": {
                      "type":"number"
                    }
-                  
              },
              "required":["res_type","flavor","count","region","image","res_name"]
+         },
+         "duffy": {
+             "type" : "object",
+             "properties" : {
+                 "res_type": {
+                     "type":"string",
+                     "pattern":"duffy"
+                     },
+                  "res_name": {
+                     "type":"string"
+                   },
+                   "version": {
+                     "type":"number"
+                   },
+                   "arch": {
+                     "type":"string"
+                   },
+                  "count": {
+                     "type":"number"
+                   }
+             },
+             "required":["res_type","res_name","version","arch","count"]
          },
          "ex_res": {
              "type" : "object",
@@ -145,7 +166,6 @@
              },
              "required":["ex_prop","keypair"]
          }
-           
     }
 }
 
