@@ -9,4 +9,5 @@ ndg-httpsclient
 boto==2.40.0
 apache-libcloud==0.20.1
 sphinx==1.4.4
+jsonschema==2.5.1
 ansible==2.1.0
