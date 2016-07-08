@@ -126,7 +126,7 @@ todo_include_todos = False
 
 html_theme = "classic"
 html_theme_options = {
-    "rightsidebar": "true",
+    "rightsidebar": "false",
     "relbarbgcolor": "black"
 }
 
