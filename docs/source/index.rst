@@ -4,6 +4,7 @@ linch-pin documentation
 About linch-pin
 ^^^^^^^^^^^^^^^
 Welcome to the Ansible documentation!
+
 Linch-pin provides a collection of Ansible playbooks for provisioning , managing resources across multiple infrastructures.
 The main goal of linch-pin is to facilitate provisioning and orchestration of resources in a multi-cloud environment through a topology file.
 
