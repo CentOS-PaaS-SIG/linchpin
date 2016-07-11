@@ -19,3 +19,4 @@
     - ["{{ res_grp['resource_group_name']  }}"]
   loop_control:
     loop_var: res_item
+

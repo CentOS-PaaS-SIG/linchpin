@@ -39,6 +39,7 @@
                                  [
                                    {"$ref": "#/definitions/os_server"},
                                    {"$ref": "#/definitions/aws_ec2"},
+                                   {"$ref": "#/definitions/aws_s3"},
                                    {"$ref": "#/definitions/gcloud_gce"},
                                    {"$ref": "#/definitions/ex_res"},
                                    {"$ref": "#/definitions/duffy"}
@@ -153,6 +154,25 @@
                    }
              },
              "required":["res_type","res_name","version","arch","count"]
+         },
+         "aws_s3": {
+             "type" : "object",
+             "properties" : {
+                 "res_name": {
+                     "type":"string"
+                     },
+                  "res_type": {
+                     "type":"string",
+                     "pattern":"aws_s3"
+                     },
+                  "region": {
+                     "type":"string"
+                     },
+                  "permission": {
+                     "type":"string"
+                   }
+             },
+             "required":["res_name","res_type"]
          },
          "ex_res": {
              "type" : "object",
