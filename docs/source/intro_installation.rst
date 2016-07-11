@@ -8,10 +8,14 @@ Installation
 Getting Ansible
 ```````````````
 
-As linchpin playbook collection is based on Ansible , Ansible should be installed on the machine before we start using linchpin . 
+As linchpin is a collection of playbooks, Ansible should be installed on the machine before we start using linchpin . 
 You may follow the following link for installing Ansible.
 | `Ansible Installation <http://docs.ansible.com/ansible/intro_installation.html>`_
 
 | Note:
 | Ansible version installed should be >= 2.1.0
+
+
+
+
 
