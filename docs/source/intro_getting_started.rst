@@ -104,3 +104,13 @@ The current directory structure of linchpin should look lika as follows::
 Understanding Directory_structure
 `````````````````````````````````
 
+.. _understanding_terminology:
+
+Terminology
+```````````
+
+.. _example_topology_file:
+
+Example Topology
+````````````````
+
