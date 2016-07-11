@@ -3,6 +3,16 @@ Installation
 
 .. contents:: Topics
 
+.. _minimum_requirements:
+
+Minimum Requirements
+````````````````````
+
+Currently Linchpin can be run from any machine with Python 2.6 or 2.7, and Ansible 2.1.0  installed ( Windows isn't supported ).
+
+This includes Red Hat, Debian, CentOS, OS X, any of the BSDs, and so on.
+
+
 .. _getting_ansible:
 
 Getting Ansible
@@ -15,16 +25,6 @@ You may try the following link for installing Ansible.
 .. note::
 
     Ansible version installed should be >= 2.1.0
-
-.. _control_machine_requirements:
-
-Minimum Requirements
-````````````````````
-
-Currently Linchpin can be run from any machine with Python 2.6 or 2.7, and Ansible 2.1.0  installed ( Windows isn't supported ).
-
-This includes Red Hat, Debian, CentOS, OS X, any of the BSDs, and so on.
-
 
 .. _getting_linchpin:
 
