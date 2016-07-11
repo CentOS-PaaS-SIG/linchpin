@@ -7,3 +7,4 @@ Before, using linchpin playbook collection , we'll learn about how to install an
    :maxdepth: 1
 
    intro_installation
+   intro_getting_started
