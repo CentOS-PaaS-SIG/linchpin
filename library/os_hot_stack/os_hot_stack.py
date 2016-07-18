@@ -36,7 +36,7 @@ author: Samvaran Kashyap Rallabandi -
 import datetime
 import sys
 import os
-import json
+import ast
 from openstack import connection
 from openstack import orchestration
 from ansible.module_utils.basic import *
@@ -52,12 +52,11 @@ def check_file_paths(module, *args):
             module.fail_json(msg= "Recursive directory not supported  %s " % (file_path))
 
 def get_connection(auth_args):
-    """ seperate function for get_connection , might change still have figure out env var defaults for auth """
+    """ separate function for get_connection , might change :: still have figureout how to access env var defaults for auth """
     con = connection.Connection(**auth_args)
     return con
 
 def create_stack(stack_name, template, wait, parameters,auth_args):
-    """support for parameters is not tested yet"""
     con = get_connection(auth_args)
     resp = con.orchestration.find_stack(stack_name)
     if not resp == None:
@@ -65,12 +64,12 @@ def create_stack(stack_name, template, wait, parameters,auth_args):
         resp['changed'] = False
         return resp
     if wait == "yes":
-        output = con.orchestration.create_stack(name=stack_name, parameters={}, template=template)
+        output = con.orchestration.create_stack(name=stack_name, parameters=parameters, template=template)
         resp = con.orchestration.wait_for_status(output, status='CREATE_COMPLETE', failures=['CREATE_FAILED'])
         resp = resp.to_dict()
         resp['changed']=True
     else:
-        resp = con.orchestration.create_stack(name=stack_name, parameters={}, template=template)
+        resp = con.orchestration.create_stack(name=stack_name, parameters=parameters, template=template)
         resp = resp.to_dict()
         resp['changed']=True
     return resp
@@ -110,7 +109,7 @@ def main():
     check_file_paths(module, template_path)
     template = open(template_path,"r").read()
     wait = module.params['wait'] if 'wait' in module.params else "yes"
-    parameters = module.params['parameters'] if 'parameters' in module.params else None
+    parameters = ast.literal_eval(module.params['parameters']) if 'parameters' in module.params else None
     auth_args = {}
     auth_args['username'] = module.params['os_username'] if 'os_username' in module.params else os.environ.get('OS_USERNAME')
     auth_args['password'] = module.params['os_password'] if 'os_password' in module.params else os.environ.get('OS_PASSWORD')
@@ -121,6 +120,7 @@ def main():
             module.fail_json(msg= "Auth Parameters missing")
     if state == "present":
         resp = create_stack(stack_name, template, wait, parameters, auth_args)
+        resp["par"]=parameters
         module.exit_json(changed=resp['changed'], output=resp)
     elif state == "absent":
         resp = delete_stack(stack_name, wait, auth_args)
