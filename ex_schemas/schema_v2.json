@@ -38,6 +38,7 @@
                              "oneOf" :
                                  [
                                    {"$ref": "#/definitions/os_server"},
+                                   {"$ref": "#/definitions/os_heat"},
                                    {"$ref": "#/definitions/aws_ec2"},
                                    {"$ref": "#/definitions/aws_s3"},
                                    {"$ref": "#/definitions/gcloud_gce"},
@@ -169,6 +170,22 @@
                      "type":"string"
                      },
                   "permission": {
+                     "type":"string"
+                   }
+             },
+             "required":["res_name","res_type"]
+         },
+         "os_heat": {
+             "type" : "object",
+             "properties" : {
+                 "res_name": {
+                     "type":"string"
+                     },
+                  "res_type": {
+                     "type":"string",
+                     "pattern":"os_heat"
+                     },
+                  "template_path": {
                      "type":"string"
                    }
              },
