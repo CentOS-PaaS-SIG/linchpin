@@ -18,11 +18,29 @@
     assign_public_ip: "{{ res_def['assign_public_ip']| default(omit) }}"
     instance_tags: "{{ res_grp_vars | selectattr('resource_group_name', 'equalto', res_grp_name ) | first }}"
   register: outputitem
+  when: res_def['res_type'] == 'aws_ec2'
 
 - name: "set tmp var"
   set_fact:
     tmp: ["{{ outputitem }}"]
+  when: outputitem['changed'] == true
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_aws: "{{ topology_outputs_aws + tmp }}"
+  when: outputitem['changed'] == true
+
+- name: "set s3 mode when state is present"
+  set_fact:
+    s3_mode: "create"
+  when: state == "present" and res_def['res_type'] == 'aws_s3'
+
+- name: "Provisioning AWS_S3 Resource"
+  s3:
+    aws_access_key: "{{ aws_access_key_id | default(omit) }}"
+    aws_secret_key: "{{  aws_secret_access_key | default(omit) }}"
+    bucket: "{{ res_def['res_name'] }}"
+    mode: "{{ s3_mode }}"
+    region: "{{ res_def['region'] }}"
+    permission: "{{ res_def['permission']| default(omit) }}"
+  when: res_def['res_type'] == 'aws_s3'
