@@ -37,6 +37,10 @@ Linch pin is available as a public GitHub repository. Thus linchpin can be direc
 
 Install from source.
 
+.. note::
+
+   You may want to use a `virtualenv <https://virtualenv.pypa.io/en/stable/>`_ during installation.
+
 .. code-block:: bash
 
     $ git clone https://github.com/CentOS-PaaS-SIG/linch-pin.git --recursive
