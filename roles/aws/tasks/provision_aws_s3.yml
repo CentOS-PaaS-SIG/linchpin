@@ -1,0 +1,28 @@
+#- name: "DEBUG:: Checking the passed varibles"
+#  debug:
+#   # msg: "Resource Definition {{ res_def }} Resource Group vars {{ res_grp_vars }}"
+#   msg: "Resource Definition {{ res_def }} Resource Group vars {{ res_grp_vars | selectattr('resource_group_name', 'equalto', res_grp_name ) | first }}"
+
+- name: "Provisioning AWS_EC2 Resource"
+  ec2:
+    aws_access_key: "{{ aws_access_key_id | default(omit) }}"
+    aws_secret_key: "{{  aws_secret_access_key | default(omit) }}"
+    key_name: "{{ res_def['keypair'] }}"
+    instance_type: "{{ res_def['flavor'] }}"
+    image: "{{ res_def['image'] }}"
+    region: "{{ res_def['region'] }}"
+    wait: yes
+    group: "{{ res_def['security_group']| default('default') }}" 
+    count: "{{ res_def['count'] }}"
+    vpc_subnet_id: "{{ res_def['vpc_subnet_id']| default(omit) }}"
+    assign_public_ip: "{{ res_def['assign_public_ip']| default(omit) }}"
+    instance_tags: "{{ res_grp_vars | selectattr('resource_group_name', 'equalto', res_grp_name ) | first }}"
+  register: outputitem
+
+- name: "set tmp var"
+  set_fact:
+    tmp: ["{{ outputitem }}"]
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_aws: "{{ topology_outputs_aws + tmp }}"
