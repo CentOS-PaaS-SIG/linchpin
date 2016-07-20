@@ -1,0 +1,18 @@
+
+- name: "Provisioning  keypair"
+  os_keypair:
+    auth:
+      auth_url: "{{ endpoint }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      project_name: "{{ project }}"
+    name: "{{ res_def['res_name']  }}"
+    state: "{{ state }}"
+    wait: "yes"
+  register: keypair_output
+
+- name: "Generate keyfile "
+  copy: 
+    content: "{{ keypair_output['key']['private_key'] }}"
+    dest: "/tmp/{{ res_def['res_name'] }}.key"
+  when: state=="present"

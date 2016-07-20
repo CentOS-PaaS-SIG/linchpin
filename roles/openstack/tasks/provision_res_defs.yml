@@ -1,3 +1,7 @@
+- name: "provision keypairs "
+  include: provision_os_keypair.yml
+  when: res_def['res_type']=="os_keypair"
+
 - name: "provision os_server resources"
   include: provision_os_server.yml 
   when: res_def['res_type']=="os_server"
@@ -5,4 +9,5 @@
 - name: "provision os_heat resources"
   include: provision_os_heat.yml 
   when: res_def['res_type']=="os_heat"
+
 

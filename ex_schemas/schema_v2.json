@@ -38,6 +38,7 @@
                              "oneOf" :
                                  [
                                    {"$ref": "#/definitions/os_server"},
+                                   {"$ref": "#/definitions/os_keypair"},
                                    {"$ref": "#/definitions/os_heat"},
                                    {"$ref": "#/definitions/aws_ec2"},
                                    {"$ref": "#/definitions/aws_s3"},
@@ -186,6 +187,22 @@
                      "pattern":"os_heat"
                      },
                   "template_path": {
+                     "type":"string"
+                   }
+             },
+             "required":["res_name","res_type", "template_path"]
+         },
+         "os_keypair": {
+             "type" : "object",
+             "properties" : {
+                 "res_name": {
+                     "type":"string"
+                     },
+                  "res_type": {
+                     "type":"string",
+                     "pattern":"os_keypair"
+                     },
+                  "public_key_path": {
                      "type":"string"
                    }
              },
