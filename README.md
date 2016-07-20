@@ -5,45 +5,16 @@ Where , multiple Infrastructure resource types can be defined with a single topo
 ## Directory Structure 
 ```
 .
+|-- configure # Ansible playbooks for configuring Jenkins and other CI tools
 |-- bin # binaries needed 
 |-- docs # documentation 
 |-- ex_schemas # example Schema definitions
-|   `-- os_server_roles.json
 |-- ex_topo # example topologies
-|   |-- ex_data_os_server.yml
-|-- group_vars # variables applicable for groups
-|   `-- all
-|-- hosts # inventory hosts file
 |-- inventory # dynamic inventory scripts
-|-- library # custom modules library
-|   `-- schema_check
-|       `-- schema_check.py
-|-- plugins # custom plugins
-|-- README.md
-|-- roles # roles handling resource specific provisioning
-|   |-- aws
-|   |   |-- handlers
-|   |   |   `-- main.yml
-|   |   |-- tasks
-|   |   |   `-- main.yml
-|   |   `-- templates
-|   |-- common 
-|   |   |-- handlers
-|   |   |   `-- main.yml
-|   |   |-- tasks
-|   |   |   `-- main.yml
-|   |   `-- templates
-|   `-- openstack
-|       |-- handlers
-|       |   `-- main.yml
-|       |-- tasks
-|       |   |-- main.yml
-|       |   `-- provision_resource_group.yml 
-|       |   `-- provision_res_defs.yml
-|       |-- templates
-|       `-- vars #contains openstack credential files
-|           |-- examplecreds.yml
-|-- site.yml
+|-- LICENSE # license for the project
+|-- provision # Ansible playbooks for provisioning resources
+|-- README.md # This file
+|-- requirements.txt # pip-compatible install file
 `-- tests # tests cases
 ```
 
@@ -52,16 +23,19 @@ Where , multiple Infrastructure resource types can be defined with a single topo
 ### System Dependencies
 Python 2.7.x  or higher
 #### Centos
+```
 sudo yum install python-setuptools
 sudo pip install ansible  
+```
 
 #### Fedore 23 and above
+```
 sudo dnf install python-setuptools
 sudo pip install ansible 
+```
 
 git clone https://github.com/CentOS-PaaS-SIG/linch-pin
-cd linch-pin/library
-### append the linch-pin/library path to library variable in ansible.cfg 
+cd linch-pin
 
 # Example Credential file formats:
 Each Infra type should be maintaining a credential file in yaml format inside their respective vars folder, 
@@ -188,15 +162,15 @@ For GCE the absolute path of the service account json file should be provided
 ## Usage
 ### Provision a topology
 ```
-command: ansible-playbook -vvv site.yml -e "{'data':'path_to_topolgy_file', 'schema':'path_to_schema_file', 'state':'present', 'topology_output_file':'path_to_output_file'}"
+command: ansible-playbook -vvv provision/site.yml -e "{'data':'path_to_topolgy_file', 'schema':'path_to_schema_file', 'state':'present', 'topology_output_file':'path_to_output_file'}"
 
-example: ansible-playbook -vvv site.yml -e "{'data':'ex_topo/ex_data.yml', 'schema':'ex_schemas/schema_v2.json', 'state':'present', 'topology_output_file':'/tmp/ex_data_output.yaml'}"
+example: ansible-playbook -vvv provision/site.yml -e "{'data':'ex_topo/ex_data.yml', 'schema':'ex_schemas/schema_v2.json', 'state':'present', 'topology_output_file':'/tmp/ex_data_output.yaml'}"
 ```
 
 ### De-Provision a topology
 ```
-command: ansible-playbook -vvv site.yml -e "{'data':'path_to_topolgy_file', 'schema':'path_to_schema_file', 'state':'absent', 'topology_output_file':'path_to_output_file'}"
-example: ansible-playbook -vvv site.yml -e "{'data':'ex_topo/ex_data.yml', 'schema':'ex_schemas/schema_v2.json', 'state':'absent', 'topology_output_file':'/tmp/ex_data_output.yaml'}"
+command: ansible-playbook -vvv provision/site.yml -e "{'data':'path_to_topolgy_file', 'schema':'path_to_schema_file', 'state':'absent', 'topology_output_file':'path_to_output_file'}"
+example: ansible-playbook -vvv provision/site.yml -e "{'data':'ex_topo/ex_data.yml', 'schema':'ex_schemas/schema_v2.json', 'state':'absent', 'topology_output_file':'/tmp/ex_data_output.yaml'}"
 ```
 ```
 note: In both Provision/Deprovision commands the topology_output_file should be specified.
