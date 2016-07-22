@@ -15,4 +15,4 @@
   copy: 
     content: "{{ keypair_output['key']['private_key'] }}"
     dest: "/tmp/{{ res_def['res_name'] }}.key"
-  when: state=="present"
+  when: state=="present" and keypair_output['changed'] == true
