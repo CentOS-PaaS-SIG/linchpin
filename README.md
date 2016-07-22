@@ -33,8 +33,6 @@ sudo dnf install python-setuptools
 sudo pip install ansible 
 
 git clone https://github.com/CentOS-PaaS-SIG/linch-pin
-cd linch-pin/library
-### append the linch-pin/library path to library variable in ansible.cfg 
 
 # Example Credential file formats:
 Each Infra type should be maintaining a credential file in yaml format inside their respective vars folder, 
