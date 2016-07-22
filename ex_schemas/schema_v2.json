@@ -42,6 +42,7 @@
                                    {"$ref": "#/definitions/os_heat"},
                                    {"$ref": "#/definitions/aws_ec2"},
                                    {"$ref": "#/definitions/aws_s3"},
+                                   {"$ref": "#/definitions/aws_ec2_key"},
                                    {"$ref": "#/definitions/gcloud_gce"},
                                    {"$ref": "#/definitions/ex_res"},
                                    {"$ref": "#/definitions/duffy"}
@@ -201,6 +202,25 @@
                   "res_type": {
                      "type":"string",
                      "pattern":"os_keypair"
+                     },
+                  "public_key_path": {
+                     "type":"string"
+                   }
+             },
+             "required":["res_name","res_type"]
+         },
+         "aws_ec2_key": {
+             "type" : "object",
+             "properties" : {
+                 "res_name": {
+                     "type":"string"
+                     },
+                  "res_type": {
+                     "type":"string",
+                     "pattern":"aws_ec2_key"
+                     },
+                  "region": {
+                     "type":"string"
                      },
                   "public_key_path": {
                      "type":"string"
