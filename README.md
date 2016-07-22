@@ -8,42 +8,15 @@ Where , multiple Infrastructure resource types can be defined with a single topo
 |-- bin # binaries needed 
 |-- docs # documentation 
 |-- ex_schemas # example Schema definitions
-|   `-- os_server_roles.json
 |-- ex_topo # example topologies
-|   |-- ex_data_os_server.yml
 |-- group_vars # variables applicable for groups
-|   `-- all
 |-- hosts # inventory hosts file
 |-- inventory # dynamic inventory scripts
 |-- library # custom modules library
-|   `-- schema_check
-|       `-- schema_check.py
 |-- plugins # custom plugins
 |-- README.md
 |-- roles # roles handling resource specific provisioning
-|   |-- aws
-|   |   |-- handlers
-|   |   |   `-- main.yml
-|   |   |-- tasks
-|   |   |   `-- main.yml
-|   |   `-- templates
-|   |-- common 
-|   |   |-- handlers
-|   |   |   `-- main.yml
-|   |   |-- tasks
-|   |   |   `-- main.yml
-|   |   `-- templates
-|   `-- openstack
-|       |-- handlers
-|       |   `-- main.yml
-|       |-- tasks
-|       |   |-- main.yml
-|       |   `-- provision_resource_group.yml 
-|       |   `-- provision_res_defs.yml
-|       |-- templates
-|       `-- vars #contains openstack credential files
-|           |-- examplecreds.yml
-|-- site.yml
+|-- site.yml # top level Ansible playbook
 `-- tests # tests cases
 ```
 
