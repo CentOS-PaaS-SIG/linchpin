@@ -3,26 +3,25 @@
 #   # msg: "Resource Definition {{ res_def }} Resource Group vars {{ res_grp_vars }}"
 #   msg: "Resource Definition {{ res_def }} Resource Group vars {{ res_grp_vars | selectattr('resource_group_name', 'equalto', res_grp_name ) | first }}"
 
-- name: "Provisioning AWS_EC2 Resource"
-  ec2:
+- name: "set s3 mode when state is present"
+  set_fact:
+    s3_mode: "create"
+  when: state == "present" and res_def['res_type'] == 'aws_s3'
+
+- name: "Provisioning AWS_S3 Resource"
+  s3:
     aws_access_key: "{{ aws_access_key_id | default(omit) }}"
     aws_secret_key: "{{  aws_secret_access_key | default(omit) }}"
-    key_name: "{{ res_def['keypair'] }}"
-    instance_type: "{{ res_def['flavor'] }}"
-    image: "{{ res_def['image'] }}"
+    bucket: "{{ res_def['res_name'] }}"
+    mode: "{{ s3_mode }}"
     region: "{{ res_def['region'] }}"
-    wait: yes
-    group: "{{ res_def['security_group']| default('default') }}" 
-    count: "{{ res_def['count'] }}"
-    vpc_subnet_id: "{{ res_def['vpc_subnet_id']| default(omit) }}"
-    assign_public_ip: "{{ res_def['assign_public_ip']| default(omit) }}"
-    instance_tags: "{{ res_grp_vars | selectattr('resource_group_name', 'equalto', res_grp_name ) | first }}"
-  register: outputitem
+    permission: "{{ res_def['permission']| default(omit) }}"
+  when: res_def['res_type'] == 'aws_s3'
 
-- name: "set tmp var"
-  set_fact:
-    tmp: ["{{ outputitem }}"]
+#- name: "set tmp var"
+#  set_fact:
+#    tmp: ["{{ outputitem }}"]
 
-- name: "Append outputitem to topology_outputs"
-  set_fact:
-    topology_outputs_aws: "{{ topology_outputs_aws + tmp }}"
+#- name: "Append outputitem to topology_outputs"
+#  set_fact:
+#    topology_outputs_aws: "{{ topology_outputs_aws_ + tmp }}"
