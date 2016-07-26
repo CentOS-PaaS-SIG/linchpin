@@ -1,12 +1,12 @@
 # linch-pin
-Linch-pin provides a collection of Ansible playbooks for provisioning , managing resources accross multiple infrastructures.
-Where , multiple Infrastructure resource types can be defined with a single topology file.
+Linch-pin provides a collection of Ansible playbooks for provisioning and managing resources across multiple infrastructures.
+Where multiple Infrastructure resource types can be defined with a single topology file.
 
-## Directory Structure 
+## Directory Structure
 ```
 .
-|-- bin # binaries needed 
-|-- docs # documentation 
+|-- bin # binaries needed
+|-- docs # documentation
 |-- ex_schemas # example Schema definitions
 |-- ex_topo # example topologies
 |-- group_vars # variables applicable for groups
@@ -24,20 +24,25 @@ Where , multiple Infrastructure resource types can be defined with a single topo
 
 ### System Dependencies
 Python 2.7.x  or higher
+
 #### Centos
+```
 sudo yum install python-setuptools
-sudo pip install ansible  
+sudo pip install ansible
+```
 
-#### Fedore 23 and above
+#### Fedora 23 and above
+```
 sudo dnf install python-setuptools
-sudo pip install ansible 
-
+sudo pip install ansible
 git clone https://github.com/CentOS-PaaS-SIG/linch-pin
+```
 
 # Example Credential file formats:
-Each Infra type should be maintaining a credential file in yaml format inside their respective vars folder, 
+Each Infra type should be maintaining a credential file in yaml format inside their respective vars folder,
 which will be referred by the topology file.
-Example formats of the credentail files are as follows:
+
+Example formats of the credential files are as follows:
 ### Openstack credential file format: 
 #### path: roles/openstack/vars/ex_os_creds.yml
 ```
@@ -159,7 +164,7 @@ For GCE the absolute path of the service account json file should be provided
 ## Usage
 ### Provision a topology
 ```
-command: ansible-playbook -vvv site.yml -e "{'data':'path_to_topolgy_file', 'schema':'path_to_schema_file', 'state':'present', 'topology_output_file':'path_to_output_file'}"
+command: ansible-playbook -vvv site.yml -e "{'data':'path_to_topology_file', 'schema':'path_to_schema_file', 'state':'present', 'topology_output_file':'path_to_output_file'}"
 
 example: ansible-playbook -vvv site.yml -e "{'data':'ex_topo/ex_data.yml', 'schema':'ex_schemas/schema_v2.json', 'state':'present', 'topology_output_file':'/tmp/ex_data_output.yaml'}"
 ```
