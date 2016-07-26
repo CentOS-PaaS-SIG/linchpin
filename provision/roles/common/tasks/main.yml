@@ -17,7 +17,7 @@
 #  with_dict: "{{ output }}"
 
 - name: "filtering the output for openstack resource groups"
-  set_fact: 
+  set_fact:
     os_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'openstack') | list }}"
 
 - name: "filtering the output for aws resource groups"
@@ -29,12 +29,13 @@
     gcloud_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'gcloud') | list }}"
 
 - name: "filtering the output for duffy resource groups"
-  set_fact: 
+  set_fact:
     duffy_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'duffy') | list }}"
 
 - name: "Registering resource group vars from topology"
   set_fact:
     res_grp_vars: "{{ output.output.data.resource_group_vars }}"
+  when: output.output.data.resource_group_vars is defined
 
 #- name: "DEBUG:: checking registered output of os_res_grps"
 #  debug:
