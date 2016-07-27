@@ -172,7 +172,8 @@ example: ansible-playbook -vvv provision/site.yml -e "{'data':'../ex_topo/ex_dat
 ### De-Provision a topology
 ```
 command: ansible-playbook -vvv provision/site.yml -e "{'data':'path_to_topolgy_file', 'schema':'path_to_schema_file', 'state':'absent', 'topology_output_file':'path_to_output_file'}"
-example: ansible-playbook -vvv provvision/site.yml -e "{'data':'../ex_topo/ex_data.yml', 'schema':'../ex_schemas/schema_v2.json', 'state':'absent', 'topology_output_file':'/tmp/ex_data_output.yaml'}"
+
+example: ansible-playbook -vvv provision/site.yml -e "{'data':'../ex_topo/ex_data.yml', 'schema':'../ex_schemas/schema_v2.json', 'state':'absent', 'topology_output_file':'/tmp/ex_data_output.yaml'}"
 ```
 ```
 note: In both Provision/Deprovision commands the topology_output_file should be specified.
