@@ -10,4 +10,11 @@
   include: provision_os_heat.yml 
   when: res_def['res_type']=="os_heat"
 
+- name: "provision os_volume resources"
+  include: provision_os_volume.yml
+  when: res_def['res_type']=="os_volume"
+
+- name: "provision os_object resources"
+  include: provision_os_object.yml
+  when: res_def['res_type']=="os_object"
 

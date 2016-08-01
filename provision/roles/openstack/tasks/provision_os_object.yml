@@ -1,0 +1,11 @@
+- name: provision/deprovision swift containers
+  os_object:
+    auth:
+      auth_url: "{{ endpoint }}" 
+      username: "{{ username }}"
+      password: "{{ password }}"
+      project_name: "{{ project }}"
+    container: "{{ res_def['res_name'] }}"
+    container_access: "{{ res_def['access'] | default('private') }}"
+    wait: yes
+    state: "{{ state }}"
