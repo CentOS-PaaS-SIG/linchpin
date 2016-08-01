@@ -8,6 +8,9 @@
   register: output
   tags: schema_validation
 
+- name: "Including Linchpin config vars"
+  include_vars: "../linchpin_config.yml"
+
 #- name: "DEBUG:: checking the registered output of schema validation"
 #  debug:
 #    msg: "{{ item }}"

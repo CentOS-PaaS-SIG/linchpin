@@ -14,5 +14,5 @@
 - name: "Generate keyfile "
   copy: 
     content: "{{ keypair_output['key']['private_key'] }}"
-    dest: "/tmp/{{ res_def['res_name'] }}.key"
+    dest: "{{ keystore_path }}/{{ res_def['res_name'] }}.key"
   when: state=="present" and keypair_output['changed'] == true
