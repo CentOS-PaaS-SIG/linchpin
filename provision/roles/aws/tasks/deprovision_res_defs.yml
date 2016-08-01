@@ -1,35 +1,36 @@
-- name: "DeProvisioning AWS_EC2 Resource"
-  ec2:
-    aws_access_key: "{{ res_def_item.0 }}"
-    aws_secret_key: "{{  res_def_item.1 }}"
-    instance_ids: "{{ res_def_item.2 }}"
-    state: 'absent'
-    region: "{{ res_def_item.3 }}"
-    wait: yes
-  when: res_def_item.4 == res_def_item.5 and res_def_item.6 == "aws_ec2" 
-  with_together:
-    - "{{ aws_access_key_id | default(omit) }}"
-    - "{{ aws_secret_access_key | default(omit) }}"
-    - "{{ tp_out.instance_ids | join(',') }}"
-    - "{{ res_def['region'] }}"
-    - "{{ tp_out['instances'][0]['tags']['resource_group_name'] }}"
-    - "{{ res_grp_name }}"
-    - "{{ res_def['res_type'] }}"
+- name: "Deprovisioning ec2 resource definitions of current group"
+  include: deprovision_aws_ec2_res_defs.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.2 }}
+  when: res_item.0['res_type'] == "aws_ec2"
+  with_nested:
+    - "{{ res_grp['res_defs'] }}"
+    - "{{ topo_output['output']['content']['aws_ec2_res'] }}"
+    - ["{{ res_grp['resource_group_name']  }}"]
   loop_control:
-    loop_var: res_def_item
-  register: output_item
+    loop_var: res_item
 
-#- name: "set s3 mode when state is present"
-#  set_fact:
-#    s3_mode: "delete"
-#  when: state == "absent" and res_def['res_type'] == 'aws_s3'
-#
-#- name: "Provisioning AWS_S3 Resource"
-#  s3:
-#    aws_access_key: "{{ aws_access_key_id | default(omit) }}"
-#    aws_secret_key: "{{  aws_secret_access_key | default(omit) }}"
-#    bucket: "{{ res_def['res_name'] }}"
-#    mode: "{{ s3_mode }}"
-#    region: "{{ res_def['region'] }}"
-#    permission: "{{ res_def['permission']| default(omit) }}"
-#  when: res_def['res_type'] == 'aws_s3'
+- name: "Deprovisioning s3 resource def of current group"
+  include: deprovision_s3_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  when: res_item.0['res_type'] == "aws_s3"
+  with_nested:
+    - "{{ res_grp['res_defs'] }}"
+    - ["{{ res_grp['resource_group_name']  }}"]
+  loop_control:
+    loop_var: res_item
+
+- name: "Deprovisioning aws_ec2_key resource def of current group"
+  include: deprovision_aws_ec2_key_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  when: res_item.0['res_type'] == "aws_ec2_key"
+  with_nested:
+    - "{{ res_grp['res_defs'] }}"
+    - ["{{ res_grp['resource_group_name']  }}"]
+  loop_control:
+    loop_var: res_item
+
+- name: "Deprovisioning cfn stack resource def of current group"
+  include: deprovision_aws_cfn.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  when: res_item.0['res_type'] == "aws_cfn"
+  with_nested:
+    - "{{ res_grp['res_defs'] }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
