@@ -164,15 +164,15 @@ For GCE the absolute path of the service account json file should be provided
 ## Usage
 ### Provision a topology
 ```
-command: ansible-playbook -vvv site.yml -e "{'data':'path_to_topology_file', 'schema':'path_to_schema_file', 'state':'present', 'topology_output_file':'path_to_output_file'}"
+command: ansible-playbook -vvv provision/site.yml -e "{'data':'path_to_topology_file', 'schema':'path_to_schema_file', 'state':'present', 'topology_output_file':'path_to_output_file'}"
 
-example: ansible-playbook -vvv site.yml -e "{'data':'../ex_topo/ex_data.yml', 'schema':'../ex_schemas/schema_v2.json', 'state':'present', 'topology_output_file':'/tmp/ex_data_output.yaml'}"
+example: ansible-playbook -vvv provision/site.yml -e "{'data':'../ex_topo/ex_data.yml', 'schema':'../ex_schemas/schema_v2.json', 'state':'present', 'topology_output_file':'/tmp/ex_data_output.yaml'}"
 ```
 
 ### De-Provision a topology
 ```
-command: ansible-playbook -vvv site.yml -e "{'data':'path_to_topolgy_file', 'schema':'path_to_schema_file', 'state':'absent', 'topology_output_file':'path_to_output_file'}"
-example: ansible-playbook -vvv site.yml -e "{'data':'../ex_topo/ex_data.yml', 'schema':'../ex_schemas/schema_v2.json', 'state':'absent', 'topology_output_file':'/tmp/ex_data_output.yaml'}"
+command: ansible-playbook -vvv provision/site.yml -e "{'data':'path_to_topolgy_file', 'schema':'path_to_schema_file', 'state':'absent', 'topology_output_file':'path_to_output_file'}"
+example: ansible-playbook -vvv provvision/site.yml -e "{'data':'../ex_topo/ex_data.yml', 'schema':'../ex_schemas/schema_v2.json', 'state':'absent', 'topology_output_file':'/tmp/ex_data_output.yaml'}"
 ```
 ```
 note: In both Provision/Deprovision commands the topology_output_file should be specified.

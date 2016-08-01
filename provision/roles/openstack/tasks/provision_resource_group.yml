@@ -3,8 +3,8 @@
     msg: "The current server obj is {{ res_grp }} "
 
 - name: "Including credentials of current resource {{ res_grp['resource_group_name'] }} "
-  include_vars: "../vars/{{ res_grp['assoc_creds'] }}.yml"
-  no_log: true 
+  include_vars: "roles/openstack/vars/{{ res_grp['assoc_creds'] }}.yml"
+  no_log: false 
 
 - name: "provisioning resource definitions of current group"
   include: provision_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
