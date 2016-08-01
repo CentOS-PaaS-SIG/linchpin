@@ -17,16 +17,17 @@ Now that linch-pin is installed according to the steps given in :doc:`intro_inst
 The current directory structure of linchpin should look lika as follows::
     
     .
+    ├── configure
     ├── docs
     ├── ex_schemas
     ├── ex_topo
-    ├── group_vars
-    ├── hosts
+    ├── inventory_overlay.example
     ├── library
+    ├── LICENSE
+    ├── provision
     ├── README.md
-    ├── requirements.txt
-    ├── roles
-    └── site.yml
+    └── requirements.txt
+
 
 .. _understanding_directory_structure:
 
