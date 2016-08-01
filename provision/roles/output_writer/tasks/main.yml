@@ -5,7 +5,6 @@
 #    msg: "{{ item }}"
 #  with_items: "{{ aws_res_grps }}"
 
-
 - name: "Updating topology_outputs"
   set_fact:
     topology_outputs:
@@ -17,6 +16,5 @@
 - name: "output vars"
   template:
     src: "../templates/output_formatter.j2"
-    dest: "{{ topology_output_file }}"
+    dest: "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name ) }}"
   when: state == "present"
-
