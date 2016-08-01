@@ -40,6 +40,8 @@
                                    {"$ref": "#/definitions/os_server"},
                                    {"$ref": "#/definitions/os_keypair"},
                                    {"$ref": "#/definitions/os_heat"},
+                                   {"$ref": "#/definitions/os_object"},
+                                   {"$ref": "#/definitions/os_volume"},
                                    {"$ref": "#/definitions/aws_ec2"},
                                    {"$ref": "#/definitions/aws_s3"},
                                    {"$ref": "#/definitions/aws_ec2_key"},
@@ -250,6 +252,38 @@
                   }
              },
              "required":["res_name","res_type","region","template_path"]
+         },
+         "os_volume": {
+             "type" : "object",
+             "properties" : {
+                 "res_name": {
+                     "type":"string"
+                     },
+                  "res_type": {
+                     "type":"string",
+                     "pattern":"os_volume"
+                   },
+                  "size": {
+                     "type":"string"
+                     }
+             },
+             "required":["res_name","res_type","size"]
+         },
+         "os_object": {
+             "type" : "object",
+             "properties" : {
+                 "res_name": {
+                     "type":"string"
+                   },
+                  "res_type": {
+                     "pattern":"os_object",
+                     "type":"string"
+                   },
+                  "access": {
+                     "type":"string"
+                   }
+             },
+             "required":["res_name","res_type"]
          },
          "ex_res": {
              "type" : "object",
