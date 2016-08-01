@@ -8,10 +8,10 @@
   register: output
   tags: schema_validation
 
-- name: "DEBUG:: checking the registered output of schema validation"
-  debug:
-    msg: "{{ item }}"
-  with_dict: "{{ output }}"
+#- name: "DEBUG:: checking the registered output of schema validation"
+#  debug:
+#    msg: "{{ item }}"
+#  with_dict: "{{ output }}"
 
 - name: "filtering the output for openstack resource groups"
   set_fact: 

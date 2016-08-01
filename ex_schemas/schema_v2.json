@@ -43,6 +43,7 @@
                                    {"$ref": "#/definitions/aws_ec2"},
                                    {"$ref": "#/definitions/aws_s3"},
                                    {"$ref": "#/definitions/aws_ec2_key"},
+                                   {"$ref": "#/definitions/aws_cfn"},
                                    {"$ref": "#/definitions/gcloud_gce"},
                                    {"$ref": "#/definitions/ex_res"},
                                    {"$ref": "#/definitions/duffy"}
@@ -227,6 +228,28 @@
                    }
              },
              "required":["res_name","res_type"]
+         },
+         "aws_cfn": {
+             "type" : "object",
+             "properties" : {
+                  "res_name": {
+                     "type":"string"
+                     },
+                  "res_type": {
+                     "type":"string",
+                     "pattern":"aws_cfn"
+                     },
+                  "region": {
+                     "type":"string"
+                   },
+                  "template_path": {
+                     "type":"string"
+                   },
+                  "disable_rollback": {
+                     "type": "string"
+                  }
+             },
+             "required":["res_name","res_type","region","template_path"]
          },
          "ex_res": {
              "type" : "object",

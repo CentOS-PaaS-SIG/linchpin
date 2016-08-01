@@ -10,4 +10,6 @@
   include: provision_aws_s3.yml 
   when: res_def['res_type']=="aws_s3"
 
-
+- name: "provision aws_cfn resources"
+  include: provision_aws_cfn.yml
+  when: res_def['res_type']=="aws_cfn"
