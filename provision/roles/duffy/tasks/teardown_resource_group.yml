@@ -4,7 +4,7 @@
   when: state == "present"
 
 - name: "Including credentials of current resource {{ res_grp['resource_group_name'] }} "
-  include_vars: "../vars/{{ res_grp['assoc_creds'] }}.yml"
+  include_vars: "roles/duffy/vars/{{ res_grp['assoc_creds'] }}.yml"
   no_log: true
 
 - name: "Parsing topology output file "
