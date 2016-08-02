@@ -1,0 +1,2 @@
+[jenkins_master]
+10.0.1.2 ansible_ssh_user=root

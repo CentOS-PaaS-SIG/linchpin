@@ -1,0 +1,78 @@
+# It is important to import the RPM signing key for the Jenkins repository
+# if you plan to use that repository
+rpm_key_imports:
+  - key: http://pkg.jenkins-ci.org/redhat-stable/jenkins.io.key
+    validate_certs: true
+
+# See playbook/roles/repositories/defaults/main.yml
+# Override these if you want to change a particular URL for one of these
+# repositories.
+released_url: "{{ rhel_base }}/released/RHEL-7/7.1/Server/x86_64/os/" 
+latest_url: "{{ rhel_base }}/latest-RHEL-7/compose/Server/x86_64/os/"
+optional_url: "{{ rhel_base }}/latest-RHEL-7/compose/Server-optional/x86_64/os/"
+extras_url: "{{ rhel_base }}/latest-EXTRAS-7-RHEL-7/compose/Server/x86_64/os/"
+z_url: "{{ rhel_base }}/repos/rhel-7.1-z/x86_64/"
+ha_url: "{{ rhel_base }}/latest-RHEL-7/compose/Server/x86_64/os/addons/HighAvailability/"
+mrg_url: "{{ rhel_base }}/repos/mrg-2.5-rhel-7-candidate/$basearch/"
+
+# Master lists
+# Override these if you want to override a specific set of repositories for a
+# particular given host
+all_repositories:
+  epel_testing:
+    name: epel-testing
+    mirrorlist: "{{ fedora_mirrors }}repo=testing-epel7"
+  epel:
+    name: epel
+    mirrorlist: "{{ fedora_mirrors }}repo=epel-7"
+  released:
+    name: rhel7-released
+    baseurl: "{{ released_url }}"
+  latest:
+    name: rhel7-latest
+    baseurl: "{{ latest_url }}"
+  optional:
+    name: rhel7_optional
+    baseurl: "{{ optional_url }}"
+  extras:
+    name: rhel7_extras
+    baseurl: "{{ extras_url }}"
+  z:
+    name: rhel7z
+    baseurl: "{{ z_url }}"
+  ha:
+    name: rhel7-ha
+    baseurl:  "{{ ha_url }}"
+  mrg:
+    name: rhel7-mrg
+    baseurl: "{{ mrg_url }}"
+  openstack:
+    name: openstack
+    baseurl: http://mirror.centos.org/centos/7/cloud/x86_64/openstack-mitaka/
+
+# These types of repositories will download the requested URL into the /etc/yum.repos.d
+# folder in order to enable them
+all_download_repositories:
+  beaker: https://beaker-project.org/yum/beaker-client-RedHatEnterpriseLinux.repo
+  jenkins: http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
+
+jslave_repositories:
+  - "{{ all_repositories.latest }}"
+  - "{{ all_repositories.optional }}"
+  - "{{ all_repositories.extras }}"
+  - "{{ all_repositories.epel }}"
+
+jslave_download_repositories:
+  - "{{ all_download_repositories.conserver }}"
+  - "{{ all_download_repositories.beaker }}"
+
+jenkins_master_repositories:
+  - "{{ all_repositories.optional }}"
+  - "{{ all_repositories.latest }}"
+  - "{{ all_repositories.extras }}"
+  - "{{ all_repositories.epel }}"
+  - "{{ all_repositories.openstack }}"
+
+jenkins_master_download_repositories:
+  - "{{ all_download_repositories.beaker }}"
+  - "{{ all_download_repositories.jenkins }}"

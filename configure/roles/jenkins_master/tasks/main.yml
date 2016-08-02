@@ -1,0 +1,39 @@
+- name: check Jenkins global security
+  jenkins_security_enabled:
+    jenkins_home: "{{ jenkins_home }}"
+
+- name: check for https pre-configure
+  include: https_check.yml
+
+- name: remember that HTTPS is already enabled, even if not set to enable
+  set_fact:
+    https_enabled: true
+  when: "{{ https_cfg_exists }}"
+
+- name: install necessary packages
+  include: install.yml
+
+- name: configure firewall for port forwarding
+  include: iptables.yml
+
+- name: configure Jenkins for HTTPS
+  become: true
+  include: https.yml
+  when: https_enabled
+
+- name: configure Jenkins
+  include: configure.yml
+
+- name: startup Jenkins
+  become: true
+  service:
+    name: jenkins
+    state: started
+    enabled: true
+
+- name: configure CLI users
+  include: cli-users.yml
+  when: jenkins_security_enabled
+
+- name: plugins and Jenkins config
+  include: plugins.yml

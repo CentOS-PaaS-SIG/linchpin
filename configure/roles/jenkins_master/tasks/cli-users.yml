@@ -1,0 +1,11 @@
+- name: download jenkins CLI
+  get_url:
+    url: "{{ https_enabled | ternary(https, http) }}://localhost/jnlpJars/jenkins-cli.jar"
+    dest: "{{ jenkins_home_dir }}/jenkins-cli.jar"
+    force: true
+    validate_certs: false
+
+- name: configure CLI users appropriately
+  jenkins_cli_user:
+    jenkins_home: "{{ jenkins_home }}"
+    key_file: "{{ ansible_user_dir }}/.ssh/id_rsa.pub"

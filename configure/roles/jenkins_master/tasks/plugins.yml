@@ -1,0 +1,80 @@
+- name: wait for Jenkins to start up
+  wait_for:
+    port: "{{ https_enabled | ternary(443, 80) }}"
+    state: started
+    delay: 15
+
+- name: download Jenkins CLI file
+  until: "'response' not in result or result.response.find('Error 503') == -1"
+  register: result
+  retries: 4
+  delay: 15
+  get_url:
+    url: "{{ https_enabled | ternary('https', 'http') }}://localhost/jnlpJars/jenkins-cli.jar"
+    dest: "{{ ansible_user_dir }}"
+    force: true
+    validate_certs: false
+
+- name: copy in configure script
+  template:
+    src: groovy_set_jenkins_cfg.java
+    dest: "{{ ansible_user_dir }}"
+  register: groovy_script
+
+- name: run Jenkins global config
+  jenkins_cli:
+    command: groovy
+    arguments: groovy_set_jenkins_cfg.java
+    validate_certs: false
+    use_ssl: "{{ https_enabled }}"
+  when: groovy_script.changed
+  notify: restart Jenkins
+
+- name: run update center configure script
+  become: true
+  become_user: jenkins
+  jenkins_update_center:
+    update_center_id: "{{ item.id }}"
+    update_center_url: "{{ item.url }}"
+  with_items: "{{ update_centers }}"
+  notify: restart Jenkins
+
+- name: create cert path
+  become: true
+  file:
+    dest: "{{ jenkins_home }}/update-center-rootCAs"
+    state: directory
+    owner: jenkins
+    group: jenkins
+
+- name: copy cert file
+  become: true
+  copy:
+    src: "{{ update_center_certificate }}"
+    dest: "{{ jenkins_home }}/update-center-rootCAs/update-center.crt"
+    owner: jenkins
+    group: jenkins
+  notify: restart Jenkins
+  when: update_center_certificate is defined
+
+- name: force handlers
+  meta: flush_handlers
+     
+- name: wait for Jenkins to start up
+  wait_for:
+    port: "{{ https_enabled | ternary(443, 80) }}"
+    state: started
+    delay: 15
+
+- name: filter plugin list
+  set_fact:
+    _jenkins_plugins: "{{ _jenkins_plugins | default([]) | union([item.split('=')[0]]) }}"
+  with_items: "{{ jenkins_plugins }}"
+
+- name: install plugins
+  jenkins_cli:
+    command: install-plugin
+    arguments: "{{ _jenkins_plugins | join(' ') }}"
+    validate_certs: false
+    use_ssl: "{{ https_enabled }}"
+  notify: restart Jenkins

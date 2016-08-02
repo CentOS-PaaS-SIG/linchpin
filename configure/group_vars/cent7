@@ -1,0 +1,14 @@
+repositories:
+  - name: epel-testing
+    mirrorlist: "{{ fedora_mirrors }}repo=testing-epel7"
+  - name: epel
+    mirrorlist: "{{ fedora_mirrors }}repo=epel-7"
+  - name: cloud
+    baseurl: "{{ centos_mirrors }}/$releasever/cloud/$basearch/openstack-liberty/"
+
+download_repositories:
+  - http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
+
+rpm_key_imports:
+  - key: http://pkg.jenkins-ci.org/redhat-stable/jenkins.io.key
+    validate_certs: true

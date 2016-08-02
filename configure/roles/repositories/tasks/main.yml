@@ -1,0 +1,13 @@
+- include: repositories.yml
+  with_items: "{{ repositories }}"
+
+- include: repository_download.yml
+  with_items: "{{ download_repositories }}"
+
+- name: import repository keys
+  become: true
+  rpm_key:
+    key: "{{ item.key }}"
+    state: present
+    validate_certs: "{{ item.validate_certs }}"
+  with_items: "{{ rpm_key_imports }}"

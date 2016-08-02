@@ -1,0 +1,2 @@
+jenkins_ssl_cert: vagrant/master/jenkins.crt
+jenkins_ssl_key: vagrant/master/jenkins.key

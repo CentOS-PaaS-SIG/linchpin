@@ -1,0 +1,16 @@
+- name: restart httpd
+  become: true
+  service:
+    name: httpd
+    state: restarted
+
+- name: restart Jenkins
+  become: true
+  service:
+    name: jenkins
+    state: restarted
+
+- name: regenerate private ssh key
+  shell: >
+    ssh-keygen -y -f "{{ ansible_user_dir }}/.ssh/id_rsa" > "{{ ansible_user_dir }}/.ssh/id_rsa.pub" &&
+    cat "{{ ansible_user_dir }}/.ssh/id_rsa.pub" >> "{{ ansible_user_dir }}/.ssh/authorized_keys"

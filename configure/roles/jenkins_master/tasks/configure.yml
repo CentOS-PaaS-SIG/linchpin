@@ -1,0 +1,31 @@
+# Template me
+- name: set Jenkins Java options
+  lineinfile:
+    backrefs: true
+    regexp: ^JENKINS_JAVA_OPTIONS=(.*)$
+    line: 'JENKINS_JAVA_OPTIONS=\1 {{ jenkins_java_options | join(" ") }}'
+    state: present
+    dest: /etc/sysconfig/jenkins
+  become: true
+  notify: restart Jenkins
+
+- name: update ulimits
+  become: true
+  template:
+    src: 99-jenkins.conf
+    dest: /etc/security/limits.d/99-jenkins.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart Jenkins
+
+- name: ensure SSH directory exists
+  file:
+    name: "{{ ansible_user_dir }}/.ssh"
+    state: directory
+
+- name: upload SSH key
+  copy:
+    src: "{{ jenkins_ssh_private_key }}"
+    dest: "{{ ansible_user_dir }}/.ssh/id_rsa"
+  notify: regenerate SSH key

@@ -1,0 +1,18 @@
+Additional roles and features needed before full feature parity exists with 1.0 Jenkins Master
+
+- tasks/create_jenkins_task.py
+  * _config_jenkins_backups
+    Backups should probably be their own role
+
+  * _config_job_priorities
+    Make this part of the Jenkins jobs roles
+
+  * _set_env_vars
+    Set arbitrary environment variables through Groovy script - could be integrated to master role?
+
+  * _create_jobs
+    Creates the jobs based on external JJB
+    Possibly needs more input on where job definitions will be loaded from
+
+  * _configure_views
+    Setup Jenkins UI views

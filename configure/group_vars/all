@@ -1,0 +1,10 @@
+# Override this if you have a different mirror infrastructure you would rather pull from
+fedora_mirrors: https://mirrors.fedoraproject.org/metalink?arch=$basearch&
+centos_mirrors: http://mirror.centos.org/centos/
+
+# Override this if you wish your default mirrors to be configured differently
+repository_defaults:
+  failovermethod: priority
+  enabled: true
+  skip_if_unavailable: false
+  gpgcheck: false

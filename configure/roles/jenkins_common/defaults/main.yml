@@ -1,0 +1,5 @@
+install_beaker: true
+jswarm_version: 1.22
+java_rpm: java-1.8.0-openjdk,java-1.8.0-openjdk-devel
+jenkins_slave_username: ''
+jenkins_slave_password: ''

@@ -1,0 +1,5 @@
+require "../shared.rb"
+
+Vagrant.configure("2") do |config|
+    vm(config, "master", "mrlesmithjr/rhel-7")
+end
