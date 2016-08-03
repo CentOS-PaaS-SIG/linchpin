@@ -48,7 +48,8 @@
                                    {"$ref": "#/definitions/aws_cfn"},
                                    {"$ref": "#/definitions/gcloud_gce"},
                                    {"$ref": "#/definitions/ex_res"},
-                                   {"$ref": "#/definitions/duffy"}
+                                   {"$ref": "#/definitions/duffy"},
+                                   {"$ref": "#/definitions/libvirt"}
                                  ]
                             }
                     },
@@ -66,9 +67,6 @@
     },
     "required": ["topology_name"],
     "definitions":{
-         "email": {
-          "type":"string"
-         },
          "os_server": {
              "type" : "object",
              "properties" : {
@@ -290,6 +288,25 @@
                    }
              },
              "required":["res_name","res_type"]
+         },
+         "libvirt": {
+             "type" : "object",
+             "properties" : {
+                 "res_name": {
+                     "type":"string"
+                   },
+                  "res_type": {
+                     "pattern":"libvirt",
+                     "type":"string"
+                   },
+                  "xml": {
+                     "type":"string"
+                   },
+                  "uri": {
+                     "type":"string"
+                   }
+             },
+             "required":["res_name","res_type","xml"]
          },
          "ex_res": {
              "type" : "object",

@@ -1,0 +1,3 @@
+- name: "provision server"
+  include: provision_libvirt.yml
+  when: res_def['res_type']=="libvirt"
