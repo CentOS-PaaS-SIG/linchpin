@@ -267,7 +267,7 @@
                      "type":"number"
                      },
                   "size": {
-                     "type":"string"
+                     "type":"number"
                      }
              },
              "required":["res_name","res_type","size"]
