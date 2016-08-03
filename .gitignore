@@ -5,3 +5,6 @@ ansible.cfg
 
 # generated docs
 docs/build/
+
+# local inventory files containing user-specific environment data
+configure/inventory/local/
