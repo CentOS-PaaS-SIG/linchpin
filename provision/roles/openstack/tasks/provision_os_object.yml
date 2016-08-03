@@ -1,4 +1,9 @@
-- name: provision/deprovision swift containers
+- name: "Register resource count"
+  shell: python -c "print [x for x in range( 0, {{ res_def['count'] }} )]"
+  register: res_count
+  when: res_def['count'] is defined
+
+- name: "provision/deprovision swift containers"
   os_object:
     auth:
       auth_url: "{{ endpoint }}" 
@@ -9,3 +14,30 @@
     container_access: "{{ res_def['access'] | default('private') }}"
     wait: yes
     state: "{{ state }}"
+  when: res_def['count'] is not defined
+
+- name: "provision/deprovision swift containers when count specified"
+  os_object:
+    auth:
+      auth_url: "{{ container.0 }}" 
+      username: "{{ container.1 }}"
+      password: "{{ container.2 }}"
+      project_name: "{{ container.3 }}"
+    container: "{{ container.4 }}_{{ container.7 }}"
+    container_access: "{{ container.5 }}"
+    wait: yes
+    state: "{{ container.6 }}"
+  with_nested:
+    - ["{{ endpoint }}"]
+    - ["{{ username }}"]
+    - ["{{ password }}"]
+    - ["{{ project }}"]
+    - ["{{ res_def['res_name'] }}"]
+    - ["{{ res_def['access'] | default('private') }}"]
+    - ["{{ state }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: container
+  register: res_def_output 
+  when: res_def['count'] is defined
+

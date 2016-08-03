@@ -263,6 +263,9 @@
                      "type":"string",
                      "pattern":"os_volume"
                    },
+                  "count": {
+                     "type":"number"
+                     },
                   "size": {
                      "type":"string"
                      }
@@ -279,6 +282,9 @@
                      "pattern":"os_object",
                      "type":"string"
                    },
+                   "count": {
+                     "type":"number"
+                     },
                   "access": {
                      "type":"string"
                    }
