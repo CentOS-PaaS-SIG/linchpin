@@ -1,0 +1,21 @@
+---
+- name: "Duffy Inventory Filter Testing"
+  hosts: localhost
+  vars_files:
+   - ../linchpin_config.yml
+   - ../ex_topo/duffy_topology_output.yml
+  vars:
+    data: '../ex_topo/duffy_3node_cluster.yml'
+    schema: '../ex_schemas/schema_v2.json'
+    state: present
+    output:
+      output:
+        data:
+         topology_name: "duffy_3node_cluster"
+    topology_outputs_duffy: "{{ duffy_res }}"
+    topology_outputs_os: "[]"
+    topology_outputs_aws: "[]"
+    topology_outputs_gce: "[]"
+
+  roles:
+    - output_writer

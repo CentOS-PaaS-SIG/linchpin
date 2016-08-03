@@ -22,14 +22,15 @@ inventory_layout:
   host_groups:
     OSEv3:
       vars:
-        ansible_ssh_user: root
+        openshift_docker_additional_registries: |
+            "registry.example.com"
+        openshift_docker_insecure_registries: |
+            "registry.example.com"
         debug_level: 2
         ansible_sudo: False
         ansible_ssh_user: root
         openshift_override_hostname_check: True
-        openshift_docker_additional_registries: "registry.example.com"
-        openshift_docker_insecure_registries: "registry.example.com"
-        openshift_set_hostname": True
+        openshift_set_hostname: True
       children:
         - masters
         - nodes
