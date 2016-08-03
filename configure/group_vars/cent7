@@ -1,0 +1,8 @@
+repositories:
+  epel_testing:
+    name: epel-testing
+    mirrorlist: "{{ fedora_mirrors }}repo=testing-epel7"
+  epel:
+    name: epel
+    mirrorlist: "{{ fedora_mirrors }}repo=epel-7"
+

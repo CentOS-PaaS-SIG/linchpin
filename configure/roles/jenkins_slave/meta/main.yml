@@ -1,0 +1,3 @@
+dependencies:
+  - role: repositories
+  - role: jenkins_common
