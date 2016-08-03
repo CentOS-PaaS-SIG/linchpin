@@ -1,0 +1,22 @@
+- name: "set command present"
+  set_fact:
+    commands: ["define", "start"]
+  when: state == "present"
+
+- name: "set command for absent"
+  set_fact:
+    commands: ["shutdown","undefine"]
+  when: state == "absent"
+ 
+- name: "Provisioning libvirt  server"
+  virt: 
+    name: "{{ item.0 }}"
+    command: "{{ item.3 }}"
+    xml: "{{ lookup('template', item.1) }}"
+    uri: "{{ item.2 }}"
+  with_nested:
+    - ["{{ res_def['res_name']  }}"]
+    - ["{{ res_def['xml']  }}"]
+    - ["{{ res_def['uri'] | default(omit) }}"]
+    - "{{ commands }}"
+  register: libvirt_output
