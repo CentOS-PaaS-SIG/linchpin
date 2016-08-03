@@ -1,0 +1,31 @@
+- hosts: jslave:jmaster
+  gather_facts: false
+  roles:
+    - certificate_authority
+
+- hosts: all
+  gather_facts: false
+  roles:
+    - repositories
+
+- hosts: update_all
+  gather_facts: true
+  roles:
+    - update_system
+
+- hosts: jslave
+  gather_facts: true
+  roles:
+    - jenkins_slave
+
+- hosts: all
+  gather_facts: false
+  tasks:
+    - name: check for local playbook
+      stat: path=playbook/local.yml
+      delegate_to: localhost
+      run_once: true
+      register: stat
+
+    - name: include local playbook
+      include: "{{ stat.stat.exists | ternary( 'local.yml', '/dev/null' ) }}"
