@@ -1,0 +1,6 @@
+repositories:
+  - name: rawhide
+    mirrorlist: "{{ fedora_mirrors }}repo=rawhide"
+
+repository_downloads:
+  - https://beaker-project.org/yum/beaker-client-Fedora.repo
