@@ -1,3 +1,0 @@
-repositories: "{{ jslave_repositories }}"
-
-download_repositories: "{{ jslave_download_repositories }}"

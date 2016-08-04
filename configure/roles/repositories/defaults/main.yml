@@ -1,8 +1,0 @@
-# Override with an array of objects like you would find in playbook/group_vars/rhel7
-# if you want a different set of repositories than this package installs by default
-repositories: []
-
-# Override with an array of strings that are URLs to repository files, if you want
-# them downloaded into the target /etc/yum.repos.d/ folder so that they can be
-# added to the package repositories
-download_repositories: []
