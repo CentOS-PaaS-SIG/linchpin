@@ -1,3 +1,0 @@
-- name: update all packages
-  yum: name=* state=latest
-  when: ansible_distribution == "Fedora" or ansible_distribution == "RedHat" or ansible_distribution == "CentOS"
