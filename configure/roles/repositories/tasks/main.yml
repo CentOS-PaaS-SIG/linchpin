@@ -1,5 +1,0 @@
-- include: repositories.yml
-  with_items: "{{ repositories }}"
-
-- include: repository_download.yml
-  with_items: "{{ download_repositories }}"
