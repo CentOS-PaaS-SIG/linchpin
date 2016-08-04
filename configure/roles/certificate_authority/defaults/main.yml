@@ -1,3 +1,0 @@
-certificate_authority_urls:
-  - http://example.com/example_cert.crt
-certificate_authority_validate_certs: false
