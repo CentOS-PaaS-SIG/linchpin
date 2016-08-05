@@ -38,3 +38,8 @@
     loop_var: vol
   register: res_def_output 
   when: res_def['count'] is defined
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os_volume: "{{ topology_outputs_os_volume + res_def_output.results }}"
+
