@@ -7,10 +7,15 @@
     state: "{{ state }}"
     wait: "yes"
   when: res_def['res_type'] == 'aws_ec2_key'
-  register: ec2_key_output
+  register: res_def_output
 
 - name: "Generate keyfile "
   copy: 
-    content: "{{ ec2_key_output['key']['private_key'] }}"
+    content: "{{ res_def_output['key']['private_key'] }}"
     dest: "/tmp/{{ res_def['res_name'] }}.pem"
-  when: state=="present" and res_def['res_type']=='aws_ec2_key' and ec2_key_output['changed']==true
+  when: state=="present" and res_def['res_type']=='aws_ec2_key' and res_def_output['changed']==true
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_aws_ec2_key: "{{ topology_outputs_aws_ec2_key + [res_def_output] }}"
+  when: res_def_output['changed'] == true
