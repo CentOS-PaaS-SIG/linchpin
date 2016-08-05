@@ -41,3 +41,8 @@
   register: res_def_output 
   when: res_def['count'] is defined
 
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os_object: "{{ topology_outputs_os_object + res_def_output.results }}"
+
+
