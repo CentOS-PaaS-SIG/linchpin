@@ -22,4 +22,13 @@
     template_parameters: "{{ cfn_params }}"
     tags:
       Stack: "{{ res_def['res_name'] }}"
-  register: output
+  register: res_def_output
+
+- name: "debug of cfn"
+  debug:
+    msg: "{{ res_def_output }}"
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_aws_cfn: "{{ topology_outputs_aws_cfn + [res_def_output] }}"
+  when: res_def_output['changed'] == true
