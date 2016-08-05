@@ -1,8 +1,3 @@
-#- name: "DEBUG:: Checking the passed varibles"
-#  debug:
-#   # msg: "Resource Definition {{ res_def }} Resource Group vars {{ res_grp_vars }}"
-#   msg: "Resource Definition {{ res_def }} Resource Group vars {{ res_grp_vars | selectattr('resource_group_name', 'equalto', res_grp_name ) | first }}"
-
 - name: "set s3 mode when state is present"
   set_fact:
     s3_mode: "create"
@@ -17,11 +12,9 @@
     region: "{{ res_def['region'] }}"
     permission: "{{ res_def['permission']| default(omit) }}"
   when: res_def['res_type'] == 'aws_s3'
+  register: res_def_output
 
-#- name: "set tmp var"
-#  set_fact:
-#    tmp: ["{{ outputitem }}"]
-
-#- name: "Append outputitem to topology_outputs"
-#  set_fact:
-#    topology_outputs_aws: "{{ topology_outputs_aws_ + tmp }}"
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_aws_s3: "{{ topology_outputs_aws_s3 + [res_def] }}"
+  when: res_def_output['changed'] == true and state == "present"
