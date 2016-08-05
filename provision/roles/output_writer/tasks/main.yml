@@ -11,7 +11,7 @@
       os_volume_res: "{{ topology_outputs_os_volume }}"
       os_obj_res: "{{ topology_outputs_os_object }}"
       os_heat_res: "{{ topology_outputs_os_heat }}"
-      aws_ec2_res: "{{ topology_outputs_aws }}"
+      aws_ec2_res: "{{ topology_outputs_aws_ec2 }}"
       gcloud_gce_res: "{{ topology_outputs_gce }}"
       duffy_res: "{{ topology_outputs_duffy }}"
 
