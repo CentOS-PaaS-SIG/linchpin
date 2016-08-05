@@ -12,6 +12,9 @@
       os_obj_res: "{{ topology_outputs_os_object }}"
       os_heat_res: "{{ topology_outputs_os_heat }}"
       aws_ec2_res: "{{ topology_outputs_aws_ec2 }}"
+      aws_s3_res: "{{ topology_outputs_aws_s3 }}"
+      aws_ec2_key_res: "{{ topology_outputs_aws_ec2_key }}"
+      aws_cfn_res: "{{ topology_outputs_aws_cfn }}"
       gcloud_gce_res: "{{ topology_outputs_gce }}"
       duffy_res: "{{ topology_outputs_duffy }}"
 
