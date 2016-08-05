@@ -33,11 +33,7 @@
     loop_var: instance
   register: res_def_output
 
-- name: "set tmp var"
-  set_fact:
-    tmp: "{{ res_def_output.results }}"
-
 - name: "Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_os: "{{ topology_outputs_os + tmp }}"
+    topology_outputs_os: "{{ topology_outputs_os_server + res_def_output.results }}"
 

@@ -21,4 +21,12 @@
     os_tenant_name: "{{ project }}"
     os_auth_url: "{{ endpoint }}"
     parameters: "{{ heat_params }}"
-  register: output
+  register: res_def_output
+
+- name: debug
+  debug:
+    msg: "{{res_def_output}}"
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os_heat: "{{ topology_outputs_os_heat + [ res_def_output.output ] }}"
