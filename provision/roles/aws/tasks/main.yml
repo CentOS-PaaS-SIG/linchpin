@@ -6,7 +6,10 @@
 
 - name: "declaring output vars"
   set_fact:
-    topology_outputs_aws: []
+    topology_outputs_aws_ec2: []
+    topology_outputs_aws_s3: []
+    topology_outputs_aws_ec2_key: []
+    topology_outputs_aws_cfn: []
 
 - name: "Initiating  Provisioning of resources aws resource group"
   include: provision_resource_group.yml res_grp={{ item }} 

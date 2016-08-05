@@ -12,15 +12,10 @@
     vpc_subnet_id: "{{ res_def['vpc_subnet_id']| default(omit) }}"
     assign_public_ip: "{{ res_def['assign_public_ip']| default(omit) }}"
     instance_tags: "{{ res_grp_vars | selectattr('resource_group_name', 'equalto', res_grp_name ) | first }}"
-  register: outputitem
+  register: res_def_output
   when: res_def['res_type'] == 'aws_ec2'
-
-- name: "set tmp var"
-  set_fact:
-    tmp: ["{{ outputitem }}"]
-  when: outputitem['changed'] == true
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_aws: "{{ topology_outputs_aws + tmp }}"
-  when: outputitem['changed'] == true
+    topology_outputs_aws_ec2: "{{ topology_outputs_aws_ec2 + [res_def_output] }}"
+  when: res_def_output['changed'] == true
