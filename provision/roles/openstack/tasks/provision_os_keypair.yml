@@ -1,4 +1,3 @@
-
 - name: "Provisioning  keypair"
   os_keypair:
     auth:
@@ -9,10 +8,16 @@
     name: "{{ res_def['res_name']  }}"
     state: "{{ state }}"
     wait: "yes"
-  register: keypair_output
+  register: res_def_output 
+
 
 - name: "Generate keyfile "
   copy: 
-    content: "{{ keypair_output['key']['private_key'] }}"
+    content: "{{ res_def_output['key']['private_key'] }}"
     dest: "{{ keystore_path }}/{{ res_def['res_name'] }}.key"
-  when: state=="present" and keypair_output['changed'] == true
+  when: state=="present" and res_def_output['changed'] == true
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os_keypair: "{{ topology_outputs_os_keypair + [res_def_output] }}"
+  when: res_def_output.changed == true and state == "present"

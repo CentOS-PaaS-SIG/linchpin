@@ -35,5 +35,5 @@
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_os: "{{ topology_outputs_os_server + res_def_output.results }}"
+    topology_outputs_os_server: "{{ topology_outputs_os_server + res_def_output.results }}"
 

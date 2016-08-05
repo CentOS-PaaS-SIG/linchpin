@@ -7,6 +7,7 @@
   set_fact:
     topology_outputs:
       os_server_res: "{{ topology_outputs_os_server }}"
+      os_keypair_res: "{{ topology_outputs_os_keypair }}"
       os_volume_res: "{{ topology_outputs_os_volume }}"
       os_obj_res: "{{ topology_outputs_os_object }}"
       os_heat_res: "{{ topology_outputs_os_heat }}"
