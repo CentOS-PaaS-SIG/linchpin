@@ -1,4 +1,4 @@
-- name: "Provisioning  keypair"
+- name: "provisioning/deprovisioning  keypair"
   os_keypair:
     auth:
       auth_url: "{{ endpoint }}"
