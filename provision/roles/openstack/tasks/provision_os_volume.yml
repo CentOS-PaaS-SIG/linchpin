@@ -1,4 +1,4 @@
-- name: "provisioning the os volume resource type"
+- name: "provision/deprovision the os volume resource type"
   os_volume:
     auth:
       auth_url: "{{ endpoint }}" 
@@ -15,7 +15,7 @@
   register: res_count
   when: res_def['count'] is defined
 
-- name: "provision/deprovision swift containers when count specified"
+- name: "provision/deprovision cinder volumes when count specified"
   os_volume:
     auth:
       auth_url: "{{ vol.0 }}"

@@ -10,7 +10,7 @@
   set_fact:
     heat_params : "{{ heat_params['heat_params'] }}"
 
-- name: "Provision os_heat stack"
+- name: "provision/deprovision os_heat stack"
   os_hot_stack:
     stack_name: "{{ res_def['res_name']  }}"
     template: "{{ res_def['template_path']  }}"
@@ -23,9 +23,6 @@
     parameters: "{{ heat_params }}"
   register: res_def_output
 
-- name: debug
-  debug:
-    msg: "{{res_def_output}}"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
