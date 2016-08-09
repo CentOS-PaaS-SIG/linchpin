@@ -29,5 +29,5 @@
   include: deprovision_resource_group.yml res_grp={{ item.0 }} topo_output_file={{ item.1 }}
   with_nested:
     - "{{ aws_res_grps }}"
-    - ["{{ topology_output_file }}"]
+    - ["{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output' ) }}"]
   when: state == "absent"
