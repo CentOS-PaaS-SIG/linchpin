@@ -1,6 +1,5 @@
 ---
 # This playbook contains common play that will be ran before the provisioning starts.
-
 - name: "schema check for given topology file"
   schema_check: 
     data: "{{ data }}"
@@ -11,10 +10,9 @@
 - name: "Including Linchpin config vars"
   include_vars: "../linchpin_config.yml"
 
-#- name: "DEBUG:: checking the registered output of schema validation"
-#  debug:
-#    msg: "{{ item }}"
-#  with_dict: "{{ output }}"
+- name: "set fact for saving topology_job_ids"
+  set_fact:
+    topology_job_ids: []
 
 - name: "filtering the output for openstack resource groups"
   set_fact:
@@ -58,4 +56,3 @@
 - name: "output vars"
   set_fact:
     topology_outputs: {}
-

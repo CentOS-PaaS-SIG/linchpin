@@ -22,8 +22,30 @@
     os_auth_url: "{{ endpoint }}"
     parameters: "{{ heat_params }}"
   register: res_def_output
-
+  when: async == false
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_heat: "{{ topology_outputs_os_heat + [ res_def_output.output ] }}"
+  when: async == false
+
+- name: "provision/deprovision os_heat stack"
+  os_hot_stack:
+    stack_name: "{{ res_def['res_name']  }}"
+    template: "{{ res_def['template_path']  }}"
+    state: "{{ state }}"
+    wait: "yes"
+    os_username: "{{ username }}"
+    os_password: "{{ password }}"
+    os_tenant_name: "{{ project }}"
+    os_auth_url: "{{ endpoint }}"
+    parameters: "{{ heat_params }}"
+  async: 1000
+  poll: 0
+  register: res_def_output
+  when: async == true
+
+- name: "save the job id"
+  set_fact:
+    topology_job_ids: "{{ topology_job_ids + [ res_def_output ] }}"
+  when: async == true

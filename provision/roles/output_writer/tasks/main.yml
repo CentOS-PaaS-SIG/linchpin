@@ -1,5 +1,4 @@
 ---
-
 - include_vars: "{{ inventory_layout_file }}"
   when: state == "present"
 
@@ -17,6 +16,7 @@
       aws_cfn_res: "{{ topology_outputs_aws_cfn }}"
       gcloud_gce_res: "{{ topology_outputs_gce }}"
       duffy_res: "{{ topology_outputs_duffy }}"
+  when: aysnc == false 
 
 - name: "create output directories"
   file:

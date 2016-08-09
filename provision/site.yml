@@ -18,3 +18,10 @@
   hosts: localhost
   roles:
     - { role: 'output_writer', topology_outputs: "{{ topology_outputs }}" }
+
+- name: "debug statement"
+  hosts: localhost
+  tasks:
+    - name: "debug the job ids"
+      debug:
+        msg: "{{ topology_job_ids }}"
