@@ -9,3 +9,6 @@ docs/build/
 # generated output and inventory files
 *.inventory
 *.output
+
+# local inventory files containing user-specific environment data
+configure/inventory/local/
