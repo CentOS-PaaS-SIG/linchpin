@@ -5,3 +5,7 @@ ansible.cfg
 
 # generated docs
 docs/build/
+
+# generated output and inventory files
+*.inventory
+*.output

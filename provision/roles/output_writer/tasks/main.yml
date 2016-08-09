@@ -1,9 +1,7 @@
 ---
-# This playbook contains common play that will be ran before the provisioning starts.
 
-#  debug:
-#    msg: "{{ item }}"
-#  with_items: "{{ aws_res_grps }}"
+- include_vars: "{{ inventory_layout_file }}"
+  when: state == "present"
 
 - name: "Updating topology_outputs"
   set_fact:
@@ -20,8 +18,31 @@
       gcloud_gce_res: "{{ topology_outputs_gce }}"
       duffy_res: "{{ topology_outputs_duffy }}"
 
-- name: "output vars"
+- name: "create output directories"
+  file:
+    state: directory
+    path: "{{ item }}"
+  with_items:
+    - "{{ outputfolder_path | default( outputfolder_path+'/' ) }}"
+    - "{{ inventoryfolder_path | default( inventoryfolder_path+'/' ) }}"
+
+- name: "DEBUG:: topology_outputs"
+  debug:
+    msg: "{{ topology_outputs }}"
+
+- name: "DEBUG:: inventory_layout"
+  debug:
+    msg: "{{ inventory_layout }}"
+  when: state == "present"
+
+- name: "generate outputs"
   template:
     src: "../templates/output_formatter.j2"
-    dest: "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name ) }}"
+    dest: "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output' ) }}"
+  when: state == "present"
+
+# include inventory generation files here
+- include: "{{ item }}"
+  with_items:
+    - "{{ inventory_playbooks }}"
   when: state == "present"

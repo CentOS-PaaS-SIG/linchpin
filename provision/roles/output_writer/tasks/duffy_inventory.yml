@@ -1,0 +1,11 @@
+---
+- name: "Updating topology_outputs for duffy"
+  set_fact:
+    duffy_topo_outputs:
+      duffy_res: "{{ topology_outputs_duffy }}"
+
+- name: "generate duffy inventory"
+  template:
+    src: "../templates/duffy_inventory_formatter.j2"
+    dest: "{{ inventory_output_file | default( inventoryfolder_path+'/'+output.output.data.topology_name+'.inventory' ) }}"
+  when: state == "present"
