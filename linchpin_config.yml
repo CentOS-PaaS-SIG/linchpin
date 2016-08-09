@@ -1,4 +1,9 @@
 ---
-keystore_path: "keystore" 
+keystore_path: "keystore"
 outputfolder_path: "outputs"
 async: false
+inventoryfolder_path: "inventory"
+# absolute path
+inventory_layout_file: '../ex_topo/duffy_3node_inventory_layout.yml'
+inventory_playbooks:
+  - duffy_inventory.yml
