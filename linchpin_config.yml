@@ -1,3 +1,4 @@
 ---
 keystore_path: "keystore" 
 outputfolder_path: "outputs"
+async: false
