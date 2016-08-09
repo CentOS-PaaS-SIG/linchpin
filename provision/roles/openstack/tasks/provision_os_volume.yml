@@ -37,9 +37,41 @@
   loop_control:
     loop_var: vol
   register: res_def_output 
-  when: res_def['count'] is defined
+  when: res_def['count'] is defined and async == false
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_volume: "{{ topology_outputs_os_volume + res_def_output.results }}"
+  when: async == false
 
+
+- name: "Async:: provision/deprovision cinder volumes when count specified"
+  os_volume:
+    auth:
+      auth_url: "{{ vol.0 }}"
+      username: "{{ vol.1 }}"
+      password: "{{ vol.2 }}"
+      project_name: "{{ vol.3 }}"
+    state: "{{ vol.6 }}"
+    size: "{{ vol.5 }}"
+    display_name: "{{ vol.4 }}_{{ vol.7 }}"
+  with_nested:
+    - ["{{ endpoint }}"]
+    - ["{{ username }}"]
+    - ["{{ password }}"]
+    - ["{{ project }}"]
+    - ["{{ res_def['res_name'] }}"]
+    - ["{{ res_def['size'] }}"]
+    - ["{{ state }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: vol
+  async: 1000
+  poll: 0
+  register: res_def_output
+  when: res_def['count'] is defined and async == true
+
+- name: "Async: save the job id"
+  set_fact:
+    topology_job_ids: "{{ topology_job_ids + [ res_def_output ] }}"
+  when: async == true
