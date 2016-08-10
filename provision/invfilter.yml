@@ -1,6 +1,7 @@
 ---
 - name: "Duffy Inventory Filter Testing"
   hosts: localhost
+  gather_facts: false
   vars_files:
    - ../linchpin_config.yml
    - ../ex_topo/duffy_topology_output.yml
