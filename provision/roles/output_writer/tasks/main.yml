@@ -16,7 +16,7 @@
       aws_cfn_res: "{{ topology_outputs_aws_cfn }}"
       gcloud_gce_res: "{{ topology_outputs_gce }}"
       duffy_res: "{{ topology_outputs_duffy }}"
-  when: aysnc == false
+  when: async == false
 
 - name: "create output directories"
   file:
@@ -25,7 +25,7 @@
   with_items:
     - "{{ outputfolder_path | default( outputfolder_path+'/' ) }}"
     - "{{ inventoryfolder_path | default( inventoryfolder_path+'/' ) }}"
-  when: aysnc == false
+  when: async == false
 
 - name: "DEBUG:: topology_outputs"
   debug:
