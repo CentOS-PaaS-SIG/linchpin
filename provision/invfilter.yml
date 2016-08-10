@@ -13,8 +13,16 @@
         data:
          topology_name: "duffy_3node_cluster"
     topology_outputs_duffy: "{{ duffy_res }}"
-    topology_outputs_os: "[]"
+    topology_outputs_os_server: "[]"
+    topology_outputs_os_volume: "[]"
+    topology_outputs_os_object: "[]"
+    topology_outputs_os_heat: "[]"
+    topology_outputs_os_keypair: "[]"
     topology_outputs_aws: "[]"
+    topology_outputs_aws_ec2: "[]"
+    topology_outputs_aws_s3: "[]"
+    topology_outputs_aws_ec2_key: "[]"
+    topology_outputs_aws_cfn: "[]"
     topology_outputs_gce: "[]"
 
   roles:

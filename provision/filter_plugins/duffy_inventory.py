@@ -33,9 +33,6 @@ def get_groups(topo, inv):
     t_prev_count = t_count
     inv_groups = {}
 
-#    print('topo: {}'.format(topo))
-#    print('inv: {}'.format(inv))
-
     for k,v in inv['hosts'].iteritems():
         num_needed = v.get('count', 1)
         if t_count > 0:
@@ -55,15 +52,11 @@ def get_groups(topo, inv):
 
             t_prev_count = t_count
 
-            print('\n')
-
-
     return inv_groups
 
 def get_group_children(inv):
 
     hg = inv.get('host_groups')
-    print('host_groups: {}\n\n'.format(hg))
     inventory = ''
 
     for k,v in hg.iteritems():
@@ -94,7 +87,11 @@ def get_group_vars(inv):
 
 def duffy_inventory(topo, inv):
 
-    d_topo = topo['duffy_res'][0]
+    print(topo['duffy_res'])
+    if len(topo['duffy_res']):
+        d_topo = topo['duffy_res'][0]
+    else:
+        return ''
     inventory = ''
 
     #verify counts. If there aren't enough nodes allocated, abort!
@@ -103,7 +100,6 @@ def duffy_inventory(topo, inv):
         g_vars = get_group_vars(inv)
         g_kids = get_group_children(inv)
 
-#    print('groups: {}'.format(groups))
 
     for k,v in groups.iteritems():
         inventory += '[{}]\n'.format(k)
