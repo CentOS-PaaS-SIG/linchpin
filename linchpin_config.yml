@@ -4,10 +4,6 @@ outputfolder_path: "outputs"
 inventoryfolder_path: "inventory"
 inventory_layout_file: '../ex_topo/duffy_3node_inventory_layout.yml'
 
-
-# absolute path
-inventory_layout_file: '../ex_topo/duffy_3node_inventory_layout.yml'
-
 inventory_playbooks:
   - duffy_inventory.yml
 
