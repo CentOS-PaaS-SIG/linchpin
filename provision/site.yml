@@ -17,4 +17,4 @@
 - name: "Writing contents to file"
   hosts: localhost
   roles:
-    - { role: 'output_writer', topology_outputs: "{{ topology_outputs }}" }
+    - { role: 'output_writer'}
