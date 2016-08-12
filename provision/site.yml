@@ -8,20 +8,13 @@
 - name:  "Provisioning resources based on resource group type"
   hosts: localhost 
   roles:
-    - { role: 'openstack', os_res_grps: "{{ os_res_grps }}" }
-    - { role: 'aws', aws_res_grps: "{{ aws_res_grps  }}" }
-    - { role: 'gcloud', gce_res_grps: "{{ gcloud_res_grps }}" }
-    - { role: 'duffy', duffy_res_grps: "{{ duffy_res_grps }}" }
-    - { role: 'libvirt', libvirt_res_grps: "{{ libvirt_res_grps }}" }
+    - { role: 'openstack'}
+    - { role: 'aws' }
+    - { role: 'gcloud' }
+    - { role: 'duffy' }
+    - { role: 'libvirt'}
 
 - name: "Writing contents to file"
   hosts: localhost
   roles:
     - { role: 'output_writer', topology_outputs: "{{ topology_outputs }}" }
-
-- name: "debug statement"
-  hosts: localhost
-  tasks:
-    - name: "debug the job ids"
-      debug:
-        msg: "{{ topology_job_ids }}"
