@@ -42,10 +42,7 @@
   register: job_result
   until: job_result.finished
   retries: 30
-
-- name: "debug on keypair "
-  debug:
-    msg: "{{ job_result }}"
+  when: async == true
 
 - name: "Async:: Generate keyfile "
   copy:
