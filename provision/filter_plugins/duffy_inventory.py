@@ -79,7 +79,7 @@ def get_group_vars(inv):
             inventory += '[{}:vars]\n'.format(k)
             for i,j in g_vars.iteritems():
                 inventory += '{}={}'.format(i,j)
-                if not isinstance(j, basestring):
+                if not isinstance(j, basestring) or not j.endswith('\n'):
                     inventory += '\n'
 
     return inventory
