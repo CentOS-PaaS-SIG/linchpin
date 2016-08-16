@@ -59,7 +59,7 @@ class JSONSchema:
             return {"error": e, "status": False }
         except Exception as e:
             return {"error": e, "status": False }
-            
+
     def get_data(self,file_path):
         if (file_path.split(".")[-1]=="yml" or "yaml"):
             fd = open(file_path)
