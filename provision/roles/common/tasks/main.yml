@@ -1,8 +1,8 @@
 ---
 # This playbook contains common play that will be ran before the provisioning starts.
 - name: "schema check for given topology file"
-  schema_check: 
-    data: "{{ data }}"
+  schema_check:
+    data: "{{ topology }}"
     schema: "{{ schema }}"
   register: output
   tags: schema_validation
