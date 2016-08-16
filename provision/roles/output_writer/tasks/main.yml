@@ -1,6 +1,6 @@
 ---
 - include_vars: "{{ inventory_layout_file }}"
-  when: state == "present"
+  when: state == "present" and inventory_layout_file is defined
 
 - name: "Updating topology_outputs"
   set_fact:
@@ -16,6 +16,15 @@
       aws_cfn_res: "{{ topology_outputs_aws_cfn }}"
       gcloud_gce_res: "{{ topology_outputs_gce }}"
       duffy_res: "{{ topology_outputs_duffy }}"
+  when: async == false
+
+- name: "delete output directories"
+  file:
+    state: absent
+    path: "{{ item }}"
+  with_items:
+    - "{{ outputfolder_path | default( outputfolder_path+'/' ) }}"
+    - "{{ inventoryfolder_path | default( inventoryfolder_path+'/' ) }}"
   when: async == false
 
 - name: "create output directories"
@@ -34,7 +43,7 @@
 - name: "DEBUG:: inventory_layout"
   debug:
     msg: "{{ inventory_layout }}"
-  when: state == "present"
+  when: state == "present" and inventory_layout is defined
 
 - name: "generate outputs"
   template:
@@ -46,4 +55,4 @@
 - include: "{{ item }}"
   with_items:
     - "{{ inventory_playbooks }}"
-  when: state == "present"
+  when: state == "present" and inventory_layout is defined
