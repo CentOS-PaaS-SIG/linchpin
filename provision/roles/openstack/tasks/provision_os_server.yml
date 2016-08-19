@@ -39,7 +39,6 @@
     topology_outputs_os_server: "{{ topology_outputs_os_server + res_def_output.results }}"
   when: async == false
 
-
 - name: "Async:: provision/deprovision os_server resources by looping on count"
   os_server:
     state: "{{ instance.4 }}"
@@ -74,8 +73,8 @@
   register: res_def_output
   when: async == true
 
+# following tasks saves the async job details 
 - name: "Async:: save the job id"
   set_fact:
-    topology_job_ids: "{{ topology_job_ids + [ res_def_output ] }}"
+    topology_outputs_os_server: "{{ topology_outputs_os_server + [ res_def_output ] }}"
   when: async == true
-

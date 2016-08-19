@@ -1,0 +1,4 @@
+- name: "os_server: wait and update outputs using jobids "
+  include: update_os_server_outputs.yml
+  when: async == true
+
