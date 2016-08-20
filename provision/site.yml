@@ -13,6 +13,7 @@
     - { role: 'gcloud' }
     - { role: 'duffy' }
     - { role: 'libvirt'}
+    - { role: 'rackspace'}
 
 - name: "Writing contents to file"
   hosts: localhost

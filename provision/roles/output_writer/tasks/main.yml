@@ -16,6 +16,7 @@
       aws_cfn_res: "{{ topology_outputs_aws_cfn }}"
       gcloud_gce_res: "{{ topology_outputs_gce }}"
       duffy_res: "{{ topology_outputs_duffy }}"
+      rax_server_res: "{{ topology_outputs_rax_server }}"
   when: async == false
 
 - name: "delete output directories"
@@ -72,6 +73,7 @@
       aws_cfn_res: "{{ topology_outputs_aws_cfn }}"
       gcloud_gce_res: "{{ topology_outputs_gce }}"
       duffy_res: "{{ topology_outputs_duffy }}"
+      rax_server_res: "{{ topology_outputs_rax_server }}"
   when: async == true
 
 # currently adding a single playbook that can manage all the async outputs based on the resource groups
