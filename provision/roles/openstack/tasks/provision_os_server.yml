@@ -25,7 +25,7 @@
     - ["{{ res_def['image'] }}"]
     - ["{{ res_def['keypair']  }}"]
     - ["{{ res_def['flavor']  }}"]
-    - ["{{ res_def['networks'][0] }}"]
+    - ["{{ res_def['networks'] }}"]
     - ["{{ res_grp_name }}"]
     - ["{{ res_def['res_name'] }}"]
     - "{{ res_count.stdout }}"
@@ -62,7 +62,7 @@
     - ["{{ res_def['image'] }}"]
     - ["{{ res_def['keypair']  }}"]
     - ["{{ res_def['flavor']  }}"]
-    - ["{{ res_def['networks'][0] }}"]
+    - ["{{ res_def['networks'] }}"]
     - ["{{ res_grp_name }}"]
     - ["{{ res_def['res_name'] }}"]
     - "{{ res_count.stdout }}"
