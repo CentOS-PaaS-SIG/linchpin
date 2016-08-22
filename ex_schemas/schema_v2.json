@@ -49,7 +49,8 @@
                                    {"$ref": "#/definitions/gcloud_gce"},
                                    {"$ref": "#/definitions/ex_res"},
                                    {"$ref": "#/definitions/duffy"},
-                                   {"$ref": "#/definitions/libvirt"}
+                                   {"$ref": "#/definitions/libvirt"},
+                                   {"$ref": "#/definitions/rax_server"}
                                  ]
                             }
                     },
@@ -308,6 +309,36 @@
              },
              "required":["res_name","res_type","xml"]
          },
+
+        "rax_server": {
+             "type" : "object",
+             "properties" : {
+                "flavor": {
+                  "type":"string"
+                },
+                "res_type": {
+                   "type":"string",
+                     "pattern":"rax_server"
+                },
+                "image": {
+                  "type":"string"
+                },
+                "count": {
+                  "type":"number"
+                },
+                "keypair": {
+                  "type":"string"
+                },
+                "region": {
+                  "type":"string"
+                },
+                "res_name": {
+                  "type":"string"
+                }
+              },
+             "required":["res_name","flavor","res_type","image","count","region"]
+          },
+
          "ex_res": {
              "type" : "object",
              "properties" : {

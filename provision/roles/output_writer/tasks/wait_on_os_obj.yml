@@ -1,0 +1,15 @@
+- name: "debug task"
+  debug:
+    msg: "{{ os_obj_group }}"
+
+- name: "waiting on each job id"
+  async_status_custom:
+    jid: "{{ item['ansible_job_id'] }}"
+  register: job_result
+  until: job_result.finished
+  retries: 30
+  with_items: "{{ os_obj_group['results']}}"
+
+- name: "Append outputitem to async_outputs"
+  set_fact:
+    async_outputs_os_obj: "{{ async_outputs_os_obj + [job_result] }}"

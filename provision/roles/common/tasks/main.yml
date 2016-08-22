@@ -34,6 +34,10 @@
   set_fact:
     libvirt_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'libvirt') | list }}"
 
+- name: "filtering the output for rackspace resource groups"
+  set_fact:
+    rax_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'rax') | list }}"
+
 - name: "Registering resource group vars from topology"
   set_fact:
     res_grp_vars: "{{ output.output.data.resource_group_vars }}"
