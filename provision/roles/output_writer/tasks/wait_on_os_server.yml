@@ -1,7 +1,6 @@
 - name: "debug task"
   debug:
     msg: "{{ os_server_group }}"
-
 - name: "waiting on each job id"
   async_status_custom:
     jid: "{{ item['ansible_job_id'] }}"
@@ -10,6 +9,16 @@
   until: job_result.finished
   retries: 30
   with_items: "{{ os_server_group['results']}}"
+  when: state == "present"
+
+- name: "waiting on each job id"
+  async_status_custom:
+    jid: "{{ item['ansible_job_id'] }}"
+  register: job_result
+  until: job_result.finished
+  retries: 30
+  with_items: "{{ os_server_group['results']}}"
+  when: state == "absent"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
