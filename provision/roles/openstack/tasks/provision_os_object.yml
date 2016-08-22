@@ -68,13 +68,19 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: container
+  async: 1000
+  poll: 0
   register: res_def_output
   when: res_def['count'] is defined and async == true
 
-- name: "Async: save the job id"
+#- name: "Async: save the job id"
+#  set_fact:
+#    topology_job_ids: "{{ topology_job_ids + [ res_def_output ] }}"
+#  when: async == true
+
+
+# following tasks saves the async job details 
+- name: "Async:: save the job id"
   set_fact:
-    topology_job_ids: "{{ topology_job_ids + [ res_def_output ] }}"
+    topology_outputs_os_object: "{{ topology_outputs_os_object + [ res_def_output ] }}"
   when: async == true
-
-
-
