@@ -21,9 +21,9 @@ def make_host_vars(host, host_vars):
     for k,v in host_vars.iteritems():
         for i,j in rep.iteritems():
             v = v.replace(i,j)
-        host_vars.update({k: v})
+        hv.update({k: v})
 
-    return host_vars
+    return hv
 
 
 def get_groups(topo, inv):
@@ -32,6 +32,7 @@ def get_groups(topo, inv):
     t_count = len(topo['hosts'])
     t_prev_count = t_count
     inv_groups = {}
+    hv = inv.get('vars')
 
     for k,v in inv['hosts'].iteritems():
         num_needed = v.get('count', 1)
@@ -40,7 +41,6 @@ def get_groups(topo, inv):
 
             for c in range(t_count, t_prev_count):
 
-                hv = inv.get('vars')
                 for hg in v.get('host_groups'):
                     host = topo['hosts'][c]
                     host_vars = make_host_vars(host, hv)
