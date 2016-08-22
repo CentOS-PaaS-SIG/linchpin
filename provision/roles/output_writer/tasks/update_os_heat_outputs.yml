@@ -1,0 +1,9 @@
+- name: "register var for async_outputs_os_server"
+  set_fact:
+    async_outputs_os_heat: [] 
+  
+- name: "Wait on jobs"
+  include: wait_on_os_heat.yml
+  vars:
+    os_heat_group: "{{ item }}"
+  with_items:  "{{ topology_outputs['os_heat_res'] }}"
