@@ -5,3 +5,7 @@
 - name: "os_obj: wait and update outputs using jobids "
   include: update_os_obj_outputs.yml
   when: async == true
+
+- name: "os_volume: wait and update outputs using jobids "
+  include: update_os_volume_outputs.yml
+  when: async == true

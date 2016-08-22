@@ -57,7 +57,7 @@ def main():
     module = AnsibleModule(argument_spec=dict(
         jid=dict(required=True),
         mode=dict(default='status', choices=['status','cleanup']),
-        module_name=dict(default='', choices=['os_server','']),
+        module_name=dict(default='', choices=['os_server','os_volume','']),
     ))
 
     mode = module.params['mode']
@@ -82,7 +82,7 @@ def main():
     data = None
     try:
         data = file(log_path).read()
-        if module_name == 'os_server' and len(data.split("\n")) == 4 :
+        if module_name == 'os_server' or module_name == 'os_volume' and len(data.split("\n")) == 4 :
           data = open(log_path).readlines()
           data = data[2]
         data = json.loads(data)
@@ -93,7 +93,7 @@ def main():
             module.exit_json(results_file=log_path, ansible_job_id=jid, started=1, finished=0)
         else:
             module.fail_json(ansible_job_id=jid, results_file=log_path,
-                msg="hahahaha Could not parse job output: %s" % data, started=1, finished=1)
+                msg="Could not parse job output: %s" % data, started=1, finished=1)
 
     if not 'started' in data:
         data['finished'] = 1

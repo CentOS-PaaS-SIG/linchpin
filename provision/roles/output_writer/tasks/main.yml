@@ -87,6 +87,7 @@
     topology_outputs:
       os_server_res: "{{ async_outputs_os_server }}"
       os_obj_res: "{{ async_outputs_os_obj }}"
+      os_volume_res: "{{ async_outputs_os_volume }}"
   when: async == true 
 
 # pretty much the same output generation when async_false
