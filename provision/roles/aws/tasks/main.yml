@@ -28,8 +28,8 @@
 #     dest: "{{ topology_output_file }}"
 #  when: state == "present"
 
-- name: "Initiating  DeProvisioning of resources aws resource group"
-  include: deprovision_resource_group.yml res_grp={{ item.0 }} topo_output_file={{ item.1 }}
+- name: "Initiating  teardown of resources aws resource group"
+  include: teardown_resource_group.yml res_grp={{ item.0 }} topo_output_file={{ item.1 }}
   with_nested:
     - "{{ aws_res_grps }}"
     - ["{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output' ) }}"]
