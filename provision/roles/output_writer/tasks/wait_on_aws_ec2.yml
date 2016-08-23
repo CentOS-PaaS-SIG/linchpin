@@ -1,0 +1,14 @@
+- name: "debug task"
+  debug:
+    msg: "{{ aws_ec2_group }}"
+
+- name: "waiting on each job id"
+  async_status_custom:
+    jid: "{{ aws_ec2_group['ansible_job_id'] }}"
+  register: job_result
+  until: job_result.finished
+  retries: 30
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    async_outputs_aws_ec2: "{{ async_outputs_aws_ec2 + [job_result] }}"

@@ -84,6 +84,7 @@
       os_obj_res: "{{ async_outputs_os_obj }}"
       os_volume_res: "{{ async_outputs_os_volume }}"
       os_heat_res: "{{ async_outputs_os_heat }}"
+      aws_ec2_res: "{{ async_outputs_aws_ec2 }}"
   when: async == true
 
 # pretty much the same output generation when async_false
@@ -99,4 +100,3 @@
   with_items:
     - "{{ inventory_playbooks }}"
   when: state == "present" and inventory_layout is defined
-
