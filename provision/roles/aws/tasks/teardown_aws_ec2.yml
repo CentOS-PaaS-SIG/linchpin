@@ -40,5 +40,15 @@
     - "{{ async }}"
   loop_control:
     loop_var: res_def_item
+  async: 1000
+  poll: 0
   register: output_item
 
+# following tasks saves the async job details 
+- name: "Async:: save the job id"
+  set_fact:
+    topology_outputs_aws_ec2: "{{ topology_outputs_aws_ec2 + [output_item] }}"
+
+- name: "debug statement showing outputs"
+  debug:
+    msg: "{{ topology_outputs_aws_ec2 }}"

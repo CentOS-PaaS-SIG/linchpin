@@ -10,7 +10,24 @@
   retries: 30
   when: state == "present"
 
-- name: "Append outputitem to topology_outputs"
+- name: "Append outputitem to t"
   set_fact:
     async_outputs_aws_ec2: "{{ async_outputs_aws_ec2 + [job_result] }}"
   when: state == "present"
+
+- name: "filtering the jobids aws_ec2 groups"
+  set_fact:
+    jobids_aws_ec2 : "{{ aws_ec2_group['results'] | map(attribute='ansible_job_id') | list  }}"
+  when: state == "absent"
+
+- name: "this is a filtered list ideally"
+  debug:
+    msg: "{{ jobids_aws_ec2 }}"
+  when: state == "absent"
+
+#- name: "waiting on each job id"
+#  async_status_custom:
+#    jid: "{{ jobids_aws_ec2[0] }}"
+#  register: job_result
+#  until: job_result.finished
+#  when:  jobids_aws_ec2[0] is defined and state == "absent"
