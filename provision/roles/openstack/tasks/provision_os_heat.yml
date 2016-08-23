@@ -45,7 +45,8 @@
   register: res_def_output
   when: async == true
 
-- name: "save the job id"
+# following tasks saves the async job details 
+- name: "Async:: save the job id"
   set_fact:
-    topology_job_ids: "{{ topology_job_ids + [ res_def_output ] }}"
+    topology_outputs_os_heat: "{{ topology_outputs_os_heat + [ res_def_output ] }}"
   when: async == true
