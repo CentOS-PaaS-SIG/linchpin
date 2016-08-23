@@ -8,7 +8,9 @@
   register: job_result
   until: job_result.finished
   retries: 30
+  when: state == "present"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
     async_outputs_aws_ec2: "{{ async_outputs_aws_ec2 + [job_result] }}"
+  when: state == "present"
