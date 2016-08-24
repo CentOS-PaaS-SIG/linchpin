@@ -1,4 +1,4 @@
-- name: "DEBUG:: provisioning resource group {{ res_grp }}"
+- name: "DEBUG:: teardown of resource group {{ res_grp }}"
   debug:
     msg: "The current server obj is {{ res_grp }} "
 
@@ -11,6 +11,6 @@
     output_file: "{{ topo_output_file }}"
   register: topo_output
 
-- name: "Deprovisioning AWS ec2 resources"
-  include: deprovision_res_defs.yml
+- name: "teardown AWS ec2 resources"
+  include: teardown_res_defs.yml
   when: state == "absent"
