@@ -1,0 +1,9 @@
+- name: "register var for async_outputs_aws_ec2"
+  set_fact:
+    async_outputs_gcloud_gce: [] 
+  
+- name: "Wait on jobs"
+  include: wait_on_gcloud_gce.yml
+  vars:
+    gcloud_gce_group: "{{ item }}"
+  with_items:  "{{ topology_outputs['gcloud_gce_res'] }}"
