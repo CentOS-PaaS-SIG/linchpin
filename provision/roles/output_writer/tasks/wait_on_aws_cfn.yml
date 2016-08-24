@@ -1,0 +1,15 @@
+- name: "debug task"
+  debug:
+    msg: "{{ aws_cfn_group }}"
+
+- name: "waiting on each job id"
+  async_status_custom:
+    jid: "{{ aws_cfn_group['ansible_job_id'] }}"
+  register: job_result
+  until: job_result.finished
+  retries: 30
+
+- name: "Append outputitem to topology output"
+  set_fact:
+    async_outputs_aws_cfn: "{{ async_outputs_aws_cfn + [job_result] }}"
+  when: state == "present"

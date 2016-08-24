@@ -1,0 +1,9 @@
+- name: "register var for async_outputs_aws_ec2"
+  set_fact:
+    async_outputs_aws_cfn: [] 
+  
+- name: "Wait on jobs"
+  include: wait_on_aws_cfn.yml
+  vars:
+    aws_cfn_group: "{{ item }}"
+  with_items:  "{{ topology_outputs['aws_cfn_res'] }}"
