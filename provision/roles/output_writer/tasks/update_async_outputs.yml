@@ -25,4 +25,3 @@
 - name: "gcloud_gce: wait and update outputs using jobids"
   include: update_gcloud_gce_outputs.yml
   when: async == true
-
