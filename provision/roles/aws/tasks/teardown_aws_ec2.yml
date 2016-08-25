@@ -40,7 +40,7 @@
     - "{{ async }}"
   loop_control:
     loop_var: res_def_item
-  async: 1000
+  async: "{{ async_timeout }}"
   poll: 0
   register: output_item
 

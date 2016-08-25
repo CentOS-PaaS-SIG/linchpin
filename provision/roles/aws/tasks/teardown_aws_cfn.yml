@@ -38,7 +38,7 @@
     template_parameters: "{{ cfn_params }}"
     tags:
       Stack: "{{ res_def['res_name'] }}"
-  async: 1000
+  async: "{{ async_timeout }}"
   poll: 0
   register: output
   when: async == true

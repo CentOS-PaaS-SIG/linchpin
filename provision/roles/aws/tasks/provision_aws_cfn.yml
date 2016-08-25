@@ -38,7 +38,7 @@
     tags:
       Stack: "{{ res_def['res_name'] }}"
   register: res_def_output
-  async: 1000
+  async: "{{ async_timeout }}"
   poll: 0
   when: async == true
 

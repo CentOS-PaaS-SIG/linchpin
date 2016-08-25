@@ -55,7 +55,7 @@
   loop_control:
     loop_var: instance
   when: res_def['res_type']=="gcloud_gce" and async == true
-  async: 1000
+  async: "{{ async_timeout }}"
   poll: 0
   register: res_def_output
 
