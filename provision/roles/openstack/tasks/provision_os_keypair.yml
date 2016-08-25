@@ -33,7 +33,7 @@
     state: "{{ state }}"
     wait: "yes"
   register: res_def_output
-  async: 1000
+  async: "{{ async_timeout }}"
   poll: 0
   when: async == true
 

@@ -68,7 +68,7 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: instance
-  async: 1000
+  async: "{{ async_timeout }}"
   poll: 0
   register: res_def_output
   when: async == true
