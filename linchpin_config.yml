@@ -8,3 +8,4 @@ inventory_playbooks:
 
 async: false
 async_timeout : 1000
+no_output : false

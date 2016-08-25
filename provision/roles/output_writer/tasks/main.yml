@@ -50,7 +50,7 @@
   template:
     src: "../templates/output_formatter.j2"
     dest: "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output' ) }}"
-  when: state == "present" and async == false
+  when: state == "present" and async == false and no_output == false
 
 # pretty much the same when we use async== false , seperated the task for probable customizations in future
 - name: "Async:: Updating topology_outputs"
@@ -98,7 +98,7 @@
   template:
     src: "../templates/output_formatter.j2"
     dest: "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output' ) }}"
-  when: state == "present" and async == true
+  when: state == "present" and async == true and no_output == false
 
 # include inventory generation files here
 - include: "{{ item }}"
