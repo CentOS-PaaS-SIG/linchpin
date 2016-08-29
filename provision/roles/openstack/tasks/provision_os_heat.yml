@@ -40,7 +40,7 @@
     os_tenant_name: "{{ project }}"
     os_auth_url: "{{ endpoint }}"
     parameters: "{{ heat_params }}"
-  async: 1000
+  async: "{{ async_timeout }}"
   poll: 0
   register: res_def_output
   when: async == true

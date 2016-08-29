@@ -7,3 +7,6 @@ inventory_playbooks:
   - duffy_inventory.yml
 
 async: false
+async_timeout : 1000
+no_output : false
+schema: "ex_schemas/schema_v2.json"
