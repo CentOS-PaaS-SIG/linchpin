@@ -84,7 +84,7 @@ def validate_grp_names(data):
     res_grp_vars = [ x['resource_group_name'] for x in res_grp_vars ]
     dup_grp_names = set([res_grp_names[i] for i in range(0,len(res_grp_names)) if res_grp_names[i]>1])
     dup_grp_vars = set([res_grp_vars[i] for i in range(0,len(res_grp_vars)) if res_grp_vars[i]>1])
-    if len(dup_grp_vars) != 0 or len(dup_grp_names) != 0 :
+    if len(dup_grp_vars) != len(res_grp_vars) or len(dup_grp_names) != len(res_grp_names) :
         return {"msg":"error: duplicate names found in resource_group_name attributes please check the results for duplicate names", "result":str(dup_grp_names)+str(dup_grp_vars)}
     else:
         return True
