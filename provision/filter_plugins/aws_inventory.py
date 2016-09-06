@@ -6,7 +6,7 @@ try:
 except ImportError:
     from ConfigParser import ConfigParser
 import StringIO
-
+import pprint 
 def pop_items(item_list,count):
     pop_list = []
     for i in range(0,count):
@@ -16,8 +16,10 @@ def pop_items(item_list,count):
 
 def get_host_ips(topo):
     host_public_ips = []
-    for group in topo['os_server_res']:
-        host_public_ips.append(str(group['server']['public_v4']))
+    for group in topo['aws_ec2_res']:
+        #host_public_ips.append(str(group['server']['public_v4']))
+        for instance in group['instances']:
+            host_public_ips.append(str(instance['public_dns_name']))
     return host_public_ips
 
 def get_layout_hosts(inv):
@@ -79,9 +81,9 @@ def add_common_vars(config, host_groups, layout):
             config.set(group,host_string)
     return config
     
-def openstack_inventory(topo, layout):
+def aws_inventory(topo, layout):
     inventory = ConfigParser(allow_no_value=True)
-    no_of_groups = len(topo['os_server_res'])
+    no_of_groups = len(topo['aws_ec2_res'])
     layout_hosts = get_layout_hosts(layout)
     inven_hosts = get_host_ips(topo)
     if len(inven_hosts) != len(layout_hosts):
@@ -104,5 +106,5 @@ class FilterModule(object):
     ''' A filter to fix interface's name format '''
     def filters(self):
         return {
-            'openstack_inventory': openstack_inventory
+            'aws_inventory': aws_inventory
         }

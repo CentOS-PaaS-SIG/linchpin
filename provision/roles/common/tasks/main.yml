@@ -43,20 +43,6 @@
     res_grp_vars: "{{ output.output.data.resource_group_vars }}"
   when: output.output.data.resource_group_vars is defined
 
-#- name: "DEBUG:: checking registered output of os_res_grps"
-#  debug:
-#    msg: "{{ item }}"
-#  with_items: "{{ os_res_grps }}"
-
-#- name: "filtering the output for awsec2 resource groups"
-#  set_fact:
-#    aws_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'aws') | list }}"
-
-#- name: "DEBUG:: checking registered output of aws_res_grps"
-#  debug:
-#    msg: "{{ item }}"
-#  with_items: "{{ aws_res_grps }}"
-
 - name: "output vars"
   set_fact:
     topology_outputs: {}

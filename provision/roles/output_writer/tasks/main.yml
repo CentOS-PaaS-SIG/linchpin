@@ -84,12 +84,17 @@
   set_fact:
     topology_outputs:
       os_server_res: "{{ async_outputs_os_server }}"
+      os_keypair_res: "{{ topology_outputs_os_keypair }}"
       os_obj_res: "{{ async_outputs_os_obj }}"
       os_volume_res: "{{ async_outputs_os_volume }}"
       os_heat_res: "{{ async_outputs_os_heat }}"
       aws_ec2_res: "{{ async_outputs_aws_ec2 }}"
+      aws_s3_res: "{{ topology_outputs_aws_s3 }}"
+      aws_ec2_key_res: "{{ topology_outputs_aws_ec2_key }}"
       aws_cfn_res: "{{ async_outputs_aws_cfn }}"
       gcloud_gce_res: "{{ async_outputs_gcloud_gce }}"
+      duffy_res: "{{ topology_outputs_duffy }}"
+      rax_server_res: "{{ topology_outputs_rax_server }}"
   when: async == true
 
 # pretty much the same output generation when async_false
@@ -100,8 +105,12 @@
     dest: "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output' ) }}"
   when: state == "present" and async == true and no_output == false
 
+- name: "set name for linchpin_output_file for inventory generation"
+  set_fact: 
+    topology_output_file:  "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output' ) }}"
+
 # include inventory generation files here
-- include: "{{ item }}"
-  with_items:
-    - "{{ inventory_playbooks }}"
-  when: state == "present" and inventory_layout is defined
+#- include: "{{ item }}"
+#  with_items:
+#    - "{{ inventory_playbooks }}"
+#  when: state == "present" and inventory_layout is defined
