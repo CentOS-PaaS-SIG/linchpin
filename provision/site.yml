@@ -5,20 +5,20 @@
   roles:
     - { role: 'common' }
  
-#- name:  "Provisioning resources based on resource group type"
-#  hosts: localhost 
-#  roles:
-#    - { role: 'openstack'}
-#    - { role: 'aws' }
-#    - { role: 'gcloud' }
-#    - { role: 'duffy' }
-#    - { role: 'libvirt'}
-#    - { role: 'rackspace'}
+- name:  "Provisioning resources based on resource group type"
+  hosts: localhost 
+  roles:
+    - { role: 'openstack'}
+    - { role: 'aws' }
+    - { role: 'gcloud' }
+    - { role: 'duffy' }
+    - { role: 'libvirt'}
+    - { role: 'rackspace'}
 
-#- name: "Writing contents to file"
-#  hosts: localhost
-#  roles:
-#    - { role: 'output_writer'}
+- name: "Writing contents to file"
+  hosts: localhost
+  roles:
+    - { role: 'output_writer'}
 
 - name: "inventory generation role"
   hosts: localhost
