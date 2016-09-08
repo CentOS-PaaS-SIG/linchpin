@@ -23,4 +23,4 @@
 - name: "inventory generation role"
   hosts: localhost
   roles:
-    - { role: 'inventory_gen'}
+    - { role: 'inventory_gen', when: state == 'present' }
