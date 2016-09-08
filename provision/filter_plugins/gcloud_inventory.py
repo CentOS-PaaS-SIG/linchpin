@@ -19,7 +19,6 @@ def get_host_ips(topo):
     for group in topo['gcloud_gce_res']:
         for instance in group['instance_data']:
             host_public_ips.append(instance['public_ip'])
-    print host_public_ips
     return host_public_ips
 
 def get_layout_hosts(inv):
