@@ -7,13 +7,6 @@ except ImportError:
     from ConfigParser import ConfigParser
 import StringIO
 
-def pop_items(item_list,count):
-    pop_list = []
-    for i in range(0,count):
-        pop_item = item_list.pop()
-        pop_list.append(pop_item)
-    return pop_list,item_list
-
 def get_host_ips(topo):
     host_public_ips = []
     for group in topo['os_server_res']:
