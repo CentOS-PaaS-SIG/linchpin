@@ -78,8 +78,6 @@ def gcloud_inventory(topo, layout):
     no_of_groups = len(topo['gcloud_gce_res'])
     layout_hosts = get_layout_hosts(layout)
     inven_hosts = get_host_ips(topo)
-    if len(inven_hosts) != len(layout_hosts):
-        raise NameError('Layout hosts doesnot match inventory hosts')
     # adding sections to respective host groups
     host_groups = get_layout_host_groups(layout)
     inventory = add_sections(inventory,host_groups)
