@@ -19,3 +19,8 @@
   hosts: localhost
   roles:
     - { role: 'output_writer'}
+
+- name: "inventory generation role"
+  hosts: localhost
+  roles:
+    - { role: 'inventory_gen', when: state == 'present' }

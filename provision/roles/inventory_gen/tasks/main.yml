@@ -1,0 +1,54 @@
+---
+#includes the output file of linchpin
+- name: "Debug statement to checkout the base folder of linchoin project"
+  debug:
+    msg: "{{ playbook_dir | dirname }}/{{ outputfolder_path }}/"
+
+#extracting the output folder from output folder path
+- name: "set default topology output folder"
+  set_fact:
+    outputfolder_path: "{{ playbook_dir | dirname }}/{{ outputfolder_path }}"
+
+# set default inventory layout folder
+- name: "set default inventory layouts folder"
+  set_fact:
+    inventory_layouts_path: "{{ playbook_dir | dirname }}/{{ inventory_layouts_path }}"
+
+- name: "set default inventory outputs folder"
+  set_fact:
+    inventory_outputs_path: "{{ playbook_dir | dirname }}/{{ inventory_outputs_path }}"
+
+- include_vars: "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output' ) }}"
+
+- name: "Updating topology_outputs"
+  set_fact:
+    topology_outputs:
+      os_server_res: "{{ os_server_res }}"
+      aws_ec2_res: "{{ aws_ec2_res }}"
+      gcloud_gce_res: "{{ gcloud_gce_res }}"
+      duffy_res: "{{ duffy_res }}"
+
+- name: "DEBUG:: inventory_layout"
+  debug:
+    msg: "{{ inventory_layout }}"
+  when: state == "present" and inventory_layout is defined
+
+# include inventory generation files here : can be overridden by  extravar inventory_layout_file currently defaulted to openshift-3node-cluster.yml
+- name: "include the layout file for inventory generation"
+  include_vars: "{{ inventory_layout_file | default( inventory_layouts_path+'/'+'openshift-3node-cluster.yml') }}"
+
+# updating inventory output file with the absoulte path configured if given : can be overridden by  extravar inventory_output_file currently
+- name: "Updating inventory_output_file with the absolute path"
+  set_fact:
+    inventory_output_file: "{{ inventory_output_file | default( inventory_outputs_path+'/'+output.output.data.topology_name+'.inventory' ) }}"
+
+# Generating inventory based on inventory type 
+# Note: inventory type is configured in linchpin_config.yml can be overridden extravar inventory_type
+- name: "Generate inventories"
+  template:
+    src: "templates/{{ item.0 }}_inventory_formatter.j2"
+    dest: "{{ item.1 }}.{{ item.0 }}"
+  with_nested:
+    - "{{ inventory_types }}"
+    - ["{{ inventory_output_file }}"]
+  when: state == "present" and inventory_layout is defined
