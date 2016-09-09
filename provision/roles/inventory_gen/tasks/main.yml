@@ -33,9 +33,9 @@
     msg: "{{ inventory_layout }}"
   when: state == "present" and inventory_layout is defined
 
-# include inventory generation files here : can be overridden by  extravar inventory_layout_file currently defaulted to duffy_3node_inventory_layout.yml
+# include inventory generation files here : can be overridden by  extravar inventory_layout_file currently defaulted to openshift-3node-cluster.yml
 - name: "include the layout file for inventory generation"
-  include_vars: "{{ inventory_layout_file | default( inventory_layouts_path+'/'+'duffy_3node_inventory_layout.yml') }}"
+  include_vars: "{{ inventory_layout_file | default( inventory_layouts_path+'/'+'openshift-3node-cluster.yml') }}"
 
 # updating inventory output file with the absoulte path configured if given : can be overridden by  extravar inventory_output_file currently
 - name: "Updating inventory_output_file with the absolute path"
