@@ -24,8 +24,6 @@ class OpenstackInventory(InventoryFilter):
         inventory = ConfigParser(allow_no_value=True)
         # calculating number of groups from topology file
         no_of_groups = len(topo['os_server_res'])
-        # get the number of hosts mentioned in layout
-        layout_hosts = self.get_layout_hosts(layout)
         inven_hosts = self.get_host_ips(topo)
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)

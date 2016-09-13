@@ -1,0 +1,68 @@
+#!/usr/bin/env python
+import abc
+import StringIO
+from ansible import errors
+try:
+    from configparser import ConfigParser
+except ImportError:
+    from ConfigParser import ConfigParser
+from AWSInventory import AWSInventory
+from OpenstackInventory import OpenstackInventory
+from GCloudInventory import GCloudInventory
+from InventoryFilter import InventoryFilter
+
+
+class GenericInventory(InventoryFilter):
+    def __init__(self):
+        self.filter_classes = {
+           "aws_inv": AWSInventory,
+           "os_inv": OpenstackInventory,
+           "gcloud_inv": GCloudInventory
+        }
+
+    def get_host_ips(self, topo):
+        """
+        currently it will return the dict as follows:
+        {
+        "aws_inv": ["x.x.x.x"],
+        "os_inv" :["x.x.x.x","x.x.x.x"],
+        "gcloud_inv" : ["x.x.x.x","x.x.x.x"]
+        }
+        """
+        host_ip_dict = {}
+        for inv_filter in self.filter_classes:
+            host_ip_dict[inv_filter] = self.filter_classes[inv_filter]().get_host_ips(topo)
+        return host_ip_dict
+
+    def get_hosts_by_count(self, host_dict, count):
+        """
+        currently this function gets all the ips/hostname according to the order in which
+        inventories are specified , later can be modified to work with user input
+        """
+        all_hosts = []
+        for inv in host_dict:
+            all_hosts.extend(host_dict[inv])
+        return all_hosts[:count]
+
+    def get_inventory(self, topo, layout):
+        # create a config parser object for creating inventory file
+        inventory = ConfigParser(allow_no_value=True)
+        # get all the topology host_ips
+        host_ip_dict = self.get_host_ips(topo)
+        # get the count of all layout hosts needed
+        layout_host_count = self.get_layout_hosts(layout)
+        # generate hosts list based on the layout host count
+        inven_hosts = self.get_hosts_by_count(host_ip_dict, layout_host_count)
+        # adding sections to respective host groups
+        host_groups = self.get_layout_host_groups(layout)
+        inventory = self.add_sections(inventory, host_groups)
+        # set children for each host group
+        inventory = self.set_children(inventory, layout)
+        # set vars for each host group
+        inventory = self.set_vars(inventory, layout)
+        # add ip addresses to each host
+        inventory = self.add_ips_to_groups(inventory, inven_hosts, layout)
+        inventory = self.add_common_vars(inventory, host_groups, layout)
+        output = StringIO.StringIO()
+        inventory.write(output)
+        return output.getvalue()

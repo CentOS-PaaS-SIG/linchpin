@@ -16,7 +16,10 @@ class InventoryFilter(object):
         pass
 
     def get_layout_hosts(self, inv):
-        return inv['host_groups'].keys()
+        count = 0
+        for host_group in inv['hosts']:
+            count += inv['hosts'][host_group]['count']
+        return count
 
     def get_layout_host_groups(self, inv):
         return inv['host_groups'].keys()
