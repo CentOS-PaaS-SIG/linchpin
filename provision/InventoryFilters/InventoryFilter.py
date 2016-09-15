@@ -77,6 +77,7 @@ class InventoryFilter(object):
             for ip in host_ips:
                 for host_group in layout['hosts'][host_name]['host_groups']:
                     self.config.set(host_group, ip)
+                    self.config.set("all", ip)
 
     def add_common_vars(self, host_groups, layout):
         # defaults common_vars to [] when they doesnot exist 
