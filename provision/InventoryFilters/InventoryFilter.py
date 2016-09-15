@@ -80,7 +80,8 @@ class InventoryFilter(object):
                     self.config.set("all", ip)
 
     def add_common_vars(self, host_groups, layout):
-        # defaults common_vars to [] when they doesnot exist 
+        # defaults common_vars to [] when they doesnot exist
+        host_groups.append("all") 
         common_vars = layout['vars'] if 'vars' in layout.keys() else []
         for group in host_groups:
             items = dict(self.config.items(group)).keys()
