@@ -79,9 +79,9 @@ def check_file_paths(module, *args):
 
 def validate_grp_names(data):
     res_grps = data['resource_groups']
-    res_grp_vars = data['resource_group_vars']
+    res_grp_vars = data['resource_group_vars'] if 'resource_group_vars' in data.keys() else []
     res_grp_names = [ x['resource_group_name'] for x in res_grps ]
-    res_grp_vars = [ x['resource_group_name'] for x in res_grp_vars ]
+    res_grp_vars = [ x['resource_group_name'] for x in res_grp_vars ] if len(res_grp_vars) > 0 else []
     dup_grp_names = set([res_grp_names[i] for i in range(0,len(res_grp_names)) if res_grp_names[i]>1])
     dup_grp_vars = set([res_grp_vars[i] for i in range(0,len(res_grp_vars)) if res_grp_vars[i]>1])
     if len(dup_grp_vars) != len(res_grp_vars) or len(dup_grp_names) != len(res_grp_names) :
