@@ -14,6 +14,7 @@ from InventoryFilter import InventoryFilter
 
 class GenericInventory(InventoryFilter):
     def __init__(self):
+        InventoryFilter.__init__(self)
         self.filter_classes = {
            "aws_inv": AWSInventory,
            "os_inv": OpenstackInventory,
@@ -45,8 +46,6 @@ class GenericInventory(InventoryFilter):
         return all_hosts[:count]
 
     def get_inventory(self, topo, layout):
-        # create a config parser object for creating inventory file
-        inventory = ConfigParser(allow_no_value=True)
         # get all the topology host_ips
         host_ip_dict = self.get_host_ips(topo)
         # get the count of all layout hosts needed
@@ -55,14 +54,14 @@ class GenericInventory(InventoryFilter):
         inven_hosts = self.get_hosts_by_count(host_ip_dict, layout_host_count)
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)
-        inventory = self.add_sections(inventory, host_groups)
+        self.add_sections(host_groups)
         # set children for each host group
-        inventory = self.set_children(inventory, layout)
+        self.set_children(layout)
         # set vars for each host group
-        inventory = self.set_vars(inventory, layout)
+        self.set_vars(layout)
         # add ip addresses to each host
-        inventory = self.add_ips_to_groups(inventory, inven_hosts, layout)
-        inventory = self.add_common_vars(inventory, host_groups, layout)
+        self.add_ips_to_groups(inven_hosts, layout)
+        self.add_common_vars(host_groups, layout)
         output = StringIO.StringIO()
-        inventory.write(output)
+        self.config.write(output)
         return output.getvalue()
