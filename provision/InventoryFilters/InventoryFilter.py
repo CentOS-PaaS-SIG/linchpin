@@ -34,12 +34,15 @@ class InventoryFilter(object):
         """
         host_groups = []
         for host in inv['hosts']:
-            host_groups.extend(inv['hosts'][host]["host_groups"])
+            if "host_groups" in inv["hosts"][host].keys():
+                host_groups.extend(inv['hosts'][host]["host_groups"])
         return list(set(host_groups))
 
     def add_sections(self, section_list):
         for section in section_list:
             self.config.add_section(section)
+        # adding a default section all
+        self.config.add_section("all")
 
     def set_children(self, inv):
         for host_group in inv['host_groups']:
@@ -58,14 +61,17 @@ class InventoryFilter(object):
     def add_ips_to_groups(self, inven_hosts, layout):
         # create a ip to host mapping based on count
         ip_to_host = {}
+        host_grps = self.get_layout_host_groups(layout)
+        
         for host_name in layout['hosts']:
+            #if type(layout['hosts'][host_name]) is dict:
             count = layout['hosts'][host_name]['count']
             host_list = []
             for i in range(0, count):
                 item = inven_hosts.pop()
                 host_list.append(item)
             ip_to_host[host_name] = host_list
-        # add ips to the host groups in inventory 
+        # add ips to the respective host groups in inventory 
         for host_name in layout['hosts']:
             host_ips = ip_to_host[host_name]
             for ip in host_ips:
@@ -73,7 +79,8 @@ class InventoryFilter(object):
                     self.config.set(host_group, ip)
 
     def add_common_vars(self, host_groups, layout):
-        common_vars = layout['vars']
+        # defaults common_vars to [] when they doesnot exist 
+        common_vars = layout['vars'] if 'vars' in layout.keys() else []
         for group in host_groups:
             items = dict(self.config.items(group)).keys()
             self.config.remove_section(group)
