@@ -10,6 +10,7 @@ from InventoryFilter import InventoryFilter
 
 
 class AWSInventory(InventoryFilter):
+    
     def get_host_ips(self, topo):
         host_public_ips = []
         for group in topo['aws_ec2_res']:
@@ -18,19 +19,17 @@ class AWSInventory(InventoryFilter):
         return host_public_ips
 
     def get_inventory(self, topo, layout):
-        inventory = ConfigParser(allow_no_value=True)
-        no_of_groups = len(topo['aws_ec2_res'])
         inven_hosts = self.get_host_ips(topo)
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)
-        inventory = self.add_sections(inventory, host_groups)
+        self.add_sections(host_groups)
         # set children for each host group
-        inventory = self.set_children(inventory, layout)
+        self.set_children(layout)
         # set vars for each host group
-        inventory = self.set_vars(inventory, layout)
+        self.set_vars(layout)
         # add ip addresses to each host
-        inventory = self.add_ips_to_groups(inventory, inven_hosts, layout)
-        inventory = self.add_common_vars(inventory, host_groups, layout)
+        self.add_ips_to_groups(inven_hosts, layout)
+        self.add_common_vars(host_groups, layout)
         output = StringIO.StringIO()
-        inventory.write(output)
+        self.config.write(output)
         return output.getvalue()
