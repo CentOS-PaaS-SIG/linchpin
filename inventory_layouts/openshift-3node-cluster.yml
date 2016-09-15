@@ -36,6 +36,3 @@ inventory_layout:
       children:
         - masters
         - nodes
-    masters: ""
-    nodes: ""
-    repo_host: "" 

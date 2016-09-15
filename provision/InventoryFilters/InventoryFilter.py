@@ -29,7 +29,13 @@ class InventoryFilter(object):
         return count
 
     def get_layout_host_groups(self, inv):
-        return inv['host_groups'].keys()
+        """
+        get all the list of host groups in layout
+        """
+        host_groups = []
+        for host in inv['hosts']:
+            host_groups.extend(inv['hosts'][host]["host_groups"])
+        return list(set(host_groups))
 
     def add_sections(self, section_list):
         for section in section_list:
