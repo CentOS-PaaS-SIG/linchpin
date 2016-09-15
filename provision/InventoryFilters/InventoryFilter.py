@@ -10,9 +10,16 @@ except ImportError:
 
 class InventoryFilter(object):
     __metaclass__ = abc.ABCMeta
+    
+    def __init__(self):
+        self.config = ConfigParser(allow_no_value=True) 
 
     @abc.abstractmethod
     def get_host_ips(self, topo, layout):
+        pass
+    
+    @abc.abstractmethod
+    def get_inventory(self, topo, layout):
         pass
 
     def get_layout_hosts(self, inv):
@@ -24,28 +31,25 @@ class InventoryFilter(object):
     def get_layout_host_groups(self, inv):
         return inv['host_groups'].keys()
 
-    def add_sections(self, config, section_list):
+    def add_sections(self, section_list):
         for section in section_list:
-            config.add_section(section)
-        return config
+            self.config.add_section(section)
 
-    def set_children(self, config, inv):
+    def set_children(self, inv):
         for host_group in inv['host_groups']:
             if "children" in inv['host_groups'][host_group]:
-                config.add_section(host_group+":"+"children")
+                self.config.add_section(host_group+":"+"children")
                 for child in inv['host_groups'][host_group]['children']:
-                    config.set(host_group+":"+"children", child)
-        return config
+                    self.config.set(host_group+":"+"children", child)
 
-    def set_vars(self, config, inv):
+    def set_vars(self, inv):
         for host_group in inv['host_groups']:
             if "vars" in inv['host_groups'][host_group]:
-                config.add_section(host_group+":"+"vars")
+                self.config.add_section(host_group+":"+"vars")
                 for var in inv['host_groups'][host_group]['vars']:
-                    config.set(host_group+":"+"vars", var, inv['host_groups'][host_group]['vars'][var])
-        return config
+                    self.config.set(host_group+":"+"vars", var, inv['host_groups'][host_group]['vars'][var])
 
-    def add_ips_to_groups(self, config, inven_hosts, layout):
+    def add_ips_to_groups(self, inven_hosts, layout):
         # create a ip to host mapping based on count
         ip_to_host = {}
         for host_name in layout['hosts']:
@@ -60,23 +64,17 @@ class InventoryFilter(object):
             host_ips = ip_to_host[host_name]
             for ip in host_ips:
                 for host_group in layout['hosts'][host_name]['host_groups']:
-                    config.set(host_group, ip)
-        return config
+                    self.config.set(host_group, ip)
 
-    def add_common_vars(self, config, host_groups, layout):
+    def add_common_vars(self, host_groups, layout):
         common_vars = layout['vars']
         for group in host_groups:
             items = dict(config.items(group)).keys()
-            config.remove_section(group)
-            config.add_section(group)
+            self.config.remove_section(group)
+            self.config.add_section(group)
             for item in items:
                 host_string = item
                 for var in common_vars:
                     if common_vars[var] == "__IP__":
                         host_string += " " + var + "=" + item + " "
-                config.set(group, host_string)
-        return config
-
-    @abc.abstractmethod
-    def get_inventory(self, topo, layout):
-        pass
+                self.config.set(group, host_string)
