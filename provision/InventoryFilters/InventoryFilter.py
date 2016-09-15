@@ -69,7 +69,7 @@ class InventoryFilter(object):
     def add_common_vars(self, host_groups, layout):
         common_vars = layout['vars']
         for group in host_groups:
-            items = dict(config.items(group)).keys()
+            items = dict(self.config.items(group)).keys()
             self.config.remove_section(group)
             self.config.add_section(group)
             for item in items:
