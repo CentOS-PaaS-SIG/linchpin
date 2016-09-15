@@ -25,7 +25,7 @@ class InventoryFilter(object):
     def get_layout_hosts(self, inv):
         count = 0
         for host_group in inv['hosts']:
-            count += inv['hosts'][host_group]['count']
+            count += inv['hosts'][host_group]['count'] if 'count' in inv['hosts'][host_group] else 1
         return count
 
     def get_layout_host_groups(self, inv):
@@ -65,7 +65,7 @@ class InventoryFilter(object):
         
         for host_name in layout['hosts']:
             #if type(layout['hosts'][host_name]) is dict:
-            count = layout['hosts'][host_name]['count']
+            count = layout['hosts'][host_name]['count'] if 'count' in layout['hosts'][host_name] else 1
             host_list = []
             for i in range(0, count):
                 item = inven_hosts.pop()
