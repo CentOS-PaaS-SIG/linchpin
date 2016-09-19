@@ -10,16 +10,12 @@ from AWSInventory import AWSInventory
 from OpenstackInventory import OpenstackInventory
 from GCloudInventory import GCloudInventory
 from InventoryFilter import InventoryFilter
-
+from InventoryProviders import get_driver, get_all_drivers 
 
 class GenericInventory(InventoryFilter):
     def __init__(self):
         InventoryFilter.__init__(self)
-        self.filter_classes = {
-           "aws_inv": AWSInventory,
-           "os_inv": OpenstackInventory,
-           "gcloud_inv": GCloudInventory
-        }
+        self.filter_classes = get_all_drivers()
 
     def get_host_ips(self, topo):
         """
