@@ -12,6 +12,7 @@ from GCloudInventory import GCloudInventory
 from InventoryFilter import InventoryFilter
 from InventoryProviders import get_driver, get_all_drivers 
 
+
 class GenericInventory(InventoryFilter):
     def __init__(self):
         InventoryFilter.__init__(self)
