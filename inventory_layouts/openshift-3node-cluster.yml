@@ -16,7 +16,6 @@ inventory_layout:
         - nodes
         - OSEv3
     openshift-repo-host:
-      count: 1
       host_groups:
         - nodes
         - OSEv3
@@ -36,6 +35,3 @@ inventory_layout:
       children:
         - masters
         - nodes
-    masters: ""
-    nodes: ""
-    repo_host: "" 
