@@ -1,0 +1,35 @@
+---
+    topology_name: "ex_os_obj"
+    site: "qeos"
+    resource_groups: 
+      - 
+        resource_group_name: "testgroup1"
+        res_group_type: "openstack"
+        res_defs:
+          - res_name: "testcontainer_sk"
+            res_type: "os_object"
+            access: "public"
+            count: 2
+        assoc_creds: "cios_e2e-openstack"
+      - 
+        resource_group_name: "testgroup2"
+        res_group_type: "openstack"
+        res_defs:
+          - res_name: "testit_sk"
+            res_type: "os_object"
+            access: "public"
+            count: 2
+        assoc_creds: "cios_e2e-openstack"
+    resource_group_vars:
+      - 
+        resource_group_name : "testgroup1"
+        Name: "TestInstanceGroup1"
+        test_var1: "test_var1 msg is grp1 hello"
+        test_var2: "test_var2 msg is grp1 hello"
+        test_var3: "test_var3 msg is grp1 hello"
+      - 
+        resource_group_name : "testgroup2"
+        Name: "TestInstanceGroup2"
+        test_var1: "test_var1 msg is grp2 hello"
+        test_var2: "test_var2 msg is grp2 hello"
+        test_var3: "test_var3 msg is grp2 hello"

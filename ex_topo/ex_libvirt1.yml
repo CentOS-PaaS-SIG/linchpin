@@ -1,0 +1,18 @@
+---
+    topology_name: "ex_libvirt"
+    site: "qeos"
+    resource_groups: 
+      - 
+        resource_group_name: "testgroup1"
+        res_group_type: "libvirt"
+        res_defs:
+          - res_name: "linux"
+            res_type: "libvirt"
+            xml: "/root/linch-pin/libvirt_xml/linux.xml"
+    resource_group_vars:
+      - 
+        resource_group_name : "testgroup1"
+        Name: "TestInstanceGroup1"
+        test_var1: "test_var1 msg is grp1 hello"
+        test_var2: "test_var2 msg is grp1 hello"
+        test_var3: "test_var3 msg is grp1 hello"

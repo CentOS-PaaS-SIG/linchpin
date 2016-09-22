@@ -1,0 +1,19 @@
+---
+    topology_name: "ex_aws_keypair_topo"
+    site: "qeos"
+    resource_groups: 
+      - 
+        resource_group_name: "testgroup1"
+        res_group_type: "aws"
+        res_defs:
+          - res_name: "ex_keypair_sk"
+            res_type: "aws_ec2_key"
+            region: "us-west-2"
+        assoc_creds: "sk_aws_personal"
+    resource_group_vars:
+      - 
+        resource_group_name : "testgroup1"
+        Name: "TestInstanceGroup1"
+        test_var1: "test_var1 msg is grp1 hello"
+        test_var2: "test_var2 msg is grp1 hello"
+        test_var3: "test_var3 msg is grp1 hello"
