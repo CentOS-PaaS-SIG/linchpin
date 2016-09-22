@@ -1,0 +1,81 @@
+---
+  topology_name: "example_topo" # topology name
+  credentials: # list of credentials
+    - "ex_os_creds" 
+    - "ex_aws_creds" 
+  resource_groups: 
+    - 
+      resource_group_name: "openshift_node_group1"
+      res_group_type: "openstack"
+      res_defs: 
+        - 
+          res_name: "openshift-node1" 
+          flavor: "m1.medium"
+          res_type: "os_server"
+          image: "rhel-7.2-server-x86_64-updated"
+          count: 1
+          keypair: "ex_keypair_os"
+          networks:
+            - "ex_network1"
+    - 
+      resource_group_name: "openshift_node_group2"
+      res_group_type: "openstack"
+      res_defs:
+        - res_name: "openshift-node2"
+          flavor: "m1.medium"
+          res_type: "os_server"
+          image: "rhel-7.2-server-x86_64-updated"
+          count: 1
+          keypair: "ex_keypair_os"
+          networks:
+            - "ex_network3"
+      assoc_creds: "ex_os_creds"
+    - 
+      resource_group_name: "openshift_master_group"
+      res_group_type: "openstack"
+      res_defs:
+        - res_name: "openshift_master"
+          flavor: "m1.large"
+          res_type: "os_server"
+          image: "rhel-7.2-server-x86_64-updated"
+          count: 1
+          keypair: "ex_keypair_os"
+          networks:
+            - "ex_network3"
+      assoc_creds: "ex_os_creds"
+    - 
+  resource_group_vars:
+    - 
+      resource_group_name : "openshift_node_group1"
+      product_type: "openshift",
+      deployment_type: "openshift-enterprise",
+      ansible_sudo: "false",
+      ansible_ssh_user: "root",
+      openshift_override_hostname_check: "true",
+      openshift_node_labels: "{'region': 'primary', 'zone': 'east'}",
+      openshift_hostname: "__IP__",
+      openshift_public_hostname: "__IP__",
+      openshift_set_hostname: "true",
+      openshift_docker_additional_registries: "brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888",
+      openshift_docker_insecure_registries: "brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888",
+      ansible-group: ["nodes", "OSEv3"]
+    -
+      resource_group_name : "openshift_node_group2"
+      product_type: "openshift",
+      deployment_type: "openshift-enterprise",
+      ansible_sudo: "false",
+      ansible_ssh_user: "root",
+      openshift_override_hostname_check: "true",
+      openshift_node_labels: "{'region': 'primary', 'zone': 'west'}",
+      openshift_hostname: "__IP__",
+      openshift_public_hostname: "__IP__",
+      openshift_set_hostname: "true",
+      openshift_docker_additional_registries: "brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888",
+      openshift_docker_insecure_registries: "brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888",
+      ansible-group: ["nodes", "OSEv3", "repo_host"]
+
+    -
+      resource_group_name : "testgroup3"
+      test_var1: "test_var1 msg is grp3 hello"
+      test_var2: "test_var2 msg is grp3 hello"
+      test_var3: "test_var3 msg is grp3 hello"

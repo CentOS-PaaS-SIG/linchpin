@@ -1,0 +1,21 @@
+---
+    topology_name: "ex_cfn_topo"
+    site: "qeos"
+    resource_groups: 
+      - 
+        resource_group_name: "testgroup1"
+        res_group_type: "aws"
+        res_defs:
+          - 
+            res_name: "cfnsimplestackaws"
+            res_type: "aws_cfn"
+            region: "us-east-1"
+            template_path: "/root/linch-pin/aws_cfn_templates/ec2_sample_cfn.template" 
+        assoc_creds: "sk_aws_personal"
+    resource_group_vars:
+      - 
+        resource_group_name : "testgroup1"
+        Name: "TestInstanceGroup1"
+        cfn_params: 
+          KeyName: "sk_key"
+          InstanceType: "t2.micro"

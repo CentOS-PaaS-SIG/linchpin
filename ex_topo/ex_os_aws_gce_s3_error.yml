@@ -1,0 +1,65 @@
+---
+    topology_name: "ex_os_aws_s3_gce_topo"
+    site: "testsite"
+    resource_groups: 
+      - 
+        resource_group_name: "testgroup1"
+        res_group_type: "aws"
+        res_defs:
+          - 
+            res_name: "ha_inst2"
+            flavor: "t2.micro"
+            res_type: "aws_ec2"
+            region: "us-east-1"
+            image: "ami-fce3c696"
+            count: 1
+            keypair: "sk_key"
+          - 
+            res_name: "samvaranbucktest"
+            res_type: "aws_s3"
+            region: "us-west-2"
+        assoc_creds: "sk_aws_personal"
+      - 
+        resource_group_name: "testgroup1"
+        res_group_type: "openstack"
+        res_defs:
+          - res_name: "ano_inst"
+            flavor: "m1.small"
+            res_type: "os_server"
+            image: "rhel-6.5_jeos"
+            count: 1 
+            keypair: "ci-factory"
+            networks:
+              - "e2e-openstack"
+        assoc_creds: "cios_e2e-openstack"
+      - 
+        resource_group_name: "testgroup1"
+        res_group_type: "gcloud"
+        res_defs:
+          - 
+            res_name: "testresourcesme"
+            flavor: "n1-standard-1"
+            res_type: "gcloud_gce"
+            region: "us-central1-a"
+            image: "debian-8"
+            count: 1
+        assoc_creds: "gcloudsk"
+    resource_group_vars:
+      - 
+        resource_group_name : "testgroup1"
+        Name: "TestInstanceGroup1"
+        test_var1: "test_var1 msg is grp1 hello"
+        test_var2: "test_var2 msg is grp1 hello"
+        test_var3: "test_var3 msg is grp1 hello"
+      - 
+        resource_group_name : "testgroup2"
+        Name: "TestInstanceGroup2"
+        test_var1: "test_var1 msg is grp2 hello"
+        test_var2: "test_var2 msg is grp2 hello"
+        test_var3: "test_var3 msg is grp2 hello"
+      - 
+        resource_group_name : "testgroup3"
+        Name: "TestInstanceGroup3"
+        test_var1: "test_var1 msg is grp3 hello"
+        test_var2: "test_var2 msg is grp3 hello"
+        test_var3: "test_var3 msg is grp3 hello"

@@ -1,0 +1,27 @@
+---
+    topology_name: "ex_rax_topo"
+    site: "qeos"
+    resource_groups: 
+      - 
+        resource_group_name: "testgroup1"
+        res_group_type: "rax"
+        res_defs:
+          - res_name: "ano_inst"
+            flavor: "2"
+            res_type: "rax_server"
+            image: "b7486124-ea63-4247-9f24-e4c089dd3e97"
+            region: "DFW"
+            count: 1
+            networks:
+              - "public"
+              - "private"
+        assoc_creds: "rx_sk_creds"
+    resource_group_vars:
+      - 
+        resource_group_name : "testgroup1"
+        Name: "TestInstanceGroup1"
+        heat_params: 
+          key_name: "ci-factory"
+          image_id: "rhel-6.5_jeos"
+          instance_type: "m1.small"
+          network_name: "e2e-openstack" 
