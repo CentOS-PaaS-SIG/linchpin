@@ -54,5 +54,6 @@ Google Cloud Topologies
 
 .. note::
 
-   
+  Source of the above mentioned examples can be fount at following link: 
+  `Example Topologies <https://github.com/CentOS-PaaS-SIG/linch-pin/tree/master/ex_topo>`_
 
