@@ -8,7 +8,7 @@ Gcloud Topologies
 Google Cloud Topologies
 ```````````````````````
 
-.. code-block:: bash
+.. code-block:: yaml
    
    ---
     topology_name: "ex_gcloud_topo1"
