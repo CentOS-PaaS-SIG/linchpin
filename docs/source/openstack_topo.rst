@@ -247,4 +247,5 @@ Openstack Full Stack
 
 .. note::
 
-   Note for topologies 
+  Source of the above mentioned examples can be found at `Example Topologies <https://github.com/CentOS-PaaS-SIG/linch-pin/tree/master/ex_topo>`_
+ 

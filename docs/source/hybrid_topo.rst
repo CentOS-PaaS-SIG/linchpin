@@ -93,3 +93,6 @@ Hybrid Topology1 (os_heat_aws_s3_gce)
           instance_type: "m1.small"
           network_name: "e2e-openstack"
 
+.. note::
+
+  Source of the above mentioned examples can be found at `Example Topologies <https://github.com/CentOS-PaaS-SIG/linch-pin/tree/master/ex_topo>`_
