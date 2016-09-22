@@ -1,5 +1,5 @@
-Example Topologies
-==================
+Openstack Topologies
+====================
 
 .. contents:: Topics
 

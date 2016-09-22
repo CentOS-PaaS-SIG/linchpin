@@ -1,4 +1,4 @@
-Example Topologies
+Hybrid Topologies
 ==================
 
 .. contents:: Topics

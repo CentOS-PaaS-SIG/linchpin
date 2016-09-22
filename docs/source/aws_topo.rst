@@ -1,5 +1,5 @@
-Example Topologies
-==================
+AWS Topologies
+==============
 
 .. contents:: Topics
 
