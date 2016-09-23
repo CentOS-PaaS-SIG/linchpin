@@ -8,7 +8,9 @@ try:
     from configparser import ConfigParser
 except ImportError:
     from ConfigParser import ConfigParser
-sys.path.append(os.getcwd())
+filepath = os.path.realpath(__file__)
+filepath = "/".join(filepath.split("/")[0:-2])
+sys.path.append(filepath)
 from InventoryFilters import GCloudInventory
 
 class FilterModule(object):
