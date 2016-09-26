@@ -70,6 +70,16 @@ class TestLinchPinInventoryGen(object):
         assert_equal(results,0)
 
     @with_setup(setup)
+    def test_inventory_duffy(self):
+        """
+        generates inventory for duffy type on testdata
+        """
+        self.variable_manager.extra_vars = {'inventory_type': 'duffy'}
+        pbex = PlaybookExecutor(playbooks=[self.playbook_path], inventory=self.inventory, variable_manager=self.variable_manager, loader=self.loader, options=self.options, passwords={})
+        results = pbex.run()
+        assert_equal(results,0)
+
+    @with_setup(setup)
     def test_inventory_other(self):
         """
         generates inventory for not supported type on testdata
