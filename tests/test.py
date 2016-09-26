@@ -2,13 +2,13 @@
 print "Linchpin Testing Initiating..."
 
 print "Testing Linchpin TestClass: TestLinchpinInvocation" 
-from TestLinchPinInvocation import TestLinchPinInvocation
+from test_linchpin_invocation import TestLinchPinInvocation
 
 print "Testing Linchpin TestClass: TestLinchpinCredentials"
-from TestLinchPinCredentials import TestLinchPinCredentials
+from test_linchpin_creds import TestLinchPinCredentials
 
 print "Testing Linchpin TestClass: TestLinchpinEnv"
-from TestLinchPinEnv import TestLinchPinEnv
+from test_linchpin_env import TestLinchPinEnv
 
 import nose
 nose.run()
