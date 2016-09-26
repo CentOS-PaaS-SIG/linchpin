@@ -38,7 +38,43 @@ class TestLinchPinEnv(object):
         """
         version = float(ansible.__version__[0:3]) >= 2.1
         assert_equal(version,True)
+    
+    @with_setup(setup)
+    def test_python_os_client_version(self):
+        """
+        Checks for the version of ansible installed
+        """
+        import openstack
+        version = float(openstack.__version__[0:3]) >= 0.8
+        assert_equal(version,True)
+    
+    @with_setup(setup)
+    def test_libcloud_version(self):
+        """
+        Checks for the version of ansible installed
+        """
+        import libcloud
+        version = float(libcloud.__version__[0:3]) >= 0.20
+        assert_equal(version,True)
+ 
+    @with_setup(setup)
+    def test_jsonschema_version(self):
+        """
+        Checks for the version of ansible installed
+        """
+        import jsonschema
+        version = float(jsonschema.__version__[0:3]) >= 2.5
+        assert_equal(version,True)
 
+    @with_setup(setup)
+    def test_boto_version(self):
+        """
+        Checks for the version of ansible installed
+        """
+        import boto
+        version = float(boto.__version__[0:3]) >= 2.4
+        assert_equal(version,True)
+     
     @with_setup(setup)
     def test_init(self):
         """
