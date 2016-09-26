@@ -4,7 +4,7 @@
   gather_facts: false
   vars_files:
    - ../linchpin_config.yml
-   - ../outputs/all_stack_outputs.testoutputs
+   - ../outputs/all_stack_outputs.testoutput
   vars:
     data: 'all_nodes_cluster'
     schema: '../ex_schemas/schema_v2.json'
