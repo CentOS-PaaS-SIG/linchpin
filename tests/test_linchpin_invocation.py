@@ -22,7 +22,7 @@ class TestLinchPinInvocation(object):
         self.variable_manager = VariableManager()
         self.loader = DataLoader()
         self.inventory = Inventory(loader=self.loader, variable_manager=self.variable_manager,  host_list=['localhost'])
-        self.playbook_path = 'test_playbook.yml'
+        self.playbook_path = 'playbooks/test_playbook.yml'
         self.Options = namedtuple('Options', ['listtags', 'listtasks', 'listhosts', 'syntax', 'connection','module_path', 'forks', 'remote_user', 'private_key_file', 'ssh_common_args', 'ssh_extra_args', 'sftp_extra_args', 'scp_extra_args', 'become', 'become_method', 'become_user', 'verbosity', 'check'])
 
     @classmethod

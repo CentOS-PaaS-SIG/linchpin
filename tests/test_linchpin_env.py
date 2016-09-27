@@ -23,7 +23,7 @@ class TestLinchPinEnv(object):
         self.variable_manager = VariableManager()
         self.loader = DataLoader()
         self.inventory = Inventory(loader=self.loader, variable_manager=self.variable_manager,  host_list=['localhost'])
-        self.playbook_path = 'test_playbook.yml'
+        self.playbook_path = 'playbooks/test_playbook.yml'
         self.Options = namedtuple('Options', ['listtags', 'listtasks', 'listhosts', 'syntax', 'connection','module_path', 'forks', 'remote_user', 'private_key_file', 'ssh_common_args', 'ssh_extra_args', 'sftp_extra_args', 'scp_extra_args', 'become', 'become_method', 'become_user', 'verbosity', 'check'])
 
     @classmethod
@@ -80,7 +80,7 @@ class TestLinchPinEnv(object):
         """
         Initialises and runs sample echo playbook for testing
         """
-        playbook_path = 'test_playbook.yml'
+        playbook_path = 'playbooks/test_playbook.yml'
         options = self.Options(listtags=False, listtasks=False, listhosts=False, syntax=False, connection='ssh', module_path=None, forks=100, remote_user='slotlocker', private_key_file=None, ssh_common_args=None, ssh_extra_args=None, sftp_extra_args=None, scp_extra_args=None, become=True, become_method=None, become_user='root', verbosity=3, check=False)
         self.variable_manager.extra_vars = {'hosts': 'mywebserver'} # This can accomodate various other command line arguments.`
         passwords = {}
