@@ -3,11 +3,11 @@
   hosts: localhost
   gather_facts: false
   vars_files:
-   - ../linchpin_config.yml
-   - ../outputs/all_stack_outputs.testoutput
+   - linchpin_config.yml
+   - all_stack_outputs.testoutput
   vars:
     data: 'all_nodes_cluster'
-    schema: '../ex_schemas/schema_v2.json'
+    schema: '../mockdata/schema_v2.json'
     inventories: ["os","aws","gcloud","generic"]
     state: present
     output:
@@ -19,7 +19,7 @@
     topology_outputs_aws_ec2: "{{ aws_ec2_res }}"
     topology_outputs_gcloud_gce: "{{ gcloud_gce_res }}"
   tasks:
-    - include_vars: "../inventory_layouts/openshift-3node-cluster.yml"
+    - include_vars: "openshift-3node-cluster.yml"
     - name: "Updating topology_outputs"
       set_fact:
         topology_outputs:
