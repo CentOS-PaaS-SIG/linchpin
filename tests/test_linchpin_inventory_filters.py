@@ -1,7 +1,13 @@
 import os
 import sys
 import json
+import StringIO
+import io
 import pdb
+try:
+    from configparser import ConfigParser
+except ImportError:
+    from ConfigParser import ConfigParser
 from nose.tools import assert_equal
 from nose.tools import assert_not_equal
 from nose.tools import assert_raises
@@ -15,6 +21,7 @@ from InventoryFilters import AWSInventory
 from InventoryFilters import OpenstackInventory
 from InventoryFilters import GCloudInventory
 from InventoryFilters import GenericInventory
+from linchpin_utils import inventory_utils
 
 
 class TestLinchPinInventoryFilters(object):
@@ -64,17 +71,23 @@ class TestLinchPinInventoryFilters(object):
     @with_setup(setup)
     def test_filter_aws_get_inventory(self):
         inv = AWSInventory.AWSInventory()
-        pass
+        output = inv.get_inventory(self.test_input, self.test_layout)
+        sections = inventory_utils.get_sections(output)
+        assert_equal(len(sections), 7)
 
     @with_setup(setup)
     def test_filter_os_get_inventory(self):
         inv = OpenstackInventory.OpenstackInventory()
-        pass
+        output = inv.get_inventory(self.test_input, self.test_layout )
+        sections = inventory_utils.get_sections(output)
+        assert_equal(len(sections), 7)
 
     @with_setup(setup)
     def test_filter_gcloud_get_inventory(self):
         inv = GCloudInventory.GCloudInventory()
-        pass
+        output = inv.get_inventory(self.test_input, self.test_layout)
+        sections = inventory_utils.get_sections(output)
+        assert_equal(len(sections), 7)
 
     @with_setup(setup)
     def test_filter_duffy_get_inventory(self):
@@ -83,4 +96,6 @@ class TestLinchPinInventoryFilters(object):
     @with_setup(setup)
     def test_filter_generic_get_inventory(self):
         inv = GenericInventory.GenericInventory()
-        pass
+        output = inv.get_inventory(self.test_input, self.test_layout)
+        sections = inventory_utils.get_sections(output)
+        assert_equal(len(sections), 7)
