@@ -91,10 +91,10 @@ def main():
     module = AnsibleModule(
     argument_spec={
             'stack_name':     {'required': True, 'aliases': ['name']},
-            'os_username':     {'required': False, 'aliases': ['name']},
-            'os_password':     {'required': False, 'aliases': ['name']},
-            'os_tenant_name':     {'required': False, 'aliases': ['name']},
-            'os_auth_url':     {'required': False, 'aliases': ['name']},
+            'os_username':     {'required': False, 'aliases': ['username']},
+            'os_password':     {'required': False, 'aliases': ['password']},
+            'os_tenant_name':     {'required': False, 'aliases': ['tenantname']},
+            'os_auth_url':     {'required': False, 'aliases': ['url']},
             'template':     {'required': True},
             'state':     {'required': True, 'choices':['present','absent']},
             'wait':     {'required': False, 'choices':['yes','no']},
