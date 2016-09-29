@@ -68,3 +68,32 @@ class TestLinchPinModuleOutputParser(object):
         output = results['failed'] and "Recursive directory not supported" in results["msg"]
         os.removedirs(dir_name)
         assert_equal(output, True)
+
+    @with_setup(setup)
+    def test_module_empty_file(self):
+        """
+        tests module with empty file
+        """
+        tf = tempfile.NamedTemporaryFile() 
+        invalid_params = {"output_file":tf.name}
+        self.options["module_args"] = json.dumps(invalid_params)
+        results = run_module(self.options)
+        output = results['failed'] and results["msg"]["content"] == None
+        os.remove(tf.name)
+        assert_equal(output, True)
+    
+    @with_setup(setup)
+    def test_module_yaml_file(self):
+        """
+        tests module with yaml file
+        """
+        tf = tempfile.NamedTemporaryFile(delete=False)
+        tf.write("testkey: testval")
+        tf_name = tf.name
+        tf.close()
+        invalid_params = {"output_file":tf_name}
+        self.options["module_args"] = json.dumps(invalid_params)
+        results = run_module(self.options)
+        output = results['changed']
+        os.remove(tf_name)
+        assert_equal(output, True)
