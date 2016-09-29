@@ -1,34 +1,5 @@
 #!/usr/bin/env python
 
-# (c) 2012, Michael DeHaan <michael.dehaan@gmail.com>
-#
-# This file is part of Ansible
-#
-# Ansible is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# Ansible is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
-#
-
-# this script is for testing modules without running through the
-# entire guts of ansible, and is very helpful for when developing
-# modules
-#
-# example:
-#    test-module -m ../library/commands/command -a "/bin/sleep 3"
-#    test-module -m ../library/system/service -a "name=httpd ensure=restarted"
-#    test-module -m ../library/system/service -a "name=httpd ensure=restarted" --debugger /usr/bin/pdb
-#    test-module -m ../library/file/lineinfile -a "dest=/etc/exports line='/srv/home hostname1(rw,sync)'" --check
-#    test-module -m ../library/commands/command -a "echo hello" -n -o "test_hello"
-
 import base64
 import optparse
 import os
@@ -36,7 +7,6 @@ import subprocess
 import sys
 import traceback
 import shutil
-
 import ansible.utils.vars as utils_vars
 from ansible.parsing.dataloader import DataLoader
 from ansible.parsing.utils.jsonify import jsonify
@@ -48,28 +18,6 @@ try:
     import json
 except ImportError:
     import simplejson as json
-
-def parse():
-    parser = optparse.OptionParser()
-    parser.add_option('-m', '--module-path', dest='module_path',
-        help="REQUIRED: full path of module source to execute")
-    parser.add_option('-a', '--args', dest='module_args', default="",
-        help="module argument string")
-    parser.add_option('-D', '--debugger', dest='debugger',
-        help="path to python debugger (e.g. /usr/bin/pdb)")
-    parser.add_option('-I', '--interpreter', dest='interpreter',
-        help="path to interpreter to use for this module (e.g. ansible_python_interpreter=/usr/bin/python)",
-        metavar='INTERPRETER_TYPE=INTERPRETER_PATH',
-        default='python={0}'.format(sys.executable))
-    parser.add_option('-c', '--check', dest='check', action='store_true',
-        help="run the module in check mode")
-    parser.add_option('-n', '--noexecute', dest='execute', action='store_false',
-        default=True, help="do not run the resulting module")
-    parser.add_option('-o', '--output', dest='filename',
-        help="Filename for resulting module",
-        default="~/.ansible_module_generated")
-    options, args = parser.parse_args()
-    return options,args
 
 def write_argsfile(argstring, json=False):
     """ Write args to a file for old-style module's use. """
