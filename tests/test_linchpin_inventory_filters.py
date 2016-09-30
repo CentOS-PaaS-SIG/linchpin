@@ -8,6 +8,10 @@ try:
     from configparser import ConfigParser
 except ImportError:
     from ConfigParser import ConfigParser
+try:
+    import mock
+except ImportError:
+    from unittest import mock
 from nose.tools import assert_equal
 from nose.tools import assert_not_equal
 from nose.tools import assert_raises
@@ -22,14 +26,14 @@ from InventoryFilters import OpenstackInventory
 from InventoryFilters import GCloudInventory
 from InventoryFilters import GenericInventory
 from linchpin_utils import inventory_utils
-
+from mockdata import inventory_mock as im
 
 class TestLinchPinInventoryFilters(object):
-    @classmethod
+
     def setup(self):
         """This method is run once before _each_ test method is executed"""
-        self.test_input = json.loads(open("mockdata/test_input.json","r").read())
-        self.test_layout = json.loads(open("mockdata/test_layout.json","r").read())
+        self.test_input = im.get_mock_topo_output()
+        self.test_layout = im.get_mock_layout()
 
     @classmethod
     def teardown(self):

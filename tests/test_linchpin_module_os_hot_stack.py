@@ -68,3 +68,5 @@ class TestLinchPinModuleOSHotStack(object):
         output = results['failed'] and "Recursive directory not supported" in results["msg"]
         assert_equal(output, True)
         os.removedirs(dir_name)
+
+    
