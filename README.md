@@ -38,6 +38,7 @@ Python virtualenv is highly recommended
 ```
 sudo yum install python-setuptools
 sudo yum install python-virtualenv
+sudo yum install python-virtualenvwrapper
 source /usr/bin/virtualenvwrapper.sh
 mkvirtualenv linchpin-test
 pip install --upgrade ansible>=2.1.0
@@ -49,6 +50,7 @@ git clone https://github.com/CentOS-PaaS-SIG/linch-pin
 ```
 sudo dnf install python-setuptools
 sudo dnf install python-virtualenv
+sudo dnf install python-virtualenvwrapper
 sudo dnf install ansible
 source /usr/bin/virtualenvwrapper.sh
 mkvirtualenv linchpin-test
