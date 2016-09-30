@@ -19,14 +19,14 @@
       rax_server_res: "{{ topology_outputs_rax_server }}"
   when: async == false
 
-- name: "delete output directories"
-  file:
-    state: absent
-    path: "{{ item }}"
-  with_items:
-    - "{{ outputfolder_path | default( outputfolder_path+'/' ) }}"
-    - "{{ inventoryfolder_path | default( inventoryfolder_path+'/' ) }}"
-  when: async == false
+#- name: "delete output directories"
+#  file:
+#    state: absent
+#    path: "{{ item }}"
+#  with_items:
+#    - "{{ outputfolder_path | default( outputfolder_path+'/' ) }}"
+#    - "{{ inventoryfolder_path | default( inventoryfolder_path+'/' ) }}"
+#  when: async == false
 
 - name: "Create output directories"
   file:
@@ -108,7 +108,7 @@
 - name: "set name for linchpin_output_file for inventory generation"
   set_fact: 
     topology_output_file:  "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output' ) }}"
-
+  when: state == "present"
 # include inventory generation files here
 #- include: "{{ item }}"
 #  with_items:
