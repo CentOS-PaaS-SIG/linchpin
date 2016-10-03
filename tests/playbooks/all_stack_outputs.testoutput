@@ -1,0 +1,935 @@
+aws_cfn_res: []
+aws_ec2_key_res: []
+aws_ec2_res:
+-   changed: true
+    instance_ids:
+    - i-0xxxxxxxxxxxxxxxd
+    - i-0xxxxxxxxxxxxxxx5
+    instances:
+    -   ami_launch_index: '0'
+        architecture: x86_64
+        block_device_mapping:
+            /dev/sda1:
+                delete_on_termination: true
+                status: attached
+                volume_id: vol-xxxxxxxx
+        dns_name: ec2-xx-xx-xx-xxx.compute-1.amazonaws.com
+        ebs_optimized: false
+        groups:
+            sg-xxxxxxxx: default
+        hypervisor: xen
+        id: i-xxxxxxxxxxxxxxxxx
+        image_id: ami-xxxxxxxx
+        instance_type: t2.micro
+        kernel: null
+        key_name: xxxxxx
+        launch_time: 'xxxx-xx-xxxxx:xx:xx.xxxx'
+        placement: us-east-1a
+        private_dns_name: ip-xxx-xx-xx-xx.ec2.internal
+        private_ip: xxx.xx.xx.xx
+        public_dns_name: ec2-xx-xx-xx-xxx.compute-1.amazonaws.com
+        public_ip: xx.xx.xx.xxx
+        ramdisk: null
+        region: us-east-1
+        root_device_name: /dev/sda1
+        root_device_type: ebs
+        state: running
+        state_code: 16
+        tags:
+            Name: TestInstanceGroup1
+            resource_group_name: testgroup1
+            test_var1: test_var1 msg is grp1 hello
+            test_var2: test_var2 msg is grp1 hello
+            test_var3: test_var3 msg is grp1 hello
+        tenancy: default
+        virtualization_type: hvm
+    -   ami_launch_index: '1'
+        architecture: x86_64
+        block_device_mapping:
+            /dev/sda1:
+                delete_on_termination: true
+                status: attached
+                volume_id: vol-xxxxxxxx
+        dns_name: ec2-xx-xxx-xxx-xxx.compute-1.amazonaws.com
+        ebs_optimized: false
+        groups:
+            sg-xxxxxxxx: default
+        hypervisor: xen
+        id: i-xxxxxxxxxxxxxxxxx
+        image_id: ami-xxxxxxxx
+        instance_type: t2.micro
+        kernel: null
+        key_name: sk_key
+        launch_time: 'xxxx-xx-xxxxx:xx:xx.xxxx'
+        placement: us-east-1a
+        private_dns_name: ip-xxx-xx-xx-xx.ec2.internal
+        private_ip: xxx.xx.xx.xx
+        public_dns_name: ec2-xx-xxx-xxx-xxx.compute-1.amazonaws.com
+        public_ip: xx.xxx.xxx.xxx
+        ramdisk: null
+        region: us-east-1
+        root_device_name: /dev/sda1
+        root_device_type: ebs
+        state: running
+        state_code: 16
+        tags:
+            Name: TestInstanceGroup1
+            resource_group_name: testgroup1
+            test_var1: test_var1 msg is grp1 hello
+            test_var2: test_var2 msg is grp1 hello
+            test_var3: test_var3 msg is grp1 hello
+        tenancy: default
+        virtualization_type: hvm
+    tagged_instances: []
+-   changed: true
+    instance_ids:
+    - i-xxxxxxxxxxxxxxxxx
+    instances:
+    -   ami_launch_index: '0'
+        architecture: x86_64
+        block_device_mapping:
+            /dev/sda1:
+                delete_on_termination: true
+                status: attached
+                volume_id: vol-xxxxxxxx
+        dns_name: ec2-xx-xxx-xxx-xxx.compute-1.amazonaws.com
+        ebs_optimized: false
+        groups:
+            sg-xxxxxxxx: default
+        hypervisor: xen
+        id: x-xxxxxxxxxxxxxxxxx
+        image_id: xxx-xxxxxxxx
+        instance_type: t2.micro
+        kernel: null
+        key_name: xx_xxx
+        launch_time: 'xxxx-xx-xxxxx:xx:xx.xxxx'
+        placement: us-east-1a
+        private_dns_name: ip-xxx-xx-xx-xxx.ec2.internal
+        private_ip: xxx.xx.xx.xxx
+        public_dns_name: ec2-xx-xxx-xxx-xxx.compute-1.amazonaws.com
+        public_ip: xx.xxx.xxx.xxx
+        ramdisk: null
+        region: us-east-1
+        root_device_name: /dev/sda1
+        root_device_type: ebs
+        state: running
+        state_code: 16
+        tags:
+            Name: TestInstanceGroup2
+            resource_group_name: testgroup2
+            test_var1: test_var1 msg is grp2 hello
+            test_var2: test_var2 msg is grp2 hello
+            test_var3: test_var3 msg is grp2 hello
+        tenancy: default
+        virtualization_type: hvm
+    tagged_instances: []
+aws_s3_res:
+-   region: us-west-2
+    res_name: xxxxxxxxxxxxxxxx
+    res_type: aws_s3
+duffy_res: []
+gcloud_gce_res:
+-   _ansible_item_result: true
+    _ansible_no_log: false
+    changed: true
+    instance:
+    - xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    - n1-standard-1
+    - debian-8
+    - us-central1-a
+    - present
+    - xxxxxxxxxxxxx@xxxxxxxxxxxxxxxxxxxxx.iam.gserviceaccount.com
+    - xxxxxxxxxxxxxxxxxxxxx
+    - xxxxxxxxxxxxxxx
+    - 0
+    instance_data:
+    -   disks:
+        - xxxxxxxxxxxxxxxxx
+        image: xxxxxx-x-xxxxxx-xxxxxxxxx-xxxx
+        machine_type: n1-standard-1
+        metadata: {}
+        name: xxxxxxxxxxxxxxxxx
+        network: default
+        private_ip: xx.xxx.x.x
+        public_ip: xxx.xxx.xx.xx
+        status: RUNNING
+        tags: []
+        zone: us-central1-a
+    instance_names:
+    - xxxxxxxxxxxxxxxxx
+    invocation:
+        module_args:
+            credentials_file: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            disk_auto_delete: true
+            disks: null
+            external_ip: ephemeral
+            image: debian-8
+            instance_names: testresourcesmea0
+            ip_forward: false
+            machine_type: n1-standard-1
+            metadata: null
+            name: null
+            network: default
+            pem_file: null
+            persistent_boot_disk: false
+            preemptible: null
+            project_id: xxxxxxxxxxxxxx-xxxxxx
+            service_account_email: xxxxxxxxxxxxx@xxxxxxxxx-xxxx-xxxxxx.iam.gserviceaccount.com
+            service_account_permissions: null
+            state: present
+            tags: null
+            zone: us-central1-a
+        module_name: gce
+    state: present
+    zone: us-central1-a
+-   _ansible_item_result: true
+    _ansible_no_log: false
+    changed: true
+    instance:
+    - xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    - xxxxxxxxxxxxx
+    - xxxxxxxx
+    - xxxxxxxxxxxxx
+    - present
+    - xxxxxxxxxxxxx@xxxxxxxxx-xxxx-xxxxxx.iam.gserviceaccount.com
+    - xxxxxxxxxxxxxxxxxxxxx
+    - xxxxxxxxxxxxxxx
+    - 1
+    instance_data:
+    -   disks:
+        - testresourcesmea1
+        image: xxxxxx-x-xxxxxx-xxxxxxxxx-xxxx
+        machine_type: xx-xxxxxxxx-x
+        metadata: {}
+        name: xxxxxxxxxxxxxxxxx
+        network: default
+        private_ip: xx.xxx.x.x
+        public_ip: xx.xxx.xx.xxx
+        status: RUNNING
+        tags: []
+        zone: xx-xxxxxxxx-x
+    instance_names:
+    - xxxxxxxxxxxxxxxxx
+    invocation:
+        module_args:
+            credentials_file: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            disk_auto_delete: true
+            disks: null
+            external_ip: ephemeral
+            image: debian-8
+            instance_names: testresourcesmea1
+            ip_forward: false
+            machine_type: n1-standard-1
+            metadata: null
+            name: null
+            network: default
+            pem_file: null
+            persistent_boot_disk: false
+            preemptible: null
+            project_id: xxxxxxxxxxxxxxxxxxxxx
+            service_account_email: xxxxxxxxxxxxx@xxxxxxxxxxxxxxxxxxxxx.iam.gserviceaccount.com
+            service_account_permissions: null
+            state: present
+            tags: null
+            zone: us-central1-a
+        module_name: gce
+    state: present
+    zone: us-central1-a
+-   _ansible_item_result: true
+    _ansible_no_log: false
+    changed: true
+    instance:
+    - xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    - n1-standard-1
+    - debian-8
+    - us-central1-a
+    - present
+    - xxxxxxxxxxxxx@xxxxxxxxxxxxxxxxxxxxx.iam.gserviceaccount.com
+    - xxxxxxxxx-xxxx-xxxxxx
+    - testresourca12
+    - 0
+    instance_data:
+    -   disks:
+        - testresourca12a0
+        image: debian-8-jessie-v20160803-nvme
+        machine_type: n1-standard-1
+        metadata: {}
+        name: testresourca12a0
+        network: default
+        private_ip: xx.xxx.x.x
+        public_ip: xxx.xxx.xxx.xxx
+        status: RUNNING
+        tags: []
+        zone: us-central1-a
+    instance_names:
+    - testresourca12a0
+    invocation:
+        module_args:
+            credentials_file: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            disk_auto_delete: true
+            disks: null
+            external_ip: ephemeral
+            image: debian-8
+            instance_names: testresourca12a0
+            ip_forward: false
+            machine_type: n1-standard-1
+            metadata: null
+            name: null
+            network: default
+            pem_file: null
+            persistent_boot_disk: false
+            preemptible: null
+            project_id: effective-pipe-141600
+            service_account_email: xxxxxxxxxxxxx@xxxxxxxxxxxxxxxxxxxxx.iam.gserviceaccount.com
+            service_account_permissions: null
+            state: present
+            tags: null
+            zone: us-central1-a
+        module_name: gce
+    state: present
+    zone: us-central1-a
+os_heat_res: []
+os_keypair_res: []
+os_obj_res: []
+os_server_res:
+-   _ansible_item_result: true
+    _ansible_no_log: false
+    changed: true
+    id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    instance:
+    - http://xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.com:5000/v2.0/
+    - xxxxxxxxxxxxxxxxxxxx
+    - xxxxxxxxxxxxxxxxxxxx
+    - xxxxxxxxxxxxx
+    - present
+    - xxxxxxxxxxxxx
+    - xxxxxxxxxx
+    - m1.small
+    - xxxxxxxxxxxxx
+    - testgroup3
+    - ano_inst_2
+    - 0
+    invocation:
+        module_args:
+            api_timeout: 99999
+            auth:
+                auth_url: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+                password: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+                project_name: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+                username: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+            auth_type: null
+            auto_ip: true
+            availability_zone: null
+            boot_from_volume: false
+            boot_volume: null
+            cacert: null
+            cert: null
+            cloud: null
+            config_drive: false
+            endpoint_type: public
+            flavor: m1.small
+            flavor_include: null
+            flavor_ram: null
+            floating_ip_pools: null
+            floating_ips: null
+            image: rhel-6.5_jeos
+            image_exclude: (deprecated)
+            key: null
+            key_name: ci-factory
+            meta: null
+            name: testgroup3_ano_inst_2_0
+            network: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+            nics: []
+            region_name: null
+            scheduler_hints: null
+            security_groups:
+            - default
+            state: present
+            terminate_volume: false
+            timeout: 180
+            userdata: null
+            verify: true
+            volume_size: false
+            volumes: []
+            wait: true
+        module_name: os_server
+    openstack:
+        HUMAN_ID: true
+        NAME_ATTR: name
+        OS-DCF:diskConfig: MANUAL
+        OS-EXT-AZ:availability_zone: nova
+        OS-EXT-STS:power_state: 1
+        OS-EXT-STS:task_state: null
+        OS-EXT-STS:vm_state: active
+        OS-SRV-USG:launched_at: 'xxxxxxxxxxxxxxxxxxxxxxxxxx'
+        OS-SRV-USG:terminated_at: null
+        accessIPv4: xx.x.xxx.xxx
+        accessIPv6: ''
+        addresses:
+            e2e-openstack:
+            -   OS-EXT-IPS-MAC:mac_addr: xx:xx:xx:xx:xx:xx
+                OS-EXT-IPS:type: fixed
+                addr: xxx.xx.xxx.xxx
+                version: 4
+            -   OS-EXT-IPS-MAC:mac_addr: xx:xx:xx:xx:xx:xx
+                OS-EXT-IPS:type: floating
+                addr: xx.x.xxx.xxx
+                version: 4
+        adminPass: xxxxxxxxxxxx
+        az: nova
+        cloud: defaults
+        config_drive: ''
+        created: 'xxxxxxxxxxxxxxxxxxxx'
+        flavor:
+            id: '2'
+            name: m1.small
+        hostId: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        human_id: testgroup3_ano_inst_2_0
+        id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        image:
+            id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            name: rhel-6.5_jeos
+        interface_ip: xx.x.xxx.xxx
+        key_name: ci-factory
+        metadata: {}
+        name: testgroup3_ano_inst_2_0
+        networks:
+            e2e-openstack:
+            - xxx.xx.xxx.xxx
+            - xx.x.xxx.xxx
+        os-extended-volumes:volumes_attached: []
+        private_v4: xxx.xx.xxx.xxx
+        progress: 0
+        public_v4: xx.x.xxx.xxx
+        public_v6: ''
+        region: ''
+        security_groups:
+        -   description: Default security group
+            id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+            name: default
+            security_group_rules:
+            -   direction: ingress
+                ethertype: IPv4
+                id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+                port_range_max: null
+                port_range_min: null
+                protocol: null
+                remote_ip_prefix: null
+                security_group_id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+            -   direction: ingress
+                ethertype: IPv4
+                id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+                port_range_max: null
+                port_range_min: null
+                protocol: null
+                remote_ip_prefix: null
+                security_group_id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        status: ACTIVE
+        tenant_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        updated: 'xxxxxxxxxxxxxxxxxxxx'
+        user_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        volumes: []
+    server:
+        HUMAN_ID: true
+        NAME_ATTR: name
+        OS-DCF:diskConfig: MANUAL
+        OS-EXT-AZ:availability_zone: nova
+        OS-EXT-STS:power_state: 1
+        OS-EXT-STS:task_state: null
+        OS-EXT-STS:vm_state: active
+        OS-SRV-USG:launched_at: 'xxxxxxxxxxxxxxxxxxxxxxxxxx'
+        OS-SRV-USG:terminated_at: null
+        accessIPv4: xx.x.xxx.xxx
+        accessIPv6: ''
+        addresses:
+            e2e-openstack:
+            -   OS-EXT-IPS-MAC:mac_addr: xx:xx:xx:xx:xx:xx
+                OS-EXT-IPS:type: fixed
+                addr: xxx.xx.xxx.xxx
+                version: 4
+            -   OS-EXT-IPS-MAC:mac_addr: xx:xx:xx:xx:xx:xx
+                OS-EXT-IPS:type: floating
+                addr: xx.x.xxx.xxx
+                version: 4
+        adminPass: xxxxxxxxxxxx
+        az: nova
+        cloud: defaults
+        config_drive: ''
+        created: 'xxxx-xx-xxxxxxxxxxxx'
+        flavor:
+            id: '2'
+            name: m1.small
+        hostId: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        human_id: testgroup3_ano_inst_2_0
+        id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        image:
+            id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            name: rhel-6.5_jeos
+        interface_ip: xxxxxxxxxxxx
+        key_name: xxxxxxxxxx
+        metadata: {}
+        name: xxxxxxxxxxxxxxxxxxxxxxx
+        networks:
+            e2e-openstack:
+            - xxxxxxxxxxxxxx
+            - xxxxxxxxxxxx
+        os-extended-volumes:volumes_attached: []
+        private_v4: xxxxxxxxxxxxxx
+        progress: 0
+        public_v4: xxxxxxxxxxxx
+        public_v6: ''
+        region: ''
+        security_groups:
+        -   description: Default security group
+            id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            name: default
+            security_group_rules:
+            -   direction: ingress
+                ethertype: IPv4
+                id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                port_range_max: null
+                port_range_min: null
+                protocol: null
+                remote_ip_prefix: null
+                security_group_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            -   direction: ingress
+                ethertype: IPv4
+                id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                port_range_max: null
+                port_range_min: null
+                protocol: null
+                remote_ip_prefix: null
+                security_group_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        status: ACTIVE
+        tenant_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        updated: xxxxxxxxxxxxxxxxxxxxxx
+        user_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        volumes: []
+-   _ansible_item_result: true
+    _ansible_no_log: false
+    changed: true
+    id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    instance:
+    - http://dashboard.xxxxxxxxx.xxx.xxxx.xxxxxx.com:5000/v2.0/
+    - xxxxxxxxxxxxx
+    - xxxxxxxxxxxxxxxxxxxx
+    - xxxxxxxxxxxxx
+    - present
+    - rhel-6.5_jeos
+    - xxxxxxxxxx
+    - m1.small
+    - e2e-openstack
+    - testgroup3
+    - ano_inst_2
+    - 1
+    invocation:
+        module_args:
+            api_timeout: 99999
+            auth:
+                auth_url: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+                password: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+                project_name: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+                username: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+            auth_type: null
+            auto_ip: true
+            availability_zone: null
+            boot_from_volume: false
+            boot_volume: null
+            cacert: null
+            cert: null
+            cloud: null
+            config_drive: false
+            endpoint_type: public
+            flavor: m1.small
+            flavor_include: null
+            flavor_ram: null
+            floating_ip_pools: null
+            floating_ips: null
+            image: xxxxxxxxxxxxx
+            image_exclude: (deprecated)
+            key: null
+            key_name: xxxxxxxxxx
+            meta: null
+            name: testgroup3_ano_inst_2_1
+            network: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+            nics: []
+            region_name: null
+            scheduler_hints: null
+            security_groups:
+            - default
+            state: present
+            terminate_volume: false
+            timeout: 180
+            userdata: null
+            verify: true
+            volume_size: false
+            volumes: []
+            wait: true
+        module_name: os_server
+    openstack:
+        HUMAN_ID: true
+        NAME_ATTR: name
+        OS-DCF:diskConfig: MANUAL
+        OS-EXT-AZ:availability_zone: nova
+        OS-EXT-STS:power_state: 1
+        OS-EXT-STS:task_state: null
+        OS-EXT-STS:vm_state: active
+        OS-SRV-USG:launched_at: 'xxxxxxxxxxxxxxxxxxxxxxxxxx'
+        OS-SRV-USG:terminated_at: null
+        accessIPv4: xx.x.xxx.xx
+        accessIPv6: ''
+        addresses:
+            e2e-openstack:
+            -   OS-EXT-IPS-MAC:mac_addr: xx:xx:xx:xx:xx:xx
+                OS-EXT-IPS:type: fixed
+                addr: xxx.xx.xxx.xxx
+                version: 4
+            -   OS-EXT-IPS-MAC:mac_addr: xx:xx:xx:xx:xx:xx
+                OS-EXT-IPS:type: floating
+                addr: xx.xx.xx.xx
+                version: 4
+        adminPass: xxxxxxxxxxxx
+        az: nova
+        cloud: defaults
+        config_drive: ''
+        created: 'xxxx-xx-xxxxxxxxxxxx'
+        flavor:
+            id: '2'
+            name: m1.small
+        hostId: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        human_id: testgroup3_ano_inst_2_1
+        id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        image:
+            id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            name: rhel-6.5_jeos
+        interface_ip: xx.x.xxx.xx
+        key_name: xxxxxxxxxx
+        metadata: {}
+        name: testgroup3_ano_inst_2_1
+        networks:
+            e2e-openstack:
+            - xxxxxxxxxxxxxx
+            - xxxxxxxxxxx
+        os-extended-volumes:volumes_attached: []
+        private_v4: xxxxxxxxxxxxxx
+        progress: 0
+        public_v4: xxxxxxxxxxx
+        public_v6: ''
+        region: ''
+        security_groups:
+        -   description: Default security group
+            id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            name: default
+            security_group_rules:
+            -   direction: ingress
+                ethertype: IPv4
+                id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                port_range_max: null
+                port_range_min: null
+                protocol: null
+                remote_ip_prefix: null
+                security_group_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            -   direction: ingress
+                ethertype: IPv4
+                id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                port_range_max: null
+                port_range_min: null
+                protocol: null
+                remote_ip_prefix: null
+                security_group_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        status: ACTIVE
+        tenant_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        updated: 'xxxxxxxxxxxxxxxxxxxx'
+        user_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        volumes: []
+    server:
+        HUMAN_ID: true
+        NAME_ATTR: name
+        OS-DCF:diskConfig: MANUAL
+        OS-EXT-AZ:availability_zone: nova
+        OS-EXT-STS:power_state: 1
+        OS-EXT-STS:task_state: null
+        OS-EXT-STS:vm_state: active
+        OS-SRV-USG:launched_at: 'xxxxxxxxxxxxxxxxxxxxxxxxxx'
+        OS-SRV-USG:terminated_at: null
+        accessIPv4: xxxxxxxxxxx
+        accessIPv6: ''
+        addresses:
+            e2e-openstack:
+            -   OS-EXT-IPS-MAC:mac_addr: xxxxxxxxxxxxxxxxx
+                OS-EXT-IPS:type: fixed
+                addr: xxxxxxxxxxxxxx
+                version: 4
+            -   OS-EXT-IPS-MAC:mac_addr: xxxxxxxxxxxxxxxxx
+                OS-EXT-IPS:type: floating
+                addr: xxxxxxxxxxx
+                version: 4
+        adminPass: xxxxxxxxxxxx
+        az: nova
+        cloud: defaults
+        config_drive: ''
+        created: 'xxxxxxxxxxxxxxxxxxxx'
+        flavor:
+            id: '2'
+            name: m1.small
+        hostId: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        human_id: testgroup3_ano_inst_2_1
+        id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        image:
+            id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            name: rhel-6.5_jeos
+        interface_ip: xxxxxxxxxxx
+        key_name: xxxxxxxxxx
+        metadata: {}
+        name: testgroup3_ano_inst_2_1
+        networks:
+            e2e-openstack:
+            - xxxxxxxxxxxxxx
+            - xxxxxxxxxxx
+        os-extended-volumes:volumes_attached: []
+        private_v4: xxxxxxxxxxxxxx
+        progress: 0
+        public_v4: xxxxxxxxxxx
+        public_v6: ''
+        region: ''
+        security_groups:
+        -   description: Default security group
+            id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            name: default
+            security_group_rules:
+            -   direction: ingress
+                ethertype: IPv4
+                id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                port_range_max: null
+                port_range_min: null
+                protocol: null
+                remote_ip_prefix: null
+                security_group_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            -   direction: ingress
+                ethertype: IPv4
+                id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                port_range_max: null
+                port_range_min: null
+                protocol: null
+                remote_ip_prefix: null
+                security_group_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        status: ACTIVE
+        tenant_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        updated: 'xxxxxxxxxxxxxxxxxxxx'
+        user_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        volumes: []
+-   _ansible_item_result: true
+    _ansible_no_log: false
+    changed: true
+    id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    instance:
+    - http://dashboard.xxxxxxxxx.xxx.xxxx.xxxxxx.com:5000/v2.0/
+    - xxxxxxxxxxxxx
+    - xxxxxxxxxxxxxxxxxxxx
+    - xxxxxxxxxxxxx
+    - xxxxxxx
+    - xxxxxxxxxxxxx
+    - xxxxxxxxxx
+    - xxxxxxxx
+    - xxxxxxxxxxxxx
+    - testgroup4
+    - ano_inst
+    - 0
+    invocation:
+        module_args:
+            api_timeout: 99999
+            auth:
+                auth_url: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+                password: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+                project_name: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+                username: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+            auth_type: null
+            auto_ip: true
+            availability_zone: null
+            boot_from_volume: false
+            boot_volume: null
+            cacert: null
+            cert: null
+            cloud: null
+            config_drive: false
+            endpoint_type: public
+            flavor: m1.small
+            flavor_include: null
+            flavor_ram: null
+            floating_ip_pools: null
+            floating_ips: null
+            image: rhel-6.5_jeos
+            image_exclude: (deprecated)
+            key: null
+            key_name: ci-factory
+            meta: null
+            name: testgroup4_ano_inst_0
+            network: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+            nics: []
+            region_name: null
+            scheduler_hints: null
+            security_groups:
+            - default
+            state: present
+            terminate_volume: false
+            timeout: 180
+            userdata: null
+            verify: true
+            volume_size: false
+            volumes: []
+            wait: true
+        module_name: os_server
+    openstack:
+        HUMAN_ID: true
+        NAME_ATTR: name
+        OS-DCF:diskConfig: MANUAL
+        OS-EXT-AZ:availability_zone: nova
+        OS-EXT-STS:power_state: 1
+        OS-EXT-STS:task_state: null
+        OS-EXT-STS:vm_state: active
+        OS-SRV-USG:launched_at: 'xxxxxxxxxxxxxxxxxxxxxxxxxx'
+        OS-SRV-USG:terminated_at: null
+        accessIPv4: xxxxxxxxxxxx
+        accessIPv6: ''
+        addresses:
+            e2e-openstack:
+            -   OS-EXT-IPS-MAC:mac_addr: xxxxxxxxxxxxxxxxx
+                OS-EXT-IPS:type: fixed
+                addr: xxxxxxxxxxxxxx
+                version: 4
+            -   OS-EXT-IPS-MAC:mac_addr: xxxxxxxxxxxxxxxxx
+                OS-EXT-IPS:type: floating
+                addr: xxxxxxxxxxxx
+                version: 4
+        adminPass: xxxxxxxxxxxx
+        az: nova
+        cloud: defaults
+        config_drive: ''
+        created: 'xxxxxxxxxxxxxxxxxxxx'
+        flavor:
+            id: '2'
+            name: m1.small
+        hostId: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        human_id: testgroup4_ano_inst_0
+        id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        image:
+            id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            name: xxxxxxxxxxxxx
+        interface_ip: xxxxxxxxxxxx
+        key_name: xxxxxxxxxx
+        metadata: {}
+        name: testgroup4_ano_inst_0
+        networks:
+            e2e-openstack:
+            - xxxxxxxxxxxxxx
+            - xxxxxxxxxxxx
+        os-extended-volumes:volumes_attached: []
+        private_v4: xxxxxxxxxxxxxx
+        progress: 0
+        public_v4: xxxxxxxxxxxx
+        public_v6: ''
+        region: ''
+        security_groups:
+        -   description: Default security group
+            id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            name: default
+            security_group_rules:
+            -   direction: ingress
+                ethertype: IPv4
+                id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                port_range_max: null
+                port_range_min: null
+                protocol: null
+                remote_ip_prefix: null
+                security_group_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            -   direction: ingress
+                ethertype: IPv4
+                id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                port_range_max: null
+                port_range_min: null
+                protocol: null
+                remote_ip_prefix: null
+                security_group_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        status: ACTIVE
+        tenant_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        updated: 'xxxxxxxxxxxxxxxxxxxx'
+        user_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        volumes: []
+    server:
+        HUMAN_ID: true
+        NAME_ATTR: name
+        OS-DCF:diskConfig: MANUAL
+        OS-EXT-AZ:availability_zone: nova
+        OS-EXT-STS:power_state: 1
+        OS-EXT-STS:task_state: null
+        OS-EXT-STS:vm_state: active
+        OS-SRV-USG:launched_at: 'xxxxxxxxxxxxxxxxxxxxxxxxxx'
+        OS-SRV-USG:terminated_at: null
+        accessIPv4: xxxxxxxxxxxx
+        accessIPv6: ''
+        addresses:
+            e2e-openstack:
+            -   OS-EXT-IPS-MAC:mac_addr: xxxxxxxxxxxxxxxxx
+                OS-EXT-IPS:type: fixed
+                addr: xxxxxxxxxxxxxx
+                version: 4
+            -   OS-EXT-IPS-MAC:mac_addr: xxxxxxxxxxxxxxxxx
+                OS-EXT-IPS:type: floating
+                addr: xx.x.xxx.xxx
+                version: 4
+        adminPass: xxxxxxxxxxxx
+        az: nova
+        cloud: defaults
+        config_drive: ''
+        created: 'xxxxxxxxxxxxxxxxxxxx'
+        flavor:
+            id: '2'
+            name: m1.small
+        hostId: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        human_id: testgroup4_ano_inst_0
+        id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        image:
+            id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            name: rhel-6.5_jeos
+        interface_ip: xxxxxxxxxxxx
+        key_name: ci-factory
+        metadata: {}
+        name: xxxxxxxxxxxxxxxxxxxx
+        networks:
+            e2e-openstack:
+            - xxxxxxxxxxxxxx
+            - xxxxxxxxxxxx
+        os-extended-volumes:volumes_attached: []
+        private_v4: xxxxxxxxxxxxxx
+        progress: 0
+        public_v4: xxxxxxxxxxxx
+        public_v6: ''
+        region: ''
+        security_groups:
+        -   description: Default security group
+            id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            name: default
+            security_group_rules:
+            -   direction: ingress
+                ethertype: IPv4
+                id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                port_range_max: null
+                port_range_min: null
+                protocol: null
+                remote_ip_prefix: null
+                security_group_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            -   direction: ingress
+                ethertype: IPv4
+                id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                port_range_max: null
+                port_range_min: null
+                protocol: null
+                remote_ip_prefix: null
+                security_group_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        status: ACTIVE
+        tenant_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        updated: 'xxxxxxxxxxxxxxxxxxxx'
+        user_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        volumes: []
+os_volume_res: []
+rax_server_res: []

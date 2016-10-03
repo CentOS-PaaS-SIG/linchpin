@@ -1,0 +1,15 @@
+- hosts: localhost
+  user: root
+  gather_facts: no
+  connection: local
+  tasks:
+    #Call ansible module "userinfo" with parameter "username=testuser"
+    - name: 'echo '
+      debug:
+        msg: "hello"
+    - name: 'echo2'
+      debug:
+        msg: 'ech02'
+#    - name: "hello fail"
+#      fail: 
+#        msg: "The system may not be provisioned according to the CMDB status."
