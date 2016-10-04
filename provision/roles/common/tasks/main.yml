@@ -1,14 +1,14 @@
 ---
 # This playbook contains common play that will be ran before the provisioning starts.
+- name: "Including Linchpin config vars"
+  include_vars: "../linchpin_config.yml"
+
 - name: "schema check for given topology file"
   schema_check:
     data: "{{ topology }}"
     schema: "{{ schema }}"
   register: output
   tags: schema_validation
-
-- name: "Including Linchpin config vars"
-  include_vars: "../linchpin_config.yml"
 
 - name: "set fact for saving topology_job_ids"
   set_fact:
