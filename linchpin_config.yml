@@ -8,7 +8,7 @@ inventory_playbooks:
 async: false
 async_timeout : 1000
 no_output : false
-schema: "ex_schemas/schema_v2.json"
+schema: "{{ playbook_dir }}/../ex_schemas/schema_v2.json"
 inventory_layouts_path: "inventory_layouts"
 inventory_outputs_path: "inventory_outputs"
 inventory_types: 
@@ -16,3 +16,4 @@ inventory_types:
   - "gcloud"
   - "openstack"
   - "generic"
+check_mode: no
