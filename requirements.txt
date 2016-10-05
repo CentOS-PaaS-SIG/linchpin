@@ -13,4 +13,5 @@ jsonschema==2.5.1
 ansible==2.1.0
 coverage
 nose
+shade==1.9.0
 python-openstackclient==0.8.6
