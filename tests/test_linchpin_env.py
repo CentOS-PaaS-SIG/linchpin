@@ -42,7 +42,7 @@ class TestLinchPinEnv(object):
     @with_setup(setup)
     def test_python_os_client_version(self):
         """
-        Checks for the version of ansible installed
+        Checks for the version of openstack client installed
         """
         import openstack
         version = float(openstack.__version__[0:3]) >= 0.8
@@ -51,7 +51,7 @@ class TestLinchPinEnv(object):
     @with_setup(setup)
     def test_libcloud_version(self):
         """
-        Checks for the version of ansible installed
+        Checks for the version of libcloud installed
         """
         import libcloud
         version = float(libcloud.__version__[0:3]) >= 0.20
@@ -60,7 +60,7 @@ class TestLinchPinEnv(object):
     @with_setup(setup)
     def test_jsonschema_version(self):
         """
-        Checks for the version of ansible installed
+        Checks for the version of json installed
         """
         import jsonschema
         version = float(jsonschema.__version__[0:3]) >= 2.5
@@ -69,7 +69,7 @@ class TestLinchPinEnv(object):
     @with_setup(setup)
     def test_boto_version(self):
         """
-        Checks for the version of ansible installed
+        Checks for the version of boto installed
         """
         import boto
         version = float(boto.__version__[0:3]) >= 2.4
