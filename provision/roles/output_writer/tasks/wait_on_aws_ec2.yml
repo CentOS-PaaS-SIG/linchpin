@@ -1,6 +1,6 @@
-- name: "debug task"
-  debug:
-    msg: "{{ aws_ec2_group }}"
+#- name: "debug task"
+#  debug:
+#    msg: "{{ aws_ec2_group }}"
 
 - name: "waiting on each job id"
   async_status_custom:
@@ -15,19 +15,31 @@
     async_outputs_aws_ec2: "{{ async_outputs_aws_ec2 + [job_result] }}"
   when: state == "present"
 
-- name: "filtering the jobids aws_ec2 groups"
+#- name: "filtering the jobids aws_ec2 groups"
+#  set_fact:
+#    jobids_aws_ec2 : "{{ aws_ec2_group['results'] | map(attribute='ansible_job_id') | list  }}"
+#  when: state == "absent"
+
+#- name: "this is a filtered list ideally"
+#  debug:
+#    msg: "{{ jobids_aws_ec2 }}"
+#  when: state == "absent"
+
+- name: "set_job_id"
   set_fact:
-    jobids_aws_ec2 : "{{ aws_ec2_group['results'] | map(attribute='ansible_job_id') | list  }}"
+    results : "{{ aws_ec2_group['results'] | first }}"
   when: state == "absent"
 
-- name: "this is a filtered list ideally"
-  debug:
-    msg: "{{ jobids_aws_ec2 }}"
+- name: "include wait"
+  include: wait.yml job_obj={{ item }}
+  with_items: "{{ results }}"
   when: state == "absent"
 
-#- name: "waiting on each job id"
-#  async_status_custom:
-#    jid: "{{ jobids_aws_ec2[0] }}"
+#- name: 'check on fire and forget task'
+#  async_status:
+#    jid: "{{ results['results'][0].ansible_job_id }}"
 #  register: job_result
 #  until: job_result.finished
-#  when:  jobids_aws_ec2[0] is defined and state == "absent"
+#  retries: 45
+#  when: results['results'][0].ansible_job_id is defined
+#  ignore_errors: yes
