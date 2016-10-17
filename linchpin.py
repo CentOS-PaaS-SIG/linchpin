@@ -29,7 +29,6 @@ def copy_files(path, dir_list, config):
             shutil.copy(src_file, dest)
 
 class Config(object):
-
     def __init__(self):
         self.verbose = False
         self.env = Environment(loader=PackageLoader('linchpin', 'templates'))
@@ -97,3 +96,47 @@ def get(config, topo, layout):
     if layout:
         #click.echo("list called with layouts")
         get_file(config.clipath+"/inventory_layouts/"+layout,"./layouts/")
+        copy_files(path, dir_list, config)
+    else:
+        click.echo("Invalid path to initialize !!")
+    #click.echo(os.listdir(config.clipath))
+    
+    #click.echo(config.clipath)
+
+@cli.command('list')
+@click.argument('topos', default=False, required=False)
+@click.argument('layouts', default=False, required=False)
+@pass_config
+def list(config, topos, layouts):
+    """ list module of linchpin  """
+    click.echo('linchpin list called !')
+    if topos:
+        click.echo("list called with topologies")
+    if layouts:
+        click.echo("list called with layouts")
+
+#@cli.command('topologies')
+#def topologies():
+#    """ list of topologies available """
+#    click.echo('linchpin list topologies called')
+#
+#@cli.command('layouts')
+#def layouts():
+#    """ list of topologies available """
+#    click.echo('linchpin list layouts called')
+
+#@cli.command()
+#@click.option("--string", default="World", help="test string")
+#@click.option("--repeat", default=1 , help="enter the int val")
+#@click.argument('out', type=click.File('w'), required=False)
+#@pass_config
+#def say(config, string, repeat, out):
+#    """say module of lpcli"""
+#    click.echo('Hello %s !' % string)
+#    if config.verbose:
+#        click.echo("### verbose mode ###")
+#    click.echo("Home directory is %s" % config.home_directory)
+#    click.echo(os.listdir("linch-pin"))
+#    for x in xrange(repeat):
+#        click.echo('Hello %s !' % string, file=out)
+
