@@ -13,28 +13,6 @@ def list_all_files(root_dir):
                 continue
             file_set.append(rel_file)
     return file_set
-"""
-drwxr-xr-x. 2 root root  4096 Oct 10 17:17 libvirt_xml
-drwxr-xr-x. 2 root root  4096 Oct 10 17:17 library
-drwxr-xr-x. 2 root root  4096 Oct 10 17:17 filter_plugins
-drwxr-xr-x. 2 root root  4096 Oct 10 17:17 bin
-drwxr-xr-x. 2 root root  4096 Oct 10 17:17 keystore
-drwxr-xr-x. 2 root root  4096 Oct 10 17:17 aws_cfn_templates
-drwxr-xr-x. 2 root root  4096 Oct 10 17:17 sample_outputs
-drwxr-xr-x. 2 root root  4096 Oct 10 17:17 ex_schemas
-drwxr-xr-x. 3 root root  4096 Oct 10 17:17 configure
-drwxr-xr-x. 2 root root  4096 Oct 10 17:17 plugins
-drwxr-xr-x. 4 root root  4096 Oct 10 17:17 docs
-drwxr-xr-x. 2 root root  4096 Oct 10 17:17 inventory
-drwxr-xr-x. 6 root root  4096 Oct 11 10:28 tests
-drwxr-xr-x. 2 root root  4096 Oct 11 10:49 inventory_layouts
-drwxr-xr-x. 2 root root  4096 Oct 12 16:43 inventory_outputs
-drwxr-xr-x. 6 root root  4096 Oct 13 12:31 provision
-drwxr-xr-x. 2 root root  4096 Oct 15 02:06 example_playbooks
-drwxr-xr-x. 2 root root  4096 Oct 16 04:38 ex_topo
-drwxr-xr-x. 2 root root  4096 Oct 16 10:26 outputs
-"""
-
 
 setup(
     name='LinchpinCli',
