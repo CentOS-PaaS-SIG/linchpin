@@ -102,15 +102,15 @@ os_server_res:
     changed: true
     id: f5832fcc-4e1b-442d-8be8-ba5e3783e7f2
     instance:
-    - http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/
-    - e2e-openstack
-    - rgHdUfMqshXWSBYdlfIp
-    - e2e-openstack
+    - <endpoint>
+    - <username>
+    - <password>
+    - <username>
     - present
     - rhel-6.5_jeos
-    - ci-factory
+    - <ssh-key-reference>
     - m1.small
-    - e2e-openstack
+    - <network>
     - testgroup2
     - ano_inst
     - 0
@@ -140,7 +140,7 @@ os_server_res:
             image: rhel-6.5_jeos
             image_exclude: (deprecated)
             key: null
-            key_name: ci-factory
+            key_name: <ssh-key-reference>
             meta: null
             name: testgroup2_ano_inst_0
             network: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
@@ -171,7 +171,7 @@ os_server_res:
         accessIPv4: 10.8.183.233
         accessIPv6: ''
         addresses:
-            e2e-openstack:
+            <network>:
             -   OS-EXT-IPS-MAC:mac_addr: fa:16:3e:48:cf:fb
                 OS-EXT-IPS:type: fixed
                 addr: 172.16.100.26
@@ -195,11 +195,11 @@ os_server_res:
             id: 3bcfd17c-6bf0-4134-ae7f-80bded8b46fd
             name: rhel-6.5_jeos
         interface_ip: 10.8.183.233
-        key_name: ci-factory
+        key_name: <ssh-key-reference>
         metadata: {}
         name: testgroup2_ano_inst_0
         networks:
-            e2e-openstack:
+            <network>:
             - 172.16.100.26
             - 10.8.183.233
         os-extended-volumes:volumes_attached: []
@@ -247,7 +247,7 @@ os_server_res:
         accessIPv4: 10.8.183.233
         accessIPv6: ''
         addresses:
-            e2e-openstack:
+            <network>:
             -   OS-EXT-IPS-MAC:mac_addr: fa:16:3e:48:cf:fb
                 OS-EXT-IPS:type: fixed
                 addr: 172.16.100.26
@@ -271,11 +271,11 @@ os_server_res:
             id: 3bcfd17c-6bf0-4134-ae7f-80bded8b46fd
             name: rhel-6.5_jeos
         interface_ip: 10.8.183.233
-        key_name: ci-factory
+        key_name: <ssh-key-reference>
         metadata: {}
         name: testgroup2_ano_inst_0
         networks:
-            e2e-openstack:
+            <network>:
             - 172.16.100.26
             - 10.8.183.233
         os-extended-volumes:volumes_attached: []
