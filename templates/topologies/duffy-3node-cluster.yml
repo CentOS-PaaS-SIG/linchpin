@@ -1,0 +1,14 @@
+---
+topology_name: "duffy_3node_cluster" # topology name
+resource_groups:
+  -
+    resource_group_name: "duffy_3node_cluster"
+    res_group_type: "duffy"
+    res_defs:
+      -
+        res_name: "duffy_nodes"
+        res_type: "duffy"
+        version: 7
+        arch: "x86_64"
+        count: 3
+    assoc_creds: "duffy_creds"
