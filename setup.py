@@ -62,6 +62,7 @@ setup(
           'provision',
           'ex_topo',
           'outputs',
+          'templates',
     ],
     package_data={
           'library': list_all_files('library'),
@@ -76,6 +77,7 @@ setup(
           'provision': list_all_files('provision'),
           'ex_topo': list_all_files('ex_topo'),
           'outputs': list_all_files('outputs'),
+          'templates': list_all_files('templates'),
     },
     data_files=[
          ('/etc/linchpin', ['linchpin_config.yml']),
