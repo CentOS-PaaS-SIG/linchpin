@@ -104,8 +104,8 @@ def get(config, topo, layout):
     #click.echo(config.clipath)
 
 @cli.command('list')
-@click.argument('topos', default=False, required=False)
-@click.argument('layouts', default=False, required=False)
+@click.option('--topos', default=False, required=False, is_flag=True)
+@click.option('--layouts', default=False, required=False, is_flag=True)
 @pass_config
 def list(config, topos, layouts):
     """ list module of linchpin  """
@@ -115,28 +115,11 @@ def list(config, topos, layouts):
     if layouts:
         click.echo("list called with layouts")
 
-#@cli.command('topologies')
-#def topologies():
-#    """ list of topologies available """
-#    click.echo('linchpin list topologies called')
-#
-#@cli.command('layouts')
-#def layouts():
-#    """ list of topologies available """
-#    click.echo('linchpin list layouts called')
-
-#@cli.command()
-#@click.option("--string", default="World", help="test string")
-#@click.option("--repeat", default=1 , help="enter the int val")
-#@click.argument('out', type=click.File('w'), required=False)
-#@pass_config
-#def say(config, string, repeat, out):
-#    """say module of lpcli"""
-#    click.echo('Hello %s !' % string)
-#    if config.verbose:
-#        click.echo("### verbose mode ###")
-#    click.echo("Home directory is %s" % config.home_directory)
-#    click.echo(os.listdir("linch-pin"))
-#    for x in xrange(repeat):
-#        click.echo('Hello %s !' % string, file=out)
+@cli.command()
+@click.option("--topo", default=False, required=False,  help="gets the topology by name")
+@click.option("--layout", default=False, required=False,  help="gets the layout by name")
+@pass_config
+def get(config, topo):
+    """ get module of linchpin cli"""
+    click.echo('get module called !')
 
