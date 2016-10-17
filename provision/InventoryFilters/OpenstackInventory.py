@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import abc
+import json
 import StringIO
 from ansible import errors
 try:
@@ -11,16 +12,24 @@ from InventoryFilter import InventoryFilter
 
 class OpenstackInventory(InventoryFilter):
 
-    def get_host_ips(self, topo):
+    def get_host_ips(self, topo, async_flag):
         host_public_ips = []
-        for group in topo['os_server_res']:
-            host_public_ips.append(str(group['server']['public_v4']))
+        if async_flag:
+            for group in topo['os_server_res']:
+                for result in  group["results"]:
+                    output = open(result["item"]["results_file"],"r").read()
+                    output = json.loads(output)
+                    host_public_ips.append(str(output['server']['public_v4']))
+        else:
+            for group in topo['os_server_res']:
+                host_public_ips.append(str(group['server']['public_v4']))
         return host_public_ips
 
-    def get_inventory(self, topo, layout):
+    def get_inventory(self, topo, async_flag, layout):
         # calculating number of groups from topology file
+        
         no_of_groups = len(topo['os_server_res'])
-        inven_hosts = self.get_host_ips(topo)
+        inven_hosts = self.get_host_ips(topo, async_flag)
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)
         self.add_sections(host_groups)

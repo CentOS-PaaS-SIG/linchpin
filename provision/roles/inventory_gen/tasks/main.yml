@@ -1,22 +1,5 @@
 ---
 #includes the output file of linchpin
-- name: "Debug statement to checkout the base folder of linchoin project"
-  debug:
-    msg: "{{ playbook_dir | dirname }}/{{ outputfolder_path }}/"
-
-#extracting the output folder from output folder path
-- name: "set default topology output folder"
-  set_fact:
-    outputfolder_path: "{{ playbook_dir | dirname }}/{{ outputfolder_path }}"
-
-# set default inventory layout folder
-- name: "set default inventory layouts folder"
-  set_fact:
-    inventory_layouts_path: "{{ playbook_dir | dirname }}/{{ inventory_layouts_path }}"
-
-- name: "set default inventory outputs folder"
-  set_fact:
-    inventory_outputs_path: "{{ playbook_dir | dirname }}/{{ inventory_outputs_path }}"
 
 - include_vars: "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output' ) }}"
 
@@ -38,6 +21,11 @@
   include_vars: "{{ inventory_layout_file | default( inventory_layouts_path+'/'+'openshift-3node-cluster.yml') }}"
 
 # updating inventory output file with the absoulte path configured if given : can be overridden by  extravar inventory_output_file currently
+- name: "DEBUG:: inventory_outputs_path ##########"
+  debug:
+    msg: "{{ inventory_outputs_path }}"
+  when: state == "present" and inventory_layout is defined
+
 - name: "Updating inventory_output_file with the absolute path"
   set_fact:
     inventory_output_file: "{{ inventory_output_file | default( inventory_outputs_path+'/'+output.output.data.topology_name+'.inventory' ) }}"
