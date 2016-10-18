@@ -120,4 +120,10 @@ def list(config, topos, layouts):
 @pass_config
 def get(config, topo, layout):
     """ get module of linchpin cli"""
-    click.echo('get module called !')
+    #click.echo('get module called !')
+    if topo:
+        #click.echo("getting the topology file")
+        get_file(config.clipath+"/ex_topo/"+topo,"./topologies/")
+    if layout:
+        #click.echo("list called with layouts")
+        get_file(config.clipath+"/inventory_layouts/"+layout,"./layouts/")
