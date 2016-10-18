@@ -72,7 +72,7 @@ def list(config, topos, layouts):
 @click.option("--topo", default=False, required=False,  help="gets the topology by name")
 @click.option("--layout", default=False, required=False,  help="gets the layout by name")
 @pass_config
-def get(config, topo):
+def get(config, topo, layout):
     """ get module of linchpin cli"""
     click.echo('get module called !')
 
