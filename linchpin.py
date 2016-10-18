@@ -54,8 +54,6 @@ def init(config, path):
         os.mkdir(path+"/topologies")
         os.mkdir(path+"/layouts")
         dir_list = ["topologies","layouts"]
-        import pdb
-        pdb.set_trace()
         copy_files(path, dir_list, config)
     else:
         click.echo("Invalid path to initialize !!")
