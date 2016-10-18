@@ -1,7 +1,14 @@
 import os
+import os.path
 import click 
 from jinja2 import Environment, PackageLoader
 import shutil, errno
+
+def list_files(path):
+    files =  os.listdir(path)
+    for filename in files:
+        click.echo(filename)
+
 def copy_files(path, dir_list, config):
     for direc in dir_list:
         dest = path+"/"+direc+"/"
@@ -52,9 +59,6 @@ def init(config, path):
         copy_files(path, dir_list, config)
     else:
         click.echo("Invalid path to initialize !!")
-    #click.echo(os.listdir(config.clipath))
-    
-    #click.echo(config.clipath)
 
 @cli.command('list')
 @click.option('--topos', default=False, required=False, is_flag=True)
@@ -64,9 +68,11 @@ def list(config, topos, layouts):
     """ list module of linchpin  """
     click.echo('linchpin list called !')
     if topos:
-        click.echo("list called with topologies")
+        #click.echo("list called with topologies")
+        list_files(config.clipath+"/ex_topo")
     if layouts:
-        click.echo("list called with layouts")
+        #click.echo("list called with layouts")
+        list_files(config.clipath+"/inventory_layouts")
 
 @cli.command()
 @click.option("--topo", default=False, required=False,  help="gets the topology by name")
@@ -75,4 +81,3 @@ def list(config, topos, layouts):
 def get(config, topo, layout):
     """ get module of linchpin cli"""
     click.echo('get module called !')
-
