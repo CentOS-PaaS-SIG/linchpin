@@ -9,6 +9,17 @@ def list_files(path):
     for filename in files:
         click.echo(filename)
 
+def get_file(src, dest):
+    try:
+        fd = open(src,"r")
+        name = fd.name.split("/")[-1]
+        inp = fd.read()
+        open(dest+name,"w").write(inp)
+        fd.close()
+    except Exception as e:
+        click.echo("get file aborted !!!")
+        click.echo(str(e))
+
 def copy_files(path, dir_list, config):
     for direc in dir_list:
         dest = path+"/"+direc+"/"
@@ -18,13 +29,14 @@ def copy_files(path, dir_list, config):
             shutil.copy(src_file, dest)
 
 class Config(object):
-    
+
     def __init__(self):
         self.verbose = False
         self.env = Environment(loader=PackageLoader('linchpin', 'templates'))
         self.linchpinfile = self.env.get_template('linchpin.lpf.j2')
         self.clipath = os.path.dirname(os.path.realpath(__file__))
         self.dir_list = ["layouts","topologies"]
+
 pass_config = click.make_pass_decorator(Config, ensure=True)
 
 @click.group(chain=True)
@@ -64,7 +76,7 @@ def init(config, path):
 @pass_config
 def list(config, topos, layouts):
     """ list module of linchpin  """
-    click.echo('linchpin list called !')
+    #click.echo('linchpin list called !')
     if topos:
         #click.echo("list called with topologies")
         list_files(config.clipath+"/ex_topo")
@@ -78,4 +90,10 @@ def list(config, topos, layouts):
 @pass_config
 def get(config, topo, layout):
     """ get module of linchpin cli"""
-    click.echo('get module called !')
+    #click.echo('get module called !')
+    if topo:
+        #click.echo("getting the topology file")
+        get_file(config.clipath+"/ex_topo/"+topo,"./topologies/")
+    if layout:
+        #click.echo("list called with layouts")
+        get_file(config.clipath+"/inventory_layouts/"+layout,"./layouts/")
