@@ -12,9 +12,9 @@ from InventoryFilter import InventoryFilter
 
 class OpenstackInventory(InventoryFilter):
 
-    def get_host_ips(self, topo, async_flag):
+    def get_host_ips(self, topo, async_flag=False):
         host_public_ips = []
-        if async_flag:
+        if async_flag==True:
             for group in topo['os_server_res']:
                 for result in  group["results"]:
                     output = open(result["item"]["results_file"],"r").read()

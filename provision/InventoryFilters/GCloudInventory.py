@@ -20,7 +20,7 @@ class GCloudInventory(InventoryFilter):
 
     def get_inventory(self, topo, layout):
         # get inventory hosts
-        inven_hosts = self.get_host_ips(topo)
+        inven_hosts = self.get_host_ips(topo, layout)
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)
         self.add_sections(host_groups)
