@@ -16,7 +16,7 @@ class InventoryFilter(object):
         self.config = ConfigParser(allow_no_value=True) 
 
     @abc.abstractmethod
-    def get_host_ips(self, topo, layout):
+    def get_host_ips(self, topo):
         pass
 
     @abc.abstractmethod
