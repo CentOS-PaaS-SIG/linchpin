@@ -29,8 +29,8 @@ inventory_layout:
         debug_level: 2
         ansible_sudo: False
         ansible_ssh_user: root
-        openshift_override_hostname_check: True
-        openshift_set_hostname: True
+        openshift_override_hostname_check: 'True'
+        openshift_set_hostname: 'True'
       children:
         - masters
         - nodes

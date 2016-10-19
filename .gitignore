@@ -7,7 +7,7 @@ ansible.cfg
 docs/build/
 
 # generated output and inventory files
-*.inventory
+*.inventory*
 *.output
 
 # local inventory files containing user-specific environment data

@@ -3,10 +3,12 @@ import abc
 import json
 import StringIO
 from ansible import errors
+
 try:
     from configparser import ConfigParser
 except ImportError:
     from ConfigParser import ConfigParser
+
 from InventoryFilter import InventoryFilter
 
 
@@ -27,7 +29,7 @@ class OpenstackInventory(InventoryFilter):
 
     def get_inventory(self, topo, async_flag, layout):
         # calculating number of groups from topology file
-        
+
         no_of_groups = len(topo['os_server_res'])
         inven_hosts = self.get_host_ips(topo, async_flag)
         # adding sections to respective host groups
