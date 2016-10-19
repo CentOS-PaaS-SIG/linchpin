@@ -28,7 +28,6 @@ class OpenstackInventory(InventoryFilter):
         return host_public_ips
 
     def get_inventory(self, topo, async_flag, layout):
-
         if len(topo['os_server_res'])== 0:
             return "" 
         no_of_groups = len(topo['os_server_res'])
