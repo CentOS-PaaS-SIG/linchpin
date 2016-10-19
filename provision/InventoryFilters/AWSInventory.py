@@ -2,16 +2,19 @@
 import abc
 import StringIO
 from ansible import errors
+
 try:
     from configparser import ConfigParser
 except ImportError:
     from ConfigParser import ConfigParser
+
 from InventoryFilter import InventoryFilter
 
 
 class AWSInventory(InventoryFilter):
-    
+
     def get_host_ips(self, topo):
+
         host_public_ips = []
         for group in topo['aws_ec2_res']:
             for instance in group['instances']:
@@ -19,6 +22,7 @@ class AWSInventory(InventoryFilter):
         return host_public_ips
 
     def get_inventory(self, topo, layout):
+
         inven_hosts = self.get_host_ips(topo)
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)

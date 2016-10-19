@@ -1,19 +1,24 @@
 #!/usr/bin/env python
+
 import abc
 import StringIO
 from ansible import errors
+
 try:
     from configparser import ConfigParser
 except ImportError:
     from ConfigParser import ConfigParser
+
 from AWSInventory import AWSInventory
 from OpenstackInventory import OpenstackInventory
 from GCloudInventory import GCloudInventory
+from DuffyInventory import DuffyInventory
 from InventoryFilter import InventoryFilter
-from InventoryProviders import get_driver, get_all_drivers 
+from InventoryProviders import get_driver, get_all_drivers
 
 
 class GenericInventory(InventoryFilter):
+
     def __init__(self):
         InventoryFilter.__init__(self)
         self.filter_classes = get_all_drivers()
