@@ -28,8 +28,9 @@ class OpenstackInventory(InventoryFilter):
         return host_public_ips
 
     def get_inventory(self, topo, async_flag, layout):
-        # calculating number of groups from topology file
 
+        if len(topo['os_server_res'])== 0:
+            return "" 
         no_of_groups = len(topo['os_server_res'])
         inven_hosts = self.get_host_ips(topo, async_flag)
         # adding sections to respective host groups
