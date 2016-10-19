@@ -10,10 +10,11 @@ async_timeout : 1000
 no_output : false
 schema: "{{ playbook_dir }}/../ex_schemas/schema_v2.json"
 inventory_layouts_path: "{{ playbook_dir }}/../inventory_layouts"
-inventory_outputs_path: "{{ playbook_dir }}/../inventory_outputs"
+inventory_outputs_path: "{{ playbook_dir }}/../inventories"
 inventory_types: 
   - "aws"
   - "gcloud"
   - "openstack"
+  - "duffy"
   - "generic"
 check_mode: no

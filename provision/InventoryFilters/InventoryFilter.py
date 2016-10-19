@@ -2,6 +2,7 @@
 import abc
 import StringIO
 from ansible import errors
+
 try:
     from configparser import ConfigParser
 except ImportError:
@@ -10,14 +11,14 @@ except ImportError:
 
 class InventoryFilter(object):
     __metaclass__ = abc.ABCMeta
-    
+
     def __init__(self):
         self.config = ConfigParser(allow_no_value=True) 
 
     @abc.abstractmethod
     def get_host_ips(self, topo):
         pass
-    
+
     @abc.abstractmethod
     def get_inventory(self, topo, layout):
         pass
