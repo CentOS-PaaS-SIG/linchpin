@@ -1,3 +1,13 @@
+#The following example illustrates the linchpinfile , ie., lpf
+#SYNTAX:
+#component_name:
+#    topology_name: <string>  # refers to the name topology file either in package or local topologies folder
+#    inventory_layout: <string> # refers to name of the inventory layout in package or local layouts folder
+#on linchpin rise ,  the folder structure is created as follows
+# component_name:
+# ---- outputs
+# ---- keystore
+# ---- inventory
 across2clouds:
  topology_name: openshift_aws_5node
  inventory_layout_file: openshift_layout_with_5nodes
