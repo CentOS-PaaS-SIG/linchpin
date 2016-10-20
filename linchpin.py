@@ -3,6 +3,31 @@ import os.path
 import click 
 from jinja2 import Environment, PackageLoader
 import shutil, errno
+import sys
+import json
+import pdb
+import ansible
+from collections import namedtuple
+from ansible.parsing.dataloader import DataLoader
+from ansible.vars import VariableManager
+from ansible.inventory import Inventory
+from ansible.executor.playbook_executor import PlaybookExecutor
+
+MSGS = {
+"ERROR:001": "No lpf files found. Please use linchpin init to initailise " 
+}
+
+
+def display(message, m_type="print"):
+    if m_type == "print":
+        raise Exception(message+":"+MSGS[message]) 
+
+def list_by_ext(dir_path, ext):
+    files = []
+    for file in os.listdir(dir_path):
+        if file.endswith(ext):
+            files.append(dir_path+"/"+file)
+    return files
 
 def list_files(path):
     files =  os.listdir(path)
@@ -35,6 +60,16 @@ class Config(object):
         self.linchpinfile = self.env.get_template('linchpin.lpf.j2')
         self.clipath = os.path.dirname(os.path.realpath(__file__))
         self.dir_list = ["layouts","topologies"]
+        self.variable_manager = VariableManager()
+        self.loader = DataLoader()
+        self.inventory = Inventory(loader=self.loader, variable_manager=self.variable_manager,  host_list=['localhost'])
+        Options = namedtuple('Options', ['listtags', 'listtasks', 'listhosts', 'syntax', 'connection','module_path', 'forks', 'remote_user', 'private_key_file', 'ssh_common_args', 'ssh_extra_args', 'sftp_extra_args', 'scp_extra_args', 'become', 'become_method', 'become_user', 'verbosity', 'check'])
+        self.playbook_path = 'playbooks/test_playbook.yml'
+        self.options = Options(listtags=False, listtasks=False, listhosts=False, syntax=False, connection='ssh', module_path=None, forks=100, remote_user='slotlocker', private_key_file=None, ssh_common_args=None, ssh_extra_args=None, sftp_extra_args=None, scp_extra_args=None, become=True, become_method=None, become_user='root', verbosity=3, check=False)
+        #variable_manager.extra_vars = {'hosts': 'mywebserver'} # This can accomodate various other command line arguments.`
+        #passwords = {}
+        #pbex = PlaybookExecutor(playbooks=[playbook_path], inventory=inventory, variable_manager=variable_manager, loader=loader, options=options, passwords=passwords)
+        #results = pbex.run()
 
 pass_config = click.make_pass_decorator(Config, ensure=True)
 
@@ -69,7 +104,7 @@ def init(config, path):
     else:
         click.echo("Invalid path to initialize !!")
 
-@cli.command('list')
+@cli.command()
 @click.option('--topos', default=False, required=False, is_flag=True)
 @click.option('--layouts', default=False, required=False, is_flag=True)
 @pass_config
@@ -96,3 +131,19 @@ def get(config, topo, layout):
     if layout:
         #click.echo("list called with layouts")
         get_file(config.clipath+"/inventory_layouts/"+layout,"./layouts/")
+
+@cli.command()
+@pass_config
+def rise(config ):
+    """ rise module of linchpin cli"""
+    config.variable_manager.extra_vars = {}
+    playbook_path = config.clipath+"/provision/site.yml"
+    init_dir = os.getcwd()
+    lpfs = list_by_ext(init_dir,".lpf")
+    if len(lpfs) == 0:
+        display("ERROR:001")
+    inventory = Inventory(loader=config.loader, variable_manager=config.variable_manager,  host_list=[])
+    config.variable_manager.extra_vars = {"linchpin_config": "/etc/linchpin/linchpin_config.yml"} 
+    passwords = {}
+    pbex = PlaybookExecutor(playbooks=[playbook_path], inventory=inventory, variable_manager=config.variable_manager, loader=config.loader, options=config.options, passwords=passwords)
+    results = pbex.run()
