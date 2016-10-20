@@ -43,8 +43,8 @@ class InventoryFilter(object):
         for section in section_list:
             self.config.add_section(section)
         # adding a default section all
-        self.config.add_section("all")
-
+        if "all" not in self.config.sections():
+            self.config.add_section("all")
     def set_children(self, inv):
         if 'host_groups' not in inv.keys():
             return
