@@ -15,6 +15,7 @@ from ansible.executor.playbook_executor import PlaybookExecutor
 
 MSGS = {
 "ERROR:001": "No lpf files found. Please use linchpin init to initailise ", 
+"ERROR:001": "Multiple lpf files found. Please use linchpin rise with --lpf <path> ", 
 "WARNING:001": "lpf file structure found current directory. Would you like to continue ?(y/n) " 
 }
 
@@ -73,6 +74,9 @@ def checkpaths():
     for f in layout_files:
         if f in os.listdir(cur_dir):
             return True
+
+def invoke_linchpin(config):
+    pass
 
 class Config(object):
     def __init__(self):
@@ -158,8 +162,9 @@ def get(config, topo, layout):
         get_file(config.clipath+"/inventory_layouts/"+layout,"./layouts/")
 
 @cli.command()
+@click.option("--lpf", default=False, required=False,  help="gets the topology by name")
 @pass_config
-def rise(config ):
+def rise(config, lpf):
     """ rise module of linchpin cli"""
     config.variable_manager.extra_vars = {}
     playbook_path = config.clipath+"/provision/site.yml"
@@ -167,6 +172,9 @@ def rise(config ):
     lpfs = list_by_ext(init_dir,".lpf")
     if len(lpfs) == 0:
         display("ERROR:001")
+    if len(lpfs) > 1:
+        display("ERROR:002") 
+    lpf = lpfs[0]
     inventory = Inventory(loader=config.loader, variable_manager=config.variable_manager,  host_list=[])
     config.variable_manager.extra_vars = {"linchpin_config": "/etc/linchpin/linchpin_config.yml"} 
     passwords = {}
