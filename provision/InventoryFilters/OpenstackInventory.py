@@ -33,7 +33,6 @@ class OpenstackInventory(InventoryFilter):
         if len(topo['os_server_res'])== 0:
             return ""
 
-        # calculating number of groups from topology file
         no_of_groups = len(topo['os_server_res'])
         inven_hosts = self.get_host_ips(topo, async_flag)
         # adding sections to respective host groups
