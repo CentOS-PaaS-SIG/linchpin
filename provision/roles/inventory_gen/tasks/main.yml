@@ -28,7 +28,7 @@
 
 - name: "Updating inventory_output_file with the absolute path"
   set_fact:
-    inventory_output_file: "{{ inventory_output_file | default( inventory_outputs_path+'/'+output.output.data.topology_name+'.inventory' ) }}"
+    inventory_output_file: "{{ inventory_output_file | default( inventory_outputs_path+'/'+output.output.data.topology_name ) }}"
 
 # Generating inventory based on inventory type 
 # Note: inventory type is configured in linchpin_config.yml can be overridden extravar inventory_type
