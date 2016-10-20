@@ -2,6 +2,7 @@
 import abc
 import StringIO
 from ansible import errors
+
 try:
     from configparser import ConfigParser
 except ImportError:
@@ -10,14 +11,14 @@ except ImportError:
 
 class InventoryFilter(object):
     __metaclass__ = abc.ABCMeta
-    
+
     def __init__(self):
         self.config = ConfigParser(allow_no_value=True) 
 
     @abc.abstractmethod
     def get_host_ips(self, topo):
         pass
-    
+
     @abc.abstractmethod
     def get_inventory(self, topo, layout):
         pass
@@ -45,6 +46,8 @@ class InventoryFilter(object):
         self.config.add_section("all")
 
     def set_children(self, inv):
+        if 'host_groups' not in inv.keys():
+            return
         for host_group in inv['host_groups']:
             if "children" in inv['host_groups'][host_group]:
                 self.config.add_section(host_group+":"+"children")
@@ -52,6 +55,8 @@ class InventoryFilter(object):
                     self.config.set(host_group+":"+"children", child)
 
     def set_vars(self, inv):
+        if 'host_groups' not in inv.keys():
+            return
         for host_group in inv['host_groups']:
             if "vars" in inv['host_groups'][host_group]:
                 self.config.add_section(host_group+":"+"vars")
