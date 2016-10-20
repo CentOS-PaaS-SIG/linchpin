@@ -38,7 +38,7 @@
 - name: "Generate inventories"
   template:
     src: "templates/{{ item.0 }}_inventory_formatter.j2"
-    dest: "{{ item.1 }}.{{ item.0 }}"
+    dest: "{{ item.1 }}.{{ item.0 }}.inventory"
   with_nested:
     - "{{ inventory_types }}"
     - ["{{ inventory_output_file }}"]
