@@ -14,13 +14,26 @@ from ansible.inventory import Inventory
 from ansible.executor.playbook_executor import PlaybookExecutor
 
 MSGS = {
-"ERROR:001": "No lpf files found. Please use linchpin init to initailise " 
+"ERROR:001": "No lpf files found. Please use linchpin init to initailise ", 
+"WARNING:001": "lpf file structure found current directory. Would you like to continue ?(y/n) " 
 }
 
+def mkdir(dir_path):
+    if os.path.exists(dir_path):
+        shutil.rmtree(dir_path)
+    os.makedirs(dir_path)
 
 def display(message, m_type="print"):
     if m_type == "print":
-        raise Exception(message+":"+MSGS[message]) 
+        click.echo(message+":"+MSGS[message])
+    if m_type == "prompt":
+        while True:
+            reply = raw_input(message+":"+MSGS[message])
+            if (reply.lower() == "y" or reply.lower() == "yes"):
+                return True
+            elif (reply.lower() == "n" or reply.lower() == "no"):
+                sys.exit(0)
+    sys.exit(0)
 
 def list_by_ext(dir_path, ext):
     files = []
@@ -52,6 +65,14 @@ def copy_files(path, dir_list, config):
         for filename in os.listdir(src):
             src_file = src+filename
             shutil.copy(src_file, dest)
+
+def checkpaths():
+    cur_dir = os.getcwd()
+    print os.listdir(cur_dir)
+    layout_files = ['layouts', 'topologies', 'linchfile.lpf']
+    for f in layout_files:
+        if f in os.listdir(cur_dir):
+            return True
 
 class Config(object):
     def __init__(self):
@@ -92,13 +113,17 @@ def cli(config, verbose, home_directory):
 def init(config, path):
     """ init module of linchpin """
     click.echo('Initailising the templates for linchpin file !')
+    if checkpaths():
+       reply = display("WARNING:001","prompt")
+       if not reply:
+           sys.exit(0)
     if config.verbose:
         click.echo("### verbose mode ###")
     if os.path.isdir(path):
         path = path.strip("/")
         config.linchpinfile.stream().dump(path+'/'+'linchfile.lpf')
-        os.mkdir(path+"/topologies")
-        os.mkdir(path+"/layouts")
+        mkdir(path+"/topologies")
+        mkdir(path+"/layouts")
         dir_list = ["topologies","layouts"]
         copy_files(path, dir_list, config)
     else:
