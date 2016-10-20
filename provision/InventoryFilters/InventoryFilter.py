@@ -46,6 +46,8 @@ class InventoryFilter(object):
         self.config.add_section("all")
 
     def set_children(self, inv):
+        if 'host_groups' not in inv.keys():
+            return
         for host_group in inv['host_groups']:
             if "children" in inv['host_groups'][host_group]:
                 self.config.add_section(host_group+":"+"children")
@@ -53,6 +55,8 @@ class InventoryFilter(object):
                     self.config.set(host_group+":"+"children", child)
 
     def set_vars(self, inv):
+        if 'host_groups' not in inv.keys():
+            return
         for host_group in inv['host_groups']:
             if "vars" in inv['host_groups'][host_group]:
                 self.config.add_section(host_group+":"+"vars")
