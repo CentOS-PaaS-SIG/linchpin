@@ -19,7 +19,7 @@ class GCloudInventory(InventoryFilter):
         return host_public_ips
 
     def get_inventory(self, topo, layout):
-        if len(topo['gcloud_gce_res']) == 0:
+        if len(topo['gcloud_gce_res']) == 0 or type(topo['gcloud_gce_res']) is str:
             return ""
         # get inventory hosts
         inven_hosts = self.get_host_ips(topo)
