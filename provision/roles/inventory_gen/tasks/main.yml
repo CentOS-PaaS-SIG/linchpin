@@ -30,16 +30,7 @@
   set_fact:
     inventory_output_file: "{{ inventory_output_file | default( inventory_outputs_path+'/'+output.output.data.topology_name ) }}"
 
-- debug:
-    msg: "{{ topology_outputs | duffy_inv(inventory_layout)}}"
-
-# Generating inventory based on inventory type
-# Note: inventory type is configured in linchpin_config.yml can be overridden extravar inventory_type
-- name: "Generate inventories"
+- name: "Generate Generic Inventory"
   template:
-    src: "templates/{{ item.0 }}_inventory_formatter.j2"
-    dest: "{{ item.1 }}.{{ item.0 }}.inventory"
-  with_nested:
-    - "{{ inventory_types }}"
-    - ["{{ inventory_output_file }}"]
-  when: state == "present" and inventory_layout is defined
+    src: "templates/generic_inventory_formatter.j2"
+    dest: "{{ inventory_output_file }}.inventory"
