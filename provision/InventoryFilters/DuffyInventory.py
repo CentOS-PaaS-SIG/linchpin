@@ -36,7 +36,7 @@ class DuffyInventory(InventoryFilter):
         return config
 
     def get_inventory(self, topo, layout):
-        if len(topo['duffy_res']) == 0 or type(topo['duffy_res']) in [str, unicode]:
+        if len(topo['duffy_res']) == 0 :
             return ""
         inventory = ConfigParser(allow_no_value=True)
         layout_hosts = self.get_layout_hosts(layout)
