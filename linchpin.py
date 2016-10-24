@@ -1,4 +1,5 @@
 import os
+import yaml
 import os.path
 import click 
 from jinja2 import Environment, PackageLoader
@@ -12,10 +13,10 @@ from ansible.parsing.dataloader import DataLoader
 from ansible.vars import VariableManager
 from ansible.inventory import Inventory
 from ansible.executor.playbook_executor import PlaybookExecutor
-
 MSGS = {
 "ERROR:001": "No lpf files found. Please use linchpin init to initailise ", 
-"ERROR:001": "Multiple lpf files found. Please use linchpin rise with --lpf <path> ", 
+"ERROR:002": "Multiple lpf files found. Please use linchpin rise with --lpf <path> ", 
+"ERROR:003": "Topology or Layout mentioned in lpf file not found . Please check your lpf file.", 
 "WARNING:001": "lpf file structure found current directory. Would you like to continue ?(y/n) " 
 }
 
@@ -75,8 +76,40 @@ def checkpaths():
         if f in os.listdir(cur_dir):
             return True
 
-def invoke_linchpin(config):
-    pass
+def parse_lpf(lpf):
+    with open(lpf, 'r') as stream:
+        try:
+            lpf = yaml.load(stream)
+            return lpf
+        except yaml.YAMLError as exc:
+            print(exc)
+
+def invoke_linchpin(config, e_vars):
+    playbook_path = config.clipath+"/provision/site.yml"
+    inventory = Inventory(loader=config.loader, variable_manager=config.variable_manager,  host_list=[])
+    config.variable_manager.extra_vars = e_vars 
+    passwords = {}
+    pbex = PlaybookExecutor(playbooks=[playbook_path], inventory=inventory, variable_manager=config.variable_manager, loader=config.loader, options=config.options, passwords=passwords)
+    results = pbex.run()
+
+def search_path(name, path):
+    for root, dirs, files in os.walk(path):
+        if name in files:
+            return os.path.join(root, name)
+
+def get_evars(lpf):
+    e_vars = []
+    for group in lpf:
+        topology = lpf[group].get("topology") 
+        layout = lpf[group].get("layout")
+        e_var_grp = {}
+        e_var_grp["topology"] = search_path(topology, os.getcwd())
+        e_var_grp["layout"] = search_path(layout, os.getcwd() )
+        if None in  e_var_grp.values():
+            display("ERROR:003")
+        e_vars.append(e_var_grp)
+    return e_vars
+        
 
 class Config(object):
     def __init__(self):
@@ -165,9 +198,8 @@ def get(config, topo, layout):
 @click.option("--lpf", default=False, required=False,  help="gets the topology by name")
 @pass_config
 def rise(config, lpf):
-    """ rise module of linchpin cli"""
+    """ rise module of linchpin cli : still need to fix the linchpin_config and outputs, inventory_outputs paths"""
     config.variable_manager.extra_vars = {}
-    playbook_path = config.clipath+"/provision/site.yml"
     init_dir = os.getcwd()
     lpfs = list_by_ext(init_dir,".lpf")
     if len(lpfs) == 0:
@@ -175,8 +207,8 @@ def rise(config, lpf):
     if len(lpfs) > 1:
         display("ERROR:002") 
     lpf = lpfs[0]
-    inventory = Inventory(loader=config.loader, variable_manager=config.variable_manager,  host_list=[])
-    config.variable_manager.extra_vars = {"linchpin_config": "/etc/linchpin/linchpin_config.yml"} 
-    passwords = {}
-    pbex = PlaybookExecutor(playbooks=[playbook_path], inventory=inventory, variable_manager=config.variable_manager, loader=config.loader, options=config.options, passwords=passwords)
-    results = pbex.run()
+    lpf = parse_lpf(lpf)
+    e_vars_grp = get_evars(lpf)
+    for e_vars in e_vars_grp:
+        e_vars['linchpin_config'] = "/etc/linchpin/linchpin_config.yml"
+        invoke_linchpin(config, e_vars)
