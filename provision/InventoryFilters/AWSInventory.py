@@ -23,7 +23,7 @@ class AWSInventory(InventoryFilter):
 
     def get_inventory(self, topo, layout):
 
-        if len(topo['aws_ec2_res']) == 0 or type(topo['aws_ec2_res']) is str:
+        if len(topo['aws_ec2_res']) == 0 or type(topo['aws_ec2_res']) in [str, unicode]:
             return ""
         inven_hosts = self.get_host_ips(topo)
         # adding sections to respective host groups
