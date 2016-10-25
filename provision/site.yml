@@ -34,4 +34,4 @@
 - name: "inventory generation role"
   hosts: localhost
   roles:
-    - { role: 'inventory_gen', when: state == 'present' }
+    - { role: 'inventory_gen', when: state == 'present' and inventory_layout_file is defined }
