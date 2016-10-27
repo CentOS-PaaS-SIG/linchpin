@@ -6,19 +6,44 @@ from jinja2 import Environment, PackageLoader
 import shutil, errno
 import sys
 import json
+import inspect
 import pdb
 import ansible
+import pprint
+import jsonschema as jsch
 from collections import namedtuple
+from ansible import utils
 from ansible.parsing.dataloader import DataLoader
 from ansible.vars import VariableManager
 from ansible.inventory import Inventory
 from ansible.executor.playbook_executor import PlaybookExecutor
+from ansible.plugins.callback import CallbackBase
 MSGS = {
 "ERROR:001": "No lpf files found. Please use linchpin init to initailise ", 
 "ERROR:002": "Multiple lpf files found. Please use linchpin rise with --lpf <path> ", 
 "ERROR:003": "Topology or Layout mentioned in lpf file not found . Please check your lpf file.", 
 "WARNING:001": "lpf file structure found current directory. Would you like to continue ?(y/n) " 
 }
+
+PLAYBOOKS={
+"PROVISION": "site.yml",
+"TEARDOWN": "site.yml",
+"SCHEMA_CHECK": "schema_check.yml",
+
+}
+
+
+class PlaybookCallback(CallbackBase):
+    """Playbook callback"""
+
+    def __init__(self):
+        super(PlaybookCallback, self).__init__()
+        # store all results
+        self.results = []
+
+    def v2_runner_on_ok(self, result, **kwargs):
+        """Save result instead of printing it"""
+        self.results.append(result)
 
 def mkdir(dir_path):
     if os.path.exists(dir_path):
@@ -86,14 +111,19 @@ def parse_yaml(lpf):
         except yaml.YAMLError as exc:
             print(exc)
 
-def invoke_linchpin(config, e_vars):
+def invoke_linchpin(config, e_vars, playbook="PROVISION"):
     """ Invokes linchpin playbook """
-    playbook_path = config.clipath+"/provision/site.yml"
+    playbook_path = config.clipath+"/provision/"+PLAYBOOKS[playbook]
     inventory = Inventory(loader=config.loader, variable_manager=config.variable_manager,  host_list=[])
     config.variable_manager.extra_vars = e_vars 
     passwords = {}
+    utils.VERBOSITY = 4
     pbex = PlaybookExecutor(playbooks=[playbook_path], inventory=inventory, variable_manager=config.variable_manager, loader=config.loader, options=config.options, passwords=passwords)
-    results = pbex.run()
+    cb = PlaybookCallback()
+    pbex._tqm._stdout_callback = cb
+    return_code = pbex.run()
+    results = cb.results
+    return results
 
 def search_path(name, path):
     """ searches for files by name in a given path """
@@ -127,9 +157,11 @@ class Config(object):
         self.variable_manager = VariableManager()
         self.loader = DataLoader()
         self.inventory = Inventory(loader=self.loader, variable_manager=self.variable_manager,  host_list=['localhost'])
+        from ansible import utils
+        utils.VERBOSITY = 4
         Options = namedtuple('Options', ['listtags', 'listtasks', 'listhosts', 'syntax', 'connection','module_path', 'forks', 'remote_user', 'private_key_file', 'ssh_common_args', 'ssh_extra_args', 'sftp_extra_args', 'scp_extra_args', 'become', 'become_method', 'become_user', 'verbosity', 'check'])
         self.playbook_path = 'playbooks/test_playbook.yml'
-        self.options = Options(listtags=False, listtasks=False, listhosts=False, syntax=False, connection='ssh', module_path=None, forks=100, remote_user='slotlocker', private_key_file=None, ssh_common_args=None, ssh_extra_args=None, sftp_extra_args=None, scp_extra_args=None, become=True, become_method=None, become_user='root', verbosity=3, check=False)
+        self.options = Options(listtags=False, listtasks=False, listhosts=False, syntax=False, connection='ssh', module_path=None, forks=100, remote_user='test', private_key_file=None, ssh_common_args=None, ssh_extra_args=None, sftp_extra_args=None, scp_extra_args=None, become=True, become_method=None, become_user='root', verbosity=utils.VERBOSITY, check=False)
         #variable_manager.extra_vars = {'hosts': 'mywebserver'} # This can accomodate various other command line arguments.`
         #passwords = {}
         #pbex = PlaybookExecutor(playbooks=[playbook_path], inventory=inventory, variable_manager=variable_manager, loader=loader, options=options, passwords=passwords)
@@ -248,13 +280,19 @@ def drop(config, lpf):
         invoke_linchpin(config, e_vars)
 
 @cli.command()
-@click.option("--lpf",t default=False, required=False,  help="gets the topology by name")
+@click.option("--lpf", default=False, required=False,  help="gets the topology by name")
 @click.option("--layout", default=False, required=False,  help="gets the topology by name")
 @click.option("--topo", default=False, required=False,  help="gets the topology by name")
 @pass_config
 def validate(config, topo, layout , lpf):
-    """ validate module of linchpin cli : still need to fix the linchpin_config and outputs, inventory_outputs paths"""
-    pass
+    """ validate module of linchpin cli : currenly validates only topologies, need to implement lpf, layouts too"""
+    e_vars = {}
+    e_vars["schema"] = config.clipath+"/ex_schemas/schema_v3.json"
+    e_vars["data"] = topo
+    #result = invoke_linchpin(config, e_vars, "SCHEMA_CHECK")
+    result = invoke_linchpin(config, e_vars, "SCHEMA_CHECK")[-1]
+    pprint.pprint(result.__dict__)
+    
 
 @cli.command()
 @click.option("--layout", default=False, required=True,  help="layout file usually found in layout folder")
