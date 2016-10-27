@@ -13,7 +13,7 @@ description:
   - This module allows a user to validate the yaml/json provisioning topologies against json schema.
 
 options:
-  data_file:
+  data:
     description:
       path to topology file can be in json/yaml format
     required: true
@@ -21,7 +21,7 @@ options:
     description:
       format of the topology file
     default: yaml
-  schema_file:
+  schema:
     description:
       Schema to be validated against
     required: true
