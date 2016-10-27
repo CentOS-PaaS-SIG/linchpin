@@ -76,7 +76,7 @@ def checkpaths():
         if f in os.listdir(cur_dir):
             return True
 
-def parse_lpf(lpf):
+def parse_yaml(lpf):
     with open(lpf, 'r') as stream:
         try:
             lpf = yaml.load(stream)
@@ -207,7 +207,7 @@ def rise(config, lpf):
     if len(lpfs) > 1:
         display("ERROR:002") 
     lpf = lpfs[0]
-    lpf = parse_lpf(lpf)
+    lpf = parse_yaml(lpf)
     e_vars_grp = get_evars(lpf)
     for e_vars in e_vars_grp:
         """ need to change them to be a part of config obj"""
@@ -215,4 +215,28 @@ def rise(config, lpf):
         e_vars['outputfolder_path'] = init_dir+"/outputs"
         e_vars['inventory_outputs_path'] = init_dir+"/inventory"
         e_vars['state'] = "present"
+        invoke_linchpin(config, e_vars)
+
+@cli.command()
+@click.option("--lpf", default=False, required=False,  help="gets the topology by name")
+@pass_config
+def drop(config, lpf):
+    """ drop module of linchpin cli : still need to fix the linchpin_config and outputs, inventory_outputs paths"""
+    config.variable_manager.extra_vars = {}
+    init_dir = os.getcwd()
+    lpfs = list_by_ext(init_dir,".lpf")
+    if len(lpfs) == 0:
+        display("ERROR:001")
+    if len(lpfs) > 1:
+        display("ERROR:002")
+    lpf = lpfs[0]
+    lpf = parse_yaml(lpf)
+    e_vars_grp = get_evars(lpf)
+    for e_vars in e_vars_grp:
+        """ need to change them to be a part of config obj """
+        e_vars['linchpin_config'] = "/etc/linchpin/linchpin_config.yml"
+        topo_name = parse_yaml(e_vars["topology"])["topology_name"]
+        e_vars['topology_output_file'] = init_dir+"/outputs/"+topo_name+".output"
+        e_vars['inventory_outputs_path'] = init_dir+"/inventory"
+        e_vars['state'] = "absent"
         invoke_linchpin(config, e_vars)
