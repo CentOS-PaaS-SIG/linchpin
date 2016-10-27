@@ -69,6 +69,7 @@ def copy_files(path, dir_list, config):
             shutil.copy(src_file, dest)
 
 def checkpaths():
+    """ checks whether the linchpin layout already exists in cwd"""
     cur_dir = os.getcwd()
     print os.listdir(cur_dir)
     layout_files = ['layouts', 'topologies', 'linchfile.lpf']
@@ -77,6 +78,7 @@ def checkpaths():
             return True
 
 def parse_yaml(lpf):
+    """ parses yaml file into json object """
     with open(lpf, 'r') as stream:
         try:
             lpf = yaml.load(stream)
@@ -85,6 +87,7 @@ def parse_yaml(lpf):
             print(exc)
 
 def invoke_linchpin(config, e_vars):
+    """ Invokes linchpin playbook """
     playbook_path = config.clipath+"/provision/site.yml"
     inventory = Inventory(loader=config.loader, variable_manager=config.variable_manager,  host_list=[])
     config.variable_manager.extra_vars = e_vars 
@@ -93,11 +96,13 @@ def invoke_linchpin(config, e_vars):
     results = pbex.run()
 
 def search_path(name, path):
+    """ searches for files by name in a given path """
     for root, dirs, files in os.walk(path):
         if name in files:
             return os.path.join(root, name)
 
 def get_evars(lpf):
+    """ creates a group of extra vars on basis on linchpin file """
     e_vars = []
     for group in lpf:
         topology = lpf[group].get("topology") 
@@ -112,6 +117,7 @@ def get_evars(lpf):
         
 
 class Config(object):
+    """ Global config object accesible by all the click modules """
     def __init__(self):
         self.verbose = False
         self.env = Environment(loader=PackageLoader('linchpin', 'templates'))
