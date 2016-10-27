@@ -228,5 +228,9 @@ def rise(config, lpf):
     lpf = parse_lpf(lpf)
     e_vars_grp = get_evars(lpf)
     for e_vars in e_vars_grp:
+        """ need to change them to be a part of config obj"""
         e_vars['linchpin_config'] = "/etc/linchpin/linchpin_config.yml"
+        e_vars['outputfolder_path'] = init_dir+"/outputs"
+        e_vars['inventory_outputs_path'] = init_dir+"/inventory"
+        e_vars['state'] = "present"
         invoke_linchpin(config, e_vars)
