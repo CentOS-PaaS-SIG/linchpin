@@ -264,3 +264,20 @@ def drop(config, lpf):
         e_vars['inventory_outputs_path'] = init_dir+"/inventory"
         e_vars['state'] = "absent"
         invoke_linchpin(config, e_vars)
+
+@cli.command()
+@click.option("--lpf",t default=False, required=False,  help="gets the topology by name")
+@click.option("--layout", default=False, required=False,  help="gets the topology by name")
+@click.option("--topo", default=False, required=False,  help="gets the topology by name")
+@pass_config
+def validate(config, topo, layout , lpf):
+    """ validate module of linchpin cli : still need to fix the linchpin_config and outputs, inventory_outputs paths"""
+    pass
+
+@cli.command()
+@click.option("--layout", default=False, required=True,  help="layout file usually found in layout folder")
+@click.option("--output", default=False, required=True,  help="topology output file usually found in output folders")
+@pass_config
+def invgen(config, output, layout):
+    """ invgen module of linchpin cli """
+    pass
