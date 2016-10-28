@@ -213,7 +213,6 @@ def init(config, path):
     else:
         click.echo("Invalid path to initialize !!")
 
-<<<<<<< 7240826019a2a9403b46b7ec91bc7a386a13b8e8
 @cli.command()
 @click.option("--topo", default=False, required=False,  help="gets the topology by name")
 @click.option("--layout", default=False, required=False,  help="gets the layout by name")
