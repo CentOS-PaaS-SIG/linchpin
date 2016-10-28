@@ -34,7 +34,6 @@ setup(
         'jinja2',
         'tabulate',
         'jsonschema'
-        'tabulate'
     ],
     entry_points='''
         [console_scripts]
