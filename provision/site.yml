@@ -3,17 +3,20 @@
 
 - name: "including the configuration files"
   hosts: localhost
+  gather_facts: false
   tasks:
     - name: "Include linchpin_config"
       include_vars: "{{ linchpin_config | default('linchpin_config.yml')}}"
  
 - name:  "schema check and Pre Provisioning Activities  on topology_file"
   hosts: localhost
+  gather_facts: false
   roles:
     - { role: 'common' }
  
 - name:  "Provisioning resources based on resource group type"
   hosts: localhost 
+  gather_facts: false
   roles:
     - { role: 'openstack', when: os_res_grps | length > 0  }
     - { role: 'aws', when: aws_res_grps | length > 0 }
@@ -24,10 +27,12 @@
 
 - name: "Writing contents to file"
   hosts: localhost
+  gather_facts: false
   roles:
     - { role: 'output_writer'}
 
 - name: "inventory generation role"
   hosts: localhost
+  gather_facts: false
   roles:
     - { role: 'inventory_gen', when: state == 'present' and inventory_layout_file is defined }
