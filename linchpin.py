@@ -236,8 +236,12 @@ def get(config, topo, layout):
 @pass_config
 def list(config, topos, layouts):
     """ list module of linchpin  """
+<<<<<<< 82849cab468d798acec82fa48c9e03e23eecfea8
     if (not topos) and (not layouts): 
         click.echo('linchpin list usage linchpin list <--topos> <--layouts> ')
+=======
+    #click.echo('linchpin list called !')
+>>>>>>> added fancy table format to linchpin list command
     headers = ["Sno","Name"]
     if topos:
         click.echo(": TOPOLOGIES LIST :")
