@@ -11,6 +11,7 @@ import pdb
 import ansible
 import pprint
 from tabulate import tabulate
+from ansible import utils
 import jsonschema as jsch
 from collections import namedtuple
 from ansible import utils
@@ -117,7 +118,7 @@ def parse_yaml(lpf):
         except yaml.YAMLError as exc:
             print(exc)
 
-def invoke_linchpin(config, e_vars, playbook="PROVISION"):
+def invoke_linchpin(config, e_vars, playbook="PROVISION", console=True):
     """ Invokes linchpin playbook """
     playbook_path = config.clipath+"/provision/"+PLAYBOOKS[playbook]
     inventory = Inventory(loader=config.loader, variable_manager=config.variable_manager,  host_list=[])
@@ -125,10 +126,13 @@ def invoke_linchpin(config, e_vars, playbook="PROVISION"):
     passwords = {}
     utils.VERBOSITY = 4
     pbex = PlaybookExecutor(playbooks=[playbook_path], inventory=inventory, variable_manager=config.variable_manager, loader=config.loader, options=config.options, passwords=passwords)
-    cb = PlaybookCallback()
-    pbex._tqm._stdout_callback = cb
-    return_code = pbex.run()
-    results = cb.results
+    if console == False:
+        cb = PlaybookCallback()
+        pbex._tqm._stdout_callback = cb
+        return_code = pbex.run()
+        results = cb.results
+    else:
+       results = pbex.run()
     return results
 
 def search_path(name, path):
@@ -163,7 +167,6 @@ class Config(object):
         self.variable_manager = VariableManager()
         self.loader = DataLoader()
         self.inventory = Inventory(loader=self.loader, variable_manager=self.variable_manager,  host_list=['localhost'])
-        from ansible import utils
         utils.VERBOSITY = 4
         Options = namedtuple('Options', ['listtags', 'listtasks', 'listhosts', 'syntax', 'connection','module_path', 'forks', 'remote_user', 'private_key_file', 'ssh_common_args', 'ssh_extra_args', 'sftp_extra_args', 'scp_extra_args', 'become', 'become_method', 'become_user', 'verbosity', 'check'])
         self.playbook_path = 'playbooks/test_playbook.yml'
@@ -264,7 +267,7 @@ def rise(config, lpf):
         e_vars['outputfolder_path'] = init_dir+"/outputs"
         e_vars['inventory_outputs_path'] = init_dir+"/inventory"
         e_vars['state'] = "present"
-        invoke_linchpin(config, e_vars)
+        output = invoke_linchpin(config, e_vars, "PROVISION", console=True)
 
 @cli.command()
 @click.option("--lpf", default=False, required=False,  help="gets the topology by name")
@@ -288,7 +291,7 @@ def drop(config, lpf):
         e_vars['topology_output_file'] = init_dir+"/outputs/"+topo_name+".output"
         e_vars['inventory_outputs_path'] = init_dir+"/inventory"
         e_vars['state'] = "absent"
-        invoke_linchpin(config, e_vars)
+        invoke_linchpin(config, e_vars, "PROVISION", console=True)
 
 @cli.command()
 @click.option("--lpf", default=False, required=False,  help="gets the topology by name")
@@ -301,7 +304,7 @@ def validate(config, topo, layout , lpf):
     e_vars["schema"] = config.clipath+"/ex_schemas/schema_v3.json"
     e_vars["data"] = topo
     #result = invoke_linchpin(config, e_vars, "SCHEMA_CHECK")
-    result = invoke_linchpin(config, e_vars, "SCHEMA_CHECK")[-1]
+    result = invoke_linchpin(config, e_vars, "SCHEMA_CHECK", console=False)[-1]
     pprint.pprint(result.__dict__)
     
 
