@@ -10,6 +10,7 @@ import inspect
 import pdb
 import ansible
 import pprint
+from tabulate import tabulate
 import jsonschema as jsch
 from collections import namedtuple
 from ansible import utils
@@ -71,8 +72,13 @@ def list_by_ext(dir_path, ext):
 
 def list_files(path):
     files =  os.listdir(path)
+    counter = 1
+    all_files = []
     for filename in files:
-        click.echo(filename)
+        file_tuple = [counter, filename]
+        all_files.append(file_tuple)
+        counter += 1
+    return all_files
 
 def get_file(src, dest):
     try:
@@ -229,12 +235,17 @@ def list(config, topos, layouts):
     """ list module of linchpin  """
     if (not topos) and (not layouts): 
         click.echo('linchpin list usage linchpin list <--topos> <--layouts> ')
+    headers = ["Sno","Name"]
     if topos:
-        #click.echo("list called with topologies")
-        list_files(config.clipath+"/ex_topo")
+        click.echo(": TOPOLOGIES LIST :")
+        files = list_files(config.clipath+"/ex_topo")
+        print tabulate(files, headers, tablefmt="fancy_grid")
+        
     if layouts:
-        #click.echo("list called with layouts")
-        list_files(config.clipath+"/inventory_layouts")
+        click.echo(": LAYOUTS LIST :")
+        files = list_files(config.clipath+"/inventory_layouts")
+        print tabulate(files, headers, tablefmt="fancy_grid")
+        
 
 @cli.command()
 @click.option("--topo", default=False, required=False,  help="gets the topology by name")
