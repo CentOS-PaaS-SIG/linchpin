@@ -33,7 +33,6 @@ setup(
         'ansible',
         'jinja2',
         'jsonschema'
-        'tabulate'
     ],
     entry_points='''
         [console_scripts]
