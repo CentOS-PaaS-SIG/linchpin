@@ -21,7 +21,8 @@ setup(
     install_requires=[
         'Click',
         'ansible',
-        'jinja2'
+        'jinja2',
+        'tabulate'
     ],
     entry_points='''
         [console_scripts]
