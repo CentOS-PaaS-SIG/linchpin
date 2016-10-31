@@ -24,7 +24,9 @@ MSGS = {
 "ERROR:001": "No lpf files found. Please use linchpin init to initailise ", 
 "ERROR:002": "Multiple lpf files found. Please use linchpin rise with --lpf <path> ", 
 "ERROR:003": "Topology or Layout mentioned in lpf file not found . Please check your lpf file.", 
-"WARNING:001": "lpf file structure found current directory. Would you like to continue ?(y/n) " 
+"ERROR:004": "linchpin_config file not found in current directory. Please initialise it with lionchpin init or linchpin config --reset", 
+"WARNING:001": "lpf file structure found current directory. Would you like to continue ?(y/n) ", 
+"WARNING:002": "linchpin_config file already found in current directory. Would you like to reset it ?(y/n)" 
 }
 
 PLAYBOOKS={
@@ -162,6 +164,7 @@ class Config(object):
         self.verbose = False
         self.env = Environment(loader=PackageLoader('linchpin', 'templates'))
         self.linchpinfile = self.env.get_template('linchpin.lpf.j2')
+        self.lpconfig = self.env.get_template('linchpin_config.yml.j2')
         self.clipath = os.path.dirname(os.path.realpath(__file__))
         self.dir_list = ["layouts","topologies"]
         self.variable_manager = VariableManager()
@@ -206,6 +209,7 @@ def init(config, path):
     if os.path.isdir(path):
         path = path.strip("/")
         config.linchpinfile.stream().dump(path+'/'+'linchfile.lpf')
+        config.lpconfig.stream().dump(path+'/'+'linchpin_config.yml')
         mkdir(path+"/topologies")
         mkdir(path+"/layouts")
         dir_list = ["topologies","layouts"]
@@ -328,7 +332,37 @@ def validate(config, topo, layout , lpf):
     #result = invoke_linchpin(config, e_vars, "SCHEMA_CHECK")
     result = invoke_linchpin(config, e_vars, "SCHEMA_CHECK", console=False)[-1]
     pprint.pprint(result.__dict__)
-    
+
+@cli.command()
+@click.option("--init", default=False, required=False,  is_flag=True, help="Initialises config file")
+@click.option("--reset", default=False, required=False,  is_flag=True, help="sets existing config file parameters")
+@pass_config
+def config(config, reset, init):
+    """ config module of linchpin cli"""
+    if reset:
+        if os.path.isfile("./linchpin_config.yml"):
+            display("WARNING:002","prompt")
+        config.lpconfig.stream(playbook_dir=config.clipath).dump('linchpin_config.yml')
+    if init:
+        if not os.path.isfile("./linchpin_config.yml"):
+            display("ERROR:004","print")
+        conf = yaml.load(open("linchpin_config.yml","r").read())
+        for key in conf:
+            inp_str = raw_input("Enter value for "+key+":default:("+str(conf[key])+"):")
+            if inp_str != "":
+                conf[key] = inp_str
+        config.lpconfig.stream(playbook_dir=config.clipath,
+                               keystore_path=conf["keystore_path"],
+                               outputfolder_path=conf["outputfolder_path"],
+                               inventoryfolder_path=conf["inventoryfolder_path"],
+                               async=conf["async"],
+                               async_timeout=conf["async_timeout"],
+                               no_output=conf["no_output"],
+                               schema=conf["schema"],
+                               inventory_layouts_path=conf["inventory_layouts_path"],
+                               inventory_outputs_path=conf["inventory_outputs_path"],
+                               check_mode=conf["check_mode"],
+                               ).dump('linchpin_config.yml')
 
 @cli.command()
 @click.option("--layout", default=False, required=True,  help="layout file usually found in layout folder")
