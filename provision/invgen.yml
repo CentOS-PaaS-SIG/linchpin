@@ -1,0 +1,35 @@
+---
+#input: linchpin_config, output, layout
+#output: output dump to file
+- name: "Inventory Filter Testing"
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+   - "{{ linchpin_config }}"
+   - "{{ output }}"
+  tasks:
+    - include_vars: "{{ layout }}"
+    - name: "Updating topology_outputs"
+      set_fact:
+        topology_outputs:
+          os_server_res: "{{ os_server_res }}"
+          aws_ec2_res: "{{  aws_ec2_res }}"
+          gcloud_gce_res: "{{ gcloud_gce_res }}"
+          duffy_res: "{{ duffy_res }}"
+        inventory_type: "{{ inventory_type | default('generic') }}"
+    - copy: 
+        content: "{{ topology_outputs | generic_inv(inventory_layout) }}" 
+        dest: "{{ inventory_output }}"
+      when: inventory_type == "generic"
+    - copy:
+        content: "{{ topology_outputs | aws_inv(inventory_layout) }}"
+        dest: "{{ inventory_output  }}"
+      when: inventory_type == "aws"
+    - copy:
+        content: "{{ topology_outputs | os_inv(inventory_layout) }}"
+        dest: "{{ inventory_output  }}"
+      when: inventory_type == "openstack"
+    - copy:
+        content: "{{ topology_outputs | gcloud_inv(inventory_layout) }}"
+        dest: "{{ inventory_output  }}" 
+      when: inventory_type == "gcloud"
