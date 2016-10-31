@@ -1,0 +1,14 @@
+- name: "provision beaker systems"
+  bkr_server:
+    resource_group: "{{ item.res_defs }}"
+  with_items: "{{ bkr_res_grps }}"
+  register: bkr
+
+- name: "allocate beaker outputs"
+  set_fact:
+    topology_outputs_beaker_server: []
+
+- include: fetch.yml
+  with_items: "{{ bkr.results }}"
+  loop_control:
+    loop_var: bkr_result
