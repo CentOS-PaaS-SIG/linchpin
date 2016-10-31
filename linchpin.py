@@ -20,11 +20,13 @@ from ansible.vars import VariableManager
 from ansible.inventory import Inventory
 from ansible.executor.playbook_executor import PlaybookExecutor
 from ansible.plugins.callback import CallbackBase
+
 MSGS = {
 "ERROR:001": "No lpf files found. Please use linchpin init to initailise ", 
 "ERROR:002": "Multiple lpf files found. Please use linchpin rise with --lpf <path> ", 
 "ERROR:003": "Topology or Layout mentioned in lpf file not found . Please check your lpf file.", 
 "ERROR:004": "linchpin_config file not found in current directory. Please initialise it with lionchpin init or linchpin config --reset", 
+"ERROR:005": "linchpin_config file not found. In default paths. Please initialise it with lionchpin init or linchpin config --reset", 
 "WARNING:001": "lpf file structure found current directory. Would you like to continue ?(y/n) ", 
 "WARNING:002": "linchpin_config file already found in current directory. Would you like to reset it ?(y/n)" 
 }
@@ -33,9 +35,7 @@ PLAYBOOKS={
 "PROVISION": "site.yml",
 "TEARDOWN": "site.yml",
 "SCHEMA_CHECK": "schema_check.yml",
-
 }
-
 
 class PlaybookCallback(CallbackBase):
     """Playbook callback"""
@@ -105,7 +105,7 @@ def copy_files(path, dir_list, config):
 def checkpaths():
     """ checks whether the linchpin layout already exists in cwd"""
     cur_dir = os.getcwd()
-    print os.listdir(cur_dir)
+    #print os.listdir(cur_dir)
     layout_files = ['layouts', 'topologies', 'linchfile.lpf']
     for f in layout_files:
         if f in os.listdir(cur_dir):
@@ -156,7 +156,13 @@ def get_evars(lpf):
             display("ERROR:003")
         e_vars.append(e_var_grp)
     return e_vars
-        
+
+def get_config():
+    config_files = ["./linchpin_config.yml","~/.linchpin_config.yml","/etc/linchpin_config.yml"]
+    for c_file in config_files:
+        if os.path.isfile(c_file):
+            return c_file
+    display("ERROR:004")
 
 class Config(object):
     """ Global config object accesible by all the click modules """
@@ -174,10 +180,6 @@ class Config(object):
         Options = namedtuple('Options', ['listtags', 'listtasks', 'listhosts', 'syntax', 'connection','module_path', 'forks', 'remote_user', 'private_key_file', 'ssh_common_args', 'ssh_extra_args', 'sftp_extra_args', 'scp_extra_args', 'become', 'become_method', 'become_user', 'verbosity', 'check'])
         self.playbook_path = 'playbooks/test_playbook.yml'
         self.options = Options(listtags=False, listtasks=False, listhosts=False, syntax=False, connection='ssh', module_path=None, forks=100, remote_user='test', private_key_file=None, ssh_common_args=None, ssh_extra_args=None, sftp_extra_args=None, scp_extra_args=None, become=True, become_method=None, become_user='root', verbosity=utils.VERBOSITY, check=False)
-        #variable_manager.extra_vars = {'hosts': 'mywebserver'} # This can accomodate various other command line arguments.`
-        #passwords = {}
-        #pbex = PlaybookExecutor(playbooks=[playbook_path], inventory=inventory, variable_manager=variable_manager, loader=loader, options=options, passwords=passwords)
-        #results = pbex.run()
 
 pass_config = click.make_pass_decorator(Config, ensure=True)
 
@@ -289,7 +291,7 @@ def rise(config, lpf):
     e_vars_grp = get_evars(lpf)
     for e_vars in e_vars_grp:
         """ need to change them to be a part of config obj"""
-        e_vars['linchpin_config'] = "/etc/linchpin/linchpin_config.yml"
+        e_vars['linchpin_config'] = get_config()
         e_vars['outputfolder_path'] = init_dir+"/outputs"
         e_vars['inventory_outputs_path'] = init_dir+"/inventory"
         e_vars['state'] = "present"
@@ -329,7 +331,6 @@ def validate(config, topo, layout , lpf):
     e_vars = {}
     e_vars["schema"] = config.clipath+"/ex_schemas/schema_v3.json"
     e_vars["data"] = topo
-    #result = invoke_linchpin(config, e_vars, "SCHEMA_CHECK")
     result = invoke_linchpin(config, e_vars, "SCHEMA_CHECK", console=False)[-1]
     pprint.pprint(result.__dict__)
 
