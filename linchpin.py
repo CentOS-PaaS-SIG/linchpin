@@ -35,6 +35,7 @@ PLAYBOOKS={
 "PROVISION": "site.yml",
 "TEARDOWN": "site.yml",
 "SCHEMA_CHECK": "schema_check.yml",
+"INVGEN": "invgen.yml",
 }
 
 class PlaybookCallback(CallbackBase):
@@ -344,9 +345,19 @@ def config(config, reset, init):
                                ).dump('linchpin_config.yml')
 
 @cli.command()
-@click.option("--layout", default=False, required=True,  help="layout file usually found in layout folder")
-@click.option("--output", default=False, required=True,  help="topology output file usually found in output folders")
+@click.option("--invtype", default="generic", required=False, type=click.Path(), help="inventory type")
+@click.option("--invout", default=False, required=True, type=click.Path(), help="inventory output file usually found in inventory output folders")
+@click.option("--layout", default=False, required=True,  type=click.Path(), help="layout file usually found in layout folder")
+@click.option("--topoout", default=False, required=True, type=click.Path(), help="topology output file usually found in output folders")
 @pass_config
-def invgen(config, output, layout):
+def invgen(config, topoout, layout, invout, invtype):
     """ invgen module of linchpin cli """
-    pass
+    config.variable_manager.extra_vars = {}
+    init_dir = os.getcwd()
+    e_vars = {}
+    e_vars['linchpin_config'] = get_config()
+    e_vars['output'] = os.path.abspath(topoout)
+    e_vars['layout'] = os.path.abspath(layout)
+    e_vars['inventory_type'] = invtype
+    e_vars['inventory_output'] = invout
+    result = invoke_linchpin(config, e_vars, "INVGEN", console=True)
