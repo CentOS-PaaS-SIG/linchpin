@@ -66,6 +66,6 @@ setup(
           'templates': list_all_files('templates'),
     },
     data_files=[
-         ('/etc/linchpin', ['linchpin_config.yml']),
+         ('linchpin_config.yml', ['linchpin_config.yml']),
     ]
 )
