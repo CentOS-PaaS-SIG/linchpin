@@ -22,7 +22,8 @@ setup(
         'Click',
         'ansible',
         'jinja2',
-        'tabulate'
+        'tabulate',
+        'jsonschema'
     ],
     entry_points='''
         [console_scripts]
@@ -30,14 +31,12 @@ setup(
     ''',
     packages=[
           'library',
-          'filter_plugins',
           'keystore',
           'ex_schemas',
           'configure',
           'docs',
           'tests',
           'inventory_layouts',
-          'inventory_outputs',
           'provision',
           'ex_topo',
           'outputs',
@@ -45,14 +44,12 @@ setup(
     ],
     package_data={
           'library': list_all_files('library'),
-          'filter_plugins': list_all_files('filter_plugins'),
           'keystore': list_all_files('keystore'),
           'ex_schemas': list_all_files('ex_schemas'),
           'configure': list_all_files('configure'),
           'docs': list_all_files('docs'),
           'tests': list_all_files('tests'),
           'inventory_layouts': list_all_files('inventory_layouts'),
-          'inventory_outputs': list_all_files('inventory_outputs'),
           'provision': list_all_files('provision'),
           'ex_topo': list_all_files('ex_topo'),
           'outputs': list_all_files('outputs'),
