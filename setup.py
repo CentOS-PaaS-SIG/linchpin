@@ -26,7 +26,7 @@ def list_all_files(root_dir):
 
 setup(
     name='linchpin',
-    version='0.8',
+    version='0.8.1',
     py_modules= ['linchpin'],
     install_requires=[
         'Click',
@@ -66,6 +66,6 @@ setup(
           'templates': list_all_files('templates'),
     },
     data_files=[
-         ('linchpin_config.yml', ['linchpin_config.yml']),
+         ('', ['linchpin_config.yml']),
     ]
 )
