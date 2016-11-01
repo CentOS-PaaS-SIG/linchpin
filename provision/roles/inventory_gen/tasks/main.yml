@@ -1,7 +1,7 @@
 ---
 #includes the output file of linchpin
 
-- include_vars: "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output' ) }}"
+- include_vars: "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output.yaml' ) }}"
 
 - name: "Updating topology_outputs"
   set_fact:
