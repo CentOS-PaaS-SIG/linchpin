@@ -257,7 +257,7 @@ def get(config, topo, layout):
 @click.option("--lpf", default=False, required=False,  help="gets the topology by name")
 @pass_config
 def rise(config, lpf):
-    """ rise module of linchpin cli : still need to fix the linchpin_config and outputs, inventory_outputs paths"""
+    """ rise module of linchpin cli """
     config.variable_manager.extra_vars = {}
     init_dir = os.getcwd()
     lpfs = list_by_ext(init_dir,".lpf")
@@ -280,7 +280,7 @@ def rise(config, lpf):
 @click.option("--lpf", default=False, required=False,  help="gets the topology by name")
 @pass_config
 def drop(config, lpf):
-    """ drop module of linchpin cli : still need to fix the linchpin_config and outputs, inventory_outputs paths"""
+    """ drop module of linchpin cli """
     config.variable_manager.extra_vars = {}
     init_dir = os.getcwd()
     lpfs = list_by_ext(init_dir,".lpf")
