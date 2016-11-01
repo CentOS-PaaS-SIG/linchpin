@@ -212,7 +212,7 @@ def init(config, path):
     if os.path.isdir(path):
         path = path.strip("/")
         config.linchpinfile.stream().dump(path+'/'+'linchfile.lpf')
-        config.lpconfig.stream().dump(path+'/'+'linchpin_config.yml')
+        config.lpconfig.stream(playbook_dir=config.clipath).dump(path+'/'+'linchpin_config.yml')
         mkdir(path+"/topologies")
         mkdir(path+"/layouts")
         dir_list = ["topologies","layouts"]
