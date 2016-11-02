@@ -17,3 +17,10 @@ nose
 python-openstackclient
 functools32
 jinja2==2.8
+MarkupSafe
+imagesize
+pytz
+Babel
+docutils
+setuptools>=17.1
+cliff==1.15.0
