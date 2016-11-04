@@ -8,6 +8,7 @@
   debug:
     var: _topology_outputs_beaker_server
 
-- name: append beaker outputs
+- name: "append beaker outputs"
   set_fact:
-    topology_outputs_beaker_server: "{{ topology_outputs_beaker_server + _topology_outputs_beaker_server['hosts'] }}"
+    topology_outputs_beaker_server: "{{ topology_outputs_beaker_server + item.hosts }}"
+  with_items: "{{ _topology_outputs_beaker_server.results }}"
