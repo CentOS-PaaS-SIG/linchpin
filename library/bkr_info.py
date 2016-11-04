@@ -42,7 +42,6 @@ class BeakerTargets(object):
         Checks on the status of a set of Beaker jobs (ids) and returns their
         hostname once the jobs have reached their defined status.
         """
-        return [{"host": "asdf.redhat.com"}]
         attempts = 0
         pass_count = 0
         all_count = len(self.ids)

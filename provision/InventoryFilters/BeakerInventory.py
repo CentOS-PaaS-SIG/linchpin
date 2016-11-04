@@ -10,8 +10,7 @@ class BeakerInventory(InventoryFilter):
     def get_hostnames(self, topology):
         hostnames = []
         for group in topology['beaker_res']:
-            for host in group:
-                hostnames.append(host['host'])
+            hostnames.append(group['host'])
         return hostnames
 
     def get_host_ips(self, topo):
