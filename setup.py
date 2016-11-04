@@ -26,13 +26,14 @@ def list_all_files(root_dir):
 
 setup(
     name='linchpin',
-    version='0.8',
+    version='0.8.1',
     py_modules= ['linchpin'],
     install_requires=[
         'Click',
         'ansible',
         'jinja2',
-        'tabulate'
+        'tabulate',
+        'jsonschema'
     ],
     entry_points='''
         [console_scripts]
@@ -40,14 +41,12 @@ setup(
     ''',
     packages=[
           'library',
-          'filter_plugins',
           'keystore',
           'ex_schemas',
           'configure',
           'docs',
           'tests',
           'inventory_layouts',
-          'inventory_outputs',
           'provision',
           'ex_topo',
           'outputs',
@@ -55,20 +54,18 @@ setup(
     ],
     package_data={
           'library': list_all_files('library'),
-          'filter_plugins': list_all_files('filter_plugins'),
           'keystore': list_all_files('keystore'),
           'ex_schemas': list_all_files('ex_schemas'),
           'configure': list_all_files('configure'),
           'docs': list_all_files('docs'),
           'tests': list_all_files('tests'),
           'inventory_layouts': list_all_files('inventory_layouts'),
-          'inventory_outputs': list_all_files('inventory_outputs'),
           'provision': list_all_files('provision'),
           'ex_topo': list_all_files('ex_topo'),
           'outputs': list_all_files('outputs'),
           'templates': list_all_files('templates'),
     },
     data_files=[
-         ('/etc/linchpin', ['linchpin_config.yml']),
+         ('', ['linchpin_config.yml']),
     ]
 )
