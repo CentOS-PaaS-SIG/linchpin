@@ -69,20 +69,6 @@ def init(config, path):
     else:
         click.echo("Invalid path to initialize !!")
 
-@cli.command('list')
-@click.option('--topos', default=False, required=False, is_flag=True)
-@click.option('--layouts', default=False, required=False, is_flag=True)
-@pass_config
-def list(config, topos, layouts):
-    """ list module of linchpin  """
-    #click.echo('linchpin list called !')
-    if topos:
-        #click.echo("list called with topologies")
-        list_files(config.clipath+"/ex_topo")
-    if layouts:
-        #click.echo("list called with layouts")
-        list_files(config.clipath+"/inventory_layouts")
-
 @cli.command()
 @click.option("--topo", default=False, required=False,  help="gets the topology by name")
 @click.option("--layout", default=False, required=False,  help="gets the layout by name")
@@ -106,7 +92,8 @@ def get(config, topo, layout):
 @pass_config
 def list(config, topos, layouts):
     """ list module of linchpin  """
-    click.echo('linchpin list called !')
+    if (not topos) and (not layouts): 
+        click.echo('linchpin list usage linchpin list <--topos> <--layouts> ')
     if topos:
         #click.echo("list called with topologies")
         list_files(config.clipath+"/ex_topo")
