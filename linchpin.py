@@ -219,7 +219,8 @@ def init(config, path):
 @pass_config
 def list(config, topos, layouts):
     """ list module of linchpin  """
-    #click.echo('linchpin list called !')
+    if (not topos) and (not layouts):
+        click.echo('linchpin list usage linchpin list <--topos> <--layouts> ')
     headers = ["Sno","Name"]
     if topos:
         click.echo(": TOPOLOGIES LIST :")
@@ -231,7 +232,6 @@ def list(config, topos, layouts):
         files = list_files(config.clipath+"/inventory_layouts")
         print tabulate(files, headers, tablefmt="fancy_grid")
         
-
 @cli.command()
 @click.option("--topo", default=False, required=False,  help="gets the topology by name")
 @click.option("--layout", default=False, required=False,  help="gets the layout by name")
@@ -306,7 +306,6 @@ def validate(config, topo, layout , lpf):
     #result = invoke_linchpin(config, e_vars, "SCHEMA_CHECK")
     result = invoke_linchpin(config, e_vars, "SCHEMA_CHECK", console=False)[-1]
     pprint.pprint(result.__dict__)
-    
 
 @cli.command()
 @click.option("--layout", default=False, required=True,  help="layout file usually found in layout folder")
