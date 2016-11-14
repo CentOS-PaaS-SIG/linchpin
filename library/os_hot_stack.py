@@ -104,17 +104,27 @@ def delete_stack(stack_name, wait, auth_args):
 
 
 def main():
-    module = AnsibleModule(argument_spec={
-             'stack_name': {'required': True, 'aliases': ['name']},
-             'os_username': {'required': False, 'aliases': ['username']},
-             'os_password': {'required': False, 'aliases': ['password']},
-             'os_tenant_name': {'required': False, 'aliases': ['tenantname']},
-             'os_auth_url': {'required': False, 'aliases': ['url']},
-             'template': {'required': True},
-             'state': {'required': True, 'choices': ['present', 'absent']},
-             'wait': {'required': False, 'choices': ['yes', 'no']},
-             'parameters': {'required': False},
-             },
+    module = AnsibleModule(
+             argument_spec=dict(
+                           stack_name=dict(
+                                      required=True, aliases=['name']
+                           ),
+                           os_username=dict(
+                                       required=False, aliases=['username']
+                           ),
+                           os_password=dict(
+                                       required=False, aliases=['password']
+                           ),
+                           os_tenant_name=dict(
+                                          required=False,
+                                          aliases=['tenantname']
+                           ),
+                           os_auth_url=dict(required=False, aliases=['url']),
+                           template=dict(required=True),
+                           state=dict(required=True),
+                           wait=dict(required=False, choices=['yes', 'no']),
+                           parameters=dict(required=False)
+             ),
              required_one_of=[],
              supports_check_mode=True)
     stack_name = module.params['stack_name']
