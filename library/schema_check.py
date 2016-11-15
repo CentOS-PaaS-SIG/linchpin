@@ -4,6 +4,7 @@
 # Author: Samvaran Kashyap Rallabandi -  <srallaba@redhat.com>
 #
 # Topology validator for Ansible based infra provsioning tool linch-pin
+
 from ansible.module_utils.basic import *
 import datetime
 import sys
@@ -14,8 +15,6 @@ import tempfile
 import yaml
 import jsonschema
 from jsonschema import validate
-from ansible.module_utils.basic import *
-
 
 DOCUMENTATION = '''
 ---
@@ -24,10 +23,10 @@ module: topo_check
 short_description: Topology validator module in ansible
 description:
   - This module allows a user to validate the yaml/json
-     provisioning topologies against json schema.
+    provisioning topologies against json schema.
 
 options:
-  data:
+  data_file:
     description:
       path to topology file can be in json/yaml format
     required: true
@@ -35,7 +34,7 @@ options:
     description:
       format of the topology file
     default: yaml
-  schema:
+  schema_file:
     description:
       Schema to be validated against
     required: true
@@ -82,23 +81,27 @@ def check_file_paths(module, *args):
             module.fail_json(msg=msg)
         if not os.access(file_path, os.R_OK):
             msg = "File not accesible %s not found" % (file_path)
-            module.fail_json(msg=msg))
+            module.fail_json(msg=msg)
         if os.path.isdir(file_path):
-            msg = "Recursive directory not supported  %s" % (file_path)
+            msg = "Recursive directory not supported  %s " % (file_path)
             module.fail_json(msg=msg)
 
 
 def validate_grp_names(data):
     res_grps = data['resource_groups']
-    res_grp_vars = data['resource_group_vars'] if 'resource_group_vars' in data.keys() else []
-    res_grp_names = [ x['resource_group_name'] for x in res_grps ]
-    res_grp_vars = [ x['resource_group_name'] for x in res_grp_vars ] if len(res_grp_vars) > 0 else []
-    dup_grp_names = set([res_grp_names[i] for i in range(0, len(res_grp_names)) if res_grp_names[i]>1])
-    dup_grp_vars = set([res_grp_vars[i] for i in range(0, len(res_grp_vars)) if res_grp_vars[i]>1])
+    if 'resource_group_vars' in data.keys():
+        res_grp_vars = data['resource_group_vars']
+    else:
+        res_grp_vars = []
+    res_grp_names = [x['resource_group_name'] for x in res_grps]
+    if len(res_grp_vars) > 0:
+        res_grp_vars = [x['resource_group_name'] for x in res_grp_vars]
+    dup_grp_names = set(res_grp_names)
+    dup_grp_vars = set(res_grp_vars)
     if len(dup_grp_vars) != len(res_grp_vars) or \
        len(dup_grp_names) != len(res_grp_names):
-        msg = "error: duplicate names found in resource_group_name attributes \
-               please check the results for duplicate names"
+        msg = "error: duplicate names found in resource_group_name \
+               attributes please check the results for duplicate names"
         return {"msg": msg, "result": str(dup_grp_names)+str(dup_grp_vars)}
     else:
         return True
@@ -115,19 +118,39 @@ def validate_values(module, data_file_path):
 
 
 def main():
-    module = AnsibleModule(
-        argument_spec = {
-            'data': {'required': True,
-            'aliases': ['topology_file']},
-            'schema': {'required': True,
-            'aliases': ['topology_file']},
-            'data_format': {'required': False,
-            'choices': ['json', 'yaml', 'yml']},
-           },
-        required_one_of=[],
-        supports_check_mode=True
-    )
+    """
+    AnsibleModule(
+             argument_spec=dict(
+                           stack_name=dict(
+                                      required=True, aliases=['name']
+                           ),
+                           os_username=dict(
+                                       required=False, aliases=['username']
+                           ),
+                           os_password=dict(
+                                       required=False, aliases=['password']
+                           ),
+                           os_tenant_name=dict(
+                                          required=False,
+                                          aliases=['tenantname']
+                           ),
 
+    """
+    module = AnsibleModule(
+             arugument_spec=dict(
+                            data=dict(
+                                 require=True, aliases=['topology_file']
+                            ),
+                            schema=dict(
+                                   required=True, aliases=['schema_file']
+                            ),
+                            data_format=dict(
+                                   required=False,
+                                   choices=['json', 'yaml', 'yml']
+                            ),
+             ),
+             required_one_of=[],
+             supports_check_mode=True)
     data_file_path = os.path.expanduser(module.params['data'])
     schema_file_path = os.path.expanduser(module.params['schema'])
     check_file_paths(module, data_file_path, schema_file_path)
@@ -140,4 +163,5 @@ def main():
         module.exit_json(isvalid=changed, output=output)
     else:
         module.fail_json(msg=resp)
+
 main()
