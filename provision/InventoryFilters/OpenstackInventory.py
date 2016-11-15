@@ -16,10 +16,10 @@ class OpenstackInventory(InventoryFilter):
 
     def get_host_ips(self, topo, async_flag=False):
         host_public_ips = []
-        if async_flag==True:
+        if async_flag:
             for group in topo['os_server_res']:
-                for result in  group["results"]:
-                    output = open(result["item"]["results_file"],"r").read()
+                for result in group["results"]:
+                    output = open(result["item"]["results_file"], "r").read()
                     output = json.loads(output)
                     host_public_ips.append(str(output['server']['public_v4']))
         else:
@@ -29,7 +29,7 @@ class OpenstackInventory(InventoryFilter):
 
     def get_inventory(self, topo, async_flag, layout):
 
-        if len(topo['os_server_res'])== 0 :
+        if len(topo['os_server_res']) == 0:
             return ""
         no_of_groups = len(topo['os_server_res'])
         inven_hosts = self.get_host_ips(topo, async_flag)

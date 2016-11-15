@@ -11,6 +11,7 @@ except ImportError:
 
 from InventoryFilter import InventoryFilter
 
+
 class DuffyInventory(InventoryFilter):
 
     def get_hostnames(self, topo):
@@ -29,14 +30,15 @@ class DuffyInventory(InventoryFilter):
         for host_name in layout['hosts']:
             count = layout['hosts'][host_name]['count']
             host_list = []
-            hosts[host_name] = [host_list.append(inven_hosts.pop()) for inven_hosts in range(count)]
+            hosts[host_name] = [host_list.append(inven_hosts.pop())
+                                for inven_hosts in range(count)]
             for ip in host_ips:
                 for host_group in layout['hosts'][host_name]['host_groups']:
                     config.set(host_group, ip)
         return config
 
     def get_inventory(self, topo, layout):
-        if len(topo['duffy_res']) == 0 :
+        if len(topo['duffy_res']) == 0:
             return ""
         inventory = ConfigParser(allow_no_value=True)
         layout_hosts = self.get_layout_hosts(layout)
@@ -54,4 +56,3 @@ class DuffyInventory(InventoryFilter):
         output = StringIO.StringIO()
         self.config.write(output)
         return output.getvalue()
-
