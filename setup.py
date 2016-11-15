@@ -3,15 +3,18 @@ import os
 
 ignore_dir = ['.git']
 """
-dirty fix for linchpin auto complete. Adds following expression to /etc/profile and sources it
-eval "$(_LINCHPIN_COMPLETE=source linchpin)" 
+dirty fix for linchpin auto complete.
+Adds following expression to /etc/profile and sources it
+eval "$(_LINCHPIN_COMPLETE=source linchpin)"
 need to think of a better way to do the same.
 """
-if "eval \"$(_LINCHPIN_COMPLETE=source linchpin)\"" not in open("/etc/profile","r").read():
-    fd = open("/etc/profile","a")
+exp = "eval \"$(_LINCHPIN_COMPLETE=source linchpin)\""
+if exp not in open("/etc/profile", "r").read():
+    fd = open("/etc/profile", "a")
     fd.write("eval \"$(_LINCHPIN_COMPLETE=source linchpin)\"")
     fd.close()
     os.system("source /etc/profile")
+
 
 def list_all_files(root_dir):
     file_set = []
@@ -26,8 +29,8 @@ def list_all_files(root_dir):
 
 setup(
     name='linchpin',
-    version='0.8',
     py_modules= ['linchpin'],
+    version='0.8.1',
     install_requires=[
         'Click',
         'ansible',
@@ -50,6 +53,8 @@ setup(
           'ex_topo',
           'outputs',
           'templates',
+          'linchpin_api',
+          'cli',
     ],
     package_data={
           'library': list_all_files('library'),
@@ -63,6 +68,8 @@ setup(
           'ex_topo': list_all_files('ex_topo'),
           'outputs': list_all_files('outputs'),
           'templates': list_all_files('templates'),
+          'linchpin_api': list_all_files('linchpin_api'),
+          'cli': list_all_files('cli'),
     },
     data_files=[
          ('', ['linchpin_config.yml']),
