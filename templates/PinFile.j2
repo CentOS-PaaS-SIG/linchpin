@@ -12,9 +12,12 @@ topology_upstream: "https://github.com/CentOS-PaaS-SIG/linch-pin/"
 layout_upstream: "https://github.com/CentOS-PaaS-SIG/linch-pin/"
 
 across2clouds:
- topology: duffy-3node-cluster.yml 
- layout: openshift-3node-cluster.yml
+  topology: duffy-3node-cluster.yml 
+  layout: openshift-3node-cluster.yml
 
 dockercontainer:
- topology: duffy-3node-cluster.yml
- layout: openshift-3node-cluster.yml
+  topology: duffy-3node-cluster.yml
+  layout: openshift-3node-cluster.yml
+
+post_actions:
+  print: "hello"
