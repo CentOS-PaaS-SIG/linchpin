@@ -49,7 +49,7 @@
 - name: "Generate outputs when async is false"
   template:
     src: "../templates/output_formatter.j2"
-    dest: "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output' ) }}"
+    dest: "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output.yaml' ) }}"
   when: state == "present" and async == false and no_output == false
 
 # pretty much the same when we use async== false , seperated the task for probable customizations in future
@@ -102,11 +102,11 @@
 - name: "Generate outputs when async is true"
   template:
     src: "../templates/output_formatter.j2"
-    dest: "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output' ) }}"
+    dest: "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output.yaml' ) }}"
   when: state == "present" and async == true and no_output == false
 
 - name: "set name for linchpin_output_file for inventory generation"
   set_fact: 
-    topology_output_file:  "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output' ) }}"
+    topology_output_file:  "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output.yaml' ) }}"
   when: state == "present"
 
