@@ -4,9 +4,9 @@
 
 - name: set local_image_path
   set_fact:
-    local_image_path: /var/lib/libvirt/images/linchpin/
+    local_image_path: "{{ libvirt_image_path }}"
 
-- name: ensure /var/lib/libvirt/linchpin/ directory exists
+- name: ensure local_image_path directory exists
   file:
     path: "{{ local_image_path }}"
     state: directory

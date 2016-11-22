@@ -13,7 +13,7 @@
     name: "{{ instance.9 }}_{{ instance.10 }}_{{ instance.11 }}"
     image: "{{ instance.5 }}"
     key_name: "{{ instance.6  }}"
-    api_timeout: 99999 
+    api_timeout: 99999
     flavor: "{{ instance.7 }}"
     network: "{{ instance.8 }}"
   with_nested:
