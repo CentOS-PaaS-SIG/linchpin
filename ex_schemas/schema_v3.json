@@ -276,7 +276,7 @@
                 "path": {
                     "type":"string"
                 },
-                "format": {
+                "type": {
                     "type":"string"
                 }
             },
@@ -317,6 +317,15 @@
                 "uri": {
                     "type":"string"
                 },
+                "image_src": {
+                    "type":"string"
+                },
+                "arch": {
+                    "type":"string"
+                },
+                "boot_dev": {
+                    "type":"string"
+                },
                 "networks": {
                     "type":"array",
                     "items" : {
@@ -337,14 +346,23 @@
                     "items" : {
                         "type":"object",
                         "properties": {
+                            "name": {
+                                "type":"string"
+                            },
                             "size": {
                                 "type":"string"
                             },
                             "pool": {
                                 "type":"string"
+                            },
+                            "cache": {
+                                "type":"string"
+                            },
+                            "format": {
+                                "type":"string"
                             }
                         },
-                        "required":["size","pool"]
+                        "required":["name","size","pool"]
                     }
                 },
                 "count": {

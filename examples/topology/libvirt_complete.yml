@@ -9,7 +9,7 @@
           - res_name: "happy"
             res_type: "libvirt_storage"
             size: 100G
-            format: lvm2
+            type: lvm2
             path: /dev/vms
 
           - res_name: "sad"
@@ -50,3 +50,4 @@
             storage:
               - pool: happy
                 size: 10G
+                format: ext4
