@@ -8,10 +8,11 @@ try:
     from configparser import ConfigParser
 except ImportError:
     from ConfigParser import ConfigParser
+from InventoryFilters import OpenstackInventory
 filepath = os.path.realpath(__file__)
 filepath = "/".join(filepath.split("/")[0:-2])
 sys.path.append(filepath)
-from InventoryFilters import OpenstackInventory
+
 
 class FilterModule(object):
     ''' A filter to fix interface's name format '''
