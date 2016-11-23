@@ -1,7 +1,9 @@
 from setuptools import setup
 import os
 
+
 ignore_dir = ['.git']
+
 """
 dirty fix for linchpin auto complete.
 Adds following expression to /etc/profile and sources it
@@ -56,6 +58,7 @@ setup(
           'templates',
           'linchpin_api',
           'cli',
+          'InventoryFilters'
     ],
     package_data={
           'library': list_all_files('library'),
@@ -71,6 +74,7 @@ setup(
           'templates': list_all_files('templates'),
           'linchpin_api': list_all_files('linchpin_api'),
           'cli': list_all_files('cli'),
+          'InventoryFilters': list_all_files('InventoryFilters')
     },
     data_files=[
          ('', ['linchpin_config.yml']),
