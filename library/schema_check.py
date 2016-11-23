@@ -118,39 +118,15 @@ def validate_values(module, data_file_path):
 
 
 def main():
-    """
-    AnsibleModule(
-             argument_spec=dict(
-                           stack_name=dict(
-                                      required=True, aliases=['name']
-                           ),
-                           os_username=dict(
-                                       required=False, aliases=['username']
-                           ),
-                           os_password=dict(
-                                       required=False, aliases=['password']
-                           ),
-                           os_tenant_name=dict(
-                                          required=False,
-                                          aliases=['tenantname']
-                           ),
-
-    """
     module = AnsibleModule(
-             arugument_spec=dict(
-                            data=dict(
-                                 require=True, aliases=['topology_file']
-                            ),
-                            schema=dict(
-                                   required=True, aliases=['schema_file']
-                            ),
-                            data_format=dict(
-                                   required=False,
-                                   choices=['json', 'yaml', 'yml']
-                            ),
-             ),
-             required_one_of=[],
-             supports_check_mode=True)
+    argument_spec={
+            'data': {'required': True, 'aliases': ['topology_file']},
+            'schema': {'required': True, 'aliases': ['topology_file']},
+            'data_format': {'required': False,'choices':['json','yaml','yml']},
+        },
+        required_one_of=[],
+        supports_check_mode=True
+        )
     data_file_path = os.path.expanduser(module.params['data'])
     schema_file_path = os.path.expanduser(module.params['schema'])
     check_file_paths(module, data_file_path, schema_file_path)
