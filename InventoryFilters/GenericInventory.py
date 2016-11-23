@@ -34,13 +34,15 @@ class GenericInventory(InventoryFilter):
         """
         host_ip_dict = {}
         for inv_filter in self.filter_classes:
-            host_ip_dict[inv_filter] = self.filter_classes[inv_filter]().get_host_ips(topo)
+            ips = self.filter_classes[inv_filter]().get_host_ips(topo)
+            host_ip_dict[inv_filter] = ips
         return host_ip_dict
 
     def get_hosts_by_count(self, host_dict, count):
         """
-        currently this function gets all the ips/hostname according to the order in which
-        inventories are specified , later can be modified to work with user input
+        currently this function gets all the ips/hostname according to the
+        order in which inventories are specified , later can be modified
+        to work with user input
         """
         all_hosts = []
         for inv in host_dict:

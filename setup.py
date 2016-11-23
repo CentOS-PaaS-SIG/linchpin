@@ -1,7 +1,22 @@
 from setuptools import setup
 import os
 
+
 ignore_dir = ['.git']
+
+"""
+dirty fix for linchpin auto complete.
+Adds following expression to /etc/profile and sources it
+eval "$(_LINCHPIN_COMPLETE=source linchpin)"
+need to think of a better way to do the same.
+"""
+exp = "eval \"$(_LINCHPIN_COMPLETE=source linchpin)\""
+if exp not in open("/etc/profile", "r").read():
+    fd = open("/etc/profile", "a")
+    fd.write("eval \"$(_LINCHPIN_COMPLETE=source linchpin)\"")
+    fd.close()
+    os.system("source /etc/profile")
+
 
 def list_all_files(root_dir):
     file_set = []
@@ -15,13 +30,15 @@ def list_all_files(root_dir):
     return file_set
 
 setup(
-    name='LinchpinCli',
+    name='linchpin',
     version='0.8.1',
     py_modules= ['linchpin'],
+    version='0.8.1',
     install_requires=[
         'Click',
         'ansible',
         'jinja2',
+        'tabulate',
         'jsonschema'
     ],
     entry_points='''
@@ -40,6 +57,9 @@ setup(
           'ex_topo',
           'outputs',
           'templates',
+          'linchpin_api',
+          'cli',
+          'InventoryFilters'
     ],
     package_data={
           'library': list_all_files('library'),
@@ -53,6 +73,9 @@ setup(
           'ex_topo': list_all_files('ex_topo'),
           'outputs': list_all_files('outputs'),
           'templates': list_all_files('templates'),
+          'linchpin_api': list_all_files('linchpin_api'),
+          'cli': list_all_files('cli'),
+          'InventoryFilters': list_all_files('InventoryFilters')
     },
     data_files=[
          ('', ['linchpin_config.yml']),
