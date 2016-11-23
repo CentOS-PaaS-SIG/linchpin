@@ -9,17 +9,49 @@ from tabulate import tabulate
 from jinja2 import Environment, PackageLoader
 from cli.utils import checkpaths, display, mkdir, copy_files, list_by_ext
 from cli.cli import LinchpinCli
+import shutil, errno
+import sys
+import json
+import inspect
+import pdb
+import ansible
+import pprint
+from tabulate import tabulate
+from ansible import utils
+import jsonschema as jsch
+from collections import namedtuple
+from ansible import utils
+from ansible.parsing.dataloader import DataLoader
+from ansible.vars import VariableManager
+from ansible.inventory import Inventory
+from ansible.executor.playbook_executor import PlaybookExecutor
+from ansible.plugins.callback import CallbackBase
+
+MSGS = {
+"ERROR:001": "No lpf files found. Please use linchpin init to initailise ", 
+"ERROR:002": "Multiple lpf files found. Please use linchpin rise with --lpf <path> ", 
+"ERROR:003": "Topology or Layout mentioned in lpf file not found . Please check your lpf file.", 
+"ERROR:004": "linchpin_config file not found in current directory. Please initialise it with lionchpin init or linchpin config --reset", 
+"ERROR:005": "linchpin_config file not found. In default paths. Please initialise it with lionchpin init or linchpin config --reset", 
+"WARNING:001": "lpf file structure found current directory. Would you like to continue ?(y/n) ", 
+"WARNING:002": "linchpin_config file already found in current directory. Would you like to reset it ?(y/n)" 
+}
+
+PLAYBOOKS={
+"PROVISION": "site.yml",
+"TEARDOWN": "site.yml",
+"SCHEMA_CHECK": "schema_check.yml",
+"INVGEN": "invgen.yml",
+}
 
 
 class Config(object):
     """ Global config object accesible by all the click modules """
     def __init__(self):
-        self.verbose = False
+        self.clipath = os.path.dirname(os.path.realpath(__file__))
         self.env = Environment(loader=PackageLoader('linchpin', 'templates'))
         self.linchpinfile = self.env.get_template('PinFile.j2')
         self.lpconfig = self.env.get_template('linchpin_config.yml.j2')
-        self.clipath = os.path.dirname(os.path.realpath(__file__))
-        self.dir_list = ["layouts", "topologies"]
 
 pass_config = click.make_pass_decorator(Config, ensure=True)
 
@@ -68,49 +100,6 @@ def init(config, path):
     else:
         click.echo("Invalid path to initialize !!")
 
-
-@cli.command()
-@click.option("--topo", default=False, required=False,  help="gets the topology by name")
-@click.option("--layout", default=False, required=False,  help="gets the layout by name")
-@pass_config
-def get(config, topo, layout):
-    """ get module of linchpin cli"""
-    #click.echo('get module called !')
-    if topo:
-        #click.echo("getting the topology file")
-        get_file(config.clipath+"/ex_topo/"+topo,"./topologies/")
-    if layout:
-        #click.echo("list called with layouts")
-        get_file(config.clipath+"/inventory_layouts/"+layout,"./layouts/")
-        copy_files(path, dir_list, config)
-    else:
-        click.echo("Invalid path to initialize !!")
-
-@cli.command()
-@click.option('--topos', default=False, required=False, is_flag=True)
-@click.option('--layouts', default=False, required=False, is_flag=True)
-@pass_config
-def list(ctx, config, topos, layouts):
-    """ list module of linchpin  """
-    if (not topos) and (not layouts): 
-        click.echo('linchpin list usage linchpin list <--topos> <--layouts> ')
-    headers = ["Sno","Name"]
-    if topos and layouts:
-        t_l = linchpin_list(config, topos, layouts)
-        click.echo(": TOPOLOGIES LIST :")
-        print tabulate(t_l[0], headers, tablefmt="fancy_grid")
-        click.echo(": LAYOUTS LIST :")
-        print tabulate(t_l[1], headers, tablefmt="fancy_grid")
-        # sys.exit(0)
-    if topos:
-        click.echo(": TOPOLOGIES LIST :")
-        files = linchpin_list(config, topos, layouts)
-        print tabulate(files, headers, tablefmt="fancy_grid")
-    if layouts:
-        click.echo(": LAYOUTS LIST :")
-        files = linchpin_list(config, topos, layouts)
-        print tabulate(files, headers, tablefmt="fancy_grid")
-        
 
 @cli.group()
 @pass_config
@@ -313,3 +302,4 @@ def invgen(config, topoout, layout, invout, invtype):
     invout = os.path.abspath(invout)
     lpcli = LinchpinCli()
     result = lpcli.lp_invgen(topoout, layout, invout, invtype)
+    pprint.pprint(result)
