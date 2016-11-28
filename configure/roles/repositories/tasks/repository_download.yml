@@ -1,0 +1,5 @@
+- name: download repository file
+  become: true
+  get_url:
+    dest: /etc/yum.repos.d/
+    url: "{{ item }}"

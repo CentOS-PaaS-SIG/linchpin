@@ -1,0 +1,5 @@
+All files in this directory ending in .txt will be newline-separated lists of
+Jenkins plugins.  These files will be read by our update center build job as
+well as the CI Provisioner for determining what list of plugins to build or
+install.  Each file is named based on the update center ID.  If your update
+center ID is 'redhat' then the file name should be 'redhat.txt'.

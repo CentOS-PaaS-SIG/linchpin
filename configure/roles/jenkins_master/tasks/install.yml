@@ -1,0 +1,46 @@
+- name: install httpd if needed
+  become: true
+  yum:
+    name: httpd
+    state: present
+  when: https_enabled
+
+- name: upgrade base system
+  become: true
+  yum:
+    name: "*"
+    state: latest
+
+- name: install necessary RPM files
+  become: true
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - git
+    - python-paramiko
+    - nss
+    - iptables
+    - iptables-services
+    - java-1.{{ java_version }}.0-openjdk
+    - "{{ jenkins_rpm }}"
+    - graphviz
+    - lftp
+    - gcc
+    - libffi-devel
+    - python-devel
+    - openssl-devel
+    - libxml2-devel
+    - libxslt-devel
+    - krb5-workstation
+    - python-futures
+    - python-six
+    - python-unittest2
+    - python-configobj
+    - python-nose
+    - cloud-utils
+    - python-glanceclient
+    - python-keystoneclient
+    - python-novaclient
+    - python-neutronclient
+    - wget

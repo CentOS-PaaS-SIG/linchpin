@@ -2,6 +2,8 @@
 *.pyc
 ansible.cfg
 *.swp
+.venv
+configure/vagrant/**/.vagrant
 
 # generated docs
 docs/build/

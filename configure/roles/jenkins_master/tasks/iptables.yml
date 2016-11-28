@@ -1,0 +1,58 @@
+- name: ensure firewalld is disabled
+  service:
+    name: firewalld
+    state: stopped
+    enabled: false
+
+- name: set iptables rules forwarding port to Jenkins default port
+  become: true
+  iptables:
+    chain: PREROUTING
+    destination_port: "{{ https_enabled | ternary(443, 80) }}"
+    protocol: tcp
+    table: nat
+    match: tcp
+    jump: REDIRECT
+    to_ports: "{{ https_enabled | ternary(8443, 8080) }}"
+    state: present
+  register: forward_rule
+
+- name: set iptables rule forwarding loopback to Jenkins default port
+  become: true
+  iptables:
+    chain: OUTPUT
+    table: nat
+    source: 0/0
+    destination: 127.0.0.1
+    protocol: tcp
+    destination_port: "{{ https_enabled | ternary(443, 80) }}"
+    jump: REDIRECT
+    to_ports: "{{ https_enabled | ternary(8443, 8080) }}"
+    state: present
+    # action: insert - avaialble in Ansible 2.2+
+  register: loopback_rule
+
+- name: set iptables rule forwarding for real address to loopback
+  become: true
+  iptables:
+    chain: OUTPUT
+    table: nat
+    protocol: tcp
+    destination: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+    destination_port: "{{ https_enabled | ternary(443, 80) }}"
+    jump: REDIRECT
+    to_ports: "{{ https_enabled | ternary(8443, 8080) }}"
+    state: present
+  register: real_address_rule
+
+- name: save iptables
+  become: true
+  shell: service iptables save
+  changed_when: false
+  when: forward_rule.changed or loopback_rule.changed or real_address_rule.changed
+
+- name: start iptables
+  become: true
+  service:
+    name: iptables
+    state: started

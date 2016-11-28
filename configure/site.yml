@@ -1,0 +1,11 @@
+- name: configure certificate authority, if necessary
+  hosts: certificate_authority
+  gather_facts: false
+  roles:
+    - certificate_authority
+
+- name: configure jenkins masters
+  hosts: jenkins_master
+  roles:
+    - repositories
+    - jenkins_master

@@ -1,0 +1,89 @@
+# ############################################################################
+# A list of variables which you can and probably should override with your own
+# values in your group variables. These are the default values for these
+# options and should work well enough for development or trial purposes, but
+# some of them should be overridden for production purposes. See individual
+# values for documentation on their function.
+# ############################################################################
+
+# A list of Jenkins update center URLs to configure. This is the default UC
+# provided by the upstream, public infrastructure. If you maintain a local
+# mirror for custom plugins or just for mirroring purposes, then override this
+# variable with those values.
+update_centers:
+  - id: default
+    url: https://updates.jenkins-ci.org/{{ jenkins_version }}/update-center.json
+# If set to true, Jenkins will be run over HTTPS (Jenkins on port 8443 with a
+# firewall forward from port 443). If you set this value to true, you MUST
+# override jenkins_ssl_cert and jenkins_ssl_key in a production system or you
+# will not see any improvements in security
+https_enabled: false
+# Local path to the SSL certificate to use in configuring HTTPS. This MUST be
+# overridden if you want secure access to Jenkins, as these default files are
+# available to the public, thus compromising the security of using these values
+# jenkins_ssl_cert: jenkins.crt
+# Local path to the SSL encryption key to use in configuring HTTPS. See the
+# comment on jenkins_ssl_cert for more warning
+# jenkins_ssl_key: jenkins.key
+# Local path to a private SSH keyfile to upload into the remote system and
+# to set as an authorized keyfile for the Jenkins user
+jenkins_ssh_private_key: id_rsa
+# The version of Jenkins to install from the repository. The only use for
+# this value is constructing the name of the RPM below, so there is no need
+# to override this just outside of changing RPM name
+jenkins_version: "1.651.3"
+# The list of Jenkins plugins that should be installed by default from the
+# configured Update Centers.
+jenkins_plugins: "{{ lookup('file', 'files/jenkins-plugin-lists/default.txt').split('\n') }}"
+# Java max heap size argument. Set this value based on the amount of RAM that
+# your instance needs and your infrastructure is able to support
+java_heap_size: 3g
+
+# ############################################################################
+# A list of variables that don't really need to be overridden, but which can be
+# parameterized if you need to tweak the Jenkins system. These represent mostly
+# advanced values.
+# ############################################################################
+
+# The home directory for the Jenkins user, and the base directory for Jenkins
+# files and jobs
+jenkins_home: /var/lib/jenkins
+# The name of the Jenkins package to install. This can be either an RPM name
+# such as one would pass to yum or dnf or a full path to the RPM file
+# (including a full URL). See note above on the variable "jenkins_version"
+jenkins_rpm: jenkins-{{ jenkins_version }}-1.1
+# The Java version to install. Older versions are deprecated and will not be
+# supported beyond the EOL support for their packages in the distribution of
+# choice
+java_version: 8
+# A set of command-line Java options to be passed into Jenkins. These values
+# can be anything accepted either by Jenkins or by the JVM
+jenkins_java_options:
+  # disables SNI extension in case of Java 1.7, which causes problems with SSL
+  - -Djsse.enableSNIExtension=false
+  # Alows creation of synthetic users that exist only in Jenkins and not external auth
+  - -Dhudson.model.User.allowNonExistentUserToLogin=true
+  # Allows admin users to see the API tokens of all users
+  - -Djenkins.security.ApiTokenProperty.showTokenToAdmins=true
+  # Allows all parameters to be passed between jobs in trigger pipelines
+  - -Dhudson.model.ParametersAction.keepUndefinedParameters=true
+  # Increase max Java heap size
+  - -Xmx{{ java_heap_size }}
+# These four values change the default ulimits for file and process counts in
+# order to avoid failure of the system when these (typically very low) default
+# values are hit
+jenkins_soft_nofile_ulimit: 4096
+jenkins_hard_nofile_ulimit: 8192
+jenkins_soft_nproc_ulimit: 30654
+jenkins_hard_nproc_ulimit: 30654
+# This is the password for the Java certificate authority root keystore
+# database file. This would be the password passed into the "keytool" util
+# when adding, removing, or updating base Java certificate authorities. The
+# default value really should not be changed unless you know what you are
+# doing and have changed the value already on the host system. This value is
+# commonly kept among all packagers, and changing this value already requires
+# root access to the host system. If your system updates this value, then set
+# the new value into "keystore_pass". Note that doing so will not cause the
+# keystore to be re-encrypted, you will need to take that step manually before
+# you use these playbooks
+keystore_pass: changeme

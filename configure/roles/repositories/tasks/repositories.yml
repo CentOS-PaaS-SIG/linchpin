@@ -1,0 +1,11 @@
+- name: install repository
+  become: true
+  yum_repository:
+    name: '{{ item.name }}'
+    failovermethod: '{{ item.failovermethod | default(repository_defaults.failovermethod) }}'
+    enabled: '{{ item.enabled | default(repository_defaults.enabled) }}'
+    skip_if_unavailable: '{{ item.skip_if_unavailable | default(repository_defaults.skip_if_unavailable) }}'
+    gpgcheck: '{{ item.gpgcheck | default(repository_defaults.gpgcheck) }}'
+    description: '{{ item.description | default("Repository installed by Ansible") }}'
+    mirrorlist: '{{ item.mirrorlist | default(omit) }}'
+    baseurl: '{{ item.baseurl | default(omit) }}'

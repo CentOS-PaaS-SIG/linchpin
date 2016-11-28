@@ -1,0 +1,24 @@
+# Override with an array of objects like you would find in playbook/group_vars/rhel7
+# if you want a different set of repositories than this package installs by default
+repositories: []
+
+# Override with an array of strings that are URLs to repository files, if you want
+# them downloaded into the target /etc/yum.repos.d/ folder so that they can be
+# added to the package repositories
+download_repositories: []
+
+# Override this with a list of objects matching the pattern
+# - key: <some_path_to_key>
+#   validate_certs: <true|false>
+# The path to a key should point towards a valid GPG key, this can either be local
+# to the system or a remote URL that can be accessed and downloaded.
+# The validate_certs parameter can be set to "false" if the key is hosted at an SSL
+# based URL for which the system does not have certificate authorities installed.
+# Generally this should be set to "true" and the SSL certificiates should be imported
+# using the certificate_authority role. This parameter will have no effect on paths
+# to local files.
+#
+# Use this variable to import GPG keys for RPM repositories that are installed but
+# which do not have keys which can be auto imported but still sign their RPMs and
+# you do not want to override the verification behavior
+rpm_key_imports: []

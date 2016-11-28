@@ -1,0 +1,83 @@
+- name: ensure keystore directory exists
+  file:
+    path: "{{ jenkins_home }}/.ssl"
+    state: directory
+    owner: jenkins
+    group: jenkins
+    mode: 0755
+
+- name: copy in ssl files
+  copy:
+    src: "{{ item.in }}"
+    dest: "{{ jenkins_home }}/.ssl/{{ item.out }}"
+    owner: jenkins
+    group: jenkins
+    mode: 0755
+  with_items:
+    - in: "{{ jenkins_ssl_cert }}"
+      out: jenkins.crt
+    - in: "{{ jenkins_ssl_key }}"
+      out: jenkins.key
+
+- name: copy ssl certificate to anchors
+  copy:
+    src: "{{ jenkins_ssl_cert }}"
+    dest: /etc/pki/ca-trust/source/anchors/jenkins.crt
+    owner: root
+    group: root
+  register: ssl_certificate_upload
+
+- name: update certificate chains
+  shell: update-ca-trust extract
+  when: ssl_certificate_upload.changed
+
+- name: generate pkcs12 version of certificate file
+  become: true
+  become_user: jenkins
+  shell: >
+    openssl pkcs12 -export -in jenkins.crt -inkey jenkins.key -out jenkins.p12
+    -name jenkins-ssl-cert -CAfile jenkins-ca.crt -caname root -password pass:{{ keystore_pass }}
+  args:
+    chdir: "{{ jenkins_home }}/.ssl"
+  when: ssl_certificate_upload.changed
+
+- name: import key tool to Java keystore
+  become_user: jenkins
+  become: true
+  shell: >
+    keytool -importkeystore -deststorepass {{ keystore_pass }} -destkeypass {{ keystore_pass }}
+    -destkeystore {{ jenkins_home }}/.ssl/keystore -srckeystore {{ jenkins_home }}/.ssl/jenkins.p12
+    -srcstoretype PKCS12 -srcstorepass {{ keystore_pass }} -alias jenkins-ssl-cert
+  when: ssl_certificate_upload.changed
+  register: keytool_import
+  changed_when: "'already exists' not in keytool_import.stderr and 'already exists' not in keytool_import.stdout"
+
+- name: modify system Jenkins config file
+  lineinfile:
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    dest: /etc/sysconfig/jenkins
+    state: present
+  with_items:
+    - regexp: ^JENKINS_PORT=.*
+      line: JENKINS_PORT="-1"
+    - regexp: ^JENKINS_HTTPS_PORT=.*
+      line: JENKINS_HTTPS_PORT="8443"
+    - regexp: ^JENKINS_ARGS=.*
+      line: JENKINS_ARGS="--httpsKeyStore={{ jenkins_home }}/.ssl/keystore --httpsKeyStorePassword={{ keystore_pass }}"
+
+- name: configuring httpd to forward port 80 traffic to port 443
+  lineinfile:
+    line: "{{ item }}"
+    dest: /etc/httpd/conf/httpd.conf
+    state: present
+  with_items:
+    - RewriteEngine On
+    - RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+  notify: restart httpd
+
+- name: enable httpd
+  service:
+    name: httpd
+    state: started
+    enabled: true
