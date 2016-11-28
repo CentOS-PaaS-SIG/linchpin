@@ -238,7 +238,6 @@ def list(config, topos, layouts):
         files = list_files(config.clipath+"/inventory_layouts")
         print tabulate(files, headers, tablefmt="fancy_grid")
         
-
 @cli.command()
 @click.option("--topo", default=False, required=False,  help="gets the topology by name")
 @click.option("--layout", default=False, required=False,  help="gets the layout by name")
