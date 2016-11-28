@@ -4,20 +4,6 @@ import os
 
 ignore_dir = ['.git']
 
-"""
-dirty fix for linchpin auto complete.
-Adds following expression to /etc/profile and sources it
-eval "$(_LINCHPIN_COMPLETE=source linchpin)"
-need to think of a better way to do the same.
-"""
-exp = "eval \"$(_LINCHPIN_COMPLETE=source linchpin)\""
-if exp not in open("/etc/profile", "r").read():
-    fd = open("/etc/profile", "a")
-    fd.write("eval \"$(_LINCHPIN_COMPLETE=source linchpin)\"")
-    fd.close()
-    os.system("source /etc/profile")
-
-
 def list_all_files(root_dir):
     file_set = []
     for dir_, _, files in os.walk(root_dir):
@@ -78,5 +64,6 @@ setup(
     },
     data_files=[
          ('', ['linchpin_config.yml']),
-    ]
+    ],
+    scripts=['scripts/linchpin_complete.sh']
 )
