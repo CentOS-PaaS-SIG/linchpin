@@ -33,7 +33,6 @@ setup(
     name='linchpin',
     version='0.8.1',
     py_modules= ['linchpin'],
-    version='0.8.1',
     install_requires=[
         'Click',
         'ansible',
