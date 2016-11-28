@@ -2,6 +2,16 @@ from setuptools import setup
 import os
 
 ignore_dir = ['.git']
+"""
+dirty fix for linchpin auto complete. Adds following expression to /etc/profile and sources it
+eval "$(_LINCHPIN_COMPLETE=source linchpin)" 
+need to think of a better way to do the same.
+"""
+if "eval \"$(_LINCHPIN_COMPLETE=source linchpin)\"" not in open("/etc/profile","r").read():
+    fd = open("/etc/profile","a")
+    fd.write("eval \"$(_LINCHPIN_COMPLETE=source linchpin)\"")
+    fd.close()
+    os.system("source /etc/profile")
 
 def list_all_files(root_dir):
     file_set = []
@@ -15,13 +25,14 @@ def list_all_files(root_dir):
     return file_set
 
 setup(
-    name='LinchpinCli',
+    name='linchpin',
     version='0.8.1',
     py_modules= ['linchpin'],
     install_requires=[
         'Click',
         'ansible',
         'jinja2',
+        'tabulate',
         'jsonschema'
     ],
     entry_points='''

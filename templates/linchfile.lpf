@@ -9,9 +9,9 @@
 # ---- keystore
 # ---- inventory
 across2clouds:
- topology: openshift_aws_5node
- inventory: openshift_layout_with_5nodes
+ topology: duffy-3node-cluster.yml 
+ layout: openshift-3node-cluster.yml
 
 dockercontainer:
- topology: herlo_docker_stuff
- layout: herlo_docker_stuff
+ topology: duffy-3node-cluster.yml
+ layout: openshift-3node-cluster.yml
