@@ -22,6 +22,7 @@ setup(
         'Click',
         'ansible',
         'jinja2',
+        'tabulate',
         'jsonschema'
     ],
     entry_points='''
