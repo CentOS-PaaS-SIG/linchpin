@@ -37,8 +37,9 @@ class LinchpinAPI:
 
     def get_config_path(self):
         try:
+            cwd = os.getcwd()
             config_files = [
-                            "./linchpin_config.yml",
+                            cwd+"/linchpin_config.yml",
                             "~/.linchpin_config.yml",
                             self.base_path+"/linchpin_config.yml",
                             "/etc/linchpin_config.yml"]
