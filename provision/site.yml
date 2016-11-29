@@ -6,7 +6,7 @@
   gather_facts: false
   tasks:
     - name: "Include linchpin_config"
-      include_vars: "{{ linchpin_config | default('linchpin_config.yml')}}"
+      include_vars: "{{ linchpin_config }}"
  
 - name:  "schema check and Pre Provisioning Activities  on topology_file"
   hosts: localhost

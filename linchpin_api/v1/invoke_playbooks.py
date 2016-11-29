@@ -90,7 +90,7 @@ def invoke_linchpin(base_path, e_vars, playbook="PROVISION", console=True):
                       ssh_extra_args=None,
                       sftp_extra_args=None,
                       scp_extra_args=None,
-                      become=True,
+                      become=False,
                       become_method=None,
                       become_user='root',
                       verbosity=utils.VERBOSITY,
