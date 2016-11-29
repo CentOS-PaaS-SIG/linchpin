@@ -1,0 +1,11 @@
+---
+keystore_path: "{{ keystore_path | default(playbook_dir+'/keystore') }}"
+outputfolder_path: "{{ outputfolder_path | default(playbook_dir+'/outputs') }} "
+inventoryfolder_path: "{{ inventoryfolder_path | default(playbook_dir+'/inventory') }}"
+async: {{ async | default(false) }}
+async_timeout : {{ async_timeout | default(1000) }}
+no_output : {{ no_output | default(false) }}
+schema: "{{ schema | default(playbook_dir+'/ex_schemas/schema_v2.json') }}"
+inventory_layouts_path: "{{ inventory_layouts_path | default(playbook_dir+'/inventory_layouts') }}"
+inventory_outputs_path: "{{ inventory_outputs_path | default(playbook_dir+'/inventories') }}"
+check_mode: "{{ check_mode | default('no') }}"

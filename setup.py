@@ -1,6 +1,7 @@
 from setuptools import setup
 import os
 
+
 ignore_dir = ['.git']
 
 def list_all_files(root_dir):
@@ -15,13 +16,14 @@ def list_all_files(root_dir):
     return file_set
 
 setup(
-    name='LinchpinCli',
+    name='linchpin',
     version='0.8.1',
     py_modules= ['linchpin'],
     install_requires=[
         'Click',
         'ansible',
         'jinja2',
+        'tabulate',
         'jsonschema'
     ],
     entry_points='''
@@ -40,6 +42,9 @@ setup(
           'ex_topo',
           'outputs',
           'templates',
+          'linchpin_api',
+          'cli',
+          'InventoryFilters'
     ],
     package_data={
           'library': list_all_files('library'),
@@ -53,8 +58,12 @@ setup(
           'ex_topo': list_all_files('ex_topo'),
           'outputs': list_all_files('outputs'),
           'templates': list_all_files('templates'),
+          'linchpin_api': list_all_files('linchpin_api'),
+          'cli': list_all_files('cli'),
+          'InventoryFilters': list_all_files('InventoryFilters')
     },
     data_files=[
          ('', ['linchpin_config.yml']),
-    ]
+    ],
+    scripts=['scripts/linchpin_complete.sh']
 )
