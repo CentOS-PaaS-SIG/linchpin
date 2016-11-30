@@ -99,7 +99,7 @@ class BeakerTargets(object):
                                   'system': recipe.get('system'),
                                   'status': recipe.get('status'),
                                   'result': recipe.get('result'),
-                                  'id': recipe.get('id')})
+                                  'id': recipe.get('job_id')})
                 results.update({'resources': resources})
         return results
 
