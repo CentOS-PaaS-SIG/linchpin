@@ -98,7 +98,8 @@ class BeakerTargets(object):
                                   'variant': recipe.get('variant'),
                                   'system': recipe.get('system'),
                                   'status': recipe.get('status'),
-                                  'result': recipe.get('result')})
+                                  'result': recipe.get('result'),
+                                  'id': recipe.get('id')})
                 results.update({'resources': resources})
         return results
 

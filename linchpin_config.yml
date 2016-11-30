@@ -16,5 +16,6 @@ inventory_types:
   - "gcloud"
   - "openstack"
   - "duffy"
+  - "beaker"
   - "generic"
 check_mode: no
