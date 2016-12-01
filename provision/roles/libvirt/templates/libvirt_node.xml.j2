@@ -1,5 +1,5 @@
 <domain type='kvm'>
-  <name>{{ instance[0] }}_{{ instance[1]['res_name'] }}_{{ instance[2] }}</name>
+  <name>linchpin_{{ instance[1]['res_name'] }}_{{ instance[2] }}</name>
   <memory unit='KiB'>{{ instance[1]['memory'] * 1024 | int }}</memory>
   <vcpu placement='static'>{{ instance[1]['vcpus'] }}</vcpu>
   <os>
@@ -25,13 +25,16 @@
       <source file='{{ instance[3] }}{{ instance[1]['res_name'] }}_{{ instance[2] }}.{{ instance[4] }}'/>
       <target dev='vda' bus='virtio'/>
     </disk>
-    {% for network in instance[1]['networks'] %}
+{% for network in instance[1]['networks'] %}
     <interface type='network'>
+      <model type='virtio'/>
       <source network='{{ network['name'] }}'/>
       <guest dev='eth{{ loop.index0 }}'/>
-      <model type='virtio'/>
+  {% if network['mac'] is defined %}
+    <mac address='{{ network['mac'] }}'/>
+  {% endif %}
     </interface>
-    {% endfor %}
+{% endfor %}
     <controller type='usb' index='0'/>
     <controller type='pci' index='0' model='pci-root'/>
     <serial type='pty'>
