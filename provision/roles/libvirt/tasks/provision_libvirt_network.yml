@@ -1,0 +1,23 @@
+---
+- name: "define network"
+  virt_net:
+    name: "{{ res_def['res_name'] }}"
+    command: define
+    xml: "{{ lookup('template', 'libvirt_network.xml.j2') }}"
+    uri: "{{ res_def['uri'] | default('qemu:///system') }}"
+  register: res_def_output
+  when: async == false
+
+#- name: "map ip and mac addresses in network"
+#  virt_net:
+#    command: modify
+#    xml: "{{ lookup('template', 'libvirt_modify_mac.xml.j2') }}"
+#  with_items:
+#    - "{{ res_def['networks'] }}"
+#  loop_control:
+#    loop_var: map_item
+
+- name: "start network"
+  virt_net:
+    state: active
+    name: "{{ res_def['res_name'] }}"

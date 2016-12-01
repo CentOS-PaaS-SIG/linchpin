@@ -270,6 +270,9 @@
                     "type":"string",
                     "pattern":"libvirt_storage"
                 },
+                "uri": {
+                    "type":"string"
+                },
                 "size": {
                     "type":"string"
                 },
@@ -292,6 +295,12 @@
                     "type":"string",
                     "pattern":"libvirt_network"
                 },
+                "ip": {
+                    "type":"string"
+                },
+                "prefix": {
+                    "type":"string"
+                },
                 "dhcp_start": {
                     "type":"string"
                 },
@@ -302,7 +311,7 @@
                     "type":"string"
                 }
             },
-            "required":["res_name","res_type"]
+            "required":["res_name","res_type","ip"]
         },
         "libvirt_node": {
             "type" : "object",
@@ -335,6 +344,9 @@
                                 "type":"string"
                             },
                             "ip": {
+                                "type":"string"
+                            },
+                            "mac": {
                                 "type":"string"
                             }
                         }
