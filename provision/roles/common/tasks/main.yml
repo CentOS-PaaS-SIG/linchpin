@@ -1,5 +1,12 @@
 ---
 # This playbook contains common play that will be ran before the provisioning starts.
+- name: "Including Linchpin config vars"
+  include_vars: "{{ playbook_dir }}/../linchpin_config.yml"
+
+- name: "DEBUG: topology and schema"
+  debug:
+    msg: "topology: {{ topology }} schema: {{ schema }}"
+
 - name: "schema check for given topology file"
   schema_check:
     data: "{{ topology }}"
