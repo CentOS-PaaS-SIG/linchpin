@@ -1,0 +1,11 @@
+<network ipv6='yes'>
+  <name>linchpin-centos71</name>
+  <forward mode='route' dev="eno1" />
+  <bridge name='virbr9' />
+  <ip address='192.168.71.1' prefix='24'>
+    <dhcp>
+      <range start='192.168.71.101' end='192.168.71.212'/>
+    </dhcp>
+  </ip>
+</network>
+
