@@ -24,7 +24,8 @@ setup(
         'ansible',
         'jinja2',
         'tabulate',
-        'jsonschema'
+        'jsonschema',
+        'mock'
     ],
     entry_points='''
         [console_scripts]
