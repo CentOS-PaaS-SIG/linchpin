@@ -1,6 +1,9 @@
 from setuptools import setup
 import os
 
+# reading requirements from requirements.txt
+with open('requirements.txt') as f:
+    required = f.read().splitlines()
 
 ignore_dir = ['.git']
 
@@ -19,15 +22,7 @@ setup(
     name='linchpin',
     version='0.8.1',
     py_modules= ['linchpin'],
-    install_requires=[
-        'Click',
-        'ansible',
-        'jinja2',
-        'tabulate',
-        'jsonschema',
-        'mock',
-        'boto'
-    ],
+    install_requires=required,
     entry_points='''
         [console_scripts]
         linchpin=linchpin:cli
