@@ -67,9 +67,11 @@ class TestLinchPinInventoryFilters(object):
 
     @with_setup(setup)
     def test_filter_generic_get_host_ips(self):
+        import pdb
+        pdb.set_trace()
         inv = GenericInventory.GenericInventory()
         host_ips = inv.get_host_ips(self.test_input)
-        output = (len(host_ips.keys()) == 3) and (sum(len(v) for v in host_ips.itervalues()) == 9)
+        output = (len(host_ips.keys()) == 4) and (sum(len(v) for v in host_ips.itervalues()) == 9)
         assert_equal(output, True)
 
     @with_setup(setup)
