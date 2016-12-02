@@ -47,4 +47,3 @@ class TestLinchPinInvocation(object):
         results = pbex.run()
         del os.environ["ANSIBLE_CFG"]
         assert_equal(results,1)
-
