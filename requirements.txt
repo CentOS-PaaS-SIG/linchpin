@@ -23,5 +23,6 @@ pytz
 Babel
 docutils
 setuptools>=17.1
-cliff==1.15.0
 mock
+click
+tabulate
