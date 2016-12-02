@@ -66,6 +66,7 @@ class InventoryFilter(object):
                 self.config.add_section(host_group+":"+"vars")
                 for var in inv['host_groups'][host_group]['vars']:
                     grp_vars = inv['host_groups'][host_group]['vars'][var]
+                    grp_vars = str(grp_vars)
                     self.config.set(host_group + ":" + "vars", var, grp_vars)
 
     def add_ips_to_groups(self, inven_hosts, layout):
