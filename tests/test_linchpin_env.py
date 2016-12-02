@@ -45,7 +45,7 @@ class TestLinchPinEnv(object):
         Checks for the version of openstack client installed
         """
         import openstack
-        version = float(openstack.__version__[0:3]) >= 0.8
+        version = float(openstack.version.__version__[0:3]) >= 0.8
         assert_equal(version,True)
     
     @with_setup(setup)
@@ -80,7 +80,9 @@ class TestLinchPinEnv(object):
         """
         Initialises and runs sample echo playbook for testing
         """
-        playbook_path = 'playbooks/test_playbook.yml'
+        path = os.path.realpath(__file__).split("/")[0:-1]
+        path = "/".join(path)
+        playbook_path = path+'/playbooks/test_playbook.yml'
         options = self.Options(listtags=False, listtasks=False, listhosts=False, syntax=False, connection='ssh', module_path=None, forks=100, remote_user='slotlocker', private_key_file=None, ssh_common_args=None, ssh_extra_args=None, sftp_extra_args=None, scp_extra_args=None, become=True, become_method=None, become_user='root', verbosity=3, check=False)
         self.variable_manager.extra_vars = {'hosts': 'mywebserver'} # This can accomodate various other command line arguments.`
         passwords = {}
