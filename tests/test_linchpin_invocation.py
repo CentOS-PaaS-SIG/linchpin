@@ -34,12 +34,17 @@ class TestLinchPinInvocation(object):
         """
         runs linchpin playbooks without any parameters
         """
+        ansible_path = "/".join(os.path.realpath(__file__).split("/")[0:-1])
+        ansible_path = ansible_path +"/mockdata/ansible.cfg"
+        os.environ["ANSIBLE_CFG"] = ansible_path
         path = os.path.realpath(__file__).split("/")[0:-2]
         path = "/".join(path)
+        
         playbook_path = path + '/provision/site.yml'
         options = self.Options(listtags=False, listtasks=False, listhosts=False, syntax=False, connection='ssh', module_path=None, forks=100, remote_user='root', private_key_file=None, ssh_common_args=None, ssh_extra_args=None, sftp_extra_args=None, scp_extra_args=None, become=True, become_method=None, become_user='root', verbosity=3, check=False)
         self.variable_manager.extra_vars = {'test_var': 'test_val'}
         pbex = PlaybookExecutor(playbooks=[playbook_path], inventory=self.inventory, variable_manager=self.variable_manager, loader=self.loader, options=options, passwords={})
         results = pbex.run()
+        del os.environ["ANSIBLE_CFG"]
         assert_equal(results,1)
 
