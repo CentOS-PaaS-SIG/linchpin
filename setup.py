@@ -25,7 +25,8 @@ setup(
         'jinja2',
         'tabulate',
         'jsonschema',
-        'mock'
+        'mock',
+        'boto'
     ],
     entry_points='''
         [console_scripts]
