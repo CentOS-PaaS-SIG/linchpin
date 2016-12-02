@@ -29,7 +29,7 @@ class InventoryFilter(object):
             if 'count' in inv['hosts'][host_group]:
                 count += inv['hosts'][host_group]['count']
             else:
-                count = 1
+                count += 1
         return count
 
     def get_layout_host_groups(self, inv):

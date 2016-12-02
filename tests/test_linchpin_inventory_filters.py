@@ -82,7 +82,7 @@ class TestLinchPinInventoryFilters(object):
     @with_setup(setup)
     def test_filter_os_get_inventory(self):
         inv = OpenstackInventory.OpenstackInventory()
-        output = inv.get_inventory(self.test_input, self.test_layout )
+        output = inv.get_inventory(self.test_input, False, self.test_layout )
         sections = inventory_utils.get_sections(output)
         assert_equal(len(sections), 7)
 
