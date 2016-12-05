@@ -32,7 +32,8 @@
                         {"$ref": "#/definitions/gcloud"},
                         {"$ref": "#/definitions/rackspace"},
                         {"$ref": "#/definitions/libvirt"},
-                        {"$ref": "#/definitions/duffy"}
+                        {"$ref": "#/definitions/duffy"},
+                        {"$ref": "#/definitions/bkr_server"}
                     ]
             }
         }
@@ -83,6 +84,53 @@
             },
             "required":["flavor","res_type","count","keypair"]
         },
+        "bkr_server": {
+             "type": "object",
+             "properties": {
+                 "job_group": {
+                     "type": "string"
+                 },
+                 "recipesets": {
+                     "type": "array",
+                     "items": {
+                         "oneOf": [{
+                             "type": "object",
+                             "properties": {
+                                 "distro": {
+                                     "type": "string"
+                                 },
+                                 "arches": {
+                                     "type": "array"
+                                 },
+                                 "arch": {
+                                     "type": "string"
+                                 },
+                                 "variant": {
+                                     "type": "string"
+                                 },
+                                 "keyvalue": {
+                                     "type": "array"
+                                 },
+                                 "hostrequire": {
+                                     "type": "array"
+                                 },
+                                 "bkr_data": {
+                                    "type": "object"
+                                 },
+                                 "count": {
+                                    "type": "number"
+                                 },
+                                 "ids": {
+                                     "type": "array"
+                                 }
+                             },
+                             "required": ["distro"]
+                         }]
+                     }
+                 }
+             },
+             "required": ["job_group", "recipesets"]
+         },
         "gcloud_gce": {
             "type" : "object",
             "properties" : {

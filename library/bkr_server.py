@@ -215,7 +215,8 @@ class BkrFactory(BkrConn):
 
 def main():
     module = AnsibleModule(argument_spec={
-        'resource_group': {'required': True, 'type': 'list'},
+        'recipesets': {'required': True, 'type': 'list'},
+        'job_group': {'required': True, 'type': 'str'},
         'state': {'default': 'present', 'choices': ['present', 'absent']},
         'cancel_message': {'default': 'Job canceled by Ansible'}
     })
@@ -223,14 +224,16 @@ def main():
     factory = BkrFactory()
     logs = []
     job_ids = []
-    for group in params.resource_group:
-        if params.state == 'present':
-            # Make provision
-            job_id = factory.provision(debug=True, wait=True, **group)
-            job_ids.extend(job_id)
-        else:
-            for recipe in group['recipesets']:
-                factory.cancel_jobs(recipe['ids'], params.cancel_message)
+    for recipeset in params.recipesets:
+        for x in range(0, recipeset['count']):
+            if params.state == 'present':
+                # Make provision
+                job_id = factory.provision(debug=True, wait=True,\
+                                           recipesets=[recipeset],\
+                                           job_group=params.job_group)
+                job_ids.extend(job_id)
+            else:
+                factory.cancel_jobs(recipeset['ids'], params.cancel_message)
     if params.state == 'present':
         parsed_ids = []
         for id_string in job_ids:
