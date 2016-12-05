@@ -14,12 +14,14 @@
 
           - res_name: "sad"
             res_type: "libvirt_storage"
+            uri: 'qemu:///system'
             size: 10G
-            format: file
-            path: /var/lib/libvirt/images
+            type: file
+            path: /var/lib/libvirt/images/linchpin
 
           - res_name: "linchpin-centos72"
             res_type: "libvirt_network"
+            ip: 192.168.77.100
             dhcp_start: 192.168.77.101
             dhcp_end: 192.168.77.112
 

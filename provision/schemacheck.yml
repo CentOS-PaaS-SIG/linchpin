@@ -5,7 +5,7 @@
   vars_files:
    - ../linchpin_config.yml
   vars:
-    topology: '../ex_topo/libvirt_complete.yml'
+    topology: 'examples/topology/libvirt_simple.yml'
     schema: '../ex_schemas/schema_v3.json'
   tasks:
     - name: "schema check for given topology file"

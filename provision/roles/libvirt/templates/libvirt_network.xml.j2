@@ -1,0 +1,14 @@
+<network ipv6='yes'>
+  <name>{{ res_def['res_name'] }}</name>
+  <forward mode="{{ res_def['forward_mode'] | default('nat') }}"
+{% if res_def['forward_dev'] is defined %}
+     dev="{{ res_def['forward_dev'] }}"{% endif %}/>
+  <ip address="{{ res_def['ip'] }}">
+{% if res_def['dhcp_start'] is defined %}
+    <dhcp>
+      <range start="{{ res_def['dhcp_start'] }}" end="{{ res_def['dhcp_end'] }}"/>
+    </dhcp>
+{% endif %}
+  </ip>
+</network>
+
