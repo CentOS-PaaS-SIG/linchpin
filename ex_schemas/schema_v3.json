@@ -295,6 +295,9 @@
                     "type":"string",
                     "pattern":"libvirt_network"
                 },
+                "driver": {
+                    "type":"string"
+                },
                 "ip": {
                     "type":"string"
                 },

@@ -19,11 +19,21 @@
 - name: "DEBUG: node_exists['failed']"
   debug:
     msg: "{{ node_exists['failed'] }}"
+  ignore_errors: yes
 
+- name: set empty local_image_path
+  set_fact:
+    local_image_path: ''
+  when: node_exists['failed'] is defined
+
+- name: set empty img_src_ext
+  set_fact:
+    img_src_ext: ''
+  when: node_exists['failed'] is defined
 
 - name: "copy image_src"
   include: copy_image_src.yml
-  when: node_exists['failed']
+  when: node_exists['failed'] is defined
 
 - name: "define node"
   virt:
@@ -40,7 +50,7 @@
   loop_control:
     loop_var: instance
   register: res_def_output
-  when: async == false
+  when:  node_exists['failed'] is defined
 
 #- name: "map ip and mac addresses in network"
 #  virt_net:

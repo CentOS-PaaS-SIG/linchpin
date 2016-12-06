@@ -1,4 +1,4 @@
-<domain type='kvm'>
+<domain type='{{ instance[1]['driver'] | default('kvm') }}'>
   <name>linchpin_{{ instance[1]['res_name'] }}_{{ instance[2] }}</name>
   <memory unit='KiB'>{{ instance[1]['memory'] * 1024 | int }}</memory>
   <vcpu placement='static'>{{ instance[1]['vcpus'] }}</vcpu>
