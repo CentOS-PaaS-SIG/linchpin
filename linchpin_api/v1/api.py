@@ -188,7 +188,7 @@ class LinchpinAPI:
             output = invoke_linchpin(config, e_vars, "PROVISION", console=True)
         """
 
-    def lp_validate(self, topo, layout, lpf):
+    def lp_validate(self, topo, layout=None, lpf=None):
         """ validate module of linchpin cli :
         currenly validates only topologies,
         need to implement lpf, layouts too"""
