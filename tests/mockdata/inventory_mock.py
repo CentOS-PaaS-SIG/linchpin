@@ -1,5 +1,6 @@
 import json
-import os 
+import os
+import yaml
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 def get_mock_topo_output():
@@ -8,3 +9,5 @@ def get_mock_topo_output():
 def get_mock_layout():
     return json.loads(open(dir_path+"/test_layout.json","r").read())
 
+def get_mock_lpf():
+    return yaml.load(open(dir_path+"/PinFile","r").read())
