@@ -15,6 +15,7 @@ from ansible.executor.playbook_executor import PlaybookExecutor
 from ansible.plugins.callback import CallbackBase
 from callbacks import PlaybookCallback
 from invoke_playbooks import invoke_linchpin
+from cli.utils import search_path
 from utils import get_file, list_files, parse_yaml
 from github import GitHub
 
@@ -58,14 +59,19 @@ class LinchpinAPI:
         """ creates a group of extra vars on basis on linchpin file dict """
         e_vars = []
         for group in lpf:
-            topology = lpf[group].get("topology")
-            layout = lpf[group].get("layout")
-            e_var_grp = {}
-            e_var_grp["topology"] = search_path(topology, os.getcwd())
-            e_var_grp["layout"] = search_path(layout, os.getcwd())
-            if None in e_var_grp.values():
-                display("ERROR:003")
-            e_vars.append(e_var_grp)
+            if not (group in ["post_actions", 
+                              "topology_upstream",
+                              "layout_upstream"]):
+                topology = lpf[group].get("topology")
+                layout = lpf[group].get("layout")
+                e_var_grp = {}
+                e_var_grp["topology"] = search_path(topology, os.getcwd())
+                e_var_grp["layout"] = search_path(layout, os.getcwd())
+                if None in e_var_grp.values():
+                    raise Exception("Topology or Layout mentioned \
+                                     in lpf file not found . \
+                                     Please check your lpf file.")
+                e_vars.append(e_var_grp)
         return e_vars
 
     def lp_list(self, config, topos=False, layouts=False):
