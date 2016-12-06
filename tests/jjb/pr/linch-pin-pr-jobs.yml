@@ -1,0 +1,132 @@
+#################
+## PR DEFAULTS ##
+#################
+
+## Jenkins side panel groovy modifications - Pull Request ID
+- publisher:
+    name: lp-pr-passed
+    publishers:
+        - groovy-postbuild:
+            script: manager.addShortText("PR# " + manager.envVars['ghprbPullId'] + " - Passed", "#000000", "#00FF66", "0px", "#A8A8A8")
+
+- publisher:
+    name: lp-pr-failed
+    publishers:
+        - groovy-postbuild:
+            script: manager.addShortText("PR# " + manager.envVars['ghprbPullId'] + " - Failed", "#000000", "#FF0000", "0px", "#A8A8A8")
+
+
+########################
+## MATRIX JOB TESTING ##
+## SLAVE              ##
+## PYTHON             ##
+########################
+
+- job-template:
+    name: '{lp-pr-name}-test-matrix'
+    defaults: lp-defaults
+    concurrent: false
+    node: '{jslave_name}'
+    project-type: matrix
+    axes:
+      - axis:
+         type: slave
+         name: nodes
+         values:
+          - '{jslave_name}'
+      - axis:
+          type: python
+          values:
+          - System-CPython-2.7
+    properties:
+        # Required by GHPRB. Also adds a nice GitHub link on the job page.
+        - github:
+            url: 'https://github.com/CentOS-PaaS-SIG/{repo-subdir}/'
+    scm:
+      - '{lp-pr-repo}'
+    triggers:
+      - github-pull-request:
+
+          # always check for PR activity every 15 minutes
+          cron: 'H/15 * * * *'
+          auth-id: '{ghprb-auth-id-trigger}'
+
+          # those who can control the bot
+          admin-list:
+              - arilivigni
+              - herlo
+              - samvarankashyap
+              - tdawson
+              - detiber
+
+          # those whose PR build without asking permission (whitelisted)
+          org-list:
+              - CentOS-PaaS-SIG
+          allow-whitelist-orgs-as-admins: true
+
+          white-list:
+              - !include-raw: lp.ghprb-whitelist.txt
+
+          # there's an issue with GHPRB wrapping the expression with \Q \E so
+          # let's just not use regex
+          trigger-phrase: centos-paas-test
+          only-trigger-phrase: true
+    wrappers:
+      - lp-wrappers
+    builders:
+      - inject:
+          properties-content: |
+            GH_STATE=pending
+            GH_DESC="{repo-subdir} unit tests running"
+            GH_CONTEXT={github-context}
+            GH_URL={lp-log-url}
+      - python: |
+          {gh-update-status}
+      - inject:
+          properties-content: |
+            GH_STATE=error
+            GH_DESC="{repo-subdir} unit tests failed"
+      - shining-panda:
+          build-environment: virtualenv
+          python-version: System-CPython-2.7
+          nature: shell
+          command: |
+            {unit-tests}
+          clear: true
+      - inject:
+          properties-content: |
+            GH_STATE=success
+            GH_DESC="{repo-subdir} unit tests passed"
+      - python: |
+          {gh-update-status}
+      - python: |
+          {gh-update-comments}
+    publishers:
+      - conditional-publisher:
+        - condition-kind: current-status
+          condition-worst: SUCCESS
+          condition-best: SUCCESS
+          action:
+            - lp-pr-passed
+        - condition-kind: current-status
+          condition-worst: ABORTED
+          condition-best: UNSTABLE
+          action:
+            - lp-pr-failed
+            - postbuildscript:
+                builders:
+                  - inject:
+                      properties-content: |
+                        GH_STATE=error
+                        GH_URL={lp-log-url}
+                  - python : |
+                      {gh-update-status}
+                  - python : |
+                      {gh-update-comments}
+                script-only-if-succeeded: false
+                execute-on: axes
+
+- job-group:
+    name: lp-pr-jobs
+    jobs:
+      - '{lp-pr-name}-test-matrix'

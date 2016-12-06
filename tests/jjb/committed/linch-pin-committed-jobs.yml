@@ -1,0 +1,41 @@
+########################
+## MATRIX JOB TESTING ##
+## SLAVE              ##
+## PYTHON             ##
+########################
+
+- job-template:
+    name: '{lp-committed-name}-test-matrix'
+    defaults: lp-defaults
+    concurrent: false
+    node: '{jslave_name}'
+    project-type: matrix
+    axes:
+      - axis:
+         type: slave
+         name: nodes
+         values:
+          - '{jslave_name}'
+      - axis:
+          type: python
+          values:
+          - System-CPython-2.7
+    scm:
+      - lp-master-scm
+    wrappers:
+      - lp-wrappers
+    builders:
+      - shining-panda:
+          build-environment: virtualenv
+          python-version: System-CPython-2.7
+          nature: shell
+          command: |
+            {unit-tests}
+          clear: true
+    publishers:
+      - lp-email
+
+- job-group:
+    name: lp-committed-jobs
+    jobs:
+      - '{lp-committed-name}-test-matrix'
