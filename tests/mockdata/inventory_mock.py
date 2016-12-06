@@ -11,3 +11,9 @@ def get_mock_layout():
 
 def get_mock_lpf():
     return yaml.load(open(dir_path+"/PinFile","r").read())
+
+def get_mock_outputfile():
+    return dir_path+"/all_stack_outputs.testoutput"
+
+def get_mock_layoutfile():
+    return dir_path+"/openshift-3node-cluster.yml"
