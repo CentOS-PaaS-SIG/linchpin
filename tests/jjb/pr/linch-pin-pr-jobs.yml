@@ -67,19 +67,31 @@
           white-list:
               - !include-raw: lp.ghprb-whitelist.txt
 
+          # the commit status context we want to update
+          status-context: '{github-context}'
+
           # there's an issue with GHPRB wrapping the expression with \Q \E so
           # let's just not use regex
           trigger-phrase: centos-paas-test
           only-trigger-phrase: true
+
+          # Never post a URL. We manually post the URL to the build server
+          # once we upload it. (The default is to post the job URL, which is
+          # not good in our case since we're internal).
+          status-url: '--none--'
+
+          # Update status when triggered only, and not when started
+          triggered-status: 'Internal aos Jenkins job has been triggered.'
+          started-status: 'triggered'
     wrappers:
       - lp-wrappers
     builders:
       - inject:
           properties-content: |
-            GH_STATE=pending
+            GH_STATE=started
             GH_DESC="{repo-subdir} unit tests running"
             GH_CONTEXT={github-context}
-            GH_URL={lp-log-url}
+            GH_URL='--none--'
       - python: |
           {gh-update-status}
       - inject:
