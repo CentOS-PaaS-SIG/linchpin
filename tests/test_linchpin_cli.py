@@ -2,7 +2,8 @@ import os
 import sys
 import pdb
 import shutil
-from linchpin_api.v1.api import LinchpinAPI
+import cli
+from cli.cli import LinchpinCli
 from mockdata import inventory_mock as im
 from nose.tools import assert_equal
 from nose.tools import assert_not_equal
@@ -11,7 +12,7 @@ from nose.tools import raises
 from nose import with_setup
 
 
-class TestLinchPinAPI(object):
+class TestLinchPinCli(object):
 
     @classmethod
     def setup(self):
@@ -24,16 +25,16 @@ class TestLinchPinAPI(object):
         pass
 
     def test_object_create(self):
-        lp = LinchpinAPI()
-        assert_equal(isinstance(lp, LinchpinAPI), True)
+        lp = LinchpinCli()
+        assert_equal(isinstance(lp, LinchpinCli), True)
 
     def test_get_config_path(self):
-        lp = LinchpinAPI()
+        lp = LinchpinCli()
         config_path = lp.get_config_path().split("/")[-1]
         assert_equal("linchpin_config.yml", config_path)
 
     def test_get_config(self):
-        lp = LinchpinAPI()
+        lp = LinchpinCli()
         cfg = lp.get_config()
         keys = ['inventory_layouts_path',
                 'inventory_outputs_path',
@@ -51,79 +52,79 @@ class TestLinchPinAPI(object):
 
     @raises(TypeError)
     def test_get_evars_without_lpf(self):
-        lp = LinchpinAPI()
+        lp = LinchpinCli()
         evars = lp.get_evars()
 
     @raises(Exception)
     def test_get_evars(self):
-        lp = LinchpinAPI()
+        lp = LinchpinCli()
         lpf = im.get_mock_lpf()
         lp.get_evars(lpf)
 
     @raises(TypeError)
     def test_lp_list_without_params(self):
-        lp = LinchpinAPI()
+        lp = LinchpinCli()
         lp = lp.lp_list()
 
     def test_lp_topo_list_without_params(self):
-        lp = LinchpinAPI()
+        lp = LinchpinCli()
         lp = lp.lp_topo_list()
         assert_equal(isinstance(lp, list), True)
 
     @raises(Exception)
     def test_lp_topo_list_with_wrong_upstream(self):
-        lp = LinchpinAPI()
+        lp = LinchpinCli()
         upstream = "www.example.com"
         lp = lp.lp_topo_list(upstream)
 
     def test_lp_topo_list_with_correct_upstream(self):
-        lp = LinchpinAPI()
+        lp = LinchpinCli()
         upstream = "https://github.com/CentOS-PaaS-SIG/linch-pin"
         lp = lp.lp_topo_list(upstream)
         assert_equal(isinstance(lp, list), True)
 
     def test_lp_layout_list_without_params(self):
-        lp = LinchpinAPI()
+        lp = LinchpinCli()
         lp = lp.lp_layout_list()
         assert_equal(isinstance(lp, list), True)
 
     @raises(Exception)
     def test_lp_layout_list_with_wrong_upstream(self):
-        lp = LinchpinAPI()
+        lp = LinchpinCli()
         upstream = "www.example.com"
         lp = lp.lp_alyout_list(upstream)
 
     def test_lp_layout_list_with_correct_upstream(self):
-        lp = LinchpinAPI()
+        lp = LinchpinCli()
         upstream = "https://github.com/CentOS-PaaS-SIG/linch-pin"
         lp = lp.lp_layout_list(upstream)
         assert_equal(isinstance(lp, list), True)
 
     @raises(TypeError)
     def test_lp_topo_get_without_params(self):
-        lp = LinchpinAPI()
+        lp = LinchpinCli()
         lp = lp.lp_topo_get()
 
     @raises(IOError)
     def test_lp_topo_get_with_wrong_input_topo(self):
-        lp = LinchpinAPI()
+        lp = LinchpinCli()
         topo = "thisdoesnotexists"
         lp = lp.lp_topo_get(topo)
 
     @raises(Exception)
     def test_lp_topo_get_with_wrong_upstream(self):
-        lp = LinchpinAPI()
+        lp = LinchpinCli()
         topo = "thisdoesnotexists"
         upstream = "www.example.com"
         lp = lp.lp_topo_get(topo, upstream)
 
     @raises(TypeError)
     def test_lp_layout_get_without_params(self):
-        lp = LinchpinAPI()
+        lp = LinchpinCli()
         lp = lp.lp_topo_get()
 
     def test_lp_topo_get_with_upstream(self):
-        lp = LinchpinAPI()
+        lp = LinchpinCli()
         upstream = "https://github.com/CentOS-PaaS-SIG/linch-pin"
         directory = "./topologies/"
         if not os.path.exists(directory):
@@ -135,7 +136,7 @@ class TestLinchPinAPI(object):
         shutil.rmtree("./topologies")
 
     def test_lp_layout_get_with_upstream(self):
-        lp = LinchpinAPI()
+        lp = LinchpinCli()
         upstream = "https://github.com/CentOS-PaaS-SIG/linch-pin"
         directory = "./layouts/"
         if not os.path.exists(directory):
@@ -146,43 +147,44 @@ class TestLinchPinAPI(object):
         assert_equal(filedownloaded, True)
         shutil.rmtree("./layouts")
 
-    def test_lp_drop(self):
-        """
-        test not implemented as there is no linchpin_api for rise
-        """
+    @raises(TypeError)
+    def test_lp_drop_without_params(self):
+        lp = LinchpinCli()
+        lp.lp_drop()
 
-    def test_lp_drop_with_target(self):
-        """
-        test not implemented as there is no linchpin_api for rise
-        """
-        pass
+    @raises(KeyError)
+    def test_lp_drop_with_wrong_target(self):
+        lp = LinchpinCli()
+        target = "doesnotexists"
+        lpf = im.get_mock_lpf_path()
+        lp.lp_drop(lpf, target)
 
-    def test_lp_rise(self):
-        """
-        test not implemented as there is no linchpin_api for rise
-        """
-        pass
+    @raises(TypeError)
+    def test_lp_rise_wthout_params(self):
+        lp = LinchpinCli()
+        lp.lp_rise()
 
-    def test_lp_rise_with_target(self):
-        """
-        test not implemented as there is no linchpin_api for rise
-        """
-        pass
+    @raises(KeyError)
+    def test_lp_rise_with_wrong_target(self):
+        lp = LinchpinCli()
+        target = "dosenotexists"
+        lpf = im.get_mock_lpf_path()
+        lp.lp_rise(lpf, target)
 
     @raises(TypeError)
     def test_lp_validate_topology_without_params(self):
-        lp = LinchpinAPI()
+        lp = LinchpinCli()
         lp = lp.lp_validate()
 
     def test_lp_validate_topology(self):
-        lp = LinchpinAPI()
+        lp = LinchpinCli()
         topo = "mockdata/ex_all.yml"
         topo = os.path.abspath(topo)
         lp = lp.lp_validate(topo)
         assert_equal(lp["_result"]["isvalid"], True)
 
     def test_lp_invgen_with_params(self):
-        lp = LinchpinAPI()
+        lp = LinchpinCli()
         of = im.get_mock_outputfile()
         lf = im.get_mock_layoutfile()
         io = os.getcwd()+"/testoutput.txt"
@@ -193,5 +195,5 @@ class TestLinchPinAPI(object):
 
     @raises(TypeError)
     def test_lp_invgen_without_params(self):
-        lp = LinchpinAPI()
+        lp = LinchpinCli()
         lp = lp.lp_invgen()
