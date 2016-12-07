@@ -1,0 +1,18 @@
+---
+- name: "Schema Check Validator"
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+   - ../linchpin_config.yml
+  vars:
+    topology: 'examples/topology/libvirt_simple.yml'
+    schema: '../ex_schemas/schema_v3.json'
+  tasks:
+    - name: "schema check for given topology file"
+      schema_check:
+        data: "{{ topology }}"
+        schema: "{{ schema }}"
+      register: output
+      tags: schema_validation
+
+#    topology: '../ex_topo/libvirt_new.yml'

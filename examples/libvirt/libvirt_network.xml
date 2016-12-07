@@ -1,0 +1,12 @@
+<network ipv6='yes'>
+  <name>{{ res_def['res_name'] }}</name>
+  <forward mode="{{ res_def['forward_mode'] | default('nat') }}"
+    {% if res_def['forward_dev'] is defined %}dev="{{ forward_dev }}" />
+  <bridge name="virbr8" />
+  <ip address="{{ res_def['ip'] }}" >
+    <dhcp>
+      <range start='192.168.78.101' end='192.168.78.112'/>
+    </dhcp>
+  </ip>
+</network>
+

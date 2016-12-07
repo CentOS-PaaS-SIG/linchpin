@@ -1,0 +1,77 @@
+- name: "register resource count"
+  shell: python -c "print [x for x in range( 0, {{ res_def['count'] | default(1) }} )]"
+  register: res_count
+
+- name: "does node already exist"
+  virt:
+    name: "linchpin_{{ nodeinfo[1]['res_name'] }}_{{ nodeinfo[2] }}"
+    command: status
+    uri: "{{ nodeinfo[1]['uri'] | default('qemu:///system') }}"
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ res_def }}"]
+    - "{{ res_count.stdout }}"
+  ignore_errors: yes
+  loop_control:
+    loop_var: nodeinfo
+  register: node_exists
+
+- name: "DEBUG: node_exists['failed']"
+  debug:
+    msg: "{{ node_exists['failed'] }}"
+
+
+- name: "copy image_src"
+  include: copy_image_src.yml
+  when: node_exists['failed']
+
+- name: "define node"
+  virt:
+    name: "linchpin_{{ instance[1]['res_name'] }}_{{ instance[2] }}"
+    command: define
+    xml: "{{ lookup('template', 'libvirt_node.xml.j2') }}"
+    uri: "{{ instance[1]['uri'] | default('qemu:///system') }}"
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ res_def }}"]
+    - "{{ res_count.stdout }}"
+    - ["{{ local_image_path }}"]
+    - ["{{ img_src_ext }}"]
+  loop_control:
+    loop_var: instance
+  register: res_def_output
+  when: async == false
+
+#- name: "map ip and mac addresses in network"
+#  virt_net:
+#    command: modify
+#    xml: "{{ lookup('template', 'libvirt_modify_mac.xml.j2') }}"
+#  with_items:
+#    - "{{ res_def['networks'] }}"
+#  loop_control:
+#    loop_var: map_item
+
+- name: "start relevant networks"
+  virt_net:
+    state: active
+    name: "{{ net_item['name'] }}"
+  with_items:
+    - "{{ res_def['networks'] }}"
+  loop_control:
+    loop_var: net_item
+
+- name: "start node"
+  virt:
+    name: "linchpin_{{ instance[1]['res_name'] }}_{{ instance[2] }}"
+    state: running
+    uri: "{{ instance[1]['uri'] | default('qemu:///system') }}"
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ res_def }}"]
+    - "{{ res_count.stdout }}"
+    - ["{{ local_image_path }}"]
+    - ["{{ img_src_ext }}"]
+  loop_control:
+    loop_var: instance
+  register: res_def_output
+  when: async == false

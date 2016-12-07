@@ -1,0 +1,10 @@
+<network ipv6='yes'>
+  <name>linchpin-centos71</name>
+  <forward mode='nat'/>
+  <ip address='192.168.71.101' prefix='24'>
+    <dhcp>
+      <range start='192.168.71.102' end='192.168.71.254'/>
+    </dhcp>
+  </ip>
+</network>
+

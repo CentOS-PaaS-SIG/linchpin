@@ -6,16 +6,20 @@
   gather_facts: false
   tasks:
     - name: "Include linchpin_config"
-      include_vars: "{{ linchpin_config }}"
- 
+      include_vars: "{{ item }}"
+      with_first_found:
+        - "../linchpin_config.yml"
+        - "~/.linchpin_config.yml"
+        - "/etc/linchpin/linchpin_config.yml"
+
 - name:  "schema check and Pre Provisioning Activities  on topology_file"
   hosts: localhost
   gather_facts: false
   roles:
     - { role: 'common' }
- 
+
 - name:  "Provisioning resources based on resource group type"
-  hosts: localhost 
+  hosts: localhost
   gather_facts: false
   roles:
     - { role: 'openstack', when: os_res_grps | length > 0  }

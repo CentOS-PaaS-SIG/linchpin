@@ -307,7 +307,7 @@
                      "type":"string"
                    }
              },
-             "required":["res_name","res_type","xml"]
+             "required":["res_name","res_type"]
          },
 
         "rax_server": {
