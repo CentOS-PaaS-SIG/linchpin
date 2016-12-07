@@ -8,12 +8,13 @@ from nose.tools import assert_equal
 from nose.tools import assert_not_equal
 from nose.tools import assert_raises
 from nose.tools import raises
-from nose import with_setup 
+from nose import with_setup
 from collections import namedtuple
 from ansible.parsing.dataloader import DataLoader
 from ansible.vars import VariableManager
 from ansible.inventory import Inventory
 from ansible.executor.playbook_executor import PlaybookExecutor
+
 
 class TestLinchPinEnv(object):
     @classmethod
@@ -22,9 +23,29 @@ class TestLinchPinEnv(object):
         # contains all the intialisation required for linchpin
         self.variable_manager = VariableManager()
         self.loader = DataLoader()
-        self.inventory = Inventory(loader=self.loader, variable_manager=self.variable_manager,  host_list=['localhost'])
+        self.inventory = Inventory(loader=self.loader,
+                                   variable_manager=self.variable_manager,
+                                   host_list=['localhost'])
         self.playbook_path = 'playbooks/test_playbook.yml'
-        self.Options = namedtuple('Options', ['listtags', 'listtasks', 'listhosts', 'syntax', 'connection','module_path', 'forks', 'remote_user', 'private_key_file', 'ssh_common_args', 'ssh_extra_args', 'sftp_extra_args', 'scp_extra_args', 'become', 'become_method', 'become_user', 'verbosity', 'check'])
+        self.Options = namedtuple('Options',
+                                  ['listtags',
+                                   'listtasks',
+                                   'listhosts',
+                                   'syntax',
+                                   'connection',
+                                   'module_path',
+                                   'forks',
+                                   'remote_user',
+                                   'private_key_file',
+                                   'ssh_common_args',
+                                   'ssh_extra_args',
+                                   'sftp_extra_args',
+                                   'scp_extra_args',
+                                   'become',
+                                   'become_method',
+                                   'become_user',
+                                   'verbosity',
+                                   'check'])
 
     @classmethod
     def teardown(self):
@@ -37,8 +58,8 @@ class TestLinchPinEnv(object):
         Checks for the version of ansible installed
         """
         version = float(ansible.__version__[0:3]) >= 2.1
-        assert_equal(version,True)
-    
+        assert_equal(version, True)
+
     @with_setup(setup)
     def test_python_os_client_version(self):
         """
@@ -46,8 +67,8 @@ class TestLinchPinEnv(object):
         """
         import openstack
         version = float(openstack.version.__version__[0:3]) >= 0.8
-        assert_equal(version,True)
-    
+        assert_equal(version, True)
+
     @with_setup(setup)
     def test_libcloud_version(self):
         """
@@ -55,8 +76,8 @@ class TestLinchPinEnv(object):
         """
         import libcloud
         version = float(libcloud.__version__[0:3]) >= 0.20
-        assert_equal(version,True)
- 
+        assert_equal(version, True)
+
     @with_setup(setup)
     def test_jsonschema_version(self):
         """
@@ -64,7 +85,7 @@ class TestLinchPinEnv(object):
         """
         import jsonschema
         version = float(jsonschema.__version__[0:3]) >= 2.5
-        assert_equal(version,True)
+        assert_equal(version, True)
 
     @with_setup(setup)
     def test_boto_version(self):
@@ -73,8 +94,8 @@ class TestLinchPinEnv(object):
         """
         import boto
         version = float(boto.__version__[0:3]) >= 2.4
-        assert_equal(version,True)
-     
+        assert_equal(version, True)
+
     @with_setup(setup)
     def test_init(self):
         """
@@ -83,9 +104,31 @@ class TestLinchPinEnv(object):
         path = os.path.realpath(__file__).split("/")[0:-1]
         path = "/".join(path)
         playbook_path = path+'/playbooks/test_playbook.yml'
-        options = self.Options(listtags=False, listtasks=False, listhosts=False, syntax=False, connection='ssh', module_path=None, forks=100, remote_user='slotlocker', private_key_file=None, ssh_common_args=None, ssh_extra_args=None, sftp_extra_args=None, scp_extra_args=None, become=True, become_method=None, become_user='root', verbosity=3, check=False)
-        self.variable_manager.extra_vars = {'hosts': 'mywebserver'} # This can accomodate various other command line arguments.`
+        options = Options(listtags=False,
+                          listtasks=False,
+                          listhosts=False,
+                          syntax=False,
+                          connection='ssh',
+                          module_path=None,
+                          forks=100,
+                          remote_user='root',
+                          private_key_file=None,
+                          ssh_common_args=None,
+                          ssh_extra_args=None,
+                          sftp_extra_args=None,
+                          scp_extra_args=None,
+                          become=True,
+                          become_method=None,
+                          become_user='root',
+                          verbosity=3,
+                          check=False)
+        self.variable_manager.extra_vars = {'hosts': 'mywebserver'}
         passwords = {}
-        pbex = PlaybookExecutor(playbooks=[playbook_path], inventory=self.inventory, variable_manager=self.variable_manager, loader=self.loader, options=options, passwords=passwords)
+        pbex = PlaybookExecutor(playbooks=[playbook_path],
+                                inventory=self.inventory,
+                                variable_manager=self.variable_manager,
+                                loader=self.loader,
+                                options=options,
+                                passwords=passwords)
         results = pbex.run()
-        assert_equal(results,0)
+        assert_equal(results, 0)

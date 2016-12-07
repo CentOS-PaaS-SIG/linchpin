@@ -4,7 +4,9 @@ from nose.tools import assert_not_equal
 from nose.tools import assert_raises
 from nose.tools import raises
 
+
 class TestA(object):
+
     @classmethod
     def setup_class(klass):
         """This method is run once for each class before any tests are run"""
@@ -37,4 +39,3 @@ class TestA(object):
     def test_raise_exc_with_decorator(self):
         a = A()
         a.raise_exc("A message")
-

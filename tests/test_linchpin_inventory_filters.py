@@ -16,17 +16,19 @@ from nose.tools import assert_equal
 from nose.tools import assert_not_equal
 from nose.tools import assert_raises
 from nose.tools import raises
-from nose import with_setup 
+from nose import with_setup
 from collections import namedtuple
-filepath = os.path.realpath(__file__)
-filepath = "/".join(filepath.split("/")[0:-2])
-sys.path.append(filepath)
 from InventoryFilters import AWSInventory
 from InventoryFilters import OpenstackInventory
 from InventoryFilters import GCloudInventory
 from InventoryFilters import GenericInventory
 from linchpin_utils import inventory_utils
 from mockdata import inventory_mock as im
+
+filepath = os.path.realpath(__file__)
+filepath = "/".join(filepath.split("/")[0:-2])
+sys.path.append(filepath)
+
 
 class TestLinchPinInventoryFilters(object):
 
@@ -45,7 +47,7 @@ class TestLinchPinInventoryFilters(object):
         host_ips = inv.get_host_ips(self.test_input)
         output = (type(host_ips) == list) and (len(host_ips) == 3)
         assert_equal(output, True)
-    
+
     @with_setup(setup)
     def test_filter_os_get_host_ips(self):
         inv = OpenstackInventory.OpenstackInventory()
@@ -59,17 +61,18 @@ class TestLinchPinInventoryFilters(object):
         host_ips = inv.get_host_ips(self.test_input)
         output = (type(host_ips) == list) and (len(host_ips) == 3)
         assert_equal(output, True)
-    
+
     @with_setup(setup)
     def test_filter_duffy_get_host_ips(self):
         pass
-
 
     @with_setup(setup)
     def test_filter_generic_get_host_ips(self):
         inv = GenericInventory.GenericInventory()
         host_ips = inv.get_host_ips(self.test_input)
-        output = (len(host_ips.keys()) == 4) and (sum(len(v) for v in host_ips.itervalues()) == 9)
+        noofhosts = len(host_ips.keys())
+        hostips = sum(len(v) for v in host_ips.itervalues())
+        output = (noofhosts == 4) and (hostips == 9)
         assert_equal(output, True)
 
     @with_setup(setup)
@@ -82,7 +85,7 @@ class TestLinchPinInventoryFilters(object):
     @with_setup(setup)
     def test_filter_os_get_inventory(self):
         inv = OpenstackInventory.OpenstackInventory()
-        output = inv.get_inventory(self.test_input, False, self.test_layout )
+        output = inv.get_inventory(self.test_input, False, self.test_layout)
         sections = inventory_utils.get_sections(output)
         assert_equal(len(sections), 7)
 

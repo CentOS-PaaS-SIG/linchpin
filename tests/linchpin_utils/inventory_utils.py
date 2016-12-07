@@ -1,5 +1,5 @@
-import yaml 
-import json 
+import yaml
+import json
 import jsonschema
 import io
 from jsonschema import validate
@@ -15,4 +15,3 @@ def get_sections(ini):
     config.readfp(buf)
     sections = config.sections()
     return sections
-

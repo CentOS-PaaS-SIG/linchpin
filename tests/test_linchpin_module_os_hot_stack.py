@@ -7,14 +7,14 @@ from nose.tools import assert_equal
 from nose.tools import assert_not_equal
 from nose.tools import assert_raises
 from nose.tools import raises
-from nose import with_setup 
+from nose import with_setup
 from collections import namedtuple
 from ansible.parsing.dataloader import DataLoader
 from ansible.vars import VariableManager
 from ansible.inventory import Inventory
 from ansible.executor.playbook_executor import PlaybookExecutor
 from linchpin_utils.module_utils import run_module
-from linchpin_utils.module_utils import boilerplate_module 
+from linchpin_utils.module_utils import boilerplate_module
 
 
 class TestLinchPinModuleOSHotStack(object):
@@ -24,11 +24,11 @@ class TestLinchPinModuleOSHotStack(object):
         self.options = {}
         filepath = os.path.realpath(__file__)
         filepath = "/".join(filepath.split("/")[0:-2])
-        self.options["module_path"]= filepath+"/library/os_hot_stack.py"
-        self.options["module_args"]= '{}'
-        self.options["interpretor"]= 'python={0}'.format(sys.executable)
-        self.options["check"]= None
-        self.options["filename"]= '~/.ansible_module_generated' 
+        self.options["module_path"] = filepath+"/library/os_hot_stack.py"
+        self.options["module_args"] = '{}'
+        self.options["interpretor"] = 'python={0}'.format(sys.executable)
+        self.options["check"] = None
+        self.options["filename"] = '~/.ansible_module_generated'
 
     @classmethod
     def teardown(self):
@@ -42,31 +42,34 @@ class TestLinchPinModuleOSHotStack(object):
         invalid_params = {}
         self.options["module_args"] = json.dumps(invalid_params)
         results = run_module(self.options)
-        output = results['failed'] and "missing required arguments" in results["msg"]
-        assert_equal(output,True)
+        msg = "missing required arguments"
+        output = results['failed'] and msg in results["msg"]
+        assert_equal(output, True)
 
     @with_setup(setup)
     def test_module_unsupported_params(self):
         """
         tests module with unsupported parameters
         """
-        invalid_params = {"test":"params"}
+        invalid_params = {"test": "params"}
         self.options["module_args"] = json.dumps(invalid_params)
         results = run_module(self.options)
-        output = results['failed'] and "unsupported parameter for module" in results["msg"]
-        assert_equal(output,True)
-    
+        msg = "unsupported parameter for module"
+        output = results['failed'] and msg in results["msg"]
+        assert_equal(output, True)
+
     @with_setup(setup)
     def test_module_dir_params(self):
         """
         tests module with dir params
         """
         dir_name = tempfile.mkdtemp()
-        invalid_params = {"stack_name":"testname","state":"present", "template": dir_name}
+        invalid_params = {"stack_name": "testname",
+                          "state": "present",
+                          "template": dir_name}
         self.options["module_args"] = json.dumps(invalid_params)
         results = run_module(self.options)
-        output = results['failed'] and "Recursive directory not supported" in results["msg"]
+        msg = "Recursive directory not supported"
+        output = results['failed'] and msg in results["msg"]
         assert_equal(output, True)
         os.removedirs(dir_name)
-
-    

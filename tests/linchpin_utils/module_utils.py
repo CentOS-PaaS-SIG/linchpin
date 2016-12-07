@@ -7,6 +7,10 @@ import subprocess
 import sys
 import traceback
 import shutil
+try:
+    import json
+except ImportError:
+    import simplejson as json
 import ansible.utils.vars as utils_vars
 from ansible.parsing.dataloader import DataLoader
 from ansible.parsing.utils.jsonify import jsonify
@@ -14,10 +18,6 @@ from ansible.parsing.splitter import parse_kv
 import ansible.executor.module_common as module_common
 import ansible.constants as C
 
-try:
-    import json
-except ImportError:
-    import simplejson as json
 
 def write_argsfile(argstring, json=False):
     """ Write args to a file for old-style module's use. """
@@ -30,22 +30,22 @@ def write_argsfile(argstring, json=False):
     argsfile.close()
     return argspath
 
+
 def boilerplate_module(modfile, args, interpreter, check, destfile):
     """ simulate what ansible does with new style modules """
 
     loader = DataLoader()
 
-    #included_boilerplate = module_data.find(module_common.REPLACER) != -1 or module_data.find("import ansible.module_utils") != -1
-
     complex_args = {}
     if args.startswith("@"):
         # Argument is a YAML file (JSON is a subset of YAML)
-        complex_args = utils_vars.combine_vars(complex_args, loader.load_from_file(args[1:]))
-        args=''
+        complex_args = utils_vars.combine_vars(complex_args,
+                                               loader.load_from_file(args[1:]))
+        args = ''
     elif args.startswith("{"):
         # Argument is a YAML document (not a file)
         complex_args = utils_vars.combine_vars(complex_args, loader.load(args))
-        args=''
+        args = ''
 
     if args:
         parsed_args = parse_kv(args)
@@ -54,7 +54,8 @@ def boilerplate_module(modfile, args, interpreter, check, destfile):
     task_vars = {}
     if interpreter:
         if '=' not in interpreter:
-            print("interpreter must by in the form of ansible_python_interpreter=/usr/bin/python")
+            print("interpreter must by in the form of \
+                   ansible_python_interpreter=/usr/bin/python")
             sys.exit(1)
         interpreter_type, interpreter_path = interpreter.split('=')
         if not interpreter_type.startswith('ansible_'):
@@ -64,7 +65,7 @@ def boilerplate_module(modfile, args, interpreter, check, destfile):
         task_vars[interpreter_type] = interpreter_path
 
     if check:
-         complex_args['_ansible_check_mode'] = True
+        complex_args['_ansible_check_mode'] = True
 
     modname = os.path.basename(modfile)
     modname = os.path.splitext(modname)[0]
@@ -75,11 +76,13 @@ def boilerplate_module(modfile, args, interpreter, check, destfile):
         task_vars=task_vars
     )
 
-    if module_style == 'new' and 'ZIPLOADER_WRAPPER = True' in module_data:
+    if module_style == 'new' \
+       and 'ZIPLOADER_WRAPPER = True' in module_data:
         module_style = 'ziploader'
 
     modfile2_path = os.path.expanduser(destfile)
-    print("* including generated source, if any, saving to: %s" % modfile2_path)
+    print("* including generated source,\
+           if any, saving to: %s" % modfile2_path)
     if module_style not in ('ziploader', 'old'):
         print("* this may offset any line numbers in tracebacks/debuggers!")
     modfile2 = open(modfile2_path, 'w')
@@ -89,10 +92,13 @@ def boilerplate_module(modfile, args, interpreter, check, destfile):
 
     return (modfile2_path, modname, module_style)
 
+
 def ziploader_setup(modfile, modname):
     os.system("chmod +x %s" % modfile)
 
-    cmd = subprocess.Popen([modfile, 'explode'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    cmd = subprocess.Popen([modfile, 'explode'],
+                           stdout=subprocess.PIPE,
+                           stderr=subprocess.PIPE)
     out, err = cmd.communicate()
     lines = out.splitlines()
     if len(lines) != 2 or 'Module expanded into' not in lines[0]:
@@ -105,8 +111,10 @@ def ziploader_setup(modfile, modname):
     argsfile = os.path.join(debug_dir, 'args')
     modfile = os.path.join(debug_dir, 'ansible_module_%s.py' % modname)
 
-    print("* ziploader module detected; extracted module source to: %s" % debug_dir)
+    print("* ziploader module detected;\
+             extracted module source to: %s" % debug_dir)
     return modfile, argsfile
+
 
 def runtest(modfile, argspath, modname, module_style):
     """Test run a module, piping it's output for reporting."""
@@ -119,7 +127,10 @@ def runtest(modfile, argspath, modname, module_style):
     if argspath is not None:
         invoke = "%s %s" % (modfile, argspath)
 
-    cmd = subprocess.Popen(invoke, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    cmd = subprocess.Popen(invoke,
+                           shell=True,
+                           stdout=subprocess.PIPE,
+                           stderr=subprocess.PIPE)
     (out, err) = cmd.communicate()
 
     try:
@@ -133,8 +144,9 @@ def runtest(modfile, argspath, modname, module_style):
 
     print("*" * 35)
     print("PARSED OUTPUT")
-    print(jsonify(results,format=True))
+    print(jsonify(results, format=True))
     return results
+
 
 def rundebug(debugger, modfile, argspath, modname, module_style):
     """Run interactively with console debugger."""
@@ -147,8 +159,18 @@ def rundebug(debugger, modfile, argspath, modname, module_style):
     else:
         subprocess.call("%s %s" % (debugger, modfile), shell=True)
 
+
 def run_module(options):
-    (modfile, modname, module_style) = boilerplate_module(options["module_path"], options["module_args"], options["interpretor"], options["check"], options["filename"])
+    m_path = options["module_path"]
+    m_args = options["module_args"]
+    m_intr = options["interpretor"]
+    m_chk = options["check"]
+    m_fname = options["filename"]
+    (modfile, modname, module_style) = boilerplate_module(m_path,
+                                                          m_args,
+                                                          m_intr,
+                                                          m_chk,
+                                                          m_fname)
 
     argspath = None
     if module_style not in ('new', 'ziploader'):
@@ -157,6 +179,7 @@ def run_module(options):
         elif module_style == 'old':
             argspath = write_argsfile(options.module_args, json=False)
         else:
-            raise Exception("internal error, unexpected module style: %s" % module_style)
+            raise Exception("internal error,\
+                            unexpected module style: %s" % module_style)
     results = runtest(modfile, argspath, modname, module_style)
     return results
