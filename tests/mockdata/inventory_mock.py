@@ -12,6 +12,9 @@ def get_mock_layout():
 def get_mock_lpf():
     return yaml.load(open(dir_path+"/PinFile","r").read())
 
+def get_mock_lpf_path():
+    return dir_path+"/PinFile"
+
 def get_mock_outputfile():
     return dir_path+"/all_stack_outputs.testoutput"
 
