@@ -20,6 +20,8 @@
           type: python
           values:
           - System-CPython-2.7
+#    triggers:
+#        - timed: "H */6 * * *"
     scm:
       - lp-master-scm
     wrappers:

@@ -125,6 +125,10 @@
           condition-best: UNSTABLE
           action:
             - lp-pr-failed
+        - condition-kind: current-status
+          condition-worst: ABORTED
+          condition-best: UNSTABLE
+          action:
             - postbuildscript:
                 builders:
                   - inject:
