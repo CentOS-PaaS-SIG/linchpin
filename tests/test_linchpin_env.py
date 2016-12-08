@@ -104,7 +104,7 @@ class TestLinchPinEnv(object):
         path = os.path.realpath(__file__).split("/")[0:-1]
         path = "/".join(path)
         playbook_path = path+'/playbooks/test_playbook.yml'
-        options = Options(listtags=False,
+        options = self.Options(listtags=False,
                           listtasks=False,
                           listhosts=False,
                           syntax=False,
