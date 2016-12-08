@@ -14,6 +14,8 @@ from ansible.vars import VariableManager
 from ansible.inventory import Inventory
 from ansible.executor.playbook_executor import PlaybookExecutor
 
+# patch for sys.exit
+sys.exit = lambda *x: None
 
 class TestLinchPinInvocation(object):
     @classmethod
@@ -55,9 +57,11 @@ class TestLinchPinInvocation(object):
         """
         runs linchpin playbooks without any parameters
         """
-        ansible_path = "/".join(os.path.realpath(__file__).split("/")[0:-1])
-        ansible_path = ansible_path + "/mockdata/ansible.cfg"
-        os.environ["ANSIBLE_CFG"] = ansible_path
+        #ansible_path = "/".join(os.path.realpath(__file__).split("/")[0:-1])
+        ansible_path = "/".join(os.path.realpath(__file__).split("/")[0:-2])
+        #ansible_path = ansible_path + "/mockdata/ansible.cfg"
+        #os.environ["ANSIBLE_CFG"] = ansible_path
+        os.environ["ANSIBLE_LIBRARY"] = ansible_path
         path = os.path.realpath(__file__).split("/")[0:-2]
         path = "/".join(path)
 
@@ -88,5 +92,6 @@ class TestLinchPinInvocation(object):
                                 options=options,
                                 passwords={})
         results = pbex.run()
-        del os.environ["ANSIBLE_CFG"]
+        #del os.environ["ANSIBLE_CFG"]
+        del os.environ["ANSIBLE_LIBRARY"]
         assert_equal(results, 1)
