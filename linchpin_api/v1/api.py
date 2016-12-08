@@ -43,7 +43,7 @@ class LinchpinAPI:
             print(cwd)
             config_files = [
                             cwd+"/linchpin_config.yml",
-                            cwd+"/../linchpin_config.yml",
+                            cwd+"/linch-pin/linchpin_config.yml", #for jenkins
                             "~/.linchpin_config.yml",
                             self.base_path+"/linchpin_config.yml",
                             "/etc/linchpin_config.yml"]
