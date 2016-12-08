@@ -16,20 +16,17 @@
     loop_var: nodeinfo
   register: node_exists
 
-- name: "DEBUG: node_exists['failed']"
-  debug:
-    msg: "{{ node_exists['failed'] }}"
-  ignore_errors: yes
+#- name: "DEBUG: node_exists['changed']"
+#  debug:
+#    msg: "{{ node_exists }}"
 
 - name: set empty local_image_path
   set_fact:
     local_image_path: ''
-  when: node_exists['failed'] is defined
 
 - name: set empty img_src_ext
   set_fact:
     img_src_ext: ''
-  when: node_exists['failed'] is defined
 
 - name: "copy image_src"
   include: copy_image_src.yml
