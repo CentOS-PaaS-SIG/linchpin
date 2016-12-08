@@ -54,7 +54,6 @@ class TestLinchPinAPI(object):
         lp = LinchpinAPI()
         evars = lp.get_evars()
 
-    @raises(Exception)
     def test_get_evars(self):
         lp = LinchpinAPI()
         lpf = im.get_mock_lpf()
