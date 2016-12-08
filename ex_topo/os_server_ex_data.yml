@@ -2,12 +2,12 @@
   topology_name: "example_topo"
   infra_type: "os_server"
   site: "qeos"
-  credentials: 
+  credentials:
     - "cios_e2e-openstack"
     - "osp7_ae2e_test"
     - "example_creds"
-  resources: 
-    - 
+  resources:
+    -
       resource_name: "testvm_sk_ha"
       res_type: "os_server"
       count: 2

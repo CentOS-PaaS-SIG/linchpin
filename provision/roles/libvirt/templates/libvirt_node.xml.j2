@@ -1,4 +1,4 @@
-<domain type='kvm'>
+<domain type='{{ instance[1]['driver'] | default('kvm') }}'>
   <name>linchpin_{{ instance[1]['res_name'] }}_{{ instance[2] }}</name>
   <memory unit='KiB'>{{ instance[1]['memory'] * 1024 | int }}</memory>
   <vcpu placement='static'>{{ instance[1]['vcpus'] }}</vcpu>
@@ -19,7 +19,11 @@
   <on_reboot>restart</on_reboot>
   <on_crash>destroy</on_crash>
   <devices>
+{% if instance[1]['driver'] is defined and instance[1]['driver'] == 'qemu' %}
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
+{% else %}
     <emulator>/usr/bin/qemu-kvm</emulator>
+{% endif %}
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2'/>
       <source file='{{ instance[3] }}{{ instance[1]['res_name'] }}_{{ instance[2] }}.{{ instance[4] }}'/>

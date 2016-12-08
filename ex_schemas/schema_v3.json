@@ -323,6 +323,10 @@
                     "type":"string",
                     "pattern":"libvirt_node"
                 },
+                "driver": {
+                    "type":"string",
+                    "enum":["kvm","qemu"]
+                },
                 "uri": {
                     "type":"string"
                 },
