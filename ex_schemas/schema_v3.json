@@ -296,7 +296,8 @@
                     "pattern":"libvirt_network"
                 },
                 "driver": {
-                    "type":"string"
+                    "type":"string",
+                    "enum":["kvm","qemu"]
                 },
                 "ip": {
                     "type":"string"
