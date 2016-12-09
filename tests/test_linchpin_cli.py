@@ -182,7 +182,7 @@ class TestLinchPinCli(object):
         topo = base_path+"/tests/mockdata/ex_all.yml"
         topo = os.path.abspath(topo)
         lp = lp.lp_validate(topo)
-        assert_equal(lp, 1)
+        assert_equal(lp, 0)
 
     def test_lp_invgen_with_params(self):
         lp = LinchpinCli()
