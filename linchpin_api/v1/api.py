@@ -199,8 +199,8 @@ class LinchpinAPI:
         e_vars["schema"] = self.base_path + "/ex_schemas/schema_v3.json"
         e_vars["data"] = topo
         result = invoke_linchpin(self.base_path, e_vars,
-                                 "SCHEMA_CHECK", console=False)
-        return result[0].__dict__
+                                 "SCHEMA_CHECK", console=True)
+        return result
 
     def lp_invgen(self, topoout, layout, invout, invtype):
         """ invgen module of linchpin cli """
