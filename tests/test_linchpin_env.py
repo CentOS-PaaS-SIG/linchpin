@@ -60,15 +60,6 @@ class TestLinchPinEnv(object):
         assert_equal(version, True)
 
     @with_setup(setup)
-    def test_python_os_client_version(self):
-        """
-        Checks for the version of openstack client installed
-        """
-        import openstack
-        version = float(openstack.version.__version__[0:3]) >= 0.8
-        assert_equal(version, True)
-
-    @with_setup(setup)
     def test_libcloud_version(self):
         """
         Checks for the version of libcloud installed
