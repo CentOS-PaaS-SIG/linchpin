@@ -187,7 +187,8 @@ class TestLinchPinAPI(object):
         io = os.getcwd()+"/testoutput.txt"
         lp.lp_invgen(of, lf, io, "generic")
         filegenerated = os.path.exists(io)
-        os.remove(io)
+        if filegenerated:
+            os.remove(io)
         assert_equal(filegenerated, True)
 
     @raises(TypeError)
