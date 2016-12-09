@@ -180,7 +180,7 @@ class TestLinchPinAPI(object):
         topo = base_path+"/tests/mockdata/ex_all.yml"
         topo = os.path.abspath(topo)
         lp = lp.lp_validate(topo)
-        assert_equal(lp["_result"]["isvalid"], True)
+        assert_equal(lp, 1)
 
     def test_lp_invgen_with_params(self):
         lp = LinchpinAPI()
