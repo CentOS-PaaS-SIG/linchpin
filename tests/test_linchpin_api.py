@@ -174,7 +174,6 @@ class TestLinchPinAPI(object):
         lp = lp.lp_validate()
 
     def test_lp_validate_topology(self):
-        pdb.set_trace()
         lp = LinchpinAPI()
         topo = "mockdata/ex_all.yml"
         topo = os.path.abspath(topo)
