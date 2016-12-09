@@ -175,14 +175,9 @@ class TestLinchPinAPI(object):
 
     def test_lp_validate_topology(self):
         lp = LinchpinAPI()
-        ansible_path = "/".join(os.path.realpath(__file__).split("/")[0:-2])
-        print("debug: ansible library_path")
-        os.environ["ANSIBLE_LIBRARY"] = ansible_path+"/library"
-        print(os.environ["ANSIBLE_LIBRARY"])
         topo = "mockdata/ex_all.yml"
         topo = os.path.abspath(topo)
         lp = lp.lp_validate(topo)
-        del os.environ["ANSIBLE_LIBRARY"] 
         assert_equal(lp["_result"]["isvalid"], True)
 
     def test_lp_invgen_with_params(self):
