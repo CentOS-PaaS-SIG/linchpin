@@ -24,7 +24,10 @@ class TestLinchPinInventoryGen(object):
         self.inventory = Inventory(loader=self.loader,
                                    variable_manager=self.variable_manager,
                                    host_list=['localhost'])
-        self.playbook_path = 'playbooks/test_inventory.yml'
+        base_path = os.path.realpath(__file__)
+        base_path = "/".join(base_path.split("/")[0:-2])
+        playbook_path = base_path+"/tests/playbooks/test_inventory.yml"
+        self.playbook_path = playbook_path
         self.Options = namedtuple('Options',
                                   ['listtags',
                                    'listtasks',
