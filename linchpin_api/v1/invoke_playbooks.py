@@ -27,7 +27,7 @@ from callbacks import PlaybookCallback
 PLAYBOOKS = {
            "PROVISION": "site.yml",
            "TEARDOWN": "site.yml",
-           "SCHEMA_CHECK": "schema_check.yml",
+           "SCHEMA_CHECK": "schemacheck.yml",
            "INVGEN": "invgen.yml",
            "TEST": "test.yml",
 }

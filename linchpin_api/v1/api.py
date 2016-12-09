@@ -23,12 +23,6 @@ from github import GitHub
 class LinchpinAPI:
 
     def __init__(self):
-        self.PLAYBOOKS = {
-                           "PROVISION": "site.yml",
-                           "TEARDOWN": "site.yml",
-                           "SCHEMA_CHECK": "schemacheck.yml",
-                           "INVGEN": "invgen.yml",
-                         }
         base_path = os.path.dirname(__file__).split("/")
         base_path = base_path[0:-2]
         self.base_path = "/".join(base_path)
