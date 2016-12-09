@@ -26,7 +26,7 @@ class LinchpinAPI:
         self.PLAYBOOKS = {
                            "PROVISION": "site.yml",
                            "TEARDOWN": "site.yml",
-                           "SCHEMA_CHECK": "schema_check.yml",
+                           "SCHEMA_CHECK": "schemacheck.yml",
                            "INVGEN": "invgen.yml",
                          }
         base_path = os.path.dirname(__file__).split("/")
