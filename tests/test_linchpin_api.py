@@ -175,7 +175,9 @@ class TestLinchPinAPI(object):
 
     def test_lp_validate_topology(self):
         lp = LinchpinAPI()
-        topo = "mockdata/ex_all.yml"
+        base_path = os.path.realpath(__file__)
+        base_path = "/".join(base_path.split("/")[0:-2])
+        topo = base_path+"/tests/mockdata/ex_all.yml"
         topo = os.path.abspath(topo)
         lp = lp.lp_validate(topo)
         assert_equal(lp["_result"]["isvalid"], True)
