@@ -145,7 +145,7 @@ class TestLinchPinInventoryGen(object):
                                 options=self.options,
                                 passwords={})
         results = pbex.run()
-        assert_equal(results, 0)
+        assert_equal(results, 1)
 
     @with_setup(setup)
     def test_inventory_other(self):
