@@ -73,6 +73,7 @@ class TestLinchPinModuleOutputParser(object):
         assert_equal(output, True)
 
     @with_setup(setup)
+    @raises(OSError)
     def test_module_empty_file(self):
         """
         tests module with empty file
