@@ -52,11 +52,10 @@ def main():
         required_one_of=[],
         supports_check_mode=True
     )
-    
     ctype = module.params['type']
     cred_store_path = module.params['creds_store']
     name = module.params['name']
-    profile = module.params['profile'] 
+    profile = module.params['profile']
     changed = True
     output = creds.get_creds(ctype, cred_store_path, name, profile)
     if output == None:
