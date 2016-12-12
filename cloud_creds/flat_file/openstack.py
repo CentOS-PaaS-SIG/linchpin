@@ -27,10 +27,23 @@ class Openstack:
         #export OS_PASSWORD=password
         #export OS_TENANT_NAME=projectName
         #export OS_AUTH_URL=https://identityHost:portNumber/v2.0
+        #auth:
+         #auth_url: http://192.168.122.10:35357/
+         #project_name: demo
+         #username: demo
+         #password: 0penstack
         ENV_VARS = ["OS_USERNAME", "OS_PASSWORD", "OS_TENANT_NAME", "OS_AUTH_URL"]
-        creds = { }
+        creds = {}
+        creds["auth"] = {}
         for var in ENV_VARS:
-            creds[var] = os.getenv(key,False)
-        if False in creds.values():
+            if var == "OS_USERNAME":
+                creds["auth"]["username"] = os.getenv(var, False)
+            if var == "OS_PASSWORD":
+                creds["auth"]["password"] = os.getenv(var, False)
+            if var == "OS_TENANT_NAME":
+                creds["auth"]["project_name"] = os.getenv(var, False)
+            if var == "OS_AUTH_URL":
+                creds["auth"]["auth_url"] = os.getenv(var, False)
+        if False in creds["auth"].values():
             return None
         return creds

@@ -19,6 +19,8 @@ class AWS:
                 parser = ConfigParser()
                 parser.read(file_path)
                 confdict = {section: dict(parser.items(section)) for section in parser.sections()}
+                if (profile is None) and ("default" in confdict):
+                    cred = confdict["default"]
                 if profile in confdict:
                     cred = confdict[profile]
         return cred
