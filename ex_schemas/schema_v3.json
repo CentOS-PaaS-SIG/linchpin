@@ -455,6 +455,10 @@
                 "assoc_creds": {
                     "description":"contains creds file associated to this resource",
                     "type":"string"
+                },
+                "profile": {
+                    "description": "contains name of the profile inside the credentialfile",
+                    "type": "string"
                 }
             },
             "required":["resource_group_name","res_group_type","res_defs","assoc_creds"],
