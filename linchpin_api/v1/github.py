@@ -9,7 +9,7 @@ class GitHub:
             self.url = url.strip(".git").strip("/")
             self.owner = self.url.split("/")[-2]
             self.repo = self.url.split("/")[-1].strip("/")
-            self.api_url = "https://api.github.com/repos"
+            self.api_url = "http://api.github.com/repos"
         except Exception as e:
             raise  Exception("Incorrect URL")  
 
