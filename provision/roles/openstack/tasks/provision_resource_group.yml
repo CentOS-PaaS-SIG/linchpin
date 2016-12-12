@@ -6,6 +6,14 @@
   include_vars: "roles/openstack/vars/{{ res_grp['assoc_creds'] }}.yml"
   no_log: false 
 
+#- name: "Initiating authdriver for openstack"
+#  auth_driver:
+#    type: "openstack"
+#    creds_store: "/root/linch-pin.work/credential_store"
+#    name: "clouds"
+#    profile: "devstack"
+#  register: auth_var
+
 - name: "provisioning resource definitions of current group"
   include: provision_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
   with_nested:

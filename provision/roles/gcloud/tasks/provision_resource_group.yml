@@ -6,6 +6,13 @@
   include_vars: "roles/gcloud/vars/{{ res_grp['assoc_creds'] }}.yml"
   no_log: true
 
+#- name: "Initiating authdriver for gcloud"
+#  auth_driver:
+#    type: "gcloud"
+#    credential_store: "/root/linch-pin.work/credential_store"
+#    name: "gcloud"
+#  register: auth_var
+
 - name: "provisioning resource definitions of current group"
   include: provision_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
   with_nested:

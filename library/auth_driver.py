@@ -21,7 +21,6 @@ options:
 author: Samvaran Kashyap Rallabandi -
 '''
 
-from ansible.module_utils.basic import *
 import datetime
 import sys
 import json
@@ -29,7 +28,9 @@ import os
 import shlex
 import tempfile
 import yaml
-
+from ansible.module_utils.basic import *
+import cloud_creds
+from cloud_creds import credentials as creds
 
 def check_file_paths(module, *args):
     for file_path in args:
@@ -44,13 +45,24 @@ def main():
     module = AnsibleModule(
     argument_spec={
             'type':     {'required': True, 'aliases': ['auth_type']},
-            'creds_store': {'required': False, 'aliases': ['credential_store']},
+            'creds_store': {'required': True, 'aliases': ['credential_store']},
+            'name': {'required': True, 'aliases': ['cred_name']},
+            'profile': {'required': False, 'aliases': ['profile'], 'default':None},
         },
         required_one_of=[],
         supports_check_mode=True
     )
+    
+    ctype = module.params['type']
+    cred_store_path = module.params['creds_store']
+    name = module.params['name']
+    profile = module.params['profile'] 
     changed = True
-    module.exit_json(changed=changed, output={})
+    output = creds.get_creds(ctype, cred_store_path, name, profile)
+    if output == None:
+        module.fail_json(msg="Invalid credentials path")
+    module.exit_json(changed=changed, output=output)
+    return output
 
 from ansible.module_utils.basic import *
 main()

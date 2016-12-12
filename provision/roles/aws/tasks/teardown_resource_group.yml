@@ -6,6 +6,14 @@
   include_vars: "roles/aws/vars/{{ res_grp['assoc_creds'] }}.yml"
   no_log: true 
 
+#- name: "Initiating authdriver aws"
+#  auth_driver:
+#    type: "aws"
+#    creds_store: "/root/linch-pin.work/credential_store"
+#    name: "botoconfig"
+#    profile: "default"
+#  register: auth_var
+
 - name: "Parsing topology output file "
   output_parser:
     output_file: "{{ topo_output_file }}"

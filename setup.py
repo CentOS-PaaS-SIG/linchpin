@@ -41,7 +41,8 @@ setup(
           'templates',
           'linchpin_api',
           'cli',
-          'InventoryFilters'
+          'InventoryFilters',
+          'cloud_creds'
     ],
     package_data={
           'library': list_all_files('library'),
@@ -57,7 +58,8 @@ setup(
           'templates': list_all_files('templates'),
           'linchpin_api': list_all_files('linchpin_api'),
           'cli': list_all_files('cli'),
-          'InventoryFilters': list_all_files('InventoryFilters')
+          'InventoryFilters': list_all_files('InventoryFilters'),
+          'cloud_creds': list_all_files('cloud_creds')
     },
     data_files=[
          ('', ['linchpin_config.yml']),
