@@ -9,7 +9,7 @@ class GCloud:
     def get_creds(self, path, name, profile=None):
         # resolves by file name
         for file_path in utils.list_files(path):
-            if name == file_path.split("/")[-1].strip(".json"):
+            if name == file_path.split("/")[-1].split(".")[0]:
                 creds = open(file_path).read()
                 creds = json.loads(creds)
                 creds["file_path"] = file_path
