@@ -73,17 +73,17 @@ class TestLinchPinModuleOutputParser(object):
         assert_equal(output, True)
 
     @with_setup(setup)
-    @raises(OSError)
     def test_module_empty_file(self):
         """
         tests module with empty file
         """
-        tf = tempfile.NamedTemporaryFile()
+        tf = tempfile.NamedTemporaryFile(delete=False)
         invalid_params = {"output_file": tf.name}
         self.options["module_args"] = json.dumps(invalid_params)
         results = run_module(self.options)
         output = results['failed'] and results["msg"]["content"] is None
-        os.remove(tf.name)
+        tf.close()
+        os.unlink(tf.name)
         assert_equal(output, True)
 
     @with_setup(setup)
