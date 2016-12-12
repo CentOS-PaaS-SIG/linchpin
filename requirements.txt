@@ -24,3 +24,4 @@ Babel
 docutils
 setuptools>=17.1
 cliff==1.15.0
+beaker-client==23.3

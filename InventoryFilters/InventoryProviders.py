@@ -6,13 +6,15 @@ from AWSInventory import AWSInventory
 from OpenstackInventory import OpenstackInventory
 from GCloudInventory import GCloudInventory
 from DuffyInventory import DuffyInventory
+from BeakerInventory import BeakerInventory
 from InventoryFilter import InventoryFilter
 
 filter_classes = {
            "aws_inv": AWSInventory,
            "os_inv": OpenstackInventory,
            "gcloud_inv": GCloudInventory,
-           "duffy_inv": DuffyInventory
+           "duffy_inv": DuffyInventory,
+           "beaker_inv": BeakerInventory
 }
 
 
