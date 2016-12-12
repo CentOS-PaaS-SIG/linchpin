@@ -17,10 +17,10 @@
     flavor: "{{ instance.7 }}"
     network: "{{ instance.8 }}"
   with_nested:
-    - ["{{ endpoint }}"]
-    - ["{{ username }}"]
-    - ["{{ password }}"]
-    - ["{{ project }}"]
+    - ["{{ auth_var['output']['auth']['auth_url'] }}"]
+    - ["{{ auth_var['output']['auth']['username'] }}"]
+    - ["{{ auth_var['output']['auth']['password'] }}"]
+    - ["{{ auth_var['output']['auth']['project_name'] }}"]
     - ["{{ state }}"]
     - ["{{ res_def['image'] }}"]
     - ["{{ res_def['keypair']  }}"]
@@ -54,10 +54,10 @@
     flavor: "{{ instance.7 }}"
     network: "{{ instance.8 }}"
   with_nested:
-    - ["{{ endpoint }}"]
-    - ["{{ username }}"]
-    - ["{{ password }}"]
-    - ["{{ project }}"]
+    - ["{{ auth_var['output']['auth']['auth_url'] }}"]
+    - ["{{ auth_var['output']['auth']['username'] }}"]
+    - ["{{ auth_var['output']['auth']['password'] }}"]
+    - ["{{ auth_var['output']['auth']['project_name'] }}"]
     - ["{{ state }}"]
     - ["{{ res_def['image'] }}"]
     - ["{{ res_def['keypair']  }}"]
