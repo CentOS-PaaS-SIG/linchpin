@@ -1,0 +1,33 @@
+- name: "Initiating playbook to perform schema_check on files"
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: "Initiating authdriver aws"
+      auth_driver: 
+        type: "aws"
+        creds_store: "{{ playbook_dir }}/../credential_store"
+        name: "botoconfig"
+   #     profile: "default"
+      register: auth_var
+    - name: "debug of auth output aws"
+      debug:
+        msg: "{{ auth_var }}"
+    - name: "Initiating authdriver"
+      auth_driver:
+        type: "openstack"
+        creds_store: "{{ playbook_dir }}/../credential_store"
+        name: "clouds"
+        profile: "devstack"
+      register: auth_var
+    - name: "debug of auth output openstack"
+      debug:
+        msg: "{{ auth_var }}"
+    - name: "Initiating authdriver for gcloud"
+      auth_driver:
+        type: "gcloud"
+        creds_store: "{{ playbook_dir }}/../credential_store"
+        name: "skcloud"
+      register: auth_var
+    - name: "debug of auth output gcloud"
+      debug:
+        msg: "{{ auth_var }}"
