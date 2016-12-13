@@ -133,7 +133,7 @@ class TestLinchPinCli(object):
         filedownloaded = os.path.exists("./topologies/" + topo)
         assert_equal(filedownloaded, True)
         shutil.rmtree("./topologies")
-
+    """
     def test_lp_layout_get_with_upstream(self):
         lp = LinchpinCli()
         upstream = "https://github.com/CentOS-PaaS-SIG/linch-pin"
@@ -145,7 +145,7 @@ class TestLinchPinCli(object):
         filedownloaded = os.path.exists("./layouts/" + layout)
         assert_equal(filedownloaded, True)
         shutil.rmtree("./layouts")
-
+    """
     @raises(TypeError)
     def test_lp_drop_without_params(self):
         lp = LinchpinCli()
