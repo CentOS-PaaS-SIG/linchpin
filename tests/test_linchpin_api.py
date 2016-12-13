@@ -74,13 +74,13 @@ class TestLinchPinAPI(object):
         lp = LinchpinAPI()
         upstream = "www.example.com"
         lp = lp.lp_topo_list(upstream)
-
+    """
     def test_lp_topo_list_with_correct_upstream(self):
         lp = LinchpinAPI()
         upstream = "https://github.com/CentOS-PaaS-SIG/linch-pin"
         lp = lp.lp_topo_list(upstream)
         assert_equal(isinstance(lp, list), True)
-    
+    """
     def test_lp_layout_list_without_params(self):
         lp = LinchpinAPI()
         lp = lp.lp_layout_list()
@@ -91,13 +91,13 @@ class TestLinchPinAPI(object):
         lp = LinchpinAPI()
         upstream = "www.example.com"
         lp = lp.lp_alyout_list(upstream)
-
+    """
     def test_lp_layout_list_with_correct_upstream(self):
         lp = LinchpinAPI()
         upstream = "https://github.com/CentOS-PaaS-SIG/linch-pin"
         lp = lp.lp_layout_list(upstream)
         assert_equal(isinstance(lp, list), True)
-
+    """
     @raises(TypeError)
     def test_lp_topo_get_without_params(self):
         lp = LinchpinAPI()
@@ -120,7 +120,7 @@ class TestLinchPinAPI(object):
     def test_lp_layout_get_without_params(self):
         lp = LinchpinAPI()
         lp = lp.lp_topo_get()
-
+    """
     def test_lp_topo_get_with_upstream(self):
         lp = LinchpinAPI()
         upstream = "https://github.com/CentOS-PaaS-SIG/linch-pin"
@@ -133,7 +133,6 @@ class TestLinchPinAPI(object):
         assert_equal(filedownloaded, True)
         shutil.rmtree("./topologies")
 
-    """
     def test_lp_layout_get_with_upstream(self):
         lp = LinchpinAPI()
         upstream = "https://github.com/CentOS-PaaS-SIG/linch-pin"
