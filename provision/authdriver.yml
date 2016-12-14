@@ -6,7 +6,7 @@
       auth_driver: 
         type: "aws"
         creds_store: "{{ playbook_dir }}/../credential_store"
-        name: "botoconfig"
+        name: "ex_aws_creds"
    #     profile: "default"
       register: auth_var
     - name: "debug of auth output aws"
@@ -16,7 +16,7 @@
       auth_driver:
         type: "openstack"
         creds_store: "{{ playbook_dir }}/../credential_store"
-        name: "clouds"
+        name: "ex_os_creds"
         profile: "devstack"
       register: auth_var
     - name: "debug of auth output openstack"
@@ -26,7 +26,7 @@
       auth_driver:
         type: "gcloud"
         creds_store: "{{ playbook_dir }}/../credential_store"
-        name: "skcloud"
+        name: "ex_gcloud_creds"
       register: auth_var
     - name: "debug of auth output gcloud"
       debug:

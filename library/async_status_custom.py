@@ -91,7 +91,7 @@ def main():
             data = open(log_path).readlines()
             data = data[2]
         data = json.loads(data)
-        #data = ast.literal_eval(data)
+        # data = ast.literal_eval(data)
     except Exception:
         if not data:
             # file not written yet?  That means it is running
