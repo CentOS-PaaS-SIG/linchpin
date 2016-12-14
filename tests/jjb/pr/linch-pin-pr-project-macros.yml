@@ -32,7 +32,7 @@
       iconv -f utf8 -t ascii $WORKSPACE/{repo-subdir}/requirements.txt >> $WORKSPACE/{repo-subdir}/requirements.txt;
       pip install $WORKSPACE/{repo-subdir}  # where your setup.py lives
       chmod -x $WORKSPACE/{repo-subdir}/tests/*.py
-      nosetests --verbosity=3 -x --with-xunit $WORKSPACE/{repo-subdir}/tests
+      nosetests --verbosity=3 --with-xunit $WORKSPACE/{repo-subdir}/tests
     gh-update-status: |
       import os
       import json

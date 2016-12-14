@@ -27,7 +27,7 @@ from callbacks import PlaybookCallback
 PLAYBOOKS = {
            "PROVISION": "site.yml",
            "TEARDOWN": "site.yml",
-           "SCHEMA_CHECK": "schema_check.yml",
+           "SCHEMA_CHECK": "schemacheck.yml",
            "INVGEN": "invgen.yml",
            "TEST": "test.yml",
 }
@@ -50,6 +50,8 @@ def get_evars(lpf):
 
 def invoke_linchpin(base_path, e_vars, playbook="PROVISION", console=True):
     """ Invokes linchpin playbook """
+    module_path = base_path+"/library"
+    print("debug:: module path ::"+module_path) 
     playbook_path = base_path+"/provision/"+PLAYBOOKS[playbook]
     loader = DataLoader()
     variable_manager = VariableManager()
@@ -82,7 +84,7 @@ def invoke_linchpin(base_path, e_vars, playbook="PROVISION", console=True):
                       listhosts=False,
                       syntax=False,
                       connection='ssh',
-                      module_path=None,
+                      module_path=module_path,
                       forks=100,
                       remote_user='test',
                       private_key_file=None,

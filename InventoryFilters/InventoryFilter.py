@@ -29,7 +29,7 @@ class InventoryFilter(object):
             if 'count' in inv['hosts'][host_group]:
                 count += inv['hosts'][host_group]['count']
             else:
-                count = 1
+                count += 1
         return count
 
     def get_layout_host_groups(self, inv):
@@ -66,6 +66,7 @@ class InventoryFilter(object):
                 self.config.add_section(host_group+":"+"vars")
                 for var in inv['host_groups'][host_group]['vars']:
                     grp_vars = inv['host_groups'][host_group]['vars'][var]
+                    grp_vars = str(grp_vars)
                     self.config.set(host_group + ":" + "vars", var, grp_vars)
 
     def add_ips_to_groups(self, inven_hosts, layout):
