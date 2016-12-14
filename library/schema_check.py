@@ -120,9 +120,12 @@ def validate_values(module, data_file_path):
 def main():
     module = AnsibleModule(
     argument_spec={
-            'data': {'required': True, 'aliases': ['topology_file']},
-            'schema': {'required': True, 'aliases': ['topology_file']},
-            'data_format': {'required': False,'choices':['json','yaml','yml']},
+                   'data': {'required': True,
+                            'aliases': ['topology_file']},
+                   'schema': {'required': True,
+                              'aliases': ['topology_file']},
+                   'data_format': {'required': False,
+                                   'choices': ['json', 'yaml', 'yml']},
         },
         required_one_of=[],
         supports_check_mode=True
