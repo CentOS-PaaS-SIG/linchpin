@@ -1,19 +1,18 @@
-- debug: var=bkr_res_grps
-
-- name: "provision beaker systems"
-  bkr_server:
-    recipesets: "{{ item.recipesets }}"
-    state: "{{ state }}"
-    job_group: "{{ item.job_group }}"
-  with_items: "{{ bkr_res_grps }}"
-  register: bkr
+---
+# This playbook will provision beaker resources.
 
 - name: "allocate beaker outputs"
   set_fact:
     topology_outputs_beaker_server: []
 
-- include: fetch.yml
-  with_items: "{{ bkr.results }}"
-  loop_control:
-    loop_var: bkr_result
-  when: "'{{ state }}' == 'present'"
+- name: "Initiating Provision of beaker resource group"
+  include: provision_resource_group.yml
+  when: state == "present"
+  check_mode: "{{ check_mode }}"
+
+- name: "Initiating Teardown of beaker resource group"
+  include: teardown_resource_group.yml res_grp={{ item.0 }} topo_output_file={{ item.1 }}
+  with_nested:
+    - "{{ bkr_res_grps }}"
+    - ["{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output.yaml' ) }}"]
+  when: state == "absent"

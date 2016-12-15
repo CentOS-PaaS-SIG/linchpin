@@ -12,7 +12,7 @@
     topology_outputs_aws_cfn: []
 
 - name: "Initiating  Provisioning of resources aws resource group"
-  include: provision_resource_group.yml res_grp={{ item }} 
+  include: provision_resource_group.yml res_grp={{ item }}
   with_items:
     - "{{ aws_res_grps }}"
   when: state == "present"
