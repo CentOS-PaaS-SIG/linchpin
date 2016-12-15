@@ -10,6 +10,7 @@
       aws_ec2_res: "{{ aws_ec2_res }}"
       gcloud_gce_res: "{{ gcloud_gce_res }}"
       duffy_res: "{{ duffy_res }}"
+      beaker_res: "{{ beaker_res }}"
 
 - name: "DEBUG:: inventory_layout"
   debug:

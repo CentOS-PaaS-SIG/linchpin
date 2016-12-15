@@ -50,7 +50,8 @@
                                    {"$ref": "#/definitions/ex_res"},
                                    {"$ref": "#/definitions/duffy"},
                                    {"$ref": "#/definitions/libvirt"},
-                                   {"$ref": "#/definitions/rax_server"}
+                                   {"$ref": "#/definitions/rax_server"},
+                                   {"$ref": "#/definitions/bkr_server"}
                                  ]
                             }
                     },
@@ -90,7 +91,50 @@
               },
              "required":["flavor","res_type","image","count","keypair"]
           },
-
+         "bkr_server": {
+             "type": "object",
+             "properties": {
+                 "job_group": {
+                     "type": "string"
+                 },
+                 "recipesets": {
+                     "type": "array",
+                     "items": {
+                         "oneOf": [{
+                             "type": "object",
+                             "properties": {
+                                 "distro": {
+                                     "type": "string"
+                                 },
+                                 "arches": {
+                                     "type": "array"
+                                 },
+                                 "arch": {
+                                     "type": "string"
+                                 },
+                                 "variant": {
+                                     "type": "string"
+                                 },
+                                 "keyvalue": {
+                                     "type": "array"
+                                 },
+                                 "hostrequire": {
+                                     "type": "array"
+                                 },
+                                 "bkr_data": {
+                                    "type": "object"
+                                 },
+                                 "count": {
+                                    "type": "number"
+                                 }
+                             },
+                             "required": ["distro"]
+                         }]
+                     }
+                 }
+             },
+             "required": ["job_group", "recipesets"]
+         },
          "aws_ec2": {
              "type" : "object",
              "properties" : {

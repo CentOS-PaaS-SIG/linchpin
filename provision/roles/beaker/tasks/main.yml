@@ -1,0 +1,19 @@
+- debug: var=bkr_res_grps
+
+- name: "provision beaker systems"
+  bkr_server:
+    recipesets: "{{ item.recipesets }}"
+    state: "{{ state }}"
+    job_group: "{{ item.job_group }}"
+  with_items: "{{ bkr_res_grps }}"
+  register: bkr
+
+- name: "allocate beaker outputs"
+  set_fact:
+    topology_outputs_beaker_server: []
+
+- include: fetch.yml
+  with_items: "{{ bkr.results }}"
+  loop_control:
+    loop_var: bkr_result
+  when: "'{{ state }}' == 'present'"
