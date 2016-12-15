@@ -1,0 +1,39 @@
+- debug: var=bkr_res_grps
+
+- name: "provision beaker systems"
+  bkr_server:
+    recipesets: "{{ res.recipesets }}"
+    state: present
+    job_group: "{{ res.job_group }}"
+  with_items: "{{ bkr_res_grps }}"
+  loop_control:
+    loop_var: res
+  register: bkr
+
+#- name: debug bkr.results['ids']
+#  debug:
+#    var: result['ids']
+#  with_items: "{{ bkr.results }}"
+#  loop_control:
+#    loop_var: result
+#  when: state == 'present'
+
+- name: "fetch beaker details"
+  bkr_info:
+    ids: "{{ result['ids'] }}"
+  with_items: "{{ bkr.results }}"
+  loop_control:
+    loop_var: result
+  when: state == 'present'
+  register: _topology_outputs_beaker_server
+
+- name: debug
+  debug:
+    var: _topology_outputs_beaker_server
+
+- name: "append beaker outputs"
+  set_fact:
+    topology_outputs_beaker_server: "{{ topology_outputs_beaker_server + item.hosts }}"
+  with_items: "{{ _topology_outputs_beaker_server.results }}"
+  when: state == 'present'
+

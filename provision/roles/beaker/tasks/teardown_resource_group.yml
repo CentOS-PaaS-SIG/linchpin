@@ -1,0 +1,50 @@
+- name: "DEBUG:: teardown of resource group {{ res_grp }}"
+  debug:
+    msg: "The current server obj is {{ res_grp }} "
+
+- name: "Parsing topology output file "
+  output_parser:
+    output_file: "{{ topo_output_file }}"
+  register: topo_output
+
+- name: debug topo_output
+  debug:
+    var: topo_output['output']['content']['beaker_res']
+
+- name: "init job_ids"
+  set_fact:
+    job_ids: []
+
+- name: "build job_id list"
+  set_fact:
+    job_ids: "{{ job_ids + [ 'J:' + fact_item['id'] ] }}"
+  with_items: "{{ topo_output['output']['content']['beaker_res'] }}"
+  loop_control:
+    loop_var: fact_item
+
+- name: job_ids
+  debug:
+    var: job_ids
+
+- name: "make ids a dict"
+  set_fact:
+    just_ids: {"ids": "{{ job_ids }}"}
+
+- name: "combine dicts"
+  set_fact:
+   combined:  "{{ recipeset | combine(just_ids) }}"
+  with_items:
+    - "{{ res_grp['recipesets'] }}"
+  loop_control:
+    loop_var: recipeset
+
+- name: combined
+  debug:
+    var: combined
+
+- name: "teardown beaker systems"
+  bkr_server:
+    recipesets: "[ {{ combined }} ]"
+    state: absent
+    job_group: "{{ res_grp['job_group'] }}"
+
