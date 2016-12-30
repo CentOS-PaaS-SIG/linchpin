@@ -15,6 +15,7 @@ from ansible.executor.playbook_executor import PlaybookExecutor
 from ansible.plugins.callback import CallbackBase
 from callbacks import PlaybookCallback
 from invoke_playbooks import invoke_linchpin
+from cli.utils import search_path
 from utils import get_file, list_files, parse_yaml
 from github import GitHub
 
@@ -22,12 +23,6 @@ from github import GitHub
 class LinchpinAPI:
 
     def __init__(self):
-        self.PLAYBOOKS = {
-                           "PROVISION": "site.yml",
-                           "TEARDOWN": "site.yml",
-                           "SCHEMA_CHECK": "schema_check.yml",
-                           "INVGEN": "invgen.yml",
-                         }
         base_path = os.path.dirname(__file__).split("/")
         base_path = base_path[0:-2]
         self.base_path = "/".join(base_path)
@@ -38,19 +33,28 @@ class LinchpinAPI:
     def get_config_path(self):
         try:
             cwd = os.getcwd()
+            print("debug:: current working directory")
+            print(cwd)
             config_files = [
                             cwd+"/linchpin_config.yml",
+                            cwd+"/linch-pin/linchpin_config.yml", #for jenkins
                             "~/.linchpin_config.yml",
                             self.base_path+"/linchpin_config.yml",
                             "/etc/linchpin_config.yml"]
             for c_file in config_files:
+                print("debug:: c_file")
+                print(c_file)
                 if os.path.isfile(c_file):
+                    print("debug:: returned file")
+                    print(c_file)
                     return c_file
         except Exception as e:
             print(e)
 
     def get_config(self):
         config_path = self.get_config_path()
+        print("debug:: config_path")
+        print(config_path)
         config = parse_yaml(config_path)
         return config
 
@@ -58,14 +62,19 @@ class LinchpinAPI:
         """ creates a group of extra vars on basis on linchpin file dict """
         e_vars = []
         for group in lpf:
-            topology = lpf[group].get("topology")
-            layout = lpf[group].get("layout")
-            e_var_grp = {}
-            e_var_grp["topology"] = search_path(topology, os.getcwd())
-            e_var_grp["layout"] = search_path(layout, os.getcwd())
-            if None in e_var_grp.values():
-                display("ERROR:003")
-            e_vars.append(e_var_grp)
+            if not (group in ["post_actions", 
+                              "topology_upstream",
+                              "layout_upstream"]):
+                topology = lpf[group].get("topology")
+                layout = lpf[group].get("layout")
+                e_var_grp = {}
+                e_var_grp["topology"] = search_path(topology, os.getcwd())
+                e_var_grp["layout"] = search_path(layout, os.getcwd())
+                if None in e_var_grp.values():
+                    raise Exception("Topology or Layout mentioned \
+                                     in lpf file not found . \
+                                     Please check your lpf file.")
+                e_vars.append(e_var_grp)
         return e_vars
 
     def lp_list(self, config, topos=False, layouts=False):
@@ -182,7 +191,7 @@ class LinchpinAPI:
             output = invoke_linchpin(config, e_vars, "PROVISION", console=True)
         """
 
-    def lp_validate(self, topo, layout, lpf):
+    def lp_validate(self, topo, layout=None, lpf=None):
         """ validate module of linchpin cli :
         currenly validates only topologies,
         need to implement lpf, layouts too"""
@@ -190,8 +199,8 @@ class LinchpinAPI:
         e_vars["schema"] = self.base_path + "/ex_schemas/schema_v3.json"
         e_vars["data"] = topo
         result = invoke_linchpin(self.base_path, e_vars,
-                                 "SCHEMA_CHECK", console=False)
-        return result[0].__dict__
+                                 "SCHEMA_CHECK", console=True)
+        return result
 
     def lp_invgen(self, topoout, layout, invout, invtype):
         """ invgen module of linchpin cli """

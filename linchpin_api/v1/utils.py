@@ -9,16 +9,11 @@ def get_file(src, dest, link=False):
         name = src.split("/")[-1]
         open(dest+"/"+name, "w").write(r.content)
     else:
-        try:
-            fd = open(src, "r")
-            name = fd.name.split("/")[-1]
-            inp = fd.read()
-            open(dest+name, "w").write(inp)
-            fd.close()
-        except Exception as e:
-            print("get file aborted !!!")
-            print(str(e))
-
+        fd = open(src, "r")
+        name = fd.name.split("/")[-1]
+        inp = fd.read()
+        open(dest+name, "w").write(inp)
+        fd.close()
 
 def list_files(path):
     files = os.listdir(path)
@@ -31,6 +26,8 @@ def list_files(path):
 
 def parse_yaml(lpf):
     """ parses yaml file into json object """
+    print("debug::print file path")
+    print(lpf)
     with open(lpf, 'r') as stream:
         try:
             lpf = yaml.load(stream)

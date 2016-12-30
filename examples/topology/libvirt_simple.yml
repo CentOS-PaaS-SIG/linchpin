@@ -12,6 +12,7 @@
 
           - res_name: "centos72"
             res_type: "libvirt_node"
+            driver: 'qemu'
             uri: 'qemu:///system'
             image_src: 'file:///tmp/linchpin_centos71.img'
             count: 2

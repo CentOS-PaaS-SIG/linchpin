@@ -37,13 +37,6 @@ MSGS = {
 "WARNING:002": "linchpin_config file already found in current directory. Would you like to reset it ?(y/n)" 
 }
 
-PLAYBOOKS={
-"PROVISION": "site.yml",
-"TEARDOWN": "site.yml",
-"SCHEMA_CHECK": "schema_check.yml",
-"INVGEN": "invgen.yml",
-}
-
 
 class Config(object):
     """ Global config object accesible by all the click modules """

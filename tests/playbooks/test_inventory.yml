@@ -10,6 +10,7 @@
     schema: '../mockdata/schema_v2.json'
     inventories: ["os","aws","gcloud","generic"]
     state: present
+    async: False
     output:
       output:
         data:
@@ -34,7 +35,7 @@
         msg: "{{ topology_outputs | generic_inv(inventory_layout)}}"
       when: inventory_type == "generic"
     - debug:
-        msg: "{{ topology_outputs | os_inv(inventory_layout)}}"
+        msg: "{{ topology_outputs | os_inv(async, inventory_layout)}}"
       when: inventory_type == "os"
     - debug:
         msg: "{{ topology_outputs | gcloud_inv(inventory_layout)}}"

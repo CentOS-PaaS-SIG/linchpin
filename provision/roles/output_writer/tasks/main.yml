@@ -17,6 +17,7 @@
       gcloud_gce_res: "{{ topology_outputs_gce  | default([]) }}"
       duffy_res: "{{ topology_outputs_duffy  | default([]) }}"
       rax_server_res: "{{ topology_outputs_rax_server  | default([]) }}"
+      beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
   when: async == false
 
 #- name: "delete output directories"
@@ -68,6 +69,7 @@
       gcloud_gce_res: "{{ topology_outputs_gce | default([]) }}"
       duffy_res: "{{ topology_outputs_duffy | default([]) }}"
       rax_server_res: "{{ topology_outputs_rax_server | default([]) }}"
+      beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
   when: async == true
 
 #- name: "debug of topoloy outputs"

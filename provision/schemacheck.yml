@@ -1,18 +1,8 @@
----
-- name: "Schema Check Validator"
+- name: "Initiating playbook to perform schema_check on files"
   hosts: localhost
   gather_facts: false
-  vars_files:
-   - ../linchpin_config.yml
-  vars:
-    topology: 'examples/topology/libvirt_simple.yml'
-    schema: '../ex_schemas/schema_v3.json'
   tasks:
-    - name: "schema check for given topology file"
-      schema_check:
-        data: "{{ topology }}"
+    - name: "Initiating schema_check"
+      schema_check: 
+        data: "{{ data }}"
         schema: "{{ schema }}"
-      register: output
-      tags: schema_validation
-
-#    topology: '../ex_topo/libvirt_new.yml'

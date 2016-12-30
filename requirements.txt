@@ -23,4 +23,8 @@ pytz
 Babel
 docutils
 setuptools>=17.1
+mock
+click
+tabulate
 cliff==1.15.0
+beaker-client==23.3

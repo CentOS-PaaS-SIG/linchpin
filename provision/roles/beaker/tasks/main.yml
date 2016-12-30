@@ -1,0 +1,18 @@
+---
+# This playbook will provision beaker resources.
+
+- name: "allocate beaker outputs"
+  set_fact:
+    topology_outputs_beaker_server: []
+
+- name: "Initiating Provision of beaker resource group"
+  include: provision_resource_group.yml
+  when: state == "present"
+  check_mode: "{{ check_mode }}"
+
+- name: "Initiating Teardown of beaker resource group"
+  include: teardown_resource_group.yml res_grp={{ item.0 }} topo_output_file={{ item.1 }}
+  with_nested:
+    - "{{ bkr_res_grps }}"
+    - ["{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output.yaml' ) }}"]
+  when: state == "absent"

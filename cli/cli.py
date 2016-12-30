@@ -114,7 +114,7 @@ class LinchpinCli(LinchpinAPI):
                                          "PROVISION",
                                          console=True)
             else:
-                print("Target not found !! in PinFile")
+                raise KeyError('Target not found in PinFile')
 
     def lp_drop(self, lpf, target):
         """ drop module of linchpin cli :
