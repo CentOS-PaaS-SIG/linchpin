@@ -27,3 +27,4 @@ mock
 click
 tabulate
 beaker-client==23.3
+sphinx_rtd_theme
