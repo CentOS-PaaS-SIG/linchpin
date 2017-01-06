@@ -1,8 +1,0 @@
-Installation
-============
-
-.. todo::
-
-   Explain installation.
-
-
