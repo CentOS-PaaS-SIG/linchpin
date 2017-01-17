@@ -57,7 +57,10 @@
                 },
                 "keypair": {
                     "type":"string"
-                }
+                },
+		"fip_pool": {
+		    "type":"string"
+		}
             },
             "required":["flavor","res_type","image","count","keypair"]
         },
