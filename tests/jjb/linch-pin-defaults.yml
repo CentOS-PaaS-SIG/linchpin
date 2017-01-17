@@ -2,7 +2,8 @@
     name: lp-defaults
     description: |
         Maintainer: <a href="mailto:srallaba@redhat.com">sk</a><br>
-        Team Contact: <a href="mailto:herlo@example.com">herlo</a><br>
+        Second Maintainer: <a href="mailto:herlo@example.com">herlo</a><br>
+        Team Contact: <a href="mailto:continuous-infra@redhat.com">continuous-infra</a><br>
         IRC Channel: #centos-devel<br><br>
         JJB Code Location: https://github.com/CentOS-PaaS-SIG/linch-pin/tests/jjb<br>
         Managed by Jenkins Job Builder. Do not edit via web.<br>
@@ -31,7 +32,7 @@
     wrappers:
         - credentials-binding:
           - text:
-              credential-id: a2432de5-7b56-4a07-b697-e16612b92750
+              credential-id: 5f607b9b-73ff-4c89-aa6f-19e43dcb9cce
               variable: GHPRB_TOKEN
 
 - publisher:

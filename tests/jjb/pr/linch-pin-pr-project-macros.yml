@@ -16,10 +16,11 @@
     jslave_name: paas-sig-ci-slave01
     lp-pr-repo: lp-pr-scm
     repo-subdir: linch-pin
-    ghprb-auth-id-trigger: '5f607b9b-73ff-4c89-aa6f-19e43dcb9cce'
-    ghprb-auth-id-update: 'a2432de5-7b56-4a07-b697-e16612b92750'
+    ghprb-auth-id-trigger: 'a2432de5-7b56-4a07-b697-e16612b92750'
+    ghprb-auth-id-update: '5f607b9b-73ff-4c89-aa6f-19e43dcb9cce'
     github-context: linch-pin/unit-tests
     lp-log-url: ${{JOB_URL}}/${{BUILD_NUMBER}}/console
+    lp-test-url: ${{JOB_URL}}/${{BUILD_NUMBER}}/testReport
     combo-filter: >
       ( TBD )
     unit-tests: |
@@ -93,6 +94,9 @@
                  " - State: " + os.environ['GH_STATE'] + \
                  " - All Test Contexts: " + context + \
                  " - Logs: " + os.environ['GH_URL']
+
+      if 'GH_TEST_RESULTS' in os.environ:
+        comments += " - Tests: " + os.environ['GH_TEST_RESULTS']
 
       data = {{'body':  comments}}
 
