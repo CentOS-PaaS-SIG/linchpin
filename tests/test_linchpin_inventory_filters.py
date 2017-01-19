@@ -72,7 +72,7 @@ class TestLinchPinInventoryFilters(object):
         host_ips = inv.get_host_ips(self.test_input)
         noofhosts = len(host_ips.keys())
         hostips = sum(len(v) for v in host_ips.itervalues())
-        output = (noofhosts == 4) and (hostips == 9)
+        output = (noofhosts == 5) and (hostips == 9)
         assert_equal(output, True)
 
     @with_setup(setup)
