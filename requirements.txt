@@ -10,7 +10,7 @@ boto>=2.40.0
 apache-libcloud>=0.20.1
 sphinx>=1.4.4
 jsonschema>=2.5.1
-ansible==2.1.4
+ansible==2.2.0
 shade>=1.9.0
 coverage
 nose
@@ -26,5 +26,4 @@ setuptools>=17.1
 mock
 click
 tabulate
-cliff==1.15.0
 beaker-client==23.3
