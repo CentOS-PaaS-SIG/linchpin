@@ -16,19 +16,19 @@ from jinja2 import Environment, PackageLoader
 
 
 MSGS = {
-        "ERROR:001": "No lpf files found. \
+        "ERROR:001": "No PinFiles found. \
                       Please use linchpin init to initailise ",
-        "ERROR:002": "Multiple lpf files found. \
-                      Please use linchpin rise with --lpf <path>",
-        "ERROR:003": "Topology or Layout mentioned in lpf file not found.\
-                      Please check your lpf file.",
+        "ERROR:002": "Multiple PinFiles found. \
+                      Please use linchpin rise with --pf <path>",
+        "ERROR:003": "Topology or Layout mentioned in PinFile not found.\
+                      Please check your pf file.",
         "ERROR:004": "linchpin_config file not found in current directory.\
                       Please initialise it with lionchpin init or \
                       linchpin config --reset",
         "ERROR:005": "linchpin_config file not found. In default paths.\
                       Please initialise it with lionchpin init or \
                       linchpin config --reset",
-        "WARNING:001": "lpf file structure found current directory.\
+        "WARNING:001": "PinFile structure found current directory.\
                         Would you like to continue ?(y/n)",
         "WARNING:002": "linchpin_config file already found in current directory.\
                         Would you like to reset it ?(y/n)"
@@ -98,18 +98,18 @@ def checkpaths():
     """ checks whether the linchpin layout already exists in cwd"""
     cur_dir = os.getcwd()
     # print os.listdir(cur_dir)
-    layout_files = ['layouts', 'topologies', 'linchfile.lpf']
+    layout_files = ['layouts', 'topologies', 'PinFile']
     for f in layout_files:
         if f in os.listdir(cur_dir):
             return True
 
 
-def parse_yaml(lpf):
+def parse_yaml(pf):
     """ parses yaml file into json object """
-    with open(lpf, 'r') as stream:
+    with open(pf, 'r') as stream:
         try:
-            lpf = yaml.load(stream)
-            return lpf
+            pf = yaml.load(stream)
+            return pf
         except yaml.YAMLError as exc:
             print(exc)
 
