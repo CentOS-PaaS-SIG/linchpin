@@ -19,9 +19,10 @@
       - axis:
           type: python
           values:
-          - System-CPython-2.7
-#    triggers:
-#        - timed: "H */6 * * *"
+          - system-CPython-2.7
+    triggers:
+        - pollscm:
+            cron: "H */1 * * *"
     scm:
       - lp-master-scm
     wrappers:
@@ -29,12 +30,31 @@
     builders:
       - shining-panda:
           build-environment: virtualenv
-          python-version: System-CPython-2.7
+          python-version: system-CPython-2.7
+          system-site-packages: true
           nature: shell
           command: |
             {unit-tests}
           clear: true
+          ignore-exit-code: true
     publishers:
+      - archive:
+          artifacts: '*.xml'
+          allow-empty: 'false'
+      - xunit:
+          thresholdmode: 'number'
+          thresholds:
+            - failed:
+                  unstablenew: 0
+                  failurenew: 0
+            - skipped:
+                  unstablenew: 0
+                  failurenew: 0
+          types:
+            - junit:
+                pattern: '*.xml'
+                deleteoutput: false
+                requireupdate: false
       - lp-email
 
 - job-group:
