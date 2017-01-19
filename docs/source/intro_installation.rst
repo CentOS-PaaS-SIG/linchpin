@@ -45,4 +45,5 @@ Install from source.
 
     $ git clone https://github.com/CentOS-PaaS-SIG/linch-pin.git --recursive
     $ cd ./linch-pin
-    $ sudo pip install -r requirements.txt # installs the dependencies required for linch-pin
+    $ sudo pip install setuptools --upgrade  # upgrade setuptools if you are on RHEL 7.x 
+    $ python setup.py install
