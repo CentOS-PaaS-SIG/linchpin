@@ -51,14 +51,14 @@ class TestLinchPinCli(object):
         assert_equal(cfg.keys(), keys)
 
     @raises(TypeError)
-    def test_get_evars_without_lpf(self):
+    def test_get_evars_without_pf(self):
         lp = LinchpinCli()
         evars = lp.get_evars()
 
     def test_get_evars(self):
         lp = LinchpinCli()
-        lpf = im.get_mock_lpf()
-        lp.get_evars(lpf)
+        pf = im.get_mock_pf()
+        lp.get_evars(pf)
 
     @raises(TypeError)
     def test_lp_list_without_params(self):
@@ -155,8 +155,8 @@ class TestLinchPinCli(object):
     def test_lp_drop_with_wrong_target(self):
         lp = LinchpinCli()
         target = "doesnotexists"
-        lpf = im.get_mock_lpf_path()
-        lp.lp_drop(lpf, target)
+        pf = im.get_mock_pf_path()
+        lp.lp_drop(pf, target)
 
     @raises(TypeError)
     def test_lp_rise_wthout_params(self):
@@ -167,8 +167,8 @@ class TestLinchPinCli(object):
     def test_lp_rise_with_wrong_target(self):
         lp = LinchpinCli()
         target = "dosenotexists"
-        lpf = im.get_mock_lpf_path()
-        lp.lp_rise(lpf, target)
+        pf = im.get_mock_pf_path()
+        lp.lp_rise(pf, target)
 
     @raises(TypeError)
     def test_lp_validate_topology_without_params(self):

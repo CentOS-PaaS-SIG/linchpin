@@ -50,14 +50,14 @@ class TestLinchPinAPI(object):
         assert_equal(cfg.keys(), keys)
 
     @raises(TypeError)
-    def test_get_evars_without_lpf(self):
+    def test_get_evars_without_pf(self):
         lp = LinchpinAPI()
         evars = lp.get_evars()
 
     def test_get_evars(self):
         lp = LinchpinAPI()
-        lpf = im.get_mock_lpf()
-        lp.get_evars(lpf)
+        pf = im.get_mock_pf()
+        lp.get_evars(pf)
 
     @raises(TypeError)
     def test_lp_list_without_params(self):

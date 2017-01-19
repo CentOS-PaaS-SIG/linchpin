@@ -14,11 +14,11 @@ def get_mock_layout():
     return json.loads(open(dir_path+"/test_layout.json", "r").read())
 
 
-def get_mock_lpf():
+def get_mock_pf():
     return yaml.load(open(dir_path+"/PinFile", "r").read())
 
 
-def get_mock_lpf_path():
+def get_mock_pf_path():
     return dir_path+"/PinFile"
 
 
