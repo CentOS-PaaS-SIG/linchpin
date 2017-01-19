@@ -9,6 +9,8 @@ class BeakerInventory(InventoryFilter):
 
     def get_hostnames(self, topology):
         hostnames = []
+        if not ('beaker_res' in topology):
+            return hostnames
         for group in topology['beaker_res']:
             hostnames.append(group['system'])
         return hostnames
@@ -20,6 +22,8 @@ class BeakerInventory(InventoryFilter):
         pass
 
     def get_inventory(self, topo, layout):
+        if not ('beaker_res' in topo):
+            return ''
         if len(topo['beaker_res']) == 0:
             return ''
         inven_hosts = self.get_host_ips(topo)
