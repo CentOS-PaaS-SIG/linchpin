@@ -12,9 +12,8 @@ The main goal of linch-pin is to facilitate provisioning and orchestration of re
    :maxdepth: 1
 
    intro
-   intro_installation
-   intro_getting_started
-   example_topologies
+   config
+   topologies
    license
 
 
