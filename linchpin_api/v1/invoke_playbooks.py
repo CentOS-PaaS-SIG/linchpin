@@ -33,12 +33,12 @@ PLAYBOOKS = {
 }
 
 
-def get_evars(lpf):
+def get_evars(pf):
     """ creates a group of extra vars on basis on linchpin file """
     e_vars = []
-    for group in lpf:
-        topology = lpf[group].get("topology")
-        layout = lpf[group].get("layout")
+    for group in pf:
+        topology = pf[group].get("topology")
+        layout = pf[group].get("layout")
         e_var_grp = {}
         e_var_grp["topology"] = search_path(topology, os.getcwd())
         e_var_grp["layout"] = search_path(layout, os.getcwd())

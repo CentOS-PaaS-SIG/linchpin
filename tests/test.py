@@ -11,4 +11,4 @@ from test_linchpin_module_os_hot_stack import TestLinchPinModuleOSHotStack
 from test_linchpin_module_output_parser import TestLinchPinModuleOutputParser 
 from test_linchpin_module_schema_check import TestLinchPinModuleSchemaCheck
 
-nose.run()
+#nose.run()

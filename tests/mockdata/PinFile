@@ -1,15 +1,8 @@
-#The following example illustrates the linchpinfile , ie., lpf
+#The following example illustrates the PinFile 
 #SYNTAX:
 #component_name:
 #    topology_name: <string>  # refers to the name topology file either in package or local topologies folder
 #    inventory_layout: <string> # refers to name of the inventory layout in package or local layouts folder
-#on linchpin rise ,  the folder structure is created as follows
-# component_name:
-# ---- outputs
-# ---- keystore
-# ---- inventory
-topology_upstream: "https://github.com/CentOS-PaaS-SIG/linch-pin/"
-layout_upstream: "https://github.com/CentOS-PaaS-SIG/linch-pin/"
 
 across2clouds:
   topology: ex_aws_ec2.yml 

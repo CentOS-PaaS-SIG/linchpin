@@ -1,0 +1,25 @@
+---
+    topology_name: "example_topo"
+    resource_groups: 
+      - 
+        resource_group_name: "testgroup1"
+        res_group_type: "openstack"
+        res_defs: 
+          - 
+            res_name: "ha_inst" 
+            flavor: "m1.small"
+            res_type: "os_server"
+            image: "rhel-7.2-server-x86_64-released"
+            count: 2
+            keypair: "ci-factory"
+            networks:
+              - "atomic-e2e-jenkins-test"
+              - "atomic-e2e-jenkins-test2"
+            fip_pool: "10.8.172.0/22"
+        assoc_creds: "atomic_jenkins"
+    resource_group_vars:
+      - 
+        resource_group_name : "testgroup1"
+        test_var1: "test_var1 msg is grp1 hello "
+        test_var2: "test_var2 msg is grp1 hello "
+        test_var3: "test_var3 msg is grp1 hello "
