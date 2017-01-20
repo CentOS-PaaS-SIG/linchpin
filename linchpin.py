@@ -28,13 +28,13 @@ from ansible.executor.playbook_executor import PlaybookExecutor
 from ansible.plugins.callback import CallbackBase
 
 MSGS = {
-"ERROR:001": "No lpf files found. Please use linchpin init to initailise ", 
-"ERROR:002": "Multiple lpf files found. Please use linchpin rise with --lpf <path> ", 
-"ERROR:003": "Topology or Layout mentioned in lpf file not found . Please check your lpf file.", 
+"ERROR:001": "No PinFiles files found. Please use linchpin init to initailise ", 
+"ERROR:002": "Multiple PinFiles found. Please use linchpin rise with --pf <path> ", 
+"ERROR:003": "Topology or Layout mentioned in PinFile not found . Please check your PinFile.", 
 "ERROR:004": "linchpin_config file not found in current directory. Please initialise it with lionchpin init or linchpin config --reset", 
 "ERROR:005": "linchpin_config file not found. In default paths. Please initialise it with lionchpin init or linchpin config --reset", 
-"WARNING:001": "lpf file structure found current directory. Would you like to continue ?(y/n) ", 
-"WARNING:002": "linchpin_config file already found in current directory. Would you like to reset it ?(y/n)" 
+"WARNING:001": "PinFile structure found current directory. Would you like to continue ?(y/n) ", 
+"WARNING:002": "linchpin_config file already found in current directory. Would you like to reset it ?(y/n)"
 }
 
 
@@ -82,12 +82,9 @@ def init(config, path):
     if os.path.isdir(path):
         path = path.strip("/")
         config.linchpinfile.stream().dump(path+'/'+'PinFile')
-        config_path = path+'/'+'linchpin_config.yml'
-        config.lpconfig.stream(pwd=path,
-                               playbook_dir=config.clipath).dump(config_path)
         mkdir(path+"/topologies")
         mkdir(path+"/layouts")
-        mkdir(path+"/inventory")
+        mkdir(path+"/inventories")
         dir_list = ["topologies", "layouts"]
         copy_files(path, dir_list, config)
     else:
@@ -172,7 +169,7 @@ def layouts_get(config, layout, upstream):
 
 
 @cli.command()
-@click.option("--lpf",
+@click.option("--pf",
               default=False,
               required=False,
               help="gets the topology by name")
@@ -181,34 +178,34 @@ def layouts_get(config, layout, upstream):
               required=False,
               help="target name mentioned in PinFile")
 @pass_config
-def rise(config, lpf, target):
+def rise(config, pf, target):
     """ rise module of linchpin cli """
     init_dir = os.getcwd()
-    lpfs = list_by_ext(init_dir, "PinFile")
-    if len(lpfs) == 0:
+    pfs = list_by_ext(init_dir, "PinFile")
+    if len(pfs) == 0:
         display("ERROR:001")
-    if len(lpfs) > 1:
+    if len(pfs) > 1:
         display("ERROR:002")
-    lpf = lpfs[0]
+    pf = pfs[0]
     lpcli = LinchpinCli()
-    output = lpcli.lp_rise(lpf, target)
+    output = lpcli.lp_rise(pf, target)
 
 
 @cli.command()
 @click.option("--target", default="all", required=False,  help="target cloud")
-@click.option("--lpf", default=False, required=False,  help="path of Pinfile")
+@click.option("--pf", default=False, required=False,  help="path of Pinfile")
 @pass_config
-def drop(config, lpf, target):
+def drop(config, pf, target):
     """ drop module of linchpin cli"""
     init_dir = os.getcwd()
-    lpfs = list_by_ext(init_dir, "PinFile")
-    if len(lpfs) == 0:
+    pfs = list_by_ext(init_dir, "PinFile")
+    if len(pfs) == 0:
         display("ERROR:001")
-    if len(lpfs) > 1:
+    if len(pfs) > 1:
         display("ERROR:002")
-    lpf = lpfs[0]
+    pf = pfs[0]
     lpcli = LinchpinCli()
-    output = lpcli.lp_drop(lpf, target)
+    output = lpcli.lp_drop(pf, target)
 
 @cli.command()
 @click.option("--pf",
@@ -226,7 +223,7 @@ def drop(config, lpf, target):
 @pass_config
 def validate(config, topo, layout, pf):
     """ validate module of linchpin cli : currenly validates only topologies,
-        need to implement lpf, layouts too"""
+        need to implement PinFile, layouts too"""
     lpcli = LinchpinCli()
     topo = os.path.abspath(topo)
     output = lpcli.lp_validate(topo, layout, pf)

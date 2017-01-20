@@ -58,22 +58,22 @@ class LinchpinAPI:
         config = parse_yaml(config_path)
         return config
 
-    def get_evars(self, lpf):
+    def get_evars(self, pf):
         """ creates a group of extra vars on basis on linchpin file dict """
         e_vars = []
-        for group in lpf:
+        for group in pf:
             if not (group in ["post_actions", 
                               "topology_upstream",
                               "layout_upstream"]):
-                topology = lpf[group].get("topology")
-                layout = lpf[group].get("layout")
+                topology = pf[group].get("topology")
+                layout = pf[group].get("layout")
                 e_var_grp = {}
                 e_var_grp["topology"] = search_path(topology, os.getcwd())
                 e_var_grp["layout"] = search_path(layout, os.getcwd())
                 if None in e_var_grp.values():
                     raise Exception("Topology or Layout mentioned \
-                                     in lpf file not found . \
-                                     Please check your lpf file.")
+                                     in pf file not found . \
+                                     Please check your pf file.")
                 e_vars.append(e_var_grp)
         return e_vars
 
@@ -151,50 +151,50 @@ class LinchpinAPI:
             get_file(link, "./layouts", True)
             return link
 
-    def lp_drop(self, config, lpf):
+    def lp_drop(self, config, pf):
         """ drop module of linchpin cli : find implementation in cli.py
         inventory_outputs paths"""
         """
         config.variable_manager.extra_vars = {}
         init_dir = os.getcwd()
-        lpfs = list_by_ext(init_dir, ".lpf")
-        if len(lpfs) == 0:
+        pfs = list_by_ext(init_dir, "PinFile")
+        if len(pfs) == 0:
             display("ERROR:001")
-        if len(lpfs) > 1:
+        if len(pfs) > 1:
             display("ERROR:002")
-        lpf = lpfs[0]
-        lpf = parse_yaml(lpf)
-        e_vars_grp = get_evars(lpf)
+        pf = pfs[0]
+        pf = parse_yaml(pf)
+        e_vars_grp = get_evars(pf)
         for e_vars in e_vars_grp:
             e_vars['linchpin_config'] = "/etc/linchpin/linchpin_config.yml"
             topo_name = parse_yaml(e_vars["topology"])["topology_name"]
             e_vars['topology_output_file'] = init_dir + "/outputs/" + \
                                                         topo_name + ".output"
-            e_vars['inventory_outputs_path'] = init_dir + "/inventory"
+            e_vars['inventory_outputs_path'] = init_dir + "/inventories"
             e_vars['state'] = "absent"
             invoke_linchpin(config, e_vars, "PROVISION", console=True)
         """
 
-    def lp_rise(self, lpf, target):
+    def lp_rise(self, pf, target):
         """ rise module of linchpin cli find implementation in cli.py"""
         """
         init_dir = os.getcwd()
-        lpfs = list_by_ext(init_dir, "PinFile")
-        lpf = lpfs[0]
-        lpf = parse_yaml(lpf)
-        e_vars_grp = get_evars(lpf)
+        pfs = list_by_ext(init_dir, "PinFile")
+        pf = pfs[0]
+        pf = parse_yaml(pf)
+        e_vars_grp = get_evars(pf)
         for e_vars in e_vars_grp:
             e_vars['linchpin_config'] = self.get_config_path()
             e_vars['outputfolder_path'] = init_dir+"/outputs"
-            e_vars['inventory_outputs_path'] = init_dir+"/inventory"
+            e_vars['inventory_outputs_path'] = init_dir+"/inventories"
             e_vars['state'] = "present"
             output = invoke_linchpin(config, e_vars, "PROVISION", console=True)
         """
 
-    def lp_validate(self, topo, layout=None, lpf=None):
+    def lp_validate(self, topo, layout=None, pf=None):
         """ validate module of linchpin cli :
         currenly validates only topologies,
-        need to implement lpf, layouts too"""
+        need to implement pf, layouts too"""
         e_vars = {}
         e_vars["schema"] = self.base_path + "/ex_schemas/schema_v3.json"
         e_vars["data"] = topo
@@ -215,7 +215,7 @@ class LinchpinAPI:
                                  "INVGEN",
                                  console=True)
 
-    def lp_test(self, topo, layout, lpf):
+    def lp_test(self, topo, layout, pf):
         """ test module of linchpin_api"""
         e_vars = {}
         e_vars['data'] = topo

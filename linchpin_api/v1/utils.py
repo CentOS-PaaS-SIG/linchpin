@@ -24,13 +24,13 @@ def list_files(path):
     return all_files
 
 
-def parse_yaml(lpf):
+def parse_yaml(pf):
     """ parses yaml file into json object """
     print("debug::print file path")
-    print(lpf)
-    with open(lpf, 'r') as stream:
+    print(pf)
+    with open(pf, 'r') as stream:
         try:
-            lpf = yaml.load(stream)
-            return lpf
+            pf = yaml.load(stream)
+            return pf
         except yaml.YAMLError as exc:
             print(exc)
