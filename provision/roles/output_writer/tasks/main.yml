@@ -37,6 +37,7 @@
     - "{{ outputfolder_path | default( outputfolder_path+'/' ) }}"
     - "{{ inventoryfolder_path | default( inventoryfolder_path+'/' ) }}"
   when: async == false
+  ignore_errors: yes
 
 - name: "DEBUG:: topology_outputs"
   debug:
