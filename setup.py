@@ -20,7 +20,11 @@ def list_all_files(root_dir):
 
 setup(
     name='linchpin',
-    version='0.8.1',
+    version='0.8.2',
+    description = 'Ansible based multi cloud orchestrator',
+    author = 'samvaran kashyap rallabandi',
+    author_email = 'samvaran.kashyap@gmail.com',
+    url = 'http://linch-pin.readthedocs.io/',
     py_modules= ['linchpin'],
     install_requires=required,
     entry_points='''
@@ -61,6 +65,7 @@ setup(
     },
     data_files=[
          ('', ['linchpin_config.yml']),
+         ('', ['requirements.txt']),
     ],
     scripts=['scripts/linchpin_complete.sh']
 )
