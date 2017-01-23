@@ -20,11 +20,11 @@ def list_all_files(root_dir):
 
 setup(
     name='linchpin',
-    version='0.8.1',
+    version='0.8.2',
     description = 'Ansible based multi cloud orchestrator',
     author = 'samvaran kashyap rallabandi',
     author_email = 'samvaran.kashyap@gmail.com',
-    url = 'https://github.com/CentOS-PaaS-SIG/linch-pin',
+    url = 'http://linch-pin.readthedocs.io/',
     py_modules= ['linchpin'],
     install_requires=required,
     entry_points='''
