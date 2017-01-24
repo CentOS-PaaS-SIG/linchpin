@@ -1,22 +1,9 @@
-from setuptools import setup
+from setuptools import setup, findall
 import os
 
 # reading requirements from requirements.txt
 with open('requirements.txt') as f:
     required = f.read().splitlines()
-
-ignore_dir = ['.git']
-
-def list_all_files(root_dir):
-    file_set = []
-    for dir_, _, files in os.walk(root_dir):
-        for file_name in files:
-            rel_dir = os.path.relpath(dir_, root_dir)
-            rel_file = os.path.join(rel_dir, file_name)
-            if any(ext in rel_file for ext in ignore_dir):
-                continue
-            file_set.append(rel_file)
-    return file_set
 
 setup(
     name='linchpin',
@@ -48,20 +35,20 @@ setup(
           'InventoryFilters'
     ],
     package_data={
-          'library': list_all_files('library'),
-          'keystore': list_all_files('keystore'),
-          'ex_schemas': list_all_files('ex_schemas'),
-          'configure': list_all_files('configure'),
-          'docs': list_all_files('docs'),
-          'tests': list_all_files('tests'),
-          'inventory_layouts': list_all_files('inventory_layouts'),
-          'provision': list_all_files('provision'),
-          'ex_topo': list_all_files('ex_topo'),
-          'outputs': list_all_files('outputs'),
-          'templates': list_all_files('templates'),
-          'linchpin_api': list_all_files('linchpin_api'),
-          'cli': list_all_files('cli'),
-          'InventoryFilters': list_all_files('InventoryFilters')
+          'library': findall('ibrary'),
+          'keystore': findall('keystore'),
+          'ex_schemas': findall('ex_schemas'),
+          'configure': findall('configure'),
+          'docs': findall('docs'),
+          'tests': findall('tests'),
+          'inventory_layouts': findall('inventory_layouts'),
+          'provision': findall('provision'),
+          'ex_topo': findall('ex_topo'),
+          'outputs': findall('outputs'),
+          'templates': findall('templates'),
+          'linchpin_api': findall('linchpin_api'),
+          'cli': findall('cli'),
+          'InventoryFilters': findall('InventoryFilters')
     },
     data_files=[
          ('', ['linchpin_config.yml']),
