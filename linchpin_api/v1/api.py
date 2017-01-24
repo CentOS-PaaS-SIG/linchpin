@@ -40,6 +40,7 @@ class LinchpinAPI:
                             cwd+"/linch-pin/linchpin_config.yml", #for jenkins
                             "~/.linchpin_config.yml",
                             self.base_path+"/linchpin_config.yml",
+                            "/usr/linchpin_config.yml",
                             "/etc/linchpin_config.yml"]
             for c_file in config_files:
                 print("debug:: c_file")
