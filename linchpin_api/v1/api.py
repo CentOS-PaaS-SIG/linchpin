@@ -33,8 +33,6 @@ class LinchpinAPI:
     def get_config_path(self):
         try:
             cwd = os.getcwd()
-            print("debug:: current working directory")
-            print(cwd)
             config_files = [
                             cwd+"/linchpin_config.yml",
                             cwd+"/linch-pin/linchpin_config.yml", #for jenkins
@@ -43,10 +41,10 @@ class LinchpinAPI:
                             "/usr/linchpin_config.yml",
                             "/etc/linchpin_config.yml"]
             for c_file in config_files:
-                print("debug:: c_file")
+                print("debug:: searching linchpin_config file from path :: ")
                 print(c_file)
                 if os.path.isfile(c_file):
-                    print("debug:: returned file")
+                    print("debug:: File found returning ::")
                     print(c_file)
                     return c_file
         except Exception as e:
@@ -54,8 +52,6 @@ class LinchpinAPI:
 
     def get_config(self):
         config_path = self.get_config_path()
-        print("debug:: config_path")
-        print(config_path)
         config = parse_yaml(config_path)
         return config
 
