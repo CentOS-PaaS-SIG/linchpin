@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, findall
 import os
 
 # reading requirements from requirements.txt
@@ -6,7 +6,7 @@ with open('requirements.txt') as f:
     required = f.read().splitlines()
 
 ignore_dir = ['.git']
-
+ 
 def list_all_files(root_dir):
     file_set = []
     for dir_, _, files in os.walk(root_dir):
@@ -20,7 +20,7 @@ def list_all_files(root_dir):
 
 setup(
     name='linchpin',
-    version='0.8.2',
+    version='0.8.5',
     description = 'Ansible based multi cloud orchestrator',
     author = 'samvaran kashyap rallabandi',
     author_email = 'samvaran.kashyap@gmail.com',
