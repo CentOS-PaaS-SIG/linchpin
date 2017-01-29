@@ -1,0 +1,267 @@
+{
+  "events": [
+    {
+      "act": "OPEN",
+      "size": [
+        190,
+        49
+      ],
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s lpdemo]$ ",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "ECHO",
+      "data": "cp ../lpdemo2/PinFile PinFile",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0058231353759765625
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;cp ../lpdemo2/PinFile PinFile\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0004036426544189453
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s lpdemo]$ ",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "ECHO",
+      "data": "cp -rv ../lpdemo2/topologies/ ../lpdemo2/layouts/ .",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0012066364288330078
+    },
+    {
+      "act": "WRITE",
+      "data": "'../lpdemo2/topologies/duffy-3node-cluster.yml' -> './topologies/duffy-3node-cluster.yml'\r\n'../lpdemo2/topologies/simple-e2e-os-cluster.yml' -> './topologies/simple-e2e-os-cluster.yml'\r\n'../lpdemo2/topologies/simple-ae2e-cluster.yml' -> './topologies/simple-ae2e-cluster.yml'\r\n'../lpdemo2/layouts/openshift-3node-cluster.yml' -> './layouts/openshift-3node-cluster.yml'\r\n",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0016314983367919922
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;cp -rv ../lpdemo2/topologies/ ../lpdemo2/layouts/ .\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007(venv) [herlo@t450s lpdemo]$ ",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "ECHO",
+      "data": "cat PinFile",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0004622936248779297
+    },
+    {
+      "act": "WRITE",
+      "data": "---\r\nae2e-test:\r\n  topology: simple-ae2e-cluster.yml\r\n  layout: openshift-3node-cluster.yml\r\n\r\n#e2e:\r\n#  topology: simple-e2e-os-cluster.yml\r\n#  layout: openshift-3node-cluster.yml\r\n\r\n",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.005324125289916992
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;cat PinFile\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0006656646728515625
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s lpdemo]$ ",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0037622451782226562
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;cat PinFile\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0002765655517578125
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s lpdemo]$ ",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "ECHO",
+      "data": "ls -l topologies/",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0014064311981201172
+    },
+    {
+      "act": "WRITE",
+      "data": "total 12\r\n-rw-rw-r--. 1 herlo herlo 323 Jan 26 16:05 duffy-3node-cluster.yml\r\n-rw-rw-r--. 1 herlo herlo 506 Jan 26 16:05 simple-ae2e-cluster.yml\r\n-rw-rw-r--. 1 herlo herlo 482 Jan 26 16:05 simple-e2e-os-cluster.yml\r\n\u001b]777;notify;Command completed;ls -l topologies/\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00029850006103515625
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s lpdemo]$ ",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.005431413650512695
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;ls -l topologies/\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00103759765625
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s lpdemo]$ ",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "ECHO",
+      "data": "ls -l layouts/",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0013036727905273438
+    },
+    {
+      "act": "WRITE",
+      "data": "total 4\r\n-rw-rw-r--. 1 herlo herlo 781 Jan 26 16:05 openshift-3node-cluster.yml\r\n",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.002628803253173828
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;ls -l layouts/\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s lpdemo]$ ",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;ls -l layouts/\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n--END--\r\n",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    },
+    {
+      "act": "CLOSE",
+      "term": "edb3a37497994e2ba303d0ee32ceac98"
+    }
+  ],
+  "shell": "/usr/bin/bash"
+}
