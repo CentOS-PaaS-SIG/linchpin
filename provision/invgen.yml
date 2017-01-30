@@ -5,7 +5,6 @@
   hosts: localhost
   gather_facts: false
   vars_files:
-   - "{{ linchpin_config }}"
    - "{{ output }}"
   tasks:
     - include_vars: "{{ layout }}"
@@ -17,19 +16,25 @@
           gcloud_gce_res: "{{ gcloud_gce_res }}"
           duffy_res: "{{ duffy_res }}"
         inventory_type: "{{ inventory_type | default('generic') }}"
-    - copy: 
-        content: "{{ topology_outputs | generic_inv(inventory_layout) }}" 
-        dest: "{{ inventory_output }}"
+    - debug: 
+        msg: "{{ topology_outputs | generic_inv(inventory_layout) }}" 
       when: inventory_type == "generic"
     - copy:
         content: "{{ topology_outputs | aws_inv(inventory_layout) }}"
         dest: "{{ inventory_output  }}"
       when: inventory_type == "aws"
-    - copy:
-        content: "{{ topology_outputs | os_inv(inventory_layout) }}"
-        dest: "{{ inventory_output  }}"
+    - debug:
+        msg: "{{ topology_outputs | os_inv(inventory_layout) }}"
       when: inventory_type == "openstack"
     - copy:
         content: "{{ topology_outputs | gcloud_inv(inventory_layout) }}"
         dest: "{{ inventory_output  }}" 
       when: inventory_type == "gcloud"
+    - copy:
+        content: "{{ topology_outputs | os_inv(inventory_layout) }}"
+        dest: "{{ inventory_output  }}"
+      when: inventory_type == "openstack"
+    - copy:
+        content: "{{ topology_outputs | generic_inv(inventory_layout) }}"
+        dest: "{{ inventory_output }}"
+      when: inventory_type == "generic"
