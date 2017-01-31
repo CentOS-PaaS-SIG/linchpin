@@ -383,14 +383,6 @@ def _exit_hostvars(module, cloud, server, changed=True):
     module.exit_json(
         changed=changed, server=server, id=server.id, openstack=hostvars)
 
-def _exit_hostvars_count(module, cloud, servers, changed=True):
-    hostvars = []
-    for server in servers:
-        hostvars.append(meta.get_hostvars_from_server(cloud, server))
-    server_ids = [server.id for server in servers]
-    module.exit_json(
-        changed=changed, servers=servers, ids=server_ids, openstack=hostvars)
-
 
 def _parse_nics(nics):
     for net in nics:
@@ -443,18 +435,6 @@ def _delete_server(module, cloud):
         module.fail_json(msg="Error in deleting vm: %s" % e.message)
     module.exit_json(changed=True, result='deleted')
 
-def _delete_server_count(module, cloud, count):
-    server_name = module.params['name']
-    for i in range(0, count):
-        servername = server_name+str(i)
-        try:
-            cloud.delete_server(
-                               servername, wait=module.params['wait'],
-                               timeout=module.params['timeout'],
-                               delete_ips=module.params['delete_fip'])
-        except Exception as e:
-            module.fail_json(msg="Error in deleting vm: %s" % e.message)
-    module.exit_json(changed=True, result='deleted')
 
 def _create_server(module, cloud):
     flavor = module.params['flavor']
@@ -513,65 +493,6 @@ def _create_server(module, cloud):
     )
 
     _exit_hostvars(module, cloud, server)
-
-def _create_server_count(module, cloud, count):
-    flavor = module.params['flavor']
-    flavor_ram = module.params['flavor_ram']
-    flavor_include = module.params['flavor_include']
-
-    image_id = None
-    if not module.params['boot_volume']:
-        image_id = cloud.get_image_id(
-            module.params['image'], module.params['image_exclude'])
-
-    if flavor:
-        flavor_dict = cloud.get_flavor(flavor)
-        if not flavor_dict:
-            module.fail_json(msg="Could not find flavor %s" % flavor)
-    else:
-        flavor_dict = cloud.get_flavor_by_ram(flavor_ram, flavor_include)
-        if not flavor_dict:
-            module.fail_json(msg="Could not find any matching flavor")
-
-    nics = _network_args(module, cloud)
-
-    if type(module.params['meta']) is str:
-        metas = {}
-        for kv_str in module.params['meta'].split(","):
-            k, v = kv_str.split("=")
-            metas[k] = v
-        module.params['meta'] = metas
-
-    servers = []
-    for i in range(0, count):
-        bootkwargs = dict(
-        name=module.params['name']+str(i),
-        image=image_id,
-        flavor=flavor_dict['id'],
-        nics=nics,
-        meta=module.params['meta'],
-        security_groups=module.params['security_groups'],
-        userdata=module.params['userdata'],
-        config_drive=module.params['config_drive'],
-        )
-        for optional_param in (
-            'key_name', 'availability_zone', 'network',
-            'scheduler_hints', 'volume_size', 'volumes'):
-            if module.params[optional_param]:
-                bootkwargs[optional_param] = module.params[optional_param]
-        server = cloud.create_server(
-            ip_pool=module.params['floating_ip_pools'],
-            ips=module.params['floating_ips'],
-            auto_ip=module.params['auto_ip'],
-            boot_volume=module.params['boot_volume'],
-            boot_from_volume=module.params['boot_from_volume'],
-            terminate_volume=module.params['terminate_volume'],
-            reuse_ips=module.params['reuse_ips'],
-            wait=module.params['wait'], timeout=module.params['timeout'],
-            **bootkwargs
-        )
-        servers.append(server)
-    _exit_hostvars_count(module, cloud, servers)
 
 
 def _delete_floating_ip_list(cloud, server, extra_ips):
@@ -639,32 +560,6 @@ def _get_server_state(module, cloud):
         module.exit_json(changed=False, result="not present")
     return True
 
-def _get_server_state_count(module, cloud, count):
-    state = module.params['state']
-    servers = []
-    for i in range(0,count):
-        server = cloud.get_server(module.params['name']+str(i))
-        servers.append(server)
-    state_flag = False
-    for server in servers:
-        if server and state == 'present':
-            if server.status not in ('ACTIVE', 'SHUTOFF', 'PAUSED', 'SUSPENDED'):
-                module.fail_json(
-                    msg="The instance is available but not Active state: "
-                        + server.status)
-            ip_changed_list = []
-            servers_list = []
-            for server in servers:
-                (ip_changed, server) = _check_floating_ips(module, cloud, server)
-                ip_changed_list.append(ip_changed)
-                servers_list.append(server)
-            _exit_hostvars_count(module, cloud, servers_list, all(ip_changed_list))
-        if server and state == 'absent':
-            state_flag = True
-        if state == 'absent':
-            module.exit_json(changed=False, result="not present")
-            state_flag = True
-    return state_flag
 
 def main():
 
@@ -694,7 +589,6 @@ def main():
         state                           = dict(default='present', choices=['absent', 'present']),
         delete_fip                      = dict(default=False, type='bool'),
         reuse_ips                       = dict(default=True, type='bool'),
-        count                           = dict(default=None, type='int'),
     )
     module_kwargs = openstack_module_kwargs(
         mutually_exclusive=[
@@ -717,7 +611,6 @@ def main():
 
     state = module.params['state']
     image = module.params['image']
-    count = module.params['count']
     boot_volume = module.params['boot_volume']
     flavor = module.params['flavor']
     flavor_ram = module.params['flavor_ram']
@@ -739,18 +632,12 @@ def main():
         cloud_params.pop('userdata', None)
         cloud = shade.openstack_cloud(**cloud_params)
 
-        if state == 'present' and count == None :
+        if state == 'present':
             _get_server_state(module, cloud)
             _create_server(module, cloud)
-        elif state == 'present' and count != None:
-            _get_server_state_count(module, cloud, count)
-            _create_server_count(module, cloud, count)
-        if state == 'absent' and count == None:
+        elif state == 'absent':
             _get_server_state(module, cloud)
             _delete_server(module, cloud)
-        elif state == 'absent' and count != None:
-            #_get_server_state_count(module, cloud, count)
-            _delete_server_count(module, cloud, count)  
     except shade.OpenStackCloudException as e:
         module.fail_json(msg=str(e), extra_data=e.extra_data)
 
