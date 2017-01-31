@@ -18,10 +18,10 @@
     nics: "{{ instance.8 }}"
     floating_ip_pools: "{{ instance.12 | default(omit) }}"
   with_nested:
-    - ["{{ endpoint }}"]
-    - ["{{ username }}"]
-    - ["{{ password }}"]
-    - ["{{ project }}"]
+    - ["{{ auth_var['output']['auth']['auth_url'] }}"]
+    - ["{{ auth_var['output']['auth']['username'] }}"]
+    - ["{{ auth_var['output']['auth']['password'] }}"]
+    - ["{{ auth_var['output']['auth']['project_name'] }}"]
     - ["{{ state }}"]
     - ["{{ res_def['image'] }}"]
     - ["{{ res_def['keypair']  }}"]
@@ -57,10 +57,10 @@
     nics: "{{ instance.8 }}"
     floating_ip_pools: "{{ instance.12 | default(omit) }}"
   with_nested:
-    - ["{{ endpoint }}"]
-    - ["{{ username }}"]
-    - ["{{ password }}"]
-    - ["{{ project }}"]
+    - ["{{ auth_var['output']['auth']['auth_url'] }}"]
+    - ["{{ auth_var['output']['auth']['username'] }}"]
+    - ["{{ auth_var['output']['auth']['password'] }}"]
+    - ["{{ auth_var['output']['auth']['project_name'] }}"]
     - ["{{ state }}"]
     - ["{{ res_def['image'] }}"]
     - ["{{ res_def['keypair']  }}"]

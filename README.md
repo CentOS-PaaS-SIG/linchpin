@@ -21,6 +21,7 @@ playbooks. These are applied using an inventory layout file (work in progress).
 ├── ex_schemas # example schemas (includes default schema: schema_v2.json)
 ├── ex_topo # example topologies and related components
 ├── keystore # location of ssh keys, etc to provide to provisioned systems
+├── credential_store # location of cloud credentials
 ├── library # ansible modules for linch-pin (written in python)
 ├── inventory # default location of inventories provided by linch-pin
 └── outputs # default location of outputs
@@ -59,37 +60,67 @@ git clone https://github.com/CentOS-PaaS-SIG/linch-pin
 ```
 
 # Example Credential file formats:
-Each Infra type should be maintaining a credential file in yaml format inside their respective vars folder,
+Each Infra type should be maintaining a credential file in yaml format inside their respective credential_store folder,
 which will be referred by the topology file.
 
 Example formats of the credential files are as follows:
 ### Openstack credential file format:
-#### path: roles/openstack/vars/ex_os_creds.yml
+#### path: credential_store/openstack/ex_os_creds.yml
+Openstack credentials follow clouds.yaml syntax.
 ```
 --- # openstack credentials example
-endpoint: http://example.com:5000/v2.0/
-project: example
-username: example
-password: example
+clouds:
+  devstack:
+    auth:
+      auth_url: http://192.168.122.10:35357/
+      project_name: demo
+      username: demo
+      password: 0penstack
+    region_name: RegionOne
+  ds-admin:
+    auth:
+      auth_url: http://192.168.122.10:35357/
+      project_name: admin
+      username: admin
+      password: 0penstack
+    region_name: RegionOne
 ```
 ### AWS credential file format:
-#### path: roles/aws/vars/ex_aws_creds.yml
+#### path: credential_store/aws/ex_aws_creds.ini
+AWS credentials follow standard botoconfig.ini format
 ```
---- # AWS credentials example
-aws_access_key_id: XXXXXXXXXXXXXXXXXXXXXX
-aws_secret_access_key: XXXXXXXXXXXXXXXXXXXXXX
+[default]
+aws_access_key_id = XXXXXXXXXXXXXXXXXXXX
+aws_secret_access_key = XXXXXXXXXXXXXXXXXXX
+
+[test]
+aws_access_key_id = XXXXXXXXXXXXXXXX
+aws_secret_access_key = XXXXXXXXXXXXXXX
+
+[test2]
+aws_access_key_id = XXXXXXXXXXXXXXXXXXXXXX
+aws_secret_access_key = XXXXXXXXXXXXXXXXXXX
+
 ```
 ### GCE credential file format:
-#### path: roles/openstack/vars/ex_gce_creds.yml
-```
---- # gcloud credentials example
-service_account_email: "XXXXXXXXXXXXXXX.iam.gserviceaccount.com"
-project_id: "XXXXXXXXXXXXXX"
-credentials_file: "absolute_path_to_json_file"
-```
-### Note:
-For GCE the absolute path of the service account json file should be provided
+#### path: credential_store/gcloud/ex_gcloud_creds.json
+Copy the service account json creds to gcloud format
 
+Example service account json:
+```
+{
+  "type": "service_account",
+  "project_id": "xxxxxxxxxxxxx",
+  "private_key_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "private_key": "-----BEGIN PRIVATE KEY-----xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n-----END PRIVATE KEY-----\n",
+  "client_email": "xxxxxxxxxxxxxxxx@xxxxxxxxxxxxx.iam.gserviceaccount.com",
+  "client_id": "xxxxxxxxxxxxxxxxxxxxx",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/xxxxxxxxxxxxxxxc%40xxxxxxxxxxxxx.iam.gserviceaccount.com"
+}
+```
 
 ### Duffy credentials file
 #### path: roles/duffy/vars/duffy_cred.yml
@@ -129,6 +160,8 @@ url_base: http://admin.ci.centos.org:8080
           keypair: "ex_keypair_os"
           networks:
             - "ex_network2"
+      assoc_creds: "ex_os_creds" # name of the credential file 
+      profile: "devstack" # profile listed in credential file
     -
       resource_group_name: "testgroup2"
       res_group_type: "openstack"
@@ -154,7 +187,8 @@ url_base: http://admin.ci.centos.org:8080
             image: "ami-fce3c696"
             count: 2
             keypair: "ex_keypair_name"
-        assoc_creds: "ex_aws_creds"
+        assoc_creds: "ex_aws_creds" # name of the credential file
+        profile: "test" # profile listed in credential file
     -
         resource_group_name: "testgroup4"
         res_group_type: "gcloud"
@@ -163,10 +197,10 @@ url_base: http://admin.ci.centos.org:8080
             res_name: "testvmgce"  # note gce resource names should not contain '_' characters 
             flavor: "n1-standard-1"
             res_type: "gcloud_gce"
-            region: "us-central1-a"
+            region: "us-central1-a" # name of credential_file
             image: "debian-7"
             count: 2
-        assoc_creds: "ex_gcloud_creds"
+        assoc_creds: "ex_gcloud_creds" 
   resource_group_vars:
     -
       resource_group_name : "testgroup1"
@@ -236,13 +270,13 @@ inventory_layout:
 
 ```
 $ ansible-playbook -vvv provision/site.yml -e "topology='/path/to/topology_file'" \
--e 'state=present' -e 'schema=/path/to/schema_v2.json'
+-e 'state=present'
 ```
 
 ### Teardown a topology
 ```
 $ ansible-playbook -vvv provision/site.yml -e "topology='/path/to/topology_file'" \
--e 'state=absent' -e "schema='/path/to/schema_v2.json'"
+-e 'state=absent'
 ```
 ### Note:
 In both Provision/Teardown commands, certain values are available beyond

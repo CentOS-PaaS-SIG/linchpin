@@ -2,9 +2,17 @@
   debug:
     msg: "The current server obj is {{ res_grp }} "
 
-- name: "Including credentials of current resource {{ res_grp['resource_group_name'] }} "
-  include_vars: "roles/aws/vars/{{ res_grp['assoc_creds'] }}.yml"
-  no_log: true 
+#- name: "Including credentials of current resource {{ res_grp['resource_group_name'] }} "
+#  include_vars: "roles/aws/vars/{{ res_grp['assoc_creds'] }}.yml"
+#  no_log: true 
+
+- name: "Initiating authdriver aws"
+  auth_driver:
+    type: "aws"
+    creds_store: "{{ credential_store  }}"
+    name: "{{ res_grp['assoc_creds'] }}"
+    profile: "test"
+  register: auth_var
 
 - name: "Parsing topology output file "
   output_parser:

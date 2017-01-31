@@ -1,10 +1,10 @@
 - name: "provisioning/deprovisioning  keypair"
   os_keypair:
     auth:
-      auth_url: "{{ endpoint }}"
-      username: "{{ username }}"
-      password: "{{ password }}"
-      project_name: "{{ project }}"
+      username: "{{ auth_var['output']['auth']['username'] }}"
+      password: "{{ auth_var['output']['auth']['password'] }}"
+      project_name: "{{ auth_var['output']['auth']['project_name'] }}"
+      auth_url: "{{ auth_var['output']['auth']['auth_url'] }}"
     name: "{{ res_def['res_name']  }}"
     state: "{{ state }}"
     wait: "yes"
@@ -25,10 +25,10 @@
 - name: "Async:: provisioning/deprovisioning  keypair"
   os_keypair:
     auth:
-      auth_url: "{{ endpoint }}"
-      username: "{{ username }}"
-      password: "{{ password }}"
-      project_name: "{{ project }}"
+      username: "{{ auth_var['output']['auth']['username'] }}"
+      password: "{{ auth_var['output']['auth']['password'] }}"
+      project_name: "{{ auth_var['output']['auth']['project_name'] }}"
+      auth_url: "{{ auth_var['output']['auth']['auth_url'] }}"
     name: "{{ res_def['res_name']  }}"
     state: "{{ state }}"
     wait: "yes"

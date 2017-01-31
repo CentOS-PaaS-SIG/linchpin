@@ -2,6 +2,10 @@
   shell: python -c "print [x for x in range( 0, {{ res_def['count'] }} )]"
   register: res_count
 
+- name: "debug"
+  debug:
+    msg: "{{ auth_var }}"
+
 - name: "Provision/Teardown resource by looping on count"
   gce:
     credentials_file: "{{ instance.0 }}" 
@@ -13,13 +17,13 @@
     service_account_email: "{{ instance.5 }}"
     project_id: "{{ instance.6 }}"
   with_nested:
-    - ["{{ credentials_file }}"]
+    - ["{{ auth_var['output']['file_path'] }}"]
     - ["{{ res_def['flavor']  }}"]
     - ["{{ res_def['image'] }}"]
     - ["{{ res_def['region'] }}"]
     - ["{{ state }}"]
-    - ["{{ service_account_email }}"]
-    - ["{{ project_id }}"]
+    - ["{{ auth_var['output']['client_email'] }}"]
+    - ["{{ auth_var['output']['project_id'] }}"]
     - ["{{ res_def['res_name'] }}"]
     - "{{ res_count.stdout }}"
   loop_control:
@@ -43,13 +47,13 @@
     service_account_email: "{{ instance.5 }}"
     project_id: "{{ instance.6 }}"
   with_nested:
-    - ["{{ credentials_file }}"]
-    - ["{{ res_def['flavor']  }}"]
+    - ["{{ auth_var['output']['file_path'] }}"]
+    - ["{{ res_def['flavor'] }}"]
     - ["{{ res_def['image'] }}"]
     - ["{{ res_def['region'] }}"]
     - ["{{ state }}"]
-    - ["{{ service_account_email }}"]
-    - ["{{ project_id }}"]
+    - ["{{ auth_var['output']['client_email'] }}"]
+    - ["{{ auth_var['output']['project_id'] }}"]
     - ["{{ res_def['res_name'] }}"]
     - "{{ res_count.stdout }}"
   loop_control:

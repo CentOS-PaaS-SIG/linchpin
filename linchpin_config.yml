@@ -2,6 +2,7 @@
 keystore_path: "{{ playbook_dir }}/../keystore"
 outputfolder_path: "{{ playbook_dir }}/../outputs"
 inventoryfolder_path: "{{ playbook_dir }}/../inventory"
+credential_store: "{{ playbook_dir }}/../credential_store"
 # inventory playbooks are not necessary because inventory_type specific tasks are defined in inventory_gen role
 inventory_playbooks:
   - duffy_inventory.yml
