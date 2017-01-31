@@ -105,9 +105,6 @@ class TestLinchPinInventoryGen(object):
     # unit test needs to be updated
     @with_setup(setup)
     def test_inventory_os(self):
-        """
-        generates inventory for openstack on testdata
-        """
         self.variable_manager.extra_vars = {'inventory_type': 'os'}
         pbex = PlaybookExecutor(playbooks=[self.playbook_path],
                                 inventory=self.inventory,
@@ -122,9 +119,6 @@ class TestLinchPinInventoryGen(object):
     #unit test needs to be updated 
     @with_setup(setup)
     def test_inventory_generic(self):
-        """
-        generates inventory for generic type on testdata
-        """
         self.variable_manager.extra_vars = {'inventory_type': 'generic'}
         pbex = PlaybookExecutor(playbooks=[self.playbook_path],
                                 inventory=self.inventory,
