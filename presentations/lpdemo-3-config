@@ -1,0 +1,208 @@
+{
+  "events": [
+    {
+      "act": "OPEN",
+      "size": [
+        190,
+        49
+      ],
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s lpdemo]$ ",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "ECHO",
+      "data": "cat topol",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "READ",
+      "data": "\t",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "WRITE",
+      "data": "ogies/",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "ECHO",
+      "data": "ae",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "READ",
+      "data": "\t",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "WRITE",
+      "data": "\u0007",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "READ",
+      "data": "\u007f",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "WRITE",
+      "data": "\b\u001b[K",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "READ",
+      "data": "\u007f",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "WRITE",
+      "data": "\b\u001b[K",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "ECHO",
+      "data": "si",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "READ",
+      "data": "\t",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "WRITE",
+      "data": "\u0007mple-",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "ECHO",
+      "data": "a",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "READ",
+      "data": "\t",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "WRITE",
+      "data": "e2e-cluster.yml ",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n---\r\n    topology_name: \"simple_ae2e_test\"\r\n    site: \"ci-osp\"\r\n    resource_groups:\r\n      - \r\n        resource_group_name: \"ae2e\"\r\n        res_group_type: \"openstack\"\r\n        res_defs:\r\n          - res_name: \"test\"\r\n            res_type: \"os_server\"\r\n            flavor: \"m1.small\"\r\n            image: \"CentOS-7-x86_64-GenericCloud-released-latest\"\r\n            count: 3\r\n            keypair: \"ci-factory\"\r\n            networks:\r\n              - \"atomic-e2e-jenkins-test\"\r\n            fip_pool: \"10.8.172.0/22\"\r\n        assoc_creds: \"ae2e-test_creds\"\r\n",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0018584728240966797
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;cat topologies/simple-ae2e-cluster.yml \u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0007607936859130859
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s lpdemo]$ ",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.003941535949707031
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;cat topologies/simple-ae2e-cluster.yml \u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007(venv) [herlo@t450s lpdemo]$ ",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "ECHO",
+      "data": "cat la",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "READ",
+      "data": "\t",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "WRITE",
+      "data": "youts/",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "ECHO",
+      "data": "o",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "READ",
+      "data": "\t",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "WRITE",
+      "data": "penshift-3node-cluster.yml ",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00025916099548339844
+    },
+    {
+      "act": "WRITE",
+      "data": "---\r\ninventory_layout:\r\n  vars:\r\n    openshift_hostname: __IP__\r\n    openshift_public_hostname: __IP__\r\n  hosts:\r\n    openshift-master:\r\n      host_groups:\r\n        - masters\r\n        - nodes\r\n        - OSEv3\r\n    openshift-node:\r\n      count: 1\r\n      host_groups:\r\n        - nodes\r\n        - OSEv3\r\n    openshift-repo-host:\r\n      host_groups:\r\n        - nodes\r\n        - OSEv3\r\n        - repo_host\r\n  host_groups:\r\n    OSEv3:\r\n      vars:\r\n        openshift_docker_additional_registries: |\r\n            \"registry.example.com\"\r\n        openshift_docker_insecure_registries: |\r\n            \"registry.example.com\"\r\n        debug_level: 2\r\n        ansible_ssh_user: root\r\n        ansible_sudo: 'False'\r\n        openshift_override_hostname_check: 'True'\r\n        openshift_set_hostname: 'True'\r\n      children:\r\n        - masters\r\n        - nodes\r\n\r\n\r\n\u001b]777;notify;Command completed;cat layouts/openshift-3node-cluster.yml \u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s lpdemo]$ ",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n--END--\r\n",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    },
+    {
+      "act": "CLOSE",
+      "term": "0a07a18c57964cdaa620c193b23c22c0"
+    }
+  ],
+  "shell": "/usr/bin/bash"
+}

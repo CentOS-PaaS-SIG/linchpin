@@ -1,0 +1,52 @@
+lpdemo-0-install
+----------------
+
+mkvirtualenv --system-site-packages venv
+pip install linchpin==0.8.6 --single-version-externally-managed --root=/
+
+
+lpdemo-1
+--------
+
+
+
+lpdemo-2
+---------
+
+source ~/.virtualenvs/venv/bin/activate
+cp ../lpdemo2/PinFile PinFile
+cp -rv ../lpdemo2/topologies/ ../lpdemo2/layouts/ .
+cat PinFile
+ls -l topologies/
+ls -l layouts/
+
+lpdemo-3
+---------
+
+source ~/.virtualenvs/venv/bin/activate
+cat topologies/simple-ae2e-cluster.yml
+cat layouts/openshift-3node-cluster.yml
+
+
+lpdemo-4-rise
+---------
+
+source ~/.virtualenvs/venv/bin/activate
+linchpin rise
+cat inventories/simple_ae2e_test.inventory
+openstack image list | grep ae2e
+ping -c <ip>
+ssh -i ~/Projects/rh/git/atomic-ci-jobs/project/config/keys/ci-factory cloud-user@<ip>
+uptime
+
+
+lpdemo-5-drop
+-------------
+
+ource ~/.virtualenvs/venv/bin/activate
+linchpin drop
+openstack image list | grep ae2e
+
+
+
+
