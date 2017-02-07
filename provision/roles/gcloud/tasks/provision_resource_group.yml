@@ -3,7 +3,7 @@
     msg: "The current server obj is {{ res_grp }}"
 
 - name: "Including credentials of current resource {{ res_grp['resource_group_name'] }} "
-  include_vars: "roles/gcloud/vars/{{ res_grp['assoc_creds'] }}.yml"
+  include_vars: "roles/gcloud/vars/{{ res_grp['assoc_creds'] }}.json"
   no_log: true
 
 - name: "provisioning resource definitions of current group"
