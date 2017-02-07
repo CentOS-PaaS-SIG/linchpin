@@ -1,0 +1,21 @@
+---
+    topology_name: "libvirt_test"
+    resource_groups:
+      -
+        resource_group_name: "libvirt1"
+        res_group_type: "libvirt"
+        res_defs:
+
+          - res_name: "happy"
+            res_type: "libvirt_storage"
+            size: 1024
+            unit: GiB
+            type: lvm2
+            path: /dev/vms
+
+          - res_name: "sad"
+            res_type: "libvirt_storage"
+            uri: 'qemu:///system'
+            size: 500
+            type: file
+            path: /var/lib/libvirt/images/linchpin

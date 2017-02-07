@@ -3,7 +3,6 @@ import sys
 import inspect
 import ansible
 import pprint
-import linchpin_api
 from tabulate import tabulate
 from ansible import utils
 import jsonschema as jsch
@@ -16,7 +15,7 @@ from ansible.executor.playbook_executor import PlaybookExecutor
 from ansible.plugins.callback import CallbackBase
 from callbacks import PlaybookCallback
 from invoke_playbooks import invoke_linchpin
-from cli.utils import search_path
+from linchpin.cli.utils import search_path
 from utils import get_file, list_files, parse_yaml
 from github import GitHub
 
@@ -213,7 +212,7 @@ class LinchpinAPI:
                                  console=True)
 
     def lp_test(self, topo, layout, pf):
-        """ test module of linchpin_api"""
+        """ test module of linchpin.api"""
         e_vars = {}
         e_vars['data'] = topo
         e_vars['schema'] = self.base_path + "/ex_schemas/schema_v3.json"

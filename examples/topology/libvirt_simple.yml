@@ -34,6 +34,15 @@
               - name: linchpin-centos71
                 ip: 192.168.71.100
                 mac: 52:54:00:d6:a2:ee
+            users:
+              libvirt:
+                - pubkey: /path/to/ci-factory
+                - password: 'libvirt'
+                groups:
+                  - wheel
+                sudo: NO PASSWORD
+
+
 #            storage:
 #              - name: centos71_1G
 #                pool: default

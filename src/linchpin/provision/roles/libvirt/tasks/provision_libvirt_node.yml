@@ -32,6 +32,12 @@
   include: copy_image_src.yml
   when: node_exists['failed'] is defined
 
+#-- add user data --
+#
+- name: libguestfs add user data
+  debug:
+    var: img_s_ext
+
 - name: "define node"
   virt:
     name: "linchpin_{{ instance[1]['res_name'] }}_{{ instance[2] }}"

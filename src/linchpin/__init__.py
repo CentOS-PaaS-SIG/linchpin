@@ -7,8 +7,8 @@ import pprint
 import os.path
 from tabulate import tabulate
 from jinja2 import Environment, PackageLoader
-from cli.utils import checkpaths, display, mkdir, copy_files, list_by_ext
-from cli.cli import LinchpinCli
+from linchpin.cli.utils import checkpaths, display, mkdir, copy_files, list_by_ext
+from linchpin.cli import LinchpinCli
 import shutil, errno
 import sys
 import json
@@ -291,3 +291,6 @@ def invgen(config, topoout, layout, invout, invtype):
     lpcli = LinchpinCli()
     result = lpcli.lp_invgen(topoout, layout, invout, invtype)
     pprint.pprint(result)
+
+def main():
+    print("entrypoint")

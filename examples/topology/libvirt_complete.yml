@@ -39,6 +39,11 @@
             storage:
               - pool: happy
                 size: 10G
+            auth_data:
+              - username: linchpin
+              - password: linchpin
+              - sudo_wheel: yes
+              - ssh-pubkey: /path/to/key
 
           - res_name: "centos74"
             res_type: "libvirt_node"
