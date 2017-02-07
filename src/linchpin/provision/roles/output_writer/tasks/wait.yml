@@ -1,0 +1,12 @@
+#- name: "debug of job_obj"
+#  debug:
+#    msg: "{{ job_obj }}"
+
+- name: 'check on fire and forget task'
+  async_status: 
+    jid: "{{ job_obj['results'][0].ansible_job_id }}"
+  register: job_result
+  until: job_result.finished
+  retries: 45
+  when: job_obj['results'][0].ansible_job_id is defined
+  ignore_errors: yes

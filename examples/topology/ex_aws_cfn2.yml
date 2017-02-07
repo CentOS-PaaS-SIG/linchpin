@@ -1,0 +1,40 @@
+---
+    topology_name: "ex_cfn_topo2"
+    site: "qeos"
+    resource_groups: 
+      - 
+        resource_group_name: "testgroup1"
+        res_group_type: "aws"
+        res_defs:
+          - 
+            res_name: "cfnsimplestackaws"
+            res_type: "aws_cfn"
+            region: "us-east-1"
+            template_path: "/root/linch-pin/aws_cfn_templates/ec2_sample_cfn.template" 
+        assoc_creds: "sk_aws_personal"
+      - 
+        resource_group_name: "testgroup2"
+        res_group_type: "aws"
+        res_defs:
+          - 
+            res_name: "ha_inst2"
+            flavor: "t2.micro"
+            res_type: "aws_ec2"
+            region: "us-east-1"
+            image: "ami-fce3c696"
+            count: 2
+            keypair: "sk_key"
+        assoc_creds: "sk_aws_personal"
+    resource_group_vars:
+      - 
+        resource_group_name : "testgroup1"
+        Name: "TestInstanceGroup1"
+        cfn_params: 
+          KeyName: "sk_key"
+          InstanceType: "t2.micro"
+      - 
+        resource_group_name : "testgroup2"
+        Name: "TestInstanceGroup2"
+        test_var1: "test_var1 msg is grp2 hello"
+        test_var2: "test_var2 msg is grp2 hello"
+        test_var3: "test_var3 msg is grp2 hello"

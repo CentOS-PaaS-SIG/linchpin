@@ -1,0 +1,54 @@
+- name: "Teardown of AWS_EC2 Resource"
+  ec2:
+    aws_access_key: "{{ res_def_item.0 }}"
+    aws_secret_key: "{{  res_def_item.1 }}"
+    instance_ids: "{{ res_def_item.2 }}"
+    state: 'absent'
+    region: "{{ res_def_item.3 }}"
+    wait: yes
+  when: res_def_item.4 == res_def_item.5 and res_def_item.6 == "aws_ec2" and res_def_item.7 == false
+  with_together:
+    - "{{ aws_access_key_id | default(omit) }}"
+    - "{{ aws_secret_access_key | default(omit) }}"
+    - "{{ tp_out.instance_ids | join(',') }}"
+    - "{{ res_def['region'] }}"
+    - "{{ tp_out['instances'][0]['tags']['resource_group_name'] }}"
+    - "{{ res_grp_name }}"
+    - "{{ res_def['res_type'] }}"
+    - "{{ async }}"
+  loop_control:
+    loop_var: res_def_item
+  register: output_item
+
+- name: "Async:: Teardown AWS_EC2 Resource"
+  ec2:
+    aws_access_key: "{{ res_def_item.0 }}"
+    aws_secret_key: "{{  res_def_item.1 }}"
+    instance_ids: "{{ res_def_item.2 }}"
+    state: 'absent'
+    region: "{{ res_def_item.3 }}"
+    wait: yes
+  when: res_def_item.4 == res_def_item.5 and res_def_item.6 == "aws_ec2" and res_def_item.7 == true
+  with_together:
+    - "{{ aws_access_key_id | default(omit) }}"
+    - "{{ aws_secret_access_key | default(omit) }}"
+    - "{{ tp_out.instance_ids | join(',') }}"
+    - "{{ res_def['region'] }}"
+    - "{{ tp_out['instances'][0]['tags']['resource_group_name'] }}"
+    - "{{ res_grp_name }}"
+    - "{{ res_def['res_type'] }}"
+    - "{{ async }}"
+  loop_control:
+    loop_var: res_def_item
+  async: "{{ async_timeout }}"
+  poll: 0
+  register: output_item
+
+# following tasks saves the async job details 
+- name: "Async:: save the job id"
+  set_fact:
+    topology_outputs_aws_ec2: "{{ topology_outputs_aws_ec2 + [output_item] }}"
+
+- name: "debug statement showing outputs"
+  debug:
+    msg: "{{ topology_outputs_aws_ec2 }}"

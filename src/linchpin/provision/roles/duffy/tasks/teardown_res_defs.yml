@@ -1,0 +1,7 @@
+- name: "Teardown Duffy Resources"
+  duffy:
+    ssid: "{{ ssid }}"
+    state: 'absent'
+  loop_control:
+    loop_var: res_def_item
+  register: output_item

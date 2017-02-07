@@ -1,0 +1,63 @@
+########################
+## MATRIX JOB TESTING ##
+## SLAVE              ##
+## PYTHON             ##
+########################
+
+- job-template:
+    name: '{lp-committed-name}-test-matrix'
+    defaults: lp-defaults
+    concurrent: false
+    node: '{jslave_name}'
+    project-type: matrix
+    axes:
+      - axis:
+         type: slave
+         name: nodes
+         values:
+          - '{jslave_name}'
+      - axis:
+          type: python
+          values:
+          - system-CPython-2.7
+    triggers:
+        - pollscm:
+            cron: "H */1 * * *"
+    scm:
+      - lp-master-scm
+    wrappers:
+      - lp-wrappers
+    builders:
+      - shining-panda:
+          build-environment: virtualenv
+          python-version: system-CPython-2.7
+          system-site-packages: true
+          nature: shell
+          command: |
+            {unit-tests}
+          clear: true
+          ignore-exit-code: true
+    publishers:
+      - archive:
+          artifacts: '*.xml'
+          allow-empty: 'false'
+      - xunit:
+          thresholdmode: 'number'
+          thresholds:
+            - failed:
+                  unstablenew: 0
+                  failurenew: 0
+            - skipped:
+                  unstablenew: 0
+                  failurenew: 0
+          types:
+            - junit:
+                pattern: '*.xml'
+                deleteoutput: false
+                requireupdate: false
+      - lp-email
+
+- job-group:
+    name: lp-committed-jobs
+    jobs:
+      - '{lp-committed-name}-test-matrix'

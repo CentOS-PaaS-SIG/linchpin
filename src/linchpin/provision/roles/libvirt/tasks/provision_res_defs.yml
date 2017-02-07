@@ -1,0 +1,24 @@
+#- name: "provision libvirt storage"
+#  include: provision_libvirt_storage.yml
+#  when: res_def['res_type']=="libvirt_storage" and state == "present"
+
+- name: "provision libvirt network"
+  include: provision_libvirt_network.yml
+  when: res_def['res_type']=="libvirt_network" and state == "present"
+
+- name: "provision libvirt node"
+  include: provision_libvirt_node.yml
+  when: res_def['res_type']=="libvirt_node" and state == "present"
+
+- name: "teardown libvirt node"
+  include: teardown_libvirt_node.yml
+  when: res_def['res_type']=="libvirt_node" and state == "absent"
+
+#- name: "teardown libvirt network"
+#  include: teardown_libvirt_network.yml
+#  when: res_def['res_type']=="libvirt_network" and state == "absent"
+
+#- name: "teardown libvirt storage"
+#  include: teardown_libvirt_storage.yml
+#  when: res_def['res_type']=="libvirt_storage" and state == "absent"
+

@@ -1,0 +1,21 @@
+---
+# tasks file for libvirt
+#- name: "DEBUG: Libvirt resource group list"
+#  debug:
+#    msg: "Resources under list libvirt_res_grps {{ libvirt_res_grps }}"
+
+#- name: "debug task libvirt resources are"
+#  debug:
+#    var: "{{ item }}"
+#  with_items:
+#    - "{{ libvirt_res_grps }}"
+
+- name: "declaring output vars"
+  set_fact:
+    topology_outputs_libvirt_nodes: []
+
+- name: "Initiating libvirt resource group"
+  include: provision_resource_group.yml res_grp={{ item }}
+  with_items:
+    - "{{ libvirt_res_grps }}"
+  register: resource_grps_output

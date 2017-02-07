@@ -1,0 +1,99 @@
+---
+- name: set local_image_path
+  set_fact:
+    local_image_path: "{{ libvirt_image_path }}"
+
+- name: ensure local_image_path directory exists
+  file:
+    path: "{{ local_image_path }}"
+    state: directory
+    mode: 0755
+  become: yes
+
+- name: "set image_src_basename"
+  set_fact:
+    image_src_basename: "{{ res_def['image_src'] | basename }}"
+
+- name: "Register local_image_src absolute path"
+  set_fact:
+    local_image_src: "{{ local_image_path }}{{ image_src_basename }}"
+
+# find the image_src, copy it to /var/lib/libvirt/linchpin/<res_name>
+
+- name: Does a local copy of image_src exist?
+  stat:
+    path: "{{ local_image_src }}"
+  register: lis
+
+- name: Download image_src
+  get_url:
+    url: "{{ res_def['image_src'] }}"
+    dest: "{{ local_image_src }}"
+  become: yes
+  when: lis.stat.exists == false
+
+# identify file type
+
+- name: Determine image_src mime_type
+  stat:
+    path: "{{ local_image_src }}"
+    mime: true
+  become: yes
+  register: lismt
+
+- name: "set image_src for uncompressed files"
+  set_fact:
+    img_src: "{{ local_image_src }}"
+  when: lismt.stat.mime_type == "application/octet-stream"
+
+- name: "set image_src basename to remove .xz extension"
+  set_fact:
+    img_src_basename: "{{ res_def['image_src'].split('.xz')[0] | basename }}"
+  when: lismt.stat.mime_type == "application/x-xz"
+
+- name: "set img_src for xz compressed files"
+  set_fact:
+    img_src: "{{ local_image_path }}{{ img_src_basename }}"
+  when: lismt.stat.mime_type == "application/x-xz"
+
+- name: "get img_src_basename extension"
+  set_fact:
+    img_src_ext: "{{ image_src_basename.split('.')[-1] }}"
+  when: lismt.stat.mime_type != "application/x-xz"
+
+- name: "get img_src_basename extension"
+  set_fact:
+    img_src_ext: "{{ image_src_basename.split('.')[-2] }}"
+  when: lismt.stat.mime_type == "application/x-xz"
+
+- name: Does img_src exist at local_image_path
+  stat:
+    path: "{{ img_src }}"
+  become: yes
+  register: ismt
+  when: lismt.stat.mime_type == "application/x-xz"
+
+  #- name: "DEBUG: ismt"
+  #  debug:
+  #    var: ismt
+
+- name: uncompress xz local_image_src
+  command: "xz -d --keep --force {{ local_image_src }}"
+  become: yes
+  when: lismt.stat.mime_type == "application/x-xz" and ismt.stat.exists == false
+
+- name: "cp img_src to match node name"
+  copy:
+    src: "{{ img_src }}"
+    dest: "{{ img_item[0] }}{{ img_item[1] }}_{{ img_item[2] }}_{{ img_item[3] }}.{{ img_item[4] }}"
+    remote_src: false
+  with_nested:
+    - ["{{ local_image_path }}"]
+    - ["{{ res_grp_name }}"]
+    - ["{{ res_def['res_name'] }}"]
+    - "{{ res_count.stdout }}"
+    - ["{{ img_src_ext }}"]
+  loop_control:
+    loop_var: img_item
+  become: yes
+  #when: ismt.stat.exists == false (if there's an option at some point to reuse disk, this would be helpful)

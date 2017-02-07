@@ -1,0 +1,26 @@
+
+- name: "provision resources of type {{ res_def['res_type'] }}"
+  include: "provision_{{ res_def['res_type'] }}.yml"
+
+# needs to be reverted when the performance is not as expected with dynamic includes 
+
+#- name: "provision keypairs "
+#  include: provision_os_keypair.yml
+#  when: res_def['res_type']=="os_keypair"
+
+#- name: "provision os_server resources"
+#  include: provision_os_server.yml 
+#  when: res_def['res_type']=="os_server"
+
+#- name: "provision os_heat resources"
+#  include: provision_os_heat.yml 
+#  when: res_def['res_type']=="os_heat"
+
+#- name: "provision os_volume resources"
+#  include: provision_os_volume.yml
+#  when: res_def['res_type']=="os_volume"
+
+#- name: "provision os_object resources"
+#  include: provision_os_object.yml
+#  when: res_def['res_type']=="os_object"
+

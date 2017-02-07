@@ -1,0 +1,56 @@
+- name: "provisioning/deprovisioning  keypair"
+  os_keypair:
+    auth:
+      auth_url: "{{ endpoint }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      project_name: "{{ project }}"
+    name: "{{ res_def['res_name']  }}"
+    state: "{{ state }}"
+    wait: "yes"
+  register: res_def_output 
+  when: async == false
+
+- name: "Generate keyfile "
+  copy: 
+    content: "{{ res_def_output['key']['private_key'] }}"
+    dest: "{{ keystore_path }}/{{ res_def['res_name'] }}.key"
+  when: state=="present" and res_def_output['changed'] == true and async == false
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os_keypair: "{{ topology_outputs_os_keypair + [res_def_output] }}"
+  when: res_def_output.changed == true and state == "present" and async == false
+
+- name: "Async:: provisioning/deprovisioning  keypair"
+  os_keypair:
+    auth:
+      auth_url: "{{ endpoint }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      project_name: "{{ project }}"
+    name: "{{ res_def['res_name']  }}"
+    state: "{{ state }}"
+    wait: "yes"
+  register: res_def_output
+  async: "{{ async_timeout }}"
+  poll: 0
+  when: async == true
+
+- name: 'Async:: Check on keypair create task'
+  async_status: jid={{ res_def_output.ansible_job_id }}
+  register: job_result
+  until: job_result.finished
+  retries: 30
+  when: async == true
+
+- name: "Async:: Generate keyfile "
+  copy:
+    content: "{{ job_result['key']['private_key'] }}"
+    dest: "{{ keystore_path }}/{{ res_def['res_name'] }}.key"
+  when: state=="present" and res_def_output['changed'] == true and async == true
+
+- name: "Async:: save the job id"
+  set_fact:
+    topology_job_ids: "{{ topology_job_ids + [ res_def_output ] }}"
+  when: async == true

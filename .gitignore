@@ -9,11 +9,8 @@ build
 dist
 *.egg-info/
 .eggs/
-MANIFEST
-
 # generated output and inventory files
 *.inventory*
 *.output*
-
 # local inventory files containing user-specific environment data
 configure/inventory/local/

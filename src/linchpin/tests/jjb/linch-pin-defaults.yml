@@ -1,0 +1,64 @@
+- defaults:
+    name: lp-defaults
+    description: |
+        Maintainer: <a href="mailto:srallaba@redhat.com">sk</a><br>
+        Second Maintainer: <a href="mailto:herlo@example.com">herlo</a><br>
+        Team Contact: <a href="mailto:continuous-infra@redhat.com">continuous-infra</a><br>
+        IRC Channel: #centos-devel<br><br>
+        JJB Code Location: https://github.com/CentOS-PaaS-SIG/linch-pin/tests/jjb<br>
+        Managed by Jenkins Job Builder. Do not edit via web.<br>
+    properties:
+        - build-discarder:
+            num-to-keep: 50
+            artifact-num-to-keep: 15
+
+- wrapper:
+    name: lp-wrappers
+    wrappers:
+        - ansicolor
+        - workspace-cleanup
+        - timestamps
+        - inject:
+            properties-content: |
+                ANSIBLE_CONTROL_PATH=/root/.ansible/cp/%%h-%%r
+                ANSIBLE_SSH_CONTROL_PATH=/root/.ansible/cp/%%h-%%r
+                ANSIBLE_HOST_KEY_CHECKING=False
+                ANSIBLE_SSH_ARGS=-C -o ControlMaster=auto -o ControlPersist=10m
+
+## Added for github token that can update or merge pull requests in github
+# credential-id
+- wrapper:
+    name: lp-gh-cred-wrappers
+    wrappers:
+        - credentials-binding:
+          - text:
+              credential-id: 5f607b9b-73ff-4c89-aa6f-19e43dcb9cce
+              variable: GHPRB_TOKEN
+
+- publisher:
+    name: lp-email
+    publishers:
+      - email-ext:
+          recipients: herlo@redhat.com, srallaba@redhat.com, ari@redhat.com
+          reply-to: $DEFAULT_REPLYTO
+          content-type: default
+          subject: $DEFAULT_SUBJECT Linch-Pin - Build Number - $BUILD_NUMBER - STATUS - $BUILD_STATUS
+          body: $DEFAULT_CONTENT
+          attach-build-log: true
+          always: false
+          unstable: false
+          first-failure: true
+          not-built: false
+          aborted: true
+          regression: true
+          failure: true
+          improvement: false
+          still-failing: true
+          success: false
+          fixed: true
+          still-unstable: true
+          pre-build: false
+          matrix-trigger: only-configurations
+          send-to:
+            - requester
+            - recipients

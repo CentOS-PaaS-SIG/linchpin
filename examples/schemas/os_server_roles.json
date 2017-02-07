@@ -1,0 +1,104 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Infra Topology",
+    "description": "Infra Topology for openstack",
+             
+    "type": "object",
+    "properties": {
+        "topology_name": {
+            "description": "The unique identifier for topology",
+            "type": "string"
+        },
+        "date": {
+            "description": "Date of creation",
+            "type": "string"
+        },
+        "infra_type": {
+            "description": "type of infrastructure ",
+            "enum": [ "aws", "openstack", "gce", "beaker_bm" ]
+        },
+        "site": {
+            "description": "site of provisioning ",
+            "type": "string"
+        },
+        "credentials": {
+             "description": "contains various credential_vaults names",
+             "type": "array",
+             "items":{
+                "type":"string"
+             },
+             "minimum":1
+        }, 
+        "resources": {
+             "description": "contains list of resources ",
+             "type": "array",
+             "items":{
+                "properties": {
+                   "resource_name": {
+                       "type":"string"
+                    },
+                    "count": {
+                       "type":"number"
+                    },
+                    "res_def":{
+                         "oneOf": [  {
+                                        "properties":{
+                                            "flavor":{
+                                                "type":"string"
+                                            },
+                                            "count":{
+                                                "type":"number"
+                                            },
+                                            "image":{
+                                                "type":"string"
+                                            },
+                                            "keypair":{
+                                                "type":"string"
+                                            },
+                                            "networks":{
+                                                 "type":"array",
+                                                 "items": {
+                                                       "type": "string"
+                                                  } 
+                                             },
+                                             "tags":{
+                                                 "type":"array",
+                                                 "items": {
+                                                       "type": "string"
+                                                  }
+                                             }
+                                        },
+                                        "required":["flavor","image","keypair","networks"]
+                                     },
+                                     {
+                                        "title": "resource_def for a sample resource",
+                                        "properties":{
+                                            "sample_name":{
+                                             "type":"string"
+                                            }
+                                        },
+                                        "required":["name"]               
+                                     }
+                                    
+                          ]
+                    },
+                     
+                    "associated_creds":{
+                        "description":"contains creds file associated to this resource",
+                        "type":"string"
+                    }
+                },
+                "required":["resource_name","res_def","count"],
+                "additionalProperties": true
+             },
+             "minimum":1,
+              "additionalitems": false
+        }
+    },
+    "required": ["topology_name","infra_type","site","credentials"],
+    "definitions":{
+         "email": {
+          "type":"string" 
+         }
+     }
+}

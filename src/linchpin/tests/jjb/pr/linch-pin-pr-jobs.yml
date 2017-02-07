@@ -1,0 +1,158 @@
+########################
+## MATRIX JOB TESTING ##
+## SLAVE              ##
+## PYTHON             ##
+########################
+
+- job-template:
+    name: '{lp-pr-name}-test-matrix'
+    defaults: lp-defaults
+    concurrent: false
+    node: '{jslave_name}'
+    project-type: matrix
+    axes:
+      - axis:
+         type: slave
+         name: nodes
+         values:
+          - '{jslave_name}'
+      - axis:
+          type: python
+          values:
+          - system-CPython-2.7
+    properties:
+        # Required by GHPRB. Also adds a nice GitHub link on the job page.
+        - github:
+            url: 'https://github.com/CentOS-PaaS-SIG/{repo-subdir}/'
+    scm:
+      - '{lp-pr-repo}'
+    triggers:
+      - github-pull-request:
+
+          # always check for PR activity every 15 minutes
+          cron: 'H/5 * * * *'
+          auth-id: '{ghprb-auth-id-trigger}'
+
+          # those who can control the bot
+          admin-list:
+              - arilivigni
+              - herlo
+              - samvarankashyap
+              - tdawson
+              - detiber
+
+          # those whose PR build without asking permission (whitelisted)
+          org-list:
+              - CentOS-PaaS-SIG
+          allow-whitelist-orgs-as-admins: true
+
+          white-list:
+              - !include-raw: lp.ghprb-whitelist.txt
+
+          # the commit status context we want to update
+          status-context: '{github-context}'
+
+          # there's an issue with GHPRB wrapping the expression with \Q \E so
+          # let's just not use regex
+          trigger-phrase: centos-paas-test
+          only-trigger-phrase: true
+
+          # Never post a URL. We manually post the URL to the build server
+          # once we upload it. (The default is to post the job URL, which is
+          # not good in our case since we're internal).
+          status-url: '--none--'
+
+          # Update status when triggered only, and not when started
+          triggered-status: 'ci.centos Jenkins job has been triggered.'
+          started-status: 'triggered'
+
+          # Don't do a status update if we succeeded since this is only the
+          # triggering job. We will make manually update with success once the
+          # testing job passes.
+          success-status: '--none--'
+
+          # Failure and error scenarios
+          failure-status: '--none--'
+          error-status: '--none--'
+    wrappers:
+      - lp-wrappers
+      - lp-gh-cred-wrappers
+
+    builders:
+      - inject:
+          properties-content: |
+            GH_STATE=pending
+            GH_DESC="{repo-subdir} unit tests running"
+            GH_CONTEXT={github-context}
+            GH_URL={lp-log-url}
+      - python: |
+          {gh-update-status}
+      - inject:
+          properties-content: |
+            GH_STATE=error
+            GH_DESC="{repo-subdir} unit tests failed"
+            GH_CONTEXT={github-context}
+            GH_URL={lp-log-url}
+      - shining-panda:
+          build-environment: virtualenv
+          python-version: system-CPython-2.7
+          system-site-packages: true
+          nature: shell
+          command: |
+            {unit-tests}
+          clear: true
+          ignore-exit-code: true
+    publishers:
+      - archive:
+          artifacts: '*.xml'
+          allow-empty: 'false'
+      - xunit:
+          thresholdmode: 'number'
+          thresholds:
+            - failed:
+                  unstablenew: 0
+                  failurenew: 0
+            - skipped:
+                  unstablenew: 0
+                  failurenew: 0
+          types:
+            - junit:
+                pattern: '*.xml'
+                deleteoutput: false
+                requireupdate: false
+      - postbuildscript:
+          builders:
+            - inject:
+                properties-content: |
+                  GH_STATE=success
+                  GH_DESC="{repo-subdir} unit tests passed"
+                  GH_CONTEXT={github-context}
+                  GH_URL={lp-log-url}
+                  GH_TEST_RESULTS={lp-test-url}
+            - python : |
+                {gh-update-status}
+            - python : |
+                {gh-update-comments}
+          script-only-if-succeeded: True
+          execute-on: axes
+      - postbuildscript:
+          builders:
+            - inject:
+                properties-content: |
+                  GH_STATE=error
+                  GH_DESC="{repo-subdir} unit tests failed"
+                  GH_CONTEXT={github-context}
+                  GH_URL={lp-log-url}
+                  GH_TEST_RESULTS={lp-test-url}
+            - python : |
+                {gh-update-status}
+            - python : |
+                {gh-update-comments}
+          script-only-if-succeeded: False
+          script-only-if-failed: True
+          execute-on: axes
+
+- job-group:
+    name: lp-pr-jobs
+    jobs:
+      - '{lp-pr-name}-test-matrix'

@@ -1,0 +1,26 @@
+---
+# This playbook will  provision resources on AWS.
+- name: "Provisioning aws resources"
+  debug:
+    msg: "Currently Provisioning aws_res is {{ aws_res_grps }} "
+
+- name: "declaring output vars"
+  set_fact:
+    topology_outputs_aws_ec2: []
+    topology_outputs_aws_s3: []
+    topology_outputs_aws_ec2_key: []
+    topology_outputs_aws_cfn: []
+
+- name: "Initiating  Provisioning of resources aws resource group"
+  include: provision_resource_group.yml res_grp={{ item }}
+  with_items:
+    - "{{ aws_res_grps }}"
+  when: state == "present"
+  check_mode: "{{ check_mode }}"
+
+- name: "Initiating  teardown of resources aws resource group"
+  include: teardown_resource_group.yml res_grp={{ item.0 }} topo_output_file={{ item.1 }}
+  with_nested:
+    - "{{ aws_res_grps }}"
+    - ["{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output.yaml' ) }}"]
+  when: state == "absent"

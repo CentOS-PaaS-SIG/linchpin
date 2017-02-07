@@ -1,0 +1,74 @@
+---
+  topology_name: "example_topo"
+  infra_type: "os_server"
+  site: "qeos"
+  credentials:
+    - "cios_e2e-openstack"
+    - "osp7_ae2e_test"
+    - "example_creds"
+  resources:
+    -
+      resource_name: "testvm_sk_ha"
+      res_type: "os_server"
+      count: 2
+      res_def: 
+        flavor: "m1.small"
+        image: "rhel-6.5_jeos"
+        keypair: "ci-factory"
+        networks:
+          - "e2e-openstack"
+        tags: 
+          - "this"
+          - "tags"
+          - "attribute"
+          - "is not required"
+        assoc_creds:  "cios_e2e-openstack"
+    - 
+      resource_name: "testvm_sk_hb"
+      res_type: "os_server"
+      count: 2
+      res_def:
+        flavor: "m1.small"
+        image: "rhel-6.5_jeos"
+        keypair: "ci-factory"
+        networks:
+          - "e2e-openstack"
+        tags:
+          - "this"
+          - "tags"
+          - "attribute"
+          - "is not required"
+        assoc_creds:  "cios_e2e-openstack"
+    - 
+      resource_name: "testvm_sk_mysql"
+      res_type: "aws_ec2"
+      count: 3
+      res_def:
+        flavor: "m1.small"
+        image: "rhel-6.5_jeos"
+        keypair: "ci-factory"
+        networks:
+          - "atomic-e2e-jenkins-test"
+        tags:
+          - "this"
+          - "tags"
+          - "attribute"
+          - "is not required"
+        assoc_creds:  "osp7_ae2e_test"
+    - 
+      resource_name: "testvm_sk_web"
+      res_type: "aws_ec2"
+      count: 4
+      res_def:
+        flavor: "m1.small"
+        count: 1
+        image: "rhel-6.5_jeos"
+        keypair: "ci-factory"
+        networks:
+          - "openshift-enterprise"
+        tags:
+          - "this"
+          - "tags"
+          - "attribute"
+          - "is not required"
+        assoc_creds:  "osp7_ose"

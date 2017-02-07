@@ -1,0 +1,20 @@
+- name: "DEBUG:: provisioning resource group {{ res_grp }}"
+  debug:
+    msg: "The current server obj is {{ res_grp }} "
+  when: state == "present"
+
+- name: "Including credentials of current resource {{ res_grp['resource_group_name'] }} "
+  include_vars: "roles/duffy/vars/{{ res_grp['assoc_creds'] }}.yml"
+  no_log: true
+
+- name: "Parsing topology output file "
+  output_parser:
+    output_file: "{{ topo_output_file }}"
+  register: topo_output
+
+- name: "DEBUG:: gathering resource group data: {{ topo_output }}"
+  debug:
+    msg: "The current server obj is {{ topo_output['output']['content']['duffy_res'][0]['ssid'] }} "
+
+- name: "Teardown resource definitions of current group"
+  include: teardown_res_defs.yml ssid="{{ topo_output['output']['content']['duffy_res'][0]['ssid'] }}"

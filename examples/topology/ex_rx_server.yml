@@ -1,0 +1,22 @@
+---
+    topology_name: "ex_rx_server_topo"
+    resource_groups: 
+      - 
+        resource_group_name: "testgroup1"
+        res_group_type: "rackspace"
+        res_defs:
+          - 
+            res_name: "testresource" 
+            flavor: "n1-standard-1"
+            res_type: "gcloud_gce"
+            region: "DFW"
+            image: "debian-7"
+            count: 2
+        assoc_creds: "gcloudsk"
+    resource_group_vars:
+      - 
+        resource_group_name : "testgroup1"
+        Name: "TestInstanceGroup1"
+        test_var1: "test_var1 msg is grp1 hello"
+        test_var2: "test_var2 msg is grp1 hello"
+        test_var3: "test_var3 msg is grp1 hello"

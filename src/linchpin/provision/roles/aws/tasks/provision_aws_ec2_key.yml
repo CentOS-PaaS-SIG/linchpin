@@ -1,0 +1,21 @@
+- name: "Provisioning AWS EC2 KEY "
+  ec2_key:
+    aws_access_key: "{{ aws_access_key_id | default(omit) }}"
+    aws_secret_key: "{{  aws_secret_access_key | default(omit) }}"
+    region: "{{ res_def['region'] }}"
+    name:  "{{ res_def['res_name'] }}"
+    state: "{{ state }}"
+    wait: "yes"
+  when: res_def['res_type'] == 'aws_ec2_key'
+  register: res_def_output
+
+- name: "Generate keyfile "
+  copy: 
+    content: "{{ res_def_output['key']['private_key'] }}"
+    dest: "/tmp/{{ res_def['res_name'] }}.pem"
+  when: state=="present" and res_def['res_type']=='aws_ec2_key' and res_def_output['changed']==true
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_aws_ec2_key: "{{ topology_outputs_aws_ec2_key + [res_def_output] }}"
+  when: res_def_output['changed'] == true

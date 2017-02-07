@@ -1,0 +1,4 @@
+---
+# defaults file for libvirt
+
+libvirt_image_path: /var/lib/libvirt/images/linchpin/

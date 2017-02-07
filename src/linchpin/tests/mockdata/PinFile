@@ -1,0 +1,12 @@
+#The following example illustrates the PinFile 
+#SYNTAX:
+#component_name:
+#    topology_name: <string>  # refers to the name topology file either in package or local topologies folder
+#    inventory_layout: <string> # refers to name of the inventory layout in package or local layouts folder
+
+across2clouds:
+  topology: ex_aws_ec2.yml 
+  layout: openshift-3node-cluster.yml
+
+post_actions:
+  print: "hello"

@@ -1,0 +1,5 @@
+--- # openstack credentials example
+endpoint: http://example.com:5000/v2.0/
+project: example
+username: example
+password: example

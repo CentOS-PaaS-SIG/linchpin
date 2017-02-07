@@ -1,0 +1,31 @@
+## SCMs
+- scm:
+    name: lp-master-scm
+    scm:
+      - git:
+          url: 'https://github.com/CentOS-PaaS-SIG/linch-pin'
+          branches:
+              - origin/master
+          basedir: linch-pin
+          skip-tag: true
+
+- project:
+    name: linch-pin-committed
+    lp-committed-name: linch-pin-committed
+    jslave_name: paas-sig-ci-slave01
+    repo-subdir: linch-pin
+    combo-filter: >
+      ( TBD )
+    unit-tests: |
+      pip install --quiet nosexcover
+      pip install --quiet pylint
+      pip install --quiet pycrypto
+      pip install --quiet flake8
+      pip install --quiet pep8
+
+      iconv -f utf8 -t ascii $WORKSPACE/{repo-subdir}/requirements.txt >> $WORKSPACE/{repo-subdir}/requirements.txt;
+      pip install $WORKSPACE/{repo-subdir}  # where your setup.py lives
+      chmod -x $WORKSPACE/{repo-subdir}/tests/*.py
+      nosetests --verbosity=3 --with-xunit $WORKSPACE/{repo-subdir}/tests
+    jobs:
+      - lp-committed-jobs

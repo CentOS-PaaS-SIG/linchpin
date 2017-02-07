@@ -1,0 +1,20 @@
+- name: "set s3 mode when state is present"
+  set_fact:
+    s3_mode: "create"
+  when: state == "present" and res_def['res_type'] == 'aws_s3'
+
+- name: "Provisioning AWS_S3 Resource"
+  s3:
+    aws_access_key: "{{ aws_access_key_id | default(omit) }}"
+    aws_secret_key: "{{  aws_secret_access_key | default(omit) }}"
+    bucket: "{{ res_def['res_name'] }}"
+    mode: "{{ s3_mode }}"
+    region: "{{ res_def['region'] }}"
+    permission: "{{ res_def['permission']| default(omit) }}"
+  when: res_def['res_type'] == 'aws_s3'
+  register: res_def_output
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_aws_s3: "{{ topology_outputs_aws_s3 + [res_def] }}"
+  when: res_def_output['changed'] == true and state == "present"

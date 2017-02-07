@@ -1,0 +1,68 @@
+#- name: "Register resource count"
+- name: "provision resource type : {{ res_def['res_type'] }}"
+  include: "provision_{{ res_def['res_type'] }}.yml"
+
+#  shell: python -c "print [x for x in range( 0, {{ res_def['count'] }} )]"
+#  register: res_count
+
+#- name: "Proivision/Teardown resource by looping on count"
+#  gce:
+#    credentials_file: "{{ instance.0 }}" 
+#    instance_names: "{{ instance.7 }}a{{ instance.8 }}"
+#    machine_type: "{{ instance.1 }}"
+#    image: "{{ instance.2 }}"
+#    zone: "{{ instance.3 }}"
+#    state: "{{ instance.4 }}"
+#    service_account_email: "{{ instance.5 }}"
+#    project_id: "{{ instance.6 }}"
+#  with_nested:
+#    - ["{{ credentials_file }}"]
+#    - ["{{ res_def['flavor']  }}"]
+#    - ["{{ res_def['image'] }}"]
+#    - ["{{ res_def['region'] }}"]
+#    - ["{{ state }}"]
+#    - ["{{ service_account_email }}"]
+#    - ["{{ project_id }}"]
+#    - ["{{ res_def['res_name'] }}"]
+#    - "{{ res_count.stdout }}"
+#  loop_control:
+#    loop_var: instance
+#  when: res_def['res_type']=="gcloud_gce" and async == false
+#  register: res_def_output
+#
+#- name: "Appendng outputitem to topology_outputs"
+#  set_fact:
+#    topology_outputs_gce: "{{ topology_outputs_gce + res_def_output.results }}"
+#  when: async == false
+#
+#- name: "Proivision/Teardown resource by looping on count"
+#  gce:
+#    credentials_file: "{{ instance.0 }}"
+#    instance_names: "{{ instance.7 }}a{{ instance.8 }}"
+#    machine_type: "{{ instance.1 }}"
+#    image: "{{ instance.2 }}"
+#    zone: "{{ instance.3 }}"
+#    state: "{{ instance.4 }}"
+#    service_account_email: "{{ instance.5 }}"
+#    project_id: "{{ instance.6 }}"
+#  with_nested:
+#    - ["{{ credentials_file }}"]
+#    - ["{{ res_def['flavor']  }}"]
+#    - ["{{ res_def['image'] }}"]
+#    - ["{{ res_def['region'] }}"]
+#    - ["{{ state }}"]
+#    - ["{{ service_account_email }}"]
+#    - ["{{ project_id }}"]
+#    - ["{{ res_def['res_name'] }}"]
+#    - "{{ res_count.stdout }}"
+#  loop_control:
+#    loop_var: instance
+#  when: res_def['res_type']=="gcloud_gce" and async == true
+#  async: "{{ async_timeout }}"
+#  poll: 0
+#  register: res_def_output
+
+#- name: "Appendng outputitem to topology_outputs"
+#  set_fact:
+#    topology_outputs_gce: "{{ topology_outputs_gce + [res_def_output] }}"
+#  when: async == true

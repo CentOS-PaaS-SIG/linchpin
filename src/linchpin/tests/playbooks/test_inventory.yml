@@ -1,0 +1,48 @@
+---
+- name: "Inventory Filter Testing"
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+   - linchpin_config.yml
+   - all_stack_outputs.testoutput
+  vars:
+    data: 'all_nodes_cluster'
+    schema: '../mockdata/schema_v2.json'
+    inventories: ["os","aws","gcloud","generic"]
+    state: present
+    async: False
+    output:
+      output:
+        data:
+         topology_name: "allnodecluster"
+    topology_outputs_duffy: "{{ duffy_res }}"
+    topology_outputs_os_server: "{{ os_server_res }}"
+    topology_outputs_aws_ec2: "{{ aws_ec2_res }}"
+    topology_outputs_gcloud_gce: "{{ gcloud_gce_res }}"
+  tasks:
+    - include_vars: "openshift-3node-cluster.yml"
+    - name: "Updating topology_outputs"
+      set_fact:
+        topology_outputs:
+          os_server_res: "{{ topology_outputs_os_server }}"
+          aws_ec2_res: "{{ topology_outputs_aws_ec2 }}"
+          gcloud_gce_res: "{{ topology_outputs_gcloud_gce }}"
+          duffy_res: "{{ topology_outputs_duffy }}"
+    - debug:
+        msg: "{{ topology_outputs | aws_inv(inventory_layout)}}"
+      when: inventory_type == "aws"
+    - debug:
+        msg: "{{ topology_outputs | generic_inv(inventory_layout)}}"
+      when: inventory_type == "generic"
+    - debug:
+        msg: "{{ topology_outputs | os_inv(async, inventory_layout)}}"
+      when: inventory_type == "os"
+    - debug:
+        msg: "{{ topology_outputs | gcloud_inv(inventory_layout)}}"
+      when: inventory_type == "gcloud"
+    - fail:
+        msg: "inventory type not mentioned"
+      when: inventory_type not in inventories
+  #  - copy: 
+  #      content: "{{ topology_outputs | generic_inv(inventory_layout) }}" 
+  #      dest: ./testoutput.ini

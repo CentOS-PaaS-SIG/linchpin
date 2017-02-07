@@ -1,0 +1,8 @@
+- name: "Initiating playbook to perform schema_check on files"
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: "Initiating schema_check"
+      schema_check: 
+        data: "{{ data }}"
+        schema: "{{ schema }}"

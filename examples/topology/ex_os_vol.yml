@@ -1,0 +1,20 @@
+---
+    topology_name: "ex_os_vol"
+    site: "qeos"
+    resource_groups: 
+      - 
+        resource_group_name: "testgroup1"
+        res_group_type: "openstack"
+        res_defs:
+          - res_name: "test_volume_sk"
+            res_type: "os_volume"
+            size: 1
+            count: 3
+        assoc_creds: "cios_e2e-openstack"
+    resource_group_vars:
+      - 
+        resource_group_name : "testgroup1"
+        Name: "TestInstanceGroup1"
+        test_var1: "test_var1 msg is grp1 hello"
+        test_var2: "test_var2 msg is grp1 hello"
+        test_var3: "test_var3 msg is grp1 hello"

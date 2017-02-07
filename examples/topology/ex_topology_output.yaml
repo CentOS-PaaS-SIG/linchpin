@@ -1,0 +1,312 @@
+aws_ec2_res:
+-   changed: true
+    instance_ids:
+    - i-0ba9ef62bff55fddb
+    instances:
+    -   ami_launch_index: '0'
+        architecture: x86_64
+        block_device_mapping:
+            /dev/sda1:
+                delete_on_termination: true
+                status: attached
+                volume_id: vol-71b619dc
+        dns_name: ec2-52-91-141-26.compute-1.amazonaws.com
+        ebs_optimized: false
+        groups:
+            sg-5135402a: default
+        hypervisor: xen
+        id: i-0ba9ef62bff55fddb
+        image_id: ami-fce3c696
+        instance_type: t2.micro
+        kernel: null
+        key_name: sk_key
+        launch_time: '2016-07-26T16:57:01.000Z'
+        placement: us-east-1b
+        private_dns_name: ip-172-31-11-97.ec2.internal
+        private_ip: 172.31.11.97
+        public_dns_name: ec2-52-91-141-26.compute-1.amazonaws.com
+        public_ip: 52.91.141.26
+        ramdisk: null
+        region: us-east-1
+        root_device_name: /dev/sda1
+        root_device_type: ebs
+        state: running
+        state_code: 16
+        tags:
+            Name: TestInstanceGroup1
+            resource_group_name: testgroup1
+            test_var1: test_var1 msg is grp1 hello
+            test_var2: test_var2 msg is grp1 hello
+            test_var3: test_var3 msg is grp1 hello
+        tenancy: default
+        virtualization_type: hvm
+    tagged_instances: []
+duffy_res: []
+gcloud_gce_res:
+-   _ansible_item_result: true
+    _ansible_no_log: false
+    changed: true
+    instance:
+    - /root/linch-pin/roles/gcloud/vars/gcloudsk.json
+    - n1-standard-1
+    - debian-8
+    - us-central1-a
+    - present
+    - cloudsk@alien-trainer-134623.iam.gserviceaccount.com
+    - alien-trainer-134623
+    - testresourcesme
+    - 0
+    instance_data:
+    -   disks:
+        - testresourcesmea0
+        image: debian-8-jessie-v20160718
+        machine_type: n1-standard-1
+        metadata: {}
+        name: testresourcesmea0
+        network: default
+        private_ip: 10.128.0.3
+        public_ip: 104.154.47.91
+        status: RUNNING
+        tags: []
+        zone: us-central1-a
+    instance_names:
+    - testresourcesmea0
+    invocation:
+        module_args:
+            credentials_file: /root/linch-pin/roles/gcloud/vars/gcloudsk.json
+            disk_auto_delete: true
+            disks: null
+            external_ip: ephemeral
+            image: debian-8
+            instance_names: testresourcesmea0
+            ip_forward: false
+            machine_type: n1-standard-1
+            metadata: null
+            name: null
+            network: default
+            pem_file: null
+            persistent_boot_disk: false
+            preemptible: null
+            project_id: alien-trainer-134623
+            service_account_email: cloudsk@alien-trainer-134623.iam.gserviceaccount.com
+            service_account_permissions: null
+            state: present
+            tags: null
+            zone: us-central1-a
+        module_name: gce
+    state: present
+    zone: us-central1-a
+os_server_res:
+-   _ansible_item_result: true
+    _ansible_no_log: false
+    changed: true
+    id: f5832fcc-4e1b-442d-8be8-ba5e3783e7f2
+    instance:
+    - <endpoint>
+    - <username>
+    - <password>
+    - <username>
+    - present
+    - rhel-6.5_jeos
+    - <ssh-key-reference>
+    - m1.small
+    - <network>
+    - testgroup2
+    - ano_inst
+    - 0
+    invocation:
+        module_args:
+            api_timeout: 99999
+            auth:
+                auth_url: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+                password: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+                project_name: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+                username: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+            auth_type: null
+            auto_ip: true
+            availability_zone: null
+            boot_from_volume: false
+            boot_volume: null
+            cacert: null
+            cert: null
+            cloud: null
+            config_drive: false
+            endpoint_type: public
+            flavor: m1.small
+            flavor_include: null
+            flavor_ram: null
+            floating_ip_pools: null
+            floating_ips: null
+            image: rhel-6.5_jeos
+            image_exclude: (deprecated)
+            key: null
+            key_name: <ssh-key-reference>
+            meta: null
+            name: testgroup2_ano_inst_0
+            network: VALUE_SPECIFIED_IN_NO_LOG_PARAMETER
+            nics: []
+            region_name: null
+            scheduler_hints: null
+            security_groups:
+            - default
+            state: present
+            terminate_volume: false
+            timeout: 180
+            userdata: null
+            verify: true
+            volume_size: false
+            volumes: []
+            wait: true
+        module_name: os_server
+    openstack:
+        HUMAN_ID: true
+        NAME_ATTR: name
+        OS-DCF:diskConfig: MANUAL
+        OS-EXT-AZ:availability_zone: nova
+        OS-EXT-STS:power_state: 1
+        OS-EXT-STS:task_state: null
+        OS-EXT-STS:vm_state: active
+        OS-SRV-USG:launched_at: '2016-07-26T16:56:40.000000'
+        OS-SRV-USG:terminated_at: null
+        accessIPv4: 10.8.183.233
+        accessIPv6: ''
+        addresses:
+            <network>:
+            -   OS-EXT-IPS-MAC:mac_addr: fa:16:3e:48:cf:fb
+                OS-EXT-IPS:type: fixed
+                addr: 172.16.100.26
+                version: 4
+            -   OS-EXT-IPS-MAC:mac_addr: fa:16:3e:48:cf:fb
+                OS-EXT-IPS:type: floating
+                addr: 10.8.183.233
+                version: 4
+        adminPass: URdaPGJWms42
+        az: nova
+        cloud: defaults
+        config_drive: ''
+        created: '2016-07-26T16:56:10Z'
+        flavor:
+            id: '2'
+            name: m1.small
+        hostId: 6363c13fc31066a15f2ff4c81bf054290d4d56d4d08e568570354580
+        human_id: testgroup2_ano_inst_0
+        id: f5832fcc-4e1b-442d-8be8-ba5e3783e7f2
+        image:
+            id: 3bcfd17c-6bf0-4134-ae7f-80bded8b46fd
+            name: rhel-6.5_jeos
+        interface_ip: 10.8.183.233
+        key_name: <ssh-key-reference>
+        metadata: {}
+        name: testgroup2_ano_inst_0
+        networks:
+            <network>:
+            - 172.16.100.26
+            - 10.8.183.233
+        os-extended-volumes:volumes_attached: []
+        private_v4: 172.16.100.26
+        progress: 0
+        public_v4: 10.8.183.233
+        public_v6: ''
+        region: ''
+        security_groups:
+        -   description: Default security group
+            id: df1a797b-009c-4685-a7c9-43863c36d653
+            name: default
+            security_group_rules:
+            -   direction: ingress
+                ethertype: IPv4
+                id: ade9fcb9-14c1-4975-a04d-6007f80005c1
+                port_range_max: null
+                port_range_min: null
+                protocol: null
+                remote_ip_prefix: null
+                security_group_id: df1a797b-009c-4685-a7c9-43863c36d653
+            -   direction: ingress
+                ethertype: IPv4
+                id: d03e4bae-24b6-415a-a30c-ee0d060f566f
+                port_range_max: null
+                port_range_min: null
+                protocol: null
+                remote_ip_prefix: null
+                security_group_id: df1a797b-009c-4685-a7c9-43863c36d653
+        status: ACTIVE
+        tenant_id: f1dda47890754241a3e111f9b7394707
+        updated: '2016-07-26T16:56:40Z'
+        user_id: 9c770dbddda444799e627004fee26e0a
+        volumes: []
+    server:
+        HUMAN_ID: true
+        NAME_ATTR: name
+        OS-DCF:diskConfig: MANUAL
+        OS-EXT-AZ:availability_zone: nova
+        OS-EXT-STS:power_state: 1
+        OS-EXT-STS:task_state: null
+        OS-EXT-STS:vm_state: active
+        OS-SRV-USG:launched_at: '2016-07-26T16:56:40.000000'
+        OS-SRV-USG:terminated_at: null
+        accessIPv4: 10.8.183.233
+        accessIPv6: ''
+        addresses:
+            <network>:
+            -   OS-EXT-IPS-MAC:mac_addr: fa:16:3e:48:cf:fb
+                OS-EXT-IPS:type: fixed
+                addr: 172.16.100.26
+                version: 4
+            -   OS-EXT-IPS-MAC:mac_addr: fa:16:3e:48:cf:fb
+                OS-EXT-IPS:type: floating
+                addr: 10.8.183.233
+                version: 4
+        adminPass: URdaPGJWms42
+        az: nova
+        cloud: defaults
+        config_drive: ''
+        created: '2016-07-26T16:56:10Z'
+        flavor:
+            id: '2'
+            name: m1.small
+        hostId: 6363c13fc31066a15f2ff4c81bf054290d4d56d4d08e568570354580
+        human_id: testgroup2_ano_inst_0
+        id: f5832fcc-4e1b-442d-8be8-ba5e3783e7f2
+        image:
+            id: 3bcfd17c-6bf0-4134-ae7f-80bded8b46fd
+            name: rhel-6.5_jeos
+        interface_ip: 10.8.183.233
+        key_name: <ssh-key-reference>
+        metadata: {}
+        name: testgroup2_ano_inst_0
+        networks:
+            <network>:
+            - 172.16.100.26
+            - 10.8.183.233
+        os-extended-volumes:volumes_attached: []
+        private_v4: 172.16.100.26
+        progress: 0
+        public_v4: 10.8.183.233
+        public_v6: ''
+        region: ''
+        security_groups:
+        -   description: Default security group
+            id: df1a797b-009c-4685-a7c9-43863c36d653
+            name: default
+            security_group_rules:
+            -   direction: ingress
+                ethertype: IPv4
+                id: ade9fcb9-14c1-4975-a04d-6007f80005c1
+                port_range_max: null
+                port_range_min: null
+                protocol: null
+                remote_ip_prefix: null
+                security_group_id: df1a797b-009c-4685-a7c9-43863c36d653
+            -   direction: ingress
+                ethertype: IPv4
+                id: d03e4bae-24b6-415a-a30c-ee0d060f566f
+                port_range_max: null
+                port_range_min: null
+                protocol: null
+                remote_ip_prefix: null
+                security_group_id: df1a797b-009c-4685-a7c9-43863c36d653
+        status: ACTIVE
+        tenant_id: f1dda47890754241a3e111f9b7394707
+        updated: '2016-07-26T16:56:40Z'
+        user_id: 9c770dbddda444799e627004fee26e0a
+        volumes: []

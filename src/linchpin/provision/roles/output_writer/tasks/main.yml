@@ -1,0 +1,108 @@
+---
+- include_vars: "{{ inventory_layout_file }}"
+  when: state == "present" and inventory_layout_file is defined
+
+- name: "Updating topology_outputs"
+  set_fact:
+    topology_outputs:
+      os_server_res: "{{ topology_outputs_os_server  | default([]) }}"
+      os_keypair_res: "{{ topology_outputs_os_keypair  | default([]) }}"
+      os_volume_res: "{{ topology_outputs_os_volume  | default([]) }}"
+      os_obj_res: "{{ topology_outputs_os_object  | default([]) }}"
+      os_heat_res: "{{ topology_outputs_os_heat  | default([]) }}"
+      os_sg_res: "{{ topology_outputs_os_sg  | default([]) }}"
+      aws_ec2_res: "{{ topology_outputs_aws_ec2  | default([]) }}"
+      aws_s3_res: "{{ topology_outputs_aws_s3  | default([]) }}"
+      aws_ec2_key_res: "{{ topology_outputs_aws_ec2_key  | default([]) }}"
+      aws_cfn_res: "{{ topology_outputs_aws_cfn  | default([]) }}"
+      gcloud_gce_res: "{{ topology_outputs_gce  | default([]) }}"
+      duffy_res: "{{ topology_outputs_duffy  | default([]) }}"
+      rax_server_res: "{{ topology_outputs_rax_server  | default([]) }}"
+      beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
+      libvirt_res: "{{ topology_outputs_libvirt_nodes | default([]) }}"
+  when: async == false
+
+- name: "Create output directories"
+  file:
+    state: directory
+    path: "{{ item }}"
+  with_items:
+    - "{{ outputfolder_path | default( outputfolder_path+'/' ) }}"
+    - "{{ inventoryfolder_path | default( inventoryfolder_path+'/' ) }}"
+  when: async == false
+  ignore_errors: yes
+
+- name: "DEBUG:: topology_outputs"
+  debug:
+    msg: "{{ topology_outputs }}"
+
+- name: "DEBUG:: inventory_layout"
+  debug:
+    msg: "{{ inventory_layout }}"
+  when: state == "present" and inventory_layout is defined
+
+- name: "Generate outputs when async is false"
+  template:
+    src: "../templates/output_formatter.j2"
+    dest: "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output.yaml' ) }}"
+  when: state == "present" and async == false and no_output == false
+
+# pretty much the same when we use async== false , seperated the task for probable customizations in future
+- name: "Async:: Updating topology_outputs"
+  set_fact:
+    topology_outputs:
+      os_server_res: "{{ topology_outputs_os_server | default([]) }}"
+      os_keypair_res: "{{ topology_outputs_os_keypair | default([]) }}"
+      os_volume_res: "{{ topology_outputs_os_volume | default([]) }}"
+      os_obj_res: "{{ topology_outputs_os_object | default([]) }}"
+      os_heat_res: "{{ topology_outputs_os_heat | default([])}}"
+      os_sg_res: "{{ topology_outputs_os_sg | default([])}}"
+      aws_ec2_res: "{{ topology_outputs_aws_ec2 | default([]) }}"
+      aws_s3_res: "{{ topology_outputs_aws_s3 | default([]) }}"
+      aws_ec2_key_res: "{{ topology_outputs_aws_ec2_key | default([]) }}"
+      aws_cfn_res: "{{ topology_outputs_aws_cfn | default([]) }}"
+      gcloud_gce_res: "{{ topology_outputs_gce | default([]) }}"
+      duffy_res: "{{ topology_outputs_duffy | default([]) }}"
+      rax_server_res: "{{ topology_outputs_rax_server | default([]) }}"
+      beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
+      libvirt_res: "{{ topology_outputs_libvirt_nodes | default([]) }}"
+  when: async == true
+
+# currently adding a single playbook that can manage all the async outputs based on the resource groups
+- name: "wait and update outputs using jobids "
+  include: update_async_outputs.yml
+  when: async == true
+
+# updates topology outputs for after the previous task
+- name: "Async:: Updating topology_outputs after wait"
+  set_fact:
+    topology_outputs:
+      os_server_res: "{{ async_outputs_os_server | default([]) }}"
+      os_keypair_res: "{{ topology_outputs_os_keypair | default([]) }}"
+      os_obj_res: "{{ async_outputs_os_obj | default([]) }}"
+      os_volume_res: "{{ async_outputs_os_volume | default([]) }}"
+      os_heat_res: "{{ async_outputs_os_heat | default([]) }}"
+      os_sg_res: "{{ topology_outputs_os_sg | default([]) }}"
+      aws_ec2_res: "{{ async_outputs_aws_ec2 | default([]) }}"
+      aws_s3_res: "{{ topology_outputs_aws_s3 | default([]) }}"
+      aws_ec2_key_res: "{{ topology_outputs_aws_ec2_key | default([]) }}"
+      aws_cfn_res: "{{ async_outputs_aws_cfn | default([]) }}"
+      gcloud_gce_res: "{{ async_outputs_gcloud_gce | default([]) }}"
+      duffy_res: "{{ topology_outputs_duffy | default([]) }}"
+      rax_server_res: "{{ topology_outputs_rax_server | default([]) }}"
+      beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
+      libvirt_res: "{{ topology_outputs_libvirt_nodes | default([]) }}"
+  when: async == true
+
+# pretty much the same output generation when async_false
+# note: need to have a filter such that it matches the output of async == false output , else the inventory layout might face issues with while parsing !!!
+- name: "Generate outputs when async is true"
+  template:
+    src: "../templates/output_formatter.j2"
+    dest: "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output.yaml' ) }}"
+  when: state == "present" and async == true and no_output == false
+
+- name: "set name for linchpin_output_file for inventory generation"
+  set_fact: 
+    topology_output_file:  "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output.yaml' ) }}"
+  when: state == "present"

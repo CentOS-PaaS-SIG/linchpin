@@ -1,0 +1,36 @@
+---
+    topology_name: "ex_os_heat_topo"
+    site: "qeos"
+    resource_groups: 
+      - 
+        resource_group_name: "testgroup1"
+        res_group_type: "openstack"
+        res_defs:
+          - 
+            res_name: "os_heat_template_sample"
+            res_type: "os_heat"
+            template_path: "/root/clients/heat_clients/hot_template_sample2.yaml" 
+          - res_name: "ano_inst"
+            flavor: "m1.small"
+            res_type: "os_server"
+            image: "rhel-6.5_jeos"
+            count: 2
+            keypair: "ci-factory"
+            networks:
+              - "e2e-openstack"
+        assoc_creds: "cios_e2e-openstack"
+    resource_group_vars:
+      - 
+        resource_group_name : "testgroup1"
+        Name: "TestInstanceGroup1"
+        heat_params: 
+          key_name: "ci-factory"
+          image_id: "rhel-6.5_jeos"
+          instance_type: "m1.small"
+          network_name: "e2e-openstack" 
+      - 
+        resource_group_name : "testgroup2"
+        Name: "TestInstanceGroup2"
+        test_var1: "test_var1 msg is grp2 hello"
+        test_var2: "test_var2 msg is grp2 hello"
+        test_var3: "test_var3 msg is grp2 hello"

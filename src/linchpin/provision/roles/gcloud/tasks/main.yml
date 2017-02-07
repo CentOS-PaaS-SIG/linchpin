@@ -1,0 +1,16 @@
+---
+# This playbook will initiate provisioning for the openstack resources groups.
+# Under Implementation 
+- name: "DEBUG:: gcloud resource group list"
+  debug:
+    msg: "Currently provisioning the resources under list gcloud_res_grps {{ gcloud_res_grps }}"
+
+- name: "declaring output vars for topology outputs of gce"
+  set_fact:
+    topology_outputs_gce: []
+
+- name: "Initiating  Provisioning of resources in gcloud resource group"
+  include: provision_resource_group.yml res_grp={{ item }}
+  with_items:
+    - "{{ gcloud_res_grps }}"
+

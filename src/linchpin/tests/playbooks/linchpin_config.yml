@@ -1,0 +1,18 @@
+---
+keystore_path: "keystore"
+outputfolder_path: "outputs"
+inventoryfolder_path: "inventory"
+# inventory playbooks are not necessary because inventory_type specific tasks are defined in inventory_gen role
+inventory_playbooks:
+  - duffy_inventory.yml
+async: false
+async_timeout : 1000
+no_output : false
+schema: "ex_schemas/schema_v2.json"
+inventory_layouts_path: "inventory_layouts"
+inventory_outputs_path: "inventory_outputs"
+inventory_types: 
+  - "aws"
+  - "gcloud"
+  - "openstack"
+  - "generic"

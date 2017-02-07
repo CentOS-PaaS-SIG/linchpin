@@ -1,0 +1,45 @@
+---
+# This playbook provisions given topology.
+
+- name: "including the configuration files"
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: "Include linchpin_config"
+      include_vars: "{{ item }}"
+      with_first_found:
+        - "{{ linchpin_config | default(omit) }}"
+        - "../linchpin_config.yml"
+        - "~/.linchpin_config.yml"
+        - "/usr/linchpin_config.yml"
+        - "/etc/linchpin/linchpin_config.yml"
+
+- name:  "schema check and Pre Provisioning Activities  on topology_file"
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - { role: 'common' }
+
+- name:  "Provisioning resources based on resource group type"
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - { role: 'openstack', when: os_res_grps | length > 0  }
+    - { role: 'aws', when: aws_res_grps | length > 0 }
+    - { role: 'gcloud', when: gcloud_res_grps | length > 0 }
+    - { role: 'duffy', when: duffy_res_grps | length > 0}
+    - { role: 'libvirt', when: libvirt_res_grps | length > 0 }
+    - { role: 'rackspace', when: rax_res_grps | length > 0 }
+    - { role: 'beaker', when: bkr_res_grps | length > 0 }
+
+- name: "Writing contents to file"
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - { role: 'output_writer'}
+
+- name: "inventory generation role"
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - { role: 'inventory_gen', when: state == 'present' and inventory_layout_file is defined }

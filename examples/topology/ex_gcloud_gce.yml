@@ -1,0 +1,34 @@
+---
+    topology_name: "ex_gcloud_topo1"
+    resource_groups: 
+      - 
+        resource_group_name: "testgroup1"
+        res_group_type: "gcloud"
+        res_defs:
+          - 
+            res_name: "testresource" 
+            flavor: "f1-micro"
+            res_type: "gcloud_gce"
+            region: "us-central1-a"
+            image: "debian-8"
+            count: 2
+        assoc_creds: "gce_creds"
+      -
+        resource_group_name: "testgroup1"
+        res_group_type: "gcloud"
+        res_defs:
+          -
+            res_name: "testres"
+            flavor: "f1-micro"
+            res_type: "gcloud_gce"
+            region: "us-central1-a"
+            image: "debian-8"
+            count: 1
+        assoc_creds: "gce_creds"
+    resource_group_vars:
+      - 
+        resource_group_name : "testgroup1"
+        Name: "TestInstanceGroup1"
+        test_var1: "test_var1 msg is grp1 hello"
+        test_var2: "test_var2 msg is grp1 hello"
+        test_var3: "test_var3 msg is grp1 hello"

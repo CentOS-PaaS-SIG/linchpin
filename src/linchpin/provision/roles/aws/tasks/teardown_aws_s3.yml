@@ -1,0 +1,14 @@
+- name: "set s3 mode when state is absent"
+  set_fact:
+    s3_mode: "delete"
+  when: state == "absent" and res_def['res_type'] == 'aws_s3'
+
+- name: "DeProvisioning AWS_S3 Resource"
+  s3:
+    aws_access_key: "{{ aws_access_key_id | default(omit) }}"
+    aws_secret_key: "{{  aws_secret_access_key | default(omit) }}"
+    bucket: "{{ res_def['res_name'] }}"
+    mode: "{{ s3_mode }}"
+    region: "{{ res_def['region'] }}"
+    permission: "{{ res_def['permission']| default(omit) }}"
+  when: res_def['res_type'] == 'aws_s3'

@@ -1,0 +1,45 @@
+---
+#input: linchpin_config, output, layout
+#output: output dump to file
+- name: "Inventory Filter Testing"
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+   - "{{ output }}"
+  tasks:
+    - name: "Parse inventory layout as a ordered dict"
+      set_fact:
+        inventory_layout: "{{ layout | ordered_yaml }}"
+    - name: "Updating topology_outputs"
+      set_fact:
+        topology_outputs:
+          os_server_res: "{{ os_server_res }}"
+          aws_ec2_res: "{{  aws_ec2_res }}"
+          gcloud_gce_res: "{{ gcloud_gce_res }}"
+          duffy_res: "{{ duffy_res }}"
+        inventory_type: "{{ inventory_type | default('generic') }}"
+    - name: "debug"
+      debug:
+        msg: "{{ inventory_layout }}"
+    - debug: 
+        msg: "{{ topology_outputs | generic_inv(inventory_layout) }}" 
+      when: inventory_type == "generic"
+    - copy:
+        content: "{{ topology_outputs | aws_inv(inventory_layout) }}"
+        dest: "{{ inventory_output  }}"
+      when: inventory_type == "aws"
+    - debug:
+        msg: "{{ topology_outputs | os_inv(inventory_layout) }}"
+      when: inventory_type == "openstack"
+    - copy:
+        content: "{{ topology_outputs | gcloud_inv(inventory_layout) }}"
+        dest: "{{ inventory_output  }}" 
+      when: inventory_type == "gcloud"
+    - copy:
+        content: "{{ topology_outputs | os_inv(inventory_layout) }}"
+        dest: "{{ inventory_output  }}"
+      when: inventory_type == "openstack"
+    - copy:
+        content: "{{ topology_outputs | generic_inv(inventory_layout) }}"
+        dest: "{{ inventory_output }}"
+      when: inventory_type == "generic"

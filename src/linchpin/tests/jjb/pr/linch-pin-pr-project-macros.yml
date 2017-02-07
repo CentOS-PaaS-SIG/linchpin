@@ -1,0 +1,116 @@
+## SCMs
+- scm:
+    name: lp-pr-scm
+    scm:
+      - git:
+          url: 'https://github.com/CentOS-PaaS-SIG/linch-pin'
+          branches:
+              - ${sha1}
+          refspec: +refs/head/*:refs/remotes/origin/* +refs/pull/*:refs/remotes/origin/pr/*
+          basedir: linch-pin
+          skip-tag: true
+
+- project:
+    name: linch-pin-pr
+    lp-pr-name: linch-pin-pr
+    jslave_name: paas-sig-ci-slave01
+    lp-pr-repo: lp-pr-scm
+    repo-subdir: linch-pin
+    ghprb-auth-id-trigger: 'a2432de5-7b56-4a07-b697-e16612b92750'
+    ghprb-auth-id-update: '5f607b9b-73ff-4c89-aa6f-19e43dcb9cce'
+    github-context: linch-pin/unit-tests
+    lp-log-url: ${{JOB_URL}}/${{BUILD_NUMBER}}/console
+    lp-test-url: ${{JOB_URL}}/${{BUILD_NUMBER}}/testReport
+    combo-filter: >
+      ( TBD )
+    unit-tests: |
+      pip install --quiet nosexcover
+      pip install --quiet pylint
+      pip install --quiet pycrypto
+      pip install --quiet flake8
+      pip install --quiet pep8
+
+      iconv -f utf8 -t ascii $WORKSPACE/{repo-subdir}/requirements.txt >> $WORKSPACE/{repo-subdir}/requirements.txt;
+      pip install $WORKSPACE/{repo-subdir}  # where your setup.py lives
+      chmod -x $WORKSPACE/{repo-subdir}/tests/*.py
+      nosetests --verbosity=3 --with-xunit $WORKSPACE/{repo-subdir}/tests
+    gh-update-status: |
+      import os
+      import json
+      import requests
+      ## Update Github Status
+
+      if os.environ['ROOT_BUILD_CAUSE'] == 'GHPRBCAUSE':
+        commit = os.environ['ghprbActualCommit']
+      elif os.environ['ROOT_BUILD_CAUSE'] == 'SCMTRIGGER':
+        commit = os.environ['GIT_COMMIT']
+      else:
+        print "Triggered for unknown root cause; exiting."
+        exit(0)
+
+      print "Updating status for", commit
+
+      data = {{'state': os.environ['GH_STATE']}}
+
+      if 'GH_CONTEXT' in os.environ:
+        data['context'] = os.environ['GH_CONTEXT']
+      if 'GH_URL' in os.environ:
+        data['target_url'] = os.environ['GH_URL']
+      if 'FPASTE_URL' in os.environ:
+        data['target_url'] = os.environ['FPASTE_URL']
+      if 'GH_DESC' in os.environ:
+        data['description'] = os.environ['GH_DESC']
+
+      api_url = ("https://api.github.com/repos/%s/statuses/%s" %
+                 (os.environ['ghprbGhRepository'],
+                  os.environ['ghprbActualCommit']))
+
+      token_header = {{'Authorization': 'token ' + os.environ['GHPRB_TOKEN']}}
+
+      # NB: the requests on prod doesn't support the json= keyword-arg
+      r = requests.post(api_url, data=json.dumps(data), headers=token_header)
+
+      if r.status_code != requests.codes.created:
+        print "Failed to update commit status [HTTP %d]" % r.status_code
+        print r.headers
+        print r.json()
+        exit(1)
+
+    gh-update-comments: |
+      import os
+      import json
+      import requests
+
+      ## Update Github Comments builders and post
+
+      if os.environ['ROOT_BUILD_CAUSE'] != 'GHPRBCAUSE':
+        exit()
+
+      context = os.environ['GH_CONTEXT']
+      if 'ALL_GH_CONTEXT' in os.environ:
+        context = os.environ['ALL_GH_CONTEXT']
+
+      comments = os.environ['ghprbActualCommit'] + \
+                 " - State: " + os.environ['GH_STATE'] + \
+                 " - All Test Contexts: " + context + \
+                 " - Logs: " + os.environ['GH_URL']
+
+      if 'GH_TEST_RESULTS' in os.environ:
+        comments += " - Tests: " + os.environ['GH_TEST_RESULTS']
+
+      data = {{'body':  comments}}
+
+      api_url = ("https://api.github.com/repos/%s/issues/%s/comments" %
+                 (os.environ['ghprbGhRepository'],
+                  os.environ['ghprbPullId']))
+
+      token_header = {{'Authorization': 'token ' + os.environ['GHPRB_TOKEN']}}
+
+      r = requests.post(api_url, data=json.dumps(data), headers=token_header)
+      if r.status_code != requests.codes.created:
+          print "Failed to add a comment [HTTP %d]" % r.status_code
+          print r.headers
+          print r.json()
+          exit(1)
+    jobs:
+      - lp-pr-jobs

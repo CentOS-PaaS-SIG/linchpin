@@ -1,0 +1,356 @@
+{  "description": "Infra Topology for openstack",
+    "type": "object",
+    "properties": {
+        "topology_name": {
+            "description": "The unique identifier for topology",
+            "type": "string"
+        },
+        "date": {
+            "description": "Date of creation",
+            "type": "string"
+        },
+        "site": {
+            "description": "site of provisioning ",
+            "type": "string"
+        },
+        "credentials": {
+             "description": "contains various credential_vaults names",
+             "type": "array",
+             "items":{
+                "type":"string"
+             },
+             "minimum":1
+        },
+        "resource_groups": {
+             "description": "contains list of resources ",
+             "type": "array",
+             "items":{
+                "properties": {
+                   "resource_group_name": {
+                       "type":"string"
+                    },
+                    "resource_group_type": {
+                       "type":"string"
+                    },
+                    "res_defs":{
+                         "type": "array",
+                         "items" : {
+                             "oneOf" :
+                                 [
+                                   {"$ref": "#/definitions/os_server"},
+                                   {"$ref": "#/definitions/os_keypair"},
+                                   {"$ref": "#/definitions/os_heat"},
+                                   {"$ref": "#/definitions/os_object"},
+                                   {"$ref": "#/definitions/os_volume"},
+                                   {"$ref": "#/definitions/aws_ec2"},
+                                   {"$ref": "#/definitions/aws_s3"},
+                                   {"$ref": "#/definitions/aws_ec2_key"},
+                                   {"$ref": "#/definitions/aws_cfn"},
+                                   {"$ref": "#/definitions/gcloud_gce"},
+                                   {"$ref": "#/definitions/ex_res"},
+                                   {"$ref": "#/definitions/duffy"},
+                                   {"$ref": "#/definitions/libvirt"},
+                                   {"$ref": "#/definitions/rax_server"}
+                                 ]
+                            }
+                    },
+                    "associated_creds":{
+                        "description":"contains creds file associated to this resource",
+                        "type":"string"
+                    }
+                },
+                "required":["resource_group_name","res_defs"],
+                 "additionalProperties": true
+             },
+             "minimum":1,
+              "additionalitems": true
+        }
+    },
+    "required": ["topology_name"],
+    "definitions":{
+         "os_server": {
+             "type" : "object",
+             "properties" : {
+                "flavor": {
+                  "type":"string"
+                },
+                "res_type": {
+                   "type":"string",
+                     "pattern":"os_server"
+                },
+                "image": {
+                  "type":"string"
+                },
+                "count": {
+                  "type":"number"
+                },
+                "keypair": {
+                  "type":"string"
+                }
+              },
+             "required":["flavor","res_type","image","count","keypair"]
+          },
+
+         "aws_ec2": {
+             "type" : "object",
+             "properties" : {
+                  "flavor": {
+                     "type":"string"
+                     },
+                   "res_type": {
+                       "type":"string",
+                        "pattern":"aws_ec2"
+                     },
+                  "count": {
+                     "type":"number"
+                     },
+                  "keypair": {
+                     "type":"string"
+                   },
+                  "security_group": {
+                      "type":"string"
+                   }
+             },
+             "required":["flavor","res_type","count","keypair"]
+         },
+         "gcloud_gce": {
+             "type" : "object",
+             "properties" : {
+                 "res_type": {
+                     "type":"string",
+                     "pattern":"gcloud_gce"
+                     },
+                  "flavor": {
+                     "type":"string"
+                   },
+                  "res_name": {
+                     "type":"string"
+                   },
+                   "region": {
+                     "type":"string"
+                   },
+                   "image": {
+                     "type":"string"
+                   },
+                  "count": {
+                     "type":"number"
+                   }
+             },
+             "required":["res_type","flavor","count","region","image","res_name"]
+         },
+         "duffy": {
+             "type" : "object",
+             "properties" : {
+                 "res_type": {
+                     "type":"string",
+                     "pattern":"duffy"
+                     },
+                  "res_name": {
+                     "type":"string"
+                   },
+                   "version": {
+                     "type":"number"
+                   },
+                   "arch": {
+                     "type":"string"
+                   },
+                  "count": {
+                     "type":"number"
+                   }
+             },
+             "required":["res_type","res_name","version","arch","count"]
+         },
+         "aws_s3": {
+             "type" : "object",
+             "properties" : {
+                 "res_name": {
+                     "type":"string"
+                     },
+                  "res_type": {
+                     "type":"string",
+                     "pattern":"aws_s3"
+                     },
+                  "region": {
+                     "type":"string"
+                     },
+                  "permission": {
+                     "type":"string"
+                   }
+             },
+             "required":["res_name","res_type"]
+         },
+         "os_heat": {
+             "type" : "object",
+             "properties" : {
+                 "res_name": {
+                     "type":"string"
+                     },
+                  "res_type": {
+                     "type":"string",
+                     "pattern":"os_heat"
+                     },
+                  "template_path": {
+                     "type":"string"
+                   }
+             },
+             "required":["res_name","res_type", "template_path"]
+         },
+         "os_keypair": {
+             "type" : "object",
+             "properties" : {
+                 "res_name": {
+                     "type":"string"
+                     },
+                  "res_type": {
+                     "type":"string",
+                     "pattern":"os_keypair"
+                     },
+                  "public_key_path": {
+                     "type":"string"
+                   }
+             },
+             "required":["res_name","res_type"]
+         },
+         "aws_ec2_key": {
+             "type" : "object",
+             "properties" : {
+                 "res_name": {
+                     "type":"string"
+                     },
+                  "res_type": {
+                     "type":"string",
+                     "pattern":"aws_ec2_key"
+                     },
+                  "region": {
+                     "type":"string"
+                     },
+                  "public_key_path": {
+                     "type":"string"
+                   }
+             },
+             "required":["res_name","res_type"]
+         },
+         "aws_cfn": {
+             "type" : "object",
+             "properties" : {
+                  "res_name": {
+                     "type":"string"
+                     },
+                  "res_type": {
+                     "type":"string",
+                     "pattern":"aws_cfn"
+                     },
+                  "region": {
+                     "type":"string"
+                   },
+                  "template_path": {
+                     "type":"string"
+                   },
+                  "disable_rollback": {
+                     "type": "string"
+                  }
+             },
+             "required":["res_name","res_type","region","template_path"]
+         },
+         "os_volume": {
+             "type" : "object",
+             "properties" : {
+                 "res_name": {
+                     "type":"string"
+                     },
+                  "res_type": {
+                     "type":"string",
+                     "pattern":"os_volume"
+                   },
+                  "count": {
+                     "type":"number"
+                     },
+                  "size": {
+                     "type":"number"
+                     }
+             },
+             "required":["res_name","res_type","size"]
+         },
+         "os_object": {
+             "type" : "object",
+             "properties" : {
+                 "res_name": {
+                     "type":"string"
+                   },
+                  "res_type": {
+                     "pattern":"os_object",
+                     "type":"string"
+                   },
+                   "count": {
+                     "type":"number"
+                     },
+                  "access": {
+                     "type":"string"
+                   }
+             },
+             "required":["res_name","res_type"]
+         },
+         "libvirt": {
+             "type" : "object",
+             "properties" : {
+                 "res_name": {
+                     "type":"string"
+                   },
+                  "res_type": {
+                     "pattern":"libvirt",
+                     "type":"string"
+                   },
+                  "xml": {
+                     "type":"string"
+                   },
+                  "uri": {
+                     "type":"string"
+                   }
+             },
+             "required":["res_name","res_type","xml"]
+         },
+
+        "rax_server": {
+             "type" : "object",
+             "properties" : {
+                "flavor": {
+                  "type":"string"
+                },
+                "res_type": {
+                   "type":"string",
+                     "pattern":"rax_server"
+                },
+                "image": {
+                  "type":"string"
+                },
+                "count": {
+                  "type":"number"
+                },
+                "keypair": {
+                  "type":"string"
+                },
+                "region": {
+                  "type":"string"
+                },
+                "res_name": {
+                  "type":"string"
+                }
+              },
+             "required":["res_name","flavor","res_type","image","count","region"]
+          },
+
+         "ex_res": {
+             "type" : "object",
+             "properties" : {
+                 "ex_prop": {
+                     "type":"string"
+                     },
+                  "keypair": {
+                     "type":"string"
+                   }
+             },
+             "required":["ex_prop","keypair"]
+         }
+    }
+}
+

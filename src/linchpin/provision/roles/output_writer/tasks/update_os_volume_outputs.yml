@@ -1,0 +1,9 @@
+- name: "register var for async_outputs_os_obj"
+  set_fact:
+    async_outputs_os_volume: []
+  
+- name: "Wait on jobs"
+  include: wait_on_os_volume.yml
+  vars:
+    os_volume_group: "{{ item }}"
+  with_items:  "{{ topology_outputs['os_volume_res'] }}"

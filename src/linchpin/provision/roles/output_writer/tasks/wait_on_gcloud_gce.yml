@@ -1,0 +1,15 @@
+- name: "debug task"
+  debug:
+    msg: "{{ gcloud_gce_group }}"
+
+- name: "wait on gce outputs"
+  async_status:
+    jid: "{{ gcloud_gce_group['ansible_job_id'] }}"
+  register: job_result
+  until: job_result.finished
+  retries: 45
+
+- name: "Append outputitem"
+  set_fact:
+    async_outputs_gcloud_gce: "{{ async_outputs_gcloud_gce + [job_result] }}"
+  when: state == "present"

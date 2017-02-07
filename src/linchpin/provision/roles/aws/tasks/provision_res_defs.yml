@@ -1,0 +1,20 @@
+- name: "provision resource type : {{ res_def['res_type'] }}"
+  include: "provision_{{ res_def['res_type'] }}.yml"
+
+# can be reverted if the provisioning is not optimized
+
+#- name: "provision aws_ec2_key "
+#  include: provision_aws_ec2_key.yml
+#  when: res_def['res_type']=="aws_ec2_key"
+
+#- name: "provision aws_ec2 resources"
+#  include: provision_aws_ec2.yml 
+#  when: res_def['res_type']=="aws_ec2"
+
+#- name: "provision aws_s3 resources"
+#  include: provision_aws_s3.yml 
+#  when: res_def['res_type']=="aws_s3"
+
+#- name: "provision aws_cfn resources"
+#  include: provision_aws_cfn.yml
+#  when: res_def['res_type']=="aws_cfn"

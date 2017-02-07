@@ -1,0 +1,50 @@
+- name: "Debug:: checking cfn parameters"
+  debug:
+    msg: "{{ res_grp_vars | selectattr('resource_group_name', 'equalto', res_grp_name ) | first }}"
+
+- name: "Set cfn parameters for template"
+  set_fact:
+    cfn_grp_vars : "{{ res_grp_vars | selectattr('resource_group_name', 'equalto', res_grp_name ) | first }}"
+
+- name: "Set cfn parameters for template"
+  set_fact:
+    cfn_params : "{{ cfn_grp_vars['cfn_params'] }}"
+
+- name: "Teardown cloud formation stack"
+  cloudformation:
+    aws_access_key: "{{ aws_access_key_id | default(omit) }}"
+    aws_secret_key: "{{  aws_secret_access_key | default(omit) }}"
+    stack_name:  "{{ res_def['res_name'] }}"
+    state: "{{ state }}"
+    region:  "{{ res_def['region'] }}"
+    disable_rollback:  "{{ res_def['disable_roleback']| default(omit) }}"
+    template: "{{ res_def['template_path'] }}"
+    template_parameters: "{{ cfn_params }}"
+    tags:
+      Stack: "{{ res_def['res_name'] }}"
+  register: output
+  when: async == false
+
+
+- name: "Async:: Teardown cloud formation stack"
+  cloudformation:
+    aws_access_key: "{{ aws_access_key_id | default(omit) }}"
+    aws_secret_key: "{{  aws_secret_access_key | default(omit) }}"
+    stack_name:  "{{ res_def['res_name'] }}"
+    state: "{{ state }}"
+    region:  "{{ res_def['region'] }}"
+    disable_rollback:  "{{ res_def['disable_roleback']| default(omit) }}"
+    template: "{{ res_def['template_path'] }}"
+    template_parameters: "{{ cfn_params }}"
+    tags:
+      Stack: "{{ res_def['res_name'] }}"
+  async: "{{ async_timeout }}"
+  poll: 0
+  register: output
+  when: async == true
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_aws_cfn: "{{ topology_outputs_aws_cfn + [output] }}"
+  when: async == true
+                                                                                                                                                       

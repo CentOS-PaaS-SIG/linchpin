@@ -1,0 +1,51 @@
+- name: "provision/deprovision os_server resources by looping on count"
+  os_server:
+    state: "{{ state }}"
+    auth:
+      auth_url: "{{ endpoint }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      project_name: "{{ project }}"
+    name: "{{ res_grp_name }}_{{ res_def['res_name'] }}"
+    image: "{{ res_def['image'] }}"
+    key_name: "{{ res_def['keypair'] }}"
+    api_timeout: 99999
+    flavor: "{{ res_def['flavor'] }}"
+    nics:  "{{ res_def['networks'] | os_net }}"
+    floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
+    count: "{{ res_def['count'] }}"
+  when: async == false
+  register: res_def_output
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os_server: "{{ topology_outputs_os_server + [res_def_output] }}"
+  when: async == false
+
+- name: "provision/deprovision os_server resources by looping on count"
+  os_server:
+    state: "{{ state }}"
+    auth:
+      auth_url: "{{ endpoint }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      project_name: "{{ project }}"
+    name: "{{ res_grp_name }}_{{ res_def['res_name'] }}"
+    image: "{{ res_def['image'] }}"
+    key_name: "{{ res_def['keypair'] }}"
+    api_timeout: 99999
+    flavor: "{{ res_def['flavor'] }}"
+    nics:  "{{ res_def['networks'] | os_net }}"
+    floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
+    count: "{{ res_def['count'] }}"
+  register: res_def_output
+  async: "{{ async_timeout | default(1000) }}"
+  poll: 0
+  register: res_def_output
+  when: async == true
+
+# following tasks saves the async job details
+- name: "Async:: save the job id"
+  set_fact:
+    topology_outputs_os_server: "{{ topology_outputs_os_server + [ res_def_output ] }}"
+  when: async == true

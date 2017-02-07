@@ -1,0 +1,9 @@
+- name: "register var for async_outputs_aws_ec2"
+  set_fact:
+    async_outputs_aws_ec2: [] 
+  
+- name: "Wait on jobs"
+  include: wait_on_aws_ec2.yml
+  vars:
+    aws_ec2_group: "{{ item }}"
+  with_items:  "{{ topology_outputs['aws_ec2_res'] }}"

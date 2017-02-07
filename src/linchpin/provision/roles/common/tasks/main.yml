@@ -1,0 +1,53 @@
+---
+# This playbook contains common play that will be ran before the provisioning starts.
+- name: "DEBUG: topology and schema"
+  debug:
+    msg: "topology: {{ topology }} schema: {{ schema }}"
+
+- name: "schema check for given topology file"
+  schema_check:
+    data: "{{ topology }}"
+    schema: "{{ schema }}"
+  register: output
+  tags: schema_validation
+
+- name: "set fact for saving topology_job_ids"
+  set_fact:
+    topology_job_ids: []
+
+- name: "filtering the output for openstack resource groups"
+  set_fact:
+    os_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'openstack') | list }}"
+
+- name: "filtering the output for aws resource groups"
+  set_fact:
+    aws_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'aws') | list }}"
+
+- name: "filtering the output for google cloud resource groups"
+  set_fact:
+    gcloud_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'gcloud') | list }}"
+
+- name: "filtering the output for duffy resource groups"
+  set_fact:
+    duffy_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'duffy') | list }}"
+
+- name: "filtering the output for libvirt resource groups"
+  set_fact:
+    libvirt_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'libvirt') | list }}"
+
+- name: "filtering the output for rackspace resource groups"
+  set_fact:
+    rax_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'rax') | list }}"
+
+- name: "filtering the output for beaker"
+  set_fact:
+    bkr_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'beaker') | list }}"
+
+- name: "Registering resource group vars from topology"
+  set_fact:
+    res_grp_vars: "{{ output.output.data.resource_group_vars }}"
+  when: output.output.data.resource_group_vars is defined
+
+- name: "output vars"
+  set_fact:
+    topology_outputs: {}

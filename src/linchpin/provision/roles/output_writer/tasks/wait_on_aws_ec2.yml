@@ -1,0 +1,45 @@
+#- name: "debug task"
+#  debug:
+#    msg: "{{ aws_ec2_group }}"
+
+- name: "waiting on each job id"
+  async_status_custom:
+    jid: "{{ aws_ec2_group['ansible_job_id'] }}"
+  register: job_result
+  until: job_result.finished
+  retries: 30
+  when: state == "present"
+
+- name: "Append outputitem to t"
+  set_fact:
+    async_outputs_aws_ec2: "{{ async_outputs_aws_ec2 + [job_result] }}"
+  when: state == "present"
+
+#- name: "filtering the jobids aws_ec2 groups"
+#  set_fact:
+#    jobids_aws_ec2 : "{{ aws_ec2_group['results'] | map(attribute='ansible_job_id') | list  }}"
+#  when: state == "absent"
+
+#- name: "this is a filtered list ideally"
+#  debug:
+#    msg: "{{ jobids_aws_ec2 }}"
+#  when: state == "absent"
+
+- name: "set_job_id"
+  set_fact:
+    results : "{{ aws_ec2_group['results'] | first }}"
+  when: state == "absent"
+
+- name: "include wait"
+  include: wait.yml job_obj={{ item }}
+  with_items: "{{ results }}"
+  when: state == "absent"
+
+#- name: 'check on fire and forget task'
+#  async_status:
+#    jid: "{{ results['results'][0].ansible_job_id }}"
+#  register: job_result
+#  until: job_result.finished
+#  retries: 45
+#  when: results['results'][0].ansible_job_id is defined
+#  ignore_errors: yes
