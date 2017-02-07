@@ -20,7 +20,6 @@ resource_groups:
         vcpus: 2
         networks:
           - name: linchpin-centos72
-
       - res_name: "centos71"
         res_type: "libvirt_node"
         uri: 'qemu:///system'

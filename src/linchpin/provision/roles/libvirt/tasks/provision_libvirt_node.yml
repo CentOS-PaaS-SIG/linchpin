@@ -28,6 +28,12 @@
   include: copy_image_src.yml
   when: node_exists['failed'] is defined
 
+#-- add user data --
+#
+- name: libguestfs add user data
+  debug:
+    var: img_s_ext
+
 - name: "define node"
   template:
     src: "../templates/libvirt_node.xml.j2"
