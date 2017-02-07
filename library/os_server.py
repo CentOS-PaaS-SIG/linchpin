@@ -27,6 +27,10 @@ except ImportError:
     HAS_SHADE = False
 
 
+ANSIBLE_METADATA = {'status': ['preview'],
+                    'supported_by': 'community',
+                    'version': '1.0'}
+
 DOCUMENTATION = '''
 ---
 module: os_server
@@ -203,9 +207,8 @@ requirements:
 '''
 
 EXAMPLES = '''
-# Creates a new instance and attaches to a network and passes metadata to
-# the instance
-- os_server:
+- name: Create a new instance and attaches to a network and passes metadata to the instance
+  os_server:
        state: present
        auth:
          auth_url: https://region-b.geo-1.identity.hpcloudsvc.com:35357/v2.0/
@@ -224,96 +227,95 @@ EXAMPLES = '''
          hostname: test1
          group: uge_master
 
-# Creates a new instance in HP Cloud AE1 region availability zone az2 and
+# Create a new instance in HP Cloud AE1 region availability zone az2 and
 # automatically assigns a floating IP
 - name: launch a compute instance
   hosts: localhost
   tasks:
-  - name: launch an instance
-    os_server:
-      state: present
-      auth:
-        auth_url: https://region-b.geo-1.identity.hpcloudsvc.com:35357/v2.0/
-        username: username
-        password: Equality7-2521
-        project_name: username-project1
-      name: vm1
-      region_name: region-b.geo-1
-      availability_zone: az2
-      image: 9302692b-b787-4b52-a3a6-daebb79cb498
-      key_name: test
-      timeout: 200
-      flavor: 101
-      security_groups: default
-      auto_ip: yes
+    - name: launch an instance
+      os_server:
+        state: present
+        auth:
+          auth_url: https://region-b.geo-1.identity.hpcloudsvc.com:35357/v2.0/
+          username: username
+          password: Equality7-2521
+          project_name: username-project1
+        name: vm1
+        region_name: region-b.geo-1
+        availability_zone: az2
+        image: 9302692b-b787-4b52-a3a6-daebb79cb498
+        key_name: test
+        timeout: 200
+        flavor: 101
+        security_groups: default
+        auto_ip: yes
 
-# Creates a new instance in named cloud mordred availability zone az2
+# Create a new instance in named cloud mordred availability zone az2
 # and assigns a pre-known floating IP
 - name: launch a compute instance
   hosts: localhost
   tasks:
-  - name: launch an instance
-    os_server:
-      state: present
-      cloud: mordred
-      name: vm1
-      availability_zone: az2
-      image: 9302692b-b787-4b52-a3a6-daebb79cb498
-      key_name: test
-      timeout: 200
-      flavor: 101
-      floating_ips:
-        - 12.34.56.79
+    - name: launch an instance
+      os_server:
+        state: present
+        cloud: mordred
+        name: vm1
+        availability_zone: az2
+        image: 9302692b-b787-4b52-a3a6-daebb79cb498
+        key_name: test
+        timeout: 200
+        flavor: 101
+        floating_ips:
+          - 12.34.56.79
 
-# Creates a new instance with 4G of RAM on Ubuntu Trusty, ignoring
+# Create a new instance with 4G of RAM on Ubuntu Trusty, ignoring
 # deprecated images
 - name: launch a compute instance
   hosts: localhost
   tasks:
-  - name: launch an instance
-    os_server:
-      name: vm1
-      state: present
-      cloud: mordred
-      region_name: region-b.geo-1
-      image: Ubuntu Server 14.04
-      image_exclude: deprecated
-      flavor_ram: 4096
+    - name: launch an instance
+      os_server:
+        name: vm1
+        state: present
+        cloud: mordred
+        region_name: region-b.geo-1
+        image: Ubuntu Server 14.04
+        image_exclude: deprecated
+        flavor_ram: 4096
 
-# Creates a new instance with 4G of RAM on Ubuntu Trusty on a Performance node
+# Create a new instance with 4G of RAM on Ubuntu Trusty on a Performance node
 - name: launch a compute instance
   hosts: localhost
   tasks:
-  - name: launch an instance
-    os_server:
-      name: vm1
-      cloud: rax-dfw
-      state: present
-      image: Ubuntu 14.04 LTS (Trusty Tahr) (PVHVM)
-      flavor_ram: 4096
-      flavor_include: Performance
+    - name: launch an instance
+      os_server:
+        name: vm1
+        cloud: rax-dfw
+        state: present
+        image: Ubuntu 14.04 LTS (Trusty Tahr) (PVHVM)
+        flavor_ram: 4096
+        flavor_include: Performance
 
 # Creates a new instance and attaches to multiple network
 - name: launch a compute instance
   hosts: localhost
   tasks:
-  - name: launch an instance with a string
-    os_server:
-      auth:
-         auth_url: https://region-b.geo-1.identity.hpcloudsvc.com:35357/v2.0/
-         username: admin
-         password: admin
-         project_name: admin
-       name: vm1
-       image: 4f905f38-e52a-43d2-b6ec-754a13ffb529
-       key_name: ansible_key
-       timeout: 200
-       flavor: 4
-       nics: "net-id=4cb08b20-62fe-11e5-9d70-feff819cdc9f,net-id=542f0430-62fe-11e5-9d70-feff819cdc9f..."
+    - name: launch an instance with a string
+      os_server:
+        auth:
+           auth_url: https://region-b.geo-1.identity.hpcloudsvc.com:35357/v2.0/
+           username: admin
+           password: admin
+           project_name: admin
+         name: vm1
+         image: 4f905f38-e52a-43d2-b6ec-754a13ffb529
+         key_name: ansible_key
+         timeout: 200
+         flavor: 4
+         nics: "net-id=4cb08b20-62fe-11e5-9d70-feff819cdc9f,net-id=542f0430-62fe-11e5-9d70-feff819cdc9f..."
 
-# Creates a new instance and attaches to a network and passes metadata to
-# the instance
-- os_server:
+- name: Creates a new instance and attaches to a network and passes metadata to the instance
+  os_server:
        state: present
        auth:
          auth_url: https://region-b.geo-1.identity.hpcloudsvc.com:35357/v2.0/
@@ -330,51 +332,51 @@ EXAMPLES = '''
          - net-name: another_network
        meta: "hostname=test1,group=uge_master"
 
-# Creates a new instance and attaches to a specific network
-- os_server:
-       state: present
-       auth:
-         auth_url: https://region-b.geo-1.identity.hpcloudsvc.com:35357/v2.0/
-         username: admin
-         password: admin
-         project_name: admin
-       name: vm1
-       image: 4f905f38-e52a-43d2-b6ec-754a13ffb529
-       key_name: ansible_key
-       timeout: 200
-       flavor: 4
-       network: another_network
+- name:  Creates a new instance and attaches to a specific network
+  os_server:
+    state: present
+    auth:
+      auth_url: https://region-b.geo-1.identity.hpcloudsvc.com:35357/v2.0/
+      username: admin
+      password: admin
+      project_name: admin
+    name: vm1
+    image: 4f905f38-e52a-43d2-b6ec-754a13ffb529
+    key_name: ansible_key
+    timeout: 200
+    flavor: 4
+      network: another_network
 
-# Creates a new instance with 4G of RAM on a 75G Ubuntu Trusty volume
+# Create a new instance with 4G of RAM on a 75G Ubuntu Trusty volume
 - name: launch a compute instance
   hosts: localhost
   tasks:
-  - name: launch an instance
-    os_server:
-      name: vm1
-      state: present
-      cloud: mordred
-      region_name: ams01
-      image: Ubuntu Server 14.04
-      flavor_ram: 4096
-      boot_from_volume: True
-      volume_size: 75
+    - name: launch an instance
+      os_server:
+        name: vm1
+        state: present
+        cloud: mordred
+        region_name: ams01
+        image: Ubuntu Server 14.04
+        flavor_ram: 4096
+        boot_from_volume: True
+        volume_size: 75
 
 # Creates a new instance with 2 volumes attached
 - name: launch a compute instance
   hosts: localhost
   tasks:
-  - name: launch an instance
-    os_server:
-      name: vm1
-      state: present
-      cloud: mordred
-      region_name: ams01
-      image: Ubuntu Server 14.04
-      flavor_ram: 4096
-      volumes:
-      - photos
-      - music
+    - name: launch an instance
+      os_server:
+        name: vm1
+        state: present
+        cloud: mordred
+        region_name: ams01
+        image: Ubuntu Server 14.04
+        flavor_ram: 4096
+        volumes:
+        - photos
+        - music
 '''
 
 
@@ -384,23 +386,33 @@ def _exit_hostvars(module, cloud, server, changed=True):
         changed=changed, server=server, id=server.id, openstack=hostvars)
 
 
+def _exit_hostvars_count(module, cloud, servers, changed=True):
+    hostvars = []
+    for server in servers:
+        hostvars.append(meta.get_hostvars_from_server(cloud, server))
+    server_ids = [server.id for server in servers]
+    module.exit_json(
+        changed=changed, servers=servers, ids=server_ids, openstack=hostvars)
+
+
 def _parse_nics(nics):
     for net in nics:
-        if type(net) == str:
+        if isinstance(net, str):
             for nic in net.split(','):
                 yield dict((nic.split('='),))
         else:
             yield net
 
+
 def _network_args(module, cloud):
     args = []
     nics = module.params['nics']
 
-    if type(nics) != list:
+    if not isinstance(nics, list):
         module.fail_json(msg='The \'nics\' parameter must be a list.')
 
     for net in _parse_nics(nics):
-        if type(net) != dict:
+        if not isinstance(net, dict):
             module.fail_json(
                 msg='Each entry in the \'nics\' parameter must be a dict.')
 
@@ -436,6 +448,25 @@ def _delete_server(module, cloud):
     module.exit_json(changed=True, result='deleted')
 
 
+def _delete_server_count(module, cloud):
+    changed = False
+    server_name = module.params['name']
+    count = module.params['count']
+    for i in range(1, count+1):
+        server = server_name+str(i)
+        server = cloud.get_server(server_name)
+        if server:
+            try:
+                cloud.delete_server(
+                    server, wait=module.params['wait'],
+                    timeout=module.params['timeout'],
+                    delete_ips=module.params['delete_fip'])
+            except Exception as e:
+                module.fail_json(msg="Error in deleting vm: %s" % e.message)
+            changed = True
+    module.exit_json(changed=changed, result='deleted')
+
+
 def _create_server(module, cloud):
     flavor = module.params['flavor']
     flavor_ram = module.params['flavor_ram']
@@ -445,6 +476,9 @@ def _create_server(module, cloud):
     if not module.params['boot_volume']:
         image_id = cloud.get_image_id(
             module.params['image'], module.params['image_exclude'])
+        if not image_id:
+            module.fail_json(msg="Could not find image %s" %
+                             module.params['image'])
 
     if flavor:
         flavor_dict = cloud.get_flavor(flavor)
@@ -457,7 +491,7 @@ def _create_server(module, cloud):
 
     nics = _network_args(module, cloud)
 
-    if type(module.params['meta']) is str:
+    if isinstance(module.params['meta'], str):
         metas = {}
         for kv_str in module.params['meta'].split(","):
             k, v = kv_str.split("=")
@@ -493,6 +527,81 @@ def _create_server(module, cloud):
     )
 
     _exit_hostvars(module, cloud, server)
+
+
+def _create_server_count(module, cloud):
+    count = module.params['count']
+    name = module.params['name']
+    flavor = module.params['flavor']
+    flavor_ram = module.params['flavor_ram']
+    flavor_include = module.params['flavor_include']
+    image_id = None
+    changed = False
+
+    if not module.params['boot_volume']:
+        image_id = cloud.get_image_id(
+            module.params['image'], module.params['image_exclude'])
+
+    if flavor:
+        flavor_dict = cloud.get_flavor(flavor)
+        if not flavor_dict:
+            module.fail_json(msg="Could not find flavor %s" % flavor)
+    else:
+        flavor_dict = cloud.get_flavor_by_ram(flavor_ram, flavor_include)
+        if not flavor_dict:
+            module.fail_json(msg="Could not find any matching flavor")
+
+    nics = _network_args(module, cloud)
+
+    if isinstance(module.params['meta'], str):
+        metas = {}
+        for kv_str in module.params['meta'].split(","):
+            k, v = kv_str.split("=")
+            metas[k] = v
+        module.params['meta'] = metas
+
+    server_names = [ name+str(i) for i in range(1, count+1) ]
+    servers = []
+
+    for server_name in server_names:
+        server = cloud.get_server(server_name)
+        if server:
+            if server.status not in ('ACTIVE', 'SHUTOFF', 'PAUSED', 'SUSPENDED'):
+                module.fail_json(
+                    msg="One or more instances in specified count us available \
+                         but not Active state: " + server.status)
+            servers.append(server)
+        else:
+            bootkwargs = dict(
+                name=server_name,
+                image=image_id,
+                flavor=flavor_dict['id'],
+                nics=nics,
+                meta=module.params['meta'],
+                security_groups=module.params['security_groups'],
+                userdata=module.params['userdata'],
+                config_drive=module.params['config_drive'],
+            )
+            for optional_param in (
+                    'key_name', 'availability_zone', 'network',
+                    'scheduler_hints', 'volume_size', 'volumes'):
+                if module.params[optional_param]:
+                    bootkwargs[optional_param] = module.params[optional_param]
+            server = cloud.create_server(
+                ip_pool=module.params['floating_ip_pools'],
+                ips=module.params['floating_ips'],
+                auto_ip=module.params['auto_ip'],
+                boot_volume=module.params['boot_volume'],
+                boot_from_volume=module.params['boot_from_volume'],
+                terminate_volume=module.params['terminate_volume'],
+                reuse_ips=module.params['reuse_ips'],
+                wait=module.params['wait'], timeout=module.params['timeout'],
+                **bootkwargs
+            )
+            servers.append(server)
+            changed = True
+
+    _exit_hostvars_count(module, cloud, servers, changed=changed)
 
 
 def _delete_floating_ip_list(cloud, server, extra_ips):
@@ -589,6 +698,7 @@ def main():
         state                           = dict(default='present', choices=['absent', 'present']),
         delete_fip                      = dict(default=False, type='bool'),
         reuse_ips                       = dict(default=True, type='bool'),
+        count                           = dict(default=None, type='int'),
     )
     module_kwargs = openstack_module_kwargs(
         mutually_exclusive=[
@@ -614,6 +724,7 @@ def main():
     boot_volume = module.params['boot_volume']
     flavor = module.params['flavor']
     flavor_ram = module.params['flavor_ram']
+    count = module.params['count']
 
     if state == 'present':
         if not (image or boot_volume):
@@ -632,14 +743,19 @@ def main():
         cloud_params.pop('userdata', None)
         cloud = shade.openstack_cloud(**cloud_params)
 
-        if state == 'present':
+        if state == 'present' and not count:
             _get_server_state(module, cloud)
             _create_server(module, cloud)
-        elif state == 'absent':
+        elif state == 'present' and count:
+            _create_server_count(module, cloud)
+        elif state == 'absent' and not count:
             _get_server_state(module, cloud)
             _delete_server(module, cloud)
+        elif state == 'absent' and count:
+            _delete_server_count(module, cloud)
     except shade.OpenStackCloudException as e:
         module.fail_json(msg=str(e), extra_data=e.extra_data)
+
 
 # this is magic, see lib/ansible/module_common.py
 from ansible.module_utils.basic import *
