@@ -454,7 +454,7 @@ def _delete_server_count(module, cloud):
     count = module.params['count']
     for i in range(1, count+1):
         server = server_name+str(i)
-        server = cloud.get_server(server_name)
+        server = cloud.get_server(server)
         if server:
             try:
                 cloud.delete_server(
