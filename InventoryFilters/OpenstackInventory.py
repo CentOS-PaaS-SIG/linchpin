@@ -15,9 +15,13 @@ from InventoryFilter import InventoryFilter
 class OpenstackInventory(InventoryFilter):
 
     def get_host_ips(self, topo):
+        print("######## topology")
+        print(topo)
         host_public_ips = []
         for group in topo['os_server_res']:
             for server in group['openstack']:
+                print("######## server")
+                print (server)
                 host_public_ips.append(str(server['accessIPv4']))
         return host_public_ips
 
