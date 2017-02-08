@@ -311,6 +311,50 @@
             },
             "required":["res_name","res_type"]
         },
+        "os_sg": {
+            "type" : "object",
+            "properties" : {
+                "res_name": {
+                    "type":"string"
+                },
+                "res_type": {
+                    "pattern":"os_sg",
+                    "type":"string"
+                },
+                "description": {
+                    "type":"string"
+                },
+                "region": {
+                    "type":"string"
+                },
+                "rules": {
+                    "type": "array",
+                    "items": {
+                        "type":"object",
+                        "properties": {
+                            "rule_type": {
+                                "type":"string"
+                            },
+                            "from_port": {
+                                "type":"number"
+                            },
+                            "to_port": {
+                                "type":"number"
+                            },
+                            "proto": {
+                                "type": "string"
+                            },
+                            "cidr_ip": {
+                                "type": "string"
+                            }
+                        }
+
+                    }
+                
+                }
+            },
+            "required":["res_name","res_type"]
+        },
         "libvirt_storage": {
             "type" : "object",
             "properties" : {
@@ -503,7 +547,8 @@
                                 {"$ref": "#/definitions/os_keypair"},
                                 {"$ref": "#/definitions/os_heat"},
                                 {"$ref": "#/definitions/os_object"},
-                                {"$ref": "#/definitions/os_volume"}
+                                {"$ref": "#/definitions/os_volume"},
+                                {"$ref": "#/definitions/os_sg"}
                              ]
                     }
                 },

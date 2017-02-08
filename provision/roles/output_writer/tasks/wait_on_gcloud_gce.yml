@@ -2,13 +2,12 @@
   debug:
     msg: "{{ gcloud_gce_group }}"
 
-- name: "set_job_id"
-  set_fact:
-    results : "{{ gcloud_gce_group['results'] | first }}"
-
-- name: "include wait"
-  include: wait.yml job_obj={{ item }}
-  with_items: "{{ results }}"
+- name: "wait on gce outputs"
+  async_status:
+    jid: "{{ gcloud_gce_group['ansible_job_id'] }}"
+  register: job_result
+  until: job_result.finished
+  retries: 45
 
 - name: "Append outputitem"
   set_fact:

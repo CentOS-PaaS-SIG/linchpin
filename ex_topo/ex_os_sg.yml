@@ -1,0 +1,31 @@
+---
+    topology_name: "example_topo_for_os_sg"
+    resource_groups: 
+      - 
+        resource_group_name: "testgroup1"
+        res_group_type: "openstack"
+        res_defs: 
+          -
+            res_type: "os_sg"
+            res_name: "os_test_sg"
+            description: "Openstack Security Group with ssh access"
+            rules:
+              -
+                rule_type: "inbound"
+                from_port: 22
+                to_port: 22
+                proto: "tcp"
+                cidr_ip: "0.0.0.0/0"
+              -
+                rule_type: "outbound"
+                from_port: 22
+                to_port: 22
+                proto: "tcp"
+                cidr_ip: "0.0.0.0/0" 
+        assoc_creds: "atomic_jenkins"
+    resource_group_vars:
+      - 
+        resource_group_name : "testgroup1"
+        test_var1: "test_var1 msg is grp1 hello "
+        test_var2: "test_var2 msg is grp1 hello "
+        test_var3: "test_var3 msg is grp1 hello "

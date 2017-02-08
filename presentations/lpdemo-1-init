@@ -1,0 +1,277 @@
+{
+  "events": [
+    {
+      "act": "OPEN",
+      "size": [
+        136,
+        36
+      ],
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s Projects]$ ",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "ECHO",
+      "data": "mkdir lpdemo",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0043201446533203125
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;mkdir lpdemo\u0007\u001b]0;@t450s:~/Projects\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects\u0007",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0007643699645996094
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s Projects]$ ",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "ECHO",
+      "data": "cd ",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "READ",
+      "data": "\u001b",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "READ",
+      "data": ".",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "WRITE",
+      "data": "lpdemo",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.003593921661376953
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;cd lpdemo\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0007638931274414062
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s lpdemo]$ ",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "ECHO",
+      "data": "linchpin --help",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.6412367820739746
+    },
+    {
+      "act": "WRITE",
+      "data": "Usage: linchpin [OPTIONS] COMMAND [ARGS]...\r\n\r\n  Welcome to linchpin command line client: lpcli\r\n\r\nOptions:\r\n  --verbose\r\n  --home-directory PATH\r\n  --help                 Show this message and exit.\r\n\r\nCommands:\r\n  config    config module of linchpin cli\r\n  drop      drop module of linchpin cli\r\n  init      init module of linchpin\r\n  invgen    invgen module of linchpin cli\r\n  layout\r\n  rise      rise module of linchpin cli\r\n  topology\r\n  validate  validate module of linchpin cli : currenly...\r\n",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.02644634246826172
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;linchpin --help\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007(venv) [herlo@t450s lpdemo]$ ",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "ECHO",
+      "data": "linchpin init",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.6479377746582031
+    },
+    {
+      "act": "WRITE",
+      "data": "Initailising the templates for linchpin file !\r\n",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.03523063659667969
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;linchpin init\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0019407272338867188
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s lpdemo]$ ",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "ECHO",
+      "data": "ls -l",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0009717941284179688
+    },
+    {
+      "act": "WRITE",
+      "data": "total 16\r\ndrwxrwxr-x. 2 herlo herlo 4096 Jan 26 15:33 \u001b[0m\u001b[38;5;33minventories\u001b[0m\r\ndrwxrwxr-x. 2 herlo herlo 4096 Jan 26 15:33 \u001b[38;5;33mlayouts\u001b[0m\r\n-rw-rw-r--. 1 herlo herlo  474 Jan 26 15:33 PinFile\r\ndrwxrwxr-x. 2 herlo herlo 4096 Jan 26 15:33 \u001b[38;5;33mtopologies\u001b[0m\r\n",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0016624927520751953
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;ls -l\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0012845993041992188
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s lpdemo]$ ",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "ECHO",
+      "data": "cat Pi",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "READ",
+      "data": "\t",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "WRITE",
+      "data": "nFile ",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0004918575286865234
+    },
+    {
+      "act": "WRITE",
+      "data": "#The following example illustrates the PinFile \r\n#SYNTAX:\r\n#component_name:\r\n#    topology_name: <string>  # refers to the name topology file either in package or local topologies folder\r\n#    inventory_layout: <string> # refers to name of the inventory layout in package or local layouts folder\r\n\r\nacross2clouds:\r\n  topology: duffy-3node-cluster.yml \r\n  layout: openshift-3node-cluster.yml\r\n\r\ndockercontainer:\r\n  topology: duffy-3node-cluster.yml\r\n  layout: openshift-3node-cluster.yml",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00030303001403808594
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;cat PinFile \u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.000644683837890625
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n--END--\r\n",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    },
+    {
+      "act": "CLOSE",
+      "term": "4e23b623e6f945e9985bc55d051e4b22"
+    }
+  ],
+  "shell": "/usr/bin/bash"
+}
