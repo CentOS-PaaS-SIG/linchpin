@@ -1,0 +1,68 @@
+---
+    topology_name: "ex_aws_topo"
+    site: "qeos"
+    resource_groups: 
+      - 
+        resource_group_name: "testgroup1"
+        res_group_type: "aws"
+        res_defs:
+          - 
+            res_name: "ha_inst" 
+            flavor: "t1.micro"
+            res_type: "aws_ec2"
+            region: "us-west-2"
+            image: "ami-014cb561"
+            count: 1
+            keypair: "libra"
+        assoc_creds: "master_aws_creds"
+      - 
+        resource_group_name: "testgroup2"
+        res_group_type: "aws"
+        res_defs:
+          - 
+            res_name: "ha_inst2"
+            flavor: "t1.micro"
+            res_type: "aws_ec2"
+            region: "us-east-1"
+            image: "ami-00a7636d"
+            count: 2
+            keypair: "libra"
+        assoc_creds: "master_aws_creds"
+      - 
+        resource_group_name: "testgroup3"
+        res_group_type: "aws"
+        res_defs:
+          - 
+            res_name: "ha_inst2"
+            flavor: "t1.micro"
+            res_type: "aws_ec2"
+            region: "us-east-1"
+            image: "ami-00a7636d"
+            count: 1
+            keypair: "libra"
+        assoc_creds: "sk_aws_creds"
+    resource_group_vars:
+      - 
+        resource_group_name : "testgroup1"
+        Name: "TestInstanceGroup1"
+        test_var1: "test_var1 msg is grp1 hello"
+        test_var2: "test_var2 msg is grp1 hello"
+        test_var3: "test_var3 msg is grp1 hello"
+      - 
+        resource_group_name : "testgroup2"
+        Name: "TestInstanceGroup2"
+        test_var1: "test_var1 msg is grp2 hello"
+        test_var2: "test_var2 msg is grp2 hello"
+        test_var3: "test_var3 msg is grp2 hello"
+      - 
+        resource_group_name : "testgroup3"
+        Name: "TestInstanceGroup3"
+        test_var1: "test_var1 msg is grp3 hello"
+        test_var2: "test_var2 msg is grp3 hello"
+        test_var3: "test_var3 msg is grp3 hello"
+      - 
+        resource_group_name : "testgroup4"
+        Name: "TestInstanceGroup4"
+        test_var1: "test_var1 msg is grp4 hello"
+        test_var2: "test_var2 msg is grp4 hello"
+        test_var3: "test_var3 msg is grp4 hello"
