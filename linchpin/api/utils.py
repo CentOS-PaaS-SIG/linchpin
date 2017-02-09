@@ -26,8 +26,8 @@ def list_files(path):
 
 def parse_yaml(pf):
     """ parses yaml file into json object """
-    print("debug::print file path")
-    print(pf)
+#    print("debug::print file path")
+#    print(pf)
     with open(pf, 'r') as stream:
         try:
             pf = yaml.load(stream)

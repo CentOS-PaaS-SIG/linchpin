@@ -1,6 +1,6 @@
 import os
-from linchpin.api.v1 import LinchpinAPI
-from linchpin.api.v1.invoke_playbooks import invoke_linchpin
+from linchpin.api import LinchpinAPI
+from linchpin.api.invoke_playbooks import invoke_linchpin
 from utils import parse_yaml
 
 
