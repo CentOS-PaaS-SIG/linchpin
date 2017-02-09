@@ -31,8 +31,8 @@ MSGS = {
 "ERROR:001": "No PinFiles files found. Please use linchpin init to initailise ", 
 "ERROR:002": "Multiple PinFiles found. Please use linchpin rise with --pf <path> ", 
 "ERROR:003": "Topology or Layout mentioned in PinFile not found . Please check your PinFile.", 
-"ERROR:004": "linchpin_config file not found in current directory. Please initialise it with linchpin config --reset", 
-"ERROR:005": "linchpin_config file not found. In default paths. Please initialise it with linchpin config --reset", 
+"ERROR:004": "linchpin_config file not found in current directory. Please initialise it with lionchpin init or linchpin config --reset",
+"ERROR:005": "linchpin_config file not found. In default paths. Please initialise it with lionchpin init or linchpin config --reset",
 "WARNING:001": "PinFile structure found current directory. Would you like to continue ?(y/n) ", 
 "WARNING:002": "linchpin_config file already found in current directory. Would you like to reset it ?(y/n)"
 }

@@ -24,7 +24,7 @@ class LinchpinAPI:
 
     def __init__(self):
         base_path = os.path.dirname(__file__).split("/")[0:-2]
-        self.base_path = "/".join(base_path)
+        self.base_path = "/{}/linchpin/".format('/'.join(base_path))
         self.excludes = set(["topology_upstream",
                              "layout_upstream",
                              "post_actions"])
@@ -38,13 +38,14 @@ class LinchpinAPI:
                             "~/.linchpin_config.yml",
                             self.base_path+"/linchpin_config.yml",
                             "/etc/linchpin_config.yml"]
-            config_files.extend(sys.path)
+            for p in sys.path:
+                config_files.extend(['{}/linchpin/linchpin_config.yml'.format(p)])
+
             for c_file in config_files:
-                print("debug:: searching linchpin_config file from path :: ")
-                print(c_file)
+#                print(c_file)
                 if os.path.isfile(c_file):
-                    print("debug:: File found returning ::")
-                    print(c_file)
+#                    print("debug:: File found returning ::")
+#                    print(c_file)
                     return c_file
         except Exception as e:
             print(e)
@@ -192,7 +193,7 @@ class LinchpinAPI:
         currenly validates only topologies,
         need to implement pf, layouts too"""
         e_vars = {}
-        e_vars["schema"] = self.base_path + "/ex_schemas/schema_v3.json"
+        e_vars["schema"] = self.base_path + "/schemas/schema_v3.json"
         e_vars["data"] = topo
         result = invoke_linchpin(self.base_path, e_vars,
                                  "SCHEMA_CHECK", console=True)
@@ -215,6 +216,6 @@ class LinchpinAPI:
         """ test module of linchpin.api"""
         e_vars = {}
         e_vars['data'] = topo
-        e_vars['schema'] = self.base_path + "/ex_schemas/schema_v3.json"
+        e_vars['schema'] = self.base_path + "/schemas/schema_v3.json"
         result = invoke_linchpin(self.base_path, e_vars, "TEST", console=True)
         return result
