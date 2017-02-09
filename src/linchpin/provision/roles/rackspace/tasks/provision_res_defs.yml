@@ -1,4 +1,0 @@
-
-- name: "provision resources of type {{ res_def['res_type'] }}"
-  include: "provision_{{ res_def['res_type'] }}.yml"
-

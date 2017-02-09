@@ -1,6 +1,9 @@
+<<<<<<< 81ce242f6d56862a0ca650748fb611d53d45d26c
 linch-pin
 ----------
 
+=======
+# linch-pin
 Linch-pin provides a collection of Ansible playbooks for provisioning and
 managing resources across multiple infrastructures. Where multiple
 infrastructure resource types can be defined with a single topology file.
@@ -49,5 +52,3 @@ Using Linch-Pin
 Probably the best way to see linch-pin in action, is to watch the
 presentation given at
 `DevConf 2017 <https://www.youtube.com/watch?v=Tb7Zti5Xao8>`_
-
-

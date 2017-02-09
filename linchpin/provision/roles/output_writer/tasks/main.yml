@@ -1,4 +1,7 @@
 ---
+- include_vars: "{{ inventory_layout_file }}"
+  when: state == "present" and inventory_layout_file is defined
+
 - name: "Updating topology_outputs"
   set_fact:
     topology_outputs:

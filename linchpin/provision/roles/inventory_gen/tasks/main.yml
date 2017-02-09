@@ -14,6 +14,11 @@
       libvirt_res: "{{ libvirt_res }}"
   when: state == "present" and inventory_layout is defined
 
+- name: "DEBUG:: inventory_layout"
+  debug:
+    msg: "{{ inventory_layout }}"
+  when: state == "present" and inventory_layout is defined
+
 # parse inventory generation files here : can be overridden by extravar inventory_layout_file currently defaulted to openshift-3node-cluster.yml
 - name: "Parse inventory layout as a ordered dict"
   set_fact:

@@ -1,5 +1,6 @@
 include requirements.txt
 include README.rst
+<<<<<<< 3c0b7a195dd5785c81ae83d38a702f437ef11e54
 
 include linchpin/linchpin_config.yml
 
@@ -7,4 +8,8 @@ recursive-include linchpin/examples *
 recursive-include linchpin/templates *
 recursive-include linchpin/provision *
 recursive-include linchpin/schemas *
+=======
+recursive-include examples *
+recursive-include templates *
+>>>>>>> big commit to move around playbooks and libs, remove src dir
 

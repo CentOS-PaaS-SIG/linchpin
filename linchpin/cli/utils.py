@@ -26,7 +26,7 @@ MSGS = {
                       Please initialise it with lionchpin init or \
                       linchpin config --reset",
         "ERROR:005": "linchpin_config file not found. In default paths.\
-                      Please initialise it with \
+                      Please initialise it with lionchpin init or \
                       linchpin config --reset",
         "WARNING:001": "PinFile structure found current directory.\
                         Would you like to continue ?(y/n)",
@@ -85,21 +85,19 @@ def get_file(src, dest):
         click.echo(str(e))
 
 
-def copy_files(src, dest, dir_list):
+def copy_files(path, dir_list, config):
     for direc in dir_list:
-        dest_dir = dest + direc + "/"
-        src_dir = src + direc + "/"
-        for file in os.listdir(src_dir):
-            src_path = src_dir+file
-            shutil.copy(src_path, dest_dir)
+        dest = path+"/"+direc+"/"
+        src = config.clipath+"/templates/"+direc+"/"
+        for filename in os.listdir(src):
+            src_file = src+filename
+            shutil.copy(src_file, dest)
 
 
-def checkpaths(workspace=None):
+def checkpaths():
     """ checks whether the linchpin layout already exists in cwd"""
-    if workspace is None:
-        cur_dir = os.getcwd()
-    else:
-        cur_dir = os.getcwd()
+    cur_dir = os.getcwd()
+    # print os.listdir(cur_dir)
     layout_files = ['layouts', 'topologies', 'PinFile']
     for f in layout_files:
         if f in os.listdir(cur_dir):
@@ -121,30 +119,3 @@ def search_path(name, path):
     for root, dirs, files in os.walk(path):
         if name in files:
             return os.path.join(root, name)
-
-def tabulate_print(items, headers):
-    print_items = []
-    for i in range(0, len(items)):
-        print_items.append((i+1, items[i]["name"]))
-    print tabulate(print_items, headers, tablefmt="fancy_grid")
-
-def write_to_file(dest_path, output):
-    if os.path.isfile(dest_path):
-        click.echo("File exists at path "+dest_path)
-        ans = click.prompt('Do you want to overwrite it ?', default='Y')
-        if ans.lower() in ['no','n']:
-            pass
-        elif ans.lower() in ['yes','y']:
-            with open(dest_path, "w") as txt:
-                txt.write(output)
-            click.echo("File created successfully")
-    else:
-        with open(dest_path, "w") as txt:
-            txt.write(output)
-        click.echo("File created successfully")
-
-def touch(fname):
-    if os.path.exists(fname):
-        os.utime(fname, None)
-    else:
-        open(fname, 'a').close()
