@@ -23,7 +23,7 @@ from github import GitHub
 
 
 class LinchpinAPI:
-    
+
     UPSTREAM_EXAMPLES_PATH = "linchpin/examples"
     def __init__(self, context):
         base_path = os.path.dirname(__file__).split("/")[0:-2]
@@ -63,7 +63,7 @@ class LinchpinAPI:
         """ creates a group of extra vars on basis on linchpin file dict """
         e_vars = []
         for group in pf:
-            if not (group in ["post_actions", 
+            if not (group in ["post_actions",
                               "topology_upstream",
                               "layout_upstream"]):
                 topology = pf[group].get("topology")
@@ -162,7 +162,7 @@ class LinchpinAPI:
                     return os.path.abspath(self.context.workspace+"/layouts/"+layout)
             except Exception as e:
                 click.echo("Exception occurred "+str(e))
-        raise IOError("layout file not found. Invalid layout reference in PinFile") 
+        raise IOError("layout file not found. Invalid layout reference in PinFile")
 
     def lp_topo_get(self, topo, upstream=None):
         """
@@ -279,7 +279,7 @@ class LinchpinAPI:
                 e_vars['topology'] = self.find_topology(pf[target]["topology"],
                                                         pf)
                 topology = pf[target]["topology"].strip(".yml").strip(".yaml")
-                output_file = ( self.context.workspace + "/outputs/" + 
+                output_file = ( self.context.workspace + "/outputs/" +
                                 topology + ".output" )
                 e_vars['topology_output_file'] = output_file
                 output = invoke_linchpin(self.base_path,
