@@ -2,7 +2,7 @@ import os
 import sys
 import pdb
 import shutil
-from linchpin_api.v1.api import LinchpinAPI
+from linchpin.api import LinchpinAPI
 from mockdata import inventory_mock as im
 from nose.tools import assert_equal
 from nose.tools import assert_not_equal

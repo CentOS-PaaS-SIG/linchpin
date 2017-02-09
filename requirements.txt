@@ -7,6 +7,12 @@ apache-libcloud>=0.20.1
 jsonschema>=2.5.1
 shade>=1.9.0
 python-openstackclient
+functools32
+coverage
+nose
+MarkupSafe
+pytz
+mock
 click
 tabulate
 ansible==2.2.1
@@ -14,3 +20,4 @@ beaker-client==23.3
 sphinx_rtd_theme
 yamlordereddictloader
 camel
+ansible==2.2.1
