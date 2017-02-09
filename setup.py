@@ -6,7 +6,10 @@ import os
 # reading requirements from requirements.txt
 dir_path = os.path.dirname(os.path.realpath(__file__))
 reqs_file = 'requirements.txt'.format(dir_path)
+<<<<<<< 7eef16c0f0fbf4c14d478d67bc8862976621ff48
 
+=======
+>>>>>>> fixed up packaging, and libraries to make it more pythonic
 with open(reqs_file) as f:
     required = f.read().splitlines()
 
@@ -35,6 +38,5 @@ setup(
     zip_safe=False,
     packages=find_packages(),
     include_package_data=True,
-
     scripts=['scripts/linchpin_complete.sh']
 )

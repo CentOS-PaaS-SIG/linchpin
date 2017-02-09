@@ -8,13 +8,14 @@ from tabulate import tabulate
 from jinja2 import Environment, PackageLoader
 from linchpin.cli.utils import checkpaths, display, mkdir
 from linchpin.cli.utils import list_by_ext, copy_files, tabulate_print
-from linchpin.cli.utils import write_to_file, touch 
+from linchpin.cli.utils import write_to_file, touch
 from linchpin.cli import LinchpinCli
 from tabulate import tabulate
 
 
 class Context(object):
-    """ Global context object accesible by all the click modules """
+    """Global context object accesible by all the click modules """
+
     VERSION = "v1.0.0"
     def __init__(self):
         self.clipath = os.path.dirname(os.path.realpath(__file__))
