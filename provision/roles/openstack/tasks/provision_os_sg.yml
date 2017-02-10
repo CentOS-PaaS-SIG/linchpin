@@ -1,0 +1,43 @@
+- name: "provisioning/deprovisioning of security group"
+  os_security_group:
+    auth:
+      auth_url: "{{ endpoint }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      project_name: "{{ project }}"
+    name: "{{ res_def['res_name']  }}"
+    state: "{{ state }}"
+    wait: "yes"
+
+- name: "provisioning/deprovisioning of security group"
+  os_security_group_rule:
+    auth:
+      auth_url: "{{ group.0 }}"
+      username: "{{ group.1 }}"
+      password: "{{ group.2 }}"
+      project_name: "{{ group.3 }}"
+    security_group: "{{ group.4 }}"
+    state: "{{ group.5 }}"
+    protocol: "{{ group.6['proto']  }}"
+    direction: "{{ group.6['rule_type'] | os_sg_rule_type }}"
+    port_range_min: "{{ group.6['from_port'] }}"
+    port_range_max: "{{ group.6['to_port'] }}"
+    remote_ip_prefix: "{{ group.6['cidr_ip']  }}"
+    wait: "yes"
+  with_nested:
+    - ["{{ endpoint }}"]
+    - ["{{ username }}"]
+    - ["{{ password }}"]
+    - ["{{ project }}"]
+    - ["{{ res_def['res_name'] }}"]
+    - ["{{ state }}"]
+    - "{{ res_def['rules'] }}"
+  loop_control:
+    loop_var: group
+  register: res_def_output
+  when: state == "present"
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os_sg: "{{ topology_outputs_os_sg + [res_def_output] }}"
+  when: state == "present"

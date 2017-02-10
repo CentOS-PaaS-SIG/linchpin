@@ -10,6 +10,7 @@
       os_volume_res: "{{ topology_outputs_os_volume  | default([]) }}"
       os_obj_res: "{{ topology_outputs_os_object  | default([]) }}"
       os_heat_res: "{{ topology_outputs_os_heat  | default([]) }}"
+      os_sg_res: "{{ topology_outputs_os_sg  | default([]) }}"
       aws_ec2_res: "{{ topology_outputs_aws_ec2  | default([]) }}"
       aws_s3_res: "{{ topology_outputs_aws_s3  | default([]) }}"
       aws_ec2_key_res: "{{ topology_outputs_aws_ec2_key  | default([]) }}"
@@ -19,15 +20,6 @@
       rax_server_res: "{{ topology_outputs_rax_server  | default([]) }}"
       beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
   when: async == false
-
-#- name: "delete output directories"
-#  file:
-#    state: absent
-#    path: "{{ item }}"
-#  with_items:
-#    - "{{ outputfolder_path | default( outputfolder_path+'/' ) }}"
-#    - "{{ inventoryfolder_path | default( inventoryfolder_path+'/' ) }}"
-#  when: async == false
 
 - name: "Create output directories"
   file:
@@ -63,6 +55,7 @@
       os_volume_res: "{{ topology_outputs_os_volume | default([]) }}"
       os_obj_res: "{{ topology_outputs_os_object | default([]) }}"
       os_heat_res: "{{ topology_outputs_os_heat | default([])}}"
+      os_sg_res: "{{ topology_outputs_os_sg | default([])}}"
       aws_ec2_res: "{{ topology_outputs_aws_ec2 | default([]) }}"
       aws_s3_res: "{{ topology_outputs_aws_s3 | default([]) }}"
       aws_ec2_key_res: "{{ topology_outputs_aws_ec2_key | default([]) }}"
@@ -72,10 +65,6 @@
       rax_server_res: "{{ topology_outputs_rax_server | default([]) }}"
       beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
   when: async == true
-
-#- name: "debug of topoloy outputs"
-#  debug:
-#    msg: "{{ topology_outputs }}"
 
 # currently adding a single playbook that can manage all the async outputs based on the resource groups
 - name: "wait and update outputs using jobids "
@@ -91,6 +80,7 @@
       os_obj_res: "{{ async_outputs_os_obj | default([]) }}"
       os_volume_res: "{{ async_outputs_os_volume | default([]) }}"
       os_heat_res: "{{ async_outputs_os_heat | default([]) }}"
+      os_sg_res: "{{ topology_outputs_os_sg | default([]) }}"
       aws_ec2_res: "{{ async_outputs_aws_ec2 | default([]) }}"
       aws_s3_res: "{{ topology_outputs_aws_s3 | default([]) }}"
       aws_ec2_key_res: "{{ topology_outputs_aws_ec2_key | default([]) }}"
@@ -98,6 +88,7 @@
       gcloud_gce_res: "{{ async_outputs_gcloud_gce | default([]) }}"
       duffy_res: "{{ topology_outputs_duffy | default([]) }}"
       rax_server_res: "{{ topology_outputs_rax_server | default([]) }}"
+      beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
   when: async == true
 
 # pretty much the same output generation when async_false
@@ -112,4 +103,3 @@
   set_fact: 
     topology_output_file:  "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output.yaml' ) }}"
   when: state == "present"
-

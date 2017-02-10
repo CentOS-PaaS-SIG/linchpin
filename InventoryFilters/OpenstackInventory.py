@@ -14,25 +14,20 @@ from InventoryFilter import InventoryFilter
 
 class OpenstackInventory(InventoryFilter):
 
-    def get_host_ips(self, topo, async_flag=False):
+    def get_host_ips(self, topo):
         host_public_ips = []
-        if async_flag:
-            for group in topo['os_server_res']:
-                for result in group["results"]:
-                    output = open(result["item"]["results_file"], "r").read()
-                    output = json.loads(output)
-                    host_public_ips.append(str(output['server']['public_v4']))
-        else:
-            for group in topo['os_server_res']:
-                host_public_ips.append(str(group['server']['public_v4']))
+        for group in topo['os_server_res']:
+            for server in group['openstack']:
+                print (server)
+                host_public_ips.append(str(server['accessIPv4']))
         return host_public_ips
 
-    def get_inventory(self, topo, async_flag, layout):
+    def get_inventory(self, topo, layout):
 
         if len(topo['os_server_res']) == 0:
             return ""
         no_of_groups = len(topo['os_server_res'])
-        inven_hosts = self.get_host_ips(topo, async_flag)
+        inven_hosts = self.get_host_ips(topo)
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)
         self.add_sections(host_groups)

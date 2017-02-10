@@ -1,0 +1,1284 @@
+{
+  "events": [
+    {
+      "act": "OPEN",
+      "size": [
+        190,
+        49
+      ],
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;source ~/.virtualenvs/venv/bin/activate\u0007\u001b]0;@t450s:~\u0007\u001b]7;file://t450s.egavas.org/home/herlo\u0007",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0010941028594970703
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s ~]$ ",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "ECHO",
+      "data": "linchpin",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "READ",
+      "data": "\t",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "WRITE",
+      "data": "\u0007",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "ECHO",
+      "data": " drop",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "READ",
+      "data": "\t",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "WRITE",
+      "data": "\u0007",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.6151609420776367
+    },
+    {
+      "act": "WRITE",
+      "data": "debug:: searching linchpin_config file from path :: \r\n/home/herlo/Projects/lpdemo/linchpin_config.yml\r\ndebug:: searching linchpin_config file from path :: \r\n/home/herlo/Projects/lpdemo/linch-pin/linchpin_config.yml\r\ndebug:: searching linchpin_config file from path :: \r\n~/.linchpin_config.yml\r\ndebug:: searching linchpin_config file from path :: \r\n/home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/linchpin_config.yml\r\ndebug:: File found returning ::\r\n/home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/linchpin_config.yml\r\ndebug:: searching linchpin_config file from path :: \r\n/home/herlo/Projects/lpdemo/linchpin_config.yml\r\ndebug:: searching linchpin_config file from path :: \r\n/home/herlo/Projects/lpdemo/linch-pin/linchpin_config.yml\r\ndebug:: searching linchpin_config file from path :: \r\n~/.linchpin_config.yml\r\ndebug:: searching linchpin_config file from path :: \r\n/home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/linchpin_config.yml\r\ndebug:: File found returning ::\r\n/home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/linchpin_config.yml\r\ndebug::print file path\r\n/home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/linchpin_config.yml\r\nFinding topology in local folder ./topology\r\ndebug:: module path ::/home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/library\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.15560650825500488
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nPLAY [including the configuration files] ***************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.018550634384155273
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [Include linchpin_config] *************************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.06098771095275879
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost] => (item=/home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/provision/../linchpin_config.yml)\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0007641315460205078
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nPLAY [schema check and Pre Provisioning Activities  on topology_file] **********\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0031211376190185547
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : DEBUG: topology and schema] *************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.04393196105957031
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost] => {\r\n    \"msg\": \"topology: /home/herlo/Projects/lpdemo/topologies/simple-ae2e-cluster.yml schema: /home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/provision/../ex_schemas/schema_v3.json\"\r\n}\u001b[0m\r\n\r\nTASK [common : schema check for given topology file] ***************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00025725364685058594
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : set fact for saving topology_job_ids] ***************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.010069847106933594
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00042510032653808594
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : filtering the output for openstack resource groups] *************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0509645938873291
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00038361549377441406
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : filtering the output for aws resource groups] *******************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.06400227546691895
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.000545501708984375
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : filtering the output for google cloud resource groups] **********\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.05984854698181152
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00018787384033203125
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : filtering the output for duffy resource groups] *****************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.05366158485412598
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0002655982971191406
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : filtering the output for libvirt resource groups] ***************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.05191755294799805
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00048828125
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : filtering the output for rackspace resource groups] *************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.053598880767822266
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0010647773742675781
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : filtering the output for beaker] ********************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.05636310577392578
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0004017353057861328
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : Registering resource group vars from topology] ******************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.052211761474609375
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00017380714416503906
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : output vars] ****************************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01557612419128418
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0017218589782714844
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nPLAY [Provisioning resources based on resource group type] *********************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.006289243698120117
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [openstack : DEBUG:: Openstack resource group list] ***********************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.05386972427368164
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost] => {\r\n    \"msg\": \"Currently Provisioning/Deprovisioning the resources under list os_res_grps [{u'resource_group_name': u'ae2e', u'res_group_type': u'openstack', u'assoc_creds': u'ae2e-test_creds', u'res_defs': [{u'count': 3, u'res_type': u'os_server', u'image': u'CentOS-7-x86_64-GenericCloud-released-latest', u'res_name': u'test', u'keypair': u'ci-factory', u'fip_pool': u'10.8.172.0/22', u'flavor': u'm1.small', u'networks': [u'atomic-e2e-jenkins-test']}]}]\"\r\n}\u001b[0m\r\n\r\nTASK [openstack : declaring output vars] ***************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.05332660675048828
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0003714561462402344
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [openstack : Initiating  Provisioning/Deprovioning of resources Openstack resource group] ***\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.06855654716491699
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mincluded: /home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/provision/roles/openstack/tasks/provision_resource_group.yml for localhost\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.04477858543395996
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [openstack : DEBUG:: provisioning resource group {u'resource_group_name': u'ae2e', u'res_group_type': u'openstack', u'assoc_creds': u'ae2e-test_creds', u'res_defs': [{u'count': 3, u'res_type': u'os_server', u'image': u'CentOS-7-x86_64-GenericCloud-released-latest', u'res_name': u'test', u'keypair': u'ci-factory', u'fip_pool': u'10.8.172.0/22', u'flavor': u'm1.small', u'networks': [u'atomic-e2e-jenkins-test']}]}] ***\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.018048763275146484
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost] => {\r\n    \"msg\": \"The current server obj is {u'resource_group_name': u'ae2e', u'res_group_type': u'openstack', u'assoc_creds': u'ae2e-test_creds', u'res_defs': [{u'count': 3, u'res_type': u'os_server', u'image': u'CentOS-7-x86_64-GenericCloud-released-latest', u'res_name': u'test', u'keypair': u'ci-factory', u'fip_pool': u'10.8.172.0/22', u'flavor': u'm1.small', u'networks': [u'atomic-e2e-jenkins-test']}]} \"\r\n}\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0019447803497314453
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [openstack : Including credentials of current resource ae2e] **************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.023256778717041016
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0005471706390380859
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [openstack : provisioning resource definitions of current group] **********\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0359187126159668
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mincluded: /home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/provision/roles/openstack/tasks/provision_res_defs.yml for localhost\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.004817962646484375
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [openstack : provision resources of type os_server] ***********************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.032433271408081055
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mincluded: /home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/provision/roles/openstack/tasks/provision_os_server.yml for localhost\u001b[0m\r\n\r\nTASK [openstack : register resource count] *************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.22451162338256836
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;33mchanged: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0005214214324951172
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [openstack : provision/deprovision os_server resources by looping on count] ***\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 7.267362117767334
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;33mchanged: [localhost] => (item=[u'http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/', u'atomic-e2e-jenkins', u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'atomic-e2e-jenkins-test', u'absent', u'CentOS-7-x86_64-GenericCloud-released-latest', u'ci-factory', u'm1.small', u'net-name=atomic-e2e-jenkins-test', u'ae2e', u'test', 0, u'10.8.172.0/22'])\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 7.01775288581848
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;33mchanged: [localhost] => (item=[u'http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/', u'atomic-e2e-jenkins', u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'atomic-e2e-jenkins-test', u'absent', u'CentOS-7-x86_64-GenericCloud-released-latest', u'ci-factory', u'm1.small', u'net-name=atomic-e2e-jenkins-test', u'ae2e', u'test', 1, u'10.8.172.0/22'])\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 7.555631399154663
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;33mchanged: [localhost] => (item=[u'http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/', u'atomic-e2e-jenkins', u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'atomic-e2e-jenkins-test', u'absent', u'CentOS-7-x86_64-GenericCloud-released-latest', u'ci-factory', u'm1.small', u'net-name=atomic-e2e-jenkins-test', u'ae2e', u'test', 2, u'10.8.172.0/22'])\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 2.5367431640625e-06
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [openstack : Append outputitem to topology_outputs] ***********************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.031005859375
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0008275508880615234
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [openstack : Async:: provision/deprovision os_server resources by looping on count] ***\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.04154658317565918
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost] => (item=[u'http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/', u'atomic-e2e-jenkins', u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'atomic-e2e-jenkins-test', u'absent', u'CentOS-7-x86_64-GenericCloud-released-latest', u'ci-factory', u'm1.small', u'net-name=atomic-e2e-jenkins-test', u'ae2e', u'test', 0, u'10.8.172.0/22']) \u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.005994558334350586
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost] => (item=[u'http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/', u'atomic-e2e-jenkins', u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'atomic-e2e-jenkins-test', u'absent', u'CentOS-7-x86_64-GenericCloud-released-latest', u'ci-factory', u'm1.small', u'net-name=atomic-e2e-jenkins-test', u'ae2e', u'test', 1, u'10.8.172.0/22']) \u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.014661788940429688
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost] => (item=[u'http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/', u'atomic-e2e-jenkins', u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'atomic-e2e-jenkins-test', u'absent', u'CentOS-7-x86_64-GenericCloud-released-latest', u'ci-factory', u'm1.small', u'net-name=atomic-e2e-jenkins-test', u'ae2e', u'test', 2, u'10.8.172.0/22']) \u001b[0m\r\n\r\nTASK [openstack : Async:: save the job id] *************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.015988588333129883
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0005037784576416016
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [aws : Provisioning aws resources] ****************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.015544891357421875
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0003643035888671875
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [aws : declaring output vars] *********************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.017598867416381836
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00018358230590820312
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [aws : Initiating  Provisioning of resources aws resource group] **********\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.015475034713745117
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [aws : Initiating  teardown of resources aws resource group] **************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01936173439025879
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [gcloud : DEBUG:: gcloud resource group list] *****************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.018540143966674805
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0027420520782470703
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [gcloud : declaring output vars for topology outputs of gce] **************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01752948760986328
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n\r\nTASK [gcloud : Initiating  Provisioning of resources in gcloud resource group] *\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01493215560913086
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [duffy : DEBUG:: Duffy resource group list] *******************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.013535737991333008
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0007290840148925781
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [duffy : declaring output vars] *******************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.013892650604248047
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0005846023559570312
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [duffy : Initiating Provisioning of duffy resource group] *****************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.013044118881225586
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [duffy : Initiating Teardown of duffy resource group] *********************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01674509048461914
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [libvirt : declaring output vars] *****************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01663684844970703
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0003597736358642578
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [libvirt : Initiating libvirt resource group] *****************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.014669179916381836
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [rackspace : DEBUG:: rackspace resource group list] ***********************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.015604734420776367
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00040531158447265625
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [rackspace : declaring output vars] ***************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.015448331832885742
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00048613548278808594
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [rackspace : Initiating  Provisioning/Deprovioning of resources rackspace resource group] ***\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.013546943664550781
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [beaker : allocate beaker outputs] ****************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.015149593353271484
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0009033679962158203
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [beaker : debug] **********************************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.017267704010009766
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0024356842041015625
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [beaker : provision beaker systems] ***************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.013854026794433594
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [beaker : fetch beaker details] *******************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01049184799194336
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [beaker : debug] **********************************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.014113187789916992
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0011255741119384766
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [beaker : append beaker outputs] ******************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.014145612716674805
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [beaker : Initiating Teardown of beaker resource group] *******************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.016492366790771484
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nPLAY [Writing contents to file] ************************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.011259078979492188
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : include_vars] ********************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.014387130737304688
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00029540061950683594
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : Updating topology_outputs] *******************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0461728572845459
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0003135204315185547
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : Create output directories] *******************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.24876904487609863
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost] => (item=/home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/provision/../outputs)\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.13568496704101562
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost] => (item=/home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/provision/../inventory)\u001b[0m\r\n\r\nTASK [output_writer : DEBUG:: topology_outputs] ********************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.023256778717041016
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost] => {\r\n    \"msg\": {\r\n        \"aws_cfn_res\": [], \r\n        \"aws_ec2_key_res\": [], \r\n        \"aws_ec2_res\": [], \r\n        \"aws_s3_res\": [], \r\n        \"beaker_res\": [], \r\n        \"duffy_res\": [], \r\n        \"gcloud_gce_res\": [], \r\n        \"os_heat_res\": [], \r\n        \"os_keypair_res\": [], \r\n        \"os_obj_res\": [], \r\n        \"os_server_res\": [\r\n            {\r\n                \"_ansible_item_label\": [\r\n                    \"http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/\", \r\n                    \"atomic-e2e-jenkins\", \r\n                    \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\", \r\n                    \"atomic-e2e-jenkins-test\", \r\n                    \"absent\", \r\n                    \"CentOS-7-x86_64-GenericCloud-released-latest'_ansible_parsed': True, u'changed': True, u'_ansible_item_label': [u'http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/', u'atomic-e2e-jenkins', u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'atomic-e2e-jenkins-test', u'absent', u'CentOS-7-x86_64-GenericCloud-released-latest', u'ci-factory', u'm1.small', u'net-name=atomic-e2e-jenkins-test', u'ae2e', u'test', 0, u'10.8.172.0/22'], u'_ansible_item_result': True, u'instance': [u'http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/', u'atomic-e2e-jenkins', u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'atomic-e2e-jenkins-test', u'absent', u'CentOS-7-x86_64-GenericCloud-released-latest', u'ci-factory', u'm1.small', u'net-name=atomic-e2e-jenkins-test', u'ae2e', u'test', 0, u'10.8.172.0/22'], u'result': u'deleted', u'invocation': {u'module_name': u'os_server', u'module_args': {u'auth_type': None, u'availability_zone': None, u'image': u'CentOS-7-x86_64-GenericCloud-released-latest', u'image_exclude': u'(deprecated)', u'flavor_include': None, u'meta': None, u'flavor': u'm1.small', u'cloud': None, u'scheduler_hints': None, u'boot_from_volume': False, u'userdata': None, u'network': None, u'verify': True, u'floating_ips': None, u'flavor_ram': None, u'volume_size': False, u'state': u'absent', u'auto_ip': True, u'security_groups': [u'default'], u'config_drive': False, u'region_name': None, u'key_name': u'ci-factory', u'api_timeout': 99999, u'auth': {u'username': u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'project_name': u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'password': u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'auth_url': u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER'}, u'endpoint_type': u'public', u'boot_volume': None, u'key': None, u'cacert': None, u'terminate_volume': False, u'wait': True, u'name': u'ae2e_test_0', u'timeout': 180, u'delete_fip': False, u'cert': None, u'volumes': [], u'nics': [u'net-name=********-test'], u'floating_ip_pools': [u'10.8.172.0/22'], u'reuse_ips': True}}, u'_ansible_no_log': False}) \u001b[0m\r\n\u001b[0;36mskipping: [localhost] => (item={u'_ansible_parsed': True, u'changed': True, u'_ansible_item_label': [u'http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/', u'atomic-e2e-jenkins', u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'atomic-e2e-jenkins-test', u'absent', u'CentOS-7-x86_64-GenericCloud-released-latest', u'ci-factory', u'm1.small', u'net-name=atomic-e2e-jenkins-test', u'ae2e', u'test', 1, u'10.8.172.0/22'], u'_ansible_item_result': True, u'instance': [u'http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/', u'atomic-e2e-jenkins', u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'atomic-e2e-jenkins-test', u'absent', u'CentOS-7-x86_64-GenericCloud-released-latest', u'ci-factory', u'm1.small', u'net-name=atomic-e2e-jenkins-test', u'ae2e', u'test', 1, u'10.8.172.0/22'], u'result': u'deleted', u'invocation': {u'module_name': u'os_server', u'module_args': {u'auth_type': None, u'availability_zone': None, u'image': u'CentOS-7-x86_64-GenericCloud-released-latest', u'image_exclude': u'(deprecated)', u'flavor_include': None, u'meta': None, u'flavor': u'm1.small', u'cloud': None, u'scheduler_hints': None, u'boot_from_volume': False, u'userdata': None, u'network': None, u'verify': True, u'floating_ips': None, u'flavor_ram': None, u'volume_size': False, u'state': u'absent', u'auto_ip': True, u'security_groups': [u'default'], u'config_drive': False, u'region_name': None, u'key_name': u'ci-factory', u'api_timeout': 99999, u'auth': {u'username': u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'project_name': u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'password': u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'auth_url': u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER'}, u'endpoint_type': u'public', u'boot_volume': None, u'key': None, u'cacert': None, u'terminate_volume': False, u'wait': True, u'name': u'ae2e_test_1', u'timeout': 180, u'delete_fip': False, u'cert': None, u'volumes': [], u'nics': [u'net-name=********-test'], u'floating_ip_pools': [u'10.8.172.0/22'], u'reuse_ips': True}}, u'_ansible_no_log': False}) \u001b[0m\r\n\u001b[0;36mskipping: [localhost] => (item={u'_ansible_parsed': True, u'changed': True, u'_ansible_item_label': [u'http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/', u'atomic-e2e-jenkins', u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'atomic-e2e-jenkins-test', u'absent', u'CentOS-7-x86_64-GenericCloud-released-latest', u'ci-factory', u'm1.small', u'net-name=atomic-e2e-jenkins-test', u'ae2e', u'test', 2, u'10.8.172.0/22'], u'_ansible_item_result': True, u'instance': [u'http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/', u'atomic-e2e-jenkins', u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'atomic-e2e-jenkins-test', u'absent', u'CentOS-7-x86_64-GenericCloud-released-latest', u'ci-factory', u'm1.small', u'net-name=atomic-e2e-jenkins-test', u'ae2e', u'test', 2, u'10.8.172.0/22'], u'result': u'deleted', u'invocation': {u'module_name': u'os_server', u'module_args': {u'auth_type': None, u'availability_zone': None, u'image': u'CentOS-7-x86_64-GenericCloud-released-latest', u'image_exclude': u'(deprecated)', u'flavor_include': None, u'meta': None, u'flavor': u'm1.small', u'cloud': None, u'scheduler_hints': None, u'boot_from_volume': False, u'userdata': None, u'network': None, u'verify': True, u'floating_ips': None, u'flavor_ram': None, u'volume_size': False, u'state': u'absent', u'auto_ip': True, u'security_groups': [u'default'], u'config_drive': False, u'region_name': None, u'key_name': u'ci-factory', u'api_timeout': 99999, u'auth': {u'username': u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'project_name': u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'password': u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'auth_url': u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER'}, u'endpoint_type': u'public', u'boot_volume': None, u'key': None, u'cacert': None, u'terminate_volume': False, u'wait': True, u'name': u'ae2e_test_2', u'timeout': 180, u'delete_fip': False, u'cert': None, u'volumes': [], u'nics': [u'net-name=********-test'], u'floating_ip_pools': [u'10.8.172.0/22'], u'reuse_ips': True}}, u'_ansible_no_log': False}) \u001b[0m\r\n\r\nTASK [output_writer : register var for async_outputs_os_obj] *******************\r\n\u001b[0;36mskipping: [localhost]\u001b[0m\r\n\r\nTASK [output_writer : Wait on jobs] ********************************************\r\n\r\nTASK [output_writer : register var for async_outputs_os_obj] *******************\r\n\u001b[0;36mskipping: [localhost]\u001b[0m\r\n\r\nTASK [output_writer : Wait on jobs] ********************************************\r\n\r\nTASK [output_writer : register var for async_outputs_os_server] ****************\r\n\u001b[0;36mskipping: [localhost]\u001b[0m\r\n\r\nTASK [output_writer : Wait on jobs] ********************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.004232645034790039
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : register var for async_outputs_aws_ec2] ******************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.018886327743530273
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0014498233795166016
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : Wait on jobs] ********************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.013087749481201172
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : register var for async_outputs_aws_ec2] ******************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.018667221069335938
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0009176731109619141
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : Wait on jobs] ********************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01296377182006836
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : register var for async_outputs_aws_ec2] ******************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.016064167022705078
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0007245540618896484
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : Wait on jobs] ********************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.016713619232177734
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : Async:: Updating topology_outputs after wait] ************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.014661788940429688
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00046563148498535156
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : Generate outputs when async is true] *********************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.015770912170410156
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0003781318664550781
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : set name for linchpin_output_file for inventory generation] ***\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01364445686340332
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0019097328186035156
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nPLAY [inventory generation role] ***********************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0021393299102783203
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [inventory_gen : include_vars] ********************************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0164029598236084
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00036406517028808594
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [inventory_gen : Updating topology_outputs] *******************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.014667034149169922
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00045299530029296875
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [inventory_gen : DEBUG:: inventory_layout] ********************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.017415285110473633
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0002968311309814453
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [inventory_gen : include the layout file for inventory generation] ********\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.014837503433227539
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0003924369812011719
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [inventory_gen : DEBUG:: inventory_outputs_path ##########] ***************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.014497518539428711
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0008499622344970703
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [inventory_gen : Updating inventory_output_file with the absolute path] ***\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.014149188995361328
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0003628730773925781
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [inventory_gen : Generate Generic Inventory] ******************************\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.014472484588623047
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0005393028259277344
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nPLAY RECAP *********************************************************************\r\n\u001b[0;33mlocalhost\u001b[0m                  : \u001b[0;32mok=25  \u001b[0m \u001b[0;33mchanged=2   \u001b[0m unreachable=0    failed=0   \r\n\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.04739713668823242
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;linchpin drop\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0008077621459960938
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s lpdemo]$ ",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.06705594062805176
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;exit\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0003826618194580078
+    },
+    {
+      "act": "ECHO",
+      "data": "nova list | grep ae2e_test",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 1.909588098526001
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;nova list | grep ae2e_test\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s lpdemo]$ ",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n--END--\r\n",
+      "term": "ca4320298a264daf94e8db7425483927"
+    },
+    {
+      "act": "CLOSE",
+      "term": "ca4320298a264daf94e8db7425483927"
+    }
+  ],
+  "shell": "/usr/bin/bash"
+}

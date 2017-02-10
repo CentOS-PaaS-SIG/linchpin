@@ -11,6 +11,7 @@
     topology_outputs_os_volume: []
     topology_outputs_os_heat: []
     topology_outputs_os_keypair: []
+    topology_outputs_os_sg: []
 
 - name: "Initiating  Provisioning/Deprovioning of resources Openstack resource group"
   include: provision_resource_group.yml res_grp={{ item }} 

@@ -1,0 +1,2087 @@
+{
+  "events": [
+    {
+      "act": "OPEN",
+      "size": [
+        190,
+        49
+      ],
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s lpdemo]$ ",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "ECHO",
+      "data": "linchpin rise",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "debug:: searching linchpin_config file from path :: \r\n/home/herlo/Projects/lpdemo/linchpin_config.yml\r\ndebug:: searching linchpin_config file from path :: \r\n/home/herlo/Projects/lpdemo/linch-pin/linchpin_config.yml\r\ndebug:: searching linchpin_config file from path :: \r\n~/.linchpin_config.yml\r\ndebug:: searching linchpin_config file from path :: \r\n/home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/linchpin_config.yml\r\ndebug:: File found returning ::\r\n/home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/linchpin_config.yml\r\ndebug:: searching linchpin_config file from path :: \r\n/home/herlo/Projects/lpdemo/linchpin_config.yml\r\ndebug:: searching linchpin_config file from path :: \r\n/home/herlo/Projects/lpdemo/linch-pin/linchpin_config.yml\r\ndebug:: searching linchpin_config file from path :: \r\n~/.linchpin_config.yml\r\ndebug:: searching linchpin_config file from path :: \r\n/home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/linchpin_config.yml\r\ndebug:: File found returning ::\r\n/home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/linchpin_config.yml\r\ndebug::print file path\r\n/home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/linchpin_config.yml\r\nFinding topology in local folder ./topology\r\ndebug:: searching linchpin_config file from path :: \r\n/home/herlo/Projects/lpdemo/linchpin_config.yml\r\ndebug:: searching linchpin_config file from path :: \r\n/home/herlo/Projects/lpdemo/linch-pin/linchpin_config.yml\r\ndebug:: searching linchpin_config file from path :: \r\n~/.linchpin_config.yml\r\ndebug:: searching linchpin_config file from path :: \r\n/home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/linchpin_config.yml\r\ndebug:: File found returning ::\r\n/home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/linchpin_config.yml\r\ndebug::print file path\r\n/home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/linchpin_config.yml\r\nFinding layout in local folder ./layouts\r\n{'linchpin_config': '/home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/linchpin_config.yml', 'inventory_layout_file': '/home/herlo/Projects/lpdemo/layouts/openshift-3node-cluster.yml', 'state': 'present', 'outputfolder_path': '/home/herlo/Projects/lpdemo/outputs', 'inventory_outputs_path': '/home/herlo/Projects/lpdemo/inventories', 'topology': '/home/herlo/Projects/lpdemo/topologies/simple-ae2e-cluster.yml'}\r\ndebug:: module path ::/home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/library\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nPLAY [including the configuration files] ***************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [Include linchpin_config] *************************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost] => (item=/home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/provision/../linchpin_config.yml)\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nPLAY [schema check and Pre Provisioning Activities  on topology_file] **********\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : DEBUG: topology and schema] *************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost] => {\r\n    \"msg\": \"topology: /home/herlo/Projects/lpdemo/topologies/simple-ae2e-cluster.yml schema: /home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/provision/../ex_schemas/schema_v3.json\"\r\n}\u001b[0m\r\n\r\nTASK [common : schema check for given topology file] ***************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : set fact for saving topology_job_ids] ***************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : filtering the output for openstack resource groups] *************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : filtering the output for aws resource groups] *******************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : filtering the output for google cloud resource groups] **********\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.000492095947265625
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : filtering the output for duffy resource groups] *****************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.05832695960998535
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0008037090301513672
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : filtering the output for libvirt resource groups] ***************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.05675935745239258
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00023174285888671875
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : filtering the output for rackspace resource groups] *************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.05475878715515137
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0004291534423828125
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : filtering the output for beaker] ********************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.057821035385131836
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0003261566162109375
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : Registering resource group vars from topology] ******************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.05277705192565918
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00048065185546875
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [common : output vars] ****************************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.015512704849243164
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0019686222076416016
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nPLAY [Provisioning resources based on resource group type] *********************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.006152629852294922
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [openstack : DEBUG:: Openstack resource group list] ***********************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.052154541015625
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost] => {\r\n    \"msg\": \"Currently Provisioning/Deprovisioning the resources under list os_res_grps [{u'resource_group_name': u'ae2e', u'res_group_type': u'openstack', u'assoc_creds': u'ae2e-test_creds', u'res_defs': [{u'count': 3, u'res_type': u'os_server', u'image': u'CentOS-7-x86_64-GenericCloud-released-latest\"\r\n}\u001b[0m\r\n\r\nTASK [openstack : declaring output vars] ***************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.05536603927612305
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.000985860824584961
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [openstack : Initiating  Provisioning/Deprovioning of resources Openstack resource group] ***\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.06302118301391602
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mincluded: /home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/provision/roles/openstack/tasks/provision_resource_group.yml for localhost\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.04234576225280762
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [openstack : DEBUG:: provisioning resource group {u'resource_group_name': u'ae2e', u'res_group_type': u'openstack', u'assoc_creds': u'ae2e-test_creds', u'res_defs': [{u'count': 3, u'res_type': u'os_server', u'image': u'CentOS-7-x86_64-GenericCloud-released-latest\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.016906023025512695
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost] => {\r\n    \"msg\": \"The current server obj is {u'resource_group_name': u'ae2e', u'res_group_type': u'openstack', u'assoc_creds': u'ae2e-test_creds', u'res_defs': [{u'count': 3, u'res_type': u'os_server', u'image': u'CentOS-7-x86_64-GenericCloud-released-latest\"\r\n}\u001b[0m\r\n\r\nTASK [openstack : Including credentials of current resource ae2e] **************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.02596449851989746
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0003898143768310547
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [openstack : provisioning resource definitions of current group] **********\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.03145027160644531
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mincluded: /home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/provision/roles/openstack/tasks/provision_res_defs.yml for localhost\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00423431396484375
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [openstack : provision resources of type os_server] ***********************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.03578495979309082
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mincluded: /home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/provision/roles/openstack/tasks/provision_os_server.yml for localhost\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0018856525421142578
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [openstack : register resource count] *************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.22167229652404785
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;33mchanged: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0009202957153320312
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [openstack : provision/deprovision os_server resources by looping on count] ***\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 3.499457597732544
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;33mchanged: [localhost] => (item=[u'http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/', u'atomic-e2e-jenkins', u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'atomic-e2e-jenkins-test', u'present', u'CentOS-7-x86_64-GenericCloud-released-latest\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 6.82590365409851
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;33mchanged: [localhost] => (item=[u'http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/', u'atomic-e2e-jenkins', u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'atomic-e2e-jenkins-test', u'present', u'CentOS-7-x86_64-GenericCloud-released-latest\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 6.694623708724976
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;33mchanged: [localhost] => (item=[u'http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/', u'atomic-e2e-jenkins', u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'atomic-e2e-jenkins-test', u'present', u'CentOS-7-x86_64-GenericCloud-released-latest\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0025963783264160156
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [openstack : Append outputitem to topology_outputs] ***********************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.09301114082336426
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00034737586975097656
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [openstack : Async:: provision/deprovision os_server resources by looping on count] ***\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.039343833923339844
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost] => (item=[u'http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/', u'atomic-e2e-jenkins', u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'atomic-e2e-jenkins-test', u'present', u'CentOS-7-x86_64-GenericCloud-released-latest', u'ci-factory', u'm1.small', u'net-name=atomic-e2e-jenkins-test', u'ae2e', u'test', 0, u'10.8.172.0/22']) \u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.005605936050415039
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost] => (item=[u'http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/', u'atomic-e2e-jenkins', u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'atomic-e2e-jenkins-test', u'present', u'CentOS-7-x86_64-GenericCloud-released-latest', u'ci-factory', u'm1.small', u'net-name=atomic-e2e-jenkins-test', u'ae2e', u'test', 1, u'10.8.172.0/22']) \u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.012244462966918945
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost] => (item=[u'http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/', u'atomic-e2e-jenkins', u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'atomic-e2e-jenkins-test', u'present', u'CentOS-7-x86_64-GenericCloud-released-latest', u'ci-factory', u'm1.small', u'net-name=atomic-e2e-jenkins-test', u'ae2e', u'test', 2, u'10.8.172.0/22']) \u001b[0m\r\n\r\nTASK [openstack : Async:: save the job id] *************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.013662338256835938
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0006861686706542969
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [aws : Provisioning aws resources] ****************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.014029979705810547
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0008742809295654297
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [aws : declaring output vars] *********************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01778888702392578
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00026154518127441406
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [aws : Initiating  Provisioning of resources aws resource group] **********\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.011483907699584961
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [aws : Initiating  teardown of resources aws resource group] **************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.014423131942749023
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [gcloud : DEBUG:: gcloud resource group list] *****************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.012898683547973633
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0005080699920654297
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [gcloud : declaring output vars for topology outputs of gce] **************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.017530441284179688
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00036787986755371094
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [gcloud : Initiating  Provisioning of resources in gcloud resource group] *\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.010314464569091797
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [duffy : DEBUG:: Duffy resource group list] *******************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.016824722290039062
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0005800724029541016
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [duffy : declaring output vars] *******************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.014860153198242188
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.000579833984375
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [duffy : Initiating Provisioning of duffy resource group] *****************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01101994514465332
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [duffy : Initiating Teardown of duffy resource group] *********************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.015443086624145508
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [libvirt : declaring output vars] *****************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01581263542175293
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0004954338073730469
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [libvirt : Initiating libvirt resource group] *****************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.013150215148925781
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [rackspace : DEBUG:: rackspace resource group list] ***********************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.015929698944091797
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0004942417144775391
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [rackspace : declaring output vars] ***************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.019373416900634766
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0005393028259277344
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [rackspace : Initiating  Provisioning/Deprovioning of resources rackspace resource group] ***\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01021122932434082
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [beaker : allocate beaker outputs] ****************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.016865253448486328
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0004642009735107422
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [beaker : debug] **********************************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01290440559387207
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0007784366607666016
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [beaker : provision beaker systems] ***************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01655435562133789
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [beaker : fetch beaker details] *******************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.010811805725097656
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [beaker : debug] **********************************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.017910242080688477
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0005919933319091797
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [beaker : append beaker outputs] ******************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01059412956237793
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [beaker : Initiating Teardown of beaker resource group] *******************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01825094223022461
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nPLAY [Writing contents to file] ************************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.011627435684204102
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : include_vars] ********************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.022377729415893555
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.000232696533203125
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : Updating topology_outputs] *******************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.1027674674987793
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0003674030303955078
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : Create output directories] *******************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost] => (item=/home/herlo/Projects/lpdemo/outputs)\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;33mchanged: [localhost] => (item=/home/herlo/.virtualenvs/venv/lib/python2.7/site-packages/provision/../inventory)\u001b[0m\r\n\r\nTASK [output_writer : DEBUG:: topology_outputs] ********************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.09571528434753418
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost] => {\r\n    \"msg\": {\r\n        \"aws_cfn_res\": [], \r\n        \"aws_ec2_key_res\": [], \r\n        \"aws_ec2_res\": [], \r\n        \"aws_s3_res\": [], \r\n        \"beaker_res\": [], \r\n        \"duffy_res\": [], \r\n        \"gcloud_gce_res\": [], \r\n        \"os_heat_res\": [], \r\n        \"os_keypair_res\": [], \r\n        \"os_obj_res\": [], \r\n        \"os_server_res\": [\r\n            {\r\n                \"_ansible_item_label\": [\r\n                    \"http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/\", \r\n                    \"atomic-e2e-jenkins\", \r\n                    \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\", \r\n                    \"atomic-e2e-jenkins-test\", \r\n                    \"present\", \r\n                    \"CentOS-7-x86_64-GenericCloud-released-latest\", \r\n                    \"ci-factory\", \r\n                    \"m1.small\", \r\n                    \"net-name=atomic-e2e-jenkins-test\", \r\n                    \"ae2e\", \r\n                    \"test\", \r\n                    0, \r\n                    \"10.8.172.0/22\"\r\n                ], \r\n                \"_ansible_item_result\": true, \r\n                \"_ansible_no_log\": false, \r\n                \"_ansible_parsed\": true, \r\n                \"changed\": true, \r\n                \"id\": \"a8df9073-e30a-4ac5-9285-2d06d4135af7\", \r\n                \"instance\": [\r\n                    \"http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/\", \r\n                    \"atomic-e2e-jenkins\", \r\n                    \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\", \r\n                    \"atomic-e2e-jenkins-test\", \r\n                    \"present\", \r\n                    \"CentOS-7-x86_64-GenericCloud-released-latest\", \r\n                    \"ci-factory\", \r\n                    \"m1.small\", \r\n                    \"net-name=atomic-e2e-jenkins-test\", \r\n                    \"ae2e\", \r\n                    \"test\", \r\n                    0, \r\n                    \"10.8.172.0/22\"\r\n                ], \r\n                \"invocation\": {\r\n                    \"module_args\": {\r\n                        \"api_timeout\": 99999, \r\n                        \"auth\": {\r\n                            \"auth_url\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\", \r\n                            \"password\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\", \r\n                            \"project_name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\", \r\n                            \"username\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                        }, \r\n                        \"auth_type\": null, \r\n                        \"auto_ip\": true, \r\n                        \"availability_zone\": null, \r\n                        \"boot_from_volume\": false, \r\n                        \"boot_volume\": null, \r\n                        \"cacert\": null, \r\n                        \"cert\": null, \r\n                        \"cloud\": null, \r\n                        \"config_drive\": false, \r\n                        \"delete_fip\": false, \r\n                        \"endpoint_type\": \"public\", \r\n                        \"flavor\": \"m1.small\", \r\n                        \"flavor_include\": null, \r\n                        \"flavor_ram\": null, \r\n                        \"floating_ip_pools\": [\r\n                            \"10.8.172.0/22\"\r\n                        ], \r\n                        \"floating_ips\": null, \r\n                        \"image\": \"CentOS-7-x86_64-GenericCloud-released-latest\", \r\n                        \"image_exclude\": \"(deprecated)\", \r\n                        \"key\": null, \r\n                        \"key_name\": \"ci-factory\", \r\n                        \"meta\": null, \r\n                        \"name\": \"ae2e_test_0\", \r\n                        \"network\": null, \r\n                        \"nics\": [\r\n                            \"net-name=********-test\"\r\n                        ], \r\n                        \"region_name\": null, \r\n                        \"reuse_ips\": true, \r\n                        \"scheduler_hints\": null, \r\n                        \"security_groups\": [\r\n                            \"default\"\r\n                        ], \r\n                        \"state\": \"present\", \r\n                        \"terminate_volume\": false, \r\n                        \"timeout\": 180, \r\n                        \"userdata\": null, \r\n                        \"verify\": true, \r\n                        \"volume_size\": false, \r\n                        \"volumes\": [], \r\n                        \"wait\": true\r\n                    }, \r\n                    \"module_name\": \"os_server\"\r\n                }, \r\n                \"openstack\": {\r\n                    \"OS-DCF:diskConfig\": \"MANUAL\", \r\n                    \"OS-EXT-AZ:availability_zone\": \"nova\", \r\n                    \"OS-EXT-STS:power_state\": 1, \r\n                    \"OS-EXT-STS:task_state\": null, \r\n                    \"OS-EXT-STS:vm_state\": \"active\", \r\n                    \"OS-SRV-USG:launched_at\": \"2017-01-27T00:40:29.000000\", \r\n                    \"OS-SRV-USG:terminated_at\": null, \r\n                    \"accessIPv4\": \"10.8.174.128\", \r\n                    \"accessIPv6\": \"\", \r\n                    \"addresses\": {\r\n                        \"atomic-e2e-jenkins-test\": [\r\n                            {\r\n                                \"OS-EXT-IPS-MAC:mac_addr\": \"fa:16:3e:a5:93:44\", \r\n                                \"OS-EXT-IPS:type\": \"fixed\", \r\n                                \"addr\": \"172.16.171.64\", \r\n                                \"version\": 4\r\n                            }, \r\n                            {\r\n                                \"OS-EXT-IPS-MAC:mac_addr\": \"de:ad:be:ef:be:ef\", \r\n                                \"OS-EXT-IPS:type\": \"floating\", \r\n                                \"addr\": \"10.8.174.128\", \r\n                                \"version\": 4\r\n                            }\r\n                        ]\r\n                    }, \r\n                    \"adminPass\": \"n4GLamQ7ymLq\", \r\n                    \"az\": \"nova\", \r\n                    \"cloud\": \"defaults\", \r\n                    \"config_drive\": \"\", \r\n                    \"created\": \"2017-01-27T00:40:23Z\", \r\n                    \"disk_config\": \"MANUAL\", \r\n                    \"flavor\": {\r\n                        \"id\": \"2\", \r\n                        \"name\": \"m1.small\"\r\n                    }, \r\n                    \"has_config_drive\": false, \r\n                    \"hostId\": \"8b8a160ccfe0a18480f80effdfb50cec97c0aa3606306be4830c0daf\", \r\n                    \"host_id\": \"8b8a160ccfe0a18480f80effdfb50cec97c0aa3606306be4830c0daf\", \r\n                    \"id\": \"a8df9073-e30a-4ac5-9285-2d06d4135af7\", \r\n                    \"image\": {\r\n                        \"id\": \"3bcfd17c-6bf0-4134-ae7f-80bded8b46fd\", \r\n                        \"name\": \"CentOS-7-x86_64-GenericCloud-released-latest\"\r\n                    }, \r\n                    \"interface_ip\": \"10.8.174.128\", \r\n                    \"key_name\": \"ci-factory\", \r\n                    \"launched_at\": \"2017-01-27T00:40:29.000000\", \r\n                    \"location\": {\r\n                        \"cloud\": \"defaults\", \r\n                        \"project\": {\r\n                            \"domain_id\": null, \r\n                            \"domain_name\": null, \r\n                            \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                            \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                        }, \r\n                        \"region_name\": \"\", \r\n                        \"zone\": \"nova\"\r\n                    }, \r\n                    \"metadata\": {}, \r\n                    \"name\": \"ae2e_test_0\", \r\n                    \"networks\": {\r\n                        \"atomic-e2e-jenkins-test\": [\r\n                            \"172.16.171.64\"\r\n                        ]\r\n                    }, \r\n                    \"os-extended-volumes:volumes_attached\": [], \r\n                    \"power_state\": 1, \r\n                    \"private_v4\": \"172.16.171.64\", \r\n                    \"progress\": 0, \r\n                    \"project_id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                    \"properties\": {\r\n                        \"OS-DCF:diskConfig\": \"MANUAL\", \r\n                        \"OS-EXT-AZ:availability_zone\": \"nova\", \r\n                        \"OS-EXT-STS:power_state\": 1, \r\n                        \"OS-EXT-STS:task_state\": null, \r\n                        \"OS-EXT-STS:vm_state\": \"active\", \r\n                        \"OS-SRV-USG:launched_at\": \"2017-01-27T00:40:29.000000\", \r\n                        \"OS-SRV-USG:terminated_at\": null, \r\n                        \"os-extended-volumes:volumes_attached\": [], \r\n                        \"request_ids\": []\r\n                    }, \r\n                    \"public_v4\": \"10.8.174.128\", \r\n                    \"public_v6\": \"\", \r\n                    \"region\": \"\", \r\n                    \"request_ids\": [], \r\n                    \"security_groups\": [\r\n                        {\r\n                            \"HUMAN_ID\": false, \r\n                            \"NAME_ATTR\": \"name\", \r\n                            \"description\": \"Default security group\", \r\n                            \"human_id\": null, \r\n                            \"id\": \"dc3d62e6-db74-48ea-801d-f3f99504b9ec\", \r\n                            \"location\": {\r\n                                \"cloud\": \"defaults\", \r\n                                \"project\": {\r\n                                    \"domain_id\": null, \r\n                                    \"domain_name\": null, \r\n                                    \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                                    \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                                }, \r\n                                \"region_name\": \"\", \r\n                                \"zone\": null\r\n                            }, \r\n                            \"name\": \"default\", \r\n                            \"project_id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                            \"properties\": {\r\n                                \"HUMAN_ID\": false, \r\n                                \"NAME_ATTR\": \"name\", \r\n                                \"human_id\": null, \r\n                                \"request_ids\": []\r\n                            }, \r\n                            \"request_ids\": [], \r\n                            \"security_group_rules\": [\r\n                                {\r\n                                    \"direction\": \"ingress\", \r\n                                    \"ethertype\": \"IPv4\", \r\n                                    \"group\": {\r\n                                        \"name\": \"default\", \r\n                                        \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                    }, \r\n                                    \"id\": \"07d9e837-23b0-47d2-93ab-89a9d6f46b21\", \r\n                                    \"location\": {\r\n                                        \"cloud\": \"defaults\", \r\n                                        \"project\": {\r\n                                            \"domain_id\": null, \r\n                                            \"domain_name\": null, \r\n                                            \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                                            \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                                        }, \r\n                                        \"region_name\": \"\", \r\n                                        \"zone\": null\r\n                                    }, \r\n                                    \"port_range_max\": null, \r\n                                    \"port_range_min\": null, \r\n                                    \"project_id\": \"\", \r\n                                    \"properties\": {\r\n                                        \"group\": {\r\n                                            \"name\": \"default\", \r\n                                            \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                        }\r\n                                    }, \r\n                                    \"protocol\": null, \r\n                                    \"remote_group_id\": null, \r\n                                    \"remote_ip_prefix\": null, \r\n                                    \"security_group_id\": \"dc3d62e6-db74-48ea-801d-f3f99504b9ec\", \r\n                                    \"tenant_id\": \"\"\r\n                                }, \r\n                                {\r\n                                    \"direction\": \"ingress\", \r\n                                    \"ethertype\": \"IPv4\", \r\n                                    \"group\": {\r\n                                        \"name\": \"default\", \r\n                                        \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                    }, \r\n                                    \"id\": \"4f2cb431-90a5-46a0-bc57-b98a4ea7ca97\", \r\n                                    \"location\": {\r\n                                        \"cloud\": \"defaults\", \r\n                                        \"project\": {\r\n                                            \"domain_id\": null, \r\n                                            \"domain_name\": null, \r\n                                            \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                                            \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                                        }, \r\n                                        \"region_name\": \"\", \r\n                                        \"zone\": null\r\n                                    }, \r\n                                    \"port_range_max\": null, \r\n                                    \"port_range_min\": null, \r\n                                    \"project_id\": \"\", \r\n                                    \"properties\": {\r\n                                        \"group\": {\r\n                                            \"name\": \"default\", \r\n                                            \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                        }\r\n                                    }, \r\n                                    \"protocol\": null, \r\n                                    \"remote_group_id\": null, \r\n                                    \"remote_ip_prefix\": null, \r\n                                    \"security_group_id\": \"dc3d62e6-db74-48ea-801d-f3f99504b9ec\", \r\n                                    \"tenant_id\": \"\"\r\n                                }\r\n                            ], \r\n                            \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                        }\r\n                    ], \r\n                    \"status\": \"ACTIVE\", \r\n                    \"task_state\": null, \r\n                    \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                    \"terminated_at\": null, \r\n                    \"updated\": \"2017-01-27T00:40:29Z\", \r\n                    \"user_id\": \"6fdaef18f58e40bfb4d10f17a54554f3\", \r\n                    \"vm_state\": \"active\", \r\n                    \"volumes\": []\r\n                }, \r\n                \"server\": {\r\n                    \"OS-DCF:diskConfig\": \"MANUAL\", \r\n                    \"OS-EXT-AZ:availability_zone\": \"nova\", \r\n                    \"OS-EXT-STS:power_state\": 1, \r\n                    \"OS-EXT-STS:task_state\": null, \r\n                    \"OS-EXT-STS:vm_state\": \"active\", \r\n                    \"OS-SRV-USG:launched_at\": \"2017-01-27T00:40:29.000000\", \r\n                    \"OS-SRV-USG:terminated_at\": null, \r\n                    \"accessIPv4\": \"10.8.174.128\", \r\n                    \"accessIPv6\": \"\", \r\n                    \"addresses\": {\r\n                        \"atomic-e2e-jenkins-test\": [\r\n                            {\r\n                                \"OS-EXT-IPS-MAC:mac_addr\": \"fa:16:3e:a5:93:44\", \r\n                                \"OS-EXT-IPS:type\": \"fixed\", \r\n                                \"addr\": \"172.16.171.64\", \r\n                                \"version\": 4\r\n                            }, \r\n                            {\r\n                                \"OS-EXT-IPS-MAC:mac_addr\": \"de:ad:be:ef:be:ef\", \r\n                                \"OS-EXT-IPS:type\": \"floating\", \r\n                                \"addr\": \"10.8.174.128\", \r\n                                \"version\": 4\r\n                            }\r\n                        ]\r\n                    }, \r\n                    \"adminPass\": \"n4GLamQ7ymLq\", \r\n                    \"az\": \"nova\", \r\n                    \"cloud\": \"defaults\", \r\n                    \"config_drive\": \"\", \r\n                    \"created\": \"2017-01-27T00:40:23Z\", \r\n                    \"disk_config\": \"MANUAL\", \r\n                    \"flavor\": {\r\n                        \"id\": \"2\", \r\n                        \"name\": \"m1.small\"\r\n                    }, \r\n                    \"has_config_drive\": false, \r\n                    \"hostId\": \"8b8a160ccfe0a18480f80effdfb50cec97c0aa3606306be4830c0daf\", \r\n                    \"host_id\": \"8b8a160ccfe0a18480f80effdfb50cec97c0aa3606306be4830c0daf\", \r\n                    \"id\": \"a8df9073-e30a-4ac5-9285-2d06d4135af7\", \r\n                    \"image\": {\r\n                        \"id\": \"3bcfd17c-6bf0-4134-ae7f-80bded8b46fd\", \r\n                        \"name\": \"CentOS-7-x86_64-GenericCloud-released-latest\"\r\n                    }, \r\n                    \"interface_ip\": \"10.8.174.128\", \r\n                    \"key_name\": \"ci-factory\", \r\n                    \"launched_at\": \"2017-01-27T00:40:29.000000\", \r\n                    \"location\": {\r\n                        \"cloud\": \"defaults\", \r\n                        \"project\": {\r\n                            \"domain_id\": null, \r\n                            \"domain_name\": null, \r\n                            \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                            \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                        }, \r\n                        \"region_name\": \"\", \r\n                        \"zone\": \"nova\"\r\n                    }, \r\n                    \"metadata\": {}, \r\n                    \"name\": \"ae2e_test_0\", \r\n                    \"networks\": {\r\n                        \"atomic-e2e-jenkins-test\": [\r\n                            \"172.16.171.64\"\r\n                        ]\r\n                    }, \r\n                    \"os-extended-volumes:volumes_attached\": [], \r\n                    \"power_state\": 1, \r\n                    \"private_v4\": \"172.16.171.64\", \r\n                    \"progress\": 0, \r\n                    \"project_id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                    \"properties\": {\r\n                        \"OS-DCF:diskConfig\": \"MANUAL\", \r\n                        \"OS-EXT-AZ:availability_zone\": \"nova\", \r\n                        \"OS-EXT-STS:power_state\": 1, \r\n                        \"OS-EXT-STS:task_state\": null, \r\n                        \"OS-EXT-STS:vm_state\": \"active\", \r\n                        \"OS-SRV-USG:launched_at\": \"2017-01-27T00:40:29.000000\", \r\n                        \"OS-SRV-USG:terminated_at\": null, \r\n                        \"os-extended-volumes:volumes_attached\": [], \r\n                        \"request_ids\": []\r\n                    }, \r\n                    \"public_v4\": \"10.8.174.128\", \r\n                    \"public_v6\": \"\", \r\n                    \"region\": \"\", \r\n                    \"request_ids\": [], \r\n                    \"security_groups\": [\r\n                        {\r\n                            \"HUMAN_ID\": false, \r\n                            \"NAME_ATTR\": \"name\", \r\n                            \"description\": \"Default security group\", \r\n                            \"human_id\": null, \r\n                            \"id\": \"dc3d62e6-db74-48ea-801d-f3f99504b9ec\", \r\n                            \"location\": {\r\n                                \"cloud\": \"defaults\", \r\n                                \"project\": {\r\n                                    \"domain_id\": null, \r\n                                    \"domain_name\": null, \r\n                                    \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                                    \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                                }, \r\n                                \"region_name\": \"\", \r\n                                \"zone\": null\r\n                            }, \r\n                            \"name\": \"default\", \r\n                            \"project_id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                            \"properties\": {\r\n                                \"HUMAN_ID\": false, \r\n                                \"NAME_ATTR\": \"name\", \r\n                                \"human_id\": null, \r\n                                \"request_ids\": []\r\n                            }, \r\n                            \"request_ids\": [], \r\n                            \"security_group_rules\": [\r\n                                {\r\n                                    \"direction\": \"ingress\", \r\n                                    \"ethertype\": \"IPv4\", \r\n                                    \"group\": {\r\n                                        \"name\": \"default\", \r\n                                        \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                    }, \r\n                                    \"id\": \"07d9e837-23b0-47d2-93ab-89a9d6f46b21\", \r\n                                    \"location\": {\r\n                                        \"cloud\": \"defaults\", \r\n                                        \"project\": {\r\n                                            \"domain_id\": null, \r\n                                            \"domain_name\": null, \r\n                                            \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                                            \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                                        }, \r\n                                        \"region_name\": \"\", \r\n                                        \"zone\": null\r\n                                    }, \r\n                                    \"port_range_max\": null, \r\n                                    \"port_range_min\": null, \r\n                                    \"project_id\": \"\", \r\n                                    \"properties\": {\r\n                                        \"group\": {\r\n                                            \"name\": \"default\", \r\n                                            \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                        }\r\n                                    }, \r\n                                    \"protocol\": null, \r\n                                    \"remote_group_id\": null, \r\n                                    \"remote_ip_prefix\": null, \r\n                                    \"security_group_id\": \"dc3d62e6-db74-48ea-801d-f3f99504b9ec\", \r\n                                    \"tenant_id\": \"\"\r\n                                }, \r\n                                {\r\n                                    \"direction\": \"ingress\", \r\n                                    \"ethertype\": \"IPv4\", \r\n                                    \"group\": {\r\n                                        \"name\": \"default\", \r\n                                        \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                    }, \r\n                                    \"id\": \"4f2cb431-90a5-46a0-bc57-b98a4ea7ca97\", \r\n                                    \"location\": {\r\n                                        \"cloud\": \"defaults\", \r\n                                        \"project\": {\r\n                                            \"domain_id\": null, \r\n                                            \"domain_name\": null, \r\n                                            \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                                            \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                                        }, \r\n                                        \"region_name\": \"\", \r\n                                        \"zone\": null\r\n                                    }, \r\n                                    \"port_range_max\": null, \r\n                                    \"port_range_min\": null, \r\n                                    \"project_id\": \"\", \r\n                                    \"properties\": {\r\n                                        \"group\": {\r\n                                            \"name\": \"default\", \r\n                                            \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                        }\r\n                                    }, \r\n                                    \"protocol\": null, \r\n                                    \"remote_group_id\": null, \r\n                                    \"remote_ip_prefix\": null, \r\n                                    \"security_group_id\": \"dc3d62e6-db74-48ea-801d-f3f99504b9ec\", \r\n                                    \"tenant_id\": \"\"\r\n                                }\r\n                            ], \r\n                            \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                        }\r\n                    ], \r\n                    \"status\": \"ACTIVE\", \r\n                    \"task_state\": null, \r\n                    \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                    \"terminated_at\": null, \r\n                    \"updated\": \"2017-01-27T00:40:29Z\", \r\n                    \"user_id\": \"6fdaef18f58e40bfb4d10f17a54554f3\", \r\n                    \"vm_state\": \"active\", \r\n                    \"volumes\": []\r\n                }\r\n            }, \r\n            {\r\n                \"_ansible_item_label\": [\r\n                    \"http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/\", \r\n                    \"atomic-e2e-jenkins\", \r\n                    \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\", \r\n                    \"atomic-e2e-jenkins-test\", \r\n                    \"present\", \r\n                    \"CentOS-7-x86_64-GenericCloud-released-latest\", \r\n                    \"ci-factory\", \r\n                    \"m1.small\", \r\n                    \"net-name=atomic-e2e-jenkins-test\", \r\n                    \"ae2e\", \r\n                    \"test\", \r\n                    1, \r\n                    \"10.8.172.0/22\"\r\n                ], \r\n                \"_ansible_item_result\": true, \r\n                \"_ansible_no_log\": false, \r\n                \"_ansible_parsed\": true, \r\n                \"changed\": true, \r\n                \"id\": \"785cd6b6-5336-467f-9771-946abd42f110\", \r\n                \"instance\": [\r\n                    \"http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/\", \r\n                    \"atomic-e2e-jenkins\", \r\n                    \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\", \r\n                    \"atomic-e2e-jenkins-test\", \r\n                    \"present\", \r\n                    \"CentOS-7-x86_64-GenericCloud-released-latest\", \r\n                    \"ci-factory\", \r\n                    \"m1.small\", \r\n                    \"net-name=atomic-e2e-jenkins-test\", \r\n                    \"ae2e\", \r\n                    \"test\", \r\n                    1, \r\n                    \"10.8.172.0/22\"\r\n                ], \r\n                \"invocation\": {\r\n                    \"module_args\": {\r\n                        \"api_timeout\": 99999, \r\n                        \"auth\": {\r\n                            \"auth_url\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\", \r\n                            \"password\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\", \r\n                            \"project_name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\", \r\n                            \"username\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                        }, \r\n                        \"auth_type\": null, \r\n                        \"auto_ip\": true, \r\n                        \"availability_zone\": null, \r\n                        \"boot_from_volume\": false, \r\n                        \"boot_volume\": null, \r\n                        \"cacert\": null, \r\n                        \"cert\": null, \r\n                        \"cloud\": null, \r\n                        \"config_drive\": false, \r\n                        \"delete_fip\": false, \r\n                        \"endpoint_type\": \"public\", \r\n                        \"flavor\": \"m1.small\", \r\n                        \"flavor_include\": null, \r\n                        \"flavor_ram\": null, \r\n                        \"floating_ip_pools\": [\r\n                            \"10.8.172.0/22\"\r\n                        ], \r\n                        \"floating_ips\": null, \r\n                        \"image\": \"CentOS-7-x86_64-GenericCloud-released-latest\", \r\n                        \"image_exclude\": \"(deprecated)\", \r\n                        \"key\": null, \r\n                        \"key_name\": \"ci-factory\", \r\n                        \"meta\": null, \r\n                        \"name\": \"ae2e_test_1\", \r\n                        \"network\": null, \r\n                        \"nics\": [\r\n                            \"net-name=********-test\"\r\n                        ], \r\n                        \"region_name\": null, \r\n                        \"reuse_ips\": true, \r\n                        \"scheduler_hints\": null, \r\n                        \"security_groups\": [\r\n                            \"default\"\r\n                        ], \r\n                        \"state\": \"present\", \r\n                        \"terminate_volume\": false, \r\n                        \"timeout\": 180, \r\n                        \"userdata\": null, \r\n                        \"verify\": true, \r\n                        \"volume_size\": false, \r\n                        \"volumes\": [], \r\n                        \"wait\": true\r\n                    }, \r\n                    \"module_name\": \"os_server\"\r\n                }, \r\n                \"openstack\": {\r\n                    \"OS-DCF:diskConfig\": \"MANUAL\", \r\n                    \"OS-EXT-AZ:availability_zone\": \"nova\", \r\n                    \"OS-EXT-STS:power_state\": 1, \r\n                    \"OS-EXT-STS:task_state\": null, \r\n                    \"OS-EXT-STS:vm_state\": \"active\", \r\n                    \"OS-SRV-USG:launched_at\": \"2017-01-27T00:41:07.000000\", \r\n                    \"OS-SRV-USG:terminated_at\": null, \r\n                    \"accessIPv4\": \"10.8.174.13\", \r\n                    \"accessIPv6\": \"\", \r\n                    \"addresses\": {\r\n                        \"atomic-e2e-jenkins-test\": [\r\n                            {\r\n                                \"OS-EXT-IPS-MAC:mac_addr\": \"fa:16:3e:42:1d:14\", \r\n                                \"OS-EXT-IPS:type\": \"fixed\", \r\n                                \"addr\": \"172.16.171.65\", \r\n                                \"version\": 4\r\n                            }, \r\n                            {\r\n                                \"OS-EXT-IPS-MAC:mac_addr\": \"de:ad:be:ef:be:ef\", \r\n                                \"OS-EXT-IPS:type\": \"floating\", \r\n                                \"addr\": \"10.8.174.13\", \r\n                                \"version\": 4\r\n                            }\r\n                        ]\r\n                    }, \r\n                    \"adminPass\": \"jgFdmveZ6BMv\", \r\n                    \"az\": \"nova\", \r\n                    \"cloud\": \"defaults\", \r\n                    \"config_drive\": \"\", \r\n                    \"created\": \"2017-01-27T00:41:01Z\", \r\n                    \"disk_config\": \"MANUAL\", \r\n                    \"flavor\": {\r\n                        \"id\": \"2\", \r\n                        \"name\": \"m1.small\"\r\n                    }, \r\n                    \"has_config_drive\": false, \r\n                    \"hostId\": \"8b8a160ccfe0a18480f80effdfb50cec97c0aa3606306be4830c0daf\", \r\n                    \"host_id\": \"8b8a160ccfe0a18480f80effdfb50cec97c0aa3606306be4830c0daf\", \r\n                    \"id\": \"785cd6b6-5336-467f-9771-946abd42f110\", \r\n                    \"image\": {\r\n                        \"id\": \"3bcfd17c-6bf0-4134-ae7f-80bded8b46fd\", \r\n                        \"name\": \"CentOS-7-x86_64-GenericCloud-released-latest\"\r\n                    }, \r\n                    \"interface_ip\": \"10.8.174.13\", \r\n                    \"key_name\": \"ci-factory\", \r\n                    \"launched_at\": \"2017-01-27T00:41:07.000000\", \r\n                    \"location\": {\r\n                        \"cloud\": \"defaults\", \r\n                        \"project\": {\r\n                            \"domain_id\": null, \r\n                            \"domain_name\": null, \r\n                            \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                            \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                        }, \r\n                        \"region_name\": \"\", \r\n                        \"zone\": \"nova\"\r\n                    }, \r\n                    \"metadata\": {}, \r\n                    \"name\": \"ae2e_test_1\", \r\n                    \"networks\": {\r\n                        \"atomic-e2e-jenkins-test\": [\r\n                            \"172.16.171.65\"\r\n                        ]\r\n                    }, \r\n                    \"os-extended-volumes:volumes_attached\": [], \r\n                    \"power_state\": 1, \r\n                    \"private_v4\": \"172.16.171.65\", \r\n                    \"progress\": 0, \r\n                    \"project_id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                    \"properties\": {\r\n                        \"OS-DCF:diskConfig\": \"MANUAL\", \r\n                        \"OS-EXT-AZ:availability_zone\": \"nova\", \r\n                        \"OS-EXT-STS:power_state\": 1, \r\n                        \"OS-EXT-STS:task_state\": null, \r\n                        \"OS-EXT-STS:vm_state\": \"active\", \r\n                        \"OS-SRV-USG:launched_at\": \"2017-01-27T00:41:07.000000\", \r\n                        \"OS-SRV-USG:terminated_at\": null, \r\n                        \"os-extended-volumes:volumes_attached\": [], \r\n                        \"request_ids\": []\r\n                    }, \r\n                    \"public_v4\": \"10.8.174.13\", \r\n                    \"public_v6\": \"\", \r\n                    \"region\": \"\", \r\n                    \"request_ids\": [], \r\n                    \"security_groups\": [\r\n                        {\r\n                            \"HUMAN_ID\": false, \r\n                            \"NAME_ATTR\": \"name\", \r\n                            \"description\": \"Default security group\", \r\n                            \"human_id\": null, \r\n                            \"id\": \"dc3d62e6-db74-48ea-801d-f3f99504b9ec\", \r\n                            \"location\": {\r\n                                \"cloud\": \"defaults\", \r\n                                \"project\": {\r\n                                    \"domain_id\": null, \r\n                                    \"domain_name\": null, \r\n                                    \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                                    \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                                }, \r\n                                \"region_name\": \"\", \r\n                                \"zone\": null\r\n                            }, \r\n                            \"name\": \"default\", \r\n                            \"project_id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                            \"properties\": {\r\n                                \"HUMAN_ID\": false, \r\n                                \"NAME_ATTR\": \"name\", \r\n                                \"human_id\": null, \r\n                                \"request_ids\": []\r\n                            }, \r\n                            \"request_ids\": [], \r\n                            \"security_group_rules\": [\r\n                                {\r\n                                    \"direction\": \"ingress\", \r\n                                    \"ethertype\": \"IPv4\", \r\n                                    \"group\": {\r\n                                        \"name\": \"default\", \r\n                                        \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                    }, \r\n                                    \"id\": \"07d9e837-23b0-47d2-93ab-89a9d6f46b21\", \r\n                                    \"location\": {\r\n                                        \"cloud\": \"defaults\", \r\n                                        \"project\": {\r\n                                            \"domain_id\": null, \r\n                                            \"domain_name\": null, \r\n                                            \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                                            \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                                        }, \r\n                                        \"region_name\": \"\", \r\n                                        \"zone\": null\r\n                                    }, \r\n                                    \"port_range_max\": null, \r\n                                    \"port_range_min\": null, \r\n                                    \"project_id\": \"\", \r\n                                    \"properties\": {\r\n                                        \"group\": {\r\n                                            \"name\": \"default\", \r\n                                            \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                        }\r\n                                    }, \r\n                                    \"protocol\": null, \r\n                                    \"remote_group_id\": null, \r\n                                    \"remote_ip_prefix\": null, \r\n                                    \"security_group_id\": \"dc3d62e6-db74-48ea-801d-f3f99504b9ec\", \r\n                                    \"tenant_id\": \"\"\r\n                                }, \r\n                                {\r\n                                    \"direction\": \"ingress\", \r\n                                    \"ethertype\": \"IPv4\", \r\n                                    \"group\": {\r\n                                        \"name\": \"default\", \r\n                                        \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                    }, \r\n                                    \"id\": \"4f2cb431-90a5-46a0-bc57-b98a4ea7ca97\", \r\n                                    \"location\": {\r\n                                        \"cloud\": \"defaults\", \r\n                                        \"project\": {\r\n                                            \"domain_id\": null, \r\n                                            \"domain_name\": null, \r\n                                            \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                                            \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                                        }, \r\n                                        \"region_name\": \"\", \r\n                                        \"zone\": null\r\n                                    }, \r\n                                    \"port_range_max\": null, \r\n                                    \"port_range_min\": null, \r\n                                    \"project_id\": \"\", \r\n                                    \"properties\": {\r\n                                        \"group\": {\r\n                                            \"name\": \"default\", \r\n                                            \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                        }\r\n                                    }, \r\n                                    \"protocol\": null, \r\n                                    \"remote_group_id\": null, \r\n                                    \"remote_ip_prefix\": null, \r\n                                    \"security_group_id\": \"dc3d62e6-db74-48ea-801d-f3f99504b9ec\", \r\n                                    \"tenant_id\": \"\"\r\n                                }\r\n                            ], \r\n                            \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                        }\r\n                    ], \r\n                    \"status\": \"ACTIVE\", \r\n                    \"task_state\": null, \r\n                    \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                    \"terminated_at\": null, \r\n                    \"updated\": \"2017-01-27T00:41:07Z\", \r\n                    \"user_id\": \"6fdaef18f58e40bfb4d10f17a54554f3\", \r\n                    \"vm_state\": \"active\", \r\n                    \"volumes\": []\r\n                }, \r\n                \"server\": {\r\n                    \"OS-DCF:diskConfig\": \"MANUAL\", \r\n                    \"OS-EXT-AZ:availability_zone\": \"nova\", \r\n                    \"OS-EXT-STS:power_state\": 1, \r\n                    \"OS-EXT-STS:task_state\": null, \r\n                    \"OS-EXT-STS:vm_state\": \"active\", \r\n                    \"OS-SRV-USG:launched_at\": \"2017-01-27T00:41:07.000000\", \r\n                    \"OS-SRV-USG:terminated_at\": null, \r\n                    \"accessIPv4\": \"10.8.174.13\", \r\n                    \"accessIPv6\": \"\", \r\n                    \"addresses\": {\r\n                        \"atomic-e2e-jenkins-test\": [\r\n                            {\r\n                                \"OS-EXT-IPS-MAC:mac_addr\": \"fa:16:3e:42:1d:14\", \r\n                                \"OS-EXT-IPS:type\": \"fixed\", \r\n                                \"addr\": \"172.16.171.65\", \r\n                                \"version\": 4\r\n                            }, \r\n                            {\r\n                                \"OS-EXT-IPS-MAC:mac_addr\": \"de:ad:be:ef:be:ef\", \r\n                                \"OS-EXT-IPS:type\": \"floating\", \r\n                                \"addr\": \"10.8.174.13\", \r\n                                \"version\": 4\r\n                            }\r\n                        ]\r\n                    }, \r\n                    \"adminPass\": \"jgFdmveZ6BMv\", \r\n                    \"az\": \"nova\", \r\n                    \"cloud\": \"defaults\", \r\n                    \"config_drive\": \"\", \r\n                    \"created\": \"2017-01-27T00:41:01Z\", \r\n                    \"disk_config\": \"MANUAL\", \r\n                    \"flavor\": {\r\n                        \"id\": \"2\", \r\n                        \"name\": \"m1.small\"\r\n                    }, \r\n                    \"has_config_drive\": false, \r\n                    \"hostId\": \"8b8a160ccfe0a18480f80effdfb50cec97c0aa3606306be4830c0daf\", \r\n                    \"host_id\": \"8b8a160ccfe0a18480f80effdfb50cec97c0aa3606306be4830c0daf\", \r\n                    \"id\": \"785cd6b6-5336-467f-9771-946abd42f110\", \r\n                    \"image\": {\r\n                        \"id\": \"3bcfd17c-6bf0-4134-ae7f-80bded8b46fd\", \r\n                        \"name\": \"CentOS-7-x86_64-GenericCloud-released-latest\"\r\n                    }, \r\n                    \"interface_ip\": \"10.8.174.13\", \r\n                    \"key_name\": \"ci-factory\", \r\n                    \"launched_at\": \"2017-01-27T00:41:07.000000\", \r\n                    \"location\": {\r\n                        \"cloud\": \"defaults\", \r\n                        \"project\": {\r\n                            \"domain_id\": null, \r\n                            \"domain_name\": null, \r\n                            \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                            \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                        }, \r\n                        \"region_name\": \"\", \r\n                        \"zone\": \"nova\"\r\n                    }, \r\n                    \"metadata\": {}, \r\n                    \"name\": \"ae2e_test_1\", \r\n                    \"networks\": {\r\n                        \"atomic-e2e-jenkins-test\": [\r\n                            \"172.16.171.65\"\r\n                        ]\r\n                    }, \r\n                    \"os-extended-volumes:volumes_attached\": [], \r\n                    \"power_state\": 1, \r\n                    \"private_v4\": \"172.16.171.65\", \r\n                    \"progress\": 0, \r\n                    \"project_id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                    \"properties\": {\r\n                        \"OS-DCF:diskConfig\": \"MANUAL\", \r\n                        \"OS-EXT-AZ:availability_zone\": \"nova\", \r\n                        \"OS-EXT-STS:power_state\": 1, \r\n                        \"OS-EXT-STS:task_state\": null, \r\n                        \"OS-EXT-STS:vm_state\": \"active\", \r\n                        \"OS-SRV-USG:launched_at\": \"2017-01-27T00:41:07.000000\", \r\n                        \"OS-SRV-USG:terminated_at\": null, \r\n                        \"os-extended-volumes:volumes_attached\": [], \r\n                        \"request_ids\": []\r\n                    }, \r\n                    \"public_v4\": \"10.8.174.13\", \r\n                    \"public_v6\": \"\", \r\n                    \"region\": \"\", \r\n                    \"request_ids\": [], \r\n                    \"security_groups\": [\r\n                        {\r\n                            \"HUMAN_ID\": false, \r\n                            \"NAME_ATTR\": \"name\", \r\n                            \"description\": \"Default security group\", \r\n                            \"human_id\": null, \r\n                            \"id\": \"dc3d62e6-db74-48ea-801d-f3f99504b9ec\", \r\n                            \"location\": {\r\n                                \"cloud\": \"defaults\", \r\n                                \"project\": {\r\n                                    \"domain_id\": null, \r\n                                    \"domain_name\": null, \r\n                                    \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                                    \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                                }, \r\n                                \"region_name\": \"\", \r\n                                \"zone\": null\r\n                            }, \r\n                            \"name\": \"default\", \r\n                            \"project_id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                            \"properties\": {\r\n                                \"HUMAN_ID\": false, \r\n                                \"NAME_ATTR\": \"name\", \r\n                                \"human_id\": null, \r\n                                \"request_ids\": []\r\n                            }, \r\n                            \"request_ids\": [], \r\n                            \"security_group_rules\": [\r\n                                {\r\n                                    \"direction\": \"ingress\", \r\n                                    \"ethertype\": \"IPv4\", \r\n                                    \"group\": {\r\n                                        \"name\": \"default\", \r\n                                        \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                    }, \r\n                                    \"id\": \"07d9e837-23b0-47d2-93ab-89a9d6f46b21\", \r\n                                    \"location\": {\r\n                                        \"cloud\": \"defaults\", \r\n                                        \"project\": {\r\n                                            \"domain_id\": null, \r\n                                            \"domain_name\": null, \r\n                                            \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                                            \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                                        }, \r\n                                        \"region_name\": \"\", \r\n                                        \"zone\": null\r\n                                    }, \r\n                                    \"port_range_max\": null, \r\n                                    \"port_range_min\": null, \r\n                                    \"project_id\": \"\", \r\n                                    \"properties\": {\r\n                                        \"group\": {\r\n                                            \"name\": \"default\", \r\n                                            \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                        }\r\n                                    }, \r\n                                    \"protocol\": null, \r\n                                    \"remote_group_id\": null, \r\n                                    \"remote_ip_prefix\": null, \r\n                                    \"security_group_id\": \"dc3d62e6-db74-48ea-801d-f3f99504b9ec\", \r\n                                    \"tenant_id\": \"\"\r\n                                }, \r\n                                {\r\n                                    \"direction\": \"ingress\", \r\n                                    \"ethertype\": \"IPv4\", \r\n                                    \"group\": {\r\n                                        \"name\": \"default\", \r\n                                        \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                    }, \r\n                                    \"id\": \"4f2cb431-90a5-46a0-bc57-b98a4ea7ca97\", \r\n                                    \"location\": {\r\n                                        \"cloud\": \"defaults\", \r\n                                        \"project\": {\r\n                                            \"domain_id\": null, \r\n                                            \"domain_name\": null, \r\n                                            \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                                            \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                                        }, \r\n                                        \"region_name\": \"\", \r\n                                        \"zone\": null\r\n                                    }, \r\n                                    \"port_range_max\": null, \r\n                                    \"port_range_min\": null, \r\n                                    \"project_id\": \"\", \r\n                                    \"properties\": {\r\n                                        \"group\": {\r\n                                            \"name\": \"default\", \r\n                                            \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                        }\r\n                                    }, \r\n                                    \"protocol\": null, \r\n                                    \"remote_group_id\": null, \r\n                                    \"remote_ip_prefix\": null, \r\n                                    \"security_group_id\": \"dc3d62e6-db74-48ea-801d-f3f99504b9ec\", \r\n                                    \"tenant_id\": \"\"\r\n                                }\r\n                            ], \r\n                            \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                        }\r\n                    ], \r\n                    \"status\": \"ACTIVE\", \r\n                    \"task_state\": null, \r\n                    \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                    \"terminated_at\": null, \r\n                    \"updated\": \"2017-01-27T00:41:07Z\", \r\n                    \"user_id\": \"6fdaef18f58e40bfb4d10f17a54554f3\", \r\n                    \"vm_state\": \"active\", \r\n                    \"volumes\": []\r\n                }\r\n            }, \r\n            {\r\n                \"_ansible_item_label\": [\r\n                    \"http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/\", \r\n                    \"atomic-e2e-jenkins\", \r\n                    \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\", \r\n                    \"atomic-e2e-jenkins-test\", \r\n                    \"present\", \r\n                    \"CentOS-7-x86_64-GenericCloud-released-latest\", \r\n                    \"ci-factory\", \r\n                    \"m1.small\", \r\n                    \"net-name=atomic-e2e-jenkins-test\", \r\n                    \"ae2e\", \r\n                    \"test\", \r\n                    2, \r\n                    \"10.8.172.0/22\"\r\n                ], \r\n                \"_ansible_item_result\": true, \r\n                \"_ansible_no_log\": false, \r\n                \"_ansible_parsed\": true, \r\n                \"changed\": true, \r\n                \"id\": \"ddbda027-0b8e-4982-a14e-301619db15b4\", \r\n                \"instance\": [\r\n                    \"http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/\", \r\n                    \"atomic-e2e-jenkins\", \r\n                    \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\", \r\n                    \"atomic-e2e-jenkins-test\", \r\n                    \"present\", \r\n                    \"CentOS-7-x86_64-GenericCloud-released-latest\", \r\n                    \"ci-factory\", \r\n                    \"m1.small\", \r\n                    \"net-name=atomic-e2e-jenkins-test\", \r\n                    \"ae2e\", \r\n                    \"test\", \r\n                    2, \r\n                    \"10.8.172.0/22\"\r\n                ], \r\n                \"invocation\": {\r\n                    \"module_args\": {\r\n                        \"api_timeout\": 99999, \r\n                        \"auth\": {\r\n                            \"auth_url\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\", \r\n                            \"password\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\", \r\n                            \"project_name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\", \r\n                            \"username\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                        }, \r\n                        \"auth_type\": null, \r\n                        \"auto_ip\": true, \r\n                        \"availability_zone\": null, \r\n                        \"boot_from_volume\": false, \r\n                        \"boot_volume\": null, \r\n                        \"cacert\": null, \r\n                        \"cert\": null, \r\n                        \"cloud\": null, \r\n                        \"config_drive\": false, \r\n                        \"delete_fip\": false, \r\n                        \"endpoint_type\": \"public\", \r\n                        \"flavor\": \"m1.small\", \r\n                        \"flavor_include\": null, \r\n                        \"flavor_ram\": null, \r\n                        \"floating_ip_pools\": [\r\n                            \"10.8.172.0/22\"\r\n                        ], \r\n                        \"floating_ips\": null, \r\n                        \"image\": \"CentOS-7-x86_64-GenericCloud-released-latest\", \r\n                        \"image_exclude\": \"(deprecated)\", \r\n                        \"key\": null, \r\n                        \"key_name\": \"ci-factory\", \r\n                        \"meta\": null, \r\n                        \"name\": \"ae2e_test_2\", \r\n                        \"network\": null, \r\n                        \"nics\": [\r\n                            \"net-name=********-test\"\r\n                        ], \r\n                        \"region_name\": null, \r\n                        \"reuse_ips\": true, \r\n                        \"scheduler_hints\": null, \r\n                        \"security_groups\": [\r\n                            \"default\"\r\n                        ], \r\n                        \"state\": \"present\", \r\n                        \"terminate_volume\": false, \r\n                        \"timeout\": 180, \r\n                        \"userdata\": null, \r\n                        \"verify\": true, \r\n                        \"volume_size\": false, \r\n                        \"volumes\": [], \r\n                        \"wait\": true\r\n                    }, \r\n                    \"module_name\": \"os_server\"\r\n                }, \r\n                \"openstack\": {\r\n                    \"OS-DCF:diskConfig\": \"MANUAL\", \r\n                    \"OS-EXT-AZ:availability_zone\": \"nova\", \r\n                    \"OS-EXT-STS:power_state\": 1, \r\n                    \"OS-EXT-STS:task_state\": null, \r\n                    \"OS-EXT-STS:vm_state\": \"active\", \r\n                    \"OS-SRV-USG:launched_at\": \"2017-01-27T00:41:48.000000\", \r\n                    \"OS-SRV-USG:terminated_at\": null, \r\n                    \"accessIPv4\": \"10.8.175.134\", \r\n                    \"accessIPv6\": \"\", \r\n                    \"addresses\": {\r\n                        \"atomic-e2e-jenkins-test\": [\r\n                            {\r\n                                \"OS-EXT-IPS-MAC:mac_addr\": \"fa:16:3e:40:77:40\", \r\n                                \"OS-EXT-IPS:type\": \"fixed\", \r\n                                \"addr\": \"172.16.171.66\", \r\n                                \"version\": 4\r\n                            }, \r\n                            {\r\n                                \"OS-EXT-IPS-MAC:mac_addr\": \"de:ad:be:ef:be:ef\", \r\n                                \"OS-EXT-IPS:type\": \"floating\", \r\n                                \"addr\": \"10.8.175.134\", \r\n                                \"version\": 4\r\n                            }\r\n                        ]\r\n                    }, \r\n                    \"adminPass\": \"poEpH8ip2imj\", \r\n                    \"az\": \"nova\", \r\n                    \"cloud\": \"defaults\", \r\n                    \"config_drive\": \"\", \r\n                    \"created\": \"2017-01-27T00:41:34Z\", \r\n                    \"disk_config\": \"MANUAL\", \r\n                    \"flavor\": {\r\n                        \"id\": \"2\", \r\n                        \"name\": \"m1.small\"\r\n                    }, \r\n                    \"has_config_drive\": false, \r\n                    \"hostId\": \"9300393529ce577347992bde8e00f5a4e36bd990de4411da60940f03\", \r\n                    \"host_id\": \"9300393529ce577347992bde8e00f5a4e36bd990de4411da60940f03\", \r\n                    \"id\": \"ddbda027-0b8e-4982-a14e-301619db15b4\", \r\n                    \"image\": {\r\n                        \"id\": \"3bcfd17c-6bf0-4134-ae7f-80bded8b46fd\", \r\n                        \"name\": \"CentOS-7-x86_64-GenericCloud-released-latest\"\r\n                    }, \r\n                    \"interface_ip\": \"10.8.175.134\", \r\n                    \"key_name\": \"ci-factory\", \r\n                    \"launched_at\": \"2017-01-27T00:41:48.000000\", \r\n                    \"location\": {\r\n                        \"cloud\": \"defaults\", \r\n                        \"project\": {\r\n                            \"domain_id\": null, \r\n                            \"domain_name\": null, \r\n                            \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                            \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                        }, \r\n                        \"region_name\": \"\", \r\n                        \"zone\": \"nova\"\r\n                    }, \r\n                    \"metadata\": {}, \r\n                    \"name\": \"ae2e_test_2\", \r\n                    \"networks\": {\r\n                        \"atomic-e2e-jenkins-test\": [\r\n                            \"172.16.171.66\"\r\n                        ]\r\n                    }, \r\n                    \"os-extended-volumes:volumes_attached\": [], \r\n                    \"power_state\": 1, \r\n                    \"private_v4\": \"172.16.171.66\", \r\n                    \"progress\": 0, \r\n                    \"project_id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                    \"properties\": {\r\n                        \"OS-DCF:diskConfig\": \"MANUAL\", \r\n                        \"OS-EXT-AZ:availability_zone\": \"nova\", \r\n                        \"OS-EXT-STS:power_state\": 1, \r\n                        \"OS-EXT-STS:task_state\": null, \r\n                        \"OS-EXT-STS:vm_state\": \"active\", \r\n                        \"OS-SRV-USG:launched_at\": \"2017-01-27T00:41:48.000000\", \r\n                        \"OS-SRV-USG:terminated_at\": null, \r\n                        \"os-extended-volumes:volumes_attached\": [], \r\n                        \"request_ids\": []\r\n                    }, \r\n                    \"public_v4\": \"10.8.175.134\", \r\n                    \"public_v6\": \"\", \r\n                    \"region\": \"\", \r\n                    \"request_ids\": [], \r\n                    \"security_groups\": [\r\n                        {\r\n                            \"HUMAN_ID\": false, \r\n                            \"NAME_ATTR\": \"name\", \r\n                            \"description\": \"Default security group\", \r\n                            \"human_id\": null, \r\n                            \"id\": \"dc3d62e6-db74-48ea-801d-f3f99504b9ec\", \r\n                            \"location\": {\r\n                                \"cloud\": \"defaults\", \r\n                                \"project\": {\r\n                                    \"domain_id\": null, \r\n                                    \"domain_name\": null, \r\n                                    \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                                    \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                                }, \r\n                                \"region_name\": \"\", \r\n                                \"zone\": null\r\n                            }, \r\n                            \"name\": \"default\", \r\n                            \"project_id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                            \"properties\": {\r\n                                \"HUMAN_ID\": false, \r\n                                \"NAME_ATTR\": \"name\", \r\n                                \"human_id\": null, \r\n                                \"request_ids\": []\r\n                            }, \r\n                            \"request_ids\": [], \r\n                            \"security_group_rules\": [\r\n                                {\r\n                                    \"direction\": \"ingress\", \r\n                                    \"ethertype\": \"IPv4\", \r\n                                    \"group\": {\r\n                                        \"name\": \"default\", \r\n                                        \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                    }, \r\n                                    \"id\": \"07d9e837-23b0-47d2-93ab-89a9d6f46b21\", \r\n                                    \"location\": {\r\n                                        \"cloud\": \"defaults\", \r\n                                        \"project\": {\r\n                                            \"domain_id\": null, \r\n                                            \"domain_name\": null, \r\n                                            \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                                            \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                                        }, \r\n                                        \"region_name\": \"\", \r\n                                        \"zone\": null\r\n                                    }, \r\n                                    \"port_range_max\": null, \r\n                                    \"port_range_min\": null, \r\n                                    \"project_id\": \"\", \r\n                                    \"properties\": {\r\n                                        \"group\": {\r\n                                            \"name\": \"default\", \r\n                                            \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                        }\r\n                                    }, \r\n                                    \"protocol\": null, \r\n                                    \"remote_group_id\": null, \r\n                                    \"remote_ip_prefix\": null, \r\n                                    \"security_group_id\": \"dc3d62e6-db74-48ea-801d-f3f99504b9ec\", \r\n                                    \"tenant_id\": \"\"\r\n                                }, \r\n                                {\r\n                                    \"direction\": \"ingress\", \r\n                                    \"ethertype\": \"IPv4\", \r\n                                    \"group\": {\r\n                                        \"name\": \"default\", \r\n                                        \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                    }, \r\n                                    \"id\": \"4f2cb431-90a5-46a0-bc57-b98a4ea7ca97\", \r\n                                    \"location\": {\r\n                                        \"cloud\": \"defaults\", \r\n                                        \"project\": {\r\n                                            \"domain_id\": null, \r\n                                            \"domain_name\": null, \r\n                                            \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                                            \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                                        }, \r\n                                        \"region_name\": \"\", \r\n                                        \"zone\": null\r\n                                    }, \r\n                                    \"port_range_max\": null, \r\n                                    \"port_range_min\": null, \r\n                                    \"project_id\": \"\", \r\n                                    \"properties\": {\r\n                                        \"group\": {\r\n                                            \"name\": \"default\", \r\n                                            \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                        }\r\n                                    }, \r\n                                    \"protocol\": null, \r\n                                    \"remote_group_id\": null, \r\n                                    \"remote_ip_prefix\": null, \r\n                                    \"security_group_id\": \"dc3d62e6-db74-48ea-801d-f3f99504b9ec\", \r\n                                    \"tenant_id\": \"\"\r\n                                }\r\n                            ], \r\n                            \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                        }\r\n                    ], \r\n                    \"status\": \"ACTIVE\", \r\n                    \"task_state\": null, \r\n                    \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                    \"terminated_at\": null, \r\n                    \"updated\": \"2017-01-27T00:41:48Z\", \r\n                    \"user_id\": \"6fdaef18f58e40bfb4d10f17a54554f3\", \r\n                    \"vm_state\": \"active\", \r\n                    \"volumes\": []\r\n                }, \r\n                \"server\": {\r\n                    \"OS-DCF:diskConfig\": \"MANUAL\", \r\n                    \"OS-EXT-AZ:availability_zone\": \"nova\", \r\n                    \"OS-EXT-STS:power_state\": 1, \r\n                    \"OS-EXT-STS:task_state\": null, \r\n                    \"OS-EXT-STS:vm_state\": \"active\", \r\n                    \"OS-SRV-USG:launched_at\": \"2017-01-27T00:41:48.000000\", \r\n                    \"OS-SRV-USG:terminated_at\": null, \r\n                    \"accessIPv4\": \"10.8.175.134\", \r\n                    \"accessIPv6\": \"\", \r\n                    \"addresses\": {\r\n                        \"atomic-e2e-jenkins-test\": [\r\n                            {\r\n                                \"OS-EXT-IPS-MAC:mac_addr\": \"fa:16:3e:40:77:40\", \r\n                                \"OS-EXT-IPS:type\": \"fixed\", \r\n                                \"addr\": \"172.16.171.66\", \r\n                                \"version\": 4\r\n                            }, \r\n                            {\r\n                                \"OS-EXT-IPS-MAC:mac_addr\": \"de:ad:be:ef:be:ef\", \r\n                                \"OS-EXT-IPS:type\": \"floating\", \r\n                                \"addr\": \"10.8.175.134\", \r\n                                \"version\": 4\r\n                            }\r\n                        ]\r\n                    }, \r\n                    \"adminPass\": \"poEpH8ip2imj\", \r\n                    \"az\": \"nova\", \r\n                    \"cloud\": \"defaults\", \r\n                    \"config_drive\": \"\", \r\n                    \"created\": \"2017-01-27T00:41:34Z\", \r\n                    \"disk_config\": \"MANUAL\", \r\n                    \"flavor\": {\r\n                        \"id\": \"2\", \r\n                        \"name\": \"m1.small\"\r\n                    }, \r\n                    \"has_config_drive\": false, \r\n                    \"hostId\": \"9300393529ce577347992bde8e00f5a4e36bd990de4411da60940f03\", \r\n                    \"host_id\": \"9300393529ce577347992bde8e00f5a4e36bd990de4411da60940f03\", \r\n                    \"id\": \"ddbda027-0b8e-4982-a14e-301619db15b4\", \r\n                    \"image\": {\r\n                        \"id\": \"3bcfd17c-6bf0-4134-ae7f-80bded8b46fd\", \r\n                        \"name\": \"CentOS-7-x86_64-GenericCloud-released-latest\"\r\n                    }, \r\n                    \"interface_ip\": \"10.8.175.134\", \r\n                    \"key_name\": \"ci-factory\", \r\n                    \"launched_at\": \"2017-01-27T00:41:48.000000\", \r\n                    \"location\": {\r\n                        \"cloud\": \"defaults\", \r\n                        \"project\": {\r\n                            \"domain_id\": null, \r\n                            \"domain_name\": null, \r\n                            \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                            \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                        }, \r\n                        \"region_name\": \"\", \r\n                        \"zone\": \"nova\"\r\n                    }, \r\n                    \"metadata\": {}, \r\n                    \"name\": \"ae2e_test_2\", \r\n                    \"networks\": {\r\n                        \"atomic-e2e-jenkins-test\": [\r\n                            \"172.16.171.66\"\r\n                        ]\r\n                    }, \r\n                    \"os-extended-volumes:volumes_attached\": [], \r\n                    \"power_state\": 1, \r\n                    \"private_v4\": \"172.16.171.66\", \r\n                    \"progress\": 0, \r\n                    \"project_id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                    \"properties\": {\r\n                        \"OS-DCF:diskConfig\": \"MANUAL\", \r\n                        \"OS-EXT-AZ:availability_zone\": \"nova\", \r\n                        \"OS-EXT-STS:power_state\": 1, \r\n                        \"OS-EXT-STS:task_state\": null, \r\n                        \"OS-EXT-STS:vm_state\": \"active\", \r\n                        \"OS-SRV-USG:launched_at\": \"2017-01-27T00:41:48.000000\", \r\n                        \"OS-SRV-USG:terminated_at\": null, \r\n                        \"os-extended-volumes:volumes_attached\": [], \r\n                        \"request_ids\": []\r\n                    }, \r\n                    \"public_v4\": \"10.8.175.134\", \r\n                    \"public_v6\": \"\", \r\n                    \"region\": \"\", \r\n                    \"request_ids\": [], \r\n                    \"security_groups\": [\r\n                        {\r\n                            \"HUMAN_ID\": false, \r\n                            \"NAME_ATTR\": \"name\", \r\n                            \"description\": \"Default security group\", \r\n                            \"human_id\": null, \r\n                            \"id\": \"dc3d62e6-db74-48ea-801d-f3f99504b9ec\", \r\n                            \"location\": {\r\n                                \"cloud\": \"defaults\", \r\n                                \"project\": {\r\n                                    \"domain_id\": null, \r\n                                    \"domain_name\": null, \r\n                                    \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                                    \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                                }, \r\n                                \"region_name\": \"\", \r\n                                \"zone\": null\r\n                            }, \r\n                            \"name\": \"default\", \r\n                            \"project_id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                            \"properties\": {\r\n                                \"HUMAN_ID\": false, \r\n                                \"NAME_ATTR\": \"name\", \r\n                                \"human_id\": null, \r\n                                \"request_ids\": []\r\n                            }, \r\n                            \"request_ids\": [], \r\n                            \"security_group_rules\": [\r\n                                {\r\n                                    \"direction\": \"ingress\", \r\n                                    \"ethertype\": \"IPv4\", \r\n                                    \"group\": {\r\n                                        \"name\": \"default\", \r\n                                        \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                    }, \r\n                                    \"id\": \"07d9e837-23b0-47d2-93ab-89a9d6f46b21\", \r\n                                    \"location\": {\r\n                                        \"cloud\": \"defaults\", \r\n                                        \"project\": {\r\n                                            \"domain_id\": null, \r\n                                            \"domain_name\": null, \r\n                                            \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                                            \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                                        }, \r\n                                        \"region_name\": \"\", \r\n                                        \"zone\": null\r\n                                    }, \r\n                                    \"port_range_max\": null, \r\n                                    \"port_range_min\": null, \r\n                                    \"project_id\": \"\", \r\n                                    \"properties\": {\r\n                                        \"group\": {\r\n                                            \"name\": \"default\", \r\n                                            \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                        }\r\n                                    }, \r\n                                    \"protocol\": null, \r\n                                    \"remote_group_id\": null, \r\n                                    \"remote_ip_prefix\": null, \r\n                                    \"security_group_id\": \"dc3d62e6-db74-48ea-801d-f3f99504b9ec\", \r\n                                    \"tenant_id\": \"\"\r\n                                }, \r\n                                {\r\n                                    \"direction\": \"ingress\", \r\n                                    \"ethertype\": \"IPv4\", \r\n                                    \"group\": {\r\n                                        \"name\": \"default\", \r\n                                        \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                    }, \r\n                                    \"id\": \"4f2cb431-90a5-46a0-bc57-b98a4ea7ca97\", \r\n                                    \"location\": {\r\n                                        \"cloud\": \"defaults\", \r\n                                        \"project\": {\r\n                                            \"domain_id\": null, \r\n                                            \"domain_name\": null, \r\n                                            \"id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                                            \"name\": \"VALUE_SPECIFIED_IN_NO_LOG_PARAMETER\"\r\n                                        }, \r\n                                        \"region_name\": \"\", \r\n                                        \"zone\": null\r\n                                    }, \r\n                                    \"port_range_max\": null, \r\n                                    \"port_range_min\": null, \r\n                                    \"project_id\": \"\", \r\n                                    \"properties\": {\r\n                                        \"group\": {\r\n                                            \"name\": \"default\", \r\n                                            \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                                        }\r\n                                    }, \r\n                                    \"protocol\": null, \r\n                                    \"remote_group_id\": null, \r\n                                    \"remote_ip_prefix\": null, \r\n                                    \"security_group_id\": \"dc3d62e6-db74-48ea-801d-f3f99504b9ec\", \r\n                                    \"tenant_id\": \"\"\r\n                                }\r\n                            ], \r\n                            \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\"\r\n                        }\r\n                    ], \r\n                    \"status\": \"ACTIVE\", \r\n                    \"task_state\": null, \r\n                    \"tenant_id\": \"4ace8180769a42e7b7ef2d795c555002\", \r\n                    \"terminated_at\": null, \r\n                    \"updated\": \"2017-01-27T00:41:48Z\", \r\n                    \"user_id\": \"6fdaef18f58e40bfb4d10f17a54554f3\", \r\n                    \"vm_state\": \"active\", \r\n                    \"volumes\": []\r\n                }\r\n            }\r\n        ], \r\n        \"os_volume_res\": [], \r\n        \"rax_server_res\": []\r\n    }\r\n}\u001b[0m\r\n\r\nTASK [output_writer : DEBUG:: inventory_layout] ********************************\r\n\u001b[0;32mok: [localhost] => {\r\n    \"msg\": {\r\n        \"host_groups\": {\r\n            \"OSEv3\": {\r\n                \"children\": [\r\n                    \"masters\", \r\n                    \"nodes\"\r\n                ], \r\n                \"vars\": {\r\n                    \"ansible_ssh_user\": root\r\n                    \"ansible_sudo\": \"False\", \r\n                    \"debug_level\": 2, \r\n                    \"openshift_docker_additional_registries\": \"\\\"registry.example.com\\\"\\n\", \r\n                    \"openshift_docker_insecure_registries\": \"\\\"registry.example.com\\\"\\n\", \r\n                    \"openshift_override_hostname_check\": \"True\", \r\n                    \"openshift_set_hostname\": \"True\"\r\n                }\r\n            }\r\n        }, \r\n        \"hosts\": {\r\n            \"openshift-master\": {\r\n                \"host_groups\": [\r\n                    \"masters\", \r\n                    \"nodes\", \r\n                    \"OSEv3\"\r\n                ]\r\n            }, \r\n            \"openshift-node\": {\r\n                \"count\": 1, \r\n                \"host_groups\": [\r\n                    \"nodes\", \r\n                    \"OSEv3\"\r\n                ]\r\n            }, \r\n            \"openshift-repo-host\": {\r\n                \"host_groups\": [\r\n                    \"nodes\", \r\n                    \"OSEv3\", \r\n                    \"repo_host\"\r\n                ]\r\n            }\r\n        }, \r\n        \"vars\": {\r\n            \"openshift_hostname\": \"__IP__\", \r\n            \"openshift_public_hostname\": \"__IP__\"\r\n        }\r\n    }\r\n}\u001b[0m\r\n\r\nTASK [output_writer : Generate outputs when async is false] ********************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;33mchanged: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0007262229919433594
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : Async:: Updating topology_outputs] ***********************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01299142837524414
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0015704631805419922
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : register var for async_outputs_os_server] ****************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.02234673500061035
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0010271072387695312
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : Wait on jobs] ********************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.05425596237182617
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost] => (item={u'_ansible_parsed': True, u'changed': True, u'_ansible_item_label': [u'http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/', u'atomic-e2e-jenkins', u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'atomic-e2e-jenkins-test', u'present', u'CentOS-7-x86_64-GenericCloud-released-latest\u001b[0m\r\n\u001b[0;36mskipping: [localhost] => (item={u'_ansible_parsed': True, u'changed': True, u'_ansible_item_label': [u'http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/', u'atomic-e2e-jenkins', u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'atomic-e2e-jenkins-test', u'present', u'CentOS-7-x86_64-GenericCloud-released-latest\u001b[0m\r\n\u001b[0;36mskipping: [localhost] => (item={u'_ansible_parsed': True, u'changed': True, u'_ansible_item_label': [u'http://dashboard.centralci.eng.rdu2.redhat.com:5000/v2.0/', u'atomic-e2e-jenkins', u'VALUE_SPECIFIED_IN_NO_LOG_PARAMETER', u'atomic-e2e-jenkins-test', u'present', u'CentOS-7-x86_64-GenericCloud-released-latest\u001b[0m\r\n\r\nTASK [output_writer : register var for async_outputs_os_obj] *******************\r\n\u001b[0;36mskipping: [localhost]\u001b[0m\r\n\r\nTASK [output_writer : Wait on jobs] ********************************************\r\n\r\nTASK [output_writer : register var for async_outputs_os_obj] *******************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0076448917388916016
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0005795955657958984
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : Wait on jobs] ********************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.02024054527282715
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : register var for async_outputs_os_server] ****************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.013261795043945312
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0010986328125
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : Wait on jobs] ********************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01934194564819336
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : register var for async_outputs_aws_ec2] ******************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01990222930908203
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0007321834564208984
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : Wait on jobs] ********************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.014792919158935547
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : register var for async_outputs_aws_ec2] ******************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01873040199279785
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0006754398345947266
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : Wait on jobs] ********************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.016553878784179688
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : register var for async_outputs_aws_ec2] ******************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.015215635299682617
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0007658004760742188
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : Wait on jobs] ********************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.02138519287109375
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : Async:: Updating topology_outputs after wait] ************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.012099266052246094
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00041484832763671875
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : Generate outputs when async is true] *********************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.018149614334106445
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;36mskipping: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00039958953857421875
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [output_writer : set name for linchpin_output_file for inventory generation] ***\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.01736164093017578
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.004701137542724609
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nPLAY [inventory generation role] ***********************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0021126270294189453
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [inventory_gen : include_vars] ********************************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.023167848587036133
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0012464523315429688
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [inventory_gen : Updating topology_outputs] *******************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.05489349365234375
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0004208087921142578
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [inventory_gen : DEBUG:: inventory_layout] ********************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.025612354278564453
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost] => {\r\n    \"msg\": {\r\n        \"host_groups\": {\r\n            \"OSEv3\": {\r\n                \"children\": [\r\n                    \"masters\", \r\n                    \"nodes\"\r\n                ], \r\n                \"vars\": {\r\n                    \"ansible_ssh_user\": root, \r\n                    \"ansible_sudo\": \"False\", \r\n                    \"debug_level\": 2, \r\n                    \"openshift_docker_additional_registries\": \"\\\"registry.example.com\\\"\\n\", \r\n                    \"openshift_docker_insecure_registries\": \"\\\"registry.example.com\\\"\\n\", \r\n                    \"openshift_override_hostname_check\": \"True\", \r\n                    \"openshift_set_hostname\": \"True\"\r\n                }\r\n            }\r\n        }, \r\n        \"hosts\": {\r\n            \"openshift-master\": {\r\n                \"host_groups\": [\r\n                    \"masters\", \r\n                    \"nodes\", \r\n                    \"OSEv3\"\r\n                ]\r\n            }, \r\n            \"openshift-node\": {\r\n                \"count\": 1, \r\n                \"host_groups\": [\r\n                    \"nodes\", \r\n                    \"OSEv3\"\r\n                ]\r\n            }, \r\n            \"openshift-repo-host\": {\r\n                \"host_groups\": [\r\n                    \"nodes\", \r\n                    \"OSEv3\", \r\n                    \"repo_host\"\r\n                ]\r\n            }\r\n        }, \r\n        \"vars\": {\r\n            \"openshift_hostname\": \"__IP__\", \r\n            \"openshift_public_hostname\": \"__IP__\"\r\n        }\r\n    }\r\n}\u001b[0m\r\n\r\nTASK [inventory_gen : include the layout file for inventory generation] ********\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00880289077758789
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0014529228210449219
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [inventory_gen : DEBUG:: inventory_outputs_path ##########] ***************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.023638248443603516
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost] => {\r\n    \"msg\": \"/home/herlo/Projects/lpdemo/inventories\"\r\n}\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 1.698204040527344e-05
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [inventory_gen : Updating inventory_output_file with the absolute path] ***\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.020901918411254883
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;32mok: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00042557716369628906
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nTASK [inventory_gen : Generate Generic Inventory] ******************************\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.27611589431762695
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b[0;33mchanged: [localhost]\u001b[0m\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0011649131774902344
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nPLAY RECAP *********************************************************************\r\n\u001b[0;33mlocalhost\u001b[0m                  : \u001b[0;32mok=36  \u001b[0m \u001b[0;33mchanged=5   \u001b[0m unreachable=0    failed=0   \r\n\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.045705318450927734
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;linchpin rise\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0003235340118408203
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s lpdemo]$ ",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "ECHO",
+      "data": "ls inv",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\t",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "entories/",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0010442733764648438
+    },
+    {
+      "act": "WRITE",
+      "data": "simple_ae2e_test.inventory\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.004652500152587891
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;ls inventories/\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0011391639709472656
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s lpdemo]$ ",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "ECHO",
+      "data": "cat s",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\u007f",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\b\u001b[K",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "ECHO",
+      "data": "inv",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\t",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "entories/",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "ECHO",
+      "data": "sam",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\t",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\u0007",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "ECHO",
+      "data": "pl",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\t",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\u0007",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\u007f",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\b\u001b[K",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\u007f",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\b\u001b[K",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\u007f",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\b\u001b[K",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\u007f",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\b\u001b[K",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\u007f",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\b\u001b[K",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\u007f",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\b\u001b[K",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "ECHO",
+      "data": "/sim",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\t",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "ple_ae2e_test.inventory ",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0005042552947998047
+    },
+    {
+      "act": "WRITE",
+      "data": "[OSEv3:children]\r\nmasters\r\nnodes\r\n\r\n[OSEv3:vars]\r\nopenshift_override_hostname_check = True\r\nopenshift_docker_insecure_registries = \"registry.example.com\"\r\n\t\r\nopenshift_docker_additional_registries = \"registry.example.com\"\r\n\t\r\ndebug_level = 2\r\nopenshift_set_hostname = True\r\nansible_ssh_user = root\r\nansible_sudo = False\r\n\r\n[repo_host]\r\n10.8.174.128 openshift_public_hostname=10.8.174.128  openshift_hostname=10.8.174.128 \r\n\r\n[nodes]\r\n10.8.174.13 openshift_public_hostname=10.8.174.13  openshift_hostname=10.8.174.13 \r\n10.8.174.128 openshift_public_hostname=10.8.174.128  openshift_hostname=10.8.174.128 \r\n10.8.175.134 openshift_public_hostname=10.8.175.134  openshift_hostname=10.8.175.134 \r\n\r\n[masters]\r\n10.8.174.13 openshift_public_hostname=10.8.174.13  openshift_hostname=10.8.174.13 \r\n\r\n[OSEv3]\r\n10.8.174.13 openshift_public_hostname=10.8.174.13  openshift_hostname=10.8.174.13 \r\n10.8.174.128 openshift_public_hostname=10.8.174.128  openshift_hostname=10.8.174.128 \r\n10.8.175.134 openshift_public_hostname=10.8.175.134  openshift_hostname=10.8.175.134 \r\n\r\n[all]\r\n10.8.174.13 openshift_public_hostname=10.8.174.13  openshift_hostname=10.8.174.13 \r\n10.8.174.128 openshift_public_hostname=10.8.174.128  openshift_hostname=10.8.174.128 \r\n10.8.175.134 openshift_public_hostname=10.8.175.134  openshift_hostname=10.8.175.134 \r\n\r\n\u001b]777;notify;Command completed;cat inventories/simple_ae2e_test.inventory \u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007(venv)",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s lpdemo]$ ",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;exit\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.00035381317138671875
+    },
+    {
+      "act": "ECHO",
+      "data": "nova list | grep ae2e_test",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 2.138728380203247
+    },
+    {
+      "act": "WRITE",
+      "data": "| 8076dc8d-085e-434d-9063-13012df80fc0 | \u001b[01;31m\u001b[Kae2e_test\u001b[m\u001b[K_0                      | ACTIVE  | -          | Running     | atomic-e2e-jenkins-test=172.16.171.135, 10.8.174.128                                          |\r\n| 708834aa-f433-4892-ae2f-fa7a3b8b8bb8 | \u001b[01;31m\u001b[Kae2e_test\u001b[m\u001b[K_1                      | ACTIVE  | -          | Running     | atomic-e2e-jenkins-test=172.16.171.136, 10.8.174.13                                           |\r\n| 49b02e66-6d55-48f0-a4ef-3f5794c139f0 | \u001b[01;31m\u001b[Kae2e_test\u001b[m\u001b[K_2                      | ACTIVE  | -          | Running     | atomic-e2e-jenkins-test=172.16.171.137, 10.8.175.134                                          |\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.021384716033935547
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;nova list | grep ae2e_test\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007[herlo@t450s lpdemo]$ ",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.10035381317138672
+    },
+    {
+      "act": "ECHO",
+      "data": "ping -c4 10.8.174.13",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0015990734100341797
+    },
+    {
+      "act": "WRITE",
+      "data": "PING 10.8.174.13 (10.8.174.13) 56(84) bytes of data.\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.14252066612243652
+    },
+    {
+      "act": "WRITE",
+      "data": "64 bytes from 10.8.174.13: icmp_seq=1 ttl=58 time=143 ms\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 1.0187880992889404
+    },
+    {
+      "act": "WRITE",
+      "data": "64 bytes from 10.8.174.13: icmp_seq=2 ttl=58 time=161 ms\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 1.0223839282989502
+    },
+    {
+      "act": "WRITE",
+      "data": "64 bytes from 10.8.174.13: icmp_seq=3 ttl=58 time=183 ms\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 1.8166539669036865
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n--- 10.8.174.13 ping statistics ---\r\n4 packets transmitted, 3 received, 25% packet loss, time 3004ms\r\nrtt min/avg/max/mdev = 143.384/163.033/183.839/16.535 ms\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0022923946380615234
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;ping -c4 10.8.174.13\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.002238750457763672
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s lpdemo]$ ",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\u001b",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "[",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "1",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": ";",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "5",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "C",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "ECHO",
+      "data": "ssh -i ~/Projects/rh/git/atomic-ci-jobs/project/config/keys/ci-factory root@10.8.174.128",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.870408296585083
+    },
+    {
+      "act": "WRITE",
+      "data": "Warning: Permanently added '10.8.174.128' (RSA) to the list of known hosts.\r\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 2.0563008785247803
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]0;root@ae2e-test-0:~\u0007\u001b[?1034h[root@ae2e-test-0 ~]# ",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "u",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "p",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.058737993240356445
+    },
+    {
+      "act": "WRITE",
+      "data": "u",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0631566047668457
+    },
+    {
+      "act": "WRITE",
+      "data": "p",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "t",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "i",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.031152009963989258
+    },
+    {
+      "act": "WRITE",
+      "data": "t",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "m",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.061261892318725586
+    },
+    {
+      "act": "WRITE",
+      "data": "i",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "e",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0350489616394043
+    },
+    {
+      "act": "WRITE",
+      "data": "m",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.07953238487243652
+    },
+    {
+      "act": "WRITE",
+      "data": "e",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.19125032424926758
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n 01:06:37 up 2 min,  1 user,  load average: 0.00, 0.00, 0.00\r\n\u001b]0;root@ae2e-test-0:~\u0007[root@ae2e-test-0 ~]# ",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "c",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.14731717109680176
+    },
+    {
+      "act": "WRITE",
+      "data": "c",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "a",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "t",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.022505760192871094
+    },
+    {
+      "act": "WRITE",
+      "data": "a",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.16186141967773438
+    },
+    {
+      "act": "WRITE",
+      "data": "t",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": " ",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.15652179718017578
+    },
+    {
+      "act": "WRITE",
+      "data": " ",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "/",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "e",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "t",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "/",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.17444515228271484
+    },
+    {
+      "act": "WRITE",
+      "data": "et",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "c",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.12199020385742188
+    },
+    {
+      "act": "WRITE",
+      "data": "c",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "/",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.13934946060180664
+    },
+    {
+      "act": "WRITE",
+      "data": "/",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "r",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "e",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.022340774536132812
+    },
+    {
+      "act": "WRITE",
+      "data": "r",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.15714335441589355
+    },
+    {
+      "act": "WRITE",
+      "data": "e",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "d",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "h",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "a",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "t",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.09454035758972168
+    },
+    {
+      "act": "WRITE",
+      "data": "dha",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.024024009704589844
+    },
+    {
+      "act": "WRITE",
+      "data": "t",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\t",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.1175377368927002
+    },
+    {
+      "act": "WRITE",
+      "data": "\u0007-",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "r",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "e",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.04549431800842285
+    },
+    {
+      "act": "WRITE",
+      "data": "r",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.07412242889404297
+    },
+    {
+      "act": "WRITE",
+      "data": "e",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\t",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.21265029907226562
+    },
+    {
+      "act": "WRITE",
+      "data": "lease ",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.14596295356750488
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nRed Hat Enterprise Linux Server release 6.5 (Santiago)\r\n\u001b]0;root@ae2e-test-0:~\u0007[root@ae2e-test-0 ~]# ",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "e",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.141876220703125
+    },
+    {
+      "act": "WRITE",
+      "data": "e",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "x",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "i",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "x",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "t",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.013794422149658203
+    },
+    {
+      "act": "WRITE",
+      "data": "i",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.10102105140686035
+    },
+    {
+      "act": "WRITE",
+      "data": "t",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "READ",
+      "data": "\r",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.12509465217590332
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\nlogout\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0017628669738769531
+    },
+    {
+      "act": "WRITE",
+      "data": "Connection to 10.8.174.128 closed.\r\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0032672882080078125
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;ssh -i ~/Projects/rh/git/atomic-ci-jobs/project/config/keys/ci-factory root@10.8.174.128\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "PAUSE",
+      "duration": 0.0017235279083251953
+    },
+    {
+      "act": "WRITE",
+      "data": "(venv) [herlo@t450s lpdemo]$ ",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\u001b]777;notify;Command completed;exit\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "WRITE",
+      "data": "\r\n--END--\r\n",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    },
+    {
+      "act": "CLOSE",
+      "term": "081e99e261bc4767b48e7f6caece77d8"
+    }
+  ],
+  "shell": "/usr/bin/bash"
+}

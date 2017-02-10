@@ -1,4 +1,5 @@
 import os
+import sys
 import inspect
 import ansible
 import pprint
@@ -23,8 +24,7 @@ from github import GitHub
 class LinchpinAPI:
 
     def __init__(self):
-        base_path = os.path.dirname(__file__).split("/")
-        base_path = base_path[0:-2]
+        base_path = os.path.dirname(__file__).split("/")[0:-2]
         self.base_path = "/".join(base_path)
         self.excludes = set(["topology_upstream",
                              "layout_upstream",
@@ -38,8 +38,8 @@ class LinchpinAPI:
                             cwd+"/linch-pin/linchpin_config.yml", #for jenkins
                             "~/.linchpin_config.yml",
                             self.base_path+"/linchpin_config.yml",
-                            "/usr/linchpin_config.yml",
                             "/etc/linchpin_config.yml"]
+            config_files.extend(sys.path)
             for c_file in config_files:
                 print("debug:: searching linchpin_config file from path :: ")
                 print(c_file)
