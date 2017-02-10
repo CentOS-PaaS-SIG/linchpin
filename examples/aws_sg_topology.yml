@@ -13,15 +13,21 @@ resource_groups:
          rules:
            -
              rule_type: "inbound"
+             from_port: "8" # type 8 is ICMP echo request
+             to_port: -1
+             proto: "icmp"
+             cidr_ip: "0.0.0.0/0"
+           -
+             rule_type: "inbound"
              from_port: 22
              to_port: 22
              proto: "tcp"
              cidr_ip: "0.0.0.0/0"
            -
              rule_type: "outbound"
-             from_port: 22
-             to_port: 22
-             proto: "tcp"
+             from_port: all
+             to_port: all
+             proto: "all"
              cidr_ip: "0.0.0.0/0"
     assoc_creds: "aws_creds"
 resource_group_vars:
