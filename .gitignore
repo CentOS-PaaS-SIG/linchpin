@@ -2,7 +2,6 @@
 *.pyc
 ansible.cfg
 *.swp
-
 # generated files
 docs/build/
 build
