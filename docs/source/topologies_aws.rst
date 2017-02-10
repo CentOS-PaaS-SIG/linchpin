@@ -234,8 +234,54 @@ AWS FULLSTACK EXAMPLE
           KeyName: "sk_key"
           InstanceType: "t2.micro"
 
+
 .. note::
 
   Source of the above mentioned examples can be found at `Example Topologies <https://github.com/CentOS-PaaS-SIG/linch-pin/tree/master/ex_topo>`_
 
- 
+AWS EC2 Security Groups EXAMPLE
+````````````````````````````````
+
+.. code-block:: yaml
+
+    ---
+    topology_name: "aws_sg_topology"
+    resource_groups:
+      -
+        resource_group_name: "awssgtest"
+        res_group_type: "aws"
+        res_defs:
+          -
+            res_name: "aws_test_sg"
+            res_type: "aws_sg"
+            description: "AWS Security Group with ssh access"
+            region: "us-east-1"
+            rules:
+           -
+             rule_type: "inbound"
+             from_port: 8 # type 8 is ICMP echo request
+             to_port: -1
+             proto: "icmp"
+             cidr_ip: "0.0.0.0/0"
+           -
+             rule_type: "inbound"
+             from_port: 22
+             to_port: 22
+             proto: "tcp"
+             cidr_ip: "0.0.0.0/0"
+           -
+             rule_type: "outbound"
+             from_port: "all"
+             to_port: "all"
+             proto: "all"
+             cidr_ip: "0.0.0.0/0"
+        assoc_creds: "aws_creds"
+    resource_group_vars:
+      -
+        resource_group_name : "awssgtest"
+        test_var1: "test_var1 msg is grp1 hello"
+
+.. note::
+
+  Source of the above AWS EC2 Security Groups example can be found at `Example Topologies <https://github.com/CentOS-PaaS-SIG/linch-pin/tree/master/examples/topology>`_
+

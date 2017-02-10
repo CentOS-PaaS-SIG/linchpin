@@ -1,0 +1,11 @@
+---
+- name: Create required AWS EC2 security groups
+  ec2_group:
+    name: "{{ res_def['res_name'] }}"
+    description: "{{ res_def['description']}}"
+    region: "{{ res_def['region']}}"
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_access_key }}"
+    rules: "{{ res_def['rules'] | aws_sg_rules('inbound') }}"
+    rules_egress: "{{ res_def['rules'] | aws_sg_rules('outbound') }}"
+
