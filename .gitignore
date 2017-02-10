@@ -9,6 +9,7 @@ build
 dist
 *.egg-info/
 .eggs/
+MANIFEST
 
 # generated output and inventory files
 *.inventory*
