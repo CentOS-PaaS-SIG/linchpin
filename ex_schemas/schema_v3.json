@@ -225,10 +225,10 @@
                                 "type":"string"
                             },
                             "from_port": {
-                                "type":"number"
+                                "type":["string", "number"]
                             },
                             "to_port": {
-                                "type":"number"
+                                "type":["string", "number"]
                             },
                             "proto": {
                                 "type": "string"
