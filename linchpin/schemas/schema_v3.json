@@ -200,6 +200,49 @@
             },
             "required":["res_name","res_type"]
         },
+        "aws_sg": {
+            "type" : "object",
+            "properties" : {
+                "res_name": {
+                    "type": "string"
+                },
+                "res_type": {
+                    "type": "string",
+                    "pattern": "aws_sg"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "rules": {
+                    "type": "array",
+                    "items": {
+                    "type":"object",
+                        "properties": {
+                            "rule_type": {
+                                "type":"string"
+                            },
+                            "from_port": {
+                                "type":["string", "number"]
+                            },
+                            "to_port": {
+                                "type":["string", "number"]
+                            },
+                            "proto": {
+                                "type": "string"
+                            },
+                            "cidr_ip": {
+                                "type": "string"
+                            }
+                        }
+
+                    }
+                }
+            },
+            "required":["res_name","res_type","description"]
+        },
         "os_heat": {
             "type" : "object",
             "properties" : {
@@ -578,7 +621,8 @@
                                 {"$ref": "#/definitions/aws_ec2"},
                                 {"$ref": "#/definitions/aws_s3"},
                                 {"$ref": "#/definitions/aws_ec2_key"},
-                                {"$ref": "#/definitions/aws_cfn"}
+                                {"$ref": "#/definitions/aws_cfn"},
+                                {"$ref": "#/definitions/aws_sg"}
                             ]
                     }
                 },
