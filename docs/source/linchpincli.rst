@@ -8,10 +8,10 @@ In order view all the commands you can use linchpin --help .
 .. toctree::
    :maxdepth: 1
 
-   linchpin_config
-   linchpin_init
-   linchpin_rise
-   linchpin_drop
-   linchpin_topology
-   linchpin_layout
-   linchpin_validate
+   linchpincli_linchpin_config
+   linchpincli_linchpin_init
+   linchpincli_linchpin_rise
+   linchpincli_linchpin_drop
+   linchpincli_linchpin_topology
+   linchpincli_linchpin_layout
+   linchpincli_linchpin_validate
