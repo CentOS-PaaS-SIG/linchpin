@@ -1,0 +1,14 @@
+<pool type='logical'>
+  <name>data</name>
+  <source>
+    <name>data</name>
+    <format type='lvm2'/>
+  </source>
+  <target>
+    <path>/dev/data</path>
+    <permissions>
+      <mode>0755</mode>
+    </permissions>
+  </target>
+</pool>
+
