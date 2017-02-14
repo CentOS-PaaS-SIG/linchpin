@@ -14,7 +14,7 @@ The main goal of linch-pin is to facilitate provisioning and orchestration of re
    intro
    config
    topologies
-   linchpincli
+   linchpin_cli 
    license
 
 
