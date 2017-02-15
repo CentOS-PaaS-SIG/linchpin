@@ -26,6 +26,7 @@ MSGS = {
 
 class Config(object):
     """ Global config object accesible by all the click modules """
+    VERSION = "v1.0.0"
     def __init__(self):
         self.clipath = os.path.dirname(os.path.realpath(__file__))
         self.env = Environment(loader=PackageLoader('linchpin', 'templates'))
@@ -35,11 +36,12 @@ class Config(object):
 pass_config = click.make_pass_decorator(Config, ensure=True)
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
-@click.group(context_settings=CONTEXT_SETTINGS)
+@click.group(invoke_without_command=True, context_settings=CONTEXT_SETTINGS)
 @click.option('--verbose', is_flag=True)
 @click.option('--home-directory', type=click.Path())
+@click.option('--version', is_flag=True)
 @pass_config
-def cli(config, verbose, home_directory):
+def cli(config, verbose, home_directory, version):
     """
     Welcome to linchpin command line client
     """
@@ -47,6 +49,9 @@ def cli(config, verbose, home_directory):
     if home_directory is None:
         home_directory = '.'
     config.home_directory = home_directory
+    if version:
+        click.echo("LinchpinCLI "+Config.VERSION)
+     
 
 
 @cli.command()
@@ -278,6 +283,3 @@ def invgen(config, topoout, layout, invout, invtype):
     lpcli = LinchpinCli()
     result = lpcli.lp_invgen(topoout, layout, invout, invtype)
     pprint.pprint(result)
-
-def main():
-    print("entrypoint")
