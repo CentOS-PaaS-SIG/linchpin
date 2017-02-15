@@ -7,25 +7,11 @@ import pprint
 import os.path
 from tabulate import tabulate
 from jinja2 import Environment, PackageLoader
-from linchpin.cli.utils import checkpaths, display, mkdir, copy_files, list_by_ext
+from linchpin.cli.utils import checkpaths, display, mkdir
+from linchpin.cli.utils import list_by_ext, copy_files
 from linchpin.cli import LinchpinCli
-import shutil, errno
-import sys
-import json
-import inspect
 import pdb
-import ansible
-import pprint
 from tabulate import tabulate
-from ansible import utils
-import jsonschema as jsch
-from collections import namedtuple
-from ansible import utils
-from ansible.parsing.dataloader import DataLoader
-from ansible.vars import VariableManager
-from ansible.inventory import Inventory
-from ansible.executor.playbook_executor import PlaybookExecutor
-from ansible.plugins.callback import CallbackBase
 
 MSGS = {
 "ERROR:001": "No PinFiles files found. Please use linchpin init to initailise ", 
