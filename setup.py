@@ -6,6 +6,7 @@ import os
 # reading requirements from requirements.txt
 dir_path = os.path.dirname(os.path.realpath(__file__))
 reqs_file = 'requirements.txt'.format(dir_path)
+
 with open(reqs_file) as f:
     required = f.read().splitlines()
 
@@ -24,7 +25,11 @@ setup(
         [console_scripts]
         linchpin=linchpin:cli
     ''',
-
+    extras_require = {
+        'beaker':  ['beaker-client==23.3'],
+        'docs': ["docutils","sphinx","sphinx_rtd_theme"],
+        'tests': ["nose","mock","coverage"],
+    },
     zip_safe=False,
     packages=find_packages(),
     include_package_data=True,
