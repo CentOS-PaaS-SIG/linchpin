@@ -133,7 +133,6 @@ def topology_get(config, topo, upstream):
     """
     lpcli = LinchpinCli()
     d = lpcli.lp_topo_get(topo)
-    pprint.pprint(d)
 
 
 @cli.group()
@@ -168,7 +167,6 @@ def layouts_get(config, layout, upstream):
     """
     lpcli = LinchpinCli()
     output = lpcli.lp_layout_get(layout, upstream)
-    pprint.pprint(output)
 
 
 @cli.command()
