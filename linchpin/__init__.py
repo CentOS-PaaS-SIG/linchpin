@@ -33,9 +33,9 @@ class Config(object):
         self.lpconfig = self.env.get_template('linchpin_config.yml.j2')
 
 pass_config = click.make_pass_decorator(Config, ensure=True)
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
-
-@click.group()
+@click.group(context_settings=CONTEXT_SETTINGS)
 @click.option('--verbose', is_flag=True)
 @click.option('--home-directory', type=click.Path())
 @pass_config
