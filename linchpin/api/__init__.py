@@ -74,19 +74,6 @@ class LinchpinAPI:
                 e_vars.append(e_var_grp)
         return e_vars
 
-    def lp_list(self, config, topos=False, layouts=False):
-        """ list module of linchpin  """
-        if topos and layouts:
-            t_files = list_files(config.clipath+"/ex_topo")
-            l_files = list_files(config.clipath+"/inventory_layouts")
-            return (t_files, l_files)
-        if topos:
-            t_files = list_files(config.clipath+"/ex_topo")
-            return t_files
-        if layouts:
-            l_files = list_files(config.clipath+"/inventory_layouts")
-            return l_files
-
     def lp_topo_list(self, upstream=None):
         """
         search_order : list topologies from upstream if mentioned
@@ -109,10 +96,10 @@ class LinchpinAPI:
         # need to add checks for ./topologies
         """
         if upstream is None:
-            get_file(self.base_path + "/ex_topo/" + topo, "./topologies/")
+            get_file(self.base_path + "/examples/topology/" + topo, "./topologies/")
         else:
             g = GitHub(upstream)
-            files = g.list_files("ex_topo")
+            files = g.list_files("linchpin/examples/topology")
             link = filter(lambda link: link['name'] == topo, files)
             link = link[0]["download_url"]
             get_file(link, "./topologies", True)
@@ -124,7 +111,7 @@ class LinchpinAPI:
                        list layouts from core package
         """
         if upstream is None:
-            l_files = list_files(self.base_path + "/examples/layouts")
+            l_files = list_files(self.base_path + "examples/layouts/")
             return l_files
         else:
             g = GitHub(upstream)
@@ -138,11 +125,11 @@ class LinchpinAPI:
                        get layouts from core package
         """
         if upstream is None:
-            get_file(self.base_path + "/inventory_layouts/" + layout,
+            get_file(self.base_path + "/examples/layouts/" + layout,
                      "./layouts/")
         else:
             g = GitHub(upstream)
-            files = g.list_files("inventory_layouts")
+            files = g.list_files("linchpin/examples/layouts")
             link = filter(lambda link: link['name'] == layout, files)
             link = link[0]["download_url"]
             get_file(link, "./layouts", True)
