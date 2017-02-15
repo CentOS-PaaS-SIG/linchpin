@@ -8,10 +8,11 @@ import os.path
 from tabulate import tabulate
 from jinja2 import Environment, PackageLoader
 from linchpin.cli.utils import checkpaths, display, mkdir
-from linchpin.cli.utils import list_by_ext, copy_files
+from linchpin.cli.utils import list_by_ext, copy_files, tabulate_print
 from linchpin.cli import LinchpinCli
 import pdb
 from tabulate import tabulate
+
 
 MSGS = {
 "ERROR:001": "No PinFiles files found. Please use linchpin init to initailise ", 
@@ -36,8 +37,9 @@ class Config(object):
 pass_config = click.make_pass_decorator(Config, ensure=True)
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
+
 @click.group(invoke_without_command=True, context_settings=CONTEXT_SETTINGS)
-@click.option('--verbose', is_flag=True)
+@click.option('-v', '--verbose', count=True)
 @click.option('--home-directory', type=click.Path())
 @click.option('--version', is_flag=True)
 @pass_config
@@ -51,7 +53,6 @@ def cli(config, verbose, home_directory, version):
     config.home_directory = home_directory
     if version:
         click.echo("LinchpinCLI "+Config.VERSION)
-     
 
 
 @cli.command()
@@ -81,6 +82,25 @@ def init(config, path):
     else:
         click.echo("Invalid path to initialise!!")
 
+
+@cli.command()
+@click.option("--layout","-l", is_flag=True)
+@click.option("--topology","-t", is_flag=True)
+@click.option("--upstream", default=None, required=False)
+@pass_config
+def list(config, topology, layout, upstream):
+    """ list module of linchpin """
+    lpcli = LinchpinCli()
+    if topology:
+        click.echo(": TOPOLOGY LIST :")
+        files = lpcli.lp_topo_list(upstream)
+        tabulate_print(files, ['Sno', 'Name'])
+    if layout:
+        click.echo(": LAYOUT LIST :")
+        files = lpcli.lp_layout_list(upstream)
+        tabulate_print(files, ['Sno', 'Name'])
+
+
 @cli.group()
 @pass_config
 def topology(config):
@@ -97,11 +117,7 @@ def topology_list(config, upstream):
     lpcli = LinchpinCli()
     click.echo(": TOPOLOGIES LIST :")
     files = lpcli.lp_topo_list(upstream)
-    t_files = []
-    for i in range(0, len(files)):
-        t_files.append((i+1, files[i]["name"]))
-    headers = ["Sno", "Name"]
-    print tabulate(t_files, headers, tablefmt="fancy_grid")
+    tabulate_print(files, ['Sno', 'Name'])
 
 
 @topology.command(name='get')
@@ -136,11 +152,7 @@ def layouts_list(config, upstream):
     lpcli = LinchpinCli()
     click.echo(": LAYOUTS LIST :")
     files = lpcli.lp_layout_list(upstream)
-    t_files = []
-    for i in range(0, len(files)):
-        t_files.append((i+1, files[i]["name"]))
-    headers = ["Sno", "Name"]
-    print tabulate(t_files, headers, tablefmt="fancy_grid")
+    tabulate_print(files, ['Sno', 'Name'])
 
 
 @layout.command(name='get')
@@ -197,6 +209,7 @@ def drop(config, pf, target):
     pf = pfs[0]
     lpcli = LinchpinCli()
     output = lpcli.lp_drop(pf, target)
+
 
 @cli.command()
 @click.option("--pf",

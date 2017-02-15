@@ -26,7 +26,7 @@ MSGS = {
                       Please initialise it with lionchpin init or \
                       linchpin config --reset",
         "ERROR:005": "linchpin_config file not found. In default paths.\
-                      Please initialise it with lionchpin init or \
+                      Please initialise it with \
                       linchpin config --reset",
         "WARNING:001": "PinFile structure found current directory.\
                         Would you like to continue ?(y/n)",
@@ -119,3 +119,9 @@ def search_path(name, path):
     for root, dirs, files in os.walk(path):
         if name in files:
             return os.path.join(root, name)
+
+def tabulate_print(items, headers):
+    print_items = []
+    for i in range(0, len(items)):
+        print_items.append((i+1, items[i]["name"]))
+    print tabulate(print_items, headers, tablefmt="fancy_grid")

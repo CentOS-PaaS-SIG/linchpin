@@ -93,13 +93,13 @@ class LinchpinAPI:
                        list topologies from current folder
         """
         if upstream is None:
-            t_files = list_files(self.base_path + "/ex_topo")
+            t_files = list_files(self.base_path + "/examples/topology/")
             return t_files
         else:
             print "getting from upstream"
             g = GitHub(upstream)
             t_files = []
-            files = g.list_files("ex_topo")
+            files = g.list_files("linchpin/examples/topology")
             return files
 
     def lp_topo_get(self, topo, upstream=None):
@@ -124,12 +124,12 @@ class LinchpinAPI:
                        list layouts from core package
         """
         if upstream is None:
-            l_files = list_files(self.base_path + "/inventory_layouts")
+            l_files = list_files(self.base_path + "/examples/layouts")
             return l_files
         else:
             g = GitHub(upstream)
             l_files = []
-            files = g.list_files("inventory_layouts")
+            files = g.list_files("linchpin/examples/layouts")
             return files
 
     def lp_layout_get(self, layout, upstream=None):
