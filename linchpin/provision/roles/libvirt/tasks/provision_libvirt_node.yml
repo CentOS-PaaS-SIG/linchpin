@@ -4,7 +4,7 @@
 
 - name: "does node already exist"
   virt:
-    name: "linchpin_{{ nodeinfo[1]['res_name'] }}_{{ nodeinfo[2] }}"
+    name: "{{ nodeinfo[0] }}_{{ nodeinfo[1]['res_name'] }}_{{ nodeinfo[2] }}"
     command: status
     uri: "{{ nodeinfo[1]['uri'] | default('qemu:///system') }}"
   with_nested:
@@ -15,10 +15,6 @@
   loop_control:
     loop_var: nodeinfo
   register: node_exists
-
-#- name: "DEBUG: node_exists['changed']"
-#  debug:
-#    msg: "{{ node_exists }}"
 
 - name: set empty local_image_path
   set_fact:
@@ -39,11 +35,9 @@
     var: img_s_ext
 
 - name: "define node"
-  virt:
-    name: "linchpin_{{ instance[1]['res_name'] }}_{{ instance[2] }}"
-    command: define
-    xml: "{{ lookup('template', 'libvirt_node.xml.j2') }}"
-    uri: "{{ instance[1]['uri'] | default('qemu:///system') }}"
+  template:
+    src: "../templates/libvirt_node.xml.j2"
+    dest: "/tmp/{{ definition[1]['res_name'] }}_{{ definition[2] }}"
   with_nested:
     - ["{{ res_grp_name }}"]
     - ["{{ res_def }}"]
@@ -51,8 +45,23 @@
     - ["{{ local_image_path }}"]
     - ["{{ img_src_ext }}"]
   loop_control:
-    loop_var: instance
-  register: res_def_output
+    loop_var: definition
+  when:  node_exists['failed'] is defined
+
+- name: "define node"
+  virt:
+    name: "{{ definition[0] }}_{{ definition[1]['res_name'] }}_{{ definition[2] }}"
+    command: define
+    xml: "{{ lookup('template', 'libvirt_node.xml.j2') }}"
+    uri: "{{ definition[1]['uri'] | default('qemu:///system') }}"
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ res_def }}"]
+    - "{{ res_count.stdout }}"
+    - ["{{ local_image_path }}"]
+    - ["{{ img_src_ext }}"]
+  loop_control:
+    loop_var: definition
   when:  node_exists['failed'] is defined
 
 #- name: "map ip and mac addresses in network"
@@ -75,7 +84,7 @@
 
 - name: "start node"
   virt:
-    name: "linchpin_{{ instance[1]['res_name'] }}_{{ instance[2] }}"
+    name: "{{ instance[0] }}_{{ instance[1]['res_name'] }}_{{ instance[2] }}"
     state: running
     uri: "{{ instance[1]['uri'] | default('qemu:///system') }}"
   with_nested:
@@ -86,5 +95,81 @@
     - ["{{ img_src_ext }}"]
   loop_control:
     loop_var: instance
-  register: res_def_output
   when: async == false
+
+
+- name: mac_and_ip | extract mac address
+  shell: >
+    virsh -c {{ node[1]['uri']| default('qemu:///system') }} dumpxml {{ node[0] }}_{{ node[1]['res_name'] }}_{{ node[2] }}
+    | grep 'mac address'
+    | cut -f 2 -d "'"
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ res_def }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: node
+  register: extract_mac_address_result
+
+#- name: extract_mac_address_result
+#  debug:
+#    var: extract_mac_address_result.results[0].stdout
+
+- name: mac_and_ip | wait for dhcp ip address
+  shell: |
+    until arp -an | grep -q -F {{ extract_mac_address_result.results[mac].stdout }}; do
+      sleep 1
+    done
+    arp -an | grep -F {{ extract_mac_address_result.results[mac].stdout }} | cut -f 2 -d "(" | cut -f 1 -d ")"
+  with_items:
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: mac
+  register: extract_ip_address_result
+
+#- name: extract_ip_address_result
+#  debug:
+#    var: extract_ip_address_result.results[{{ ip }}].stdout
+#  with_items:
+#    - "{{ res_count.stdout }}"
+#  loop_control:
+#    loop_var: ip
+
+#- name: set_fact
+#  set_fact:
+#    libvirt_result_ip_addresses: []
+#
+#- name: libvirt_ip | extract facts
+#  set_fact:
+#    libvirt_result_ip_addresses: "{{ extract_ip_address_result.results[ip].stdout }}"
+#  with_items:
+#    - "{{ res_count.stdout }}"
+#  loop_control:
+#    loop_var: ip
+
+- name: "dump node data"
+  virt:
+    name: "{{ data[0] }}_{{ data[1]['res_name'] }}_{{ data[2] }}"
+    command: get_xml
+    uri: "{{ data[1]['uri'] | default('qemu:///system') }}"
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ res_def }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: data
+  when: async == false
+  register: node_data
+
+- name: "Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
+  set_fact:
+    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [extract_ip_address_result.results[xml_item].stdout] }}"
+  with_items:
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: xml_item
+  when: async == false
+
+#- name: "Append outputitem to topology_outputs"
+#  set_fact:
+#    topology_outputs_libvirt_node: "{{ topology_outputs_libvirt_node + [res_def_output] }}"
