@@ -30,3 +30,4 @@ beaker-client==23.3
 sphinx_rtd_theme
 libvirt-python>=3.0.0
 yamlordereddictloader
+libvirt-python>=3.0.0
