@@ -2,6 +2,7 @@
 
 import abc
 import StringIO
+from camel import Camel
 from ansible import errors
 
 try:
@@ -51,6 +52,7 @@ class GenericInventory(InventoryFilter):
         return all_hosts[:count]
 
     def get_inventory(self, topo, layout):
+        layout =  Camel().load(layout)
         # get all the topology host_ips
         host_ip_dict = self.get_host_ips(topo)
         # get the count of all layout hosts needed
