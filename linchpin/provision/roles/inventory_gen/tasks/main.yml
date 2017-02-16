@@ -11,6 +11,8 @@
       gcloud_gce_res: "{{ gcloud_gce_res }}"
       duffy_res: "{{ duffy_res }}"
       beaker_res: "{{ beaker_res }}"
+      libvirt_res: "{{ libvirt_res }}"
+  when: state == "present" and inventory_layout is defined
 
 # include inventory generation files here : can be overridden by extravar inventory_layout_file currently defaulted to openshift-3node-cluster.yml
 - name: "include the layout file for inventory generation"
