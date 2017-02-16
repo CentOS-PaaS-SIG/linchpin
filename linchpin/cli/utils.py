@@ -85,19 +85,21 @@ def get_file(src, dest):
         click.echo(str(e))
 
 
-def copy_files(path, dir_list, config):
+def copy_files(src, dest, dir_list):
     for direc in dir_list:
-        dest = path+"/"+direc+"/"
-        src = config.clipath+"/templates/"+direc+"/"
-        for filename in os.listdir(src):
-            src_file = src+filename
-            shutil.copy(src_file, dest)
+        dest_dir = dest + direc + "/"
+        src_dir = src + direc + "/"
+        for file in os.listdir(src_dir):
+            src_path = src_dir+file
+            shutil.copy(src_path, dest_dir)
 
 
-def checkpaths():
+def checkpaths(workspace=None):
     """ checks whether the linchpin layout already exists in cwd"""
-    cur_dir = os.getcwd()
-    # print os.listdir(cur_dir)
+    if workspace is None:
+        cur_dir = os.getcwd()
+    else:
+        cur_dir = os.getcwd()
     layout_files = ['layouts', 'topologies', 'PinFile']
     for f in layout_files:
         if f in os.listdir(cur_dir):
