@@ -31,3 +31,5 @@ sphinx_rtd_theme
 libvirt-python>=3.0.0
 yamlordereddictloader
 libvirt-python>=3.0.0
+yamlordereddictloader
+camel
