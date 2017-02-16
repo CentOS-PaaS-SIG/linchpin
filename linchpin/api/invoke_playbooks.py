@@ -51,7 +51,7 @@ def get_evars(pf):
 def invoke_linchpin(base_path, e_vars, playbook="PROVISION", console=True):
     """ Invokes linchpin playbook """
     module_path = base_path+"/library"
-    print("debug:: module path ::"+module_path) 
+    print("debug:: module path ::"+module_path)
     playbook_path = base_path+"/provision/"+PLAYBOOKS[playbook]
     loader = DataLoader()
     variable_manager = VariableManager()
@@ -92,8 +92,8 @@ def invoke_linchpin(base_path, e_vars, playbook="PROVISION", console=True):
                       ssh_extra_args=None,
                       sftp_extra_args=None,
                       scp_extra_args=None,
-                      become=False,
-                      become_method=None,
+                      become=True,
+                      become_method='sudo',
                       become_user='root',
                       verbosity=utils.VERBOSITY,
                       check=False)
