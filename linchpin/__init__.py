@@ -14,17 +14,6 @@ import pdb
 from tabulate import tabulate
 
 
-MSGS = {
-"ERROR:001": "No PinFiles files found. Please use linchpin init to initailise ", 
-"ERROR:002": "Multiple PinFiles found. Please use linchpin rise with --pf <path> ", 
-"ERROR:003": "Topology or Layout mentioned in PinFile not found . Please check your PinFile.", 
-"ERROR:004": "linchpin_config file not found in current directory. Please initialise it with linchpin config --reset", 
-"ERROR:005": "linchpin_config file not found. In default paths. Please initialise it with linchpin config --reset", 
-"WARNING:001": "PinFile structure found current directory. Would you like to continue ?(y/n) ", 
-"WARNING:002": "linchpin_config file already found in current directory. Would you like to reset it ?(y/n)"
-}
-
-
 class Config(object):
     """ Global config object accesible by all the click modules """
     VERSION = "v1.0.0"
@@ -33,6 +22,11 @@ class Config(object):
         self.env = Environment(loader=PackageLoader('linchpin', 'templates'))
         self.linchpinfile = self.env.get_template('PinFile.j2')
         self.lpconfig = self.env.get_template('linchpin_config.yml.j2')
+        self.INIT_DIR_LAYOUT = ['topologies', 'layouts', 'inventories']
+        self.TEMPLATES_PATH  = self.clipath+"/templates/" 
+        self.workspace = os.environ.get('LINCHPIN_WORKSPACE', False)
+        if not self.workspace:
+            self.workspace = os.environ.get('PWD')+"/"
 
 pass_config = click.make_pass_decorator(Config, ensure=True)
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
@@ -53,34 +47,31 @@ def cli(config, verbose, home_directory, version):
     config.home_directory = home_directory
     if version:
         click.echo("LinchpinCLI "+Config.VERSION)
+        click.echo("WORKSPACE = "+config.workspace)
 
 
 @cli.command()
-@click.option("--path",
-              default=".",
-              type=click.Path(),
-              required=False,
-              help="path for initialisation")
 @pass_config
-def init(config, path):
+def init(config):
     """ init module of linchpin """
     click.echo('Initialising the templates for linchpin file !')
-    if checkpaths():
+    click.echo('WORKSPACE = '+config.workspace)
+    if checkpaths(config.workspace):
         reply = display("WARNING:001", "prompt")
         if not reply:
             sys.exit(0)
     if config.verbose:
         click.echo("### verbose mode ###")
-    if os.path.isdir(path):
-        path = path.strip("/")
-        config.linchpinfile.stream().dump(path+'/'+'PinFile')
-        mkdir(path+"/topologies")
-        mkdir(path+"/layouts")
-        mkdir(path+"/inventories")
+    if os.path.isdir(config.workspace):
+        path = config.workspace
+        config.linchpinfile.stream().dump(path+'PinFile')
+        for dir in config.INIT_DIR_LAYOUT:
+            mkdir(path+dir)
         dir_list = ["topologies", "layouts"]
-        copy_files(path, dir_list, config)
+        copy_files(config.TEMPLATES_PATH, config.workspace, dir_list)
+        #copy_files(path, dir_list, config)
     else:
-        click.echo("Invalid path to initialise!!")
+        click.echo("Invalid WORKSPACE to initialise!!")
 
 
 @cli.command()
