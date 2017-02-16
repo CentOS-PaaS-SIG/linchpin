@@ -73,6 +73,7 @@ class InventoryFilter(object):
         # create a ip to host mapping based on count
         ip_to_host = {}
         host_grps = self.get_layout_host_groups(layout)
+        inven_hosts.reverse()
         for host_name in layout['hosts']:
             if 'count' in layout['hosts'][host_name]:
                 count = layout['hosts'][host_name]['count']
