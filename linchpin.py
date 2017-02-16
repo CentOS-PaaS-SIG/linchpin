@@ -31,8 +31,8 @@ MSGS = {
 "ERROR:001": "No PinFiles files found. Please use linchpin init to initailise ", 
 "ERROR:002": "Multiple PinFiles found. Please use linchpin rise with --pf <path> ", 
 "ERROR:003": "Topology or Layout mentioned in PinFile not found . Please check your PinFile.", 
-"ERROR:004": "linchpin_config file not found in current directory. Please initialise it with lionchpin init or linchpin config --reset", 
-"ERROR:005": "linchpin_config file not found. In default paths. Please initialise it with lionchpin init or linchpin config --reset", 
+"ERROR:004": "linchpin_config file not found in current directory. Please initialise it with linchpin config --reset", 
+"ERROR:005": "linchpin_config file not found. In default paths. Please initialise it with linchpin config --reset", 
 "WARNING:001": "PinFile structure found current directory. Would you like to continue ?(y/n) ", 
 "WARNING:002": "linchpin_config file already found in current directory. Would you like to reset it ?(y/n)"
 }
@@ -55,7 +55,7 @@ pass_config = click.make_pass_decorator(Config, ensure=True)
 @pass_config
 def cli(config, verbose, home_directory):
     """
-    Welcome to linchpin command line client: lpcli
+    Welcome to linchpin command line client
     """
     config.verbose = verbose
     if home_directory is None:
@@ -72,7 +72,7 @@ def cli(config, verbose, home_directory):
 @pass_config
 def init(config, path):
     """ init module of linchpin """
-    click.echo('Initailising the templates for linchpin file !')
+    click.echo('Initialising the templates for linchpin file !')
     if checkpaths():
         reply = display("WARNING:001", "prompt")
         if not reply:
@@ -88,7 +88,7 @@ def init(config, path):
         dir_list = ["topologies", "layouts"]
         copy_files(path, dir_list, config)
     else:
-        click.echo("Invalid path to initialize !!")
+        click.echo("Invalid path to initialise!!")
 
 @cli.group()
 @pass_config
@@ -122,7 +122,7 @@ def topology_list(config, upstream):
 @pass_config
 def topology_get(config, topo, upstream):
     """
-    needs implementation if topology folder is not found raise error
+    Get topology by name
     """
     lpcli = LinchpinCli()
     d = lpcli.lp_topo_get(topo)
@@ -161,7 +161,7 @@ def layouts_list(config, upstream):
 @pass_config
 def layouts_get(config, layout, upstream):
     """
-    needs implementation if layout folder is not found raise error
+    Get layout by name
     """
     lpcli = LinchpinCli()
     output = lpcli.lp_layout_get(layout, upstream)
@@ -222,8 +222,9 @@ def drop(config, pf, target):
               help="gets the topology by name")
 @pass_config
 def validate(config, topo, layout, pf):
-    """ validate module of linchpin cli : currenly validates only topologies,
-        need to implement PinFile, layouts too"""
+    """ validate module of linchpin cli : 
+        validates only topologies for now
+    """
     lpcli = LinchpinCli()
     topo = os.path.abspath(topo)
     output = lpcli.lp_validate(topo, layout, pf)
