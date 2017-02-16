@@ -10,3 +10,6 @@ python-openstackclient
 click
 tabulate
 ansible==2.2.1
+beaker-client==23.3
+sphinx_rtd_theme
+libvirt-python>=3.0.0
