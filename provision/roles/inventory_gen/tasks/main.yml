@@ -11,6 +11,8 @@
       gcloud_gce_res: "{{ gcloud_gce_res }}"
       duffy_res: "{{ duffy_res }}"
       beaker_res: "{{ beaker_res }}"
+      libvirt_res: "{{ libvirt_res }}"
+  when: state == "present" and inventory_layout is defined
 
 - name: "DEBUG:: inventory_layout"
   debug:

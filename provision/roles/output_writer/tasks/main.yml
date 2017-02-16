@@ -19,6 +19,7 @@
       duffy_res: "{{ topology_outputs_duffy  | default([]) }}"
       rax_server_res: "{{ topology_outputs_rax_server  | default([]) }}"
       beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
+      libvirt_res: "{{ topology_outputs_libvirt_nodes | default([]) }}"
   when: async == false
 
 - name: "Create output directories"
@@ -64,6 +65,7 @@
       duffy_res: "{{ topology_outputs_duffy | default([]) }}"
       rax_server_res: "{{ topology_outputs_rax_server | default([]) }}"
       beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
+      libvirt_res: "{{ topology_outputs_libvirt_nodes | default([]) }}"
   when: async == true
 
 # currently adding a single playbook that can manage all the async outputs based on the resource groups
@@ -89,6 +91,7 @@
       duffy_res: "{{ topology_outputs_duffy | default([]) }}"
       rax_server_res: "{{ topology_outputs_rax_server | default([]) }}"
       beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
+      libvirt_res: "{{ topology_outputs_libvirt_nodes | default([]) }}"
   when: async == true
 
 # pretty much the same output generation when async_false
