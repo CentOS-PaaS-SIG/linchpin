@@ -13,6 +13,7 @@ from AWSInventory import AWSInventory
 from OpenstackInventory import OpenstackInventory
 from GCloudInventory import GCloudInventory
 from DuffyInventory import DuffyInventory
+from LibvirtInventory import LibvirtInventory
 from InventoryFilter import InventoryFilter
 from InventoryProviders import get_driver, get_all_drivers
 
