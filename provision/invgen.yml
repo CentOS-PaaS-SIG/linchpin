@@ -9,7 +9,7 @@
   tasks:
     - name: "Parse inventory layout as a ordered dict"
       set_fact:
-        inventory_layout: "{{ inventory_layout_file | ordered_yaml }}"
+        inventory_layout: "{{ layout | ordered_yaml }}"
     - name: "Updating topology_outputs"
       set_fact:
         topology_outputs:
