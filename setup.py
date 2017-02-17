@@ -29,10 +29,9 @@ setup(
         'beaker':  ['beaker-client==23.3'],
         'docs': ["docutils","sphinx","sphinx_rtd_theme"],
         'tests': ["nose","mock","coverage"],
-    },
+    dependency_links = ['https://github.com/eevee/camel/tree/v0.1/tarball/'],
     zip_safe=False,
     packages=find_packages(),
     include_package_data=True,
-
     scripts=['scripts/linchpin_complete.sh']
 )
