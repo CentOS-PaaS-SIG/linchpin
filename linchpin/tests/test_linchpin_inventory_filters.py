@@ -104,6 +104,6 @@ class TestLinchPinInventoryFilters(object):
     def test_filter_generic_get_inventory(self):
         inv = GenericInventory.GenericInventory()
         layout_data = Camel().dump(self.test_layout)
-        output = inv.get_inventory(self.test_input, self.test_layout)
+        output = inv.get_inventory(self.test_input, layout_data)
         sections = inventory_utils.get_sections(output)
         assert_equal(len(sections), 7)
