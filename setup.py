@@ -31,6 +31,7 @@ setup(
         [console_scripts]
         linchpin=linchpin:cli
     ''',
+    dependency_links = ['https://github.com/eevee/camel/tree/v0.1/tarball/'],
     packages=[
           'library',
           'keystore',
