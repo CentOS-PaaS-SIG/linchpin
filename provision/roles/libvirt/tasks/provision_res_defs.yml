@@ -10,9 +10,9 @@
   include: provision_libvirt_node.yml
   when: res_def['res_type']=="libvirt_node" and state == "present"
 
-#- name: "teardown libvirt node"
-#  include: teardown_libvirt_node.yml
-#  when: res_def['res_type']=="libvirt_node" and state == "absent"
+- name: "teardown libvirt node"
+  include: teardown_libvirt_node.yml
+  when: res_def['res_type']=="libvirt_node" and state == "absent"
 
 #- name: "teardown libvirt network"
 #  include: teardown_libvirt_network.yml

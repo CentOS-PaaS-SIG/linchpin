@@ -51,10 +51,6 @@
     img_src_basename: "{{ res_def['image_src'].split('.xz')[0] | basename }}"
   when: lismt.stat.mime_type == "application/x-xz"
 
-- name: "DEBUG: image_src_basename"
-  debug:
-    msg: "image_src_basename {{ image_src_basename }}"
-
 - name: "set img_src for xz compressed files"
   set_fact:
     img_src: "{{ local_image_path }}{{ img_src_basename }}"
@@ -77,7 +73,11 @@
   register: ismt
   when: lismt.stat.mime_type == "application/x-xz"
 
-- name: uncompress xz local_image_src if necessary
+  #- name: "DEBUG: ismt"
+  #  debug:
+  #    var: ismt
+
+- name: uncompress xz local_image_src
   command: "xz -d --keep --force {{ local_image_src }}"
   become: yes
   when: lismt.stat.mime_type == "application/x-xz" and ismt.stat.exists == false
@@ -85,13 +85,15 @@
 - name: "cp img_src to match node name"
   copy:
     src: "{{ img_src }}"
-    dest: "{{ img_item[0] }}{{ img_item[1] }}_{{ img_item[2] }}.{{ img_item[3] }}"
+    dest: "{{ img_item[0] }}{{ img_item[1] }}_{{ img_item[2] }}_{{ img_item[3] }}.{{ img_item[4] }}"
     remote_src: false
   with_nested:
     - ["{{ local_image_path }}"]
+    - ["{{ res_grp_name }}"]
     - ["{{ res_def['res_name'] }}"]
     - "{{ res_count.stdout }}"
     - ["{{ img_src_ext }}"]
   loop_control:
     loop_var: img_item
   become: yes
+  #when: ismt.stat.exists == false (if there's an option at some point to reuse disk, this would be helpful)

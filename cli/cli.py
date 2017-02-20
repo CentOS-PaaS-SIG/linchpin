@@ -87,12 +87,13 @@ class LinchpinCli(LinchpinAPI):
                 if e_vars['topology'] is None:
                     print("Topology not found !!")
                     break
-                layout_path = self.find_layout(pf[key]["layout"], pf)
-                e_vars['inventory_layout_file'] = layout_path
-                if e_vars['inventory_layout_file'] is None:
-                    print("Layout not found !!")
-                    break
-                print(e_vars)
+                if pf[key].has_key('layout'):
+                    layout_path = self.find_layout(pf[key]["layout"], pf)
+                    e_vars['inventory_layout_file'] = layout_path
+                    if e_vars['inventory_layout_file'] is None:
+                        print("Layout not found !!")
+                        break
+                    print(e_vars)
                 output = invoke_linchpin(self.base_path,
                                          e_vars,
                                          "PROVISION",
@@ -104,11 +105,12 @@ class LinchpinCli(LinchpinAPI):
                 e_vars['topology'] = topology_path
                 if e_vars['topology'] is None:
                     print("Topology not found !!")
-                layout_path = self.find_layout(pf[target]["layout"], pf)
-                e_vars['inventory_layout_file'] = layout_path
-                if e_vars['inventory_layout_file'] is None:
-                    print("Layout not found !!")
-                print(e_vars)
+                if pf[key].has_key('layout'):
+                    layout_path = self.find_layout(pf[target]["layout"], pf)
+                    e_vars['inventory_layout_file'] = layout_path
+                    if e_vars['inventory_layout_file'] is None:
+                        print("Layout not found !!")
+                    print(e_vars)
                 output = invoke_linchpin(self.base_path,
                                          e_vars,
                                          "PROVISION",

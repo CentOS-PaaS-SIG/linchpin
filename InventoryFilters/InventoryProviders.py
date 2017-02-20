@@ -7,6 +7,7 @@ from OpenstackInventory import OpenstackInventory
 from GCloudInventory import GCloudInventory
 from DuffyInventory import DuffyInventory
 from BeakerInventory import BeakerInventory
+from LibvirtInventory import LibvirtInventory
 from InventoryFilter import InventoryFilter
 
 filter_classes = {
@@ -14,7 +15,8 @@ filter_classes = {
            "os_inv": OpenstackInventory,
            "gcloud_inv": GCloudInventory,
            "duffy_inv": DuffyInventory,
-           "beaker_inv": BeakerInventory
+           "beaker_inv": BeakerInventory,
+           "libvirt_inv": LibvirtInventory
 }
 
 
