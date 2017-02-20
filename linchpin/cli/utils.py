@@ -127,3 +127,18 @@ def tabulate_print(items, headers):
     for i in range(0, len(items)):
         print_items.append((i+1, items[i]["name"]))
     print tabulate(print_items, headers, tablefmt="fancy_grid")
+
+def write_to_file(dest_path, output):
+    if os.path.isfile(dest_path):
+        click.echo("File exists at path "+dest_path)
+        ans = click.prompt('Do you want to overwrite it ?', default='Y')
+        if ans.lower() in ['no','n']:
+            pass
+        elif ans.lower() in ['yes','y']:
+            with open(dest_path, "w") as txt:
+                txt.write(output)
+            click.echo("File created successfully")
+    else:
+        with open(dest_path, "w") as txt:
+            txt.write(output)
+        click.echo("File created successfully")

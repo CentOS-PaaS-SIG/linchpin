@@ -2,15 +2,14 @@ import os
 import yaml
 import click
 import sys
-import pdb
 import pprint
 import os.path
 from tabulate import tabulate
 from jinja2 import Environment, PackageLoader
 from linchpin.cli.utils import checkpaths, display, mkdir
 from linchpin.cli.utils import list_by_ext, copy_files, tabulate_print
+from linchpin.cli.utils import write_to_file 
 from linchpin.cli import LinchpinCli
-import pdb
 from tabulate import tabulate
 
 
@@ -123,7 +122,10 @@ def topology_get(config, topo, upstream):
     Get topology by name
     """
     lpcli = LinchpinCli()
-    d = lpcli.lp_topo_get(topo)
+    output = lpcli.lp_topo_get(topo)
+    click.echo(output)
+    dest_path = config.workspace+"/topologies/"+topo
+    write_to_file(dest_path, output)
 
 
 @cli.group()
@@ -158,6 +160,9 @@ def layouts_get(config, layout, upstream):
     """
     lpcli = LinchpinCli()
     output = lpcli.lp_layout_get(layout, upstream)
+    click.echo(output)
+    dest_path = config.workspace+"/layouts/"+layout
+    write_to_file(dest_path, output)
 
 
 @cli.command()

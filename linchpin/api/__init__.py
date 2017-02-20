@@ -3,9 +3,10 @@ import sys
 import inspect
 import ansible
 import pprint
+import requests
+import jsonschema as jsch
 from tabulate import tabulate
 from ansible import utils
-import jsonschema as jsch
 from collections import namedtuple
 from ansible import utils
 from ansible.parsing.dataloader import DataLoader
@@ -20,8 +21,10 @@ from utils import get_file, list_files, parse_yaml
 from github import GitHub
 
 
-class LinchpinAPI:
 
+class LinchpinAPI:
+    
+    UPSTREAM_EXAMPLES_PATH = "linchpin/examples"
     def __init__(self):
         base_path = os.path.dirname(__file__).split("/")[0:-2]
         self.base_path = "/{}/linchpin/".format('/'.join(base_path))
@@ -83,10 +86,11 @@ class LinchpinAPI:
             t_files = list_files(self.base_path + "/examples/topology/")
             return t_files
         else:
-            print "getting from upstream"
+            print("getting from upstream")
             g = GitHub(upstream)
             t_files = []
-            files = g.list_files("linchpin/examples/topology")
+            repo_path = LinchpinAPI.UPSTREAM_EXAMPLES_PATH + "/topology"
+            files = g.list_files(repo_path)
             return files
 
     def lp_topo_get(self, topo, upstream=None):
@@ -96,14 +100,19 @@ class LinchpinAPI:
         # need to add checks for ./topologies
         """
         if upstream is None:
-            get_file(self.base_path + "/examples/topology/" + topo, "./topologies/")
+            pkg_file_path = self.base_path + "/examples/topology/" + topo
+            return open(pkg_file_path).read()
+            #get_file(self.base_path + "/examples/topology/" + topo,
+            #         "./topologies/")
         else:
             g = GitHub(upstream)
-            files = g.list_files("linchpin/examples/topology")
+            repo_path = LinchpinAPI.UPSTREAM_EXAMPLES_PATH + "/topology"
+            files = g.list_files(repo_path)
             link = filter(lambda link: link['name'] == topo, files)
             link = link[0]["download_url"]
-            get_file(link, "./topologies", True)
-            return link
+            return requests.get(link).text
+            #get_file(link, "./topologies", True)
+            #return link
 
     def lp_layout_list(self, upstream=None):
         """
@@ -116,7 +125,8 @@ class LinchpinAPI:
         else:
             g = GitHub(upstream)
             l_files = []
-            files = g.list_files("linchpin/examples/layouts")
+            repo_path = LinchpinAPI.UPSTREAM_EXAMPLES_PATH + "/layouts"
+            files = g.list_files(repo_path)
             return files
 
     def lp_layout_get(self, layout, upstream=None):
@@ -125,15 +135,19 @@ class LinchpinAPI:
                        get layouts from core package
         """
         if upstream is None:
-            get_file(self.base_path + "/examples/layouts/" + layout,
-                     "./layouts/")
+            pkg_file_path = self.base_path + "/examples/layouts/" + layout
+            return open(pkg_file_path, "r").read()
+            #get_file(self.base_path + "/examples/layouts/" + layout,
+            #         "./layouts/")
         else:
             g = GitHub(upstream)
-            files = g.list_files("linchpin/examples/layouts")
+            repo_path = LinchpinAPI.UPSTREAM_EXAMPLES_PATH + "/layouts"
+            files = g.list_files(repo_path)
             link = filter(lambda link: link['name'] == layout, files)
             link = link[0]["download_url"]
-            get_file(link, "./layouts", True)
-            return link
+            return requests.get(link).text
+            #get_file(link, "./layouts", True)
+            #return link
 
     def lp_drop(self, config, pf):
         """ drop module of linchpin cli : find implementation in cli.py
