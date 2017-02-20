@@ -30,7 +30,7 @@
       - github-pull-request:
 
           # always check for PR activity every 15 minutes
-          cron: 'H/15 * * * *'
+          cron: 'H/5 * * * *'
           auth-id: '{ghprb-auth-id-trigger}'
 
           # those who can control the bot
