@@ -16,13 +16,15 @@ class LibvirtInventory(InventoryFilter):
 
     def get_host_ips(self, topo):
         ips = []
+        if not ('libvirt_res' in topo):
+            return ips
         for val in topo['libvirt_res']:
             print('ip: {}'.format(val))
             ips.append(val)
         return ips
 
     def get_inventory(self, topo, layout):
-        if len(topo['duffy_res']) == 0:
+        if len(topo['libvirt_res']) == 0:
             return ""
         inventory = ConfigParser(allow_no_value=True)
         layout_hosts = self.get_layout_hosts(layout)
