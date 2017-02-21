@@ -31,6 +31,9 @@ setup(
         [console_scripts]
         linchpin=linchpin:cli
     ''',
+    extras_require = {
+        'libvirt': ["libvirt-python>=3.0.0"],
+    },
     dependency_links = ['https://github.com/eevee/camel/tree/v0.1/tarball/'],
     packages=[
           'library',
