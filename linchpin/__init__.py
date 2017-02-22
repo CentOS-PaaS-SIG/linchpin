@@ -80,7 +80,7 @@ def init(config):
 @pass_config
 def list(config, topology, layout, upstream):
     """ list module of linchpin """
-    lpcli = LinchpinCli()
+    lpcli = LinchpinCli(config)
     if topology:
         click.echo(": TOPOLOGY LIST :")
         files = lpcli.lp_topo_list(upstream)
@@ -104,7 +104,7 @@ def topology(config):
               help="upstream url for topology")
 @pass_config
 def topology_list(config, upstream):
-    lpcli = LinchpinCli()
+    lpcli = LinchpinCli(config)
     click.echo(": TOPOLOGIES LIST :")
     files = lpcli.lp_topo_list(upstream)
     tabulate_print(files, ['Sno', 'Name'])
@@ -121,7 +121,7 @@ def topology_get(config, topo, upstream):
     """
     Get topology by name
     """
-    lpcli = LinchpinCli()
+    lpcli = LinchpinCli(config)
     output = lpcli.lp_topo_get(topo)
     click.echo(output)
     dest_path = config.workspace+"/topologies/"+topo
@@ -141,7 +141,7 @@ def layout(config):
               help="upstream url for layouts")
 @pass_config
 def layouts_list(config, upstream):
-    lpcli = LinchpinCli()
+    lpcli = LinchpinCli(config)
     click.echo(": LAYOUTS LIST :")
     files = lpcli.lp_layout_list(upstream)
     tabulate_print(files, ['Sno', 'Name'])
@@ -158,7 +158,7 @@ def layouts_get(config, layout, upstream):
     """
     Get layout by name
     """
-    lpcli = LinchpinCli()
+    lpcli = LinchpinCli(config)
     output = lpcli.lp_layout_get(layout, upstream)
     click.echo(output)
     dest_path = config.workspace+"/layouts/"+layout
@@ -227,7 +227,7 @@ def validate(config, topo, layout, pf):
     """ validate module of linchpin cli : 
         validates only topologies for now
     """
-    lpcli = LinchpinCli()
+    lpcli = LinchpinCli(config)
     topo = os.path.abspath(topo)
     output = lpcli.lp_validate(topo, layout, pf)
     pprint.pprint(output)
@@ -291,6 +291,6 @@ def invgen(config, topoout, layout, invout, invtype):
     topoout = os.path.abspath(topoout)
     layout = os.path.abspath(layout)
     invout = os.path.abspath(invout)
-    lpcli = LinchpinCli()
+    lpcli = LinchpinCli(config)
     result = lpcli.lp_invgen(topoout, layout, invout, invtype)
     pprint.pprint(result)
