@@ -170,13 +170,15 @@ def layouts_get(config, layout, upstream):
               default=False,
               required=False,
               help="gets the topology by name")
-@click.option("--target",
-              default="all",
-              required=False,
-              help="target name mentioned in PinFile")
+@click.argument('targets', nargs=-1)
+#@click.option("--target",
+#              default="all",
+#              required=False,
+#              help="target name mentioned in PinFile")
 @pass_config
-def rise(config, pf, target):
+def rise(config, pf, targets):
     """ rise module of linchpin cli """
+    click.echo(targets)
     init_dir = os.getcwd()
     pfs = list_by_ext(init_dir, "PinFile")
     if len(pfs) == 0:
@@ -184,16 +186,18 @@ def rise(config, pf, target):
     if len(pfs) > 1:
         display("ERROR:002")
     pf = pfs[0]
-    lpcli = LinchpinCli()
-    output = lpcli.lp_rise(pf, target)
+    lpcli = LinchpinCli(config)
+    output = lpcli.lp_rise(pf, targets)
 
 
 @cli.command()
-@click.option("--target", default="all", required=False,  help="target cloud")
+#@click.option("--target", default="all", required=False,  help="target cloud")
 @click.option("--pf", default=False, required=False,  help="path of Pinfile")
+@click.argument('targets', nargs=-1)
 @pass_config
-def drop(config, pf, target):
+def drop(config, pf, targets):
     """ drop module of linchpin cli"""
+    click.echo(targets)
     init_dir = os.getcwd()
     pfs = list_by_ext(init_dir, "PinFile")
     if len(pfs) == 0:
@@ -201,8 +205,8 @@ def drop(config, pf, target):
     if len(pfs) > 1:
         display("ERROR:002")
     pf = pfs[0]
-    lpcli = LinchpinCli()
-    output = lpcli.lp_drop(pf, target)
+    lpcli = LinchpinCli(config)
+    output = lpcli.lp_drop(pf, targets)
 
 
 @cli.command()
