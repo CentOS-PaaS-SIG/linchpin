@@ -203,6 +203,49 @@ def drop(context, pf, targets):
     lpcli = LinchpinCli(context)
     output = lpcli.lp_drop(pf, targets)
 
+@cli.group()
+@pass_context
+def config(context):
+        pass
+
+
+@config.command(name='init')
+@pass_context
+def config_init(context):
+    if os.path.isfile(context.workspace+"/linchpin_config.yml"):
+        click.confirm("Linchpin config exists would you like to overrite it?",
+                      abort=True)
+    playbook_dir = click.prompt('Please enter playbook directory',
+                                default=context.clipath)
+    keystore_path = click.prompt('Please enter keystore path',
+                                 default=context.workspace+'keystore')
+    outputfolder_path = click.prompt('Please enter outputfolder path ',
+                                     default=context.workspace+'outputs')
+    async = click.prompt('Please enter async mode',
+                         default='false')
+    async_timeout = click.prompt('Please enter async timeout',
+                                 default=999)
+    no_output = click.prompt('no output mode',
+                             default='false')
+    inventory_layouts_path = click.prompt('Please enter a inventory \
+                                          layouts path',
+                                          default=context.workspace+'layouts')
+    inventory_outputs_path = click.prompt('Please enter inventory outputs',
+                                          default=context.workspace+'inventories')
+    check_mode = click.prompt('checkmode', default='no')
+    pwd = context.workspace
+    context.lpconfig.stream(
+                     playbook_dir=playbook_dir,
+                     keystore_path=keystore_path,
+                     outputfolder_path=outputfolder_path,
+                     async=async,
+                     async_timeout=async_timeout,
+                     no_output=no_output,
+                     inventory_layouts_path=inventory_layouts_path,
+                     inventory_outputs_path=inventory_outputs_path,
+                     check_mode=check_mode,
+                     pwd=pwd).dump('linchpin_config.yml')
+
 
 @cli.command()
 @click.option("--pf",
@@ -226,48 +269,6 @@ def validate(context, topo, layout, pf):
     topo = os.path.abspath(topo)
     output = lpcli.lp_validate(topo, layout, pf)
     pprint.pprint(output)
-
-
-@cli.command()
-@click.option("--init",
-              default=False,
-              required=False,
-              is_flag=True,
-              help="Initialises config file")
-@click.option("--reset",
-              default=False,
-              required=False,
-              is_flag=True,
-              help="sets existing config file parameters")
-@pass_context
-def config(contexr, reset, init):
-    """ config module of linchpin cli"""
-    if reset:
-        if os.path.isfile("./linchpin_config.yml"):
-            display("WARNING:002", "prompt")
-        config.lpconfig.stream(playbook_dir=context.clipath,
-                               pwd=os.getcwd()).dump('linchpin_config.yml')
-    if init:
-        if not os.path.isfile("./linchpin_config.yml"):
-            display("ERROR:004", "print")
-        conf = yaml.load(open("linchpin_config.yml", "r").read())
-        for key in conf:
-            inp_str = raw_input("Enter value of "+key+":("+str(conf[key])+"):")
-            if inp_str != "":
-                conf[key] = inp_str
-        context.lpconfig.stream(
-                         playbook_dir=context.clipath,
-                         keystore_path=conf["keystore_path"],
-                         outputfolder_path=conf["outputfolder_path"],
-                         inventoryfolder_path=conf["inventoryfolder_path"],
-                         async=conf["async"],
-                         async_timeout=conf["async_timeout"],
-                         no_output=conf["no_output"],
-                         schema=conf["schema"],
-                         inventory_layouts_path=conf["inventory_layouts_path"],
-                         inventory_outputs_path=conf["inventory_outputs_path"],
-                         check_mode=conf["check_mode"],
-                         pwd=os.getcwd()).dump('linchpin_config.yml')
 
 
 @cli.command()
