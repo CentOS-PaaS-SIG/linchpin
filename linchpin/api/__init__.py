@@ -233,6 +233,8 @@ class LinchpinAPI:
                 topology_registry = pf.get("topology_registry", None)
                 e_vars['topology'] = self.find_topology(pf[target]["topology"],
                                                         topology_registry)
+                if pf[target].has_key("layout"):
+                    e_vars['inventory_layout_file'] = self.context.workspace+"/layouts/"+pf[target]["layout"]
                 output = invoke_linchpin(self.base_path,
                                          e_vars,
                                          "PROVISION",
@@ -244,6 +246,8 @@ class LinchpinAPI:
                 topology_registry = pf.get("topology_registry", None)
                 e_vars['topology'] = self.find_topology(pf[target]["topology"],
                                                         topology_registry)
+                if pf[target].has_key("layout"):
+                    e_vars['inventory_layout_file'] = self.context.workspace+"/layouts/"+pf[target]["layout"]
                 output = invoke_linchpin(self.base_path, e_vars, "PROVISION",
                                          console=True)
         else:
