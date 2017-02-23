@@ -142,3 +142,9 @@ def write_to_file(dest_path, output):
         with open(dest_path, "w") as txt:
             txt.write(output)
         click.echo("File created successfully")
+
+def touch(fname):
+    if os.path.exists(fname):
+        os.utime(fname, None)
+    else:
+        open(fname, 'a').close()

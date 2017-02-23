@@ -8,7 +8,7 @@ from tabulate import tabulate
 from jinja2 import Environment, PackageLoader
 from linchpin.cli.utils import checkpaths, display, mkdir
 from linchpin.cli.utils import list_by_ext, copy_files, tabulate_print
-from linchpin.cli.utils import write_to_file 
+from linchpin.cli.utils import write_to_file, touch 
 from linchpin.cli import LinchpinCli
 from tabulate import tabulate
 
@@ -272,20 +272,33 @@ def validate(context, topo, layout, pf):
 
 
 @cli.command()
-@click.option("--invtype", default="generic", required=False,
+@click.option("--invtype","-it",
+              default="generic",
+              required=False,
               type=click.Path(),
-              help="inventory type")
-@click.option("--invout", required=True, type=click.Path(),
-              help="inventory output file")
-@click.option("--layout", default=False, required=True,  type=click.Path(),
-              help="layout file usually found in layout folder")
-@click.option("--topoout", default=False, required=True, type=click.Path(),
+              prompt=True,
+              help="options: generic | openstack | aws | gcloud | libvirt")
+@click.option("--invout","-io",
+              required=True,
+              type=click.Path(),
+              prompt=True,
+              help="inventory output file path")
+@click.option("--layout","-l",
+              required=True,
+              prompt=True,
+              type=click.Path(),
+              help="layout file path")
+@click.option("--topoout","-to",
+              required=True,
+              type=click.Path(),
+              prompt=True,
               help="topology output file usually found in output folders")
 @pass_context
 def invgen(context, topoout, layout, invout, invtype):
     """ invgen module of linchpin cli """
     topoout = os.path.abspath(topoout)
     layout = os.path.abspath(layout)
+    touch(invout)
     invout = os.path.abspath(invout)
     lpcli = LinchpinCli(context)
     result = lpcli.lp_invgen(topoout, layout, invout, invtype)
