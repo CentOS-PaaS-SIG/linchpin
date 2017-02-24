@@ -19,9 +19,10 @@
     msg: "{{ inventory_layout }}"
   when: state == "present" and inventory_layout is defined
 
-# include inventory generation files here : can be overridden by extravar inventory_layout_file currently defaulted to openshift-3node-cluster.yml
-- name: "include the layout file for inventory generation"
-  include_vars: "{{ inventory_layout_file | default( inventory_layouts_path+'/'+'openshift-3node-cluster.yml') }}"
+# parse inventory generation files here : can be overridden by extravar inventory_layout_file currently defaulted to openshift-3node-cluster.yml
+- name: "Parse inventory layout as a ordered dict"
+  set_fact:
+    inventory_layout: "{{ inventory_layout_file | default( inventory_layouts_path+'/'+'openshift-3node-cluster.yml') | ordered_yaml }}"
 
 # updating inventory output file with the absoulte path configured if given : can be overridden by  extravar inventory_output_file currently
 - name: "DEBUG:: inventory_outputs_path ##########"

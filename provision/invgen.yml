@@ -7,7 +7,9 @@
   vars_files:
    - "{{ output }}"
   tasks:
-    - include_vars: "{{ layout }}"
+    - name: "Parse inventory layout as a ordered dict"
+      set_fact:
+        inventory_layout: "{{ layout | ordered_yaml }}"
     - name: "Updating topology_outputs"
       set_fact:
         topology_outputs:
@@ -16,6 +18,9 @@
           gcloud_gce_res: "{{ gcloud_gce_res }}"
           duffy_res: "{{ duffy_res }}"
         inventory_type: "{{ inventory_type | default('generic') }}"
+    - name: "debug"
+      debug:
+        msg: "{{ inventory_layout }}"
     - debug: 
         msg: "{{ topology_outputs | generic_inv(inventory_layout) }}" 
       when: inventory_type == "generic"

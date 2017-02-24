@@ -24,7 +24,7 @@ from InventoryFilters import GCloudInventory
 from InventoryFilters import GenericInventory
 from linchpin_utils import inventory_utils
 from mockdata import inventory_mock as im
-
+from camel import Camel
 filepath = os.path.realpath(__file__)
 filepath = "/".join(filepath.split("/")[0:-2])
 sys.path.append(filepath)
@@ -72,7 +72,7 @@ class TestLinchPinInventoryFilters(object):
         host_ips = inv.get_host_ips(self.test_input)
         noofhosts = len(host_ips.keys())
         hostips = sum(len(v) for v in host_ips.itervalues())
-        output = (noofhosts == 5) and (hostips == 9)
+        output = (noofhosts == 6) and (hostips == 9)
         assert_equal(output, True)
 
     @with_setup(setup)
@@ -103,6 +103,7 @@ class TestLinchPinInventoryFilters(object):
     @with_setup(setup)
     def test_filter_generic_get_inventory(self):
         inv = GenericInventory.GenericInventory()
-        output = inv.get_inventory(self.test_input, self.test_layout)
+        layout_data = Camel().dump(self.test_layout)
+        output = inv.get_inventory(self.test_input, layout_data)
         sections = inventory_utils.get_sections(output)
         assert_equal(len(sections), 7)

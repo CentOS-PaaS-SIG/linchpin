@@ -10,6 +10,7 @@ except ImportError:
 
 
 def get_sections(ini):
+    ini = ini.decode('utf-8') 
     buf = io.StringIO(ini)
     config = ConfigParser(allow_no_value=True)
     config.readfp(buf)
