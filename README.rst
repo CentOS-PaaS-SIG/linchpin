@@ -8,26 +8,13 @@ infrastructure resource types can be defined with a single topology file.
 Linch-pin can also generate inventory files for use with additional ansible
 playbooks. These are applied using an inventory layout file (work in progress).
 
-Directory Structure
-++++++++++++++++++++
+Contributing
+++++++++++++
 
-.. code-block:: bash
-    .
-    ├── provision # provisioning of infrastructures occurs here
-    │   ├── roles # ansible roles used to perform provisioning
-    │   ├── filter_plugins # inventory layout filter plugins
-    │   ├── site.yml # default provisioning playbook
-    │   └── invfilter.yml # playbook for tooling inventory filters
-    ├── configure # additional configurations for jenkins jobs and the like
-    │   └── site.yml # configuration playbook
-    ├── docs # documentation
-    ├── README.md # this file
-    ├── schemas # example schemas (includes default schema: schema_v2.json)
-    ├── ex_topo # example topologies and related components
-    ├── keystore # location of ssh keys, etc to provide to provisioned systems
-    ├── library # ansible modules for linch-pin (written in python)
-    ├── inventory # default location of inventories provided by linch-pin
-    └── outputs # default location of outputs
+Developers are encouraged to contribute to the Linch-Pin project. Please visit
+`Contributing <http://github.com/CentOS-PaaS-SIG/linch-pin/tree/master/CONTRIBUTING.rst>`_
+for details.
+>>>>>>> Rename README.md to README.rst
 
 Installation
 ++++++++++++
