@@ -288,16 +288,15 @@ class LinchpinAPI:
             raise  KeyError("One or more Invalid targets found")
 
 
-    def lp_validate(self, topo, layout=None, pf=None):
-        """ validate module of linchpin cli :
-        currenly validates only topologies,
-        need to implement pf, layouts too"""
+    def lp_validate_topology(self, topology):
         e_vars = {}
         e_vars["schema"] = self.base_path + "/schemas/schema_v3.json"
-        e_vars["data"] = topo
+        e_vars["data"] = topology
         result = invoke_linchpin(self.base_path, e_vars,
                                  "SCHEMA_CHECK", console=True)
+        print(result)
         return result
+
 
     def lp_invgen(self, topoout, layout, invout, invtype):
         """ invgen module of linchpin cli """

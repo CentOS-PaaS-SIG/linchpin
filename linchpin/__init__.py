@@ -247,28 +247,22 @@ def config_init(context):
                      pwd=pwd).dump('linchpin_config.yml')
 
 
-@cli.command()
-@click.option("--pf",
-              default=False,
-              required=False,
-              help="gets the PinFile by name")
-@click.option("--layout",
-              default=False,
-              required=False,
-              help="gets the layout by name")
-@click.option("--topo",
-              default=False,
-              required=False,
-              help="gets the topology by name")
+@cli.group()
 @pass_context
-def validate(context, topo, layout, pf):
-    """ validate module of linchpin cli : 
-        validates only topologies for now
-    """
+def validate(context):
+    pass
+
+
+@validate.command(name='topology')
+@click.argument('topology', nargs=1)
+@pass_context
+def validate_topology(context, topology):
+    click.echo("inside validate topology")
     lpcli = LinchpinCli(context)
-    topo = os.path.abspath(topo)
-    output = lpcli.lp_validate(topo, layout, pf)
-    pprint.pprint(output)
+    click.echo(topology)
+    topology = os.path.abspath(topology)
+    result = lpcli.lp_validate_topology(topology)
+    return result
 
 
 @cli.command()
@@ -302,4 +296,3 @@ def invgen(context, topoout, layout, invout, invtype):
     invout = os.path.abspath(invout)
     lpcli = LinchpinCli(context)
     result = lpcli.lp_invgen(topoout, layout, invout, invtype)
-    pprint.pprint(result)
