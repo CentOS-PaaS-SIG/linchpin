@@ -12,7 +12,7 @@ Contributing
 ++++++++++++
 
 Developers are encouraged to contribute to the Linch-Pin project. Please visit
-`Contributing <http://github.com/CentOS-PaaS-SIG/linch-pin/tree/master/CONTRIBUTING.rst>`_
+`Contributing <http://github.com/CentOS-PaaS-SIG/linch-pin/tree/develop/CONTRIBUTING.rst>`_
 for details.
 >>>>>>> Rename README.md to README.rst
 
