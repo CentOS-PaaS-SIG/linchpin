@@ -15,19 +15,17 @@ PinFile
 ```````
 
 The first file to configure is the PinFile. A PinFile can be configured with multiple
-sets of infrastructure that should be provisioned or torn down. This file has two entries
-prefilled that should be left as is.
+sets of infrastructure that should be provisioned or torn down.
 
-``
-topology_upstream: https://github.com/CentOS-PaaS-SIG/linch-pin/
-layout_upstream: https://github.com/CentOS-PaaS-SIG/linch-pin/
-``
+This file has two entries prefilled that should be left as is::
 
-These values should be left as is.
+  topology_upstream: https://github.com/CentOS-PaaS-SIG/linch-pin/
+  layout_upstream: https://github.com/CentOS-PaaS-SIG/linch-pin/
+
 
 The remaining values in this file are named object hashes. Each object hash has two
-properties. `topology` is is the name of the toplogy file to be used with that group.
-`layout` is the name of the layout file that will be placed  Both topology and layout
+properties. `topology` is the name of the toplogy file to be used with that group.
+`layout` is the name of the layout file that will be placed. Both topology and layout
 files will be discussed in more detail in the upcoming pages.
 
 inventory

@@ -1,7 +1,7 @@
 Example Topologies
 ==================
 
-Before, using Linchpin, Here are few Linchpin topology examples.
+Before using Linchpin, here are few Linchpin topology examples.
 
 .. toctree::
    :maxdepth: 1
