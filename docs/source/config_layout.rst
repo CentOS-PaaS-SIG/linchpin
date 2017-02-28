@@ -28,7 +28,7 @@ value is optional and defaults to 1 when it's not present.
 The `host_groups` field contains an array of Ansible inventory groups into which all
 the hosts under this hash will get placed. This value is optional and will default to
 an empty list when not filled. In that case, the host will be named into the inventory
-with its host vars, but it will not 
+with its host vars, and added to default 'all' group.
 
 As an example, assume you provisioned three hosts and you wanted one database and
 two applicaiton hosts. Your goal is to get to an Ansible inventory that looks like this::
