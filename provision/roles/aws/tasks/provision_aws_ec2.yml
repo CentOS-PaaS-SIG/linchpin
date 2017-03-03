@@ -1,3 +1,11 @@
+- name: "Set default res_grp_vars when not defined"
+  set_fact:
+    res_grp_vars:
+      -       
+        name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+        resource_group_name: "{{ res_grp_name  }}"
+  when: res_grp_vars is not defined
+
 - name: "Provisioning AWS_EC2 Resource when async == false"
   ec2:
     aws_access_key: "{{ aws_access_key_id | default(omit) }}"
@@ -32,7 +40,7 @@
     group: "{{ res_def['security_group']| default('default') }}"
     count: "{{ res_def['count'] }}"
     vpc_subnet_id: "{{ res_def['vpc_subnet_id']| default(omit) }}"
-    assign_public_ip: "{{ res_def['assign_public_ip']| default(omit) }}"
+    assign_public_ip: "{{ res_def['assign_public_ip'] | default(omit) }}"
     instance_tags: "{{ res_grp_vars | selectattr('resource_group_name', 'equalto', res_grp_name ) | first }}"
   async: "{{ async_timeout }}"
   poll: 0
