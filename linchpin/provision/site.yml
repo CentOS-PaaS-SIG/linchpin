@@ -8,7 +8,7 @@
     - name: "Include linchpin_config"
       include_vars: "{{ item }}"
       with_first_found:
-        - "{{ linchpin_config.yml | default(omit) }}"
+        - "{{ linchpin_config | default(omit) }}"
         - "../linchpin_config.yml"
         - "~/.linchpin_config.yml"
         - "/usr/linchpin_config.yml"
