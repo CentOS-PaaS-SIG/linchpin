@@ -20,7 +20,7 @@ def list_all_files(root_dir):
 
 setup(
     name='linchpin',
-    version='0.8.6',
+    version='0.9.1',
     description = 'Ansible based multi cloud orchestrator',
     author = 'samvaran kashyap rallabandi',
     author_email = 'samvaran.kashyap@gmail.com',
