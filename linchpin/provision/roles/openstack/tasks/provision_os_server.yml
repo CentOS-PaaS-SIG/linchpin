@@ -6,7 +6,7 @@
       username: "{{ username }}"
       password: "{{ password }}"
       project_name: "{{ project }}"
-    name: "{{ res_grp_name }}_{{ res_def['res_name'] }}"
+    name: "{{ res_grp_name }}_{{ res_def['res_name'] | default(res_def['name']) }}"
     image: "{{ res_def['image'] }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
@@ -30,7 +30,7 @@
       username: "{{ username }}"
       password: "{{ password }}"
       project_name: "{{ project }}"
-    name: "{{ res_grp_name }}_{{ res_def['res_name'] }}"
+    name: "{{ res_grp_name }}_{{ res_def['res_name'] | default(res_def['name']) }}"
     image: "{{ res_def['image'] }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
