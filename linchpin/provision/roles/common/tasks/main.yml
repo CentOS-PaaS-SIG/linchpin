@@ -1,47 +1,46 @@
 ---
 # This playbook contains common play that will be ran before the provisioning starts.
-- name: "DEBUG: topology and schema"
+- name: "DEBUG: topology"
   debug:
-    msg: "topology: {{ topology }} schema: {{ schema }}"
+    msg: "topology: {{ topology }} "
 
 - name: "schema check for given topology file"
   schema_check:
     data: "{{ topology }}"
-    schema: "{{ schema }}"
+    schema: "{{ playbook_dir }}/../schemas/schema_v3.json"
   register: output
   tags: schema_validation
+  ignore_errors: true
+
+- name: "schema check for given topology file"
+  schema_check:
+    data: "{{ topology }}"
+    schema: "{{ playbook_dir }}/../schemas/schema_v4.json"
+  register: output
+  tags: schema_validation
+  when: output["failed"] == true
 
 - name: "set fact for saving topology_job_ids"
   set_fact:
     topology_job_ids: []
 
-- name: "filtering the output for openstack resource groups"
+- name: "Get the resource group types defined in topology"
   set_fact:
-    os_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'openstack') | list }}"
+      res_grp_types: "{{ output.output.data.resource_groups | mapmultipleattr('res_group_type','resource_group_type') }}"
 
-- name: "filtering the output for aws resource groups"
-  set_fact:
-    aws_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'aws') | list }}"
+- name: "Filter resource_groups by type"
+  set_fact: 
+    filtered_res_grps : "{{ res_grp_types | res_grp_filter( output.output.data.resource_groups, 'res_group_type','resource_group_type')  }}"
 
-- name: "filtering the output for google cloud resource groups"
+- name: "Assigning facts with respect to their group type"
   set_fact:
-    gcloud_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'gcloud') | list }}"
-
-- name: "filtering the output for duffy resource groups"
-  set_fact:
-    duffy_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'duffy') | list }}"
-
-- name: "filtering the output for libvirt resource groups"
-  set_fact:
-    libvirt_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'libvirt') | list }}"
-
-- name: "filtering the output for rackspace resource groups"
-  set_fact:
-    rax_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'rax') | list }}"
-
-- name: "filtering the output for beaker"
-  set_fact:
-    bkr_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'beaker') | list }}"
+    os_res_grps: "{{  filtered_res_grps['openstack'] | default([]) }}"
+    aws_res_grps: "{{ filtered_res_grps['aws'] | default([]) }}"
+    gcloud_res_grps: "{{ filtered_res_grps['gcloud'] | default([]) }}"
+    duffy_res_grps: "{{ filtered_res_grps['duffy'] | default([]) }}"
+    libvirt_res_grps: "{{ filtered_res_grps['libvirt'] | default([])}}"
+    rax_res_grps: "{{ filtered_res_grps['rackspace'] | default([]) }}"
+    bkr_res_grps: "{{ filtered_res_grps['beaker'] | default([]) }}"
 
 - name: "Registering resource group vars from topology"
   set_fact:
