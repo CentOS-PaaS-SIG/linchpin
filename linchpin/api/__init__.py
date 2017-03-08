@@ -225,6 +225,7 @@ class LinchpinAPI:
         e_vars['linchpin_config'] = self.get_config_path()
         e_vars['outputfolder_path'] = self.context.workspace+"/outputs"
         e_vars['inventory_outputs_path'] = self.context.workspace+"/inventories"
+        e_vars['keystore_path'] = self.context.workspace+"/keystore"
         e_vars['state'] = "present"
         # checks wether the targets are valid or not
         if set(targets) == set(pf.keys()).intersection(targets) and len(targets) > 0:
@@ -259,6 +260,7 @@ class LinchpinAPI:
         e_vars = {}
         e_vars['linchpin_config'] = self.get_config_path()
         e_vars['inventory_outputs_path'] = self.context.workspace + "/inventories"
+        e_vars['keystore_path'] = self.context.workspace+"/keystore"
         e_vars['state'] = "absent"
         # checks wether the targets are valid or not
         if set(targets) == set(pf.keys()).intersection(targets) and len(targets) > 0:
