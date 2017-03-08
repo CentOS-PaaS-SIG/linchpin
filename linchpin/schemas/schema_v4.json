@@ -54,7 +54,7 @@
 		    "type":"string"
 		}
             },
-            "required":["flavor","res_type","image","count","keypair"]
+            "required":["flavor","type","image","count","keypair"]
         },
         "aws_ec2": {
             "type" : "object",
@@ -79,7 +79,7 @@
                     "type":"string"
                 }
             },
-            "required":["flavor","res_type","count","keypair"]
+            "required":["flavor","type","count","keypair"]
         },
         "bkr_server": {
              "type": "object",
@@ -235,15 +235,15 @@
                     }
                 }
             },
-            "required":["name","res_type","description"]
+            "required":["name","type","description"]
         },
         "os_heat": {
             "type" : "object",
             "properties" : {
-                "res_name": {
+                "name": {
                     "type":"string"
                 },
-                "res_type": {
+                "type": {
                     "type":"string",
                     "pattern":"os_heat"
                 },
@@ -251,15 +251,15 @@
                     "type":"string"
                 }
             },
-            "required":["res_name","res_type", "template_path"]
+            "required":["name","type", "template_path"]
         },
         "os_keypair": {
             "type" : "object",
             "properties" : {
-                "res_name": {
+                "name": {
                     "type":"string"
                 },
-                "res_type": {
+                "type": {
                     "type":"string",
                     "pattern":"os_keypair"
                 },
@@ -531,7 +531,7 @@
                 "flavor": {
                     "type":"string"
                 },
-                "res_type": {
+                "type": {
                     "type":"string",
                     "pattern":"rax_server"
                 },
@@ -547,7 +547,7 @@
                 "region": {
                     "type":"string"
                 },
-                "res_name": {
+                "name": {
                     "type":"string"
                 }
             },
@@ -652,7 +652,7 @@
                     "type":"string"
                 }
             },
-            "required":["resource_group_name","resource_group_type","res_defs","assoc_creds"],
+            "required":["resource_group_name","resource_group_type","resource_definitions","credentials"],
             "additionalProperties": true
         },
         "duffy": {
@@ -661,11 +661,11 @@
                 "resource_group_name": {
                     "type":"string"
                 },
-                "res_group_type": {
+                "resource_group_type": {
                     "type":"string",
                     "pattern":"duffy"
                 },
-                "res_defs":{
+                "resource_definitions":{
                     "type": "array",
                     "items" : {
                         "oneOf" :
@@ -674,12 +674,12 @@
                             ]
                     }
                 },
-                "assoc_creds": {
+                "credentials": {
                     "description":"contains creds file associated to this resource",
                     "type":"string"
                 }
             },
-            "required":["resource_group_name","res_group_type","res_defs","assoc_creds"],
+            "required":["resource_group_name","resource_group_type","resource_definitions","credentials"],
             "additionalProperties": true
         },
         "libvirt": {
@@ -688,11 +688,11 @@
                 "resource_group_name": {
                     "type":"string"
                 },
-                "res_group_type": {
+                "resource_group_type": {
                     "type":"string",
                     "pattern":"libvirt"
                 },
-                "res_defs": {
+                "resource_definitions": {
                     "type": "array",
                     "items" : {
                         "oneOf" :
@@ -708,7 +708,7 @@
                     "type":"string"
                 }
             },
-            "required":["resource_group_name","res_group_type","res_defs"],
+            "required":["resource_group_name","resource_group_type","resource_definitions"],
             "additionalProperties": true
         },
         "rackspace": {
@@ -717,11 +717,11 @@
                 "resource_group_name": {
                     "type":"string"
                 },
-                "res_group_type": {
+                "resource_group_type": {
                     "type":"string",
                     "pattern":"rackspace"
                 },
-                "res_defs":{
+                "resource_definitions":{
                     "type": "array",
                     "items" : {
                         "oneOf" :
@@ -730,12 +730,12 @@
                             ]
                     }
                 },
-                "assoc_creds": {
+                "credentials": {
                     "description":"contains creds file associated to this resource",
                     "type":"string"
                 }
             },
-            "required":["resource_group_name","res_group_type","res_defs","assoc_creds"],
+            "required":["resource_group_name","resource_group_type","resource_definitions","credentials"],
             "additionalProperties": true
         }
     }
