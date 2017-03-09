@@ -1,13 +1,15 @@
+
+
 - name: "Provision/Teardown resource by looping on count"
   gce:
-    name: "{{ res_def['res_name'] }}"
+    name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     num_instances: "{{ res_def['count'] | default(omit)}}"
     zone: "{{ res_def['region'] }}"
     machine_type: "{{ res_def['flavor']  }}"
     image: "{{ res_def['image']  }}"
     state: "{{ state }}"
     service_account_email: "{{ client_email }}"
-    credentials_file: "{{ credentials_file | default('roles/gcloud/vars/'+res_grp['assoc_creds']+'.json') }}"
+    credentials_file: "roles/gcloud/vars/{{ res_grp['assoc_creds'] | default(res_grp['credentials']) }}.json"
     project_id: "{{ project_id }}"
   register: res_def_output
   when: async == false
@@ -19,14 +21,14 @@
 
 - name: "Async:: Provision/Teardown resource by looping on count"
   gce:
-    name: "{{ res_def['res_name'] }}"
+    name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     num_instances: "{{ res_def['count'] | default(omit)}}"
     zone: "{{ res_def['region'] }}"
     machine_type: "{{ res_def['flavor']  }}"
     image: "{{ res_def['image']  }}"
     state: "{{ state }}"
     service_account_email: "{{ client_email }}"
-    credentials_file: "{{ credentials_file | default('roles/gcloud/vars/'+res_grp['assoc_creds']+'.json') }}"
+    credentials_file: "roles/gcloud/vars/{{ res_grp['assoc_creds'] | default(res_grp['credentials']) }}.json"
     project_id: "{{ project_id }}"
   register: res_def_output
   when: async == true
