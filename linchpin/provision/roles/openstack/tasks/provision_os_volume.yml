@@ -7,7 +7,7 @@
       project_name: "{{ project }}" 
     state: "{{ state }}"
     size: "{{ res_def['size'] }}"
-    display_name: "{{ res_def['res_name'] }}"
+    display_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
   when: res_def['count'] is not defined
 
 - name: "Register resource count"
@@ -30,7 +30,7 @@
     - ["{{ username }}"]
     - ["{{ password }}"]
     - ["{{ project }}"]
-    - ["{{ res_def['res_name'] }}"]
+    - ["{{ res_def['res_name'] | default(res_def['name']) }}"]
     - ["{{ res_def['size'] }}"]
     - ["{{ state }}"]
     - "{{ res_count.stdout }}"
@@ -60,7 +60,7 @@
     - ["{{ username }}"]
     - ["{{ password }}"]
     - ["{{ project }}"]
-    - ["{{ res_def['res_name'] }}"]
+    - ["{{ res_def['res_name'] | default(res_def['name']) }}"]
     - ["{{ res_def['size'] }}"]
     - ["{{ state }}"]
     - "{{ res_count.stdout }}"
