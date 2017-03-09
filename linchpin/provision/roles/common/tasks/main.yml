@@ -1,9 +1,5 @@
 ---
 # This playbook contains common play that will be ran before the provisioning starts.
-- name: "DEBUG: topology"
-  debug:
-    msg: "topology: {{ topology }} "
-
 - name: "schema check for given topology file"
   schema_check:
     data: "{{ topology }}"
@@ -12,13 +8,22 @@
   tags: schema_validation
   ignore_errors: true
 
+- name: "Set state for schema validation"
+  set_fact:
+    schema_valid: "{{ output['isvalid'] | default(false) }}"
+
 - name: "schema check for given topology file"
   schema_check:
     data: "{{ topology }}"
     schema: "{{ playbook_dir }}/../schemas/schema_v4.json"
-  register: output
+  register: v4output
   tags: schema_validation
-  when: output["failed"] == true
+  when: schema_valid == false
+
+- name: "update output when schema_v4 is used"
+  set_fact:
+    output: "{{ v4output }}"
+  when: schema_valid == false
 
 - name: "set fact for saving topology_job_ids"
   set_fact:
