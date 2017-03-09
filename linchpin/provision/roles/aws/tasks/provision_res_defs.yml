@@ -1,5 +1,5 @@
-- name: "provision resource type : {{ res_def['res_type'] }}"
-  include: "provision_{{ res_def['res_type'] }}.yml"
+- name: "provision resource type : {{ res_def['res_type'] | default(res_def['type']) }}"
+  include: "provision_{{ res_def['res_type'] | default(res_def['type'])}}.yml"
 
 # can be reverted if the provisioning is not optimized
 
