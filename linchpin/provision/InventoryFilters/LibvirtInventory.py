@@ -12,20 +12,22 @@ except ImportError:
 from InventoryFilter import InventoryFilter
 
 
-class AWSInventory(InventoryFilter):
+class LibvirtInventory(InventoryFilter):
 
     def get_host_ips(self, topo):
-
-        host_public_ips = []
-        for group in topo['aws_ec2_res']:
-            for instance in group['instances']:
-                host_public_ips.append(str(instance['public_dns_name']))
-        return host_public_ips
+        ips = []
+        if not ('libvirt_res' in topo):
+            return ips
+        for val in topo['libvirt_res']:
+            print('ip: {}'.format(val))
+            ips.append(val)
+        return ips
 
     def get_inventory(self, topo, layout):
-
-        if len(topo['aws_ec2_res']) == 0:
+        if len(topo['libvirt_res']) == 0:
             return ""
+        inventory = ConfigParser(allow_no_value=True)
+        layout_hosts = self.get_layout_hosts(layout)
         inven_hosts = self.get_host_ips(topo)
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)
