@@ -1,5 +1,5 @@
 <domain type='{{ instance[1]['driver'] | default('kvm') }}'>
-  <name>linchpin_{{ instance[1]['res_name'] }}_{{ instance[2] }}</name>
+  <name>linchpin_{{ instance[1]['res_name'] | default(instance[1]['name']) }}_{{ instance[2] }}</name>
   <memory unit='KiB'>{{ instance[1]['memory'] * 1024 | int }}</memory>
   <vcpu placement='static'>{{ instance[1]['vcpus'] }}</vcpu>
   <os>
@@ -26,7 +26,7 @@
 {% endif %}
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2'/>
-      <source file='{{ instance[3] }}{{ instance[1]['res_name'] }}_{{ instance[2] }}.{{ instance[4] }}'/>
+      <source file='{{ instance[3] }}{{ instance[1]['res_name'] | default(instance[1]['name']) }}_{{ instance[2] }}.{{ instance[4] }}'/>
       <target dev='vda' bus='virtio'/>
     </disk>
 {% for network in instance[1]['networks'] %}

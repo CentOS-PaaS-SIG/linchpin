@@ -1,5 +1,5 @@
 <network ipv6='yes'>
-  <name>{{ res_def['res_name'] }}</name>
+  <name>{{ res_def['res_name'] | default(res_def['name'])  }}</name>
   <forward mode="{{ res_def['forward_mode'] | default('nat') }}"
 {% if res_def['forward_dev'] is defined %}
      dev="{{ res_def['forward_dev'] }}"{% endif %}/>

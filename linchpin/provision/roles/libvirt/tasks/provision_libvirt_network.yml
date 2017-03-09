@@ -1,7 +1,7 @@
 ---
 - name: "define network"
   virt_net:
-    name: "{{ res_def['res_name'] }}"
+    name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     command: define
     xml: "{{ lookup('template', 'libvirt_network.xml.j2') }}"
     uri: "{{ res_def['uri'] | default('qemu:///system') }}"
@@ -20,4 +20,4 @@
 - name: "start network"
   virt_net:
     state: active
-    name: "{{ res_def['res_name'] }}"
+    name: "{{ res_def['res_name'] | default(res_def['name']) }}"
