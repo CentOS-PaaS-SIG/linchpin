@@ -1,0 +1,32 @@
+- name: "register resource count"
+  shell: python -c "print [x for x in range( 0, {{ res_def['count'] | default(1) }} )]"
+  register: res_count
+
+- name: "halt node"
+  virt:
+    name: "{{ instance[0] }}_{{ instance[1]['res_name'] }}_{{ instance[2] }}"
+    state: destroyed
+    uri: "{{ instance[1]['uri'] | default('qemu:///system') }}"
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ res_def }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: instance
+  register: res_def_output
+  when: async == false
+
+- name: "undefine node"
+  virt:
+    name: "{{ instance[0] }}_{{ instance[1]['res_name'] }}_{{ instance[2] }}"
+    command: undefine
+    uri: "{{ instance[1]['uri'] | default('qemu:///system') }}"
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ res_def }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: instance
+  register: res_def_output
+  when: async == false
+
