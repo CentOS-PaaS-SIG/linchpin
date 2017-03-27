@@ -6,10 +6,6 @@ import os
 # reading requirements from requirements.txt
 dir_path = os.path.dirname(os.path.realpath(__file__))
 reqs_file = 'requirements.txt'.format(dir_path)
-<<<<<<< 7eef16c0f0fbf4c14d478d67bc8862976621ff48
-
-=======
->>>>>>> fixed up packaging, and libraries to make it more pythonic
 with open(reqs_file) as f:
     required = f.read().splitlines()
 
@@ -30,6 +26,7 @@ setup(
     ''',
     extras_require = {
         'beaker':  ['beaker-client==23.3'],
+        'krbV': ["python-krbV"],
         'docs': ["docutils","sphinx","sphinx_rtd_theme"],
         'tests': ["nose","mock","coverage"],
         'libvirt': ["libvirt-python>=3.0.0", "lxml"],
