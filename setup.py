@@ -33,6 +33,7 @@ setup(
     ''',
     extras_require = {
         'libvirt': ["libvirt-python>=3.0.0"],
+        'beaker-kerberos': ["python-krbV"]
     },
     dependency_links = ['https://github.com/eevee/camel/tree/v0.1/tarball/'],
     packages=[
