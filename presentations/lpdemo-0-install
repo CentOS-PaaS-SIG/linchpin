@@ -88,7 +88,7 @@
     },
     {
       "act": "ECHO",
-      "data": "pip install linchpin==0.8.6",
+      "data": "pip install linchpin==0.9.0",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -107,7 +107,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Collecting linchpin==0.8.6\r\n",
+      "data": "Collecting linchpin==0.9.0\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -116,7 +116,7 @@
     },
     {
       "act": "WRITE",
-      "data": "  Downloading linchpin-0.8.6-py2-none-any.whl (183kB)\r\n\u001b[?25l\r\u001b[K    5% |\u2588\u2589                              | 10kB 63.9MB/s eta 0:00:01",
+      "data": "  Downloading linchpin-0.9.0-py2-none-any.whl (183kB)\r\n\u001b[?25l\r\u001b[K    5% |\u2588\u2589                              | 10kB 63.9MB/s eta 0:00:01",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -197,7 +197,7 @@
     },
     {
       "act": "WRITE",
-      "data": "\u001b[?25hRequirement already satisfied: pyasn1>=0.1.9 in /usr/lib/python2.7/site-packages (from linchpin==0.8.6)\r\nRequirement already satisfied: MarkupSafe in /usr/lib64/python2.7/site-packages (from linchpin==0.8.6)\r\nRequirement already satisfied: apache-libcloud>=0.20.1 in /home/herlo/.local/lib/python2.7/site-packages/apache_libcloud-1.5.0-py2.7.egg (from linchpin==0.8.6)\r\nRequirement already satisfied: tabulate in /usr/lib/python2.7/site-packages/tabulate-0.7.7-py2.7.egg (from linchpin==0.8.6)\r\nRequirement already satisfied: ndg-httpsclient in /home/herlo/.local/lib/python2.7/site-packages/ndg_httpsclient-0.4.2-py2.7.egg (from linchpin==0.8.6)\r\n",
+      "data": "\u001b[?25hRequirement already satisfied: pyasn1>=0.1.9 in /usr/lib/python2.7/site-packages (from linchpin==0.9.0)\r\nRequirement already satisfied: MarkupSafe in /usr/lib64/python2.7/site-packages (from linchpin==0.9.0)\r\nRequirement already satisfied: apache-libcloud>=0.20.1 in /home/herlo/.local/lib/python2.7/site-packages/apache_libcloud-1.5.0-py2.7.egg (from linchpin==0.9.0)\r\nRequirement already satisfied: tabulate in /usr/lib/python2.7/site-packages/tabulate-0.7.7-py2.7.egg (from linchpin==0.9.0)\r\nRequirement already satisfied: ndg-httpsclient in /home/herlo/.local/lib/python2.7/site-packages/ndg_httpsclient-0.4.2-py2.7.egg (from linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -206,7 +206,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: six>=1.10.0 in /home/herlo/.virtualenvs/venv/lib/python2.7/site-packages (from linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: six>=1.10.0 in /home/herlo/.virtualenvs/venv/lib/python2.7/site-packages (from linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -215,7 +215,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Collecting sphinx-rtd-theme (from linchpin==0.8.6)\r\n",
+      "data": "Collecting sphinx-rtd-theme (from linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -350,7 +350,7 @@
     },
     {
       "act": "WRITE",
-      "data": "\u001b[?25hRequirement already satisfied: enum34>=1.1.6 in /home/herlo/.local/lib/python2.7/site-packages/enum34-1.1.6-py2.7.egg (from linchpin==0.8.6)\r\nRequirement already satisfied: sphinx>=1.4.4 in /home/herlo/.local/lib/python2.7/site-packages/Sphinx-1.5.1-py2.7.egg (from linchpin==0.8.6)\r\n",
+      "data": "\u001b[?25hRequirement already satisfied: enum34>=1.1.6 in /home/herlo/.local/lib/python2.7/site-packages/enum34-1.1.6-py2.7.egg (from linchpin==0.9.0)\r\nRequirement already satisfied: sphinx>=1.4.4 in /home/herlo/.local/lib/python2.7/site-packages/Sphinx-1.5.1-py2.7.egg (from linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -359,7 +359,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: Babel in /usr/lib/python2.7/site-packages (from linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: Babel in /usr/lib/python2.7/site-packages (from linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -368,7 +368,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: pyopenssl in /usr/lib/python2.7/site-packages (from linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: pyopenssl in /usr/lib/python2.7/site-packages (from linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -377,7 +377,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: docutils in /usr/lib/python2.7/site-packages (from linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: docutils in /usr/lib/python2.7/site-packages (from linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -386,7 +386,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: jinja2==2.8 in /usr/lib/python2.7/site-packages (from linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: jinja2==2.8 in /usr/lib/python2.7/site-packages (from linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -395,7 +395,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: setuptools>=17.1 in /home/herlo/.virtualenvs/venv/lib/python2.7/site-packages (from linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: setuptools>=17.1 in /home/herlo/.virtualenvs/venv/lib/python2.7/site-packages (from linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -404,7 +404,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: imagesize in /usr/lib/python2.7/site-packages/imagesize-0.7.1-py2.7.egg (from linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: imagesize in /usr/lib/python2.7/site-packages/imagesize-0.7.1-py2.7.egg (from linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -413,7 +413,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: jsonschema>=2.5.1 in /usr/lib/python2.7/site-packages (from linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: jsonschema>=2.5.1 in /usr/lib/python2.7/site-packages (from linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -422,7 +422,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: coverage in /home/herlo/.local/lib/python2.7/site-packages/coverage-4.3.4-py2.7-linux-x86_64.egg (from linchpin==0.8.6)\r\nRequirement already satisfied: functools32 in /usr/lib/python2.7/site-packages/functools32-3.2.3.post2-py2.7.egg (from linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: coverage in /home/herlo/.local/lib/python2.7/site-packages/coverage-4.3.4-py2.7-linux-x86_64.egg (from linchpin==0.9.0)\r\nRequirement already satisfied: functools32 in /usr/lib/python2.7/site-packages/functools32-3.2.3.post2-py2.7.egg (from linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -431,7 +431,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: beaker-client==23.3 in /usr/lib/python2.7/site-packages/beaker_client-23.3-py2.7.egg (from linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: beaker-client==23.3 in /usr/lib/python2.7/site-packages/beaker_client-23.3-py2.7.egg (from linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -440,7 +440,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: boto>=2.40.0 in /home/herlo/.local/lib/python2.7/site-packages/boto-2.45.0-py2.7.egg (from linchpin==0.8.6)\r\nRequirement already satisfied: pycparser>=2.14 in /usr/lib/python2.7/site-packages (from linchpin==0.8.6)\r\nRequirement already satisfied: click in /usr/lib/python2.7/site-packages (from linchpin==0.8.6)\r\nRequirement already satisfied: shade>=1.9.0 in /home/herlo/.local/lib/python2.7/site-packages/shade-1.14.1-py2.7.egg (from linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: boto>=2.40.0 in /home/herlo/.local/lib/python2.7/site-packages/boto-2.45.0-py2.7.egg (from linchpin==0.9.0)\r\nRequirement already satisfied: pycparser>=2.14 in /usr/lib/python2.7/site-packages (from linchpin==0.9.0)\r\nRequirement already satisfied: click in /usr/lib/python2.7/site-packages (from linchpin==0.9.0)\r\nRequirement already satisfied: shade>=1.9.0 in /home/herlo/.local/lib/python2.7/site-packages/shade-1.14.1-py2.7.egg (from linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -449,7 +449,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: idna>=2.1 in /home/herlo/.local/lib/python2.7/site-packages/idna-2.2-py2.7.egg (from linchpin==0.8.6)\r\nRequirement already satisfied: ipaddress>=1.0.16 in /usr/lib/python2.7/site-packages (from linchpin==0.8.6)\r\nRequirement already satisfied: python-openstackclient in /home/herlo/.local/lib/python2.7/site-packages/python_openstackclient-3.7.0-py2.7.egg (from linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: idna>=2.1 in /home/herlo/.local/lib/python2.7/site-packages/idna-2.2-py2.7.egg (from linchpin==0.9.0)\r\nRequirement already satisfied: ipaddress>=1.0.16 in /usr/lib/python2.7/site-packages (from linchpin==0.9.0)\r\nRequirement already satisfied: python-openstackclient in /home/herlo/.local/lib/python2.7/site-packages/python_openstackclient-3.7.0-py2.7.egg (from linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -458,7 +458,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: nose in /usr/lib/python2.7/site-packages (from linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: nose in /usr/lib/python2.7/site-packages (from linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -467,7 +467,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: pytz in /usr/lib/python2.7/site-packages (from linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: pytz in /usr/lib/python2.7/site-packages (from linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -476,7 +476,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Collecting ansible==2.2.1 (from linchpin==0.8.6)\r\n",
+      "data": "Collecting ansible==2.2.1 (from linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -827,7 +827,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: mock in /usr/lib/python2.7/site-packages/mock-2.0.0-py2.7.egg (from linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: mock in /usr/lib/python2.7/site-packages/mock-2.0.0-py2.7.egg (from linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -836,7 +836,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: Pygments>=2.0 in /usr/lib/python2.7/site-packages (from sphinx>=1.4.4->linchpin==0.8.6)\r\nRequirement already satisfied: snowballstemmer>=1.1 in /home/herlo/.local/lib/python2.7/site-packages/snowballstemmer-1.2.1-py2.7.egg (from sphinx>=1.4.4->linchpin==0.8.6)\r\nRequirement already satisfied: alabaster<0.8,>=0.7 in /home/herlo/.local/lib/python2.7/site-packages/alabaster-0.7.9-py2.7.egg (from sphinx>=1.4.4->linchpin==0.8.6)\r\nRequirement already satisfied: requests in /usr/lib/python2.7/site-packages (from sphinx>=1.4.4->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: Pygments>=2.0 in /usr/lib/python2.7/site-packages (from sphinx>=1.4.4->linchpin==0.9.0)\r\nRequirement already satisfied: snowballstemmer>=1.1 in /home/herlo/.local/lib/python2.7/site-packages/snowballstemmer-1.2.1-py2.7.egg (from sphinx>=1.4.4->linchpin==0.9.0)\r\nRequirement already satisfied: alabaster<0.8,>=0.7 in /home/herlo/.local/lib/python2.7/site-packages/alabaster-0.7.9-py2.7.egg (from sphinx>=1.4.4->linchpin==0.9.0)\r\nRequirement already satisfied: requests in /usr/lib/python2.7/site-packages (from sphinx>=1.4.4->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -845,7 +845,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: cryptography>=1.3 in /usr/lib64/python2.7/site-packages (from pyopenssl->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: cryptography>=1.3 in /usr/lib64/python2.7/site-packages (from pyopenssl->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -854,7 +854,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: appdirs>=1.4.0 in /home/herlo/.virtualenvs/venv/lib/python2.7/site-packages (from setuptools>=17.1->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: appdirs>=1.4.0 in /home/herlo/.virtualenvs/venv/lib/python2.7/site-packages (from setuptools>=17.1->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -863,7 +863,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: packaging>=16.8 in /home/herlo/.virtualenvs/venv/lib/python2.7/site-packages (from setuptools>=17.1->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: packaging>=16.8 in /home/herlo/.virtualenvs/venv/lib/python2.7/site-packages (from setuptools>=17.1->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -872,7 +872,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: repoze.lru in /usr/lib/python2.7/site-packages (from jsonschema>=2.5.1->linchpin==0.8.6)\r\nRequirement already satisfied: beaker-common in /home/herlo/.local/lib/python2.7/site-packages/beaker_common-23.3-py2.7.egg (from beaker-client==23.3->linchpin==0.8.6)\r\nRequirement already satisfied: lxml in /usr/lib64/python2.7/site-packages (from beaker-client==23.3->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: repoze.lru in /usr/lib/python2.7/site-packages (from jsonschema>=2.5.1->linchpin==0.9.0)\r\nRequirement already satisfied: beaker-common in /home/herlo/.local/lib/python2.7/site-packages/beaker_common-23.3-py2.7.egg (from beaker-client==23.3->linchpin==0.9.0)\r\nRequirement already satisfied: lxml in /usr/lib64/python2.7/site-packages (from beaker-client==23.3->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -881,7 +881,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: PrettyTable in /usr/lib/python2.7/site-packages (from beaker-client==23.3->linchpin==0.8.6)\r\nRequirement already satisfied: pbr<2.0,>=0.11 in /usr/lib/python2.7/site-packages (from shade>=1.9.0->linchpin==0.8.6)\r\nRequirement already satisfied: munch in /usr/lib/python2.7/site-packages (from shade>=1.9.0->linchpin==0.8.6)\r\nRequirement already satisfied: decorator in /usr/lib/python2.7/site-packages (from shade>=1.9.0->linchpin==0.8.6)\r\nRequirement already satisfied: jmespath in /home/herlo/.local/lib/python2.7/site-packages/jmespath-0.9.0-py2.7.egg (from shade>=1.9.0->linchpin==0.8.6)\r\nRequirement already satisfied: jsonpatch in /usr/lib/python2.7/site-packages (from shade>=1.9.0->linchpin==0.8.6)\r\nRequirement already satisfied: os-client-config>=1.22.0 in /home/herlo/.local/lib/python2.7/site-packages/os_client_config-1.26.0-py2.7.egg (from shade>=1.9.0->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: PrettyTable in /usr/lib/python2.7/site-packages (from beaker-client==23.3->linchpin==0.9.0)\r\nRequirement already satisfied: pbr<2.0,>=0.11 in /usr/lib/python2.7/site-packages (from shade>=1.9.0->linchpin==0.9.0)\r\nRequirement already satisfied: munch in /usr/lib/python2.7/site-packages (from shade>=1.9.0->linchpin==0.9.0)\r\nRequirement already satisfied: decorator in /usr/lib/python2.7/site-packages (from shade>=1.9.0->linchpin==0.9.0)\r\nRequirement already satisfied: jmespath in /home/herlo/.local/lib/python2.7/site-packages/jmespath-0.9.0-py2.7.egg (from shade>=1.9.0->linchpin==0.9.0)\r\nRequirement already satisfied: jsonpatch in /usr/lib/python2.7/site-packages (from shade>=1.9.0->linchpin==0.9.0)\r\nRequirement already satisfied: os-client-config>=1.22.0 in /home/herlo/.local/lib/python2.7/site-packages/os_client_config-1.26.0-py2.7.egg (from shade>=1.9.0->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -890,7 +890,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: requestsexceptions>=1.1.1 in /usr/lib/python2.7/site-packages (from shade>=1.9.0->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: requestsexceptions>=1.1.1 in /usr/lib/python2.7/site-packages (from shade>=1.9.0->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -899,7 +899,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: keystoneauth1>=2.11.0 in /home/herlo/.local/lib/python2.7/site-packages/keystoneauth1-2.18.0-py2.7.egg (from shade>=1.9.0->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: keystoneauth1>=2.11.0 in /home/herlo/.local/lib/python2.7/site-packages/keystoneauth1-2.18.0-py2.7.egg (from shade>=1.9.0->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -908,7 +908,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: netifaces>=0.10.4 in /usr/lib64/python2.7/site-packages (from shade>=1.9.0->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: netifaces>=0.10.4 in /usr/lib64/python2.7/site-packages (from shade>=1.9.0->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -917,7 +917,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: python-novaclient!=2.27.0,!=2.32.0,>=2.21.0 in /usr/lib/python2.7/site-packages (from shade>=1.9.0->linchpin==0.8.6)\r\nRequirement already satisfied: python-keystoneclient>=0.11.0 in /home/herlo/.local/lib/python2.7/site-packages/python_keystoneclient-3.9.0-py2.7.egg (from shade>=1.9.0->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: python-novaclient!=2.27.0,!=2.32.0,>=2.21.0 in /usr/lib/python2.7/site-packages (from shade>=1.9.0->linchpin==0.9.0)\r\nRequirement already satisfied: python-keystoneclient>=0.11.0 in /home/herlo/.local/lib/python2.7/site-packages/python_keystoneclient-3.9.0-py2.7.egg (from shade>=1.9.0->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -926,7 +926,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: python-cinderclient>=1.3.1 in /home/herlo/.local/lib/python2.7/site-packages/python_cinderclient-1.10.0-py2.7.egg (from shade>=1.9.0->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: python-cinderclient>=1.3.1 in /home/herlo/.local/lib/python2.7/site-packages/python_cinderclient-1.10.0-py2.7.egg (from shade>=1.9.0->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -935,7 +935,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: python-neutronclient>=2.3.10 in /usr/lib/python2.7/site-packages (from shade>=1.9.0->linchpin==0.8.6)\r\nRequirement already satisfied: python-troveclient>=1.2.0 in /home/herlo/.local/lib/python2.7/site-packages/python_troveclient-2.7.0-py2.7.egg (from shade>=1.9.0->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: python-neutronclient>=2.3.10 in /usr/lib/python2.7/site-packages (from shade>=1.9.0->linchpin==0.9.0)\r\nRequirement already satisfied: python-troveclient>=1.2.0 in /home/herlo/.local/lib/python2.7/site-packages/python_troveclient-2.7.0-py2.7.egg (from shade>=1.9.0->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -944,7 +944,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: python-ironicclient>=0.10.0 in /home/herlo/.local/lib/python2.7/site-packages/python_ironicclient-1.10.0-py2.7.egg (from shade>=1.9.0->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: python-ironicclient>=0.10.0 in /home/herlo/.local/lib/python2.7/site-packages/python_ironicclient-1.10.0-py2.7.egg (from shade>=1.9.0->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -953,7 +953,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: python-swiftclient>=2.5.0 in /home/herlo/.local/lib/python2.7/site-packages/python_swiftclient-3.2.0-py2.7.egg (from shade>=1.9.0->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: python-swiftclient>=2.5.0 in /home/herlo/.local/lib/python2.7/site-packages/python_swiftclient-3.2.0-py2.7.egg (from shade>=1.9.0->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -962,7 +962,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: python-heatclient>=1.0.0 in /home/herlo/.local/lib/python2.7/site-packages/python_heatclient-1.7.0-py2.7.egg (from shade>=1.9.0->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: python-heatclient>=1.0.0 in /home/herlo/.local/lib/python2.7/site-packages/python_heatclient-1.7.0-py2.7.egg (from shade>=1.9.0->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -971,7 +971,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: python-designateclient>=2.1.0 in /home/herlo/.local/lib/python2.7/site-packages/python_designateclient-2.4.0-py2.7.egg (from shade>=1.9.0->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: python-designateclient>=2.1.0 in /home/herlo/.local/lib/python2.7/site-packages/python_designateclient-2.4.0-py2.7.egg (from shade>=1.9.0->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -980,7 +980,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: python-magnumclient>=2.1.0 in /home/herlo/.local/lib/python2.7/site-packages/python_magnumclient-2.3.1-py2.7.egg (from shade>=1.9.0->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: python-magnumclient>=2.1.0 in /home/herlo/.local/lib/python2.7/site-packages/python_magnumclient-2.3.1-py2.7.egg (from shade>=1.9.0->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -989,7 +989,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: dogpile.cache>=0.5.3 in /home/herlo/.local/lib/python2.7/site-packages/dogpile.cache-0.6.2-py2.7.egg (from shade>=1.9.0->linchpin==0.8.6)\r\nRequirement already satisfied: cliff>=2.3.0 in /home/herlo/.local/lib/python2.7/site-packages/cliff-2.4.0-py2.7.egg (from python-openstackclient->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: dogpile.cache>=0.5.3 in /home/herlo/.local/lib/python2.7/site-packages/dogpile.cache-0.6.2-py2.7.egg (from shade>=1.9.0->linchpin==0.9.0)\r\nRequirement already satisfied: cliff>=2.3.0 in /home/herlo/.local/lib/python2.7/site-packages/cliff-2.4.0-py2.7.egg (from python-openstackclient->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -998,7 +998,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: openstacksdk!=0.9.11,!=0.9.12,>=0.9.10 in /home/herlo/.local/lib/python2.7/site-packages/openstacksdk-0.9.10-py2.7.egg (from python-openstackclient->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: openstacksdk!=0.9.11,!=0.9.12,>=0.9.10 in /home/herlo/.local/lib/python2.7/site-packages/openstacksdk-0.9.10-py2.7.egg (from python-openstackclient->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -1007,7 +1007,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: osc-lib>=1.2.0 in /home/herlo/.local/lib/python2.7/site-packages/osc_lib-1.3.0-py2.7.egg (from python-openstackclient->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: osc-lib>=1.2.0 in /home/herlo/.local/lib/python2.7/site-packages/osc_lib-1.3.0-py2.7.egg (from python-openstackclient->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -1016,7 +1016,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: oslo.i18n>=2.1.0 in /usr/lib/python2.7/site-packages (from python-openstackclient->linchpin==0.8.6)\r\nRequirement already satisfied: oslo.utils>=3.18.0 in /home/herlo/.local/lib/python2.7/site-packages/oslo.utils-3.22.0-py2.7.egg (from python-openstackclient->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: oslo.i18n>=2.1.0 in /usr/lib/python2.7/site-packages (from python-openstackclient->linchpin==0.9.0)\r\nRequirement already satisfied: oslo.utils>=3.18.0 in /home/herlo/.local/lib/python2.7/site-packages/oslo.utils-3.22.0-py2.7.egg (from python-openstackclient->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -1025,7 +1025,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: python-glanceclient>=2.5.0 in /home/herlo/.local/lib/python2.7/site-packages/python_glanceclient-2.5.0-py2.7.egg (from python-openstackclient->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: python-glanceclient>=2.5.0 in /home/herlo/.local/lib/python2.7/site-packages/python_glanceclient-2.5.0-py2.7.egg (from python-openstackclient->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -1034,7 +1034,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: paramiko in /usr/lib/python2.7/site-packages (from ansible==2.2.1->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: paramiko in /usr/lib/python2.7/site-packages (from ansible==2.2.1->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -1043,7 +1043,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: PyYAML in /usr/lib64/python2.7/site-packages (from ansible==2.2.1->linchpin==0.8.6)\r\nRequirement already satisfied: pycrypto>=2.6 in /usr/lib64/python2.7/site-packages (from ansible==2.2.1->linchpin==0.8.6)\r\nRequirement already satisfied: funcsigs>=1 in /usr/lib/python2.7/site-packages (from mock->linchpin==0.8.6)\r\nRequirement already satisfied: urllib3==1.15.1 in /usr/lib/python2.7/site-packages (from requests->sphinx>=1.4.4->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: PyYAML in /usr/lib64/python2.7/site-packages (from ansible==2.2.1->linchpin==0.9.0)\r\nRequirement already satisfied: pycrypto>=2.6 in /usr/lib64/python2.7/site-packages (from ansible==2.2.1->linchpin==0.9.0)\r\nRequirement already satisfied: funcsigs>=1 in /usr/lib/python2.7/site-packages (from mock->linchpin==0.9.0)\r\nRequirement already satisfied: urllib3==1.15.1 in /usr/lib/python2.7/site-packages (from requests->sphinx>=1.4.4->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -1052,7 +1052,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: cffi>=1.4.1 in /usr/lib64/python2.7/site-packages (from cryptography>=1.3->pyopenssl->linchpin==0.8.6)\r\nRequirement already satisfied: pyparsing in /home/herlo/.virtualenvs/venv/lib/python2.7/site-packages (from packaging>=16.8->setuptools>=17.1->linchpin==0.8.6)\r\nRequirement already satisfied: jsonpointer>=1.0 in /usr/lib/python2.7/site-packages (from jsonpatch->shade>=1.9.0->linchpin==0.8.6)\r\nRequirement already satisfied: iso8601>=0.1.11 in /usr/lib/python2.7/site-packages (from keystoneauth1>=2.11.0->shade>=1.9.0->linchpin==0.8.6)\r\nRequirement already satisfied: positional>=1.1.1 in /home/herlo/.local/lib/python2.7/site-packages/positional-1.1.1-py2.7.egg (from keystoneauth1>=2.11.0->shade>=1.9.0->linchpin==0.8.6)\r\nRequirement already satisfied: stevedore>=1.17.1 in /usr/lib/python2.7/site-packages (from keystoneauth1>=2.11.0->shade>=1.9.0->linchpin==0.8.6)\r\nRequirement already satisfied: debtcollector>=1.2.0 in /usr/lib/python2.7/site-packages (from python-keystoneclient>=0.11.0->shade>=1.9.0->linchpin==0.8.6)\r\nRequirement already satisfied: oslo.config!=3.18.0,>=3.14.0 in /home/herlo/.local/lib/python2.7/site-packages/oslo.config-3.22.0-py2.7.egg (from python-keystoneclient>=0.11.0->shade>=1.9.0->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: cffi>=1.4.1 in /usr/lib64/python2.7/site-packages (from cryptography>=1.3->pyopenssl->linchpin==0.9.0)\r\nRequirement already satisfied: pyparsing in /home/herlo/.virtualenvs/venv/lib/python2.7/site-packages (from packaging>=16.8->setuptools>=17.1->linchpin==0.9.0)\r\nRequirement already satisfied: jsonpointer>=1.0 in /usr/lib/python2.7/site-packages (from jsonpatch->shade>=1.9.0->linchpin==0.9.0)\r\nRequirement already satisfied: iso8601>=0.1.11 in /usr/lib/python2.7/site-packages (from keystoneauth1>=2.11.0->shade>=1.9.0->linchpin==0.9.0)\r\nRequirement already satisfied: positional>=1.1.1 in /home/herlo/.local/lib/python2.7/site-packages/positional-1.1.1-py2.7.egg (from keystoneauth1>=2.11.0->shade>=1.9.0->linchpin==0.9.0)\r\nRequirement already satisfied: stevedore>=1.17.1 in /usr/lib/python2.7/site-packages (from keystoneauth1>=2.11.0->shade>=1.9.0->linchpin==0.9.0)\r\nRequirement already satisfied: debtcollector>=1.2.0 in /usr/lib/python2.7/site-packages (from python-keystoneclient>=0.11.0->shade>=1.9.0->linchpin==0.9.0)\r\nRequirement already satisfied: oslo.config!=3.18.0,>=3.14.0 in /home/herlo/.local/lib/python2.7/site-packages/oslo.config-3.22.0-py2.7.egg (from python-keystoneclient>=0.11.0->shade>=1.9.0->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -1061,7 +1061,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: oslo.serialization>=1.10.0 in /usr/lib/python2.7/site-packages (from python-keystoneclient>=0.11.0->shade>=1.9.0->linchpin==0.8.6)\r\nRequirement already satisfied: simplejson>=2.2.0 in /usr/lib64/python2.7/site-packages (from python-cinderclient>=1.3.1->shade>=1.9.0->linchpin==0.8.6)\r\nRequirement already satisfied: python-mistralclient>=2.0.0 in /home/herlo/.local/lib/python2.7/site-packages/python_mistralclient-3.0.0-py2.7.egg (from python-troveclient>=1.2.0->shade>=1.9.0->linchpin==0.8.6)\r\n",
+      "data": "Requirement already satisfied: oslo.serialization>=1.10.0 in /usr/lib/python2.7/site-packages (from python-keystoneclient>=0.11.0->shade>=1.9.0->linchpin==0.9.0)\r\nRequirement already satisfied: simplejson>=2.2.0 in /usr/lib64/python2.7/site-packages (from python-cinderclient>=1.3.1->shade>=1.9.0->linchpin==0.9.0)\r\nRequirement already satisfied: python-mistralclient>=2.0.0 in /home/herlo/.local/lib/python2.7/site-packages/python_mistralclient-3.0.0-py2.7.egg (from python-troveclient>=1.2.0->shade>=1.9.0->linchpin==0.9.0)\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -1070,7 +1070,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Requirement already satisfied: futures>=3.0 in /usr/lib/python2.7/site-packages (from python-swiftclient>=2.5.0->shade>=1.9.0->linchpin==0.8.6)\r\nRequirement already satisfied: cmd2>=0.6.7 in /usr/lib/python2.7/site-packages (from cliff>=2.3.0->python-openstackclient->linchpin==0.8.6)\r\nRequirement already satisfied: unicodecsv>=0.8.0 in /usr/lib/python2.7/site-packages (from cliff>=2.3.0->python-openstackclient->linchpin==0.8.6)\r\nRequirement already satisfied: monotonic>=0.6 in /home/herlo/.local/lib/python2.7/site-packages/monotonic-1.2-py2.7.egg (from oslo.utils>=3.18.0->python-openstackclient->linchpin==0.8.6)\r\nRequirement already satisfied: netaddr!=0.7.16,>=0.7.13 in /usr/lib/python2.7/site-packages (from oslo.utils>=3.18.0->python-openstackclient->linchpin==0.8.6)\r\nRequirement already satisfied: warlock!=1.3.0,<2,>=1.0.1 in /home/herlo/.local/lib/python2.7/site-packages/warlock-1.2.0-py2.7.egg (from python-glanceclient>=2.5.0->python-openstackclient->linchpin==0.8.6)\r\nRequirement already satisfied: wrapt in /usr/lib64/python2.7/site-packages (from positional>=1.1.1->keystoneauth1>=2.11.0->shade>=1.9.0->linchpin==0.8.6)\r\nRequirement already satisfied: rfc3986>=0.3.1 in /home/herlo/.local/lib/python2.7/site-packages/rfc3986-0.4.1-py2.7.egg (from oslo.config!=3.18.0,>=3.14.0->python-keystoneclient>=0.11.0->shade>=1.9.0->linchpin==0.8.6)\r\nBuilding wheels for collected packages: ansible\r\n",
+      "data": "Requirement already satisfied: futures>=3.0 in /usr/lib/python2.7/site-packages (from python-swiftclient>=2.5.0->shade>=1.9.0->linchpin==0.9.0)\r\nRequirement already satisfied: cmd2>=0.6.7 in /usr/lib/python2.7/site-packages (from cliff>=2.3.0->python-openstackclient->linchpin==0.9.0)\r\nRequirement already satisfied: unicodecsv>=0.8.0 in /usr/lib/python2.7/site-packages (from cliff>=2.3.0->python-openstackclient->linchpin==0.9.0)\r\nRequirement already satisfied: monotonic>=0.6 in /home/herlo/.local/lib/python2.7/site-packages/monotonic-1.2-py2.7.egg (from oslo.utils>=3.18.0->python-openstackclient->linchpin==0.9.0)\r\nRequirement already satisfied: netaddr!=0.7.16,>=0.7.13 in /usr/lib/python2.7/site-packages (from oslo.utils>=3.18.0->python-openstackclient->linchpin==0.9.0)\r\nRequirement already satisfied: warlock!=1.3.0,<2,>=1.0.1 in /home/herlo/.local/lib/python2.7/site-packages/warlock-1.2.0-py2.7.egg (from python-glanceclient>=2.5.0->python-openstackclient->linchpin==0.9.0)\r\nRequirement already satisfied: wrapt in /usr/lib64/python2.7/site-packages (from positional>=1.1.1->keystoneauth1>=2.11.0->shade>=1.9.0->linchpin==0.9.0)\r\nRequirement already satisfied: rfc3986>=0.3.1 in /home/herlo/.local/lib/python2.7/site-packages/rfc3986-0.4.1-py2.7.egg (from oslo.config!=3.18.0,>=3.14.0->python-keystoneclient>=0.11.0->shade>=1.9.0->linchpin==0.9.0)\r\nBuilding wheels for collected packages: ansible\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -1151,7 +1151,7 @@
     },
     {
       "act": "WRITE",
-      "data": "Successfully installed ansible-2.2.1.0 linchpin-0.8.6 sphinx-rtd-theme-0.1.9\r\n",
+      "data": "Successfully installed ansible-2.2.1.0 linchpin-0.9.0 sphinx-rtd-theme-0.1.9\r\n",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {
@@ -1160,7 +1160,7 @@
     },
     {
       "act": "WRITE",
-      "data": "\u001b]777;notify;Command completed;pip install linchpin==0.8.6\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
+      "data": "\u001b]777;notify;Command completed;pip install linchpin==0.9.0\u0007\u001b]0;@t450s:~/Projects/lpdemo\u0007\u001b]7;file://t450s.egavas.org/home/herlo/Projects/lpdemo\u0007",
       "term": "21137157c389430cbd09766c78161b25"
     },
     {

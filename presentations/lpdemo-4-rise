@@ -1972,7 +1972,7 @@
     },
     {
       "act": "WRITE",
-      "data": "\r\nRed Hat Enterprise Linux Server release 6.5 (Santiago)\r\n\u001b]0;root@ae2e-test-0:~\u0007[root@ae2e-test-0 ~]# ",
+      "data": "\r\nCentOS Linux release 7.3.1611 (Core)\r\n\u001b]0;root@ae2e-test-0:~\u0007[root@ae2e-test-0 ~]# ",
       "term": "081e99e261bc4767b48e7f6caece77d8"
     },
     {
