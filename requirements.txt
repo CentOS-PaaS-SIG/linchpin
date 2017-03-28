@@ -1,6 +1,7 @@
 setuptools>=17.1
 docutils
 Babel
+requests==2.10.0
 imagesize
 jinja2==2.8
 enum34>=1.1.6
