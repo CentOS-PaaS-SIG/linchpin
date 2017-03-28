@@ -24,10 +24,8 @@ setup(
         linchpin=linchpin:cli
     ''',
     extras_require = {
-        'libvirt': ["libvirt-python>=3.0.0"],
-        'krbV': ["python-krbV"]
-        'beaker':  ['beaker-client==23.3'],
         'krbV': ["python-krbV"],
+        'beaker':  ['beaker-client==23.3'],
         'docs': ["docutils","sphinx","sphinx_rtd_theme"],
         'tests': ["nose","mock","coverage"],
         'libvirt': ["libvirt-python>=3.0.0", "lxml"],
