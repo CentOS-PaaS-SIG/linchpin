@@ -126,15 +126,13 @@ class LinchpinCli(LinchpinAPI):
         init_dir = os.getcwd()
         e_vars = {}
         e_vars['linchpin_config'] = self.get_config_path()
+        e_vars['outputfolder_path'] = init_dir+"/outputs"
         e_vars['inventory_outputs_path'] = init_dir + "/inventories"
         e_vars['state'] = "absent"
         if target == "all":
             for key in set(pf.keys()).difference(self.excludes):
                 e_vars['topology'] = self.find_topology(pf[key]["topology"],
                                                         pf)
-                topo_name = pf[key]["topology"].strip(".yml").strip(".yaml")
-                output_path = init_dir + "/outputs/" + topo_name + ".output"
-                e_vars['topology_output_file'] = output_path
                 output = invoke_linchpin(self.base_path,
                                          e_vars,
                                          "TEARDOWN",
@@ -147,10 +145,6 @@ class LinchpinCli(LinchpinAPI):
                 e_vars['topology'] = topology_path
                 if e_vars['topology'] is None:
                     print("Topology not found !!")
-                topo_name = pf[target]["topology"]
-                topo_name = topo_name.strip(".yml").strip(".yaml")
-                output_path = init_dir + "/outputs/" + topo_name + ".output"
-                e_vars['topology_output_file'] = output_path
                 output = invoke_linchpin(self.base_path,
                                          e_vars,
                                          "TEARDOWN",
