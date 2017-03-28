@@ -1,5 +1,4 @@
 from setuptools import setup, find_packages
-#from distutils.core import setup
 from pip.req import parse_requirements
 import os
 
@@ -25,6 +24,8 @@ setup(
         linchpin=linchpin:cli
     ''',
     extras_require = {
+        'libvirt': ["libvirt-python>=3.0.0"],
+        'krbV': ["python-krbV"]
         'beaker':  ['beaker-client==23.3'],
         'krbV': ["python-krbV"],
         'docs': ["docutils","sphinx","sphinx_rtd_theme"],
