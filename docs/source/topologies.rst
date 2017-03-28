@@ -10,3 +10,4 @@ Before, using Linchpin, Here are few Linchpin topology examples.
    topologies_openstack
    topologies_gcloud
    topologies_hybrid
+   topologies_beaker
