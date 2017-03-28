@@ -1,0 +1,10 @@
+aws_ec2_res: []
+duffy_res:
+-   changed: true
+    hosts:
+    - n63.crusty.ci.centos.org
+    - n21.dusty.ci.centos.org
+    - n11.dusty.ci.centos.org
+    ssid: 5adc53b2
+gcloud_gce_res: []
+os_server_res: []

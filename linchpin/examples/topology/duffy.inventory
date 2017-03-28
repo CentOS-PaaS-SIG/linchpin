@@ -1,0 +1,51 @@
+# based upon the duffy_3node_cluster.yml topology file from linch-pin
+# the following nodes are provisioned.
+#
+#
+#   [
+#        "n31.crusty",
+#        "d4de2418"
+#    ],
+#    [
+#        "n34.crusty",
+#        "d4de2418"
+#    ],
+#    [
+#        "n11.dusty",
+#        "d4de2418"
+#    ],
+#
+#
+# Using the duffy_3node_inventory_layout.yml inventory layout,
+# the inventory_layout filter in linch-pin would create
+# the following inventory file.
+
+[OSEv3]
+n31.crusty.ci.centos.org openshift_hostname=n31.crusty.ci.centos.org openshift_public_hostname=n31.crusty.ci.centos.org
+n34.crusty.ci.centos.org openshift_hostname=n34.crusty.ci.centos.org openshift_public_hostname=n34.crusty.ci.centos.org
+n11.dusty.ci.centos.org openshift_hostname=n11.dusty.ci.centos.org openshift_public_hostname=n11.dusty.ci.centos.org
+
+[masters]
+n31.crusty.ci.centos.org openshift_hostname=n31.crusty.ci.centos.org openshift_public_hostname=n31.crusty.ci.centos.org
+
+[nodes]
+n31.crusty.ci.centos.org openshift_hostname=n31.crusty.ci.centos.org openshift_public_hostname=n31.crusty.ci.centos.org
+n34.crusty.ci.centos.org openshift_hostname=n34.crusty.ci.centos.org openshift_public_hostname=n34.crusty.ci.centos.org
+n11.dusty.ci.centos.org openshift_hostname=n11.dusty.ci.centos.org openshift_public_hostname=n11.dusty.ci.centos.org
+
+[repo_host]
+n11.dusty.ci.centos.org openshift_hostname=n11.dusty.ci.centos.org openshift_public_hostname=n11.dusty.ci.centos.org
+
+[OSEv3:vars]
+debug_level=2
+openshift_docker_additional_registries="registry.example.com",
+openshift_docker_insecure_registries="registry.example.com",
+openshift_override_hostname_check=true
+product_type=openshift
+ansible_ssh_user=root
+openshift_set_hostname=true
+ansible_sudo=false
+
+[OSEv3:children]
+masters
+nodes

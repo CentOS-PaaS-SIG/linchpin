@@ -49,4 +49,3 @@ Probably the best way to see linch-pin in action, is to watch the
 presentation given at
 `DevConf 2017 <https://www.youtube.com/watch?v=Tb7Zti5Xao8>`_
 
-

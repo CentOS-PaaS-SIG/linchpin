@@ -1,0 +1,38 @@
+---
+inventory_layout:
+  vars:
+    openshift_hostname: __IP__
+    openshift_public_hostname: __IP__
+  hosts:
+    openshift-master:
+      host_groups:
+        - masters
+        - nodes
+        - OSEv3
+    openshift-node:
+      count: 1
+      host_groups:
+        - nodes
+        - OSEv3
+    openshift-repo-host:
+      host_groups:
+        - nodes
+        - OSEv3
+        - repo_host
+  host_groups:
+    OSEv3:
+      vars:
+        openshift_docker_additional_registries: |
+            "registry.example.com"
+        openshift_docker_insecure_registries: |
+            "registry.example.com"
+        debug_level: 2
+        ansible_sudo: False
+        ansible_ssh_user: root
+        openshift_override_hostname_check: 'True'
+        openshift_set_hostname: 'True'
+      children:
+        - masters
+        - nodes
+
+
