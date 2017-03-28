@@ -28,7 +28,7 @@ Beaker Server
               - DISKSPACE>20000
             hostrequire:
               - arch=X86_64
-    count: 1
+            count: 1
 
 .. note::
 
