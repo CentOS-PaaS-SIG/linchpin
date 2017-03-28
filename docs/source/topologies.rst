@@ -13,3 +13,4 @@ Before using Linchpin, here are few Linchpin topology examples.
    topologies_beaker
    topologies_libvirt
    topologies_hybrid
+   topologies_beaker
