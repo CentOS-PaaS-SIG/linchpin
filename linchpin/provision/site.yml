@@ -14,7 +14,7 @@
         - "/usr/linchpin_config.yml"
         - "/etc/linchpin/linchpin_config.yml"
 
-- name:  "schema check and Pre Provisioning Activities  on topology_file"
+- name:  "schema check and Pre Provisioning Activities on topology_file"
   hosts: localhost
   gather_facts: false
   roles:

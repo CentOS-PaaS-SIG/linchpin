@@ -12,7 +12,6 @@ except ImportError:
     from ConfigParser import ConfigParser
 from InventoryFilters import GenericInventory
 
-
 filepath = os.path.realpath(__file__)
 filepath = "/".join(filepath.split("/")[0:-2])
 sys.path.append(filepath)

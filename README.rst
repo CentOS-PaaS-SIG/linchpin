@@ -28,9 +28,9 @@ General Configuration
 Credentials
 ++++++++++++
 
-* `Openstack credentials examples <https://github.com/herlo/linch-pin/tree/cli_cleanup/linchpin/provision/roles/openstack/vars>`_
-* `AWS credential examples <https://github.com/herlo/linch-pin/tree/cli_cleanup/linchpin/provision/roles/aws/vars>`_
-* `GCE credentials examples <https://github.com/herlo/linch-pin/tree/cli_cleanup/linchpin/provision/roles/gcloud/vars>`_
+* `Openstack credentials examples <https://github.com/herlo/linch-pin/tree/master/linchpin/provision/roles/openstack/vars>`_
+* `AWS credential examples <https://github.com/herlo/linch-pin/tree/master/linchpin/provision/roles/aws/vars>`_
+* `GCE credentials examples <https://github.com/herlo/linch-pin/tree/master/linchpin/provision/roles/gcloud/vars>`_
 
 Example Topology
 +++++++++++++++++++++
