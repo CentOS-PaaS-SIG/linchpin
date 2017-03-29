@@ -1,7 +1,14 @@
 ---
 #includes the output file of linchpin
-
 - include_vars: "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output.yaml' ) }}"
+
+
+# include inventory generation files here.
+# Can be overridden by extravar inventory_layout_file,
+- name: "include the layout file for inventory generation"
+  set_fact:
+    inventory_layout: "{{ inventory_layout_file | default( inventory_layouts_path+'/'+'openshift-3node-cluster.yml') | ordered_yaml }}"
+
 
 - name: "Updating topology_outputs"
   set_fact:
@@ -14,27 +21,16 @@
       libvirt_res: "{{ libvirt_res }}"
   when: state == "present" and inventory_layout is defined
 
-- name: "DEBUG:: inventory_layout"
-  debug:
-    msg: "{{ inventory_layout }}"
-  when: state == "present" and inventory_layout is defined
 
-# parse inventory generation files here : can be overridden by extravar inventory_layout_file currently defaulted to openshift-3node-cluster.yml
-- name: "Parse inventory layout as a ordered dict"
-  set_fact:
-    inventory_layout: "{{ inventory_layout_file | default( inventory_layouts_path+'/'+'openshift-3node-cluster.yml') | ordered_yaml }}"
-
-# updating inventory output file with the absoulte path configured if given : can be overridden by  extravar inventory_output_file currently
-- name: "DEBUG:: inventory_outputs_path ##########"
-  debug:
-    msg: "{{ inventory_outputs_path }}"
-  when: state == "present" and inventory_layout is defined
-
+# updating inventory output file with the absolute path configured if given.
+# Can be overridden by extravar inventory_output_file currently
 - name: "Updating inventory_output_file with the absolute path"
   set_fact:
     inventory_output_file: "{{ inventory_output_file | default( inventory_outputs_path+'/'+output.output.data.topology_name ) }}"
+
 
 - name: "Generate Generic Inventory"
   template:
     src: "templates/generic_inventory_formatter.j2"
     dest: "{{ inventory_output_file }}.inventory"
+  when: state == "present" and inventory_layout is defined

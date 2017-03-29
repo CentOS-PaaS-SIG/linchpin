@@ -14,5 +14,5 @@ class FilterModule(object):
     ''' A filter to fix interface's name format '''
     def filters(self):
         return {
-            'ordered_yaml': to_ordered_dict 
+            'ordered_yaml': to_ordered_dict
         }

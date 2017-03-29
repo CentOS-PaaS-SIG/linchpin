@@ -23,6 +23,7 @@
             vcpus: 2
             networks:
               - name: linchpin-centos72
+
           - res_name: "centos74"
             res_type: "libvirt_node"
             uri: 'qemu://libvirt.example.com/system'
