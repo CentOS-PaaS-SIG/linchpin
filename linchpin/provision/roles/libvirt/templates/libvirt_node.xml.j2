@@ -1,5 +1,5 @@
 <domain type='{{ definition[1]['driver'] | default('kvm') }}'>
-  <name>{{ definition[0] }}_{{ definition[1]['res_name'] | default(instance[1]['name']) }}_{{ definition[2] }}</name>
+  <name>{{ definition[0] }}_{{ definition[1]['res_name'] | default(definition[1]['name']) }}_{{ definition[2] }}</name>
   <memory unit='KiB'>{{ definition[1]['memory'] * 1024 | int }}</memory>
   <vcpu placement='static'>{{ definition[1]['vcpus'] }}</vcpu>
   <os>

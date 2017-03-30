@@ -89,6 +89,7 @@
     remote_src: false
   with_nested:
     - ["{{ local_image_path }}"]
+    - ["{{ res_grp_name }}"]
     - ["{{ res_def['res_name'] | default(res_def['name']) }}"]
     - "{{ res_count.stdout }}"
     - ["{{ img_src_ext }}"]
