@@ -30,7 +30,7 @@ setup(
         'tests': ["nose","mock","coverage"],
         'libvirt': ["libvirt-python>=3.0.0", "lxml"],
     },
-    dependency_links = ['https://github.com/eevee/camel/tree/v0.1/tarball/'],
+    dependency_links = ['https://github.com/eevee/camel/archive/v0.1.tar.gz#egg=camel-99.1'],
     zip_safe=False,
     packages=find_packages(),
     include_package_data=True,

@@ -8,6 +8,7 @@ oslo.utils<3.23.0
 debtcollector<1.12.0
 stevedore<1.21.0
 pyopenssl
+requests==2.10.0
 ndg-httpsclient
 boto>=2.40.0
 apache-libcloud>=0.20.1
