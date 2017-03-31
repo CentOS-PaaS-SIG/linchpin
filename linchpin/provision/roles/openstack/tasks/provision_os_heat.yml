@@ -12,8 +12,8 @@
 
 - name: "provision/deprovision os_heat stack"
   os_hot_stack:
-    stack_name: "{{ res_def['res_name']  }}"
-    template: "{{ res_def['template_path']  }}"
+    stack_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+    template: "{{ res_def['template_path'] }}"
     state: "{{ state }}"
     wait: "yes"
     os_username: "{{ username }}"
@@ -31,7 +31,7 @@
 
 - name: "provision/deprovision os_heat stack"
   os_hot_stack:
-    stack_name: "{{ res_def['res_name']  }}"
+    stack_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     template: "{{ res_def['template_path']  }}"
     state: "{{ state }}"
     wait: "yes"

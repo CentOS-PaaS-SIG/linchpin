@@ -1,5 +1,5 @@
 <domain type='{{ definition[1]['driver'] | default('kvm') }}'>
-  <name>{{ definition[0] }}_{{ definition[1]['res_name'] }}_{{ definition[2] }}</name>
+  <name>{{ definition[0] }}_{{ definition[1]['res_name'] | default(definition[1]['name']) }}_{{ definition[2] }}</name>
   <memory unit='KiB'>{{ definition[1]['memory'] * 1024 | int }}</memory>
   <vcpu placement='static'>{{ definition[1]['vcpus'] }}</vcpu>
   <os>
@@ -26,7 +26,7 @@
 {% endif %}
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2'/>
-      <source file='{{ definition[3] }}{{ definition[0] }}_{{ definition[1]['res_name'] }}_{{ definition[2] }}.{{ definition[4] }}'/>
+      <source file='{{ definition[3] }}{{ definition[0] }}_{{ definition[1]['res_name'] | default(definition[1]['name']) }}_{{ definition[2] }}.{{ definition[4] }}'/>
       <target dev='vda' bus='virtio'/>
     </disk>
 {% for network in definition[1]['networks'] %}

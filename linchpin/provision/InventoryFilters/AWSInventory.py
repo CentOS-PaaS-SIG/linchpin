@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import abc
 import StringIO
 from ansible import errors

@@ -1,6 +1,6 @@
 
-- name: "provision resources of type {{ res_def['res_type'] }}"
-  include: "provision_{{ res_def['res_type'] }}.yml"
+- name: "provision resources of type {{ res_def['res_type'] | default(res_def['type']) }}"
+  include: "provision_{{ res_def['res_type'] | default(res_def['type']) }}.yml"
 
 # needs to be reverted when the performance is not as expected with dynamic includes 
 

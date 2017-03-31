@@ -4,7 +4,7 @@
 
 - name: "does node already exist"
   virt:
-    name: "{{ nodeinfo[0] }}_{{ nodeinfo[1]['res_name'] }}_{{ nodeinfo[2] }}"
+    name: "{{ nodeinfo[0] }}_{{ nodeinfo[1]['res_name'] | default(nodeinfo[1]['name']) }}_{{ nodeinfo[2] }}"
     command: status
     uri: "{{ nodeinfo[1]['uri'] | default('qemu:///system') }}"
   with_nested:
@@ -50,7 +50,7 @@
 
 - name: "define node"
   virt:
-    name: "{{ definition[0] }}_{{ definition[1]['res_name'] }}_{{ definition[2] }}"
+    name: "{{ definition[0] }}_{{ definition[1]['res_name'] | default(definition[1]['name']) }}_{{ definition[2] }}"
     command: define
     xml: "{{ lookup('template', 'libvirt_node.xml.j2') }}"
     uri: "{{ definition[1]['uri'] | default('qemu:///system') }}"
@@ -84,7 +84,7 @@
 
 - name: "start node"
   virt:
-    name: "{{ instance[0] }}_{{ instance[1]['res_name'] }}_{{ instance[2] }}"
+    name: "{{ instance[0] }}_{{ instance[1]['res_name'] | default(instance[1]['name']) }}_{{ instance[2] }}"
     state: running
     uri: "{{ instance[1]['uri'] | default('qemu:///system') }}"
   with_nested:

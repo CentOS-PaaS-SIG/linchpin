@@ -3,9 +3,10 @@ import sys
 import inspect
 import ansible
 import pprint
+import requests
+import jsonschema as jsch
 from tabulate import tabulate
 from ansible import utils
-import jsonschema as jsch
 from collections import namedtuple
 from ansible import utils
 from ansible.parsing.dataloader import DataLoader
@@ -20,14 +21,17 @@ from utils import get_file, list_files, parse_yaml
 from github import GitHub
 
 
+
 class LinchpinAPI:
 
-    def __init__(self):
+    UPSTREAM_EXAMPLES_PATH = "linchpin/examples"
+    def __init__(self, context):
         base_path = os.path.dirname(__file__).split("/")[0:-2]
         self.base_path = "/{}/linchpin/".format('/'.join(base_path))
         self.excludes = set(["topology_upstream",
                              "layout_upstream",
                              "post_actions"])
+        self.context = context
 
     def get_config_path(self):
         try:
@@ -59,7 +63,7 @@ class LinchpinAPI:
         """ creates a group of extra vars on basis on linchpin file dict """
         e_vars = []
         for group in pf:
-            if not (group in ["post_actions", 
+            if not (group in ["post_actions",
                               "topology_upstream",
                               "layout_upstream"]):
                 topology = pf[group].get("topology")
@@ -74,33 +78,91 @@ class LinchpinAPI:
                 e_vars.append(e_var_grp)
         return e_vars
 
-    def lp_list(self, config, topos=False, layouts=False):
-        """ list module of linchpin  """
-        if topos and layouts:
-            t_files = list_files(config.clipath+"/ex_topo")
-            l_files = list_files(config.clipath+"/inventory_layouts")
-            return (t_files, l_files)
-        if topos:
-            t_files = list_files(config.clipath+"/ex_topo")
-            return t_files
-        if layouts:
-            l_files = list_files(config.clipath+"/inventory_layouts")
-            return l_files
-
     def lp_topo_list(self, upstream=None):
         """
         search_order : list topologies from upstream if mentioned
                        list topologies from current folder
         """
         if upstream is None:
-            t_files = list_files(self.base_path + "/ex_topo")
+            t_files = list_files(self.base_path + "/examples/topology/")
             return t_files
         else:
-            print "getting from upstream"
+            print("getting from upstream")
             g = GitHub(upstream)
             t_files = []
-            files = g.list_files("ex_topo")
+            repo_path = LinchpinAPI.UPSTREAM_EXAMPLES_PATH + "/topology"
+            files = g.list_files(repo_path)
             return files
+
+    def find_topology(self, topology, topolgy_registry):
+        print("searching for topology in configured workspace: "+self.context.workspace)
+        try:
+            topos = os.listdir(self.context.workspace+"/topologies")
+            if topology in topos:
+                return os.path.abspath(self.context.workspace+"/topologies/"+topology)
+        except OSError as e:
+            click.echo(str(e))
+            click.echo("topologies directory  not found in workspace.")
+        except Exception as e:
+            click.echo(str(e))
+        click.echo("Searching for topology in linchpin package.")
+        topos = self.lp_topo_list()
+        topos = [t["name"] for t in topos]
+        if topology in topos:
+            click.echo("Topology file found in linchpin package.")
+            click.echo("Copying it to workspace")
+            self.lp_topo_get(topology)
+            return os.path.abspath(self.context.workspace+"/topologies/"+topology)
+        click.echo("Topology file not found")
+        click.echo("Searching for topology from upstream")
+        # currently supports only one topology registry per PinFile
+        if topology_registry:
+            try:
+                topos = self.lp_topo_list(topology_registry)
+                topos = [x["name"] for x in topos]
+                if topology in topos:
+                    click.echo("Found topology in registry")
+                    click.echo("Fetching topology from registry")
+                    self.lp_topo_get(topology, topology_registry)
+                    return os.path.abspath(self.context.workspace+"/topologies/"+topology)
+            except Exception as e:
+                click.echo("Exception occurred "+str(e))
+        raise IOError("Topology file not found. Invalid topology reference in PinFile")
+
+    def find_layout(self, layout, layout_registry=None):
+        print("searching for layout in configured workspace: "+self.context.workspace)
+        try:
+            layouts = os.listdir(self.context.workspace+"/layouts")
+            if layout in layouts:
+                return os.path.abspath(self.context.workspace+"/layouts/"+layout)
+        except OSError as e:
+            click.echo(str(e))
+            click.echo("layouts directory  not found in workspace.")
+        except Exception as e:
+            click.echo(str(e))
+        click.echo("Searching for layout in linchpin package.")
+        layouts = self.lp_layout_list()
+        layouts = [t["name"] for t in layouts]
+        if layout in layouts:
+            click.echo("layout file found in linchpin package.")
+            click.echo("Copying it to workspace")
+            self.lp_layout_get(layout)
+            return os.path.abspath(self.context.workspace+"/layouts/"+layout)
+        click.echo("layout file not found")
+        click.echo("Searching for layout from upstream")
+        # currently supports only one layout registry per PinFile
+        if layout_registry:
+            try:
+                layouts = self.lp_layout_list(layout_registry)
+                layouts = [x["name"] for x in layouts]
+                if layout in layouts:
+                    click.echo("Found layout in registry")
+                    click.echo("Fetching layout from registry")
+                    self.lp_layout_get(layout, layout_registry)
+                    return os.path.abspath(self.context.workspace+"/layouts/"+layout)
+            except Exception as e:
+                click.echo("Exception occurred "+str(e))
+        raise IOError("layout file not found. Invalid layout reference in PinFile")
 
     def lp_topo_get(self, topo, upstream=None):
         """
@@ -109,14 +171,19 @@ class LinchpinAPI:
         # need to add checks for ./topologies
         """
         if upstream is None:
-            get_file(self.base_path + "/ex_topo/" + topo, "./topologies/")
+            pkg_file_path = self.base_path + "/examples/topology/" + topo
+            return open(pkg_file_path).read()
+            #get_file(self.base_path + "/examples/topology/" + topo,
+            #         "./topologies/")
         else:
             g = GitHub(upstream)
-            files = g.list_files("ex_topo")
+            repo_path = LinchpinAPI.UPSTREAM_EXAMPLES_PATH + "/topology"
+            files = g.list_files(repo_path)
             link = filter(lambda link: link['name'] == topo, files)
             link = link[0]["download_url"]
-            get_file(link, "./topologies", True)
-            return link
+            return requests.get(link).text
+            #get_file(link, "./topologies", True)
+            #return link
 
     def lp_layout_list(self, upstream=None):
         """
@@ -124,12 +191,13 @@ class LinchpinAPI:
                        list layouts from core package
         """
         if upstream is None:
-            l_files = list_files(self.base_path + "/inventory_layouts")
+            l_files = list_files(self.base_path + "examples/layouts/")
             return l_files
         else:
             g = GitHub(upstream)
             l_files = []
-            files = g.list_files("inventory_layouts")
+            repo_path = LinchpinAPI.UPSTREAM_EXAMPLES_PATH + "/layouts"
+            files = g.list_files(repo_path)
             return files
 
     def lp_layout_get(self, layout, upstream=None):
@@ -138,66 +206,105 @@ class LinchpinAPI:
                        get layouts from core package
         """
         if upstream is None:
-            get_file(self.base_path + "/inventory_layouts/" + layout,
-                     "./layouts/")
+            pkg_file_path = self.base_path + "/examples/layouts/" + layout
+            return open(pkg_file_path, "r").read()
+            #get_file(self.base_path + "/examples/layouts/" + layout,
+            #         "./layouts/")
         else:
             g = GitHub(upstream)
-            files = g.list_files("inventory_layouts")
+            repo_path = LinchpinAPI.UPSTREAM_EXAMPLES_PATH + "/layouts"
+            files = g.list_files(repo_path)
             link = filter(lambda link: link['name'] == layout, files)
             link = link[0]["download_url"]
-            get_file(link, "./layouts", True)
-            return link
+            return requests.get(link).text
 
-    def lp_drop(self, config, pf):
-        """ drop module of linchpin cli : find implementation in cli.py
-        inventory_outputs paths"""
-        """
-        config.variable_manager.extra_vars = {}
-        init_dir = os.getcwd()
-        pfs = list_by_ext(init_dir, "PinFile")
-        if len(pfs) == 0:
-            display("ERROR:001")
-        if len(pfs) > 1:
-            display("ERROR:002")
-        pf = pfs[0]
+
+    def lp_rise(self, pf, targets):
         pf = parse_yaml(pf)
-        e_vars_grp = get_evars(pf)
-        for e_vars in e_vars_grp:
-            e_vars['linchpin_config'] = "/etc/linchpin/linchpin_config.yml"
-            topo_name = parse_yaml(e_vars["topology"])["topology_name"]
-            e_vars['topology_output_file'] = init_dir + "/outputs/" + \
-                                                        topo_name + ".output"
-            e_vars['inventory_outputs_path'] = init_dir + "/inventories"
-            e_vars['state'] = "absent"
-            invoke_linchpin(config, e_vars, "PROVISION", console=True)
-        """
+        e_vars = {}
+        e_vars['linchpin_config'] = self.get_config_path()
+        e_vars['outputfolder_path'] = self.context.workspace+"/outputs"
+        e_vars['inventory_outputs_path'] = self.context.workspace+"/inventories"
+        e_vars['keystore_path'] = self.context.workspace+"/keystore"
+        e_vars['state'] = "present"
+        # checks wether the targets are valid or not
+        if set(targets) == set(pf.keys()).intersection(targets) and len(targets) > 0:
+            for target in targets:
+                topology = pf[target]['topology']
+                topology_registry = pf.get("topology_registry", None)
+                e_vars['topology'] = self.find_topology(pf[target]["topology"],
+                                                        topology_registry)
+                if pf[target].has_key("layout"):
+                    e_vars['inventory_layout_file'] = self.context.workspace+"/layouts/"+pf[target]["layout"]
+                output = invoke_linchpin(self.base_path,
+                                         e_vars,
+                                         "PROVISION",
+                                         console=True)
 
-    def lp_rise(self, pf, target):
-        """ rise module of linchpin cli find implementation in cli.py"""
-        """
-        init_dir = os.getcwd()
-        pfs = list_by_ext(init_dir, "PinFile")
-        pf = pfs[0]
+        elif len(targets) == 0:
+            for target in set(pf.keys()).difference(self.excludes):
+                topology = pf[target]['topology']
+                topology_registry = pf.get("topology_registry", None)
+                e_vars['topology'] = self.find_topology(pf[target]["topology"],
+                                                        topology_registry)
+                if pf[target].has_key("layout"):
+                    e_vars['inventory_layout_file'] = self.context.workspace+"/layouts/"+pf[target]["layout"]
+                output = invoke_linchpin(self.base_path, e_vars, "PROVISION",
+                                         console=True)
+        else:
+            raise  KeyError("One or more Invalid targets found")
+
+    def lp_drop(self, pf, targets):
+        """ drop module of linchpin cli """
         pf = parse_yaml(pf)
-        e_vars_grp = get_evars(pf)
-        for e_vars in e_vars_grp:
-            e_vars['linchpin_config'] = self.get_config_path()
-            e_vars['outputfolder_path'] = init_dir+"/outputs"
-            e_vars['inventory_outputs_path'] = init_dir+"/inventories"
-            e_vars['state'] = "present"
-            output = invoke_linchpin(config, e_vars, "PROVISION", console=True)
-        """
+        e_vars = {}
+        e_vars['linchpin_config'] = self.get_config_path()
+        e_vars['inventory_outputs_path'] = self.context.workspace + "/inventories"
+        e_vars['keystore_path'] = self.context.workspace+"/keystore"
+        e_vars['state'] = "absent"
+        # checks wether the targets are valid or not
+        if set(targets) == set(pf.keys()).intersection(targets) and len(targets) > 0:
+            for target in targets:
+                topology = pf[target]['topology']
+                topology_registry = pf.get("topology_registry", None)
+                e_vars['topology'] = self.find_topology(pf[target]["topology"],
+                                                        topology_registry)
+                output_file = ( self.context.workspace + "/outputs/" +
+                                topology.strip(".yaml").strip(".yml") +
+                                ".output")
+                e_vars['topology_output_file'] = output_file
+                output = invoke_linchpin(self.base_path,
+                                         e_vars,
+                                         "TEARDOWN",
+                                         console=True)
 
-    def lp_validate(self, topo, layout=None, pf=None):
-        """ validate module of linchpin cli :
-        currenly validates only topologies,
-        need to implement pf, layouts too"""
+        elif len(targets) == 0:
+            for target in set(pf.keys()).difference(self.excludes):
+                e_vars['topology'] = self.find_topology(pf[target]["topology"],
+                                                        pf)
+                topology = pf[target]["topology"].strip(".yml").strip(".yaml")
+                output_file = (self.context.workspace + "/outputs/" +
+                                topology.strip("yaml").strip("yml") +
+                                ".output")
+
+                e_vars['topology_output_file'] = output_file
+                output = invoke_linchpin(self.base_path,
+                                         e_vars,
+                                         "TEARDOWN",
+                                         console=True)
+        else:
+            raise  KeyError("One or more Invalid targets found")
+
+
+    def lp_validate_topology(self, topology):
         e_vars = {}
         e_vars["schema"] = self.base_path + "/schemas/schema_v3.json"
-        e_vars["data"] = topo
+        e_vars["data"] = topology
         result = invoke_linchpin(self.base_path, e_vars,
                                  "SCHEMA_CHECK", console=True)
+        print(result)
         return result
+
 
     def lp_invgen(self, topoout, layout, invout, invtype):
         """ invgen module of linchpin cli """

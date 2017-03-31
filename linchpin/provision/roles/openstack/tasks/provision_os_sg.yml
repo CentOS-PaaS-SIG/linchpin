@@ -5,7 +5,7 @@
       username: "{{ username }}"
       password: "{{ password }}"
       project_name: "{{ project }}"
-    name: "{{ res_def['res_name']  }}"
+    name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     state: "{{ state }}"
     wait: "yes"
 
@@ -29,7 +29,7 @@
     - ["{{ username }}"]
     - ["{{ password }}"]
     - ["{{ project }}"]
-    - ["{{ res_def['res_name'] }}"]
+    - ["{{ res_def['res_name'] | default(res_def['name']) }}"]
     - ["{{ state }}"]
     - "{{ res_def['rules'] }}"
   loop_control:

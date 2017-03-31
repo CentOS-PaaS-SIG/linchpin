@@ -21,7 +21,7 @@
     assign_public_ip: "{{ res_def['assign_public_ip']| default(omit) }}"
     instance_tags: "{{ res_grp_vars | selectattr('resource_group_name', 'equalto', res_grp_name ) | first }}"
   register: res_def_output
-  when: res_def['res_type'] == 'aws_ec2' and async == false
+  when: async == false
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
@@ -45,7 +45,7 @@
   async: "{{ async_timeout }}"
   poll: 0
   register: res_def_output
-  when: res_def['res_type'] == 'aws_ec2' and async == true
+  when: async == true
 
 - name: "Async:: Append outputitem to topology_outputs"
   set_fact:
