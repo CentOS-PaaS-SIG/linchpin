@@ -269,6 +269,10 @@ class LinchpinAPI:
                 topology_registry = pf.get("topology_registry", None)
                 e_vars['topology'] = self.find_topology(pf[target]["topology"],
                                                         topology_registry)
+                output_file = ( self.context.workspace + "/outputs/" +
+                                topology.strip(".yaml").strip(".yml") +
+                                ".output")
+                e_vars['topology_output_file'] = output_file
                 output = invoke_linchpin(self.base_path,
                                          e_vars,
                                          "TEARDOWN",
@@ -279,8 +283,10 @@ class LinchpinAPI:
                 e_vars['topology'] = self.find_topology(pf[target]["topology"],
                                                         pf)
                 topology = pf[target]["topology"].strip(".yml").strip(".yaml")
-                output_file = ( self.context.workspace + "/outputs/" +
-                                topology + ".output" )
+                output_file = (self.context.workspace + "/outputs/" +
+                                topology.strip("yaml").strip("yml") +
+                                ".output")
+
                 e_vars['topology_output_file'] = output_file
                 output = invoke_linchpin(self.base_path,
                                          e_vars,

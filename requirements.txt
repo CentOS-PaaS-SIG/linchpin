@@ -1,6 +1,5 @@
 setuptools>=17.1
 jinja2==2.8
-pbr<2.0.0
 oslo.config<3.23.0
 oslo.i18n<3.13.0
 oslo.serialization<2.17.0
