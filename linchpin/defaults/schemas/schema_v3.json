@@ -33,7 +33,8 @@
                         {"$ref": "#/definitions/rackspace"},
                         {"$ref": "#/definitions/libvirt"},
                         {"$ref": "#/definitions/duffy"},
-                        {"$ref": "#/definitions/bkr_server"}
+                        {"$ref": "#/definitions/bkr_server"},
+                        {"$ref": "#/definitions/openshift_resource"}
                     ]
             }
         }
@@ -87,6 +88,48 @@
             },
             "required":["flavor","res_type","count","keypair"]
         },
+		"openshift_inline": {
+			"type": "object",
+			"properties": {
+				"inline_data": {
+					"type": "object"
+				}
+			},
+			"required": ["inline_data"]
+		},
+		"openshift_external": {
+			"type": "object",
+			"properties": {
+				"file_reference" : {
+					"type": "string"
+				}
+			},
+			"required": ["file_reference"]
+		},
+		"openshift_resource": {
+			"type": "object",
+			"properties": {
+				"api_endpoint": {
+					"type": "string"
+				},
+				"resource_group_name": {
+					"type": "string"
+				},
+				"api_token": {
+					"type": "string"
+				},
+				"resources": {
+					"type": "array",
+					"items": {
+						"oneOf" : [
+							{"$ref": "#/definitions/openshift_inline"},
+							{"$ref": "#/definitions/openshift_external"}
+						]
+					}
+				}
+			},
+			"required": ["api_endpoint", "resources", "api_token"]
+		},
         "bkr_server": {
              "type": "object",
              "properties": {
