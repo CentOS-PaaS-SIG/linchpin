@@ -31,6 +31,7 @@
     - { role: 'libvirt', when: libvirt_res_grps | length > 0 }
     - { role: 'rackspace', when: rax_res_grps | length > 0 }
     - { role: 'beaker', when: bkr_res_grps | length > 0 }
+    - { role: 'openshift', when: openshift_res_grps | length > 0 }
 
 - name: "Writing contents to file"
   hosts: localhost
