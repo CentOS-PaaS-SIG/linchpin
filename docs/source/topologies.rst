@@ -8,6 +8,7 @@ Before using Linchpin, here are few Linchpin topology examples.
 
    topologies_aws
    topologies_openstack
+   topologies_openshift
    topologies_gcloud
    topologies_duffy
    topologies_beaker
