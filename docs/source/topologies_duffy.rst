@@ -1,5 +1,5 @@
 Duffy Topologies
-==============
+================
 
 .. contents:: Topics
 
