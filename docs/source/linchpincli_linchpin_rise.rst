@@ -7,7 +7,6 @@ This command initiate the provisioning activity using contents of PinFile and cu
 By default it provisions all the targets in the PinFile.
 
 
-Options :
 Options:
   --pf           option to specify PinFIle to use
   --target TEXT  target to provision
