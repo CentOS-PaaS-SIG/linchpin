@@ -283,5 +283,5 @@ AWS EC2 Security Groups EXAMPLE
 
 .. note::
 
-  Source of the above AWS EC2 Security Groups example can be found at `Example Topologies <https://github.com/CentOS-PaaS-SIG/linch-pin/tree/master/examples/topology>`_
+  Source of the above AWS EC2 Security Groups example can be found at `Example Topologies <https://github.com/CentOS-PaaS-SIG/linch-pin/tree/master/ex_topo>`_
 
