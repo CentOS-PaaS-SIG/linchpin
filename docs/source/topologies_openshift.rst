@@ -68,7 +68,7 @@ Pods are only referenced here as the most likely possibility, and are a clear
 example of something that could be orphaned on a cluster.
 
 Example Topologies
-==================
+------------------
 
 Each of these topologies has two places where authentication data will need to
 be inserted. The first is the field named "api_endpoint". This needs to be,
@@ -83,7 +83,7 @@ basis. This can be done by executing "oc whoami --token" after an "oc login"
 command.
 
 OpenShift Instance (Inline)
-``````````````````````````
+```````````````````````````
 
 In this example, the data for a ReplicationController is inserted directly
 into the topology file. The value under "inline_data" is exactly the same
@@ -127,7 +127,7 @@ as the data that would be passed into the "oc" command through a file.
                       runAsUser: 1000090000
 
 OpenShift Instance (external)
-````````````````````````````
+`````````````````````````````
 
 In this example, the data is not placed into the topology file but a reference
 to an external yaml file is provided. That file will be read in by Linchpin
