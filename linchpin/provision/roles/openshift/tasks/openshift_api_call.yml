@@ -12,7 +12,9 @@
     insecure: "{{ resource_group.insecure | default(omit) }}"
     inline_data: "{{ resource.inline_data | default(omit) }}"
     file_reference: "{{ resource.file_reference | default(omit) }}"
-    state: update
+    state: present
   register: openshift_host
 
-- debug: var=openshift_host
+- name: add output to topology
+  set_fact:
+      topology_outputs_openshift_resources: "{{ topology_outputs_openshift_resources + [openshift_host] }}"
