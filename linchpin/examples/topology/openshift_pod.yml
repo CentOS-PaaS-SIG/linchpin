@@ -21,7 +21,7 @@ resource_groups:
                   name: jenkins-slave
               spec:
                 containers:
-                  - image: greghellings/swarm:cent7-0.5.2.5
+                  - image: redhatqecinch/jenkins_slave:latest
                     name: jenkins-slave
                     env:
                       - name: JENKINS_MASTER_URL
