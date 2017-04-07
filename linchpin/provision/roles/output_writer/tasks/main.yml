@@ -17,6 +17,7 @@
       rax_server_res: "{{ topology_outputs_rax_server  | default([]) }}"
       beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
       libvirt_res: "{{ topology_outputs_libvirt_nodes | default([]) }}"
+      openshift_res: "{{ topology_outputs_openshift_resources | default([]) }}"
   when: not async
 
 - name: "Create output directories"
