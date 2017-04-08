@@ -6,8 +6,8 @@ Beaker Topologies
 .. _beaker_topologies:
 
 
-Simple Beaker Topology
-`````````````````````````
+Beaker Server
+```````````````
 
 .. code-block:: yaml
 
@@ -30,5 +30,6 @@ Simple Beaker Topology
               - arch=X86_64
             count: 1
 
-.. note:: For more details about beaker and its components, please visit the
-    `documentation <https://beaker-project.org/docs/>`_.
+.. note::
+
+  Source of the above Beaker example can be found at `Example Topologies <https://github.com/CentOS-PaaS-SIG/linch-pin/tree/master/examples/topology>`_
