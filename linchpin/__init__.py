@@ -1,298 +1,382 @@
+#!/usr/bin/env python
+
 import os
-import yaml
-import click
 import sys
-import pprint
-import os.path
-from tabulate import tabulate
+import click
+import shutil
+import logging
+import ConfigParser
+
+from distutils import dir_util
 from jinja2 import Environment, PackageLoader
-from linchpin.cli.utils import checkpaths, display, mkdir
-from linchpin.cli.utils import list_by_ext, copy_files, tabulate_print
-from linchpin.cli.utils import write_to_file, touch
+
+from linchpin.context import LinchpinContext
 from linchpin.cli import LinchpinCli
+from linchpin.version import __version__
 
 
-class Context(object):
-    """Global context object accesible by all the click modules """
-
-    VERSION = "v1.0.0"
-    def __init__(self):
-        self.clipath = os.path.dirname(os.path.realpath(__file__))
-        self.env = Environment(loader=PackageLoader('linchpin', 'templates'))
-        self.linchpinfile = self.env.get_template('PinFile.j2')
-        self.lpconfig = self.env.get_template('linchpin_config.yml.j2')
-        self.INIT_DIR_LAYOUT = ['topologies', 'layouts', 'inventories','keystore']
-        self.TEMPLATES_PATH  = self.clipath+"/templates/" 
-        self.workspace = os.environ.get('LINCHPIN_WORKSPACE', False)
-        if not self.workspace:
-            self.workspace = os.environ.get('PWD')+"/"
-
-pass_context = click.make_pass_decorator(Context, ensure=True)
+pass_context = click.make_pass_decorator(LinchpinContext, ensure=True)
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
-@click.group(invoke_without_command=True, context_settings=CONTEXT_SETTINGS)
-@click.option('-v', '--verbose', count=True)
-@click.option('--home-directory', type=click.Path())
-@click.option('--version', is_flag=True)
+class RiseAlias(click.Group):
+
+    def list_commands(self, ctx):
+        return ['init', 'up', 'destroy']
+
+    def get_command(self, ctx, name):
+        rv = click.Group.get_command(self, ctx, name)
+        return rv
+
+
+@click.command(cls=RiseAlias,
+                invoke_without_command=True,
+                no_args_is_help=True,
+                context_settings=CONTEXT_SETTINGS)
+@click.option('-w', '--workspace', type=click.Path(), envvar='WORKSPACE',
+        help='Uses the familiar Jenkins $WORKSPACE environment variable')
+@click.option('-v', '--verbose', is_flag=True, default=False,
+        help='Enable verbose output')
+@click.option('--version', is_flag=True,
+        help='Prints the version and exits')
 @pass_context
-def cli(context, verbose, home_directory, version):
-    """
-    Welcome to linchpin command line client
-    """
-    context.verbose = verbose
-    if home_directory is None:
-        home_directory = '.'
-    context.home_directory = home_directory
+def runcli(ctx, verbose, workspace, version):
+    """linchpin: hybrid cloud orchestration"""
+
+    ctx.verbose = verbose
+
     if version:
-        click.echo("LinchpinCLI "+Context.VERSION)
-        click.echo("WORKSPACE = "+context.workspace)
+        ctx.log_state('linchpin version {0}'.format(ctx.version))
+        sys.exit(0)
 
-
-@cli.command()
-@pass_context
-def init(context):
-    """ init module of linchpin """
-    click.echo('Initialising the templates for linchpin file !')
-    click.echo('WORKSPACE = '+context.workspace)
-    if checkpaths(context.workspace):
-        reply = display("WARNING:001", "prompt")
-        if not reply:
-            sys.exit(0)
-    if context.verbose:
-        click.echo("### verbose mode ###")
-    if os.path.isdir(context.workspace):
-        path = context.workspace
-        context.linchpinfile.stream().dump(path+'PinFile')
-        for dir in context.INIT_DIR_LAYOUT:
-            mkdir(path+dir)
-        dir_list = ["topologies", "layouts"]
-        copy_files(context.TEMPLATES_PATH, context.workspace, dir_list)
+    if workspace is None:
+        ctx.workspace = os.path.realpath(os.path.curdir)
     else:
-        click.echo("Invalid WORKSPACE to initialise!!")
+        ctx.workspace = os.path.realpath(workspace)
+
+    ctx.log_info("ctx.workspace: {0}".format(ctx.workspace))
+
+    ctx.pinfile = ctx.cfgs['init']['pinfile']
 
 
-@cli.command()
-@click.option("--layout","-l", is_flag=True)
-@click.option("--topology","-t", is_flag=True)
-@click.option("--upstream", default=None, required=False)
+@runcli.command('init', short_help='Initializes a linchpin project.')
 @pass_context
-def list(context, topology, layout, upstream):
-    """ list module of linchpin """
-    lpcli = LinchpinCli(context)
-    if topology:
-        click.echo(": TOPOLOGY LIST :")
-        files = lpcli.lp_topo_list(upstream)
-        tabulate_print(files, ['Sno', 'Name'])
-    if layout:
-        click.echo(": LAYOUT LIST :")
-        files = lpcli.lp_layout_list(upstream)
-        tabulate_print(files, ['Sno', 'Name'])
-
-
-@cli.group()
-@pass_context
-def topology(context):
-    pass
-
-
-@topology.command(name='list')
-@click.option('--upstream',
-              default=None,
-              required=False,
-              help="upstream url for topology")
-@pass_context
-def topology_list(context, upstream):
-    lpcli = LinchpinCli(context)
-    click.echo(": TOPOLOGIES LIST :")
-    files = lpcli.lp_topo_list(upstream)
-    tabulate_print(files, ['Sno', 'Name'])
-
-
-@topology.command(name='get')
-@click.option('--upstream',
-              default=None,
-              required=False,
-              help="upstream url for topology")
-@click.argument('topo')
-@pass_context
-def topology_get(context, topo, upstream):
+def init(ctx):
     """
-    Get topology by name
+    Initializes a linchpin project, which generates an example PinFile, and
+    creates the necessary directory structure for topologies and layouts.
     """
-    lpcli = LinchpinCli(context)
-    output = lpcli.lp_topo_get(topo)
-    click.echo(output)
-    dest_path = context.workspace+"/topologies/"+topo
-    write_to_file(dest_path, output)
+
+    ws = ctx.workspace
+    pf = ctx.pinfile
+
+    pf_w_path = os.path.realpath('{0}/{1}'.format(ws, pf))
+
+    src = ctx.cfgs['init']['source']
+    src_w_path = os.path.realpath('{0}/{1}'.format(ctx.lib_path, src))
+
+    src_pf = os.path.realpath('{0}.lp_example'.format(pf_w_path))
+
+    if os.path.exists(pf_w_path):
+        if not click.confirm(
+            '{0} already exists, overwrite it?'.format(pf_w_path),
+            default=False):
+            sys.exit(0)
+
+    dir_util.copy_tree(src_w_path, ws, verbose=1)
+    os.rename(src_pf, pf_w_path)
+
+    ctx.log_state('{0} and file structure created at {1}'.format(
+        ctx.pinfile, ctx.workspace))
 
 
-@cli.group()
+@runcli.command()
+@click.option('-p', '--pinfile', envvar='PINFILE',
+        help='Use a name for the PinFile different from the configuration.')
+@click.argument('targets', metavar='TARGET', required=False,
+        nargs=-1)
 @pass_context
-def layout(context):
-    pass
+def up(ctx, pinfile, targets):
 
-
-@layout.command(name='list')
-@click.option('--upstream',
-              default=None,
-              required=False,
-              help="upstream url for layouts")
-@pass_context
-def layouts_list(context, upstream):
-    lpcli = LinchpinCli(context)
-    click.echo(": LAYOUTS LIST :")
-    files = lpcli.lp_layout_list(upstream)
-    tabulate_print(files, ['Sno', 'Name'])
-
-
-@layout.command(name='get')
-@click.option('--upstream',
-              default=None,
-              required=False,
-              help="upstream url for layouts")
-@click.argument('layout')
-@pass_context
-def layouts_get(context, layout, upstream):
     """
-    Get layout by name
+    Provisions nodes from the given target(s) in the given PinFile.
+
+    \b
+    TARGET ...
+    Provision ONLY the listed target(s).
+
     """
-    lpcli = LinchpinCli(context)
-    output = lpcli.lp_layout_get(layout, upstream)
-    click.echo(output)
-    dest_path = context.workspace+"/layouts/"+layout
-    write_to_file(dest_path, output)
+    if pinfile is None:
+        pinfile = ctx.pinfile
+
+    pf_w_path = '{0}/{1}'.format(ctx.workspace, pinfile)
+
+    if not os.path.exists(pf_w_path):
+        return ctx.log_state('{0} not found in provided workspace: '
+            '{1}'.format(pinfile, ctx.workspace))
+
+    lpcli = LinchpinCli(ctx)
+    lpcli.lp_rise(pf_w_path, targets)
 
 
-@cli.command()
-@click.option("--pf",
-              default=False,
-              required=False,
-              help="gets the topology by name")
-@click.argument('targets', nargs=-1)
+@runcli.command()
+@click.option('-p', '--pinfile', envvar='PINFILE',
+        help='Use a name for the PinFile different from the configuration.')
+@click.argument('targets', metavar='TARGET', required=False,
+        nargs=-1)
 @pass_context
-def rise(context, pf, targets):
-    """ rise module of linchpin cli """
-    click.echo(targets)
-    init_dir = os.getcwd()
-    pfs = list_by_ext(init_dir, "PinFile")
-    if len(pfs) == 0:
-        display("ERROR:001")
-    if len(pfs) > 1:
-        display("ERROR:002")
-    pf = pfs[0]
-    lpcli = LinchpinCli(context)
-    output = lpcli.lp_rise(pf, targets)
+def rise(ctx, pinfile, targets):
+
+    """
+    DEPRECATED. Use 'up'
+
+    """
+
+    up(ctx, pinfile, targets)
 
 
-@cli.command()
-#@click.option("--target", default="all", required=False,  help="target cloud")
-@click.option("--pf", default=False, required=False,  help="path of Pinfile")
-@click.argument('targets', nargs=-1)
+@runcli.command()
+@click.option('-p', '--pinfile', envvar='PINFILE',
+        help='Use a name for the PinFile different from the configuration.')
+@click.argument('targets', metavar='TARGET', required=False,
+        nargs=-1)
 @pass_context
-def drop(context, pf, targets):
-    """ drop module of linchpin cli"""
-    click.echo(targets)
-    init_dir = os.getcwd()
-    pfs = list_by_ext(init_dir, "PinFile")
-    if len(pfs) == 0:
-        display("ERROR:001")
-    if len(pfs) > 1:
-        display("ERROR:002")
-    pf = pfs[0]
-    lpcli = LinchpinCli(context)
-    output = lpcli.lp_drop(pf, targets)
+def destroy(ctx, pinfile, targets):
 
-@cli.group()
+    """
+    Destroys nodes from the given target(s) in the given PinFile.
+
+    \b
+    TARGET ...
+    Destroy ONLY the listed target(s).
+
+    """
+    if pinfile is None:
+        pinfile = ctx.pinfile
+
+    pf_w_path = '{0}/{1}'.format(ctx.workspace, pinfile)
+
+    if not os.path.exists(pf_w_path):
+        return ctx.log_state('{0} not found in provided workspace: '
+            '{1}'.format(pinfile, ctx.workspace))
+
+    lpcli = LinchpinCli(ctx)
+    lpcli.lp_destroy(pf_w_path, targets)
+
+
+@runcli.command()
+@click.option('-p', '--pinfile', envvar='PINFILE',
+        help='Use a name for the PinFile different from the configuration.')
+@click.argument('targets', metavar='TARGET', required=False,
+        nargs=-1)
 @pass_context
-def config(context):
-        pass
+def drop(ctx, pinfile, targets):
+
+    """
+    DEPRECATED. Use 'destroy'.
+
+    There are now two functions, `destroy` and `down` which perform node
+    teardown. The `destroy` functionality is the default, and if drop is
+    used, will be called.
+
+    The `down` functionality is currently unimplemented, but will shutdown
+    and preserve instances. This feature will only work on providers that
+    support this option.
+
+    """
+
+    destroy(ctx, pinfile, targets)
 
 
-@config.command(name='init')
-@pass_context
-def config_init(context):
-    if os.path.isfile(context.workspace+"/linchpin_config.yml"):
-        click.confirm("Linchpin config exists would you like to overrite it?",
-                      abort=True)
-    playbook_dir = click.prompt('Please enter playbook directory',
-                                default=context.clipath)
-    keystore_path = click.prompt('Please enter keystore path',
-                                 default=context.workspace+'keystore')
-    outputfolder_path = click.prompt('Please enter outputfolder path ',
-                                     default=context.workspace+'outputs')
-    async = click.prompt('Please enter async mode',
-                         default='false')
-    async_timeout = click.prompt('Please enter async timeout',
-                                 default=999)
-    no_output = click.prompt('no output mode',
-                             default='false')
-    inventory_layouts_path = click.prompt('Please enter a inventory \
-                                          layouts path',
-                                          default=context.workspace+'layouts')
-    inventory_outputs_path = click.prompt('Please enter inventory outputs',
-                                          default=context.workspace+'inventories')
-    check_mode = click.prompt('checkmode', default='no')
-    pwd = context.workspace
-    context.lpconfig.stream(
-                     playbook_dir=playbook_dir,
-                     keystore_path=keystore_path,
-                     outputfolder_path=outputfolder_path,
-                     async=async,
-                     async_timeout=async_timeout,
-                     no_output=no_output,
-                     inventory_layouts_path=inventory_layouts_path,
-                     inventory_outputs_path=inventory_outputs_path,
-                     check_mode=check_mode,
-                     pwd=pwd).dump('linchpin_config.yml')
 
 
-@cli.group()
-@pass_context
-def validate(context):
-    pass
 
+#@cli.group()
+#@pass_config
+#def topology(config):
+#    pass
+#
+#
+#@topology.command(name='list')
+#@click.option('--upstream',
+#              default=None,
+#              required=False,
+#              help="upstream url for topology")
+#@pass_config
+#def topology_list(config, upstream):
+#    lpcli = LinchpinCli()
+#    click.echo(": TOPOLOGIES LIST :")
+#    files = lpcli.lp_topo_list(upstream)
+#    t_files = []
+#    for i in range(0, len(files)):
+#        t_files.append((i+1, files[i]["name"]))
+#    headers = ["Sno", "Name"]
+#    print tabulate(t_files, headers, tablefmt="fancy_grid")
+#
+#
+#@topology.command(name='get')
+#@click.option('--upstream',
+#              default=None,
+#              required=False,
+#              help="upstream url for topology")
+#@click.argument('topo')
+#@pass_config
+#def topology_get(config, topo, upstream):
+#    """
+#    needs implementation if topology folder is not found raise error
+#    """
+#    lpcli = LinchpinCli()
+#    d = lpcli.lp_topo_get(topo)
+#    pprint.pprint(d)
+#
+#
+#@cli.group()
+#@pass_config
+#def layout(config):
+#    pass
+#
+#
+#@layout.command(name='list')
+#@click.option('--upstream',
+#              default=None,
+#              required=False,
+#              help="upstream url for layouts")
+#@pass_config
+#def layouts_list(config, upstream):
+#    lpcli = LinchpinCli()
+#    click.echo(": LAYOUTS LIST :")
+#    files = lpcli.lp_layout_list(upstream)
+#    t_files = []
+#    for i in range(0, len(files)):
+#        t_files.append((i+1, files[i]["name"]))
+#    headers = ["Sno", "Name"]
+#    print tabulate(t_files, headers, tablefmt="fancy_grid")
+#
+#
+#@layout.command(name='get')
+#@click.option('--upstream',
+#              default=None,
+#              required=False,
+#              help="upstream url for layouts")
+#@click.argument('layout')
+#@pass_config
+#def layouts_get(config, layout, upstream):
+#    """
+#    needs implementation if layout folder is not found raise error
+#    """
+#    lpcli = LinchpinCli()
+#    output = lpcli.lp_layout_get(layout, upstream)
+#    pprint.pprint(output)
+#
+#
+#@cli.command()
+#@click.option("--pf",
+#              default=False,
+#              required=False,
+#              help="gets the topology by name")
+#@click.option("--target",
+#              default="all",
+#              required=False,
+#              help="target name mentioned in PinFile")
+#@pass_config
+#def rise(config, pf, target):
+#    """ rise module of linchpin cli """
+#    init_dir = os.getcwd()
+#    pfs = list_by_ext(init_dir, "PinFile")
+#    if len(pfs) == 0:
+#        display("ERROR:001")
+#    if len(pfs) > 1:
+#        display("ERROR:002")
+#    pf = pfs[0]
+#    lpcli = LinchpinCli()
+#    output = lpcli.lp_rise(pf, target)
+#
+#
+#
+#@cli.command()
+#@click.option("--pf",
+#              default=False,
+#              required=False,
+#              help="gets the PinFile by name")
+#@click.option("--layout",
+#              default=False,
+#              required=False,
+#              help="gets the layout by name")
+#@click.option("--topo",
+#              default=False,
+#              required=False,
+#              help="gets the topology by name")
+#@pass_config
+#def validate(config, topo, layout, pf):
+#    """ validate module of linchpin cli : currenly validates only topologies,
+#        need to implement PinFile, layouts too"""
+#    lpcli = LinchpinCli()
+#    topo = os.path.abspath(topo)
+#    output = lpcli.lp_validate(topo, layout, pf)
+#    pprint.pprint(output)
+#
+#
+#@cli.command()
+#@click.option("--init",
+#              default=False,
+#              required=False,
+#              is_flag=True,
+#              help="Initialises config file")
+#@click.option("--reset",
+#              default=False,
+#              required=False,
+#              is_flag=True,
+#              help="sets existing config file parameters")
+#@pass_config
+#def config(config, reset, init):
+#    """ config module of linchpin cli"""
+#    if reset:
+#        if os.path.isfile("./linchpin_config.yml"):
+#            display("WARNING:002", "prompt")
+#        config.lpconfig.stream(playbook_dir=config.clipath,
+#                               pwd=os.getcwd()).dump('linchpin_config.yml')
+#    if init:
+#        if not os.path.isfile("./linchpin_config.yml"):
+#            display("ERROR:004", "print")
+#        conf = yaml.load(open("linchpin_config.yml", "r").read())
+#        for key in conf:
+#            inp_str = raw_input("Enter value of "+key+":("+str(conf[key])+"):")
+#            if inp_str != "":
+#                conf[key] = inp_str
+#        config.lpconfig.stream(
+#                         playbook_dir=config.clipath,
+#                         keystore_path=conf["keystore_path"],
+#                         outputfolder_path=conf["outputfolder_path"],
+#                         inventoryfolder_path=conf["inventoryfolder_path"],
+#                         async=conf["async"],
+#                         async_timeout=conf["async_timeout"],
+#                         no_output=conf["no_output"],
+#                         schema=conf["schema"],
+#                         inventory_layouts_path=conf["inventory_layouts_path"],
+#                         inventory_outputs_path=conf["inventory_outputs_path"],
+#                         check_mode=conf["check_mode"],
+#                         pwd=os.getcwd()).dump('linchpin_config.yml')
+#
+#
+#@cli.command()
+#@click.option("--invtype", default="generic", required=False,
+#              type=click.Path(),
+#              help="inventory type")
+#@click.option("--invout", required=True, type=click.Path(),
+#              help="inventory output file")
+#@click.option("--layout", default=False, required=True,  type=click.Path(),
+#              help="layout file usually found in layout folder")
+#@click.option("--topoout", default=False, required=True, type=click.Path(),
+#              help="topology output file usually found in output folders")
+#@pass_config
+#def invgen(config, topoout, layout, invout, invtype):
+#    """ invgen module of linchpin cli """
+#    topoout = os.path.abspath(topoout)
+#    layout = os.path.abspath(layout)
+#    invout = os.path.abspath(invout)
+#    lpcli = LinchpinCli()
+#    result = lpcli.lp_invgen(topoout, layout, invout, invtype)
+#    pprint.pprint(result)
 
-@validate.command(name='topology')
-@click.argument('topology', nargs=1)
-@pass_context
-def validate_topology(context, topology):
-    click.echo("inside validate topology")
-    lpcli = LinchpinCli(context)
-    click.echo(topology)
-    topology = os.path.abspath(topology)
-    result = lpcli.lp_validate_topology(topology)
-    return result
-
-
-@cli.command()
-@click.option("--invtype","-it",
-              default="generic",
-              required=False,
-              type=click.Path(),
-              prompt=True,
-              help="options: generic | openstack | aws | gcloud | libvirt")
-@click.option("--invout","-io",
-              required=True,
-              type=click.Path(),
-              prompt=True,
-              help="inventory output file path")
-@click.option("--layout","-l",
-              required=True,
-              prompt=True,
-              type=click.Path(),
-              help="layout file path")
-@click.option("--topoout","-to",
-              required=True,
-              type=click.Path(),
-              prompt=True,
-              help="topology output file usually found in output folders")
-@pass_context
-def invgen(context, topoout, layout, invout, invtype):
-    """ invgen module of linchpin cli """
-    topoout = os.path.abspath(topoout)
-    layout = os.path.abspath(layout)
-    touch(invout)
-    invout = os.path.abspath(invout)
-    lpcli = LinchpinCli(context)
-    result = lpcli.lp_invgen(topoout, layout, invout, invtype)
+def main():
+    print("entrypoint")

@@ -24,13 +24,13 @@ from ansible.plugins.callback import CallbackBase
 from callbacks import PlaybookCallback
 
 
-PLAYBOOKS = {
-           "PROVISION": "site.yml",
-           "TEARDOWN": "site.yml",
-           "SCHEMA_CHECK": "schemacheck.yml",
-           "INVGEN": "invgen.yml",
-           "TEST": "test.yml",
-}
+#PLAYBOOKS = {
+#           "PROVISION": "site.yml",
+#           "TEARDOWN": "site.yml",
+#           "SCHEMA_CHECK": "schemacheck.yml",
+#           "INVGEN": "invgen.yml",
+#           "TEST": "test.yml",
+#}
 
 
 def get_evars(pf):
@@ -48,11 +48,16 @@ def get_evars(pf):
     return e_vars
 
 
-def invoke_linchpin(base_path, e_vars, playbook="PROVISION", console=True):
-    """ Invokes linchpin playbook """
-    module_path = base_path+"/library"
-    print("debug:: module path ::"+module_path)
-    playbook_path = base_path+"/provision/"+PLAYBOOKS[playbook]
+def invoke_linchpin(ctx, lp_path, e_vars, playbook='provision', console=True):
+
+    """
+    Invokes linchpin playbook
+    """
+
+    pb_path = '{0}/{1}'.format(lp_path, ctx.cfgs['lp']['playbooks_folder'])
+    module_path = '{0}/{1}'.format(pb_path, ctx.cfgs['lp']['module_folder'])
+    playbook_path = '{0}/{1}'.format(pb_path, ctx.cfgs['playbooks'][playbook])
+
     loader = DataLoader()
     variable_manager = VariableManager()
     variable_manager.extra_vars = e_vars
@@ -61,6 +66,7 @@ def invoke_linchpin(base_path, e_vars, playbook="PROVISION", console=True):
                           host_list=[])
     passwords = {}
     utils.VERBOSITY = 4
+
     Options = namedtuple('Options', ['listtags',
                                      'listtasks',
                                      'listhosts',
@@ -79,6 +85,7 @@ def invoke_linchpin(base_path, e_vars, playbook="PROVISION", console=True):
                                      'become_user',
                                      'verbosity',
                                      'check'])
+
     options = Options(listtags=False,
                       listtasks=False,
                       listhosts=False,
@@ -97,12 +104,14 @@ def invoke_linchpin(base_path, e_vars, playbook="PROVISION", console=True):
                       become_user='root',
                       verbosity=utils.VERBOSITY,
                       check=False)
+
     pbex = PlaybookExecutor(playbooks=[playbook_path],
                             inventory=inventory,
                             variable_manager=variable_manager,
                             loader=loader,
                             options=options,
                             passwords=passwords)
+
     if not console:
         cb = PlaybookCallback()
         pbex._tqm._stdout_callback = cb
