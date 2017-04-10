@@ -17,3 +17,5 @@ MANIFEST
 
 # local inventory files containing user-specific environment data
 configure/inventory/local/
+
+*workspace*

@@ -21,7 +21,7 @@ setup(
     install_requires=required,
     entry_points='''
         [console_scripts]
-        linchpin=linchpin:cli
+        linchpin=linchpin:runcli
     ''',
     extras_require = {
         'krbV': ["python-krbV"],
