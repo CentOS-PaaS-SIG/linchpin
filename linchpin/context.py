@@ -10,6 +10,7 @@ import ConfigParser
 from distutils import dir_util
 from jinja2 import Environment, PackageLoader
 
+from linchpin.api import LinchpinError
 from linchpin.cli import LinchpinCli
 from linchpin.version import __version__
 
@@ -18,6 +19,7 @@ class LinchpinContext(object):
     LPContext object, which will be used to manage the cli,
     and load the configuration file.
     """
+
 
     def __init__(self):
         """
@@ -50,17 +52,33 @@ class LinchpinContext(object):
         self.lib_path = '{0}/'.format(os.path.dirname(
             os.path.realpath(__file__))).rstrip('/')
 
-        for path in [
-                '{0}/linchpin.conf'.format(os.getcwd()),
-                '~/.linchpin.conf',
-                '/etc/linchpin.conf',
-                '{0}/linchpin.conf'.format(self.lib_path)]:
+        expanded_path = None
+        config_found = False
 
-            expanded_path = "{0}/{1}".format(os.path.expanduser(path), 'linchpin.conf')
 
+        # simply modify this variable to adjust where linchpin.conf can be found
+        CONFIG_PATH = [
+            '{0}/linchpin.conf'.format(
+                        os.path.realpath(os.path.expanduser(os.path.curdir))),
+            '~/.linchpin.conf',
+            '/etc/linchpin.conf',
+            '{0}/linchpin.conf'.format(self.lib_path)
+        ]
+
+        for path in CONFIG_PATH:
+            expanded_path = (
+                "{0}".format(os.path.realpath(os.path.expanduser(path))))
+
+            # implement first found
             if os.path.exists(expanded_path):
-                self._load_config(expanded_path)
+                # logging before the config file is setup doesn't work
+                # if messages are needed before this, use print.
+                config_found = True
                 break
+
+        if not config_found:
+            raise LinchpinError('Configuration file not found in'
+                                ' path: {0}'.format(CONFIG_PATH))
 
         config = ConfigParser.SafeConfigParser()
         try:
@@ -68,14 +86,22 @@ class LinchpinContext(object):
             config.readfp(f)
             f.close()
         except ConfigParser.InterpolationSyntaxError as e:
-            raise LPContextError("Unable to parse configuration file properly: %s" % e)
+            raise LinchpinError('Unable to parse configuration file properly:'
+                    ' {0}'.format(e))
 
         for section in config.sections():
             if not self.cfgs.has_key(section):
                 self.cfgs[section] = {}
 
+            # add evars to the ansible extra_vars when running a playbook.
             for k, v in config.items(section):
-                self.cfgs[section][k] = v
+                if section != 'evars':
+                    self.cfgs[section][k] = v
+                else:
+                    try:
+                        self.cfgs[section][k] = config.getboolean(section, k)
+                    except ValueError as e:
+                        self.cfgs[section][k] = v
 
 
     def _setup_logging(self, enable_logging=True):

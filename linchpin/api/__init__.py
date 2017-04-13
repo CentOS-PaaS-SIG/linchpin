@@ -8,13 +8,8 @@ from linchpin.api.utils import yaml2json
 
 class LinchpinError(Exception):
 
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        repr(self.value)
-
-
+    def __init__(self,*args,**kwargs):
+        Exception.__init__(self,*args,**kwargs)
 
 class LinchpinAPI:
 
@@ -24,6 +19,19 @@ class LinchpinAPI:
         base_path = '/'.join(os.path.dirname(__file__).split("/")[0:-2])
         self.lp_path = '{0}/{1}'.format(base_path, self.ctx.cfgs['lp']['pkg'])
 
+        self._load_global_evars()
+
+
+    def _load_global_evars(self):
+
+        """
+        Instantiate the evars variable, then load the variables from the
+        'evars' section in linchpin.conf. This will then be passed to
+        invoke_linchpin, which passes them to the Ansible playbook as needed.
+
+        """
+
+        self.evars = self.ctx.cfgs.get('evars', None)
 
     def run_playbook(self, pinfile, targets='all', playbook='provision'):
 
@@ -43,14 +51,13 @@ class LinchpinAPI:
 
         pf = yaml2json(pinfile)
 
-        e_vars = {}
-        e_vars['outputfolder_path'] = '{0}/{1}'.format(
+        self.evars['outputfolder_path'] = '{0}/{1}'.format(
                                 self.ctx.workspace,
                                 self.ctx.cfgs['lp']['outputs_folder'])
-        e_vars['inventory_outputs_path'] = '{0}/{1}'.format(
+        self.evars['inventory_outputs_path'] = '{0}/{1}'.format(
                                 self.ctx.workspace,
                                 self.ctx.cfgs['lp']['inventories_folder'])
-        e_vars['state'] = "present"
+        self.evars['state'] = "present"
 
 
         # checks wether the targets are valid or not
@@ -59,21 +66,21 @@ class LinchpinAPI:
                 self.ctx.log_state('Provisioning target: {0}'.format(target))
                 topology = pf[target]['topology']
                 topology_registry = pf.get("topology_registry", None)
-                e_vars['topology'] = find_topology(pf[target]["topology"],
+                self.evars['topology'] = find_topology(pf[target]["topology"],
                                                         topology_registry)
                 if pf[target].has_key("layout"):
-                    e_vars['inventory_layout_file'] = (
+                    self.evars['inventory_layout_file'] = (
                         '{0}/{1}/{2}'.format(self.ctx.workspace,
                                     self.ctx.cfgs['lp']['layouts_folder'],
                                     pf[target]["layout"]))
 
 
-#                def invoke_linchpin(ctx, lp_path, e_vars, playbook='provision', console=True):
+#                def invoke_linchpin(ctx, lp_path, self.evars, playbook='provision', console=True):
                 #invoke the PROVISION linch-pin playbook
                 output = invoke_linchpin(
                                             self.ctx,
                                             self.lp_path,
-                                            e_vars,
+                                            self.evars,
                                             playbook=playbook
                                         )
 
@@ -82,10 +89,10 @@ class LinchpinAPI:
                 self.ctx.log_state('Provisioning target: {0}'.format(target))
                 topology = pf[target]['topology']
                 topology_registry = pf.get("topology_registry", None)
-                e_vars['topology'] = self.find_topology(pf[target]["topology"],
+                self.evars['topology'] = self.find_topology(pf[target]["topology"],
                                                         topology_registry)
                 if pf[target].has_key("layout"):
-                    e_vars['inventory_layout_file'] = (
+                    self.evars['inventory_layout_file'] = (
                         '{0}/{1}/{2}'.format(self.ctx.workspace,
                                     self.ctx.cfgs['lp']['layouts_folder'],
                                     pf[target]["layout"]))
@@ -96,7 +103,7 @@ class LinchpinAPI:
                 output = invoke_linchpin(
                                             self.ctx,
                                             self.lp_path,
-                                            e_vars,
+                                            self.evars,
                                             playbook=playbook
                                          )
 
@@ -167,50 +174,6 @@ class LinchpinAPI:
         """
 
         self.run_playbook(pinfile, targets, playbook="destroy")
-
-
-#   SK's lp_drop function
-#    def lp_drop(self, pf, targets):
-#        """ drop module of linchpin cli """
-#        pf = parse_yaml(pf)
-#        e_vars = {}
-#        e_vars['linchpin_config'] = self.get_config_path()
-#        e_vars['inventory_outputs_path'] = self.context.workspace + "/inventories"
-#        e_vars['keystore_path'] = self.context.workspace+"/keystore"
-#        e_vars['state'] = "absent"
-#        # checks wether the targets are valid or not
-#        if set(targets) == set(pf.keys()).intersection(targets) and len(targets) > 0:
-#            for target in targets:
-#                topology = pf[target]['topology']
-#                topology_registry = pf.get("topology_registry", None)
-#                e_vars['topology'] = self.find_topology(pf[target]["topology"],
-#                                                        topology_registry)
-#                output_file = ( self.context.workspace + "/outputs/" +
-#                                topology.strip(".yaml").strip(".yml") +
-#                                ".output")
-#                e_vars['topology_output_file'] = output_file
-#                output = invoke_linchpin(self.base_path,
-#                                         e_vars,
-#                                         "TEARDOWN",
-#                                         console=True)
-#
-#        elif len(targets) == 0:
-#            for target in set(pf.keys()).difference(self.excludes):
-#                e_vars['topology'] = self.find_topology(pf[target]["topology"],
-#                                                        pf)
-#                topology = pf[target]["topology"].strip(".yml").strip(".yaml")
-#                output_file = (self.context.workspace + "/outputs/" +
-#                                topology.strip("yaml").strip("yml") +
-#                                ".output")
-#
-#                e_vars['topology_output_file'] = output_file
-#                output = invoke_linchpin(self.base_path,
-#                                         e_vars,
-#                                         "TEARDOWN",
-#                                         console=True)
-#        else:
-#            raise  KeyError("One or more Invalid targets found")
-
 
 
     def lp_down(self, pf, targets):
@@ -416,10 +379,10 @@ class LinchpinAPI:
 #
 #
 #    def lp_validate_topology(self, topology):
-#        e_vars = {}
-#        e_vars["schema"] = self.base_path + "/schemas/schema_v3.json"
-#        e_vars["data"] = topology
-#        result = invoke_linchpin(self.base_path, e_vars,
+#        self.evars = {}
+#        self.evars["schema"] = self.base_path + "/schemas/schema_v3.json"
+#        self.evars["data"] = topology
+#        result = invoke_linchpin(self.base_path, self.evars,
 #                                 "SCHEMA_CHECK", console=True)
 #        print(result)
 #        return result
@@ -427,21 +390,21 @@ class LinchpinAPI:
 #
 #    def lp_invgen(self, topoout, layout, invout, invtype):
 #        """ invgen module of linchpin cli """
-#        e_vars = {}
-#        e_vars['linchpin_config'] = self.get_config_path()
-#        e_vars['output'] = os.path.abspath(topoout)
-#        e_vars['layout'] = os.path.abspath(layout)
-#        e_vars['inventory_type'] = invtype
-#        e_vars['inventory_output'] = invout
+#        self.evars = {}
+#        self.evars['linchpin_config'] = self.get_config_path()
+#        self.evars['output'] = os.path.abspath(topoout)
+#        self.evars['layout'] = os.path.abspath(layout)
+#        self.evars['inventory_type'] = invtype
+#        self.evars['inventory_output'] = invout
 #        result = invoke_linchpin(self.base_path,
-#                                 e_vars,
+#                                 self.evars,
 #                                 "INVGEN",
 #                                 console=True)
 #
 #    def lp_test(self, topo, layout, pf):
 #        """ test module of linchpin.api"""
-#        e_vars = {}
-#        e_vars['data'] = topo
-#        e_vars['schema'] = self.base_path + "/schemas/schema_v3.json"
-#        result = invoke_linchpin(self.base_path, e_vars, "TEST", console=True)
+#        self.evars = {}
+#        self.evars['data'] = topo
+#        self.evars['schema'] = self.base_path + "/schemas/schema_v3.json"
+#        result = invoke_linchpin(self.base_path, self.evars, "TEST", console=True)
 #        return result
