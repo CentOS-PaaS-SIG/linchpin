@@ -1,27 +1,17 @@
 import os
-import yaml
-import os.path
-import click
-import shutil
-import errno
-import sys
-import json
-import inspect
-import pdb
-import ansible
 import pprint
 import jsonschema as jsch
 from tabulate import tabulate
-from ansible import utils
-from jinja2 import Environment, PackageLoader
-from collections import namedtuple
+
+import ansible
 from ansible import utils
 from ansible.parsing.dataloader import DataLoader
 from ansible.vars import VariableManager
 from ansible.inventory import Inventory
 from ansible.executor.playbook_executor import PlaybookExecutor
-from ansible.plugins.callback import CallbackBase
 from callbacks import PlaybookCallback
+
+from collections import namedtuple
 
 
 #PLAYBOOKS = {
@@ -32,20 +22,6 @@ from callbacks import PlaybookCallback
 #           "TEST": "test.yml",
 #}
 
-
-def get_evars(pf):
-    """ creates a group of extra vars on basis on linchpin file """
-    e_vars = []
-    for group in pf:
-        topology = pf[group].get("topology")
-        layout = pf[group].get("layout")
-        e_var_grp = {}
-        e_var_grp["topology"] = search_path(topology, os.getcwd())
-        e_var_grp["layout"] = search_path(layout, os.getcwd())
-        if None in e_var_grp.values():
-            display("ERROR:003")
-        e_vars.append(e_var_grp)
-    return e_vars
 
 
 def invoke_linchpin(ctx, lp_path, e_vars, playbook='provision', console=True):
