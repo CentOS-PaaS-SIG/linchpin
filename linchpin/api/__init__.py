@@ -173,7 +173,7 @@ class LinchpinAPI:
             A tuple of targets to destroy.
         """
 
-        self.run_playbook(pinfile, targets, playbook="destroy")
+        self.run_playbook(pf, targets, playbook="destroy")
 
 
     def lp_down(self, pf, targets):
