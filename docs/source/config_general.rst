@@ -28,8 +28,8 @@ properties. `topology` is the name of the toplogy file to be used with that grou
 `layout` is the name of the layout file that will be placed. Both topology and layout
 files will be discussed in more detail in the upcoming pages.
 
-inventory
-`````````
+inventories
+```````````
 
 This is a folder where output from linchpin will be placed following a successful run
 of the command. Specifically, when so configured, inventory files suitable for consumption
