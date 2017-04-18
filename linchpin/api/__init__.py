@@ -51,13 +51,22 @@ class LinchpinAPI:
 
         pf = yaml2json(pinfile)
 
-        self.evars['outputfolder_path'] = '{0}/{1}'.format(
+        # playbooks check whether from_cli is defined
+        # if not, vars get loaded from linchpin.conf
+        self.evars['from_cli'] = True
+        self.evars['lp_path'] = self.lp_path
+
+        self.evars['default_resources_path'] = '{0}/{1}'.format(
                                 self.ctx.workspace,
-                                self.ctx.cfgs['lp']['outputs_folder'])
-        self.evars['inventory_outputs_path'] = '{0}/{1}'.format(
+                                self.ctx.cfgs['lp']['resources_folder'])
+        self.evars['default_inventories_path'] = '{0}/{1}'.format(
                                 self.ctx.workspace,
                                 self.ctx.cfgs['lp']['inventories_folder'])
+
         self.evars['state'] = "present"
+
+        if playbook == 'destroy':
+            self.evars['state'] = "absent"
 
 
         # checks wether the targets are valid or not
@@ -69,7 +78,7 @@ class LinchpinAPI:
                 self.evars['topology'] = find_topology(pf[target]["topology"],
                                                         topology_registry)
                 if pf[target].has_key("layout"):
-                    self.evars['inventory_layout_file'] = (
+                    self.evars['layout_file'] = (
                         '{0}/{1}/{2}'.format(self.ctx.workspace,
                                     self.ctx.cfgs['lp']['layouts_folder'],
                                     pf[target]["layout"]))
@@ -92,7 +101,7 @@ class LinchpinAPI:
                 self.evars['topology'] = self.find_topology(pf[target]["topology"],
                                                         topology_registry)
                 if pf[target].has_key("layout"):
-                    self.evars['inventory_layout_file'] = (
+                    self.evars['layout_file'] = (
                         '{0}/{1}/{2}'.format(self.ctx.workspace,
                                     self.ctx.cfgs['lp']['layouts_folder'],
                                     pf[target]["layout"]))

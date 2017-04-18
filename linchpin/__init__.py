@@ -352,7 +352,7 @@ def drop(ctx, pinfile, targets):
 #                         async_timeout=conf["async_timeout"],
 #                         no_output=conf["no_output"],
 #                         schema=conf["schema"],
-#                         inventory_layouts_path=conf["inventory_layouts_path"],
+#                         default_layouts_path=conf["default_layouts_path"],
 #                         inventory_outputs_path=conf["inventory_outputs_path"],
 #                         check_mode=conf["check_mode"],
 #                         pwd=os.getcwd()).dump('linchpin_config.yml')

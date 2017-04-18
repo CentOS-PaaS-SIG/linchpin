@@ -14,20 +14,10 @@ from callbacks import PlaybookCallback
 from collections import namedtuple
 
 
-#PLAYBOOKS = {
-#           "PROVISION": "site.yml",
-#           "TEARDOWN": "site.yml",
-#           "SCHEMA_CHECK": "schemacheck.yml",
-#           "INVGEN": "invgen.yml",
-#           "TEST": "test.yml",
-#}
-
-
-
 def invoke_linchpin(ctx, lp_path, e_vars, playbook='provision', console=True):
 
     """
-    Invokes linchpin playbook
+    Invokes specified linchpin playbook
     """
 
     pb_path = '{0}/{1}'.format(lp_path, ctx.cfgs['lp']['playbooks_folder'])
