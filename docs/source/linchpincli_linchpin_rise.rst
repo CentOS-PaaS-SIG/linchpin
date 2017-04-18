@@ -7,11 +7,10 @@ This command initiate the provisioning activity using contents of PinFile and cu
 By default it provisions all the targets in the PinFile.
 
 
-Options :
 Options:
   --pf           option to specify PinFIle to use
   --target TEXT  target to provision
-  --help         help 
+  --help         help
 
 =========
 Examples:
@@ -19,7 +18,7 @@ Examples:
 
 +-------------------------------------+--------------------------------------------------------------------+
 | Usage                               | Action                                                             |
-+-------------------------------------+--------------------------------------------------------------------+
++=====================================+====================================================================+
 | linchpin rise                       | Provisions all targets in the PinFile of current working directory |
 +-------------------------------------+--------------------------------------------------------------------+
 | linchpin rise --target <targetname> | Initiates provisioning of specific target                          |

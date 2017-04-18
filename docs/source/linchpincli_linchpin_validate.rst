@@ -6,11 +6,11 @@ command : linchpin validate
 This command validates Pinfiles, topology files and layoutfiles against predefined schema.
 
 
-Options : 
---pf           PinFile path
---layout       layout path
---topo         topology path
---help         Help
+Options:
+  --pf           PinFile path
+  --layout       layout path
+  --topo         topology path
+  --help         Help
 
 =========
 Examples:
@@ -18,7 +18,7 @@ Examples:
 
 +------------------------------------------+-------------------------------------------+
 | Usage                                    | Action                                    |
-+------------------------------------------+-------------------------------------------+
++==========================================+===========================================+
 | linchpin validate --pf <file_path>       | valdates the Pinfile (Not Implemented )   |
 +------------------------------------------+-------------------------------------------+
 | linchpin validate --topology <file_path> | validates topology files                  |

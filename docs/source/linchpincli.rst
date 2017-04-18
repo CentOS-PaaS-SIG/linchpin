@@ -17,3 +17,4 @@ In order view all the commands you can use::
    linchpincli_linchpin_topology
    linchpincli_linchpin_layout
    linchpincli_linchpin_validate
+   linchpincli_linchpin_invgen

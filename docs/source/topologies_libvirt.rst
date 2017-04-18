@@ -1,5 +1,5 @@
-Beaker Topologies
-=================
+Libvirt Topologies
+==================
 
 .. contents:: Topics
 
@@ -11,7 +11,7 @@ Simple Libvirt Topology
 
 .. code-block:: yaml
 
----
+   ---
     topology_name: "libvirt_simple"
     resource_groups:
       -
