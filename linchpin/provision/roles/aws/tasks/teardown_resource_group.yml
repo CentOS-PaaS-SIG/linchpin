@@ -15,7 +15,7 @@
 #  include: teardown_res_defs.yml
 #  when: state == "absent"
 
-# patch for res_type to type translation 
+# patch for res_type to type translation
 - name: "Add attribute res_type to res_grp resource_definitions"
   set_fact:
     resource_definitions: "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) | duplicateattr('type', 'res_type') }}"

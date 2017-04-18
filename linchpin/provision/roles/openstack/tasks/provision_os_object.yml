@@ -39,12 +39,12 @@
   loop_control:
     loop_var: container
   register: res_def_output 
-  when: res_def['count'] is defined and async == false
+  when: res_def['count'] is defined and not async
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_object: "{{ topology_outputs_os_object + res_def_output.results }}"
-  when: async == false
+  when: not async
 
 - name: "Async:: provision/deprovision swift containers when count specified"
   os_object:
@@ -71,16 +71,16 @@
   async: "{{ async_timeout }}"
   poll: 0
   register: res_def_output
-  when: res_def['count'] is defined and async == true
+  when: res_def['count'] is defined and async
 
 #- name: "Async: save the job id"
 #  set_fact:
 #    topology_job_ids: "{{ topology_job_ids + [ res_def_output ] }}"
-#  when: async == true
+#  when: async
 
 
-# following tasks saves the async job details 
+# following tasks saves the async job details
 - name: "Async:: save the job id"
   set_fact:
     topology_outputs_os_object: "{{ topology_outputs_os_object + [ res_def_output ] }}"
-  when: async == true
+  when: async

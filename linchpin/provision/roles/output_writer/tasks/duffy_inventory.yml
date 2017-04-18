@@ -7,5 +7,5 @@
 - name: "generate duffy inventory"
   template:
     src: "../templates/duffy_inventory_formatter.j2"
-    dest: "{{ inventory_output_file | default( inventoryfolder_path+'/'+output.output.data.topology_name+'.inventory' ) }}"
+    dest: "{{ inventory_file | default( default_inventories_path+'/'+output.output.data.topology_name+'.inventory' ) }}"
   when: state == "present"

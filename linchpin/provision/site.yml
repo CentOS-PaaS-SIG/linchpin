@@ -29,4 +29,4 @@
   hosts: localhost
   gather_facts: false
   roles:
-    - { role: 'inventory_gen', when: state == 'present' and inventory_layout_file is defined }
+    - { role: 'inventory_gen', when: state == 'present' and (layout_file is defined or layout is defined) }

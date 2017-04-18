@@ -17,16 +17,16 @@
       rax_server_res: "{{ topology_outputs_rax_server  | default([]) }}"
       beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
       libvirt_res: "{{ topology_outputs_libvirt_nodes | default([]) }}"
-  when: async == false
+  when: not async
 
 - name: "Create output directories"
   file:
     state: directory
     path: "{{ item }}"
   with_items:
-    - "{{ outputfolder_path | default( outputfolder_path+'/' ) }}"
-    - "{{ inventoryfolder_path | default( inventoryfolder_path+'/' ) }}"
-  when: async == false
+    - "{{ default_resources_path | default( default_resources_path+'/' ) }}"
+    - "{{ default_inventories_path | default( default_inventories_path+'/' ) }}"
+  when: not async
   ignore_errors: yes
 
 - name: "DEBUG:: topology_outputs"
@@ -41,8 +41,8 @@
 - name: "Generate outputs when async is false"
   template:
     src: "../templates/output_formatter.j2"
-    dest: "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output' ) }}"
-  when: state == "present" and async == false and no_output == false
+    dest: "{{ resources_file | default( default_resources_path+'/'+outputs.topology_name+'.output' ) }}"
+  when: state == "present" and not async and output
 
 # pretty much the same when we use async== false , seperated the task for probable customizations in future
 - name: "Async:: Updating topology_outputs"
@@ -63,12 +63,12 @@
       rax_server_res: "{{ topology_outputs_rax_server | default([]) }}"
       beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
       libvirt_res: "{{ topology_outputs_libvirt_nodes | default([]) }}"
-  when: async == true
+  when: async
 
 # currently adding a single playbook that can manage all the async outputs based on the resource groups
 - name: "wait and update outputs using jobids "
   include: update_async_outputs.yml
-  when: async == true
+  when: async
 
 # updates topology outputs for after the previous task
 - name: "Async:: Updating topology_outputs after wait"
@@ -89,17 +89,18 @@
       rax_server_res: "{{ topology_outputs_rax_server | default([]) }}"
       beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
       libvirt_res: "{{ topology_outputs_libvirt_nodes | default([]) }}"
-  when: async == true
+  when: async
 
-# pretty much the same output generation when async_false
-# note: need to have a filter such that it matches the output of async == false output , else the inventory layout might face issues with while parsing !!!
+# pretty much the same output generation when async is False
+# note: need to have a filter such that it matches the output when
+# async is False, otherwise the inventory layout might face issues parsing!!!
 - name: "Generate outputs when async is true"
   template:
     src: "../templates/output_formatter.j2"
-    dest: "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output.yaml' ) }}"
-  when: state == "present" and async == true and no_output == false
+    dest: "{{ resources_file | default( default_resources_path+'/'+outputs.topology_name+'.output.yaml' ) }}"
+  when: state == "present" and async and output
 
-- name: "set name for linchpin_output_file for inventory generation"
-  set_fact: 
-    topology_output_file:  "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output' ) }}"
+- name: "set name of the resources_file for inventory generation"
+  set_fact:
+    resources_file:  "{{ resources_file | default( default_resources_path+'/'+outputs.topology_name+'.output' ) }}"
   when: state == "present"
