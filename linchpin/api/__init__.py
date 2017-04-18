@@ -58,10 +58,10 @@ class LinchpinAPI:
 
         self.evars['default_resources_path'] = '{0}/{1}'.format(
                                 self.ctx.workspace,
-                                self.ctx.cfgs['lp']['resources_folder'])
+                                self.ctx.cfgs['evars']['resources_folder'])
         self.evars['default_inventories_path'] = '{0}/{1}'.format(
                                 self.ctx.workspace,
-                                self.ctx.cfgs['lp']['inventories_folder'])
+                                self.ctx.cfgs['evars']['inventories_folder'])
 
         self.evars['state'] = "present"
 
@@ -80,7 +80,7 @@ class LinchpinAPI:
                 if pf[target].has_key("layout"):
                     self.evars['layout_file'] = (
                         '{0}/{1}/{2}'.format(self.ctx.workspace,
-                                    self.ctx.cfgs['lp']['layouts_folder'],
+                                    self.ctx.cfgs['evars']['layouts_folder'],
                                     pf[target]["layout"]))
 
 
@@ -103,7 +103,7 @@ class LinchpinAPI:
                 if pf[target].has_key("layout"):
                     self.evars['layout_file'] = (
                         '{0}/{1}/{2}'.format(self.ctx.workspace,
-                                    self.ctx.cfgs['lp']['layouts_folder'],
+                                    self.ctx.cfgs['evars']['layouts_folder'],
                                     pf[target]["layout"]))
 
 
@@ -234,7 +234,7 @@ class LinchpinAPI:
 
         topo_path = os.path.realpath('{}/{}'.format(
                 self.ctx.workspace,
-                self.ctx.cfgs['lp']['topologies_folder']))
+                self.ctx.cfgs['evars']['topologies_folder']))
 
         topos = os.listdir(topo_path)
 

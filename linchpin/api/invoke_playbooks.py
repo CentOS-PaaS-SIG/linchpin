@@ -20,7 +20,7 @@ def invoke_linchpin(ctx, lp_path, e_vars, playbook='provision', console=True):
     Invokes specified linchpin playbook
     """
 
-    pb_path = '{0}/{1}'.format(lp_path, ctx.cfgs['lp']['playbooks_folder'])
+    pb_path = '{0}/{1}'.format(lp_path, ctx.cfgs['evars']['playbooks_folder'])
     module_path = '{0}/{1}'.format(pb_path, ctx.cfgs['lp']['module_folder'])
     playbook_path = '{0}/{1}'.format(pb_path, ctx.cfgs['playbooks'][playbook])
 
