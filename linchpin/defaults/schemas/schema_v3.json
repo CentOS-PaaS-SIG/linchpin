@@ -393,7 +393,7 @@
                         }
 
                     }
-                
+
                 }
             },
             "required":["res_name","res_type"]
