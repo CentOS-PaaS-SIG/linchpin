@@ -74,7 +74,7 @@ def runcli(ctx, verbose, workspace, version):
     if workspace is None:
         ctx.workspace = os.path.realpath(os.path.curdir)
     else:
-        ctx.workspace = os.path.realpath(workspace)
+        ctx.workspace = os.path.realpath(os.path.expanduser(workspace))
 
     ctx.log_info("ctx.workspace: {0}".format(ctx.workspace))
 
