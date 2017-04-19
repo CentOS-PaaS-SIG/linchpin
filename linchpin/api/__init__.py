@@ -19,19 +19,6 @@ class LinchpinAPI:
         base_path = '/'.join(os.path.dirname(__file__).split("/")[0:-2])
         self.lp_path = '{0}/{1}'.format(base_path, self.ctx.cfgs['lp']['pkg'])
 
-        self._load_global_evars()
-
-
-    def _load_global_evars(self):
-
-        """
-        Instantiate the evars variable, then load the variables from the
-        'evars' section in linchpin.conf. This will then be passed to
-        invoke_linchpin, which passes them to the Ansible playbook as needed.
-
-        """
-
-        self.evars = self.ctx.cfgs.get('evars', None)
 
     def run_playbook(self, pinfile, targets='all', playbook='provision'):
 
@@ -53,55 +40,55 @@ class LinchpinAPI:
 
         # playbooks check whether from_cli is defined
         # if not, vars get loaded from linchpin.conf
-        self.evars['from_cli'] = True
-        self.evars['lp_path'] = self.lp_path
+        self.ctx.evars['from_cli'] = True
+        self.ctx.evars['lp_path'] = self.lp_path
 
-        self.evars['default_resources_path'] = '{0}/{1}'.format(
+        self.ctx.evars['default_resources_path'] = '{0}/{1}'.format(
                                 self.ctx.workspace,
                                 self.ctx.cfgs['evars']['resources_folder'])
-        self.evars['default_inventories_path'] = '{0}/{1}'.format(
+        self.ctx.evars['default_inventories_path'] = '{0}/{1}'.format(
                                 self.ctx.workspace,
                                 self.ctx.cfgs['evars']['inventories_folder'])
 
-        self.evars['state'] = "present"
+        self.ctx.evars['state'] = "present"
 
         if playbook == 'destroy':
-            self.evars['state'] = "absent"
+            self.ctx.evars['state'] = "absent"
 
 
         # checks wether the targets are valid or not
         if set(targets) == set(pf.keys()).intersection(targets) and len(targets) > 0:
             for target in targets:
-                self.ctx.log_state('Provisioning target: {0}'.format(target))
+                self.ctx.log_state('{0} target: {1}'.format(playbook, target))
                 topology = pf[target]['topology']
                 topology_registry = pf.get("topology_registry", None)
-                self.evars['topology'] = self.find_topology(pf[target]["topology"],
+                self.ctx.evars['topology'] = find_topology(pf[target]["topology"],
                                                         topology_registry)
                 if pf[target].has_key("layout"):
-                    self.evars['layout_file'] = (
+                    self.ctx.evars['layout_file'] = (
                         '{0}/{1}/{2}'.format(self.ctx.workspace,
                                     self.ctx.cfgs['evars']['layouts_folder'],
                                     pf[target]["layout"]))
 
 
-#                def invoke_linchpin(ctx, lp_path, self.evars, playbook='provision', console=True):
+#                def invoke_linchpin(ctx, lp_path, self.ctx.evars, playbook='provision', console=True):
                 #invoke the PROVISION linch-pin playbook
                 output = invoke_linchpin(
                                             self.ctx,
                                             self.lp_path,
-                                            self.evars,
+                                            self.ctx.evars,
                                             playbook=playbook
                                         )
 
         elif len(targets) == 0:
             for target in set(pf.keys()).difference():
-                self.ctx.log_state('Provisioning target: {0}'.format(target))
+                self.ctx.log_state('{0} target: {1}'.format(playbook, target))
                 topology = pf[target]['topology']
                 topology_registry = pf.get("topology_registry", None)
-                self.evars['topology'] = self.find_topology(pf[target]["topology"],
+                self.ctx.evars['topology'] = self.find_topology(pf[target]["topology"],
                                                         topology_registry)
                 if pf[target].has_key("layout"):
-                    self.evars['layout_file'] = (
+                    self.ctx.evars['layout_file'] = (
                         '{0}/{1}/{2}'.format(self.ctx.workspace,
                                     self.ctx.cfgs['evars']['layouts_folder'],
                                     pf[target]["layout"]))
@@ -112,7 +99,7 @@ class LinchpinAPI:
                 output = invoke_linchpin(
                                             self.ctx,
                                             self.lp_path,
-                                            self.evars,
+                                            self.ctx.evars,
                                             playbook=playbook
                                          )
 

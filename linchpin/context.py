@@ -29,17 +29,8 @@ class LinchpinContext(object):
         self.version = __version__
         self.verbose = False
 
-        # load all configurations
-        self._load_config()
 
-        # setup logging
-        self._setup_logging(eval(self.cfgs['logger']['enable']))
-
-        # create a LinchpinCLI object
-        self.lpcli = LinchpinCli(self)
-
-
-    def _load_config(self):
+    def load_config(self, lpconfig=None):
         """
         Create self.cfgs from the linchpin configuration file.
 
@@ -55,15 +46,17 @@ class LinchpinContext(object):
         expanded_path = None
         config_found = False
 
-
-        # simply modify this variable to adjust where linchpin.conf can be found
-        CONFIG_PATH = [
-            '{0}/linchpin.conf'.format(
-                        os.path.realpath(os.path.expanduser(os.path.curdir))),
-            '~/.linchpin.conf',
-            '/etc/linchpin.conf',
-            '{0}/linchpin.conf'.format(self.lib_path)
-        ]
+        if lpconfig:
+            CONFIG_PATH = [ lpconfig ]
+        else:
+            # simply modify this variable to adjust where linchpin.conf can be found
+            CONFIG_PATH = [
+                '{0}/linchpin.conf'.format(
+                            os.path.realpath(os.path.expanduser(os.path.curdir))),
+                '~/.linchpin.conf',
+                '/etc/linchpin.conf',
+                '{0}/linchpin.conf'.format(self.lib_path)
+            ]
 
         for path in CONFIG_PATH:
             expanded_path = (
@@ -104,7 +97,19 @@ class LinchpinContext(object):
                         self.cfgs[section][k] = v
 
 
-    def _setup_logging(self, enable_logging=True):
+    def load_global_evars(self):
+
+        """
+        Instantiate the evars variable, then load the variables from the
+        'evars' section in linchpin.conf. This will then be passed to
+        invoke_linchpin, which passes them to the Ansible playbook as needed.
+
+        """
+
+        self.evars = self.cfgs.get('evars', None)
+
+
+    def setup_logging(self, enable_logging=True):
         """
         Create a local log file to manage debugging and the like
 

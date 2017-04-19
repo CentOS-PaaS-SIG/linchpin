@@ -25,6 +25,7 @@ class LinchpinAliases(click.Group):
     lp_aliases = {
             'rise': 'up',
             'drop': 'destroy',
+            'down': 'destroy',
         }
 
     def list_commands(self, ctx):
@@ -55,6 +56,8 @@ class LinchpinAliases(click.Group):
                 invoke_without_command=True,
                 no_args_is_help=True,
                 context_settings=CONTEXT_SETTINGS)
+@click.option('-c', '--config', type=click.Path(), envvar='LP_CONFIG',
+        help='Path to config file')
 @click.option('-w', '--workspace', type=click.Path(), envvar='WORKSPACE',
         help='Uses the familiar Jenkins $WORKSPACE environment variable')
 @click.option('-v', '--verbose', is_flag=True, default=False,
@@ -62,10 +65,14 @@ class LinchpinAliases(click.Group):
 @click.option('--version', is_flag=True,
         help='Prints the version and exits')
 @pass_context
-def runcli(ctx, verbose, workspace, version):
+def runcli(ctx, config, workspace, verbose, version):
     """linchpin: hybrid cloud orchestration"""
 
     ctx.verbose = verbose
+
+    ctx.load_config(lpconfig=config)
+    ctx.load_global_evars()
+    ctx.setup_logging(eval(ctx.cfgs['logger']['enable']))
 
     if version:
         ctx.log_state('linchpin version {0}'.format(ctx.version))
