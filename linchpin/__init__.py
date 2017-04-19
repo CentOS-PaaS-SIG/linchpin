@@ -19,17 +19,39 @@ pass_context = click.make_pass_decorator(LinchpinContext, ensure=True)
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
-class RiseAlias(click.Group):
+class LinchpinAliases(click.Group):
+
+    lp_commands = ['init', 'up', 'destroy']
+    lp_aliases = {
+            'rise': 'up',
+            'drop': 'destroy',
+        }
 
     def list_commands(self, ctx):
-        return ['init', 'up', 'destroy']
+        """
+        Provide a list of available commands. Anhthing deprecated should
+        not be listed
+        """
+
+        return self.lp_commands
 
     def get_command(self, ctx, name):
-        rv = click.Group.get_command(self, ctx, name)
+
+        """
+        Track aliases for specific commands and the commands and return the
+        correct action.
+        """
+
+        cmd = self.lp_aliases.get(name)
+
+        if cmd == None:
+            cmd = name
+
+        rv = click.Group.get_command(self, ctx, cmd)
         return rv
 
 
-@click.command(cls=RiseAlias,
+@click.command(cls=LinchpinAliases,
                 invoke_without_command=True,
                 no_args_is_help=True,
                 context_settings=CONTEXT_SETTINGS)
@@ -132,7 +154,7 @@ def rise(ctx, pinfile, targets):
 
     """
 
-    up(ctx, pinfile, targets)
+    pass
 
 
 @runcli.command()
@@ -185,7 +207,7 @@ def drop(ctx, pinfile, targets):
 
     """
 
-    destroy(ctx, pinfile, targets)
+    pass
 
 
 
