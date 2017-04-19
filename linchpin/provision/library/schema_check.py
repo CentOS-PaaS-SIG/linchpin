@@ -51,17 +51,16 @@ class JSONSchema:
     def validate(self):
         data = self.get_data(self.data_file)
         schema = open(self.schema_file).read()
-        if type(data) is dict:
-            return data
+
         try:
             result = jsonschema.validate(json.loads(data), json.loads(schema))
-            return {"status": True, "data": json.loads(data)}
+            return (True, json.loads(data))
         except jsonschema.ValidationError as e:
-            return {"error": e.message, "status": False}
+            return {"ValidationError": e.message, "status": False}
         except jsonschema.SchemaError as e:
-            return {"error": e, "status": False}
+            return {"SchemaError": e, "status": False}
         except Exception as e:
-            return {"error": e, "status": False}
+            return {"Unknown Error": e, "status": False}
 
     def get_data(self, file_path):
         ext = file_path.split(".")[-1]
@@ -120,8 +119,8 @@ def validate_values(module, data_file_path):
 def main():
     module = AnsibleModule(
     argument_spec={
-            'data': {'required': True, 'aliases': ['topology_file']},
-            'schema': {'required': True, 'aliases': ['topology_file']},
+            'data': {'required': True, 'aliases': ['topology']},
+            'schema': {'required': True},
             'data_format': {'required': False,'choices':['json','yaml','yml']},
         },
         required_one_of=[],
@@ -132,12 +131,19 @@ def main():
     check_file_paths(module, data_file_path, schema_file_path)
     validate_values(module, data_file_path)
     schema_obj = JSONSchema(data_file_path, schema_file_path)
-    output = schema_obj.validate()
-    resp = {"path": data_file_path, "content": output}
-    if output["status"]:
+
+    status, out = schema_obj.validate()
+
+#    module.fail_json(msg=out)
+
+    if status:
         changed = True
-        module.exit_json(isvalid=changed, output=output)
+        module.exit_json(isvalid=changed, out=out)
     else:
+        resp = {"path": data_file_path,
+                "schema": schema_file_path,
+                "output": out}
+
         module.fail_json(msg=resp)
 
 main()

@@ -12,12 +12,12 @@
     credentials_file: "roles/gcloud/vars/{{ res_grp['assoc_creds'] | default(res_grp['credentials']) }}.json"
     project_id: "{{ project_id }}"
   register: res_def_output
-  when: async == false
+  when: not async
 
 - name: "Appending outputitem to topology_outputs"
   set_fact:
     topology_outputs_gce: "{{ topology_outputs_gce + [res_def_output] }}"
-  when: async == false
+  when: not async
 
 - name: "Async:: Provision/Teardown resource by looping on count"
   gce:
@@ -31,11 +31,11 @@
     credentials_file: "roles/gcloud/vars/{{ res_grp['assoc_creds'] | default(res_grp['credentials']) }}.json"
     project_id: "{{ project_id }}"
   register: res_def_output
-  when: async == true
+  when: async
   async: "{{ async_timeout }}"
   poll: 0
 
 - name: "Appending outputitem to topology_outputs"
   set_fact:
     topology_outputs_gce: "{{ topology_outputs_gce + [ res_def_output ] }}"
-  when: async == true
+  when: async

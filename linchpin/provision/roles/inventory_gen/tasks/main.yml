@@ -1,7 +1,7 @@
 ---
 #includes the output file of linchpin
 
-- include_vars: "{{ topology_output_file | default( outputfolder_path+'/'+output.output.data.topology_name+'.output.yaml' ) }}"
+- include_vars: "{{ resources_file | default( default_resources_path+'/'+outputs.topology_name+'.output.yaml' ) }}"
 
 - name: "Updating topology_outputs"
   set_fact:
@@ -14,22 +14,17 @@
       libvirt_res: "{{ libvirt_res }}"
   when: state == "present" and inventory_layout is defined
 
-# parse inventory generation files here : can be overridden by extravar inventory_layout_file currently defaulted to openshift-3node-cluster.yml
+
+# parse inventory generation files here : can be overridden by extravar layout_file currently defaulted to openshift-3node-cluster.yml
 - name: "Parse inventory layout as a ordered dict"
   set_fact:
-    inventory_layout: "{{ inventory_layout_file | default( inventory_layouts_path+'/'+'openshift-3node-cluster.yml') | ordered_yaml }}"
+    inventory_layout: "{{ layout_file | default( default_layouts_path+'/'+'openshift-3node-cluster.yml') | ordered_yaml }}"
 
-# updating inventory output file with the absoulte path configured if given : can be overridden by  extravar inventory_output_file currently
-- name: "DEBUG:: inventory_outputs_path ##########"
-  debug:
-    msg: "{{ inventory_outputs_path }}"
-  when: state == "present" and inventory_layout is defined
-
-- name: "Updating inventory_output_file with the absolute path"
+- name: "Updating inventory_file with the absolute path"
   set_fact:
-    inventory_output_file: "{{ inventory_output_file | default( inventory_outputs_path+'/'+output.output.data.topology_name ) }}"
+    inventory_file: "{{ inventory_file | default( default_inventories_path+'/'+outputs.topology_name ) }}"
 
 - name: "Generate Generic Inventory"
   template:
     src: "templates/generic_inventory_formatter.j2"
-    dest: "{{ inventory_output_file }}.inventory"
+    dest: "{{ inventory_file }}.inventory"

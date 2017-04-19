@@ -2,17 +2,15 @@
 - name: "Inventory Filter Testing"
   hosts: localhost
   gather_facts: false
-  vars_files:
-   - ../linchpin_config.yml
   vars:
-    data: '../ex_topo/duffy_3node_cluster.yml'
+    data: '../examples/topologies/duffy_3node_cluster.yml'
     state: present
     output:
       output:
         data:
          topology_name: "duffy_3node_cluster"
-    topology_output_file: '../ex_topo/duffy_topology_output.yml'
-    inventory_layout_file: '../ex_topo/duffy_3node_inventory_layout.yml'
+    resources_file: '../examples/topologies/duffy_topology_output.yml'
+    layout_file: '../examples/topologies/duffy_3node_inventory_layout.yml'
     topology_outputs_duffy: "{{ topology_outputs['duffy_res'] }}"
     topology_outputs_os_server: "{{ topology_outputs['os_server_res'] }}"
     topology_outputs_os_volume: "{{ topology_outputs['os_volume_res'] }}"

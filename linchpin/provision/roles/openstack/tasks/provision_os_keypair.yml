@@ -8,19 +8,19 @@
     name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     state: "{{ state }}"
     wait: "yes"
-  register: res_def_output 
-  when: async == false
+  register: res_def_output
+  when: not async
 
 - name: "Generate keyfile "
   copy: 
     content: "{{ res_def_output['key']['private_key'] }}"
     dest: "{{ keystore_path }}/{{ res_def['res_name'] | default(res_def['name']) }}.key"
-  when: state=="present" and res_def_output['changed'] == true and async == false
+  when: state=="present" and res_def_output['changed'] == true and not async
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_keypair: "{{ topology_outputs_os_keypair + [res_def_output] }}"
-  when: res_def_output.changed == true and state == "present" and async == false
+  when: res_def_output.changed == true and state == "present" and not async
 
 - name: "Async:: provisioning/deprovisioning  keypair"
   os_keypair:
@@ -35,22 +35,22 @@
   register: res_def_output
   async: "{{ async_timeout }}"
   poll: 0
-  when: async == true
+  when: async
 
 - name: 'Async:: Check on keypair create task'
   async_status: jid={{ res_def_output.ansible_job_id }}
   register: job_result
   until: job_result.finished
   retries: 30
-  when: async == true
+  when: async
 
 - name: "Async:: Generate keyfile "
   copy:
     content: "{{ job_result['key']['private_key'] }}"
     dest: "{{ keystore_path }}/{{ res_def['res_name'] | default(res_def['name']) }}.key"
-  when: state=="present" and res_def_output['changed'] == true and async == true
+  when: state=="present" and res_def_output['changed'] == true and async
 
 - name: "Async:: save the job id"
   set_fact:
     topology_job_ids: "{{ topology_job_ids + [ res_def_output ] }}"
-  when: async == true
+  when: async

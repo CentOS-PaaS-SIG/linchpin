@@ -1,10 +1,11 @@
 include requirements.txt
 include README.rst
 
-include linchpin/linchpin_config.yml
+include linchpin/linchpin.conf
 
 recursive-include linchpin/examples *
 recursive-include linchpin/templates *
+recursive-include linchpin/defaults *
 recursive-include linchpin/provision *
 recursive-include linchpin/schemas *
 

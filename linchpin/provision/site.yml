@@ -1,19 +1,6 @@
 ---
 # This playbook provisions given topology.
 
-- name: "including the configuration files"
-  hosts: localhost
-  gather_facts: false
-  tasks:
-    - name: "Include linchpin_config"
-      include_vars: "{{ item }}"
-      with_first_found:
-        - "{{ linchpin_config | default(omit) }}"
-        - "../linchpin_config.yml"
-        - "~/.linchpin_config.yml"
-        - "/usr/linchpin_config.yml"
-        - "/etc/linchpin/linchpin_config.yml"
-
 - name:  "schema check and Pre Provisioning Activities on topology_file"
   hosts: localhost
   gather_facts: false
@@ -43,4 +30,4 @@
   hosts: localhost
   gather_facts: false
   roles:
-    - { role: 'inventory_gen', when: state == 'present' and inventory_layout_file is defined }
+    - { role: 'inventory_gen', when: state == 'present' and (layout_file is defined or layout is defined) }

@@ -1,14 +1,12 @@
-import os
-import click
+#!/usr/bin/env python
+
 from linchpin.api import LinchpinAPI
-from linchpin.api.invoke_playbooks import invoke_linchpin
-from utils import parse_yaml
 
 
 class LinchpinCli(LinchpinAPI):
 
-    def __init__(self, context):
-        LinchpinAPI.__init__(self, context)
+    def __init__(self, ctx):
+        LinchpinAPI.__init__(self, ctx)
 
-    def test(self):
-        print("test function inside linchpincli")
+
+

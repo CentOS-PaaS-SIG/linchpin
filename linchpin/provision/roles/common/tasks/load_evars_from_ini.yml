@@ -1,0 +1,78 @@
+---
+# this will load all known evars from the [evars] section of the linchpin.conf
+# The plays will not override evars provided on the cli. In other words,
+# if the values are already set, the config vars will not take precedence.
+
+#- name: set cwd
+#  set_fact:
+#    cwd:
+#      "{{ lookup('env', 'PWD') }}"
+
+# " need this quote because highlighting is dumb
+
+#- name: cwd
+#  debug:
+#    var: cwd
+- name: use linchpin_config if provided
+  set_fact:
+    lpconfig: "{{ linchpin_config }}"
+  when: linchpin_config is defined
+
+- name: set lp_path
+  set_fact:
+    lp_path:
+      "{{ lookup('pipe', 'pwd')|dirname }}"
+  when: linchpin_config is not defined
+
+- name: set lpconfig (linchpin.conf) full path
+  set_fact:
+    lpconfig: "{{ lp_path }}/linchpin.conf"
+  when: linchpin_config is not defined
+
+- name: set boolean evars from linchpin.conf
+  set_fact:
+    async: "{{ lookup('ini', 'async section=evars file={{ lpconfig }}') }}"
+    output: "{{ lookup('ini', 'output section=evars file={{ lpconfig }}') }}"
+    check_mode: "{{ lookup('ini', 'check_mode section=evars file={{ lpconfig }}') }}"
+
+- name: set schema evars from linchpin.conf
+  set_fact:
+    schema_v3: "{{ lookup('ini', 'schema_v3 section=evars file={{ lpconfig }}') }}"
+    schema_v4: "{{ lookup('ini', 'schema_v4 section=evars file={{ lpconfig }}') }}"
+
+- name: set default path evars from linchpin.conf
+  set_fact:
+    default_schemas_path: "{{ lookup('ini', 'default_schemas_path section=evars file={{ lpconfig }}') }}"
+    default_topologies_path: "{{ lookup('ini', 'default_topologies_path section=evars file={{ lpconfig }}') }}"
+    default_layouts_path: "{{ lookup('ini', 'default_layouts_path section=evars file={{ lpconfig }}') }}"
+    default_resources_path: "{{ lookup('ini', 'default_resources_path section=evars file={{ lpconfig }}') }}"
+    default_inventories_path: "{{ lookup('ini', 'default_inventories_path section=evars file={{ lpconfig }}') }}"
+  when: workspace is not defined
+
+- name: set remaining evars from linchpin.conf
+  set_fact:
+    schemas_folder: "{{ lookup('ini', 'schemas_folder section=evars file={{ lpconfig }}') }}"
+    topologies_folder: "{{ lookup('ini', 'topologies_folder section=evars file={{ lpconfig }}') }}"
+    layouts_folder: "{{ lookup('ini', 'layouts_folder section=evars file={{ lpconfig }}') }}"
+    resources_folder: "{{ lookup('ini', 'resources_folder section=evars file={{ lpconfig }}') }}"
+    inventories_folder: "{{ lookup('ini', 'inventories_folder section=evars file={{ lpconfig }}') }}"
+    async_timeout: "{{ lookup('ini', 'async_timeout section=evars file={{ lpconfig }}') }}"
+
+- name: set default path evars using workspace var
+  set_fact:
+    default_schemas_path: "{{ workspace }}/{{ schemas_folder }}"
+    default_topologies_path: "{{ workspace }}/{{ topologies_folder }}"
+    default_layouts_path: "{{ workspace }}/{{ layouts_folder }}"
+    default_resources_path: "{{ workspace }}/{{ resources_folder }}"
+    default_inventories_path: "{{ workspace }}/{{ inventories_folder }}"
+  when: workspace is defined
+
+
+#- name: evars_tmp
+#  debug:
+#    var: evars_tmp
+
+#- fail:
+#    msg: "stopping execution for now"
+
+

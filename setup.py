@@ -1,6 +1,14 @@
+import os
+import ast
 from setuptools import setup, find_packages
 from pip.req import parse_requirements
 import os
+
+with file('linchpin/version.py') as f:
+    for line in f:
+        if line.startswith('__version__'):
+            ver = ast.parse(line).body[0].value.s
+            break
 
 # reading requirements from requirements.txt
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -12,7 +20,7 @@ ignore_dir = ['.git']
 
 setup(
     name='linchpin',
-    version='1.0.0a1',
+    version=ver,
     description = 'Ansible based multi cloud orchestrator',
     author = 'samvaran kashyap rallabandi',
     author_email = 'samvaran.kashyap@gmail.com',
@@ -21,7 +29,7 @@ setup(
     install_requires=required,
     entry_points='''
         [console_scripts]
-        linchpin=linchpin:cli
+        linchpin=linchpin:runcli
     ''',
     extras_require = {
         'krbV': ["python-krbV"],
