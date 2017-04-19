@@ -1,58 +1,29 @@
 import os
-import yaml
-import os.path
-import click
-import shutil
-import errno
-import sys
-import json
-import inspect
-import pdb
-import ansible
 import pprint
 import jsonschema as jsch
 from tabulate import tabulate
-from ansible import utils
-from jinja2 import Environment, PackageLoader
-from collections import namedtuple
+
+import ansible
 from ansible import utils
 from ansible.parsing.dataloader import DataLoader
 from ansible.vars import VariableManager
 from ansible.inventory import Inventory
 from ansible.executor.playbook_executor import PlaybookExecutor
-from ansible.plugins.callback import CallbackBase
 from callbacks import PlaybookCallback
 
-
-PLAYBOOKS = {
-           "PROVISION": "site.yml",
-           "TEARDOWN": "site.yml",
-           "SCHEMA_CHECK": "schemacheck.yml",
-           "INVGEN": "invgen.yml",
-           "TEST": "test.yml",
-}
+from collections import namedtuple
 
 
-def get_evars(pf):
-    """ creates a group of extra vars on basis on linchpin file """
-    e_vars = []
-    for group in pf:
-        topology = pf[group].get("topology")
-        layout = pf[group].get("layout")
-        e_var_grp = {}
-        e_var_grp["topology"] = search_path(topology, os.getcwd())
-        e_var_grp["layout"] = search_path(layout, os.getcwd())
-        if None in e_var_grp.values():
-            display("ERROR:003")
-        e_vars.append(e_var_grp)
-    return e_vars
+def invoke_linchpin(ctx, lp_path, e_vars, playbook='provision', console=True):
 
+    """
+    Invokes specified linchpin playbook
+    """
 
-def invoke_linchpin(base_path, e_vars, playbook="PROVISION", console=True):
-    """ Invokes linchpin playbook """
-    module_path = base_path+"/library"
-    print("debug:: module path ::"+module_path)
-    playbook_path = base_path+"/provision/"+PLAYBOOKS[playbook]
+    pb_path = '{0}/{1}'.format(lp_path, ctx.cfgs['evars']['playbooks_folder'])
+    module_path = '{0}/{1}'.format(pb_path, ctx.cfgs['lp']['module_folder'])
+    playbook_path = '{0}/{1}'.format(pb_path, ctx.cfgs['playbooks'][playbook])
+
     loader = DataLoader()
     variable_manager = VariableManager()
     variable_manager.extra_vars = e_vars
@@ -61,6 +32,7 @@ def invoke_linchpin(base_path, e_vars, playbook="PROVISION", console=True):
                           host_list=[])
     passwords = {}
     utils.VERBOSITY = 4
+
     Options = namedtuple('Options', ['listtags',
                                      'listtasks',
                                      'listhosts',
@@ -79,6 +51,7 @@ def invoke_linchpin(base_path, e_vars, playbook="PROVISION", console=True):
                                      'become_user',
                                      'verbosity',
                                      'check'])
+
     options = Options(listtags=False,
                       listtasks=False,
                       listhosts=False,
@@ -97,12 +70,14 @@ def invoke_linchpin(base_path, e_vars, playbook="PROVISION", console=True):
                       become_user='root',
                       verbosity=utils.VERBOSITY,
                       check=False)
+
     pbex = PlaybookExecutor(playbooks=[playbook_path],
                             inventory=inventory,
                             variable_manager=variable_manager,
                             loader=loader,
                             options=options,
                             passwords=passwords)
+
     if not console:
         cb = PlaybookCallback()
         pbex._tqm._stdout_callback = cb

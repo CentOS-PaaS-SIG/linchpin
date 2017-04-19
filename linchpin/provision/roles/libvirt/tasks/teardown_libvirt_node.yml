@@ -14,7 +14,7 @@
   loop_control:
     loop_var: instance
   register: res_def_output
-  when: async == false
+  when: not async
 
 - name: "undefine node"
   virt:
@@ -28,5 +28,5 @@
   loop_control:
     loop_var: instance
   register: res_def_output
-  when: async == false
+  when: not async
 

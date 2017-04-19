@@ -14,13 +14,13 @@
     nics:  "{{ res_def['networks'] | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
     count: "{{ res_def['count'] }}"
-  when: async == false
+  when: not async
   register: res_def_output
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_server: "{{ topology_outputs_os_server + [res_def_output] }}"
-  when: async == false
+  when: not async
 
 - name: "provision/deprovision os_server resources by looping on count"
   os_server:
@@ -42,10 +42,10 @@
   async: "{{ async_timeout | default(1000) }}"
   poll: 0
   register: res_def_output
-  when: async == true
+  when: async
 
 # following tasks saves the async job details
 - name: "Async:: save the job id"
   set_fact:
     topology_outputs_os_server: "{{ topology_outputs_os_server + [ res_def_output ] }}"
-  when: async == true
+  when: async

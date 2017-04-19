@@ -3,6 +3,6 @@
   gather_facts: false
   tasks:
     - name: "Initiating schema_check"
-      schema_check: 
-        data: "{{ data }}"
+      schema_check:
+        data: "{{ topology }}"
         schema: "{{ schema }}"

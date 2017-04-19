@@ -22,7 +22,7 @@ version_added: "0.1"
 module: output_parser
 short_description: output_parser module in ansible
 description:
-  - This module allows a user to parser the output yaml file
+  - This module allows a user to parse a yaml file
     and register it as variable in ansible.
 
 options:
@@ -53,7 +53,9 @@ def main():
              argument_spec=dict(
                            output_file=dict(
                                        required=True,
-                                       aliases=['topology_output_file']
+                                       aliases=[
+                                           'topology_output_file',
+                                           'resources_file']
                            )
              ),
              required_one_of=[],

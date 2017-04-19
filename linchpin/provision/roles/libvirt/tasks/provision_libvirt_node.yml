@@ -28,12 +28,6 @@
   include: copy_image_src.yml
   when: node_exists['failed'] is defined
 
-#-- add user data --
-#
-- name: libguestfs add user data
-  debug:
-    var: img_s_ext
-
 - name: "define node"
   template:
     src: "../templates/libvirt_node.xml.j2"
@@ -95,7 +89,7 @@
     - ["{{ img_src_ext }}"]
   loop_control:
     loop_var: instance
-  when: async == false
+  when: not async
 
 
 - name: mac_and_ip | extract mac address
@@ -158,7 +152,7 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: data
-  when: async == false
+  when: not async
   register: node_data
 
 - name: "Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
@@ -168,7 +162,7 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: xml_item
-  when: async == false
+  when: not async
 
 #- name: "Append outputitem to topology_outputs"
 #  set_fact:

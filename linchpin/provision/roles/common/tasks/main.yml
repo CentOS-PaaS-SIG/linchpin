@@ -1,29 +1,79 @@
 ---
-# This playbook contains common play that will be ran before the provisioning starts.
-- name: "schema check for given topology file"
-  schema_check:
-    data: "{{ topology }}"
-    schema: "{{ playbook_dir }}/../schemas/schema_v3.json"
-  register: output
-  tags: schema_validation
-  ignore_errors: true
 
-- name: "Set state for schema validation"
+#- name: schema_v3
+#  debug:
+#    var: schema_v3
+#
+#- name: topology
+#  debug:
+#    var: topology
+#
+#- name: from_cli
+#  debug:
+#    var: from_cli
+
+- name: "load ini evars from linchpin.conf"
+  include: load_evars_from_ini.yml
+  when: from_cli is not defined
+ 
+- name: "if topology_file is passed, set topology to its value"
   set_fact:
-    schema_valid: "{{ output['isvalid'] | default(false) }}"
+    topology: "{{ topology_file }}"
+  when: topology_file is defined
 
-- name: "schema check for given topology file"
+- name: "if schema_file is passed, set schema to its value"
+  set_fact:
+    schema: "{{ schema_file }}"
+  when: schema_file is defined
+
+- name: "check topology file against the provided schema"
   schema_check:
     data: "{{ topology }}"
-    schema: "{{ playbook_dir }}/../schemas/schema_v4.json"
+    schema: "{{ schema }}"
+  register: out
+  when: schema is defined
+
+- name: "assign output from provided schema"
+  set_fact:
+     outputs: "{{ out['out'] }}"
+  when: schema is defined
+
+- name: "check topology file against schema_v3"
+  schema_check:
+    data: "{{ topology }}"
+    schema: "{{ schema_v3 }}"
+  register: v3_out
+  tags: schema_validation
+  when: schema is not defined
+  #  ignore_errors: true
+
+- name: "Set state for schema_v3 validation"
+  set_fact:
+    schema_valid: "{{ v3_out['isvalid'] | default(false) }}"
+  when: schema is not defined
+
+- name: "assign schema_v3 output"
+  set_fact:
+     outputs: "{{ v3_out['out'] }}"
+  when: schema is not defined and schema_valid
+
+- name: "check topology file against schema_v4"
+  schema_check:
+    data: "{{ topology }}"
+    schema: "{{ schema_v4 }}"
   register: v4output
   tags: schema_validation
-  when: schema_valid == false
+  when: schema is not defined and not schema_valid
 
 - name: "update output when schema_v4 is used"
   set_fact:
-    output: "{{ v4output }}"
-  when: schema_valid == false
+    v4_out: "{{ v4output }}"
+  when: schema is not defined and not schema_valid
+
+- name: "assign output from schema_v4"
+  set_fact:
+     outputs: "{{ v4_out['out'] }}"
+  when: schema is not defined and not schema_valid
 
 - name: "set fact for saving topology_job_ids"
   set_fact:
@@ -31,11 +81,11 @@
 
 - name: "Get the resource group types defined in topology"
   set_fact:
-      res_grp_types: "{{ output.output.data.resource_groups | mapmultipleattr('res_group_type','resource_group_type') }}"
+      res_grp_types: "{{ outputs.resource_groups | mapmultipleattr('res_group_type','resource_group_type') }}"
 
 - name: "Filter resource_groups by type"
-  set_fact: 
-    filtered_res_grps : "{{ res_grp_types | res_grp_filter( output.output.data.resource_groups, 'res_group_type','resource_group_type')  }}"
+  set_fact:
+    filtered_res_grps : "{{ res_grp_types | res_grp_filter( outputs.resource_groups, 'res_group_type','resource_group_type')  }}"
 
 - name: "Assigning facts with respect to their group type"
   set_fact:
@@ -49,12 +99,12 @@
 
 - name: "filtering the output for openshift"
   set_fact:
-    openshift_res_grps: "{{ output.output.data.resource_groups | selectattr('res_group_type', 'equalto', 'openshift') | list }}"
+    openshift_res_grps: "{{ outputs.resource_groups | selectattr('res_group_type', 'equalto', 'openshift') | list }}"
 
 - name: "Registering resource group vars from topology"
   set_fact:
-    res_grp_vars: "{{ output.output.data.resource_group_vars }}"
-  when: output.output.data.resource_group_vars is defined
+    res_grp_vars: "{{ outputs.resource_group_vars }}"
+  when: outputs.resource_group_vars is defined
 
 - name: "output vars"
   set_fact:

@@ -1,0 +1,44 @@
+# To use this topology, the libvirt modules must be installed.
+# Here's how (using Fedora 25 x86_65 installation):
+#
+# $ virtualenv venv
+# $ source venv/bin/activate
+# (venv) $ pip install linchpin
+# .. snip ..
+# (venv) $ pip install linchpin[libvirt]
+# .. snip ..
+# (venv) $ sudo dnf install libselinux-python
+# .. snip ..
+# (venv) $ sudo ln -s /usr/lib64/python2.7/site-packages/_selinux.so venv/lib/python2.7/site-packages/_selinux.so
+# (venv) $ sudo ln -s /usr/lib64/python2.7/site-packages/selinux venv/lib/python2.7/site-packages/
+# .. verify links are correct ..
+#
+# (venv) $ linchpin up
+# .. snip ..
+#
+# YMMV
+
+---
+topology_name: "libvirt"
+resource_groups:
+  -
+    resource_group_name: "ex"
+    res_group_type: "libvirt"
+    res_defs:
+
+      - res_name: "linchpin-centos71"
+        res_type: "libvirt_network"
+        ip: 192.168.71.100
+        dhcp_start: 192.168.71.101
+        dhcp_end: 192.168.71.112
+
+      - res_name: "centos71"
+        res_type: "libvirt_node"
+        uri: 'qemu:///system'
+        count: 1
+        image_src: 'http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz'
+        memory: 1024
+        vcpus: 1
+        arch: x86_64
+        networks:
+          - name: linchpin-centos71
