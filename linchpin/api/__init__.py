@@ -75,7 +75,7 @@ class LinchpinAPI:
                 self.ctx.log_state('Provisioning target: {0}'.format(target))
                 topology = pf[target]['topology']
                 topology_registry = pf.get("topology_registry", None)
-                self.evars['topology'] = find_topology(pf[target]["topology"],
+                self.evars['topology'] = self.find_topology(pf[target]["topology"],
                                                         topology_registry)
                 if pf[target].has_key("layout"):
                     self.evars['layout_file'] = (
