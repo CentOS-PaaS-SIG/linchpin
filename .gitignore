@@ -19,3 +19,6 @@ MANIFEST
 configure/inventory/local/
 
 *workspace*
+
+
+nosetests.xml
