@@ -1,26 +1,16 @@
-Toplogy
-=======
+linchpin topology
+=================
 
-command : linchpin topology
+.. note::
+    This command has not yet been implemented for 1.0.0.
 
-This command lists all the topology available and copies layouts to the layouts folder in current working directory.
+Examples
+--------
 
++------------------------------------------------------------+-------------------------------------------+
+| Usage                                                      | Action                                    |
++============================================================+===========================================+
++------------------------------------------------------------+-------------------------------------------+
 
-Options:
- ====   ======
- get    gets toplogy by name.
- list   lists all the topologies packaged
- ====   ======
-
-=========
-Examples:
-=========
-
-+------------------------+----------------------------------------------------+
-| Usage                  | Action                                             |
-+========================+====================================================+
-| linchpin topology list | Lists all the topologies packaged in linchpin      |
-+------------------------+----------------------------------------------------+
-| linchpin topology get  | Copies the topology file from the package by name  |
-| <layoutname>           |  into layouts folder of current working directory. |
-+------------------------+----------------------------------------------------+
+.. seealso::
+    * :doc:`linchpincli`

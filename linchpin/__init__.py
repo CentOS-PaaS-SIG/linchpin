@@ -59,7 +59,8 @@ class LinchpinAliases(click.Group):
 @click.option('-c', '--config', type=click.Path(), envvar='LP_CONFIG',
         help='Path to config file')
 @click.option('-w', '--workspace', type=click.Path(), envvar='WORKSPACE',
-        help='Uses the familiar Jenkins $WORKSPACE environment variable')
+        help='Use the specified workspace if the familiar Jenkins $WORKSPACE environment variable '
+        'is not set')
 @click.option('-v', '--verbose', is_flag=True, default=False,
         help='Enable verbose output')
 @click.option('--version', is_flag=True,
@@ -121,7 +122,7 @@ def init(ctx):
 
 @runcli.command()
 @click.option('-p', '--pinfile', envvar='PINFILE',
-        help='Use a name for the PinFile different from the configuration.')
+        help='Use a different PinFile than the one in the current workspace.')
 @click.argument('targets', metavar='TARGET', required=False,
         nargs=-1)
 @pass_context
@@ -132,7 +133,8 @@ def up(ctx, pinfile, targets):
 
     \b
     TARGET ...
-    Provision ONLY the listed target(s).
+    Provision ONLY the listed target(s). If omitted, ALL targets in the appropriate PinFile
+    will be provisioned.
 
     """
     if pinfile is None:
@@ -166,7 +168,7 @@ def rise(ctx, pinfile, targets):
 
 @runcli.command()
 @click.option('-p', '--pinfile', envvar='PINFILE',
-        help='Use a name for the PinFile different from the configuration.')
+        help='Use a different PinFile than the one in the current workspace.')
 @click.argument('targets', metavar='TARGET', required=False,
         nargs=-1)
 @pass_context
@@ -177,7 +179,8 @@ def destroy(ctx, pinfile, targets):
 
     \b
     TARGET ...
-    Destroy ONLY the listed target(s).
+    Destroy ONLY the listed target(s). If omitted, ALL targets in the appropriate Pinfile
+    will be destroyed.
 
     """
     if pinfile is None:
