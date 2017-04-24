@@ -1,25 +1,10 @@
-Drop
-====
+linchpin drop
+=============
 
-command : linchpin drop
+.. deprecated:: 1.0.0
 
-This command initiates the teardown activity using contents of PinFile and current working directory.
-By default it teardowns all the targets in the PinFile.
+This command is an alias for :doc:`linchpincli_linchpin_destroy`, and has been
+included for backward compatibility with previous versions of linchpin. It will
+be removed in a future version of linchpin.
 
-
-Options:
-  --target    Name of the target
-  --pf        Option to specify the PinFile to use.
-  --help      Help
-
-=========
-Examples:
-=========
-
-+--------------------------------------+--------------------------------------------------------------------+
-| Usage                                | Action                                                             |
-+======================================+====================================================================+
-| linchpin drop                        | Teardown  all targets in the PinFile of current working directory. |
-+--------------------------------------+--------------------------------------------------------------------+
-| linchpin drop --target <targetname>  | Initiates provisioning of specific target.                         |
-+--------------------------------------+--------------------------------------------------------------------+
+Users of linchpin should switch to using ``linchpin destroy`` as soon as possible.
