@@ -9,19 +9,8 @@ import shutil
 #A cli utility module for performing tasks related to the linchpin cli
 ####
 
-def find_topology(ctx, topology):
-
-    topo_path = os.path.realpath('{}/{}'.format(
-            ctx.workspace,
-            ctx.cfgs['lp']['topologies_folder']))
-
-    topos = os.listdir(topo_path)
-
-    if topology in topos:
-        return os.path.realpath('{0}/{1}'.format(topo_path, topology))
-
-    return None
-
+#def find_topology(ctx, topology):
+#
 #    print("Not found")
 #    print("Finding topology in package ")
 #    topos = self.lp_topo_list()
