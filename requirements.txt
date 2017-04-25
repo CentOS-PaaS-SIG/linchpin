@@ -12,3 +12,5 @@ camel
 yamlordereddictloader
 ansible==2.2.1
 python-openstackclient
+naked
+cerberus
