@@ -8,9 +8,11 @@ from ansible.inventory import Inventory
 from ansible.vars import VariableManager
 from ansible.parsing.dataloader import DataLoader
 from ansible.executor.playbook_executor import PlaybookExecutor
-
+from linchpin.api.invoke_playbooks import invoke_linchpin
 from linchpin.api.utils import yaml2json
 from linchpin.api.callbacks import PlaybookCallback
+from linchpin.hooks import LinchpinHooks
+from linchpin.hooks.state import State
 
 
 class LinchpinError(Exception):
@@ -19,7 +21,7 @@ class LinchpinError(Exception):
         Exception.__init__(self,*args,**kwargs)
 
 
-class LinchpinAPI:
+class LinchpinAPI(object):
 
     def __init__(self, ctx):
 
@@ -71,6 +73,31 @@ class LinchpinAPI:
             return self.ctx.evars.get(key, None)
         return self.evars
 
+        self._state = None
+        self._state_observers = []
+        self.hooks = LinchpinHooks(self)
+        self.current_target_data = {}
+
+    @property
+    def state(self):
+        """ getter function for state property of the API object. """
+        return self._state
+
+    @state.setter
+    def state(self, state):
+        # call run_hooks after state is being set
+        print("State change initiated")
+        value = state.split("::")
+        state = value[0]
+        sub_state = value[-1] if len(value) > 1 else None
+        self._state = State(state,
+                            sub_state
+                            )
+        for callback in self._state_observers:
+            callback(self._state)
+
+    def bind_to_state(self, callback):
+        self._state_observers.append(callback)
 
     def set_evar(self, key, value):
         """
@@ -88,7 +115,6 @@ class LinchpinAPI:
 
     def run_playbook(self, pinfile, targets='all', playbook='up'):
 
-
         """
         This function takes a list of targets, and executes the given
         playbook (provison, destroy, etc.) for each provided target.
@@ -101,7 +127,6 @@ class LinchpinAPI:
         pf = yaml2json(pinfile)
 
         # playbooks check whether from_api is defined
-        # if not, vars get loaded from linchpin.conf
 
 
         self.ctx.log_debug('from_api: {0}'.format(self.get_evar('from_api')))
@@ -119,9 +144,7 @@ class LinchpinAPI:
         self.ctx.evars['default_inventories_path'] = '{0}/{1}'.format(
                                 self.ctx.workspace,
                                 self.ctx.evars['inventories_folder'])
-
         self.ctx.evars['state'] = "present"
-
         if playbook == 'destroy':
             self.ctx.evars['state'] = "absent"
 
@@ -138,10 +161,25 @@ class LinchpinAPI:
                         '{0}/{1}/{2}'.format(self.ctx.workspace,
                                     self.ctx.evars['layouts_folder'],
                                     pf[target]["layout"]))
+                self.current_target_data = pf[target]
+                self.current_target_data["extra_vars"] = self.ctx.evars
+                # set the state to preup/predown based on playbook
+                # note : changing the state triggers the hooks
+                if playbook == "provision":
+                    self.state = "preup"
+                elif playbook == "destroy":
+                    self.state = "predown"
 
                 #invoke the appropriate playbook
                 results[target] = self._invoke_playbook(playbook=playbook,
                                                 console=self.console)
+                # note : changing the state triggers the hooks
+                if playbook == "provision":
+                    self.prepare_ctx_params()
+                    self.state = "postup"
+                elif playbook == "destroy":
+                    self.prepare_ctx_params()
+                    self.state = "postdown"
 
             return results
 
@@ -155,12 +193,25 @@ class LinchpinAPI:
                         '{0}/{1}/{2}'.format(self.ctx.workspace,
                                     self.ctx.evars['layouts_folder'],
                                     pf[target]["layout"]))
-
+                self.current_target_data = pf[target]
+                self.current_target_data["extra_vars"] = self.ctx.evars
+                
+                # set the state to preup/predown based on playbook
+                # note : changing the state triggers the hooks
+                if playbook == "provision":
+                    self.state = "preup"
+                elif playbook == "destroy":
+                    self.state = "predown"
 
                 #invoke the appropriate playbook
                 results[target] = self._invoke_playbook(playbook=playbook,
                                                 console=self.console)
-
+                if playbook == "provision":
+                    self.prepare_ctx_params()
+                    self.state = "postup"
+                elif playbook == "destroy":
+                    self.prepare_ctx_params()
+                    self.state = "postdown"
             return results
 
         else:
@@ -168,6 +219,34 @@ class LinchpinAPI:
 
 
     def lp_rise(self, pinfile, targets='all'):
+                # set the current target data
+                self.current_target_data = pf[target]
+                self.current_target_data["extra_vars"] = self.ctx.evars
+                # set the state to preup/predown based on playbook
+                # note : changing the state triggers the hooks
+                if playbook == "provision":
+                    self.state = "preup"
+                elif playbook == "destroy":
+                    self.state = "predown"
+                #invoke the PROVISION linch-pin playbook
+                output = invoke_linchpin(
+                                            self.ctx,
+                                            self.lp_path,
+                                            self.ctx.evars,
+                                            playbook=playbook
+                                        )
+                # set the state to postup/postdown based on playbook
+                # note : changing the state triggers the hooks
+                if playbook == "provision":
+                    self.prepare_ctx_params()
+                    self.state = "postup"
+                elif playbook == "destroy":
+                    self.prepare_ctx_params()
+                    self.state = "postdown"
+        else:
+            raise  KeyError("One or more Invalid targets found")
+
+    def lp_rise(self, pf, targets='all'):
 
         """
         DEPRECATED
@@ -179,7 +258,6 @@ class LinchpinAPI:
 
 
     def lp_up(self, pinfile, targets='all'):
-
 
         """
         This function takes a list of targets, and provisions them according
