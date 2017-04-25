@@ -1,0 +1,45 @@
+---
+openstack:
+  topology: ex_os_server.yml
+  layout: openshift-3node-cluster.yml
+  hooks:
+    postup:              # sub-state is specified
+        - name: do_something
+          type: python
+          context: false
+          actions:
+            - test.py
+        - name: testruby
+          type: ruby
+          context: false
+          actions:
+            - test.rb
+        - name: testnode
+          type: node
+          context: true
+          actions:
+            - test.js
+    preup:              # sub-state is specified
+        - name: test_something
+          action_manager: testact.py
+          type: testtype
+          actions:
+            - "This does nothing"
+        - name: post_up
+          type: ansible
+          context: false
+          actions:
+            - playbook: test_playbook.yaml
+              vars: test_var.yaml
+              extra_vars: { "test_var": "preup task"}
+    postdown:
+        - name: do_something
+          type: shell
+          actions:
+            - echo " this is post down operation Hello hai how r u ?"
+        - name: postdown_task
+          type: ansible
+          actions:
+            - playbook: test_playbook.yaml
+              vars: test_var.yaml
+              extra_vars: { "test_var": "postdowntask"}
