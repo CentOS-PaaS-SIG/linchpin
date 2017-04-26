@@ -9,7 +9,7 @@ from ansible.parsing.dataloader import DataLoader
 from ansible.vars import VariableManager
 from ansible.inventory import Inventory
 from ansible.executor.playbook_executor import PlaybookExecutor
-from callbacks import PlaybookCallback
+from linchpin.api.callbacks import PlaybookCallback
 
 from collections import namedtuple
 
