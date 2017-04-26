@@ -11,15 +11,15 @@
     heat_params : "{{ heat_params['heat_params'] }}"
 
 - name: "provision/deprovision os_heat stack"
-  os_hot_stack:
-    stack_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
-    template: "{{ res_def['template_path'] }}"
+  os_stack:
+    name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+    auth:
+      auth_url: "{{ endpoint }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      project_name: "{{ project }}"
     state: "{{ state }}"
-    wait: "yes"
-    os_username: "{{ username }}"
-    os_password: "{{ password }}"
-    os_tenant_name: "{{ project }}"
-    os_auth_url: "{{ endpoint }}"
+    template: "{{ res_def['template_path'] }}"
     parameters: "{{ heat_params }}"
   register: res_def_output
   when: not async
@@ -30,15 +30,15 @@
   when: not async
 
 - name: "provision/deprovision os_heat stack"
-  os_hot_stack:
-    stack_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
-    template: "{{ res_def['template_path']  }}"
+  os_stack:
+    name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+    auth:
+      auth_url: "{{ endpoint }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      project_name: "{{ project }}"
     state: "{{ state }}"
-    wait: "yes"
-    os_username: "{{ username }}"
-    os_password: "{{ password }}"
-    os_tenant_name: "{{ project }}"
-    os_auth_url: "{{ endpoint }}"
+    template: "{{ res_def['template_path'] }}"
     parameters: "{{ heat_params }}"
   async: "{{ async_timeout }}"
   poll: 0
