@@ -9,8 +9,8 @@ import logging
 from distutils import dir_util
 from jinja2 import Environment, PackageLoader
 
-from linchpin.context import LinchpinContext
 from linchpin.cli import LinchpinCli
+from linchpin.cli.context import LinchpinContext
 from linchpin.version import __version__
 
 
@@ -72,7 +72,7 @@ def runcli(ctx, config, workspace, verbose, version):
 
     ctx.load_config(lpconfig=config)
     ctx.load_global_evars()
-    ctx.setup_logging(eval(ctx.cfgs['logger']['enable']))
+    ctx.setup_logging()
 
     if version:
         ctx.log_state('linchpin version {0}'.format(ctx.version))
@@ -83,7 +83,7 @@ def runcli(ctx, config, workspace, verbose, version):
     else:
         ctx.workspace = os.path.realpath(os.path.expanduser(workspace))
 
-    ctx.log_info("ctx.workspace: {0}".format(ctx.workspace))
+    ctx.log_debug("ctx.workspace: {0}".format(ctx.workspace))
 
     ctx.pinfile = ctx.cfgs['init']['pinfile']
 
@@ -146,7 +146,7 @@ def up(ctx, pinfile, targets):
             '{1}'.format(pinfile, ctx.workspace))
 
     lpcli = LinchpinCli(ctx)
-    lpcli.lp_rise(pf_w_path, targets)
+    lpcli.lp_up(pf_w_path, targets)
 
 
 @runcli.command()
