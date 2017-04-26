@@ -5,8 +5,11 @@ import sys
 import click
 import shutil
 import logging
-import ConfigParser
 
+try:
+    import configparser as ConfigParser
+except ImportError:
+    import ConfigParser as ConfigParser
 from distutils import dir_util
 from jinja2 import Environment, PackageLoader
 
@@ -83,7 +86,7 @@ class LinchpinContext(object):
                     ' {0}'.format(e))
 
         for section in config.sections():
-            if not self.cfgs.has_key(section):
+            if section not in self.cfgs:
                 self.cfgs[section] = {}
 
             # add evars to the ansible extra_vars when running a playbook.

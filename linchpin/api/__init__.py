@@ -64,7 +64,7 @@ class LinchpinAPI:
                 topology_registry = pf.get("topology_registry", None)
                 self.ctx.evars['topology'] = self.find_topology(pf[target]["topology"],
                                                         topology_registry)
-                if pf[target].has_key("layout"):
+                if 'layout' in pf[target]:
                     self.ctx.evars['layout_file'] = (
                         '{0}/{1}/{2}'.format(self.ctx.workspace,
                                     self.ctx.cfgs['evars']['layouts_folder'],
@@ -87,7 +87,7 @@ class LinchpinAPI:
                 topology_registry = pf.get("topology_registry", None)
                 self.ctx.evars['topology'] = self.find_topology(pf[target]["topology"],
                                                         topology_registry)
-                if pf[target].has_key("layout"):
+                if 'layout' in pf[target]:
                     self.ctx.evars['layout_file'] = (
                         '{0}/{1}/{2}'.format(self.ctx.workspace,
                                     self.ctx.cfgs['evars']['layouts_folder'],

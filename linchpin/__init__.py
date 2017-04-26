@@ -5,7 +5,6 @@ import sys
 import click
 import shutil
 import logging
-import ConfigParser
 
 from distutils import dir_util
 from jinja2 import Environment, PackageLoader

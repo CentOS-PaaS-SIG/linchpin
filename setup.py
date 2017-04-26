@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 from pip.req import parse_requirements
 import os
 
-with file('linchpin/version.py') as f:
+with open('linchpin/version.py') as f:
     for line in f:
         if line.startswith('__version__'):
             ver = ast.parse(line).body[0].value.s
