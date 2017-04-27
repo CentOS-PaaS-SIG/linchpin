@@ -132,7 +132,6 @@ class LinchpinAPI:
             for target in targets:
                 self.ctx.log_state('target: {0}, action: {1}'.format(target, playbook))
                 topology = pf[target]['topology']
-                topology_registry = pf.get("topology_registry", None)
                 self.ctx.evars['topology'] = self.find_topology(
                         pf[target]["topology"])
                 if 'layout' in pf[target]:
@@ -149,7 +148,6 @@ class LinchpinAPI:
             for target in set(pf.keys()).difference():
                 self.ctx.log_state('target: {0}, action: {1}'.format(target, playbook))
                 topology = pf[target]['topology']
-                topology_registry = pf.get("topology_registry", None)
                 self.ctx.evars['topology'] = self.find_topology(
                         pf[target]["topology"])
                 if 'layout' in pf[target]:
