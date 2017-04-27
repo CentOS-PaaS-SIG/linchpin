@@ -14,7 +14,9 @@ from cerberus import Validator
 
 
 class AnsibleActionManager(ActionManager):
+
     def __init__(self, name, action_data, target_data, **kwargs):
+
         self.name = name
         self.action_data = action_data
         self.target_data = target_data
@@ -22,6 +24,7 @@ class AnsibleActionManager(ActionManager):
         self.kwargs = kwargs
 
     def validate(self):
+
         """
         ansible_action_block:: sample:: 
         - name: build_openshift_cluster
@@ -31,6 +34,7 @@ class AnsibleActionManager(ActionManager):
               vars: test_var.yaml
               extra_vars: { "testvar": "world"}
         """
+
         schema= {
         'name': {'type': 'string', 'required': True },
         'type': { 'type': 'string', 'allowed': ['ansible']},
@@ -56,7 +60,7 @@ class AnsibleActionManager(ActionManager):
             return status
 
     def load(self):
-        print("Load module of Ansible Action Manager ")
+
         self.loader = DataLoader()
         self.variable_manager = VariableManager()
         self.passwords = {}
@@ -108,6 +112,7 @@ class AnsibleActionManager(ActionManager):
 
 
     def get_ansible_runner(self, playbook_path, extra_vars):
+
         self.variable_manager.extra_vars = extra_vars
         # though verbosity through api doesnot work
         pbex = PlaybookExecutor(playbooks=[playbook_path],
@@ -119,6 +124,7 @@ class AnsibleActionManager(ActionManager):
         return pbex
 
     def get_ctx_params(self):
+
         ctx_params = {}
         ctx_params["resource_file"] = self.target_data.get("resource_file",None)
         ctx_params["layout_file"] = self.target_data.get("layout_file",None)
@@ -127,6 +133,7 @@ class AnsibleActionManager(ActionManager):
 
 
     def execute(self):
+
         self.load()
         extra_vars = {}
         for action in self.action_data["actions"]:

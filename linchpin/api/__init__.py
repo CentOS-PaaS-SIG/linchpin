@@ -8,6 +8,7 @@ from ansible.inventory import Inventory
 from ansible.vars import VariableManager
 from ansible.parsing.dataloader import DataLoader
 from ansible.executor.playbook_executor import PlaybookExecutor
+
 from linchpin.api.invoke_playbooks import invoke_linchpin
 from linchpin.api.utils import yaml2json
 from linchpin.api.callbacks import PlaybookCallback
@@ -86,7 +87,7 @@ class LinchpinAPI(object):
     @state.setter
     def state(self, state):
         # call run_hooks after state is being set
-        print("State change initiated")
+        self.ctx.log_debug("State change initiated")
         value = state.split("::")
         state = value[0]
         sub_state = value[-1] if len(value) > 1 else None
@@ -127,10 +128,11 @@ class LinchpinAPI(object):
         pf = yaml2json(pinfile)
 
         # playbooks check whether from_api is defined
-
-
         self.ctx.log_debug('from_api: {0}'.format(self.get_evar('from_api')))
 
+        # playbooks check whether from_cli is defined
+        # if not, vars get loaded from linchpin.conf
+        self.ctx.evars['from_cli'] = True
         self.ctx.evars['lp_path'] = self.lp_path
 
         self.console = ast.literal_eval(self.ctx.cfgs['ansible'].get('console', 'False'))

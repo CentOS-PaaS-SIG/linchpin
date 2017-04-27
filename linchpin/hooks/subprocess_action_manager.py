@@ -6,7 +6,9 @@ from cerberus import Validator
 
 
 class SubprocessActionManager(ActionManager):
+
     def __init__(self, name, action_data, target_data, **kwargs):
+
         self.name = name
         self.action_data = action_data
         self.target_data = target_data
@@ -14,6 +16,7 @@ class SubprocessActionManager(ActionManager):
         self.kwargs = kwargs
 
     def validate(self):
+
         """
         action_block :: sample ::
         - name: manipulate_inventory
@@ -54,18 +57,20 @@ class SubprocessActionManager(ActionManager):
             return status
 
     def load(self):
+
         # set os.environpath if exists
         if self.action_data.has_key("path"):
             os.environ["PATH"] += ":"+self.action_data["path"]
 
     def add_context_params(self, action):
+
         command = action
         for key in self.target_data:
             command += " %s=%s " %(key, self.target_data[key])
         return command
 
     def execute(self):
-        print("Running Execute module of SubprocessAction Manager")
+
         self.load()
         for action in self.action_data["actions"]:
             if self.context:

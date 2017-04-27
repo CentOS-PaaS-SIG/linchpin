@@ -4,7 +4,9 @@ from cerberus import Validator
 
 
 class RubyActionManager(ActionManager):
+
     def __init__(self, name, action_data, target_data, **kwargs):
+
         self.name = name
         self.action_data = action_data
         self.target_data = target_data
@@ -12,6 +14,7 @@ class RubyActionManager(ActionManager):
         self.kwargs = kwargs
 
     def validate(self):
+
         schema= {
         'name': {'type': 'string', 'required': True },
         'type': { 'type': 'string', 'allowed': ['ruby']},
@@ -41,7 +44,7 @@ class RubyActionManager(ActionManager):
                                     params)
 
     def execute(self):
-        print("Execute module of RubyActionManager")
+
         for action in self.action_data["actions"]:
             context = self.action_data.get("context", True)
             path = self.action_data["path"]

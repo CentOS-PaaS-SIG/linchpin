@@ -5,7 +5,9 @@ from cerberus import Validator
 
 
 class PythonActionManager(ActionManager):
+
     def __init__(self, name, action_data, target_data, **kwargs):
+
         self.name = name
         self.action_data = action_data
         self.target_data = target_data
@@ -13,6 +15,7 @@ class PythonActionManager(ActionManager):
         self.kwargs = kwargs
 
     def validate(self):
+
         schema= {
         'name': {'type': 'string', 'required': True },
         'type': { 'type': 'string', 'allowed': ['python']},
@@ -32,6 +35,7 @@ class PythonActionManager(ActionManager):
             return status 
 
     def add_ctx_params(self, file_path, context=True):
+
         if not context:
             return "{0} {1}".format(sys.executable, 
                                     file_path)
@@ -43,7 +47,7 @@ class PythonActionManager(ActionManager):
                                     params)
 
     def execute(self):
-        print("Execute module of PythonActionManager")
+
         for action in self.action_data["actions"]:
             context = self.action_data.get("context", True)
             path = self.action_data["path"]

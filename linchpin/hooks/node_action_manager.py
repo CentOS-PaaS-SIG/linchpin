@@ -12,6 +12,7 @@ class NodeActionManager(ActionManager):
         self.kwargs = kwargs
 
     def validate(self):
+
         schema= {
         'name': {'type': 'string', 'required': True },
         'type': { 'type': 'string', 'allowed': ['node']},
@@ -23,15 +24,17 @@ class NodeActionManager(ActionManager):
                      'required': True
                    }
         }
+
         v = Validator(schema)
         status = v.validate(self.action_data)
+
         if not status:
             raise Exception("Invalid syntax: LinchpinHook:"+str((v.errors)))
         else:
             return status
-        pass
 
     def add_ctx_params(self, file_path, context=True):
+
         if not context:
             return file_path
         params = file_path
@@ -41,7 +44,7 @@ class NodeActionManager(ActionManager):
                                     params)
 
     def execute(self):
-        print("Execute module of RubyActionManager")
+
         for action in self.action_data["actions"]:
             context = self.action_data.get("context", True)
             path = self.action_data["path"]

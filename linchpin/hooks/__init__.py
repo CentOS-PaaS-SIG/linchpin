@@ -53,42 +53,52 @@ from core_action_managers import ACTION_MANAGERS
 
 
 class ActionBlockRouter(object):
+
     def __init__(self, name, *args, **kwargs):
+
         self.__implementation = self.__get_implementation(name)(name, *args, **kwargs)
 
     def __getattr__(self, name):
+
         return getattr(self.__implementation, name)
 
     def __get_implementation(self, class_name):
+
         action_class = ACTION_MANAGERS.get(class_name, None)
         if action_class == None:
             raise Exception("Action Class %s not found " % (class_name))
         return action_class
 
 class LinchpinHooks(object):
+
     def __init__(self, api):
+
         self.api = api
         self.api.bind_to_state(self.run_hooks)
 
     def run_hooks(self, state, is_global=False):
-        print("State change triggered in linchpin API")
-        print("Observed State in LinchpinHooks :: "+str(state))
+
+        self.api.ctx.log("State change triggered in linchpin API")
+        self.api.ctx.log("Observed State in LinchpinHooks :: "+str(state))
         hooks_data = self.api.current_target_data.get("hooks", None)
         if hooks_data == None:
-            print("No hooks found for current target")
+            self.api.ctx.log("No hooks found for current target")
             return
         # fetches all the state_data , ie., all the action blocks inside
         # state of the target
         state_data = hooks_data.get(str(state), None)
+
         # Print out error message if the hooks are not found
         if state_data == None:
-            print(str(state)+" state hook not found in PinFile")
+            self.api.ctx.log(str(state)+" State hook not found in PinFile")
             return
+
         # current target data extravars are fetched
         target_data = self.api.current_target_data.get("extra_vars", None)
         self.run_actions(state_data, target_data)
 
     def run_actions(self, action_blocks, target_data, is_global=False):
+
         """
         arguments
         action_blocks: list of action_blocks each block constitues
@@ -101,6 +111,7 @@ class LinchpinHooks(object):
           actions:
             - echo " this is post up operation Hello hai how r u ?"
         """
+
         if is_global:
             raise NotImplementedError("Run Hooks is not implemented \
                                        for global scoped hooks")
