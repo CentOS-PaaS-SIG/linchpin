@@ -61,7 +61,10 @@
                 },
 		"fip_pool": {
 		    "type":"string"
-		}
+		},
+		"security_groups": {
+                    "type":"string"
+                }
             },
             "required":["flavor","res_type","image","count","keypair"]
         },
