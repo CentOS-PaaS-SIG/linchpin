@@ -52,7 +52,10 @@
                 },
 		"fip_pool": {
 		    "type":"string"
-		}
+		},
+		"security_groups": {
+                    "type":"string"
+                }
             },
             "required":["flavor","type","image","count","keypair"]
         },
