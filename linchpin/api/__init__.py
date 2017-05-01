@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 
 import os
+from collections import namedtuple
 
-from linchpin.api.invoke_playbooks import invoke_linchpin
+from callbacks import PlaybookCallback
+from ansible.inventory import Inventory
+from ansible.vars import VariableManager
+from ansible.parsing.dataloader import DataLoader
+from ansible.executor.playbook_executor import PlaybookExecutor
+
 from linchpin.api.utils import yaml2json
 
 
@@ -11,6 +17,7 @@ class LinchpinError(Exception):
     def __init__(self,*args,**kwargs):
         Exception.__init__(self,*args,**kwargs)
 
+
 class LinchpinAPI:
 
     def __init__(self, ctx):
@@ -18,37 +25,101 @@ class LinchpinAPI:
         self.ctx = ctx
         base_path = '/'.join(os.path.dirname(__file__).split("/")[0:-2])
         self.lp_path = '{0}/{1}'.format(base_path, self.ctx.cfgs['lp']['pkg'])
+        ctx.evars['from_api'] = True
 
 
-    def run_playbook(self, pinfile, targets='all', playbook='provision'):
+    def get_cfg(self, section=None, key=None):
+        """
+        Get the cfgs object
+
+        :param section: section from ini-style config file
+
+        :param key: key to get from config file, within section
+        """
+        if section:
+            s = self.ctx.cfgs.get(section, None)
+            if key and s:
+                return self.ctx.cfgs[section].get(key, None)
+            return s
+        return self.ctx.cfgs
+
+    def set_cfg(self, section, key, value):
+        """
+        Set a value in cfgs. Does not persist into a file,
+        only during the current execution.
+
+
+        :param section: section within ini-style config file
+
+        :param key: key to use
+
+        :param value: value to set into section within config file
+        """
+
+        self.ctx.cfgs[section][key] = value
+
+
+    def get_evar(self, key=None):
+        """
+        Get the current evars (extra_vars)
+
+        :param key: key to use
+        """
+
+        if key:
+            return self.ctx.evars.get(key, None)
+        return self.evars
+
+
+    def set_evar(self, key, value):
+        """
+        Set a value into evars (extra_vars). Does not persist into a file,
+        only during the current execution.
+
+        :param key: key to use
+
+        :param value: value to set into evars
+        """
+
+        self.set_cfg('evars', key, value)
+        self.evars[key] = value
+
+
+    def run_playbook(self, pinfile, targets='all', playbook='up'):
 
 
         """
         This function takes a list of targets, and executes the given
         playbook (provison, destroy, etc.) for each provided target.
 
-        \b
-        pf:
-            Provided PinFile, with available targets,
+        :param pinfile: Provided PinFile, with available targets,
 
-        \b
-        targets:
-            A tuple of targets to run.
+        :param targets: A tuple of targets to run. (default: 'all')
         """
 
         pf = yaml2json(pinfile)
 
-        # playbooks check whether from_cli is defined
+        # playbooks check whether from_api is defined
         # if not, vars get loaded from linchpin.conf
-        self.ctx.evars['from_cli'] = True
+
+
+        self.ctx.log_debug('from_api: {0}'.format(self.get_evar('from_api')))
+
         self.ctx.evars['lp_path'] = self.lp_path
+
+        self.console = eval(self.ctx.cfgs['ansible'].get('console', 'False'))
+
+        if not self.console:
+            self.console = self.ctx.verbose
+
+        print('console: {0}'.format(self.console))
 
         self.ctx.evars['default_resources_path'] = '{0}/{1}'.format(
                                 self.ctx.workspace,
-                                self.ctx.cfgs['evars']['resources_folder'])
+                                self.ctx.evars['resources_folder'])
         self.ctx.evars['default_inventories_path'] = '{0}/{1}'.format(
                                 self.ctx.workspace,
-                                self.ctx.cfgs['evars']['inventories_folder'])
+                                self.ctx.evars['inventories_folder'])
 
         self.ctx.evars['state'] = "present"
 
@@ -56,58 +127,45 @@ class LinchpinAPI:
             self.ctx.evars['state'] = "absent"
 
 
-        # checks wether the targets are valid or not
+        # checks whether the targets are valid or not
         if set(targets) == set(pf.keys()).intersection(targets) and len(targets) > 0:
             for target in targets:
-                self.ctx.log_state('{0} target: {1}'.format(playbook, target))
+                self.ctx.log_state('target: {0}, action: {1}'.format(target, playbook))
                 topology = pf[target]['topology']
-                topology_registry = pf.get("topology_registry", None)
-                self.ctx.evars['topology'] = self.find_topology(pf[target]["topology"],
-                                                        topology_registry)
+                self.ctx.evars['topology'] = self.find_topology(
+                        pf[target]["topology"])
                 if 'layout' in pf[target]:
                     self.ctx.evars['layout_file'] = (
                         '{0}/{1}/{2}'.format(self.ctx.workspace,
-                                    self.ctx.cfgs['evars']['layouts_folder'],
+                                    self.ctx.evars['layouts_folder'],
                                     pf[target]["layout"]))
 
-
-#                def invoke_linchpin(ctx, lp_path, self.ctx.evars, playbook='provision', console=True):
-                #invoke the PROVISION linch-pin playbook
-                output = invoke_linchpin(
-                                            self.ctx,
-                                            self.lp_path,
-                                            self.ctx.evars,
-                                            playbook=playbook
-                                        )
+                #invoke the appropriate playbook
+                return self._invoke_playbook(playbook=playbook,
+                                                console=self.console)
 
         elif len(targets) == 0:
             for target in set(pf.keys()).difference():
-                self.ctx.log_state('{0} target: {1}'.format(playbook, target))
+                self.ctx.log_state('target: {0}, action: {1}'.format(target, playbook))
                 topology = pf[target]['topology']
-                topology_registry = pf.get("topology_registry", None)
-                self.ctx.evars['topology'] = self.find_topology(pf[target]["topology"],
-                                                        topology_registry)
+                self.ctx.evars['topology'] = self.find_topology(
+                        pf[target]["topology"])
                 if 'layout' in pf[target]:
                     self.ctx.evars['layout_file'] = (
                         '{0}/{1}/{2}'.format(self.ctx.workspace,
-                                    self.ctx.cfgs['evars']['layouts_folder'],
+                                    self.ctx.evars['layouts_folder'],
                                     pf[target]["layout"]))
 
 
-
-                #invoke the PROVISION linch-pin playbook
-                output = invoke_linchpin(
-                                            self.ctx,
-                                            self.lp_path,
-                                            self.ctx.evars,
-                                            playbook=playbook
-                                         )
+                #invoke the appropriate playbook
+                return self._invoke_playbook(playbook=playbook,
+                                                console=self.console)
 
         else:
             raise  KeyError("One or more Invalid targets found")
 
 
-    def lp_rise(self, pf, targets='all'):
+    def lp_rise(self, pinfile, targets='all'):
 
         """
         DEPRECATED
@@ -115,7 +173,7 @@ class LinchpinAPI:
         An alias for lp_up. Used only for backward compatibility.
         """
 
-        self.lp_up(pf, targets)
+        self.lp_up(pinfile, targets)
 
 
     def lp_up(self, pinfile, targets='all'):
@@ -126,19 +184,17 @@ class LinchpinAPI:
         to their topology. If an layout argument is provided, an inventory
         will be generated for the provisioned nodes.
 
-        \b
-        pf:
+        :param pinfile:
             Provided PinFile, with available targets,
 
-        \b
-        targets:
+        :param targets:
             A tuple of targets to provision.
         """
 
-        self.run_playbook(pinfile, targets, playbook="provision")
+        return self.run_playbook(pinfile, targets, playbook="up")
 
 
-    def lp_drop(self, pf, targets):
+    def lp_drop(self, pinfile, targets):
 
         """
         DEPRECATED
@@ -146,33 +202,29 @@ class LinchpinAPI:
         An alias for lp_destroy. Used only for backward compatibility.
         """
 
-        self.lp_destroy(pf, targets)
+        return self.lp_destroy(pinfile, targets)
 
 
-    def lp_destroy(self, pf, targets):
+    def lp_destroy(self, pinfile, targets='all'):
 
 
         """
         This function takes a list of targets, and performs a destructive
         teardown, including undefining nodes, according to the target.
 
-        \b
-        SEE ALSO:
-            lp_down - currently unimplemented
+        .. seealso:: lp_down - currently unimplemented
 
-        \b
-        pf:
+        :param pinfile:
             Provided PinFile, with available targets,
 
-        \b
-        targets:
+        :param targets:
             A tuple of targets to destroy.
         """
 
-        self.run_playbook(pf, targets, playbook="destroy")
+        return self.run_playbook(pinfile, targets, playbook="destroy")
 
 
-    def lp_down(self, pf, targets):
+    def lp_down(self, pinfile, targets='all'):
 
 
         """
@@ -180,19 +232,14 @@ class LinchpinAPI:
         nodes in the target's topology. Only providers which support shutdown
         from their API (Ansible) will support this option.
 
-        \b
         CURRENTLY UNIMPLEMENTED
 
-        \b
-        SEE ALSO:
-            lp_destroy
+        .. seealso:: lp_destroy
 
-        \b
-        pf:
+        :param pinfile:
             Provided PinFile, with available targets,
 
-        \b
-        targets:
+        :param targets:
             A tuple of targets to provision.
         """
 
@@ -200,28 +247,21 @@ class LinchpinAPI:
 
 
 
-    def find_topology(self, topology, topo_reg):
+    def find_topology(self, topology):
 
 
         """
         Find the topology to be acted upon. This could be pulled from a
         registry.
 
-        \b
-        topology:
+        :param topology:
             name of topology from PinFile to be loaded
 
-        \b
-        topo_reg:
-            registry (optional) where the topology may be found.
-
-            Default:
-                $WORKSPACE/layouts/LAYOUT_NAME
         """
 
         topo_path = os.path.realpath('{}/{}'.format(
                 self.ctx.workspace,
-                self.ctx.cfgs['evars']['topologies_folder']))
+                self.ctx.evars['topologies_folder']))
 
         topos = os.listdir(topo_path)
 
@@ -229,6 +269,84 @@ class LinchpinAPI:
             return os.path.realpath('{0}/{1}'.format(topo_path, topology))
 
         return None
+
+
+    def _invoke_playbook(self, playbook='up', console=True):
+
+        """
+        Uses the Ansible API code to invoke the specified linchpin playbook
+
+        :param playbook: Which ansible playbook to run (default: 'up')
+        :param console: Whether to display the ansible console (default: True)
+        """
+
+        pb_path = '{0}/{1}'.format(self.lp_path, self.ctx.evars['playbooks_folder'])
+        module_path = '{0}/{1}'.format(pb_path, self.ctx.cfgs['lp']['module_folder'])
+        playbook_path = '{0}/{1}'.format(pb_path, self.ctx.cfgs['playbooks'][playbook])
+
+        loader = DataLoader()
+        variable_manager = VariableManager()
+        variable_manager.extra_vars = self.ctx.evars
+        inventory = Inventory(loader=loader,
+                              variable_manager=variable_manager,
+                              host_list=[])
+        passwords = {}
+        utils.VERBOSITY = 4
+
+        Options = namedtuple('Options', ['listtags',
+                                         'listtasks',
+                                         'listhosts',
+                                         'syntax',
+                                         'connection',
+                                         'module_path',
+                                         'forks',
+                                         'remote_user',
+                                         'private_key_file',
+                                         'ssh_common_args',
+                                         'ssh_extra_args',
+                                         'sftp_extra_args',
+                                         'scp_extra_args',
+                                         'become',
+                                         'become_method',
+                                         'become_user',
+                                         'verbosity',
+                                         'check'])
+
+        options = Options(listtags=False,
+                          listtasks=False,
+                          listhosts=False,
+                          syntax=False,
+                          connection='ssh',
+                          module_path=module_path,
+                          forks=100,
+                          remote_user='test',
+                          private_key_file=None,
+                          ssh_common_args=None,
+                          ssh_extra_args=None,
+                          sftp_extra_args=None,
+                          scp_extra_args=None,
+                          become=False,
+                          become_method='sudo',
+                          become_user='root',
+                          verbosity=utils.VERBOSITY,
+                          check=False)
+
+        pbex = PlaybookExecutor(playbooks=[playbook_path],
+                                inventory=inventory,
+                                variable_manager=variable_manager,
+                                loader=loader,
+                                options=options,
+                                passwords=passwords)
+
+        if not console:
+            cb = PlaybookCallback()
+            pbex._tqm._stdout_callback = cb
+            return_code = pbex.run()
+            results = cb.results
+        else:
+            results = pbex.run()
+
+        return results
 
 
 #    def lp_topo_list(self, upstream=None):

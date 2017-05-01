@@ -2,7 +2,6 @@
 
 import os
 import sys
-import click
 import shutil
 import logging
 
@@ -11,6 +10,7 @@ try:
 except ImportError:
     import ConfigParser as ConfigParser
 from distutils import dir_util
+from collections import OrderedDict
 from jinja2 import Environment, PackageLoader
 
 from linchpin.api import LinchpinError
@@ -42,9 +42,11 @@ class LinchpinContext(object):
 
         """
 
-        self.cfgs = {}
-        self.lib_path = '{0}/'.format(os.path.dirname(
+        self.cfgs = OrderedDict()
+
+        lib_path = '{0}'.format(os.path.dirname(
             os.path.realpath(__file__))).rstrip('/')
+        self.lib_path = os.path.abspath(os.path.join(lib_path, os.pardir))
 
         expanded_path = None
         config_found = False
@@ -100,6 +102,7 @@ class LinchpinContext(object):
                         self.cfgs[section][k] = v
 
 
+
     def load_global_evars(self):
 
         """
@@ -112,52 +115,72 @@ class LinchpinContext(object):
         self.evars = self.cfgs.get('evars', None)
 
 
-    def setup_logging(self, enable_logging=True):
-        """
-        Create a local log file to manage debugging and the like
-
-        These are the only hardcoded values, which are used to find the config
-        file. The search path, is a first found of the following:
+    def setup_logging(self):
 
         """
-        self.enable_logging = enable_logging
+        Setup logging to a file, console, or both.  Modifying the linchpin.conf
+        appropriately will provide functionality.
+
+        """
+
+        self.enable_logging = eval(self.cfgs['logger'].get('enable', 'True'))
 
         if self.enable_logging:
 
             # create logger
-            self.logger = logging.getLogger('linchpin')
-            self.logger.setLevel(eval(self.cfgs['logger']['loglevel']))
+            self.logger = logging.getLogger('lp_logger')
+            self.logger.setLevel(eval(self.cfgs['logger'].get('level',
+                                                            'logging.DEBUG')))
 
-            fh = logging.FileHandler(self.cfgs['logger']['file'])
-            fh.setLevel(eval(self.cfgs['logger']['loglevel']))
-
-            formatter = logging.Formatter(self.cfgs['logger']['format'])
+            fh = logging.FileHandler(self.cfgs['logger'].get('file',
+                                                            'linchpin.log'))
+            fh.setLevel(eval(self.cfgs['logger'].get('level',
+                                                    'logging.DEBUG')))
+            formatter = logging.Formatter(
+                            self.cfgs['logger'].get('format',
+                            '%(levelname)s %(asctime)s %(message)s'))
             fh.setFormatter(formatter)
-
             self.logger.addHandler(fh)
+
+
+        self.console = logging.getLogger('lp_console')
+        self.console.setLevel(eval(self.cfgs['console'].get('level',
+                                                        'logging.INFO')))
+
+        ch = logging.StreamHandler()
+        ch.setLevel(eval(self.cfgs['console'].get('level',
+                                                'logging.INFO')))
+        formatter = logging.Formatter(
+                        self.cfgs['console'].get('format', '%(message)s'))
+        ch.setFormatter(formatter)
+        self.console.addHandler(ch)
 
 
     def log(self, msg, **kwargs):
         """Logs a message to a logfile"""
 
         lvl = kwargs.get('level')
+        msg_type = kwargs.get('msg_type')
 
         if lvl is None:
             lvl = logging.INFO
 
-        if self.verbose:
-            click.echo(msg, file=sys.stderr)
+        if self.verbose and not msg_type:
+            self.console.log(logging.INFO, msg)
 
-        if not self.enable_logging:
-            return
+        state_msg = msg
+        if msg_type == 'STATE':
+            state_msg = 'STATE - {0}'.format(msg)
+            self.console.log(logging.INFO, msg)
 
-        self.logger.log(lvl, msg)
+        if self.enable_logging:
+            self.logger.log(lvl, state_msg)
 
-    def log_state(self, msg, lvl=logging.INFO):
+
+    def log_state(self, msg):
         """Logs a message to stdout."""
 
-        click.echo(msg)
-        self.log('STATE - {0}'.format(msg), level=lvl)
+        self.log(msg, msg_type='STATE', level=logging.DEBUG)
 
     def log_info(self, msg):
         """Logs a message to """
@@ -166,5 +189,4 @@ class LinchpinContext(object):
     def log_debug(self, msg):
         """Logs a message to stderr."""
         self.log(msg, level=logging.DEBUG)
-
 

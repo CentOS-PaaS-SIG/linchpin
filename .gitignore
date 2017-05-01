@@ -19,3 +19,7 @@ MANIFEST
 configure/inventory/local/
 
 *workspace*
+
+.coverage
+nosetests.xml
+*.log

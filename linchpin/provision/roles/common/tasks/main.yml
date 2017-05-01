@@ -8,13 +8,13 @@
 #  debug:
 #    var: topology
 #
-#- name: from_cli
+#- name: from_api
 #  debug:
-#    var: from_cli
+#    var: from_api
 
 - name: "load ini evars from linchpin.conf"
   include: load_evars_from_ini.yml
-  when: from_cli is not defined
+  when: from_api is not defined
  
 - name: "if topology_file is passed, set topology to its value"
   set_fact:
