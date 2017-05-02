@@ -14,6 +14,12 @@ class PlaybookCallback(CallbackBase):
 
     def v2_runner_on_ok(self, result, **kwargs):
 
-        """Save result instead of printing it"""
+        """Save ok result"""
+
+        self.results.append(result)
+
+    def v2_runner_on_failed(self, result, **kwargs):
+
+        """Save failed result"""
 
         self.results.append(result)
