@@ -3,7 +3,7 @@
 import os
 from collections import namedtuple
 
-from callbacks import PlaybookCallback
+from linchpin.api.callbacks import PlaybookCallback
 from ansible.inventory import Inventory
 from ansible.vars import VariableManager
 from ansible.parsing.dataloader import DataLoader
