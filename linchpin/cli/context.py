@@ -2,6 +2,7 @@
 
 import os
 import sys
+import ast
 import shutil
 import logging
 
@@ -123,7 +124,7 @@ class LinchpinContext(object):
 
         """
 
-        self.enable_logging = eval(self.cfgs['logger'].get('enable', 'True'))
+        self.enable_logging = ast.literal_eval(self.cfgs['logger'].get('enable', 'True'))
 
         if self.enable_logging:
 
