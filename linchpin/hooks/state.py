@@ -19,14 +19,31 @@ class State(object):
             raise StateError("Invalid SubState mentioned")
 
     def _validate_state(self, state):
+        
+        """
+        Validates the state based on linchpin.conf
+
+        :param state: state name
+        """
+
         VALID_STATES = self.api.ctx.cfgs["states"].keys()
         return state in VALID_STATES
 
     def _validate_sub_state(self, sub_state):
-        """Should change logic to validate the substate as per state"""
+        
+        """
+        Not implemented yet 
+        ideally should validated substates of state based on linchpin.conf
+        """
+
         return sub_state in State.VALID_SUB_STATES
 
     def __repr__(self):
+
+        """
+        Representational override of state object
+        """
+
         if self.sub_state:
             return "%s::%s" % (self.state, self.sub_state)
         else:

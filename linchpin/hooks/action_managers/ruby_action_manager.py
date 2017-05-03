@@ -17,6 +17,10 @@ class RubyActionManager(ActionManager):
 
     def validate(self):
 
+        """
+        Validates the action_block based on the cerberus schema
+        """
+
         schema= {
         'name': {'type': 'string', 'required': True },
         'type': { 'type': 'string', 'allowed': ['ruby']},
@@ -37,6 +41,13 @@ class RubyActionManager(ActionManager):
         pass
 
     def add_ctx_params(self, file_path, context=True):
+
+        """
+        Adds ctx params to the action_block run when context is true
+        :param file_path: path to the script
+        :param context: whether the context params are to be included or not
+        """
+
         if not context:
             return file_path
         params = file_path
@@ -46,6 +57,10 @@ class RubyActionManager(ActionManager):
                                     params)
 
     def execute(self):
+        
+        """
+        Executes the action_block in the PinFile
+        """
 
         for action in self.action_data["actions"]:
             context = self.action_data.get("context", True)

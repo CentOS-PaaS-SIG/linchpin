@@ -33,6 +33,7 @@ class LinchpinAPI(object):
 
 
     def get_cfg(self, section=None, key=None):
+        
         """
         Get the cfgs object
 
@@ -40,6 +41,7 @@ class LinchpinAPI(object):
 
         :param key: key to get from config file, within section
         """
+
         if section:
             s = self.ctx.cfgs.get(section, None)
             if key and s:
@@ -48,6 +50,7 @@ class LinchpinAPI(object):
         return self.ctx.cfgs
 
     def set_cfg(self, section, key, value):
+        
         """
         Set a value in cfgs. Does not persist into a file,
         only during the current execution.
@@ -64,6 +67,7 @@ class LinchpinAPI(object):
 
 
     def get_evar(self, key=None):
+        
         """
         Get the current evars (extra_vars)
 
@@ -76,11 +80,22 @@ class LinchpinAPI(object):
 
     @property
     def state(self):
-        """ getter function for state property of the API object. """
+
+        """ 
+        getter function for _state property of the API object. 
+        """
+
         return self._state
 
     @state.setter
     def state(self, state):
+
+        """
+        _state property setter , splits the state string in substates and sets
+        linchpin.state object
+        :param state: valid state string mentioned in linchpin.conf
+        """
+
         # call run_hooks after state is being set
         self.ctx.log_debug("State change initiated")
         value = state.split("::")
@@ -94,9 +109,17 @@ class LinchpinAPI(object):
 
 
     def bind_to_state(self, callback):
+
+        """
+        Function used by LinchpinHooksclass to add callbacks
+
+        :param callback: callback function 
+        """
+
         self._state_observers.append(callback)
 
     def set_evar(self, key, value):
+        
         """
         Set a value into evars (extra_vars). Does not persist into a file,
         only during the current execution.
@@ -169,7 +192,6 @@ class LinchpinAPI(object):
                 results[target] = self._invoke_playbook(playbook=playbook,
                                                 console=self.console)
                 self.state = self.playbook_post_states[playbook]
-
             return results
 
         elif len(targets) == 0:
@@ -239,7 +261,6 @@ class LinchpinAPI(object):
 
     def lp_destroy(self, pinfile, targets='all'):
 
-
         """
         This function takes a list of targets, and performs a destructive
         teardown, including undefining nodes, according to the target.
@@ -257,7 +278,6 @@ class LinchpinAPI(object):
 
 
     def lp_down(self, pinfile, targets='all'):
-
 
         """
         This function takes a list of targets, and performs a shutdown on

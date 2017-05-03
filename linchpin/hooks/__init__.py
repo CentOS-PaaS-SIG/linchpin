@@ -32,7 +32,7 @@ openstack:
             - playbook: test_playbook.yaml
               vars: test_var.yaml
               extra_vars: { "testvar": "world"}
-    postdown:
+    postdestroy:
         - name: do_something
           type: shell
           actions:
@@ -49,11 +49,15 @@ openstack:
 import pprint
 import ast
 import sys
+
 from linchpin.hooks.action_managers import ACTION_MANAGERS
 from linchpin.exceptions import ActionManagerError
 
 class ActionBlockRouter(object):
+    """
+    proxy pattern implementation for fetching actionmanagers by name
 
+    """
     def __init__(self, name, *args, **kwargs):
 
         self.__implementation = self.__get_implementation(name)(name, *args, **kwargs)
@@ -63,6 +67,10 @@ class ActionBlockRouter(object):
         return getattr(self.__implementation, name)
 
     def __get_implementation(self, class_name):
+        """
+        Fetches implementation of lcass from linchpin.hooks.action_managers
+        :param name: action manager class name  
+        """
 
         action_class = ACTION_MANAGERS.get(class_name, None)
         if action_class == None:
@@ -77,12 +85,12 @@ class LinchpinHooks(object):
         self.api.bind_to_state(self.run_hooks)
 
     def prepare_ctx_params(self):
+        
         """
         prepares few context parameters based on the current target_data
-        that is being set.
-        res_file and inventory file are not found
-        These parameters are based topology name.
+        that is being set. these parameters are based topology name.
         """
+        
         topology = self.api.current_target_data["topology"]
         name = topology.split("/")[-1].split(".")[-2]
         inv_file = name+".inventory"
@@ -99,8 +107,15 @@ class LinchpinHooks(object):
         self.api.current_target_data["extra_vars"]["resource_file"] = res_file
 
     def run_hooks(self, state, is_global=False):
+        
+        """
+        Get the cfgs object
+        :param section: section from ini-style config file
+        :param key: key to get from config file, within section
+        """
 
-        self.prepare_ctx_params()
+        if not str(state) in self.api.ctx.cfgs["playbook_pre_states"]:
+            self.prepare_ctx_params()
         self.api.ctx.log("State change triggered in linchpin API")
         self.api.ctx.log("Observed State in LinchpinHooks :: "+str(state))
         hooks_data = self.api.current_target_data.get("hooks", None)
@@ -123,7 +138,8 @@ class LinchpinHooks(object):
     def run_actions(self, action_blocks, target_data, is_global=False):
 
         """
-        arguments
+        Runs actions inside each action block of each target
+        params:
         action_blocks: list of action_blocks each block constitues
                        to a type of hook
         target_data: data specific to target , which can be dict of topology , layout, outputs , inventory.

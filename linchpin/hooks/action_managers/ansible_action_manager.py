@@ -28,7 +28,8 @@ class AnsibleActionManager(ActionManager):
     def validate(self):
 
         """
-        ansible_action_block:: sample:: 
+        validates the action_block based on the cerberus schema
+        example:: ansible_action_block:::: 
         - name: build_openshift_cluster
           type: ansible
           actions:
@@ -62,6 +63,10 @@ class AnsibleActionManager(ActionManager):
             return status
 
     def load(self):
+        
+        """
+        Loads the ansible specific managers and loaders
+        """
 
         self.loader = DataLoader()
         self.variable_manager = VariableManager()
@@ -114,6 +119,12 @@ class AnsibleActionManager(ActionManager):
 
 
     def get_ansible_runner(self, playbook_path, extra_vars):
+        
+        """
+        Fetches ansible runner based on playbook_path and extra_vars
+        :param playbook_path: path to playbook
+        :param extra_vars: variables to be passed
+        """
 
         self.variable_manager.extra_vars = extra_vars
         # though verbosity through api doesnot work
@@ -126,6 +137,10 @@ class AnsibleActionManager(ActionManager):
         return pbex
 
     def get_ctx_params(self):
+        
+        """
+        Reformats the ansible specific variables
+        """
 
         ctx_params = {}
         ctx_params["resource_file"] = self.target_data.get("resource_file",None)
@@ -135,6 +150,10 @@ class AnsibleActionManager(ActionManager):
 
 
     def execute(self):
+        
+        """
+        Executes the action_block in the PinFile
+        """
 
         self.load()
         extra_vars = {}

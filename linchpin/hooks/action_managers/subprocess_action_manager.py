@@ -20,6 +20,8 @@ class SubprocessActionManager(ActionManager):
     def validate(self):
 
         """
+        Validates the action_block based on the cerberus schema
+        example:
         action_block :: sample ::
         - name: manipulate_inventory
           type: shell
@@ -59,12 +61,22 @@ class SubprocessActionManager(ActionManager):
             return status
 
     def load(self):
+        
+        """
+        Adds the shell script to the os path if mentioned
+        """
 
         # set os.environpath if exists
         if self.action_data.has_key("path"):
             os.environ["PATH"] += ":"+self.action_data["path"]
 
     def add_context_params(self, action):
+        
+        """
+        Adds ctx params to the action_block run when context is true
+        :param file_path: path to the script
+        :param context: whether the context params are to be included or not
+        """
 
         command = action
         for key in self.target_data:
@@ -72,6 +84,10 @@ class SubprocessActionManager(ActionManager):
         return command
 
     def execute(self):
+        
+        """
+        Executes the action_block in the PinFile
+        """
 
         self.load()
         for action in self.action_data["actions"]:
