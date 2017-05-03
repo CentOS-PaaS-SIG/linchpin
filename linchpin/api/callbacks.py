@@ -12,7 +12,7 @@ class PlaybookCallback(CallbackBase):
         self.results = []
 
 
-    def v2_runner_on_ok(self, result, **kwargs):
+    def v2_runner_on_ok(self, result):
 
         """Save ok result"""
 
