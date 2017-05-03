@@ -19,7 +19,7 @@ class LinchpinError(Exception):
         Exception.__init__(self,*args,**kwargs)
 
 
-class LinchpinAPI:
+class LinchpinAPI(object):
 
     def __init__(self, ctx):
 
