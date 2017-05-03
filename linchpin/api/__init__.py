@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import ast
 from collections import namedtuple
 
 from ansible.inventory import Inventory
@@ -107,7 +108,7 @@ class LinchpinAPI:
 
         self.ctx.evars['lp_path'] = self.lp_path
 
-        self.console = eval(self.ctx.cfgs['ansible'].get('console', 'False'))
+        self.console = ast.literal_eval(self.ctx.cfgs['ansible'].get('console', 'False'))
 
         if not self.console:
             self.console = self.ctx.verbose
@@ -124,11 +125,12 @@ class LinchpinAPI:
         if playbook == 'destroy':
             self.ctx.evars['state'] = "absent"
 
+        results = {}
+
         # checks whether the targets are valid or not
         if set(targets) == set(pf.keys()).intersection(targets) and len(targets) > 0:
             for target in targets:
                 self.ctx.log_state('target: {0}, action: {1}'.format(target, playbook))
-                topology = pf[target]['topology']
                 self.ctx.evars['topology'] = self.find_topology(
                         pf[target]["topology"])
                 if 'layout' in pf[target]:
@@ -138,14 +140,14 @@ class LinchpinAPI:
                                     pf[target]["layout"]))
 
                 #invoke the appropriate playbook
-                return self._invoke_playbook(playbook=playbook,
+                results[target] = self._invoke_playbook(playbook=playbook,
                                                 console=self.console)
 
+            return results
+
         elif len(targets) == 0:
-            results = {}
             for target in set(pf.keys()).difference():
                 self.ctx.log_state('target: {0}, action: {1}'.format(target, playbook))
-                topology = pf[target]['topology']
                 self.ctx.evars['topology'] = self.find_topology(
                         pf[target]["topology"])
                 if 'layout' in pf[target]:
