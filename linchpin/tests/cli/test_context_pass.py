@@ -3,17 +3,21 @@ import os
 from nose.tools import *
 
 import logging
-import ConfigParser
 from unittest import TestCase
 
-from linchpin.cli.context import LinchpinContext
+try:
+    import configparser as ConfigParser
+except ImportError:
+    import ConfigParser as ConfigParser
+
+from linchpin.cli.context import LinchpinCliContext
 from linchpin.tests.mockdata.context import ContextData
 
 
 def test_context_create():
 
-    lpc = LinchpinContext()
-    assert_equal(isinstance(lpc, LinchpinContext), True)
+    lpc = LinchpinCliContext()
+    assert_equal(isinstance(lpc, LinchpinCliContext), True)
 
 
 def setup_load_config():
@@ -35,8 +39,8 @@ def setup_load_config():
 @with_setup(setup_load_config)
 def test_load_config():
 
-    lpc = LinchpinContext()
-    lpc.load_config(config_path)
+    lpc = LinchpinCliContext()
+    lpc.load_config(lpconfig=config_path)
 
     assert_dict_equal.__self__.maxDiff = None
     assert_dict_equal(config_data, lpc.cfgs)
@@ -61,7 +65,7 @@ def setup_load_evars():
 @with_setup(setup_load_evars)
 def test_load_global_evars():
 
-    lpc = LinchpinContext()
+    lpc = LinchpinCliContext()
     lpc.load_config(cfg_path)
     lpc.load_global_evars()
 
@@ -88,7 +92,7 @@ def setup_logging_setup():
 def test_logging_setup():
 
 
-    lpc = LinchpinContext()
+    lpc = LinchpinCliContext()
     lpc.load_config(cfg_path)
     lpc.setup_logging()
 
@@ -105,7 +109,7 @@ def test_log_msg():
     msg = 'Test Msg'
     regex = '^{0}.*{1}'.format(logging.getLevelName(lvl), msg)
 
-    lpc = LinchpinContext()
+    lpc = LinchpinCliContext()
     lpc.load_config(cfg_path)
     lpc.setup_logging()
     lpc.log(msg, level=lvl)
@@ -122,7 +126,7 @@ def test_log_state():
     msg = '{0}: State Msg'.format(logging.getLevelName(lvl))
     regex = '^{0}.*STATE - {1}'.format(logging.getLevelName(lvl), msg)
 
-    lpc = LinchpinContext()
+    lpc = LinchpinCliContext()
     lpc.load_config(cfg_path)
     lpc.setup_logging()
     lpc.log_state(msg)
@@ -139,7 +143,7 @@ def test_log_info():
     msg = 'Info Msg'
     regex = '^{0}.*{1}'.format(logging.getLevelName(lvl), msg)
 
-    lpc = LinchpinContext()
+    lpc = LinchpinCliContext()
     lpc.load_config(cfg_path)
     lpc.setup_logging()
     lpc.log_info(msg)
@@ -156,7 +160,7 @@ def test_log_debug():
     msg = 'Debug Msg'
     regex = '^{0}.*{1}'.format(logging.getLevelName(lvl), msg)
 
-    lpc = LinchpinContext()
+    lpc = LinchpinCliContext()
     lpc.load_config(cfg_path)
     lpc.setup_logging()
     lpc.log_debug(msg)
@@ -170,7 +174,7 @@ def test_log_debug():
 
 def main():
 
-    tlc = TestLinchpinContext()
+    tlc = TestLinchpinCliContext()
     tlc.setup_load_config()
     tlc.test_load_config()
 

@@ -10,11 +10,11 @@ from distutils import dir_util
 from jinja2 import Environment, PackageLoader
 
 from linchpin.cli import LinchpinCli
-from linchpin.cli.context import LinchpinContext
+from linchpin.cli.context import LinchpinCliContext
 from linchpin.version import __version__
 
 
-pass_context = click.make_pass_decorator(LinchpinContext, ensure=True)
+pass_context = click.make_pass_decorator(LinchpinCliContext, ensure=True)
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 

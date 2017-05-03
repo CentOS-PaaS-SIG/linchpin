@@ -6,19 +6,21 @@ import ast
 import shutil
 import logging
 
-try:
-    import configparser as ConfigParser
-except ImportError:
-    import ConfigParser as ConfigParser
 from distutils import dir_util
 from collections import OrderedDict
 from jinja2 import Environment, PackageLoader
 
+try:
+    import configparser as ConfigParser
+except ImportError:
+    import ConfigParser as ConfigParser
+
+from linchpin.api.context import LinchpinContext
 from linchpin.api import LinchpinError
-from linchpin.cli import LinchpinCli
 from linchpin.version import __version__
 
-class LinchpinContext(object):
+
+class LinchpinCliContext(LinchpinContext):
     """
     LPContext object, which will be used to manage the cli,
     and load the configuration file.
@@ -27,11 +29,10 @@ class LinchpinContext(object):
 
     def __init__(self):
         """
-        Initializes basic variables, loads the configuration, sets up logging.
+        Initializes basic variables
         """
 
-        self.version = __version__
-        self.verbose = False
+        LinchpinContext.__init__(self)
 
 
     def load_config(self, lpconfig=None):
@@ -158,7 +159,16 @@ class LinchpinContext(object):
 
 
     def log(self, msg, **kwargs):
-        """Logs a message to a logfile"""
+        """
+        Logs a message to a logfile or the console
+
+        :param msg: message to log
+
+        :param lvl: keyword argument defining the log level
+
+        :param msg_type: keyword argument giving more flexibility.
+        Only `STATE` is currently implemented.
+        """
 
         lvl = kwargs.get('level')
         msg_type = kwargs.get('msg_type')
