@@ -24,6 +24,12 @@ class LinchpinAPI(object):
         base_path = '/'.join(os.path.dirname(__file__).split("/")[0:-2])
         self.lp_path = '{0}/{1}'.format(base_path, self.ctx.cfgs['lp']['pkg'])
         ctx.evars['from_api'] = True
+        self.playbook_pre_states = self.ctx.cfgs["playbook_pre_states"]
+        self.playbook_post_states = self.ctx.cfgs["playbook_post_states"]
+        self._state = None
+        self._state_observers = []
+        self.hooks = LinchpinHooks(self)
+        self.current_target_data = {}
 
 
     def get_cfg(self, section=None, key=None):
@@ -68,11 +74,6 @@ class LinchpinAPI(object):
             return self.ctx.evars.get(key, None)
         return self.evars
 
-        self._state = None
-        self._state_observers = []
-        self.hooks = LinchpinHooks(self)
-        self.current_target_data = {}
-
     @property
     def state(self):
         """ getter function for state property of the API object. """
@@ -86,10 +87,11 @@ class LinchpinAPI(object):
         state = value[0]
         sub_state = value[-1] if len(value) > 1 else None
         self._state = State(state,
-                            sub_state
-                            )
+                            sub_state,
+                            self)
         for callback in self._state_observers:
             callback(self._state)
+
 
     def bind_to_state(self, callback):
         self._state_observers.append(callback)
@@ -141,12 +143,12 @@ class LinchpinAPI(object):
                                 self.ctx.workspace,
                                 self.ctx.evars['inventories_folder'])
         self.ctx.evars['state'] = "present"
+
         if playbook == 'destroy':
             self.ctx.evars['state'] = "absent"
 
         results = {}
 
-        # checks whether the targets are valid or not
         if set(targets) == set(pf.keys()).intersection(targets) and len(targets) > 0:
             for target in targets:
                 self.ctx.log_state('target: {0}, action: {1}'.format(target, playbook))
@@ -157,25 +159,16 @@ class LinchpinAPI(object):
                         '{0}/{1}/{2}'.format(self.ctx.workspace,
                                     self.ctx.evars['layouts_folder'],
                                     pf[target]["layout"]))
+                # set the current target data 
                 self.current_target_data = pf[target]
                 self.current_target_data["extra_vars"] = self.ctx.evars
                 # set the state to preup/predown based on playbook
                 # note : changing the state triggers the hooks
-                if playbook == "provision":
-                    self.state = "preup"
-                elif playbook == "destroy":
-                    self.state = "predown"
-
+                self.state = self.playbook_pre_states[playbook]
                 #invoke the appropriate playbook
                 results[target] = self._invoke_playbook(playbook=playbook,
                                                 console=self.console)
-                # note : changing the state triggers the hooks
-                if playbook == "provision":
-                    self.prepare_ctx_params()
-                    self.state = "postup"
-                elif playbook == "destroy":
-                    self.prepare_ctx_params()
-                    self.state = "postdown"
+                self.state = self.playbook_post_states[playbook]
 
             return results
 
@@ -189,27 +182,18 @@ class LinchpinAPI(object):
                         '{0}/{1}/{2}'.format(self.ctx.workspace,
                                     self.ctx.evars['layouts_folder'],
                                     pf[target]["layout"]))
-                self.current_target_data = pf[target]
-                self.current_target_data["extra_vars"] = self.ctx.evars
-                
                 # set the state to preup/predown based on playbook
                 # note : changing the state triggers the hooks
-                if playbook == "provision":
-                    self.state = "preup"
-                elif playbook == "destroy":
-                    self.state = "predown"
+                # set the current target data
+                self.current_target_data = pf[target]
+                self.current_target_data["extra_vars"] = self.ctx.evars
 
+                self.state = self.playbook_pre_states[playbook]
                 #invoke the appropriate playbook
                 results[target] = self._invoke_playbook(playbook=playbook,
                                                 console=self.console)
-                if playbook == "provision":
-                    self.prepare_ctx_params()
-                    self.state = "postup"
-                elif playbook == "destroy":
-                    self.prepare_ctx_params()
-                    self.state = "postdown"
+                self.state = self.playbook_post_states[playbook]
             return results
-
         else:
             raise  LinchpinError("One or more Invalid targets found")
 

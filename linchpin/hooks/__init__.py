@@ -76,8 +76,31 @@ class LinchpinHooks(object):
         self.api = api
         self.api.bind_to_state(self.run_hooks)
 
+    def prepare_ctx_params(self):
+        """
+        prepares few context parameters based on the current target_data
+        that is being set.
+        res_file and inventory file are not found
+        These parameters are based topology name.
+        """
+        topology = self.api.current_target_data["topology"]
+        name = topology.split("/")[-1].split(".")[-2]
+        inv_file = name+".inventory"
+        res_file = name+".output"
+        inv_file = "{0}/{1}".format(
+                   self.api.current_target_data["extra_vars"]["default_inventories_path"],
+                   inv_file
+                   )
+        res_file = "{0}/{1}".format(
+                   self.api.current_target_data["extra_vars"]["default_resources_path"],
+                   res_file
+                   )
+        self.api.current_target_data["extra_vars"]["inventory_file"] = inv_file
+        self.api.current_target_data["extra_vars"]["resource_file"] = res_file
+
     def run_hooks(self, state, is_global=False):
 
+        self.prepare_ctx_params()
         self.api.ctx.log("State change triggered in linchpin API")
         self.api.ctx.log("Observed State in LinchpinHooks :: "+str(state))
         hooks_data = self.api.current_target_data.get("hooks", None)

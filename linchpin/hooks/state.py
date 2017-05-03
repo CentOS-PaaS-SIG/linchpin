@@ -1,9 +1,12 @@
 from linchpin.exceptions import StateError 
 
 class State(object):
-    VALID_STATES = ["preup", "predown", "postup", "postdown"]
-    #VALID_SUB_STATES = ["preup", "predown", "postup", "postdown"]
-    def __init__(self, state, sub_state ):
+
+    # currently unimplemented
+    VALID_SUB_STATES = []
+
+    def __init__(self, state, sub_state , api=None):
+        self.api = api
         if self._validate_state(state):
             self.state = state
         else:
@@ -14,11 +17,15 @@ class State(object):
             self.sub_state = sub_state
         else:
             raise StateError("Invalid SubState mentioned")
+
     def _validate_state(self, state):
-        return state in State.VALID_STATES
+        VALID_STATES = self.api.ctx.cfgs["states"].keys()
+        return state in VALID_STATES
+
     def _validate_sub_state(self, sub_state):
         """Should change logic to validate the substate as per state"""
         return sub_state in State.VALID_SUB_STATES
+
     def __repr__(self):
         if self.sub_state:
             return "%s::%s" % (self.state, self.sub_state)

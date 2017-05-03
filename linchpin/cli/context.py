@@ -14,7 +14,7 @@ from distutils import dir_util
 from collections import OrderedDict
 from jinja2 import Environment, PackageLoader
 
-from linchpin.api import LinchpinError
+from linchpin.exceptions import LinchpinError
 from linchpin.cli import LinchpinCli
 from linchpin.version import __version__
 
