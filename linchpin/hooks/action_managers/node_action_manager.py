@@ -2,6 +2,8 @@ from action_manager import ActionManager
 from Naked.toolshed.shell import run_js
 from cerberus import Validator
 
+from linchpin.exceptions import HookError
+
 
 class NodeActionManager(ActionManager):
     def __init__(self, name, action_data, target_data, **kwargs):
@@ -29,7 +31,7 @@ class NodeActionManager(ActionManager):
         status = v.validate(self.action_data)
 
         if not status:
-            raise Exception("Invalid syntax: LinchpinHook:"+str((v.errors)))
+            raise HookError("Invalid syntax: LinchpinHook:"+str((v.errors)))
         else:
             return status
 

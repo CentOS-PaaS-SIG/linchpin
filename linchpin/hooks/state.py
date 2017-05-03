@@ -1,3 +1,5 @@
+from linchpin.exceptions import StateError 
+
 class State(object):
     VALID_STATES = ["preup", "predown", "postup", "postdown"]
     #VALID_SUB_STATES = ["preup", "predown", "postup", "postdown"]
@@ -5,13 +7,13 @@ class State(object):
         if self._validate_state(state):
             self.state = state
         else:
-            raise Exception("Invalid State mentioned")
+            raise StateError("Invalid State mentioned")
         if sub_state == None:
             self.sub_state = sub_state
         elif self._validate_sub_state(sub_state):
             self.sub_state = sub_state
         else:
-            raise Exception("Invalid SubState mentioned")
+            raise StateError("Invalid SubState mentioned")
     def _validate_state(self, state):
         return state in State.VALID_STATES
     def _validate_sub_state(self, sub_state):

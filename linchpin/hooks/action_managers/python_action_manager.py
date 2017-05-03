@@ -3,6 +3,8 @@ import sys
 import subprocess
 from cerberus import Validator
 
+from linchpin.exceptions import HookError
+
 
 class PythonActionManager(ActionManager):
 
@@ -30,7 +32,7 @@ class PythonActionManager(ActionManager):
         v = Validator(schema)
         status = v.validate(self.action_data)
         if not status:
-            raise Exception("Invalid syntax: LinchpinHook:"+str((v.errors)))
+            raise HookError("Invalid syntax: LinchpinHook:"+str((v.errors)))
         else:
             return status 
 

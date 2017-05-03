@@ -13,12 +13,7 @@ from linchpin.api.utils import yaml2json
 from linchpin.api.callbacks import PlaybookCallback
 from linchpin.hooks import LinchpinHooks
 from linchpin.hooks.state import State
-
-
-class LinchpinError(Exception):
-
-    def __init__(self,*args,**kwargs):
-        Exception.__init__(self,*args,**kwargs)
+from linchpin.exceptions import LinchpinError 
 
 
 class LinchpinAPI(object):
@@ -216,7 +211,7 @@ class LinchpinAPI(object):
             return results
 
         else:
-            raise  KeyError("One or more Invalid targets found")
+            raise  LinchpinError("One or more Invalid targets found")
 
 
     def lp_rise(self, pf, targets='all'):

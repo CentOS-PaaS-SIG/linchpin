@@ -50,7 +50,7 @@ import pprint
 import ast
 import sys
 from linchpin.hooks.action_managers import ACTION_MANAGERS
-
+from linchpin.exceptions import ActionManagerError
 
 class ActionBlockRouter(object):
 
@@ -66,7 +66,7 @@ class ActionBlockRouter(object):
 
         action_class = ACTION_MANAGERS.get(class_name, None)
         if action_class == None:
-            raise Exception("Action Class %s not found " % (class_name))
+            raise ActionManagerError("Action Class %s not found " % (class_name))
         return action_class
 
 class LinchpinHooks(object):

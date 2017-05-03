@@ -12,6 +12,8 @@ from ansible.plugins.callback import CallbackBase
 from action_manager import ActionManager
 from cerberus import Validator
 
+from linchpin.exceptions import HookError
+
 
 class AnsibleActionManager(ActionManager):
 
@@ -55,7 +57,7 @@ class AnsibleActionManager(ActionManager):
         v = Validator(schema)
         status = v.validate(self.action_data)
         if not status:
-            raise Exception("Invalid syntax: LinchpinHook:"+str((v.errors)))
+            raise HookError("Invalid syntax: LinchpinHook:"+str((v.errors)))
         else:
             return status
 
