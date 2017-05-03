@@ -332,7 +332,7 @@ class LinchpinAPI(object):
         """
 
         pb_path = '{0}/{1}'.format(self.lp_path, self.ctx.evars['playbooks_folder'])
-        module_path = '{0}/{1}'.format(pb_path, self.ctx.cfgs['lp']['module_folder'])
+        module_path = '{0}/{1}/'.format(pb_path, self.ctx.cfgs['lp']['module_folder'])
         playbook_path = '{0}/{1}'.format(pb_path, self.ctx.cfgs['playbooks'][playbook])
 
         loader = DataLoader()

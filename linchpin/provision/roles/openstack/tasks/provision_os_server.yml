@@ -1,5 +1,5 @@
 - name: "provision/deprovision os_server resources by looping on count"
-  os_server:
+  os_server2:
     state: "{{ state }}"
     auth:
       auth_url: "{{ endpoint }}"
@@ -23,7 +23,7 @@
   when: not async
 
 - name: "provision/deprovision os_server resources by looping on count"
-  os_server:
+  os_server2:
     state: "{{ state }}"
     auth:
       auth_url: "{{ endpoint }}"
