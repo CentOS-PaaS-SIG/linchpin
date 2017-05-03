@@ -9,7 +9,6 @@ from ansible.vars import VariableManager
 from ansible.parsing.dataloader import DataLoader
 from ansible.executor.playbook_executor import PlaybookExecutor
 
-from linchpin.api.invoke_playbooks import invoke_linchpin
 from linchpin.api.utils import yaml2json
 from linchpin.api.callbacks import PlaybookCallback
 from linchpin.hooks import LinchpinHooks
@@ -220,34 +219,6 @@ class LinchpinAPI(object):
             raise  KeyError("One or more Invalid targets found")
 
 
-    def lp_rise(self, pinfile, targets='all'):
-                # set the current target data
-                self.current_target_data = pf[target]
-                self.current_target_data["extra_vars"] = self.ctx.evars
-                # set the state to preup/predown based on playbook
-                # note : changing the state triggers the hooks
-                if playbook == "provision":
-                    self.state = "preup"
-                elif playbook == "destroy":
-                    self.state = "predown"
-                #invoke the PROVISION linch-pin playbook
-                output = invoke_linchpin(
-                                            self.ctx,
-                                            self.lp_path,
-                                            self.ctx.evars,
-                                            playbook=playbook
-                                        )
-                # set the state to postup/postdown based on playbook
-                # note : changing the state triggers the hooks
-                if playbook == "provision":
-                    self.prepare_ctx_params()
-                    self.state = "postup"
-                elif playbook == "destroy":
-                    self.prepare_ctx_params()
-                    self.state = "postdown"
-        else:
-            raise  KeyError("One or more Invalid targets found")
-
     def lp_rise(self, pf, targets='all'):
 
         """
@@ -326,7 +297,6 @@ class LinchpinAPI(object):
         """
 
         pass
-
 
 
     def find_topology(self, topology):

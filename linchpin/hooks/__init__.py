@@ -49,7 +49,7 @@ openstack:
 import pprint
 import ast
 import sys
-from core_action_managers import ACTION_MANAGERS
+from linchpin.hooks.action_managers import ACTION_MANAGERS
 
 
 class ActionBlockRouter(object):
