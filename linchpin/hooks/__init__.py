@@ -93,8 +93,10 @@ class LinchpinHooks(object):
         
         topology = self.api.current_target_data["topology"]
         name = topology.split("/")[-1].split(".")[-2]
-        inv_file = name+".inventory"
-        res_file = name+".output"
+        inv_file = "{0}{1}".format(name,
+                                   self.api.ctx.cfgs["extns"]["inventory"])
+        res_file = "{0}{1}".format(name,
+                                   self.api.ctx.cfgs["extns"]["resource"])
         inv_file = "{0}/{1}".format(
                    self.api.current_target_data["extra_vars"]["default_inventories_path"],
                    inv_file
