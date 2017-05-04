@@ -10,6 +10,20 @@ from linchpin.exceptions import HookError
 class SubprocessActionManager(ActionManager):
 
     def __init__(self, name, action_data, target_data, **kwargs):
+        
+        """
+        SubprocessActionManager constructor
+        :param name: Name of Action Manager , ( ie., shell)
+        :param action_data: dictionary of action_block consists of set of actions
+        example:
+        - name: hookname
+          type: shell
+          actions:
+            - echo " this is post down operation Hello hai how r u ?"
+            - test.sh
+        :param target_data: Target specific data defined in PinFile
+        :param kwargs: anyother keyword args passed as metadata
+        """
 
         self.name = name
         self.action_data = action_data

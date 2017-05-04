@@ -10,5 +10,5 @@ ACTION_MANAGERS = {
     "ansible" : AnsibleActionManager,
     "python": PythonActionManager,
     "ruby" : RubyActionManager,
-    "node" : NodejsActionManager
+    "nodejs" : NodejsActionManager
 }

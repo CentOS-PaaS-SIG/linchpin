@@ -18,6 +18,21 @@ from linchpin.exceptions import HookError
 class AnsibleActionManager(ActionManager):
 
     def __init__(self, name, action_data, target_data, **kwargs):
+        
+        """
+        AnsibleActionManager constructor 
+        :param name: Name of Action Manager , ( ie., ansible)
+        :param action_data: dictionary of action_block consists of set of actions
+        example:
+        - name: nameofthehook
+          type: ansible
+          actions:
+            - playbook: test_playbook.yaml
+              vars: test_var.yaml
+              extra_vars: { "test_var": "postdowntask"}
+        :param target_data: Target specific data defined in PinFile
+        :param kwargs: anyother keyword args passed as metadata
+        """
 
         self.name = name
         self.action_data = action_data
@@ -28,7 +43,7 @@ class AnsibleActionManager(ActionManager):
     def validate(self):
 
         """
-        validates the action_block based on the cerberus schema
+        Validates the action_block based on the cerberus schema
         example:: ansible_action_block:::: 
         - name: build_openshift_cluster
           type: ansible

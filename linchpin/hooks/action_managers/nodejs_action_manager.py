@@ -9,6 +9,20 @@ class NodejsActionManager(ActionManager):
     
     def __init__(self, name, action_data, target_data, **kwargs):
         
+        """
+        NodejsActionManager constructor
+        :param name: Name of Action Manager , ( ie., nodejs)
+        :param action_data: dictionary of action_block consists of set of actions
+        example:
+        - name: nameofhook
+          type: nodejs
+          context: true
+          actions:
+            - test.js
+        :param target_data: Target specific data defined in PinFile
+        :param kwargs: anyother keyword args passed as metadata
+        """
+        
         self.name = name
         self.action_data = action_data
         self.target_data = target_data
@@ -23,7 +37,7 @@ class NodejsActionManager(ActionManager):
 
         schema= {
         'name': {'type': 'string', 'required': True },
-        'type': { 'type': 'string', 'allowed': ['node']},
+        'type': { 'type': 'string', 'allowed': ['nodejs']},
         'path': {'type': 'string', 'required': False},
         'context': {'type': 'boolean', 'required': False},
         'actions': {
