@@ -220,7 +220,7 @@ class LinchpinAPI(object):
             raise  LinchpinError("One or more Invalid targets found")
 
 
-    def lp_rise(self, pf, targets='all'):
+    def lp_rise(self, pinfile, targets='all'):
 
         """
         DEPRECATED
