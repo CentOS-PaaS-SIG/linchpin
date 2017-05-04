@@ -5,7 +5,7 @@ from cerberus import Validator
 from linchpin.exceptions import HookError
 
 
-class NodeActionManager(ActionManager):
+class NodejsActionManager(ActionManager):
     
     def __init__(self, name, action_data, target_data, **kwargs):
         

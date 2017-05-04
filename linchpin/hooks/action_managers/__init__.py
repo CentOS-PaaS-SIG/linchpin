@@ -2,7 +2,7 @@ from subprocess_action_manager import SubprocessActionManager
 from ansible_action_manager import AnsibleActionManager
 from python_action_manager import PythonActionManager
 from ruby_action_manager import RubyActionManager
-from node_action_manager import NodeActionManager
+from nodejs_action_manager import NodejsActionManager
 
 # dict of core action manager packaged with linchpin
 ACTION_MANAGERS = {
@@ -10,5 +10,5 @@ ACTION_MANAGERS = {
     "ansible" : AnsibleActionManager,
     "python": PythonActionManager,
     "ruby" : RubyActionManager,
-    "node" : NodeActionManager
+    "node" : NodejsActionManager
 }
