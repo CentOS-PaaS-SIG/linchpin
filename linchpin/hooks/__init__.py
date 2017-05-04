@@ -197,7 +197,10 @@ class LinchpinHooks(object):
                     a_b_obj = class_(action_type, a_b, target_data, context=ctx)
                 else:
                     a_b_obj = ActionBlockRouter(action_type, a_b, target_data, context=ctx)
-                # validates the class object
-                a_b_obj.validate()
-                # executes the hook
-                a_b_obj.execute()
+                try:
+                    # validates the class object
+                    a_b_obj.validate()
+                    # executes the hook
+                    a_b_obj.execute()
+                except Exception as e:
+                    self.api.ctx.log_info(str(e))
