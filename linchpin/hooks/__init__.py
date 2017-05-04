@@ -164,11 +164,12 @@ class LinchpinHooks(object):
                 if not a_b.has_key("path"):
                     # if the path is not defined it defaults to
                     # workspace/hooks/typeofhook/name
-                    a_b["path"] = "{0}/hooks/{1}/{2}/".format(
-                                                            self.api.ctx.workspace,
-                                                            a_b["type"],
-                                                            a_b["name"]
-                                                           )
+                    a_b["path"] = "{0}/{1}/{2}/{3}/".format(
+                                   self.api.ctx.workspace,
+                                   self.api.ctx.cfgs["evars"]["hooks_folder"],
+                                   a_b["type"],
+                                   a_b["name"]
+                                   )
                 if a_b.has_key("action_manager"):
                     # fetches the action object from the path
                     # add path to python path
