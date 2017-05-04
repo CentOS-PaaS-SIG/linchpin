@@ -116,11 +116,11 @@ class LinchpinHooks(object):
 
         if not str(state) in self.api.ctx.cfgs["playbook_pre_states"]:
             self.prepare_ctx_params()
-        self.api.ctx.log("State change triggered in linchpin API")
-        self.api.ctx.log("Observed State in LinchpinHooks :: "+str(state))
+        self.api.ctx.log_debug("State change triggered in linchpin API")
+        self.api.ctx.log_debug("Observed State in LinchpinHooks :: "+str(state))
         hooks_data = self.api.current_target_data.get("hooks", None)
         if hooks_data == None:
-            self.api.ctx.log("No hooks found for current target")
+            self.api.ctx.log_debug("No hooks found for current target")
             return
         # fetches all the state_data , ie., all the action blocks inside
         # state of the target
@@ -128,7 +128,7 @@ class LinchpinHooks(object):
 
         # Print out error message if the hooks are not found
         if state_data == None:
-            self.api.ctx.log(str(state)+" State hook not found in PinFile")
+            self.api.ctx.log_debug(str(state)+" State hook not found in PinFile")
             return
 
         # current target data extravars are fetched
