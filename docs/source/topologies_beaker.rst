@@ -17,6 +17,7 @@ Beaker Server
       - resource_group_name: test1
         res_group_type: beaker
         job_group: ci-ops-central
+        whiteboard: Arbitrary Job whiteboard string
         recipesets:
           - distro: RHEL-6.5
             arch: x86_64

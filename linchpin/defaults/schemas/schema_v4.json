@@ -90,6 +90,9 @@
                  "job_group": {
                      "type": "string"
                  },
+                 "whiteboard": {
+                     "type": "string"
+                 },
                  "recipesets": {
                      "type": "array",
                      "items": {

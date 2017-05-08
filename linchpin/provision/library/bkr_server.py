@@ -47,7 +47,7 @@ class BkrFactory(BkrConn):
         """
             provision resources in Beaker
         """
-        # Break down kwargs for debug, dryrun, wait, and recipesets
+        # Break down kwargs for debug, dryrun, wait, recipesets, and whiteboard
         debug = kwargs.get("debug", False)
         dryrun = kwargs.get("dryrun", False)
         wait = kwargs.get("wait", False)
@@ -215,6 +215,7 @@ class BkrFactory(BkrConn):
 
 def main():
     module = AnsibleModule(argument_spec={
+        'whiteboard': {'required': False, 'type': 'str'},
         'recipesets': {'required': True, 'type': 'list'},
         'job_group': {'required': True, 'type': 'str'},
         'state': {'default': 'present', 'choices': ['present', 'absent']},
@@ -230,7 +231,8 @@ def main():
                 # Make provision
                 job_id = factory.provision(debug=True, wait=True,\
                                            recipesets=[recipeset],\
-                                           job_group=params.job_group)
+                                           job_group=params.job_group,
+                                           whiteboard=params.whiteboard)
                 job_ids.extend(job_id)
             else:
                 factory.cancel_jobs(recipeset['ids'], params.cancel_message)
