@@ -66,6 +66,7 @@ class BkrFactory(BkrConn):
             ks_meta = kwargs.get("ks_meta", "")
             method = kwargs.get("method", "nfs")
             priority = kwargs.get("priority", "Normal")
+            hostrequires = kwargs.get("hostrequires", [])
 
             # Tasks and harnesses
             if 'harness' in ks_meta:
@@ -111,6 +112,27 @@ class BkrFactory(BkrConn):
 
             # Create Base Recipe
             recipe_template = BeakerRecipe(*args, **kwargs)
+
+            # Add Host Requirements
+            if 'force' in hostrequires:
+                # hostRequires element is created by BeakerRecipe, use it
+                hostrequires_node = recipe_template.node.getElementsByTagName('hostRequires')[0]
+                # all other filters are ignored if the hostname is forced, so the use of 'force'
+                # is mutually exclusive with the use of any other 'hostRequires' filters
+                hostrequires_node.setAttribute('force', hostrequires['force'])
+            else:
+                for requirement in hostrequires:
+                    # If force is not used, a requirement can be any number of differently
+                    # formatted XML elements, each with their own combination of element name and
+                    # valid attrs. So, the best we can do is generate XML based on the input, and
+                    # only the "tag" key is required.
+                    tag_name = requirement.pop('tag')
+                    requirement_node = self.doc.createElement(tag_name)
+                    for attr, value in requirement.items():
+                        # Force all values to str, which the XML writer expects.
+                        requirement_node.setAttribute(attr, str(value))
+                    # use the BeakerRecipe API to add the element
+                    recipe_template.addHostRequires(requirement_node)
 
             # Add Distro Requirements
             recipe_template.addBaseRequires(*args, **kwargs)

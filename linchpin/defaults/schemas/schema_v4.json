@@ -114,8 +114,30 @@
                                  "keyvalue": {
                                      "type": "array"
                                  },
-                                 "hostrequire": {
-                                     "type": "array"
+                                 "hostrequires": {
+                                     "type": "array",
+                                     "items": {
+                                         "oneOf": [
+                                             {
+                                                 "type": "object",
+                                                 "properties": {
+                                                     "force": {
+                                                         "type": "string"
+                                                     }
+                                                 },
+                                                 "required": ["force"]
+                                             },
+                                             {
+                                                 "type": "object",
+                                                 "properties": {
+                                                     "tag": {
+                                                         "type": "string"
+                                                     }
+                                                 },
+                                                 "required": ["tag"]
+                                             }
+                                          ]
+                                     }
                                  },
                                  "bkr_data": {
                                     "type": "object"

@@ -14,6 +14,11 @@ resource_groups:
         keyvalue:
           - MEMORY>1000
           - DISKSPACE>20000
-        hostrequire:
-          - arch=X86_64
+        hostrequires:
+          - tag: processors
+            op: ">="
+            value: 4
+          - tag: device
+            op: "="
+            type: "network"
         count: 1

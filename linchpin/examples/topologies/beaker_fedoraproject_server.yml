@@ -11,6 +11,4 @@ resource_groups:
         keyvalue:
           - MEMORY>1000
           - DISKSPACE>20000
-        hostrequire:
-          - arch=X86_64
         count: 1
