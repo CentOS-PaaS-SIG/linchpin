@@ -1,0 +1,8 @@
+---
+- name: "Provision dummy resources by looping on count"
+  dummy:
+    state: absent
+    name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+    count: "{{ res_def['count'] | default(1) }}"
+  register: outputitem
+  when: res_def['type']=="dummy_node"

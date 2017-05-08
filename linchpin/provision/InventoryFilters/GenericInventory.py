@@ -11,11 +11,14 @@ except ImportError:
     from ConfigParser import ConfigParser
 
 from AWSInventory import AWSInventory
-from OpenstackInventory import OpenstackInventory
-from GCloudInventory import GCloudInventory
+from BeakerInventory import BeakerInventory
 from DuffyInventory import DuffyInventory
-from LibvirtInventory import LibvirtInventory
+from DummyInventory import DummyInventory
+from GCloudInventory import GCloudInventory
 from InventoryFilter import InventoryFilter
+from LibvirtInventory import LibvirtInventory
+from OpenstackInventory import OpenstackInventory
+
 from InventoryProviders import get_driver, get_all_drivers
 
 

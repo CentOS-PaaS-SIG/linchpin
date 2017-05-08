@@ -1,11 +1,16 @@
 ---
-#includes the output file of linchpin
+
+#- name: "DEBUG:: layout_file"
+#  debug:
+#    msg: "{{ layout_file }}"
+#  when: state == "present"
 
 - include_vars: "{{ resources_file | default( default_resources_path+'/'+outputs.topology_name+'.output.yaml' ) }}"
 
 - name: "Updating topology_outputs"
   set_fact:
     topology_outputs:
+      dummy_res: "{{ dummy_res }}"
       os_server_res: "{{ os_server_res }}"
       aws_ec2_res: "{{ aws_ec2_res }}"
       gcloud_gce_res: "{{ gcloud_gce_res }}"

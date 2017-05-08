@@ -3,20 +3,22 @@ Inventory Providers List
 """
 
 from AWSInventory import AWSInventory
-from OpenstackInventory import OpenstackInventory
-from GCloudInventory import GCloudInventory
-from DuffyInventory import DuffyInventory
 from BeakerInventory import BeakerInventory
-from LibvirtInventory import LibvirtInventory
+from DuffyInventory import DuffyInventory
+from DummyInventory import DummyInventory
+from GCloudInventory import GCloudInventory
 from InventoryFilter import InventoryFilter
+from LibvirtInventory import LibvirtInventory
+from OpenstackInventory import OpenstackInventory
 
 filter_classes = {
            "aws_inv": AWSInventory,
-           "os_inv": OpenstackInventory,
-           "gcloud_inv": GCloudInventory,
-           "duffy_inv": DuffyInventory,
            "beaker_inv": BeakerInventory,
-           "libvirt_inv": LibvirtInventory
+           "duffy_inv": DuffyInventory,
+           "dummy_inv": DummyInventory,
+           "gcloud_inv": GCloudInventory,
+           "libvirt_inv": LibvirtInventory,
+           "os_inv": OpenstackInventory,
 }
 
 
