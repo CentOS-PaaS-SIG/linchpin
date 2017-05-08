@@ -44,7 +44,7 @@ class LinchpinCliContext(LinchpinContext):
 
         """
 
-        self.cfgs = OrderedDict()
+        self.cfgs = {}
 
         lib_path = '{0}'.format(os.path.dirname(
             os.path.realpath(__file__))).rstrip('/')

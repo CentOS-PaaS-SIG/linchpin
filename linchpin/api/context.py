@@ -45,7 +45,7 @@ class LinchpinContext(object):
 
         """
 
-        self.cfgs = OrderedDict()
+        self.cfgs = {}
 
         self.cfgs['lp'] = { 'pkg': 'linchpin' }
         self.cfgs['ansible'] = { 'console', 'False' }
@@ -54,7 +54,7 @@ class LinchpinContext(object):
             'inventories_folder': 'inventories',
         }
 
-        self.evars = self.cfgs.get('evars')
+        self.evars = self.cfgs.get('evars', {})
 
 
     def setup_logging(self):

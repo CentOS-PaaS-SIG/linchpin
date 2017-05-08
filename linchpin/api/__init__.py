@@ -57,6 +57,9 @@ class LinchpinAPI(object):
         :param value: value to set into section within config file
         """
 
+        if not self.ctx.cfgs.get(section):
+            self.ctx.cfgs.update({section: {}})
+
         self.ctx.cfgs[section][key] = value
 
 
@@ -69,7 +72,7 @@ class LinchpinAPI(object):
 
         if key:
             return self.ctx.evars.get(key, None)
-        return self.evars
+        return self.ctx.evars
 
 
     def set_evar(self, key, value):
@@ -83,7 +86,6 @@ class LinchpinAPI(object):
         """
 
         self.set_cfg('evars', key, value)
-        self.evars[key] = value
 
 
     def run_playbook(self, pinfile, targets='all', playbook='up'):
