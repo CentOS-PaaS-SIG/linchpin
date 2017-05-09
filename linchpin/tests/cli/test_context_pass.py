@@ -11,7 +11,7 @@ except ImportError:
     import ConfigParser as ConfigParser
 
 from linchpin.cli.context import LinchpinCliContext
-from linchpin.tests.mockdata.context import ContextData
+from linchin.tests.mockdata.context import ContextData
 
 
 def test_context_create():
