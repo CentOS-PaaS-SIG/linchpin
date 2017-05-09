@@ -12,7 +12,7 @@ except ImportError:
 
 from linchpin.api import LinchpinAPI
 from linchpin.api.context import LinchpinContext
-#from linchpin.tests.mockdata import APIData
+from linchpin.tests.mockdata.context import ContextData
 
 
 def test_api_create():
@@ -33,8 +33,24 @@ def setup_lp_api():
     global lpc
     global lpa
 
+    global target
+    global pinfile
+
+    base_path = '{0}'.format(os.path.dirname(
+        os.path.realpath(__file__))).rstrip('/')
+    lib_path = os.path.realpath(os.path.join(base_path, os.pardir))
+
+    provider = 'dummy'
+    pinfile = 'PinFile'
+
+    mock_path = '{0}/{1}/{2}'.format(lib_path, 'mockdata', provider)
+
     lpc = LinchpinContext()
-    lpc.load_config()
+    lpc.load_config(lpconfig='{0}/conf/linchpin.conf'.format(mock_path))
+    lpc.load_global_evars()
+    lpc.setup_logging()
+    lpc.workspace = os.path.realpath(mock_path)
+
     lpa = LinchpinAPI(lpc)
 
 
@@ -93,6 +109,7 @@ def test_get_all_evars():
 
     assert_dict_contains_subset(test_evars, lpa_evars)
 
+
 @with_setup(setup_lp_api)
 def test_get_evar_item():
 
@@ -101,6 +118,42 @@ def test_get_evar_item():
         lpa.set_evar(k, v)
 
     assert_equal(lpa.get_evar(key='ekey2'), test_evars.get('ekey2'))
+
+
+#def setup_lp_api():
+#
+#    """
+#    Perform setup of LinchpinContext, lpc.load_config, and LinchPinAPI
+#    """
+#
+#    global lpc
+#    global lpa
+#
+#    lpc = LinchpinContext()
+#    lpc.load_config()
+#    lpa = LinchpinAPI(lpc)
+
+@with_setup(setup_lp_api)
+def test_run_playbook():
+
+    pf_w_path = '{0}/{1}'.format(lpc.workspace, pinfile)
+    results = lpa.run_playbook(pf_w_path, targets=['dummy'])
+
+    for res in results['dummy']:
+        name = res._task.get_name()
+        failed = False
+        if res.is_failed():
+            failed = res.is_failed()
+            print('{0}: {1}'.format(name, failed))
+
+
+    assert not failed
+
+
+
+
+
+
 
 
 def main():

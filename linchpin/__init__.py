@@ -78,9 +78,7 @@ def runcli(ctx, config, workspace, verbose, version):
         ctx.log_state('linchpin version {0}'.format(ctx.version))
         sys.exit(0)
 
-    if workspace is None:
-        ctx.workspace = os.path.realpath(os.path.curdir)
-    else:
+    if workspace is not None:
         ctx.workspace = os.path.realpath(os.path.expanduser(workspace))
 
     ctx.log_debug("ctx.workspace: {0}".format(ctx.workspace))
@@ -122,7 +120,7 @@ def init(ctx):
 @runcli.command()
 @click.option('-p', '--pinfile', envvar='PINFILE',
         help='Use a different PinFile than the one in the current workspace.')
-@click.argument('targets', metavar='TARGET', required=False,
+@click.argument('targets', metavar='TARGETS', required=False,
         nargs=-1)
 @pass_context
 def up(ctx, pinfile, targets):

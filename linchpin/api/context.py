@@ -35,24 +35,88 @@ class LinchpinContext(object):
         self.version = __version__
         self.verbose = False
 
+        lib_path = '{0}'.format(os.path.dirname(
+            os.path.realpath(__file__))).rstrip('/')
+        self.lib_path = os.path.realpath(os.path.join(lib_path, os.pardir))
+
+        self.workspace = os.path.realpath(os.path.curdir)
+
 
     def load_config(self, lpconfig=None):
         """
-        Create self.cfgs and self.evars with hardcoded values
+        Create self.cfgs from the linchpin configuration file.
 
-        These are the only hardcoded values, which are used to find the config
-        file. The search path, is a first found of the following:
+        These are the only hardcoded values, which are used to find
+        the config file. The linchpin.conf file is found
+        at `/linchpin/library/path/linchpin.conf`.
+
+        Alternatively, a full path to the linchpin configuration file
+        can be passed.
+
+        :param lpconfig: absolute path to a linchpin config (default: None)
 
         """
 
         self.cfgs = {}
 
-        self.cfgs['lp'] = { 'pkg': 'linchpin' }
-        self.cfgs['ansible'] = { 'console', 'False' }
-        self.cfgs['evars'] = {
-            'resources_folder': 'resources',
-            'inventories_folder': 'inventories',
-        }
+        expanded_path = None
+        config_found = False
+
+        if lpconfig:
+            CONFIG_PATH = [ lpconfig ]
+        else:
+            # simply modify this variable to adjust where linchpin.conf can be found
+            CONFIG_PATH = [
+                '{0}/linchpin.conf'.format(self.lib_path)
+            ]
+
+        for path in CONFIG_PATH:
+            expanded_path = (
+                "{0}".format(os.path.realpath(os.path.expanduser(path))))
+
+            # implement first found
+            if os.path.exists(expanded_path):
+                # logging before the config file is setup doesn't work
+                # if messages are needed before this, use print.
+                config_found = True
+                break
+
+        if not config_found:
+            raise LinchpinError('Configuration file not found in'
+                                ' path: {0}'.format(CONFIG_PATH))
+
+        config = ConfigParser.SafeConfigParser()
+        try:
+            f = open(path)
+            config.readfp(f)
+            f.close()
+        except ConfigParser.InterpolationSyntaxError as e:
+            raise LinchpinError('Unable to parse configuration file properly:'
+                    ' {0}'.format(e))
+
+        for section in config.sections():
+            if section not in self.cfgs:
+                self.cfgs[section] = {}
+
+            # add evars to the ansible extra_vars when running a playbook.
+            for k, v in config.items(section):
+                if section != 'evars':
+                    self.cfgs[section][k] = v
+                else:
+                    try:
+                        self.cfgs[section][k] = config.getboolean(section, k)
+                    except ValueError as e:
+                        self.cfgs[section][k] = v
+
+
+    def load_global_evars(self):
+
+        """
+        Instantiate the evars variable, then load the variables from the
+        'evars' section in linchpin.conf. This will then be passed to
+        invoke_linchpin, which passes them to the Ansible playbook as needed.
+
+        """
 
         self.evars = self.cfgs.get('evars', {})
 

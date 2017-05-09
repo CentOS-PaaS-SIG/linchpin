@@ -26,7 +26,7 @@ class LinchpinAPI(object):
         self.ctx = ctx
         base_path = '/'.join(os.path.dirname(__file__).split("/")[0:-2])
         self.lp_path = '{0}/{1}'.format(base_path, self.ctx.cfgs['lp']['pkg'])
-        ctx.evars['from_api'] = True
+        self.set_evar('from_api', True)
 
 
     def get_cfg(self, section=None, key=None):
@@ -43,6 +43,7 @@ class LinchpinAPI(object):
                 return self.ctx.cfgs[section].get(key, None)
             return s
         return self.ctx.cfgs
+
 
     def set_cfg(self, section, key, value):
         """
@@ -110,10 +111,13 @@ class LinchpinAPI(object):
 
         self.ctx.evars['lp_path'] = self.lp_path
 
-        self.console = ast.literal_eval(self.ctx.cfgs['ansible'].get('console', 'False'))
+        #do we display the ansible output to the console?
+        ansible_console = False
+        if self.ctx.cfgs.get('ansible'):
+            ansible_console = ast.literal_eval(self.ctx.cfgs['ansible'].get('console', 'False'))
 
-        if not self.console:
-            self.console = self.ctx.verbose
+        if not ansible_console:
+            ansible_console = self.ctx.verbose
 
         self.ctx.evars['default_resources_path'] = '{0}/{1}'.format(
                                 self.ctx.workspace,
@@ -143,7 +147,7 @@ class LinchpinAPI(object):
 
                 #invoke the appropriate playbook
                 results[target] = self._invoke_playbook(playbook=playbook,
-                                                console=self.console)
+                                                console=ansible_console)
 
             return results
 
@@ -161,7 +165,7 @@ class LinchpinAPI(object):
 
                 #invoke the appropriate playbook
                 results[target] = self._invoke_playbook(playbook=playbook,
-                                                console=self.console)
+                                                console=ansible_console)
 
             return results
 
@@ -263,7 +267,7 @@ class LinchpinAPI(object):
 
         """
 
-        topo_path = os.path.realpath('{}/{}'.format(
+        topo_path = os.path.realpath('{0}/{1}'.format(
                 self.ctx.workspace,
                 self.ctx.evars['topologies_folder']))
 

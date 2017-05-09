@@ -32,23 +32,41 @@ class LinchpinCliContext(LinchpinContext):
         Initializes basic variables
         """
 
+        # The following values are set in the parent class
+        #
+        # self.version = __version__
+        # self.verbose = False
+        #
+        # lib_path = '{0}'.format(os.path.dirname(
+        #                       os.path.realpath(__file__))).rstrip('/')
+        # self.lib_path = os.path.realpath(os.path.join(lib_path, os.pardir))
+        #
+        #self.workspace = os.path.realpath(os.path.curdir)
+
         LinchpinContext.__init__(self)
 
 
     def load_config(self, lpconfig=None):
         """
         Create self.cfgs from the linchpin configuration file.
+        .. note:: Overrides load_config in linchpin.api.LinchpinContext
 
         These are the only hardcoded values, which are used to find the config
-        file. The search path, is a first found of the following:
+        file. The search path, is a first found of the following::
+
+          * $PWD/linchpin.conf
+          * ~/.linchpin.conf
+          * /etc/linchpin.conf
+          * linchpin/library/path/linchpin.conf
+
+        Alternatively, a full path to the linchpin configuration file
+        can be passed.
+
+        :param lpconfig: absolute path to a linchpin config (default: None)
 
         """
 
         self.cfgs = {}
-
-        lib_path = '{0}'.format(os.path.dirname(
-            os.path.realpath(__file__))).rstrip('/')
-        self.lib_path = os.path.abspath(os.path.join(lib_path, os.pardir))
 
         expanded_path = None
         config_found = False
@@ -102,19 +120,6 @@ class LinchpinCliContext(LinchpinContext):
                         self.cfgs[section][k] = config.getboolean(section, k)
                     except ValueError as e:
                         self.cfgs[section][k] = v
-
-
-
-    def load_global_evars(self):
-
-        """
-        Instantiate the evars variable, then load the variables from the
-        'evars' section in linchpin.conf. This will then be passed to
-        invoke_linchpin, which passes them to the Ansible playbook as needed.
-
-        """
-
-        self.evars = self.cfgs.get('evars', None)
 
 
     def setup_logging(self):
