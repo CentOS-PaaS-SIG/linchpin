@@ -102,9 +102,6 @@
                                  "distro": {
                                      "type": "string"
                                  },
-                                 "arches": {
-                                     "type": "array"
-                                 },
                                  "arch": {
                                      "type": "string"
                                  },

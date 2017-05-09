@@ -7,7 +7,7 @@ Beaker Topologies
 
 
 Beaker Server
-```````````````
+`````````````
 
 .. code-block:: yaml
 
@@ -21,9 +21,6 @@ Beaker Server
         recipesets:
           - distro: RHEL-6.5
             arch: x86_64
-            arches:
-              - X86_64
-              - X86_64
             keyvalue:
               - MEMORY>1000
               - DISKSPACE>20000
@@ -51,7 +48,7 @@ The reservation of a specific hostname can be done with the ``force`` keyword ne
 recipeset's ``hostrequires`` mapping. Additional filtering,
 such as a ``keyvalue`` or ``hostrequires`` filter, is silently ignored by beaker when the hostname
 to reserve is forced. Because of this, using the ``force`` argument is mutually exclusive to using
-and other filters.
+any other filters.
 
 For example::
 

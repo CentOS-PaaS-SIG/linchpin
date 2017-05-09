@@ -6,8 +6,6 @@ resource_groups:
     recipesets:
       - distro: Fedora-24
         arch: x86_64
-        arches:
-          - X86_64
         keyvalue:
           - MEMORY>1000
           - DISKSPACE>20000
