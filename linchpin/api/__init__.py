@@ -11,12 +11,9 @@ from ansible.executor.playbook_executor import PlaybookExecutor
 
 from linchpin.api.utils import yaml2json
 from linchpin.api.callbacks import PlaybookCallback
-
-
-class LinchpinError(Exception):
-
-    def __init__(self,*args,**kwargs):
-        Exception.__init__(self,*args,**kwargs)
+from linchpin.hooks import LinchpinHooks
+from linchpin.hooks.state import State
+from linchpin.exceptions import LinchpinError 
 
 
 class LinchpinAPI(object):
@@ -28,6 +25,13 @@ class LinchpinAPI(object):
         self.lp_path = '{0}/{1}'.format(base_path, self.ctx.cfgs['lp']['pkg'])
         self.set_evar('from_api', True)
 
+        self.playbook_pre_states = self.ctx.cfgs["playbook_pre_states"]
+        self.playbook_post_states = self.ctx.cfgs["playbook_post_states"]
+        self._state = None
+        self._state_observers = []
+        self.hooks = LinchpinHooks(self)
+        self.current_target_data = {}
+
 
     def get_cfg(self, section=None, key=None):
         """
@@ -37,6 +41,7 @@ class LinchpinAPI(object):
 
         :param key: key to get from config file, within section
         """
+
         if section:
             s = self.ctx.cfgs.get(section, None)
             if key and s:
@@ -75,6 +80,42 @@ class LinchpinAPI(object):
             return self.ctx.evars.get(key, None)
         return self.ctx.evars
 
+    @property
+    def state(self):
+        """
+        getter function for _state property of the API object. 
+        """
+
+        return self._state
+
+    @state.setter
+    def state(self, state):
+        """
+        _state property setter , splits the state string in substates and sets
+        linchpin.state object
+        :param state: valid state string mentioned in linchpin.conf
+        """
+
+        # call run_hooks after state is being set
+        self.ctx.log_debug("State change initiated")
+        value = state.split("::")
+        state = value[0]
+        sub_state = value[-1] if len(value) > 1 else None
+        self._state = State(state,
+                            sub_state,
+                            self)
+        for callback in self._state_observers:
+            callback(self._state)
+
+
+    def bind_to_state(self, callback):
+        """
+        Function used by LinchpinHooksclass to add callbacks
+
+        :param callback: callback function 
+        """
+
+        self._state_observers.append(callback)
 
     def set_evar(self, key, value):
         """
@@ -91,7 +132,6 @@ class LinchpinAPI(object):
 
     def run_playbook(self, pinfile, targets='all', playbook='up'):
 
-
         """
         This function takes a list of targets, and executes the given
         playbook (provison, destroy, etc.) for each provided target.
@@ -104,11 +144,11 @@ class LinchpinAPI(object):
         pf = yaml2json(pinfile)
 
         # playbooks check whether from_api is defined
-        # if not, vars get loaded from linchpin.conf
-
-
         self.ctx.log_debug('from_api: {0}'.format(self.get_evar('from_api')))
 
+        # playbooks check whether from_cli is defined
+        # if not, vars get loaded from linchpin.conf
+        self.ctx.evars['from_cli'] = True
         self.ctx.evars['lp_path'] = self.lp_path
 
         #do we display the ansible output to the console?
@@ -125,7 +165,6 @@ class LinchpinAPI(object):
         self.ctx.evars['default_inventories_path'] = '{0}/{1}'.format(
                                 self.ctx.workspace,
                                 self.ctx.evars['inventories_folder'])
-
         self.ctx.evars['state'] = "present"
 
         if playbook == 'destroy':
@@ -133,7 +172,6 @@ class LinchpinAPI(object):
 
         results = {}
 
-        # checks whether the targets are valid or not
         if set(targets) == set(pf.keys()).intersection(targets) and len(targets) > 0:
             for target in targets:
                 self.ctx.log_state('target: {0}, action: {1}'.format(target, playbook))
@@ -144,10 +182,17 @@ class LinchpinAPI(object):
                         '{0}/{1}/{2}'.format(self.ctx.workspace,
                                     self.ctx.evars['layouts_folder'],
                                     pf[target]["layout"]))
-
+                # set the current target data 
+                self.current_target_data = pf[target]
+                self.current_target_data["extra_vars"] = self.ctx.evars
+                # set the state to preup/predown based on playbook
+                # note : changing the state triggers the hooks
+                self.state = self.playbook_pre_states[playbook]
                 #invoke the appropriate playbook
                 results[target] = self._invoke_playbook(playbook=playbook,
                                                 console=ansible_console)
+
+                self.state = self.playbook_post_states[playbook]
 
             return results
 
@@ -161,16 +206,23 @@ class LinchpinAPI(object):
                         '{0}/{1}/{2}'.format(self.ctx.workspace,
                                     self.ctx.evars['layouts_folder'],
                                     pf[target]["layout"]))
+                # set the state to preup/predown based on playbook
+                # note : changing the state triggers the hooks
+                # set the current target data
+                self.current_target_data = pf[target]
+                self.current_target_data["extra_vars"] = self.ctx.evars
 
-
+                self.state = self.playbook_pre_states[playbook]
                 #invoke the appropriate playbook
                 results[target] = self._invoke_playbook(playbook=playbook,
                                                 console=ansible_console)
 
+                self.state = self.playbook_post_states[playbook]
+
             return results
 
         else:
-            raise  KeyError("One or more Invalid targets found")
+            raise  LinchpinError("One or more Invalid targets found")
 
 
     def lp_rise(self, pinfile, targets='all'):
@@ -185,7 +237,6 @@ class LinchpinAPI(object):
 
 
     def lp_up(self, pinfile, targets='all'):
-
 
         """
         This function takes a list of targets, and provisions them according
@@ -215,7 +266,6 @@ class LinchpinAPI(object):
 
     def lp_destroy(self, pinfile, targets='all'):
 
-
         """
         This function takes a list of targets, and performs a destructive
         teardown, including undefining nodes, according to the target.
@@ -234,7 +284,6 @@ class LinchpinAPI(object):
 
     def lp_down(self, pinfile, targets='all'):
 
-
         """
         This function takes a list of targets, and performs a shutdown on
         nodes in the target's topology. Only providers which support shutdown
@@ -252,7 +301,6 @@ class LinchpinAPI(object):
         """
 
         pass
-
 
 
     def find_topology(self, topology):
@@ -289,7 +337,7 @@ class LinchpinAPI(object):
         """
 
         pb_path = '{0}/{1}'.format(self.lp_path, self.ctx.evars['playbooks_folder'])
-        module_path = '{0}/{1}'.format(pb_path, self.ctx.cfgs['lp']['module_folder'])
+        module_path = '{0}/{1}/'.format(pb_path, self.ctx.cfgs['lp']['module_folder'])
         playbook_path = '{0}/{1}'.format(pb_path, self.ctx.cfgs['playbooks'][playbook])
 
         loader = DataLoader()

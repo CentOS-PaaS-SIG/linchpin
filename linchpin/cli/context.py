@@ -16,7 +16,8 @@ except ImportError:
     import ConfigParser as ConfigParser
 
 from linchpin.api.context import LinchpinContext
-from linchpin.api import LinchpinError
+from linchpin.exceptions import LinchpinError
+from linchpin.cli import LinchpinCli
 from linchpin.version import __version__
 
 

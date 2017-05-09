@@ -32,4 +32,4 @@
 - name: "Generate Generic Inventory"
   template:
     src: "templates/generic_inventory_formatter.j2"
-    dest: "{{ inventory_file }}.inventory"
+    dest: "{{ inventory_file }}"
