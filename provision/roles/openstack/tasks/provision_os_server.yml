@@ -13,6 +13,7 @@
     flavor: "{{ res_def['flavor'] }}"
     nics:  "{{ res_def['networks'] | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
+    security_groups: "{{ res_def['security_groups'] | default(omit) }}"
     count: "{{ res_def['count'] }}"
   when: async == false
   register: res_def_output
@@ -37,6 +38,7 @@
     flavor: "{{ res_def['flavor'] }}"
     nics:  "{{ res_def['networks'] | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
+    security_groups: "{{ res_def['security_groups'] | default(omit) }}"
     count: "{{ res_def['count'] }}"
   register: res_def_output
   async: "{{ async_timeout | default(1000) }}"
