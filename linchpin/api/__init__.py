@@ -24,8 +24,12 @@ class LinchpinAPI(object):
         base_path = '/'.join(os.path.dirname(__file__).split("/")[0:-2])
         self.lp_path = '{0}/{1}'.format(base_path, self.ctx.cfgs['lp']['pkg'])
         ctx.evars['from_api'] = True
-        self.playbook_pre_states = self.ctx.cfgs["playbook_pre_states"]
-        self.playbook_post_states = self.ctx.cfgs["playbook_post_states"]
+        self.playbook_pre_states = self.get_cfg('playbook_pre_states',
+                                                {'up': 'preup', 
+                                                 'destroy': 'predestroy'})
+        self.playbook_post_states = self.get_cfg('playbook_post_states',
+                                                 {'up': 'postup',
+                                                  'destroy': 'postdestroy'})
         self._state = None
         self._state_observers = []
         self.hooks = LinchpinHooks(self)
