@@ -1,3 +1,4 @@
+import os
 import yaml
 import json
 import ansible
@@ -174,10 +175,12 @@ class AnsibleActionManager(ActionManager):
         extra_vars = {}
         for action in self.action_data["actions"]:
             path = self.action_data["path"]
-            playbook = "{0}/{1}".format(
-                        path,
-                        action.get("playbook")
-                        )
+            playbook = action.get("playbook")
+            if not(os.path.isfile(playbook)):
+                playbook = "{0}/{1}".format(
+                            path,
+                            playbook
+                            )
             if action.has_key("vars"):
                 var_file = "{0}/{1}".format(
                            path,
