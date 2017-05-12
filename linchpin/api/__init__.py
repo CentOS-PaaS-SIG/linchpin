@@ -178,73 +178,46 @@ class LinchpinAPI(object):
 
         results = {}
 
+        # determine what targets is equal to
         if (set(targets) == set(pf.keys()).intersection(targets) and
                                                         len(targets) > 0):
-
-            for target in targets:
-                self.ctx.log_state('target: {0}, action: {1}'.format(
-                                                            target, playbook))
-                self.set_evar('topology', self.find_topology(
-                        pf[target]["topology"]))
-                if 'layout' in pf[target]:
-                    self.set_evar('layout_file', (
-                        '{0}/{1}/{2}'.format(self.ctx.workspace,
-                                    self.get_evar('layouts_folder'),
-                                    pf[target]["layout"])))
-
-                # set the current target data
-                self.target_data = pf[target]
-                self.target_data["extra_vars"] = self.get_evar()
-
-                # note : changing the state triggers the hooks
-                self.pb_hooks = self.get_cfg('hookstates', playbook)
-                self.ctx.log_debug('calling: {0}{1}'.format('pre', playbook))
-                if 'pre' in self.pb_hooks:
-                    self.hook_state = '{0}{1}'.format('pre', playbook)
-
-                #invoke the appropriate playbook
-                results[target] = self._invoke_playbook(playbook=playbook,
-                                                console=ansible_console)
-
-                if 'post' in self.pb_hooks:
-                    self.hook_state = '{0}{1}'.format('post', playbook)
-
-            return results
-
+            pass
         elif len(targets) == 0:
-            for target in set(pf.keys()).difference():
-                self.ctx.log_state('target: {0}, action: {1}'.format(
-                                                            target, playbook))
-                self.set_evar('topology', self.find_topology(
-                        pf[target]["topology"]))
-                if 'layout' in pf[target]:
-                    self.set_evar('layout_file', (
-                        '{0}/{1}/{2}'.format(self.ctx.workspace,
-                                    self.get_evar('layouts_folder'),
-                                    pf[target]["layout"])))
-
-                # set the state to preup/predown based on playbook
-                # note : changing the state triggers the hooks
-                # set the current target data
-                self.target_data = pf[target]
-                self.target_data["extra_vars"] = self.get_evar()
-
-                self.state = self.prehooks[playbook]
-
-                if 'pre' in self.pb_hooks:
-                    self.hook_state = '{0}{1}'.format('pre', playbook)
-
-                #invoke the appropriate playbook
-                results[target] = self._invoke_playbook(playbook=playbook,
-                                                console=ansible_console)
-
-                if 'post' in self.pb_hooks:
-                    self.hook_state = '{0}{1}'.format('post', playbook)
-
-            return results
-
+            targets = set(pf.keys()).difference()
         else:
             raise  LinchpinError("One or more Invalid targets found")
+
+
+        for target in targets:
+            self.ctx.log_state('target: {0}, action: {1}\n'.format(
+                                                        target, playbook))
+            self.set_evar('topology', self.find_topology(
+                    pf[target]["topology"]))
+            if 'layout' in pf[target]:
+                self.set_evar('layout_file', (
+                    '{0}/{1}/{2}'.format(self.ctx.workspace,
+                                self.get_evar('layouts_folder'),
+                                pf[target]["layout"])))
+
+            # set the current target data
+            self.target_data = pf[target]
+            self.target_data["extra_vars"] = self.get_evar()
+
+            # note : changing the state triggers the hooks
+            self.pb_hooks = self.get_cfg('hookstates', playbook)
+            self.ctx.log_debug('calling: {0}{1}'.format('pre', playbook))
+
+            if 'pre' in self.pb_hooks:
+                self.hook_state = '{0}{1}'.format('pre', playbook)
+
+            #invoke the appropriate playbook
+            results[target] = self._invoke_playbook(playbook=playbook,
+                                            console=ansible_console)
+
+            if 'post' in self.pb_hooks:
+                self.hook_state = '{0}{1}'.format('post', playbook)
+
+        return results
 
 
     def lp_rise(self, pinfile, targets='all'):
