@@ -11,7 +11,7 @@ except ImportError:
     import ConfigParser as ConfigParser
 
 from linchpin.cli.context import LinchpinCliContext
-from linchpin.tests.mockdata.context import ContextData
+from linchpin.tests.mockdata.contextdata import ContextData
 
 
 def test_context_create():
@@ -42,7 +42,7 @@ def test_load_config():
     lpc = LinchpinCliContext()
     lpc.load_config(lpconfig=config_path)
 
-    assert_dict_equal.__self__.maxDiff = None
+#    assert_dict_equal.__self__.maxDiff = None
     assert_dict_equal(config_data, lpc.cfgs)
 
 
@@ -62,6 +62,26 @@ def setup_load_evars():
     cd.write_config_file(cfg_path)
 
 
+@with_setup(setup_load_config)
+def test_get_cfg():
+
+    lpc = LinchpinCliContext()
+    lpc.load_config(config_path)
+    cfg_value = lpc.get_cfg('hooks', 'up')
+
+    assert_equal(cfg_value, config_data['hooks']['up'])
+
+
+@with_setup(setup_load_config)
+def test_set_cfg():
+
+    lpc = LinchpinCliContext()
+    lpc.load_config(config_path)
+    lpc.set_cfg('test', 'key', 'value')
+
+    assert_equal(lpc.get_cfg('test', 'key'), lpc.cfgs['test']['key'])
+
+
 @with_setup(setup_load_evars)
 def test_load_global_evars():
 
@@ -70,6 +90,28 @@ def test_load_global_evars():
     lpc.load_global_evars()
 
     assert_dict_equal(evars_data, lpc.evars)
+
+
+@with_setup(setup_load_evars)
+def test_get_evar():
+
+    lpc = LinchpinCliContext()
+    lpc.load_config(cfg_path)
+    lpc.load_global_evars()
+    evar_value = lpc.get_evar('async')
+
+    assert_equal(evar_value, evars_data['async'])
+
+
+@with_setup(setup_load_evars)
+def test_set_evar():
+
+    lpc = LinchpinCliContext()
+    lpc.load_config(cfg_path)
+    lpc.load_global_evars()
+    lpc.set_evar('test', 'me')
+
+    assert_equal('me', lpc.evars['test'])
 
 
 def setup_logging_setup():
