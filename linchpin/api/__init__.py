@@ -207,7 +207,7 @@ class LinchpinAPI(object):
                                                 console=ansible_console)
 
                 if 'post' in self.pb_hooks:
-                    self.hook_state = '{0}{1}'.format('pre', playbook)
+                    self.hook_state = '{0}{1}'.format('post', playbook)
 
             return results
 
@@ -230,11 +230,16 @@ class LinchpinAPI(object):
                 self.target_data["extra_vars"] = self.get_evar()
 
                 self.state = self.prehooks[playbook]
+
+                if 'pre' in self.pb_hooks:
+                    self.hook_state = '{0}{1}'.format('pre', playbook)
+
                 #invoke the appropriate playbook
                 results[target] = self._invoke_playbook(playbook=playbook,
                                                 console=ansible_console)
 
-                self.state = self.posthooks[playbook]
+                if 'post' in self.pb_hooks:
+                    self.hook_state = '{0}{1}'.format('post', playbook)
 
             return results
 
