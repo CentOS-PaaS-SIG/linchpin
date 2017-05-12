@@ -8,8 +8,8 @@
 
 - name: "Provisioning AWS_EC2 Resource when not async"
   ec2:
-    aws_access_key: "{{ aws_access_key_id | default(omit) }}"
-    aws_secret_key: "{{  aws_secret_access_key | default(omit) }}"
+    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
     key_name: "{{ res_def['keypair'] }}"
     instance_type: "{{ res_def['flavor'] }}"
     image: "{{ res_def['image'] }}"
@@ -30,8 +30,8 @@
 
 - name: "Async:: Provisioning AWS_EC2 Resource"
   ec2:
-    aws_access_key: "{{ aws_access_key_id | default(omit) }}"
-    aws_secret_key: "{{  aws_secret_access_key | default(omit) }}"
+    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
     key_name: "{{ res_def['keypair'] }}"
     instance_type: "{{ res_def['flavor'] }}"
     image: "{{ res_def['image'] }}"
