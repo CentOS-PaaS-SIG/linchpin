@@ -13,11 +13,24 @@ description:
   - This module allows a user to fetch credentials on request and egister it as variable in ansible.
 
 options:
-  type:
+  name:
     description:
-      type of credential required
+      name of the credential file to be used 
     required: true
-
+  cred_type:
+    description:
+      credential type , type of credential to be used.
+      eg: aws, gcloud , openstack , etc.,
+    required: false
+  cred_path:
+    description:
+      credentials path where the credentials are to be stored
+    required: false
+  driver:
+    description:
+      defaults to file type. 
+    required: true
+      
 author: Samvaran Kashyap Rallabandi -
 '''
 
@@ -29,28 +42,71 @@ import os
 import shlex
 import tempfile
 import yaml
+import glob
+try:
+    import configparser as ConfigParser
+except ImportError:
+    import ConfigParser as ConfigParser
 
 
-def check_file_paths(module, *args):
-    for file_path in args:
-        if not os.path.exists(file_path):
-            module.fail_json(msg= "File not found %s not found" % (file_path))
-        if not os.access(file_path, os.R_OK):
-            module.fail_json(msg= "File not accesible %s not found" % (file_path))
-        if os.path.isdir(file_path):
-            module.fail_json(msg= "Recursive directory not supported  %s " % (file_path))
+class ConfigDict(ConfigParser.ConfigParser):
 
+    def as_dict(self):
+        d = dict(self._sections)
+        for k in d:
+            d[k] = dict(self._defaults, **d[k])
+            d[k].pop('__name__', None)
+        return d
+
+def list_files(path):
+    return glob.glob(path+"/*.*")
+
+def parse_file(filename):
+    cred_str = open(filename, "r").read()
+    try:
+        out = json.loads(cred_str)
+    except Exception as e:
+        try:
+            out = yaml.load(cred_str)
+        except Exception as e:
+            try:
+                config = ConfigDict()
+                f = open(filename)
+                config.readfp(f)
+                out = config.as_dict()
+                f.close()
+            except Exception as e:
+                module.fail_json(msg= "Error  {0} ".format(str(e)))
+    return out
+
+def get_cred(name, creds_path):
+    paths = creds_path.split(";")
+    files = []
+    for path in paths:
+        files = list_files(path)
+        for filename in files:
+            if name == filename.split("/")[-1].split(".")[0]:
+                out = parse_file(filename)
+                return out, path
+    module.fail_json(msg= "Error: Credential not found")
 def main():
+    global module
     module = AnsibleModule(
     argument_spec={
-            'type':     {'required': True, 'aliases': ['auth_type']},
-            'creds_store': {'required': False, 'aliases': ['credential_store']},
+            'name':     {'required': True, 'aliases': ['name']},
+            'cred_type':     {'required': False, 'aliases': ['credential_type']},
+            'cred_path': {'required': True, 'aliases': ['credential_store']},
+            'driver': {'required': True, 'aliases': ['driver_type']},
         },
         required_one_of=[],
         supports_check_mode=True
     )
+    name = module.params["name"]
+    cred_type = module.params["cred_type"]
+    cred_path = module.params["cred_path"]
+    driver_type = module.params["driver"]
+    output, path = get_cred(name, cred_path)
     changed = True
-    module.exit_json(changed=changed, output={})
+    module.exit_json(changed=changed, output=output, params=module.params, path=path)
 
-from ansible.module_utils.basic import *
 main()
