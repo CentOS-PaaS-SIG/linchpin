@@ -13,41 +13,43 @@ from linchpin.api.utils import yaml2json
 from linchpin.api.callbacks import PlaybookCallback
 from linchpin.hooks import LinchpinHooks
 from linchpin.hooks.state import State
-from linchpin.exceptions import LinchpinError 
+from linchpin.exceptions import LinchpinError
 
 
 class LinchpinAPI(object):
 
     def __init__(self, ctx):
+        """
+        FIXME: Write SOMETHING HERE
+        """
 
         self.ctx = ctx
-        base_path = '/'.join(os.path.dirname(__file__).split("/")[0:-2])
-        self.lp_path = '{0}/{1}'.format(base_path, self.ctx.cfgs['lp']['pkg'])
+        base_path = '/'.join(os.path.dirname(__file__).split('/')[0:-2])
+        pkg = self.get_cfg(section='lp',
+                        key='pkg',
+                        default='linchpin')
+        self.lp_path = '{0}/{1}'.format(base_path, pkg)
         self.set_evar('from_api', True)
 
-        self.playbook_pre_states = self.ctx.cfgs["playbook_pre_states"]
-        self.playbook_post_states = self.ctx.cfgs["playbook_post_states"]
-        self._state = None
-        self._state_observers = []
+        self.hook_state = None
+        self._hook_observers = []
         self.hooks = LinchpinHooks(self)
-        self.current_target_data = {}
+        self.target_data = {}
 
 
-    def get_cfg(self, section=None, key=None):
+    def get_cfg(self, section=None, key=None, default=None):
         """
-        Get the cfgs object
+        Get cfgs value(s) by section and/or key, or the whole cfgs object
 
         :param section: section from ini-style config file
 
         :param key: key to get from config file, within section
+
+        :param default: default value to return if nothing is found.
+        Does not apply if section is not provided.
         """
 
-        if section:
-            s = self.ctx.cfgs.get(section, None)
-            if key and s:
-                return self.ctx.cfgs[section].get(key, None)
-            return s
-        return self.ctx.cfgs
+        return self.ctx.get_cfg(section=section, key=key, default=default)
 
 
     def set_cfg(self, section, key, value):
@@ -63,59 +65,20 @@ class LinchpinAPI(object):
         :param value: value to set into section within config file
         """
 
-        if not self.ctx.cfgs.get(section):
-            self.ctx.cfgs.update({section: {}})
-
-        self.ctx.cfgs[section][key] = value
+        self.ctx.set_cfg(section, key, value)
 
 
-    def get_evar(self, key=None):
+    def get_evar(self, key=None, default=None):
         """
         Get the current evars (extra_vars)
 
         :param key: key to use
+
+        :param default: default value to return if nothing is found (default: None)
         """
 
-        if key:
-            return self.ctx.evars.get(key, None)
-        return self.ctx.evars
+        return self.ctx.get_evar(key, default)
 
-    @property
-    def state(self):
-        """
-        getter function for _state property of the API object. 
-        """
-
-        return self._state
-
-    @state.setter
-    def state(self, state):
-        """
-        _state property setter , splits the state string in substates and sets
-        linchpin.state object
-        :param state: valid state string mentioned in linchpin.conf
-        """
-
-        # call run_hooks after state is being set
-        self.ctx.log_debug("State change initiated")
-        value = state.split("::")
-        state = value[0]
-        sub_state = value[-1] if len(value) > 1 else None
-        self._state = State(state,
-                            sub_state,
-                            self)
-        for callback in self._state_observers:
-            callback(self._state)
-
-
-    def bind_to_state(self, callback):
-        """
-        Function used by LinchpinHooksclass to add callbacks
-
-        :param callback: callback function 
-        """
-
-        self._state_observers.append(callback)
 
     def set_evar(self, key, value):
         """
@@ -127,7 +90,47 @@ class LinchpinAPI(object):
         :param value: value to set into evars
         """
 
-        self.set_cfg('evars', key, value)
+        self.ctx.set_evar(key, value)
+
+
+    @property
+    def hook_state(self):
+        """
+        getter function for hook_state property of the API object
+        """
+
+        return self.hook_state
+
+
+    @hook_state.setter
+    def hook_state(self, hook_state):
+        """
+        hook_state property setter , splits the hook_state string in subhook_state and sets
+        linchpin.hook_state object
+
+        :param hook_state: valid hook_state string mentioned in linchpin.conf
+        """
+
+        # call run_hooks after hook_state is being set
+        if hook_state is None:
+            return
+        else:
+#            hook_state = hook_state.split('::')[0]
+            self.ctx.log_debug('hook {0} initiated'.format(hook_state))
+            self._hook_state = State(hook_state, None, self.ctx)
+
+            for callback in self._hook_observers:
+                callback(self._hook_state)
+
+
+    def bind_to_hook_state(self, callback):
+        """
+        Function used by LinchpinHooksclass to add callbacks
+
+        :param callback: callback function
+        """
+
+        self._hook_observers.append(callback)
 
 
     def run_playbook(self, pinfile, targets='all', playbook='up'):
@@ -148,8 +151,8 @@ class LinchpinAPI(object):
 
         # playbooks check whether from_cli is defined
         # if not, vars get loaded from linchpin.conf
-        self.ctx.evars['from_cli'] = True
-        self.ctx.evars['lp_path'] = self.lp_path
+        self.set_evar('from_cli', True)
+        self.set_evar('lp_path', self.lp_path)
 
         #do we display the ansible output to the console?
         ansible_console = False
@@ -159,65 +162,79 @@ class LinchpinAPI(object):
         if not ansible_console:
             ansible_console = self.ctx.verbose
 
-        self.ctx.evars['default_resources_path'] = '{0}/{1}'.format(
-                                self.ctx.workspace,
-                                self.ctx.evars['resources_folder'])
-        self.ctx.evars['default_inventories_path'] = '{0}/{1}'.format(
-                                self.ctx.workspace,
-                                self.ctx.evars['inventories_folder'])
-        self.ctx.evars['state'] = "present"
+        self.set_evar('default_resources_path', '{0}/{1}'.format(
+                                            self.ctx.workspace,
+                                            self.get_evar('resources_folder',
+                                                    default='resources')))
+
+        self.set_evar('default_inventories_path', '{0}/{1}'.format(
+                                        self.ctx.workspace,
+                                        self.get_evar('inventories_folder',
+                                                default='inventories')))
+        self.set_evar('state', 'present')
 
         if playbook == 'destroy':
-            self.ctx.evars['state'] = "absent"
+            self.set_evar('state', 'absent')
 
         results = {}
 
-        if set(targets) == set(pf.keys()).intersection(targets) and len(targets) > 0:
+        if (set(targets) == set(pf.keys()).intersection(targets) and
+                                                        len(targets) > 0):
+
             for target in targets:
-                self.ctx.log_state('target: {0}, action: {1}'.format(target, playbook))
-                self.ctx.evars['topology'] = self.find_topology(
-                        pf[target]["topology"])
+                self.ctx.log_state('target: {0}, action: {1}'.format(
+                                                            target, playbook))
+                self.set_evar('topology', self.find_topology(
+                        pf[target]["topology"]))
                 if 'layout' in pf[target]:
-                    self.ctx.evars['layout_file'] = (
+                    self.set_evar('layout_file', (
                         '{0}/{1}/{2}'.format(self.ctx.workspace,
-                                    self.ctx.evars['layouts_folder'],
-                                    pf[target]["layout"]))
-                # set the current target data 
-                self.current_target_data = pf[target]
-                self.current_target_data["extra_vars"] = self.ctx.evars
-                # set the state to preup/predown based on playbook
+                                    self.get_evar('layouts_folder'),
+                                    pf[target]["layout"])))
+
+                # set the current target data
+                self.target_data = pf[target]
+                self.target_data["extra_vars"] = self.get_evar()
+
                 # note : changing the state triggers the hooks
-                self.state = self.playbook_pre_states[playbook]
+                self.pb_hooks = self.get_cfg('hookstates', playbook)
+                self.ctx.log_debug('calling: {0}{1}'.format('pre', playbook))
+                if 'pre' in self.pb_hooks:
+                    self.hook_state = '{0}{1}'.format('pre', playbook)
+
                 #invoke the appropriate playbook
                 results[target] = self._invoke_playbook(playbook=playbook,
                                                 console=ansible_console)
 
-                self.state = self.playbook_post_states[playbook]
+                if 'post' in self.pb_hooks:
+                    self.hook_state = '{0}{1}'.format('pre', playbook)
 
             return results
 
         elif len(targets) == 0:
             for target in set(pf.keys()).difference():
-                self.ctx.log_state('target: {0}, action: {1}'.format(target, playbook))
-                self.ctx.evars['topology'] = self.find_topology(
-                        pf[target]["topology"])
+                self.ctx.log_state('target: {0}, action: {1}'.format(
+                                                            target, playbook))
+                self.set_evar('topology', self.find_topology(
+                        pf[target]["topology"]))
                 if 'layout' in pf[target]:
-                    self.ctx.evars['layout_file'] = (
+                    self.set_evar('layout_file', (
                         '{0}/{1}/{2}'.format(self.ctx.workspace,
-                                    self.ctx.evars['layouts_folder'],
-                                    pf[target]["layout"]))
+                                    self.get_evar('layouts_folder'),
+                                    pf[target]["layout"])))
+
                 # set the state to preup/predown based on playbook
                 # note : changing the state triggers the hooks
                 # set the current target data
-                self.current_target_data = pf[target]
-                self.current_target_data["extra_vars"] = self.ctx.evars
+                self.target_data = pf[target]
+                self.target_data["extra_vars"] = self.get_evar()
 
-                self.state = self.playbook_pre_states[playbook]
+                self.state = self.prehooks[playbook]
                 #invoke the appropriate playbook
                 results[target] = self._invoke_playbook(playbook=playbook,
                                                 console=ansible_console)
 
-                self.state = self.playbook_post_states[playbook]
+                self.state = self.posthooks[playbook]
 
             return results
 
@@ -317,7 +334,7 @@ class LinchpinAPI(object):
 
         topo_path = os.path.realpath('{0}/{1}'.format(
                 self.ctx.workspace,
-                self.ctx.evars['topologies_folder']))
+                self.get_evar('topologies_folder', 'topologies')))
 
         topos = os.listdir(topo_path)
 
@@ -336,13 +353,14 @@ class LinchpinAPI(object):
         :param console: Whether to display the ansible console (default: True)
         """
 
-        pb_path = '{0}/{1}'.format(self.lp_path, self.ctx.evars['playbooks_folder'])
-        module_path = '{0}/{1}/'.format(pb_path, self.ctx.cfgs['lp']['module_folder'])
-        playbook_path = '{0}/{1}'.format(pb_path, self.ctx.cfgs['playbooks'][playbook])
+        pb_path = '{0}/{1}'.format(self.lp_path,
+                            self.ctx.get_evar('playbooks_folder', 'provision'))
+        module_path = '{0}/{1}/'.format(pb_path, self.get_cfg('lp', 'module_folder', 'library'))
+        playbook_path = '{0}/{1}'.format(pb_path, self.get_cfg('playbooks', playbook, 'site.yml'))
 
         loader = DataLoader()
         variable_manager = VariableManager()
-        variable_manager.extra_vars = self.ctx.evars
+        variable_manager.extra_vars = self.get_evar()
         inventory = Inventory(loader=loader,
                               variable_manager=variable_manager,
                               host_list=[])

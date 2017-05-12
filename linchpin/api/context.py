@@ -121,6 +121,70 @@ class LinchpinContext(object):
         self.evars = self.cfgs.get('evars', {})
 
 
+    def get_cfg(self, section=None, key=None, default=None):
+        """
+        Get cfgs value(s) by section and/or key, or the whole cfgs object
+
+        :param section: section from ini-style config file
+
+        :param key: key to get from config file, within section
+
+        :param default: default value to return if nothing is found.
+        Does not apply if section is not provided.
+        """
+
+        if section:
+            s = self.cfgs.get(section, default)
+            if key and s:
+                return self.cfgs[section].get(key, default)
+            return s
+        return self.cfgs
+
+
+    def set_cfg(self, section, key, value):
+        """
+        Set a value in cfgs. Does not persist into a file,
+        only during the current execution.
+
+        :param section: section within ini-style config file
+        :param key: key to use
+        :param value: value to set into section within config file
+        """
+
+        if not self.cfgs.get(section):
+            self.cfgs.update({section: {}})
+
+        self.cfgs[section][key] = value
+
+
+    def get_evar(self, key=None, default=None):
+        """
+        Get the current evars (extra_vars)
+
+        :param key: key to use
+
+        :param default: default value to return if nothing is found (default: None)
+        """
+
+        if key:
+            return self.evars.get(key, default)
+
+        return self.evars
+
+
+    def set_evar(self, key, value):
+        """
+        Set a value into evars (extra_vars). Does not persist into a file,
+        only during the current execution.
+
+        :param key: key to use
+
+        :param value: value to set into evars
+        """
+
+        self.set_cfg('evars', key, value)
+
+
     def setup_logging(self):
 
         """
