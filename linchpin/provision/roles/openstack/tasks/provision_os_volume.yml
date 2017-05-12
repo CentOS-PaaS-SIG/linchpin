@@ -1,11 +1,7 @@
 ---
 - name: "provision/deprovision the os volume resource type"
   os_volume:
-    auth:
-      auth_url: "{{ endpoint }}"
-      username: "{{ username }}"
-      password: "{{ password }}"
-      project_name: "{{ project }}"
+    auth: "{{ auth_var | provide_default(omit) }}"
     state: "{{ state }}"
     size: "{{ res_def['size'] }}"
     display_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
@@ -18,19 +14,12 @@
 
 - name: "provision/deprovision cinder volumes when count specified"
   os_volume:
-    auth:
-      auth_url: "{{ vol.0 }}"
-      username: "{{ vol.1 }}"
-      password: "{{ vol.2 }}"
-      project_name: "{{ vol.3 }}"
-    state: "{{ vol.6 }}"
-    size: "{{ vol.5 }}"
-    display_name: "{{ vol.4 }}_{{ vol.7 }}"
+    auth: "{{ vol.0 }}"
+    state: "{{ vol.3 }}"
+    size: "{{ vol.2 }}"
+    display_name: "{{ vol.1 }}_{{ vol.4 }}"
   with_nested:
-    - ["{{ endpoint }}"]
-    - ["{{ username }}"]
-    - ["{{ password }}"]
-    - ["{{ project }}"]
+    - ["{{ auth_var | provide_default(omit) }}"]
     - ["{{ res_def['res_name'] | default(res_def['name']) }}"]
     - ["{{ res_def['size'] }}"]
     - ["{{ state }}"]
@@ -48,19 +37,12 @@
 
 - name: "Async:: provision/deprovision cinder volumes when count specified"
   os_volume:
-    auth:
-      auth_url: "{{ vol.0 }}"
-      username: "{{ vol.1 }}"
-      password: "{{ vol.2 }}"
-      project_name: "{{ vol.3 }}"
-    state: "{{ vol.6 }}"
-    size: "{{ vol.5 }}"
-    display_name: "{{ vol.4 }}_{{ vol.7 }}"
+    auth: "{{ vol.0 }}"
+    state: "{{ vol.3 }}"
+    size: "{{ vol.2 }}"
+    display_name: "{{ vol.1 }}_{{ vol.4 }}"
   with_nested:
-    - ["{{ endpoint }}"]
-    - ["{{ username }}"]
-    - ["{{ password }}"]
-    - ["{{ project }}"]
+    - ["{{ auth_var | provide_default(omit) }}"]
     - ["{{ res_def['res_name'] | default(res_def['name']) }}"]
     - ["{{ res_def['size'] }}"]
     - ["{{ state }}"]

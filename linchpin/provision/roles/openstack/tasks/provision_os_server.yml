@@ -1,11 +1,7 @@
 - name: "provision/deprovision os_server resources by looping on count"
   os_server2:
     state: "{{ state }}"
-    auth:
-      auth_url: "{{ endpoint }}"
-      username: "{{ username }}"
-      password: "{{ password }}"
-      project_name: "{{ project }}"
+    auth: "{{ auth_var | provide_default(omit) }}"
     name: "{{ res_grp_name }}_{{ res_def['res_name'] | default(res_def['name']) }}"
     image: "{{ res_def['image'] }}"
     key_name: "{{ res_def['keypair'] }}"
@@ -26,11 +22,7 @@
 - name: "provision/deprovision os_server resources by looping on count"
   os_server2:
     state: "{{ state }}"
-    auth:
-      auth_url: "{{ endpoint }}"
-      username: "{{ username }}"
-      password: "{{ password }}"
-      project_name: "{{ project }}"
+    auth: "{{ auth_var | provide_default(omit) }}"
     name: "{{ res_grp_name }}_{{ res_def['res_name'] | default(res_def['name']) }}"
     image: "{{ res_def['image'] }}"
     key_name: "{{ res_def['keypair'] }}"

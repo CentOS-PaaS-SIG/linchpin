@@ -5,11 +5,7 @@
 
 - name: "provision/deprovision swift containers"
   os_object:
-    auth:
-      auth_url: "{{ endpoint }}" 
-      username: "{{ username }}"
-      password: "{{ password }}"
-      project_name: "{{ project }}"
+    auth: "{{ auth_var | provide_default(omit) }}"
     container: "{{ res_def['res_name'] | default(res_def['name']) }}"
     container_access: "{{ res_def['access'] | default('private') }}"
     wait: yes
@@ -18,20 +14,13 @@
 
 - name: "provision/deprovision swift containers when count specified"
   os_object:
-    auth:
-      auth_url: "{{ container.0 }}" 
-      username: "{{ container.1 }}"
-      password: "{{ container.2 }}"
-      project_name: "{{ container.3 }}"
-    container: "{{ container.4 }}_{{ container.7 }}"
-    container_access: "{{ container.5 }}"
+    auth: "{{ container.0 }}"
+    container: "{{ container.1 }}_{{ container.4 }}"
+    container_access: "{{ container.2 }}"
     wait: yes
-    state: "{{ container.6 }}"
+    state: "{{ container.3 }}"
   with_nested:
-    - ["{{ endpoint }}"]
-    - ["{{ username }}"]
-    - ["{{ password }}"]
-    - ["{{ project }}"]
+    - ["{{ auth_var | provide_default(omit) }}"]
     - ["{{ res_def['res_name'] | default(res_def['name']) }}"]
     - ["{{ res_def['access'] | default('private') }}"]
     - ["{{ state }}"]
@@ -48,20 +37,13 @@
 
 - name: "Async:: provision/deprovision swift containers when count specified"
   os_object:
-    auth:
-      auth_url: "{{ container.0 }}"
-      username: "{{ container.1 }}"
-      password: "{{ container.2 }}"
-      project_name: "{{ container.3 }}"
-    container: "{{ container.4 }}_{{ container.7 }}"
-    container_access: "{{ container.5 }}"
+    auth: "{{ container.0 }}"
+    container: "{{ container.1 }}_{{ container.4 }}"
+    container_access: "{{ container.2 }}"
     wait: yes
-    state: "{{ container.6 }}"
+    state: "{{ container.3 }}"
   with_nested:
-    - ["{{ endpoint }}"]
-    - ["{{ username }}"]
-    - ["{{ password }}"]
-    - ["{{ project }}"]
+    - ["{{ auth_var | provide_default(omit) }}"]
     - ["{{ res_def['res_name'] | default(res_def['name']) }}"]
     - ["{{ res_def['access'] | default('private') }}"]
     - ["{{ state }}"]
