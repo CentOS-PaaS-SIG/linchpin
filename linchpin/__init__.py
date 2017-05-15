@@ -60,12 +60,15 @@ class LinchpinAliases(click.Group):
 @click.option('-w', '--workspace', type=click.Path(), envvar='WORKSPACE',
         help='Use the specified workspace if the familiar Jenkins $WORKSPACE environment variable '
         'is not set')
+@click.option('-c', '--creds', type=click.Path(), envvar='LP_CREDS',
+        help='Use the specified credentials path if RKSPACE environment variable '
+        'is not set')
 @click.option('-v', '--verbose', is_flag=True, default=False,
         help='Enable verbose output')
 @click.option('--version', is_flag=True,
         help='Prints the version and exits')
 @pass_context
-def runcli(ctx, config, workspace, verbose, version):
+def runcli(ctx, config, workspace, creds, verbose, version):
     """linchpin: hybrid cloud orchestration"""
 
     ctx.verbose = verbose
@@ -81,7 +84,10 @@ def runcli(ctx, config, workspace, verbose, version):
     if workspace is not None:
         ctx.workspace = os.path.realpath(os.path.expanduser(workspace))
 
+    ctx.creds_path = os.path.realpath(os.path.expanduser(workspace))
+
     ctx.log_debug("ctx.workspace: {0}".format(ctx.workspace))
+    ctx.log_debug("ctx.creds_path: {0}".format(ctx.creds_path))
 
     ctx.pinfile = ctx.cfgs['init']['pinfile']
 
