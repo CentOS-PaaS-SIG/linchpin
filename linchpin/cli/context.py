@@ -6,19 +6,22 @@ import ast
 import shutil
 import logging
 
-try:
-    import configparser as ConfigParser
-except ImportError:
-    import ConfigParser as ConfigParser
 from distutils import dir_util
 from collections import OrderedDict
 from jinja2 import Environment, PackageLoader
 
+try:
+    import configparser as ConfigParser
+except ImportError:
+    import ConfigParser as ConfigParser
+
+from linchpin.api.context import LinchpinContext
 from linchpin.exceptions import LinchpinError
 from linchpin.cli import LinchpinCli
 from linchpin.version import __version__
 
-class LinchpinContext(object):
+
+class LinchpinCliContext(LinchpinContext):
     """
     LPContext object, which will be used to manage the cli,
     and load the configuration file.
@@ -27,27 +30,44 @@ class LinchpinContext(object):
 
     def __init__(self):
         """
-        Initializes basic variables, loads the configuration, sets up logging.
+        Initializes basic variables
         """
 
-        self.version = __version__
-        self.verbose = False
+        # The following values are set in the parent class
+        #
+        # self.version = __version__
+        # self.verbose = False
+        #
+        # lib_path = '{0}'.format(os.path.dirname(
+        #                       os.path.realpath(__file__))).rstrip('/')
+        # self.lib_path = os.path.realpath(os.path.join(lib_path, os.pardir))
+        #
+        #self.workspace = os.path.realpath(os.path.curdir)
+
+        LinchpinContext.__init__(self)
 
 
     def load_config(self, lpconfig=None):
         """
         Create self.cfgs from the linchpin configuration file.
+        .. note:: Overrides load_config in linchpin.api.LinchpinContext
 
         These are the only hardcoded values, which are used to find the config
-        file. The search path, is a first found of the following:
+        file. The search path, is a first found of the following::
+
+          * $PWD/linchpin.conf
+          * ~/.linchpin.conf
+          * /etc/linchpin.conf
+          * linchpin/library/path/linchpin.conf
+
+        Alternatively, a full path to the linchpin configuration file
+        can be passed.
+
+        :param lpconfig: absolute path to a linchpin config (default: None)
 
         """
 
-        self.cfgs = OrderedDict()
-
-        lib_path = '{0}'.format(os.path.dirname(
-            os.path.realpath(__file__))).rstrip('/')
-        self.lib_path = os.path.abspath(os.path.join(lib_path, os.pardir))
+        self.cfgs = {}
 
         expanded_path = None
         config_found = False
@@ -103,19 +123,6 @@ class LinchpinContext(object):
                         self.cfgs[section][k] = v
 
 
-
-    def load_global_evars(self):
-
-        """
-        Instantiate the evars variable, then load the variables from the
-        'evars' section in linchpin.conf. This will then be passed to
-        invoke_linchpin, which passes them to the Ansible playbook as needed.
-
-        """
-
-        self.evars = self.cfgs.get('evars', None)
-
-
     def setup_logging(self):
 
         """
@@ -158,7 +165,16 @@ class LinchpinContext(object):
 
 
     def log(self, msg, **kwargs):
-        """Logs a message to a logfile"""
+        """
+        Logs a message to a logfile or the console
+
+        :param msg: message to log
+
+        :param lvl: keyword argument defining the log level
+
+        :param msg_type: keyword argument giving more flexibility.
+        Only `STATE` is currently implemented.
+        """
 
         lvl = kwargs.get('level')
         msg_type = kwargs.get('msg_type')

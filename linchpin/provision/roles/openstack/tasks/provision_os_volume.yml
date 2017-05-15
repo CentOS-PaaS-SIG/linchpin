@@ -1,10 +1,11 @@
+---
 - name: "provision/deprovision the os volume resource type"
   os_volume:
     auth:
-      auth_url: "{{ endpoint }}" 
+      auth_url: "{{ endpoint }}"
       username: "{{ username }}"
       password: "{{ password }}"
-      project_name: "{{ project }}" 
+      project_name: "{{ project }}"
     state: "{{ state }}"
     size: "{{ res_def['size'] }}"
     display_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
@@ -36,7 +37,7 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: vol
-  register: res_def_output 
+  register: res_def_output
   when: res_def['count'] is defined and not async
 
 - name: "Append outputitem to topology_outputs"
