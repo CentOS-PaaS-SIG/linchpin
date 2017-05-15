@@ -64,7 +64,10 @@
                 "keypair": {
                     "type":"string"
                 },
-                "fip_pool": {
+		            "fip_pool": {
+		                "type":"string"
+		            },
+		            "security_groups": {
                     "type":"string"
                 }
             },
