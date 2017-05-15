@@ -33,6 +33,12 @@ class LinchpinAPI(object):
 
         self.hook_state = None
         self._hook_observers = []
+        self.playbook_pre_states = self.get_cfg('playbook_pre_states',
+                                                {'up': 'preup', 
+                                                 'destroy': 'predestroy'})
+        self.playbook_post_states = self.get_cfg('playbook_post_states',
+                                                 {'up': 'postup',
+                                                  'destroy': 'postdestroy'})
         self.hooks = LinchpinHooks(self)
         self.target_data = {}
 
