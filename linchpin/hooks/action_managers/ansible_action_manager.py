@@ -195,6 +195,8 @@ class AnsibleActionManager(ActionManager):
             e_vars = action.get("extra_vars", {})
             extra_vars.update(e_vars)
             if self.context:
-                extra_vars["linchpin_context"] = self.get_ctx_params()
+                #extra_vars["linchpin_context"] = self.get_ctx_params()
+                extra_vars.update(self.get_ctx_params())
+
             pbex = self.get_ansible_runner(playbook, extra_vars)
             results = pbex.run()
