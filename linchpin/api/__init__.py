@@ -2,6 +2,7 @@
 
 import os
 import ast
+import yaml
 from collections import namedtuple
 
 from ansible.inventory import Inventory
@@ -138,6 +139,23 @@ class LinchpinAPI(object):
 
         self._hook_observers.append(callback)
 
+    def set_magic_vars(self):
+        try:
+            t_f = open(self.get_evar("topology"), "r").read()
+            t_f = yaml.load(t_f)
+            topology_name = t_f["topology_name"]
+        except Exception as e:
+            ctx.log_info("{0}".format(str(e)))
+            topology_name = self.get_evar("topology").split("/")[-1]
+            # defaults to file name if there is any error
+            topology_name = topology_name.split(".")[-2]
+        inv_file = '{0}/{1}/{2}{3}'.format(self.ctx.workspace,
+                        self.get_evar('inventories_folder'),
+                        topology_name,
+                        self.get_cfg('extensions','inventory' ,'inventory')
+                    )
+        self.set_evar('inventory_file', inv_file)
+        self.set_evar('topology_name', topology_name)
 
     def run_playbook(self, pinfile, targets='all', playbook='up'):
 
@@ -204,6 +222,9 @@ class LinchpinAPI(object):
                     '{0}/{1}/{2}'.format(self.ctx.workspace,
                                 self.get_evar('layouts_folder'),
                                 pf[target]["layout"])))
+
+            # parse topology_file and set inventory_file
+            self.set_magic_vars()
 
             # set the current target data
             self.target_data = pf[target]

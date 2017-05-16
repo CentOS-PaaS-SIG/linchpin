@@ -95,22 +95,16 @@ class LinchpinHooks(object):
         that is being set. these parameters are based topology name.
         '''
 
-        topology = self.api.target_data['topology']
-        name = topology.split('/')[-1].split('.')[-2]
-        inv_file = '{0}{1}'.format(name,
-                            self.api.get_cfg('extensions', 'inventory'))
-        res_file = '{0}{1}'.format(name,
+        topology_name = self.api.get_evar("topology_name")
+
+        res_file = '{0}{1}'.format(topology_name,
                             self.api.get_cfg('extensions', 'resource'))
-        inv_file = '{0}/{1}'.format(
-           self.api.target_data['extra_vars']['default_inventories_path'],
-           inv_file
-           )
         res_file = '{0}/{1}'.format(
                self.api.target_data['extra_vars']['default_resources_path'],
                res_file
                )
-        self.api.target_data['extra_vars']['inventory_file'] = inv_file
         self.api.target_data['extra_vars']['resource_file'] = res_file
+        self.api.target_data['extra_vars']['inventory_file'] = self.api.get_evar("inventory_file")
 
 
     def run_hooks(self, state, is_global=False):
@@ -133,13 +127,14 @@ class LinchpinHooks(object):
 
         hooks_data = self.api.target_data.get('hooks', None)
 
-        if hooks_data.has_key(str(state)):
+        if hooks_data and hooks_data.has_key(str(state)):
             self.api.ctx.log_debug('running {0} hooks'.format(state))
 
             self.prepare_ctx_params()
 
             # fetches all the state_data , ie., all the action blocks inside
             # state of the target
+
             state_data = hooks_data.get(str(state), None)
 
             # Print out error message if the hooks are not found
