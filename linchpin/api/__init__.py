@@ -191,7 +191,7 @@ class LinchpinAPI(object):
                                             self.get_evar('resources_folder',
                                                     default='resources')))
 
-        self.set_evar('default_inventories_path', '{0}/{1}'.format(
+        self.set_evar('inventory_dir', '{0}/{1}'.format(
                                         self.ctx.workspace,
                                         self.get_evar('inventories_folder',
                                                 default='inventories')))

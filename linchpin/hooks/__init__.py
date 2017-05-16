@@ -105,6 +105,7 @@ class LinchpinHooks(object):
                )
         self.api.target_data['extra_vars']['resource_file'] = res_file
         self.api.target_data['extra_vars']['inventory_file'] = self.api.get_evar("inventory_file")
+        self.api.target_data['extra_vars']['inventory_dir'] = self.api.get_evar("inventory_dir")
 
 
     def run_hooks(self, state, is_global=False):
