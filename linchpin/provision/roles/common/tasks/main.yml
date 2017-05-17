@@ -92,7 +92,7 @@
     os_res_grps: "{{  filtered_res_grps['openstack'] | default([]) }}"
     aws_res_grps: "{{ filtered_res_grps['aws'] | default([]) }}"
     gcloud_res_grps: "{{ filtered_res_grps['gcloud'] | default([]) }}"
-    duffy_res_grps: "{{ filtered_res_grps['duffy'] | default([]) }}"
+    duffy_res_grps: "{{ filtered_res_grps['duffy_node'] | default([]) }}"
     libvirt_res_grps: "{{ filtered_res_grps['libvirt'] | default([])}}"
     rax_res_grps: "{{ filtered_res_grps['rackspace'] | default([]) }}"
     bkr_res_grps: "{{ filtered_res_grps['beaker'] | default([]) }}"

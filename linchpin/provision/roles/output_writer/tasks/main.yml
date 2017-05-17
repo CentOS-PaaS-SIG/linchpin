@@ -98,7 +98,7 @@
 - name: "Generate outputs when async is true"
   template:
     src: "../templates/output_formatter.j2"
-    dest: "{{ resources_file | default( default_resources_path+'/'+outputs.topology_name+'.output.yaml' ) }}"
+    dest: "{{ resources_file | default( default_resources_path+'/'+outputs.topology_name+'.output' ) }}"
   when: state == "present" and async and output
 
 - name: "set name of the resources_file for inventory generation"
