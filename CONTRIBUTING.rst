@@ -1,7 +1,7 @@
-Linch-Pin Contributions Welcome
+LinchPin Contributions Welcome
 -------------------------------
 
-Thank you for desiring to provide contributions to the Linch-Pin project.
+Thank you for desiring to provide contributions to the LinchPin project.
 This handy guide should provide simple guidelines for getting started,
 submitting a patch, etc.
 
@@ -12,7 +12,7 @@ Any questions regarding this guide, or in general? Please feel free to
 Cloning the Repository
 ++++++++++++++++++++++
 
-To start contributing to the Linch-Pin project, please fork the repository.
+To start contributing to the LinchPin project, please fork the repository.
 Documentation for forking can be found `here
 <https://help.github.com/articles/fork-a-repo/>`_.
 
@@ -56,7 +56,7 @@ the upstream repository is a read-only repository (indicated by git://).
 Make a Change
 +++++++++++++
 
-To make a change to linch-pin, it is recommended to create a feature branch.
+To make a change to linchpin, it is recommended to create a feature branch.
 In this way, each feature can track its changes and not conflict with others.
 
 .. code-block:: bash
@@ -101,7 +101,7 @@ submit a Pull Request. Please follow the github article,
 
 Submit the Pull Request (PR) against the ``develop`` branch.
 
-.. note:: The Linch-Pin project works from the ``develop`` branch. As features
+.. note:: The LinchPin project works from the ``develop`` branch. As features
     are completed toward the next release (currently `1.0.0,
     <https://github.com/CentOS-PaaS-SIG/linch-pin/milestone/6>`_).
 
@@ -157,6 +157,32 @@ an uncommitted, but changed file. Stash the changes, and rerun the pull.
 
     no changes added to commit (use "git add" and/or "git commit -a")
     Dropped refs/stash@{0} (6593564022ce350be91e44d71af2a16c0825524c)
+
+
+Release Process
++++++++++++++++
+
+To better familiarize contributors with the development model used by LinchPin,
+there are two basic trees used to manage development. The master and
+develop upstream branches.
+
+The master branch tracks what is currently in production and stable. The
+develop branch tracks current and future features. In the state as of 15 May
+2017, the latest release is 0.9.1. In development (develop branch), the work
+being done is focusing on releasing a new 1.0.0 release. Currently at 1.0.0a5.
+
+As a release approaches, there will be three basic stages in develop.
+
+  1. New feature development, unstable development
+  2. Alpha versions, indicated by updating version.py (eg. 1.0.0a3). These
+  updates are not ready for production, but are approaching stable. Generally
+  this implies feature completeness, but not fully vetted, tested, etc.
+  3. Beta versions, indicated by updating version.py (eg. 1.0.0b2). These
+  updates are very close to production. Once the release is stable, the beta
+  (b2) will be removed from the version and pushed to the master branch.
+
+Once a release is pushed to master, it will be tagged and released to pypi,
+followed (hopefully) with an RPM release.
 
 
 Remove Feature Branch
