@@ -21,7 +21,9 @@ class LinchpinAPI(object):
 
     def __init__(self, ctx):
         """
-        FIXME: Write SOMETHING HERE
+        LinchpinAPI constructor
+        :param ctx: context object from api/context.py
+
         """
 
         self.ctx = ctx
@@ -140,6 +142,10 @@ class LinchpinAPI(object):
         self._hook_observers.append(callback)
 
     def set_magic_vars(self):
+        """
+        Function inbuilt to set magic vars for ansible context
+        """
+
         try:
             t_f = open(self.get_evar("topology"), "r").read()
             t_f = yaml.load(t_f)
@@ -158,7 +164,6 @@ class LinchpinAPI(object):
         self.set_evar('topology_name', topology_name)
 
     def run_playbook(self, pinfile, targets='all', playbook='up'):
-
         """
         This function takes a list of targets, and executes the given
         playbook (provison, destroy, etc.) for each provided target.
@@ -248,7 +253,6 @@ class LinchpinAPI(object):
 
 
     def lp_rise(self, pinfile, targets='all'):
-
         """
         DEPRECATED
 
@@ -259,7 +263,6 @@ class LinchpinAPI(object):
 
 
     def lp_up(self, pinfile, targets='all'):
-
         """
         This function takes a list of targets, and provisions them according
         to their topology. If an layout argument is provided, an inventory
@@ -276,7 +279,6 @@ class LinchpinAPI(object):
 
 
     def lp_drop(self, pinfile, targets):
-
         """
         DEPRECATED
 
@@ -287,7 +289,6 @@ class LinchpinAPI(object):
 
 
     def lp_destroy(self, pinfile, targets='all'):
-
         """
         This function takes a list of targets, and performs a destructive
         teardown, including undefining nodes, according to the target.
@@ -305,7 +306,6 @@ class LinchpinAPI(object):
 
 
     def lp_down(self, pinfile, targets='all'):
-
         """
         This function takes a list of targets, and performs a shutdown on
         nodes in the target's topology. Only providers which support shutdown
@@ -326,8 +326,6 @@ class LinchpinAPI(object):
 
 
     def find_topology(self, topology):
-
-
         """
         Find the topology to be acted upon. This could be pulled from a
         registry.
@@ -350,7 +348,6 @@ class LinchpinAPI(object):
 
 
     def _invoke_playbook(self, playbook='up', console=True):
-
         """
         Uses the Ansible API code to invoke the specified linchpin playbook
 

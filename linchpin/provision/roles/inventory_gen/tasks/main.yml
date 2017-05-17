@@ -27,7 +27,7 @@
 
 - name: "Updating inventory_file with the absolute path"
   set_fact:
-    inventory_file: "{{ inventory_file | default( default_inventories_path+'/'+outputs.topology_name ) }}"
+    inventory_file: "{{ inventory_file | default( inventory_dir+'/'+outputs.topology_name ) }}"
 
 - name: "Generate Generic Inventory"
   template:

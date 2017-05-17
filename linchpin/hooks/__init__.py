@@ -1,4 +1,4 @@
-'''
+"""
 example Pinfile for reference::
 ---
 openstack:
@@ -44,7 +44,7 @@ openstack:
               vars: test_var.yaml
               extra_vars: { 'testvar': 'world'}
 
-'''
+"""
 
 import pprint
 import ast
@@ -54,10 +54,10 @@ from linchpin.hooks.action_managers import ACTION_MANAGERS
 from linchpin.exceptions import ActionManagerError
 
 class ActionBlockRouter(object):
-    '''
-    proxy pattern implementation for fetching actionmanagers by name
+    """
+    Proxy pattern implementation for fetching actionmanagers by name
+    """
 
-    '''
     def __init__(self, name, *args, **kwargs):
 
         self.__implementation = self.__get_implementation(name)(name, *args, **kwargs)
@@ -81,19 +81,20 @@ class ActionBlockRouter(object):
 class LinchpinHooks(object):
 
     def __init__(self, api):
-        '''
-        FIXME
-        '''
+        """
+        LinchpinHooks class constructor
+        :param api: LinchpinAPI object
+        """
 
         self.api = api
         self.api.bind_to_hook_state(self.run_hooks)
 
 
     def prepare_ctx_params(self):
-        '''
+        """
         prepares few context parameters based on the current target_data
         that is being set. these parameters are based topology name.
-        '''
+        """
 
         topology_name = self.api.get_evar("topology_name")
 
@@ -109,22 +110,13 @@ class LinchpinHooks(object):
 
 
     def run_hooks(self, state, is_global=False):
-
-        '''
-        Run any hooks for the current state
-
+        """
+        Function to run hook all hooks from Pinfile based on the state
         :param state: hook state (currently, preup, postup,
         predestroy, postdestroy)
         :param is_global: whether the hook is global (can be applied to
         multiple targets)
-        '''
-
-        # FIXME
-        # This statement makes no logical sense.
-        # Why would we prepare context parameters if the state isn't
-        # listed in the method? It doesn't appear as though that
-        # sets any related values in any way, shape, or form.
-        #self.prepare_ctx_params()
+        """
 
         hooks_data = self.api.target_data.get('hooks', None)
 
@@ -149,8 +141,7 @@ class LinchpinHooks(object):
 
 
     def run_actions(self, action_blocks, tgt_data, is_global=False):
-
-        '''
+        """
         Runs actions inside each action block of each target
 
         :param action_blocks: list of action_blocks each block constitues
@@ -164,7 +155,7 @@ class LinchpinHooks(object):
           type: shell
           actions:
             - echo ' this is 'postup' operation Hello hai how r u ?'
-        '''
+        """
 
         if is_global:
             raise NotImplementedError('Run Hooks is not implemented \
@@ -179,7 +170,7 @@ class LinchpinHooks(object):
                     # workspace/hooks/typeofhook/name
                     a_b['path'] = '{0}/{1}/{2}/{3}/'.format(
                                    self.api.ctx.workspace,
-                                   self.api.ctx.cfgs['evars']['hooks_folder'],
+                                   self.api.get_cfg('evars', 'hooks_folder','hooks'),
                                    a_b['type'],
                                    a_b['name']
                                    )

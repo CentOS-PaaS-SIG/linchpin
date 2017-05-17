@@ -124,7 +124,6 @@ def init(ctx):
         nargs=-1)
 @pass_context
 def up(ctx, pinfile, targets):
-
     """
     Provisions nodes from the given target(s) in the given PinFile.
 
@@ -134,6 +133,7 @@ def up(ctx, pinfile, targets):
     will be provisioned.
 
     """
+
     if pinfile is None:
         pinfile = ctx.pinfile
 
@@ -154,7 +154,6 @@ def up(ctx, pinfile, targets):
         nargs=-1)
 @pass_context
 def rise(ctx, pinfile, targets):
-
     """
     DEPRECATED. Use 'up'
 
@@ -170,7 +169,6 @@ def rise(ctx, pinfile, targets):
         nargs=-1)
 @pass_context
 def destroy(ctx, pinfile, targets):
-
     """
     Destroys nodes from the given target(s) in the given PinFile.
 
@@ -180,6 +178,7 @@ def destroy(ctx, pinfile, targets):
     will be destroyed.
 
     """
+
     if pinfile is None:
         pinfile = ctx.pinfile
 
@@ -200,7 +199,6 @@ def destroy(ctx, pinfile, targets):
         nargs=-1)
 @pass_context
 def drop(ctx, pinfile, targets):
-
     """
     DEPRECATED. Use 'destroy'.
 
