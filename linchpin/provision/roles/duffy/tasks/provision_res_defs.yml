@@ -6,7 +6,7 @@
     arch: "{{ res_def['arch'] }}"
     count: "{{ res_def['count'] }}"
   register: outputitem
-  when: res_def['res_type']=="duffy"
+  when: res_def['res_type']=="duffy_node"
 
 - name: "set tmp var"
   set_fact:
