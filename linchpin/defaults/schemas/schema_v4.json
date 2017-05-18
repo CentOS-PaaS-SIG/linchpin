@@ -90,6 +90,9 @@
                  "job_group": {
                      "type": "string"
                  },
+                 "whiteboard": {
+                     "type": "string"
+                 },
                  "recipesets": {
                      "type": "array",
                      "items": {
@@ -98,9 +101,6 @@
                              "properties": {
                                  "distro": {
                                      "type": "string"
-                                 },
-                                 "arches": {
-                                     "type": "array"
                                  },
                                  "arch": {
                                      "type": "string"
@@ -111,8 +111,30 @@
                                  "keyvalue": {
                                      "type": "array"
                                  },
-                                 "hostrequire": {
-                                     "type": "array"
+                                 "hostrequires": {
+                                     "type": "array",
+                                     "items": {
+                                         "oneOf": [
+                                             {
+                                                 "type": "object",
+                                                 "properties": {
+                                                     "force": {
+                                                         "type": "string"
+                                                     }
+                                                 },
+                                                 "required": ["force"]
+                                             },
+                                             {
+                                                 "type": "object",
+                                                 "properties": {
+                                                     "tag": {
+                                                         "type": "string"
+                                                     }
+                                                 },
+                                                 "required": ["tag"]
+                                             }
+                                          ]
+                                     }
                                  },
                                  "bkr_data": {
                                     "type": "object"

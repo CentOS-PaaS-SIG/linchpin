@@ -4,15 +4,18 @@ resource_groups:
   - resource_group_name: test1
     res_group_type: beaker
     job_group: ci-ops-central
+    whiteboard: Arbitrary Job whiteboard string
     recipesets:
       - distro: RHEL-6.5
         arch: x86_64
-        arches:
-          - X86_64
-          - X86_64
         keyvalue:
           - MEMORY>1000
           - DISKSPACE>20000
-        hostrequire:
-          - arch=X86_64
+        hostrequires:
+          - tag: processors
+            op: ">="
+            value: 4
+          - tag: device
+            op: "="
+            type: "network"
         count: 1

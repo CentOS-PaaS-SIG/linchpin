@@ -2,6 +2,7 @@
 
 - name: "provision beaker systems"
   bkr_server:
+    whiteboard: "{{ res.whiteboard | default('Provisioned with linchpin') }}"
     recipesets: "{{ res.recipesets }}"
     state: present
     job_group: "{{ res.job_group }}"
