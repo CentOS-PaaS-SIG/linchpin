@@ -9,19 +9,33 @@
             "description": "Date of creation",
             "type": "string"
         },
+        "site": {
+            "description": "site of provisioning ",
+            "type": "string"
+        },
+        "credentials": {
+             "description": "contains various credential_vaults names",
+             "type": "array",
+             "items":{
+                "type":"string"
+             },
+             "minimum":1
+        },
         "resource_groups": {
             "description": "contains list of resources ",
             "type": "array",
             "items":{
                 "oneOf" :
                     [
+                        {"$ref": "#/definitions/dummy"},
                         {"$ref": "#/definitions/openstack"},
                         {"$ref": "#/definitions/aws"},
                         {"$ref": "#/definitions/gcloud"},
                         {"$ref": "#/definitions/rackspace"},
                         {"$ref": "#/definitions/libvirt"},
                         {"$ref": "#/definitions/duffy"},
-                        {"$ref": "#/definitions/bkr_server"}
+                        {"$ref": "#/definitions/bkr_server"},
+                        {"$ref": "#/definitions/openshift_resource"}
                     ]
             }
         }
@@ -31,9 +45,9 @@
         "os_server": {
             "type" : "object",
             "properties" : {
-		"name": {
-		    "type":"string"
-		},
+                "name": {
+                    "type":"string"
+                },
                 "flavor": {
                     "type":"string"
                 },
@@ -50,23 +64,57 @@
                 "keypair": {
                     "type":"string"
                 },
-		"fip_pool": {
-		    "type":"string"
-		},
-		"security_groups": {
+		            "fip_pool": {
+		                "type":"string"
+		            },
+		            "security_groups": {
                     "type":"string"
                 }
             },
             "required":["flavor","type","image","count","keypair"]
+        },
+        "dummy": {
+            "type" : "object",
+            "properties" : {
+                "resource_group_name": {
+                    "type":"string"
+                },
+                "resource_group_type": {
+                    "type":"string",
+                    "pattern":"dummy"
+                },
+                "resource_definitions":{
+                    "type": "array",
+                    "items" : {
+                        "oneOf" :
+                            [
+                                {"$ref": "#/definitions/dummy_node"}
+                            ]
+                    }
+                }
+            },
+            "required":["resource_group_name","resource_group_type","resource_definitions"],
+            "additionalProperties": true
+        },
+        "dummy_node": {
+            "type" : "object",
+            "properties" : {
+                "name": {
+                    "type":"string"
+                },
+                "count": {
+                   "type": "number"
+                }
+            }
         },
         "aws_ec2": {
             "type" : "object",
             "properties" : {
                 "name": {
                     "type":"string"
-	                    },	    
+                },
                 "flavor": {
-                   "type":"string"
+                    "type":"string"
                 },
                 "type": {
                     "type":"string",
@@ -83,6 +131,48 @@
                 }
             },
             "required":["flavor","type","count","keypair"]
+        },
+        "openshift_inline": {
+            "type": "object",
+            "properties": {
+                "inline_data": {
+                    "type": "object"
+                }
+            },
+            "required": ["inline_data"]
+        },
+        "openshift_external": {
+            "type": "object",
+            "properties": {
+                "file_reference" : {
+                    "type": "string"
+                }
+            },
+            "required": ["file_reference"]
+        },
+        "openshift_resource": {
+            "type": "object",
+            "properties": {
+                "api_endpoint": {
+                    "type": "string"
+                },
+                "resource_group_name": {
+                    "type": "string"
+                },
+                "api_token": {
+                    "type": "string"
+                },
+                "resources": {
+                    "type": "array",
+                    "items": {
+                    "oneOf" : [
+                            {"$ref": "#/definitions/openshift_inline"},
+                            {"$ref": "#/definitions/openshift_external"}
+                        ]
+                    }
+                }
+            },
+            "required": ["api_endpoint", "resources", "api_token"]
         },
         "bkr_server": {
              "type": "object",
@@ -412,7 +502,6 @@
                         }
 
                     }
-                
                 }
             },
             "required":["name","type"]

@@ -1,0 +1,11 @@
+#The following example illustrates the PinFile
+#
+#SYNTAX:
+#
+#target:
+#    topology: <string>
+#    inventory: <string>
+
+dummy:
+  topology: dummy-cluster.yml
+  layout: dummy-layout.yml

@@ -56,11 +56,11 @@ class JSONSchema:
             result = jsonschema.validate(json.loads(data), json.loads(schema))
             return (True, json.loads(data))
         except jsonschema.ValidationError as e:
-            return {"ValidationError": e.message, "status": False}
+            return (False, "ValidationError: {0}".format(e.message))
         except jsonschema.SchemaError as e:
-            return {"SchemaError": e, "status": False}
+            return (False, "SchemaError: {0}".format(e))
         except Exception as e:
-            return {"Unknown Error": e, "status": False}
+            return (False, "Unknown Error: {0}".format(e))
 
     def get_data(self, file_path):
         ext = file_path.split(".")[-1]

@@ -1,0 +1,22 @@
+---
+# This playbook will initiate provisioning for the duffy resources groups.
+- name: "DEBUG:: Dummy resource group list"
+  debug:
+    msg: "Currently provisioning the resources under list dummy_res_grps {{ dummy_res_grps }}"
+
+- name: "declaring output vars"
+  set_fact:
+    topology_outputs_dummy: []
+
+- name: "Initiating Provisioning of dummy resource group"
+  include: provision_resource_group.yml res_grp={{ item }}
+  with_items:
+    - "{{ dummy_res_grps }}"
+  when: state == "present"
+
+- name: "Initiating Teardown of dummy resource group"
+  include: teardown_resource_group.yml res_grp={{ item.0 }} topo_output_file={{ item.1 }}
+  with_nested:
+    - "{{ dummy_res_grps }}"
+    - ["{{ resources_file | default( default_resources_path+'/'+outputs.topology_name+'.output.yaml' ) }}"]
+  when: state == "absent"

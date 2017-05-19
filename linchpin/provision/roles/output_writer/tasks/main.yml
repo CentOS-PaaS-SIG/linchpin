@@ -2,19 +2,20 @@
 - name: "Updating topology_outputs"
   set_fact:
     topology_outputs:
-      os_server_res: "{{ topology_outputs_os_server  | default([]) }}"
-      os_keypair_res: "{{ topology_outputs_os_keypair  | default([]) }}"
-      os_volume_res: "{{ topology_outputs_os_volume  | default([]) }}"
-      os_obj_res: "{{ topology_outputs_os_object  | default([]) }}"
-      os_heat_res: "{{ topology_outputs_os_heat  | default([]) }}"
-      os_sg_res: "{{ topology_outputs_os_sg  | default([]) }}"
-      aws_ec2_res: "{{ topology_outputs_aws_ec2  | default([]) }}"
-      aws_s3_res: "{{ topology_outputs_aws_s3  | default([]) }}"
-      aws_ec2_key_res: "{{ topology_outputs_aws_ec2_key  | default([]) }}"
-      aws_cfn_res: "{{ topology_outputs_aws_cfn  | default([]) }}"
-      gcloud_gce_res: "{{ topology_outputs_gce  | default([]) }}"
-      duffy_res: "{{ topology_outputs_duffy  | default([]) }}"
-      rax_server_res: "{{ topology_outputs_rax_server  | default([]) }}"
+      dummy_res: "{{ topology_outputs_dummy | default([]) }}"
+      os_server_res: "{{ topology_outputs_os_server | default([]) }}"
+      os_keypair_res: "{{ topology_outputs_os_keypair | default([]) }}"
+      os_volume_res: "{{ topology_outputs_os_volume | default([]) }}"
+      os_obj_res: "{{ topology_outputs_os_object | default([]) }}"
+      os_heat_res: "{{ topology_outputs_os_heat | default([]) }}"
+      os_sg_res: "{{ topology_outputs_os_sg | default([]) }}"
+      aws_ec2_res: "{{ topology_outputs_aws_ec2 | default([]) }}"
+      aws_s3_res: "{{ topology_outputs_aws_s3 | default([]) }}"
+      aws_ec2_key_res: "{{ topology_outputs_aws_ec2_key | default([]) }}"
+      aws_cfn_res: "{{ topology_outputs_aws_cfn | default([]) }}"
+      gcloud_gce_res: "{{ topology_outputs_gce | default([]) }}"
+      duffy_res: "{{ topology_outputs_duffy | default([]) }}"
+      rax_server_res: "{{ topology_outputs_rax_server | default([]) }}"
       beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
       libvirt_res: "{{ topology_outputs_libvirt_nodes | default([]) }}"
       openshift_res: "{{ topology_outputs_openshift_resources | default([]) }}"
@@ -34,11 +35,6 @@
   debug:
     msg: "{{ topology_outputs }}"
 
-- name: "DEBUG:: inventory_layout"
-  debug:
-    msg: "{{ inventory_layout }}"
-  when: state == "present" and inventory_layout is defined
-
 - name: "Generate outputs when async is false"
   template:
     src: "../templates/output_formatter.j2"
@@ -49,6 +45,7 @@
 - name: "Async:: Updating topology_outputs"
   set_fact:
     topology_outputs:
+      dummy_res: "{{ topology_outputs_dummy | default([]) }}"
       os_server_res: "{{ topology_outputs_os_server | default([]) }}"
       os_keypair_res: "{{ topology_outputs_os_keypair | default([]) }}"
       os_volume_res: "{{ topology_outputs_os_volume | default([]) }}"
@@ -75,6 +72,7 @@
 - name: "Async:: Updating topology_outputs after wait"
   set_fact:
     topology_outputs:
+      dummy_res: "{{ topology_outputs_dummy | default([]) }}"
       os_server_res: "{{ async_outputs_os_server | default([]) }}"
       os_keypair_res: "{{ topology_outputs_os_keypair | default([]) }}"
       os_obj_res: "{{ async_outputs_os_obj | default([]) }}"

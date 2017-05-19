@@ -2,6 +2,7 @@
 
 import os
 import ast
+import yaml
 from collections import namedtuple
 
 from ansible.inventory import Inventory
@@ -11,38 +12,54 @@ from ansible.executor.playbook_executor import PlaybookExecutor
 
 from linchpin.api.utils import yaml2json
 from linchpin.api.callbacks import PlaybookCallback
+from linchpin.hooks import LinchpinHooks
+from linchpin.hooks.state import State
+from linchpin.exceptions import LinchpinError
 
 
-class LinchpinError(Exception):
-
-    def __init__(self,*args,**kwargs):
-        Exception.__init__(self,*args,**kwargs)
-
-
-class LinchpinAPI:
+class LinchpinAPI(object):
 
     def __init__(self, ctx):
+        """
+        LinchpinAPI constructor
+        :param ctx: context object from api/context.py
+
+        """
 
         self.ctx = ctx
-        base_path = '/'.join(os.path.dirname(__file__).split("/")[0:-2])
-        self.lp_path = '{0}/{1}'.format(base_path, self.ctx.cfgs['lp']['pkg'])
-        ctx.evars['from_api'] = True
+        base_path = '/'.join(os.path.dirname(__file__).split('/')[0:-2])
+        pkg = self.get_cfg(section='lp',
+                        key='pkg',
+                        default='linchpin')
+        self.lp_path = '{0}/{1}'.format(base_path, pkg)
+        self.set_evar('from_api', True)
+
+        self.hook_state = None
+        self._hook_observers = []
+        self.playbook_pre_states = self.get_cfg('playbook_pre_states',
+                                                {'up': 'preup', 
+                                                 'destroy': 'predestroy'})
+        self.playbook_post_states = self.get_cfg('playbook_post_states',
+                                                 {'up': 'postup',
+                                                  'destroy': 'postdestroy'})
+        self.hooks = LinchpinHooks(self)
+        self.target_data = {}
 
 
-    def get_cfg(self, section=None, key=None):
+    def get_cfg(self, section=None, key=None, default=None):
         """
-        Get the cfgs object
+        Get cfgs value(s) by section and/or key, or the whole cfgs object
 
         :param section: section from ini-style config file
 
         :param key: key to get from config file, within section
+
+        :param default: default value to return if nothing is found.
+        Does not apply if section is not provided.
         """
-        if section:
-            s = self.ctx.cfgs.get(section, None)
-            if key and s:
-                return self.ctx.cfgs[section].get(key, None)
-            return s
-        return self.ctx.cfgs
+
+        return self.ctx.get_cfg(section=section, key=key, default=default)
+
 
     def set_cfg(self, section, key, value):
         """
@@ -57,19 +74,19 @@ class LinchpinAPI:
         :param value: value to set into section within config file
         """
 
-        self.ctx.cfgs[section][key] = value
+        self.ctx.set_cfg(section, key, value)
 
 
-    def get_evar(self, key=None):
+    def get_evar(self, key=None, default=None):
         """
         Get the current evars (extra_vars)
 
         :param key: key to use
+
+        :param default: default value to return if nothing is found (default: None)
         """
 
-        if key:
-            return self.ctx.evars.get(key, None)
-        return self.evars
+        return self.ctx.get_evar(key, default)
 
 
     def set_evar(self, key, value):
@@ -82,13 +99,71 @@ class LinchpinAPI:
         :param value: value to set into evars
         """
 
-        self.set_cfg('evars', key, value)
-        self.evars[key] = value
+        self.ctx.set_evar(key, value)
 
+
+    @property
+    def hook_state(self):
+        """
+        getter function for hook_state property of the API object
+        """
+
+        return self.hook_state
+
+
+    @hook_state.setter
+    def hook_state(self, hook_state):
+        """
+        hook_state property setter , splits the hook_state string in subhook_state and sets
+        linchpin.hook_state object
+
+        :param hook_state: valid hook_state string mentioned in linchpin.conf
+        """
+
+        # call run_hooks after hook_state is being set
+        if hook_state is None:
+            return
+        else:
+#            hook_state = hook_state.split('::')[0]
+            self.ctx.log_debug('hook {0} initiated'.format(hook_state))
+            self._hook_state = State(hook_state, None, self.ctx)
+
+            for callback in self._hook_observers:
+                callback(self._hook_state)
+
+
+    def bind_to_hook_state(self, callback):
+        """
+        Function used by LinchpinHooksclass to add callbacks
+
+        :param callback: callback function
+        """
+
+        self._hook_observers.append(callback)
+
+    def set_magic_vars(self):
+        """
+        Function inbuilt to set magic vars for ansible context
+        """
+
+        try:
+            t_f = open(self.get_evar("topology"), "r").read()
+            t_f = yaml.load(t_f)
+            topology_name = t_f["topology_name"]
+        except Exception as e:
+            ctx.log_info("{0}".format(str(e)))
+            topology_name = self.get_evar("topology").split("/")[-1]
+            # defaults to file name if there is any error
+            topology_name = topology_name.split(".")[-2]
+        inv_file = '{0}/{1}/{2}{3}'.format(self.ctx.workspace,
+                        self.get_evar('inventories_folder'),
+                        topology_name,
+                        self.get_cfg('extensions','inventory' ,'inventory')
+                    )
+        self.set_evar('inventory_file', inv_file)
+        self.set_evar('topology_name', topology_name)
 
     def run_playbook(self, pinfile, targets='all', playbook='up'):
-
-
         """
         This function takes a list of targets, and executes the given
         playbook (provison, destroy, etc.) for each provided target.
@@ -101,74 +176,83 @@ class LinchpinAPI:
         pf = yaml2json(pinfile)
 
         # playbooks check whether from_api is defined
-        # if not, vars get loaded from linchpin.conf
-
-
         self.ctx.log_debug('from_api: {0}'.format(self.get_evar('from_api')))
 
-        self.ctx.evars['lp_path'] = self.lp_path
+        # playbooks check whether from_cli is defined
+        # if not, vars get loaded from linchpin.conf
+        self.set_evar('from_cli', True)
+        self.set_evar('lp_path', self.lp_path)
 
-        self.console = ast.literal_eval(self.ctx.cfgs['ansible'].get('console', 'False'))
+        #do we display the ansible output to the console?
+        ansible_console = False
+        if self.ctx.cfgs.get('ansible'):
+            ansible_console = ast.literal_eval(self.ctx.cfgs['ansible'].get('console', 'False'))
 
-        if not self.console:
-            self.console = self.ctx.verbose
+        if not ansible_console:
+            ansible_console = self.ctx.verbose
 
-        self.ctx.evars['default_resources_path'] = '{0}/{1}'.format(
-                                self.ctx.workspace,
-                                self.ctx.evars['resources_folder'])
-        self.ctx.evars['default_inventories_path'] = '{0}/{1}'.format(
-                                self.ctx.workspace,
-                                self.ctx.evars['inventories_folder'])
+        self.set_evar('default_resources_path', '{0}/{1}'.format(
+                                            self.ctx.workspace,
+                                            self.get_evar('resources_folder',
+                                                    default='resources')))
 
-        self.ctx.evars['state'] = "present"
+        self.set_evar('inventory_dir', '{0}/{1}'.format(
+                                        self.ctx.workspace,
+                                        self.get_evar('inventories_folder',
+                                                default='inventories')))
+        self.set_evar('state', 'present')
 
         if playbook == 'destroy':
-            self.ctx.evars['state'] = "absent"
+            self.set_evar('state', 'absent')
 
         results = {}
 
-        # checks whether the targets are valid or not
-        if set(targets) == set(pf.keys()).intersection(targets) and len(targets) > 0:
-            for target in targets:
-                self.ctx.log_state('target: {0}, action: {1}'.format(target, playbook))
-                self.ctx.evars['topology'] = self.find_topology(
-                        pf[target]["topology"])
-                if 'layout' in pf[target]:
-                    self.ctx.evars['layout_file'] = (
-                        '{0}/{1}/{2}'.format(self.ctx.workspace,
-                                    self.ctx.evars['layouts_folder'],
-                                    pf[target]["layout"]))
-
-                #invoke the appropriate playbook
-                results[target] = self._invoke_playbook(playbook=playbook,
-                                                console=self.console)
-
-            return results
-
+        # determine what targets is equal to
+        if (set(targets) == set(pf.keys()).intersection(targets) and
+                                                        len(targets) > 0):
+            pass
         elif len(targets) == 0:
-            for target in set(pf.keys()).difference():
-                self.ctx.log_state('target: {0}, action: {1}'.format(target, playbook))
-                self.ctx.evars['topology'] = self.find_topology(
-                        pf[target]["topology"])
-                if 'layout' in pf[target]:
-                    self.ctx.evars['layout_file'] = (
-                        '{0}/{1}/{2}'.format(self.ctx.workspace,
-                                    self.ctx.evars['layouts_folder'],
-                                    pf[target]["layout"]))
-
-
-                #invoke the appropriate playbook
-                results[target] = self._invoke_playbook(playbook=playbook,
-                                                console=self.console)
-
-            return results
-
+            targets = set(pf.keys()).difference()
         else:
-            raise  KeyError("One or more Invalid targets found")
+            raise  LinchpinError("One or more Invalid targets found")
+
+
+        for target in targets:
+            self.ctx.log_state('target: {0}, action: {1}\n'.format(
+                                                        target, playbook))
+            self.set_evar('topology', self.find_topology(
+                    pf[target]["topology"]))
+            if 'layout' in pf[target]:
+                self.set_evar('layout_file', (
+                    '{0}/{1}/{2}'.format(self.ctx.workspace,
+                                self.get_evar('layouts_folder'),
+                                pf[target]["layout"])))
+
+            # parse topology_file and set inventory_file
+            self.set_magic_vars()
+
+            # set the current target data
+            self.target_data = pf[target]
+            self.target_data["extra_vars"] = self.get_evar()
+
+            # note : changing the state triggers the hooks
+            self.pb_hooks = self.get_cfg('hookstates', playbook)
+            self.ctx.log_debug('calling: {0}{1}'.format('pre', playbook))
+
+            if 'pre' in self.pb_hooks:
+                self.hook_state = '{0}{1}'.format('pre', playbook)
+
+            #invoke the appropriate playbook
+            results[target] = self._invoke_playbook(playbook=playbook,
+                                            console=ansible_console)
+
+            if 'post' in self.pb_hooks:
+                self.hook_state = '{0}{1}'.format('post', playbook)
+
+        return results
 
 
     def lp_rise(self, pinfile, targets='all'):
-
         """
         DEPRECATED
 
@@ -179,8 +263,6 @@ class LinchpinAPI:
 
 
     def lp_up(self, pinfile, targets='all'):
-
-
         """
         This function takes a list of targets, and provisions them according
         to their topology. If an layout argument is provided, an inventory
@@ -197,7 +279,6 @@ class LinchpinAPI:
 
 
     def lp_drop(self, pinfile, targets):
-
         """
         DEPRECATED
 
@@ -208,8 +289,6 @@ class LinchpinAPI:
 
 
     def lp_destroy(self, pinfile, targets='all'):
-
-
         """
         This function takes a list of targets, and performs a destructive
         teardown, including undefining nodes, according to the target.
@@ -227,8 +306,6 @@ class LinchpinAPI:
 
 
     def lp_down(self, pinfile, targets='all'):
-
-
         """
         This function takes a list of targets, and performs a shutdown on
         nodes in the target's topology. Only providers which support shutdown
@@ -248,10 +325,7 @@ class LinchpinAPI:
         pass
 
 
-
     def find_topology(self, topology):
-
-
         """
         Find the topology to be acted upon. This could be pulled from a
         registry.
@@ -261,9 +335,9 @@ class LinchpinAPI:
 
         """
 
-        topo_path = os.path.realpath('{}/{}'.format(
+        topo_path = os.path.realpath('{0}/{1}'.format(
                 self.ctx.workspace,
-                self.ctx.evars['topologies_folder']))
+                self.get_evar('topologies_folder', 'topologies')))
 
         topos = os.listdir(topo_path)
 
@@ -274,7 +348,6 @@ class LinchpinAPI:
 
 
     def _invoke_playbook(self, playbook='up', console=True):
-
         """
         Uses the Ansible API code to invoke the specified linchpin playbook
 
@@ -282,13 +355,14 @@ class LinchpinAPI:
         :param console: Whether to display the ansible console (default: True)
         """
 
-        pb_path = '{0}/{1}'.format(self.lp_path, self.ctx.evars['playbooks_folder'])
-        module_path = '{0}/{1}'.format(pb_path, self.ctx.cfgs['lp']['module_folder'])
-        playbook_path = '{0}/{1}'.format(pb_path, self.ctx.cfgs['playbooks'][playbook])
+        pb_path = '{0}/{1}'.format(self.lp_path,
+                            self.ctx.get_evar('playbooks_folder', 'provision'))
+        module_path = '{0}/{1}/'.format(pb_path, self.get_cfg('lp', 'module_folder', 'library'))
+        playbook_path = '{0}/{1}'.format(pb_path, self.get_cfg('playbooks', playbook, 'site.yml'))
 
         loader = DataLoader()
         variable_manager = VariableManager()
-        variable_manager.extra_vars = self.ctx.evars
+        variable_manager.extra_vars = self.get_evar()
         inventory = Inventory(loader=loader,
                               variable_manager=variable_manager,
                               host_list=[])

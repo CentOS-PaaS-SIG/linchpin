@@ -45,17 +45,17 @@
   register: v3_out
   tags: schema_validation
   when: schema is not defined
-  #  ignore_errors: true
+  ignore_errors: true
 
 - name: "Set state for schema_v3 validation"
   set_fact:
-    schema_valid: "{{ v3_out['isvalid'] | default(false) }}"
+    v3_schema_valid: "{{ v3_out['isvalid'] | default(false) }}"
   when: schema is not defined
 
 - name: "assign schema_v3 output"
   set_fact:
      outputs: "{{ v3_out['out'] }}"
-  when: schema is not defined and schema_valid
+  when: schema is not defined and v3_schema_valid
 
 - name: "check topology file against schema_v4"
   schema_check:
@@ -63,17 +63,17 @@
     schema: "{{ schema_v4 }}"
   register: v4output
   tags: schema_validation
-  when: schema is not defined and not schema_valid
+  when: schema is not defined and not v3_schema_valid
 
 - name: "update output when schema_v4 is used"
   set_fact:
     v4_out: "{{ v4output }}"
-  when: schema is not defined and not schema_valid
+  when: schema is not defined and not v3_schema_valid
 
 - name: "assign output from schema_v4"
   set_fact:
      outputs: "{{ v4_out['out'] }}"
-  when: schema is not defined and not schema_valid
+  when: schema is not defined and not v3_schema_valid
 
 - name: "set fact for saving topology_job_ids"
   set_fact:
@@ -89,6 +89,7 @@
 
 - name: "Assigning facts with respect to their group type"
   set_fact:
+    dummy_res_grps: "{{  filtered_res_grps['dummy'] | default([]) }}"
     os_res_grps: "{{  filtered_res_grps['openstack'] | default([]) }}"
     aws_res_grps: "{{ filtered_res_grps['aws'] | default([]) }}"
     gcloud_res_grps: "{{ filtered_res_grps['gcloud'] | default([]) }}"
@@ -97,9 +98,15 @@
     rax_res_grps: "{{ filtered_res_grps['rackspace'] | default([]) }}"
     bkr_res_grps: "{{ filtered_res_grps['beaker'] | default([]) }}"
 
-- name: "filtering the output for openshift"
+- name: "filtering the output for openshift v3"
   set_fact:
     openshift_res_grps: "{{ outputs.resource_groups | selectattr('res_group_type', 'equalto', 'openshift') | list }}"
+  when: v3_schema_valid
+
+- name: "filtering the output for openshift v4"
+  set_fact:
+    openshift_res_grps: "{{ outputs.resource_groups | selectattr('resource_group_type', 'equalto', 'openshift') | list }}"
+  when: not v3_schema_valid
 
 - name: "Registering resource group vars from topology"
   set_fact:

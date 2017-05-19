@@ -1,11 +1,16 @@
 ---
-#includes the output file of linchpin
+
+#- name: "DEBUG:: layout_file"
+#  debug:
+#    msg: "{{ layout_file }}"
+#  when: state == "present"
 
 - include_vars: "{{ resources_file | default( default_resources_path+'/'+outputs.topology_name+'.output.yaml' ) }}"
 
 - name: "Updating topology_outputs"
   set_fact:
     topology_outputs:
+      dummy_res: "{{ dummy_res }}"
       os_server_res: "{{ os_server_res }}"
       aws_ec2_res: "{{ aws_ec2_res }}"
       gcloud_gce_res: "{{ gcloud_gce_res }}"
@@ -22,9 +27,9 @@
 
 - name: "Updating inventory_file with the absolute path"
   set_fact:
-    inventory_file: "{{ inventory_file | default( default_inventories_path+'/'+outputs.topology_name ) }}"
+    inventory_file: "{{ inventory_file | default( inventory_dir+'/'+outputs.topology_name ) }}"
 
 - name: "Generate Generic Inventory"
   template:
     src: "templates/generic_inventory_formatter.j2"
-    dest: "{{ inventory_file }}.inventory"
+    dest: "{{ inventory_file }}"
