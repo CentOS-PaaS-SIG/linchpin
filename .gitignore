@@ -21,5 +21,6 @@ configure/inventory/local/
 *workspace*
 
 .coverage
+*coverage*
 nosetests.xml
 *.log

@@ -10,7 +10,7 @@ from linchpin.exceptions import HookError
 class SubprocessActionManager(ActionManager):
 
     def __init__(self, name, action_data, target_data, **kwargs):
-        
+
         """
         SubprocessActionManager constructor
         :param name: Name of Action Manager , ( ie., shell)

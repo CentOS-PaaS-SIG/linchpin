@@ -1,0 +1,5 @@
+sudo: false
+
+language: python
+
+script: nosetests -s linchpin/tests/*
