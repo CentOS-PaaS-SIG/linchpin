@@ -1,9 +1,17 @@
 - name: "provisioning/deprovisioning of security group"
   os_security_group:
-    auth: "{{ auth_var | provide_default(omit) }}"
+    auth: "{{ auth_var | default(omit) }}"
     name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     state: "{{ state }}"
     wait: "yes"
+  when: auth_var['changed'] == true
+
+- name: "provisioning/deprovisioning of security group"
+  os_security_group:
+    name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+    state: "{{ state }}"
+    wait: "yes"
+  when: auth_var['changed'] == false
 
 - name: "provisioning/deprovisioning of security group"
   os_security_group_rule:
@@ -17,14 +25,34 @@
     remote_ip_prefix: "{{ group.3['cidr_ip']  }}"
     wait: "yes"
   with_nested:
-    - ["{{ auth_var | provide_default(omit) }}"]
+    - ["{{ auth_var | default(omit) }}"]
     - ["{{ res_def['res_name'] | default(res_def['name']) }}"]
     - ["{{ state }}"]
     - "{{ res_def['rules'] }}"
   loop_control:
     loop_var: group
   register: res_def_output
-  when: state == "present"
+  when: state == "present" and auth_var['changed'] == true
+
+- name: "provisioning/deprovisioning of security group"
+  os_security_group_rule:
+    security_group: "{{ group.0 }}"
+    state: "{{ group.1 }}"
+    protocol: "{{ group.2['proto']  }}"
+    direction: "{{ group.2['rule_type'] | os_sg_rule_type }}"
+    port_range_min: "{{ group.2['from_port'] }}"
+    port_range_max: "{{ group.2['to_port'] }}"
+    remote_ip_prefix: "{{ group.2['cidr_ip']  }}"
+    wait: "yes"
+  with_nested:
+    - ["{{ res_def['res_name'] | default(res_def['name']) }}"]
+    - ["{{ state }}"]
+    - "{{ res_def['rules'] }}"
+  loop_control:
+    loop_var: group
+  register: res_def_output
+  when: state == "present" and auth_var['changed'] == false
+ 
 
 - name: "Append outputitem to topology_outputs"
   set_fact:

@@ -21,7 +21,7 @@
 
 - name: "set auth_var "
   set_fact:
-    auth_var: "{{ auth_var['output']['clouds'][cred_profile]['auth'] | default('') }}"
+    auth_var: "{{ auth_var['output']['clouds'][cred_profile]['auth'] | default(omit) }}"
   ignore_errors: true
 
 - name: "provisioning resource definitions of current group"
