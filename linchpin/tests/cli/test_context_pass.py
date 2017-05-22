@@ -20,7 +20,7 @@ def test_context_create():
     assert_equal(isinstance(lpc, LinchpinCliContext), True)
 
 
-def setup_load_config():
+def setup_context_data():
 
     """
     Perform setup of ContextData() object, and run get_temp_filename()
@@ -28,15 +28,21 @@ def setup_load_config():
 
     global config_path
     global config_data
+    global evars_data
+    global logfile
 
     cd = ContextData()
+    cd.load_config_data()
     cd.parse_config()
+    evars_data = cd.evars
     config_path = cd.get_temp_filename()
-    config_data = cd.config_data
+    config_data = cd.cfg_data
+
+    logfile = cd.logfile
     cd.write_config_file(config_path)
 
 
-@with_setup(setup_load_config)
+@with_setup(setup_context_data)
 def test_load_config():
 
     lpc = LinchpinCliContext()
@@ -46,33 +52,17 @@ def test_load_config():
     assert_dict_equal(config_data, lpc.cfgs)
 
 
-def setup_load_evars():
-
-    """
-    Perform setup of ContextData() object, and run get_temp_filename()
-    """
-
-    global cfg_path
-    global evars_data
-
-    cd = ContextData(parser=ConfigParser.RawConfigParser)
-    cd.create_context_evars()
-    cfg_path = cd.get_temp_filename()
-    evars_data = cd.evars
-    cd.write_config_file(cfg_path)
-
-
-@with_setup(setup_load_config)
+@with_setup(setup_context_data)
 def test_get_cfg():
 
     lpc = LinchpinCliContext()
     lpc.load_config(config_path)
-    cfg_value = lpc.get_cfg('hooks', 'up')
+    cfg_value = lpc.get_cfg('hookstates', 'up')
 
-    assert_equal(cfg_value, config_data['hooks']['up'])
+    assert_equal(cfg_value, config_data['hookstates']['up'])
 
 
-@with_setup(setup_load_config)
+@with_setup(setup_context_data)
 def test_set_cfg():
 
     lpc = LinchpinCliContext()
@@ -82,66 +72,50 @@ def test_set_cfg():
     assert_equal(lpc.get_cfg('test', 'key'), lpc.cfgs['test']['key'])
 
 
-@with_setup(setup_load_evars)
+@with_setup(setup_context_data)
 def test_load_global_evars():
 
     lpc = LinchpinCliContext()
-    lpc.load_config(cfg_path)
+    lpc.load_config(config_path)
     lpc.load_global_evars()
 
     assert_dict_equal(evars_data, lpc.evars)
 
 
-@with_setup(setup_load_evars)
+@with_setup(setup_context_data)
 def test_get_evar():
 
     lpc = LinchpinCliContext()
-    lpc.load_config(cfg_path)
+    lpc.load_config(config_path)
     lpc.load_global_evars()
     evar_value = lpc.get_evar('async')
 
     assert_equal(evar_value, evars_data['async'])
 
 
-@with_setup(setup_load_evars)
+@with_setup(setup_context_data)
 def test_set_evar():
 
     lpc = LinchpinCliContext()
-    lpc.load_config(cfg_path)
+    lpc.load_config(config_path)
     lpc.load_global_evars()
     lpc.set_evar('test', 'me')
 
     assert_equal('me', lpc.evars['test'])
 
 
-def setup_logging_setup():
-
-    """
-    Setup the logger configuration
-    """
-
-    global cfg_path
-    global logfile
-
-    cd = ContextData()
-    cd.parse_config()
-    cfg_path = cd.get_temp_filename()
-    logfile = cd.logfile
-    cd.write_config_file(cfg_path)
-
-
-@with_setup(setup_logging_setup)
+@with_setup(setup_context_data)
 def test_logging_setup():
 
 
     lpc = LinchpinCliContext()
-    lpc.load_config(cfg_path)
+    lpc.load_config(config_path)
     lpc.setup_logging()
 
     assert os.path.isfile(logfile)
 
 
-@with_setup(setup_logging_setup)
+@with_setup(setup_context_data)
 def test_log_msg():
 
     # This test assumes the default message format found around line 139
@@ -152,7 +126,7 @@ def test_log_msg():
     regex = '^{0}.*{1}'.format(logging.getLevelName(lvl), msg)
 
     lpc = LinchpinCliContext()
-    lpc.load_config(cfg_path)
+    lpc.load_config(config_path)
     lpc.setup_logging()
     lpc.log(msg, level=lvl)
 
@@ -161,7 +135,7 @@ def test_log_msg():
 
     assert_regexp_matches(line, regex)
 
-@with_setup(setup_logging_setup)
+@with_setup(setup_context_data)
 def test_log_state():
 
     lvl=logging.DEBUG
@@ -169,7 +143,7 @@ def test_log_state():
     regex = '^{0}.*STATE - {1}'.format(logging.getLevelName(lvl), msg)
 
     lpc = LinchpinCliContext()
-    lpc.load_config(cfg_path)
+    lpc.load_config(config_path)
     lpc.setup_logging()
     lpc.log_state(msg)
 
@@ -178,7 +152,7 @@ def test_log_state():
 
     assert_regexp_matches(line, regex)
 
-@with_setup(setup_logging_setup)
+@with_setup(setup_context_data)
 def test_log_info():
 
     lvl=logging.INFO
@@ -186,7 +160,7 @@ def test_log_info():
     regex = '^{0}.*{1}'.format(logging.getLevelName(lvl), msg)
 
     lpc = LinchpinCliContext()
-    lpc.load_config(cfg_path)
+    lpc.load_config(config_path)
     lpc.setup_logging()
     lpc.log_info(msg)
 
@@ -195,7 +169,7 @@ def test_log_info():
 
     assert_regexp_matches(line, regex)
 
-@with_setup(setup_logging_setup)
+@with_setup(setup_context_data)
 def test_log_debug():
 
     lvl=logging.DEBUG
@@ -203,7 +177,7 @@ def test_log_debug():
     regex = '^{0}.*{1}'.format(logging.getLevelName(lvl), msg)
 
     lpc = LinchpinCliContext()
-    lpc.load_config(cfg_path)
+    lpc.load_config(config_path)
     lpc.setup_logging()
     lpc.log_debug(msg)
 

@@ -2,4 +2,4 @@ sudo: false
 
 language: python
 
-script: nosetests -s linchpin/tests/*
+script: nosetests -s linchpin/tests/{cli,api}/*

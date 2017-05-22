@@ -19,7 +19,7 @@ class ContextData(object):
         self.lib_path = '{0}'.format(os.path.dirname(
             os.path.realpath(__file__))).rstrip('/')
 
-        self.logfile = tempfile.mktemp(suffix='.log', prefix='linchpin', dir='/tmp')
+        self.logfile = tempfile.mktemp(suffix='.log', prefix='linchpin')
         self.parser = parser()
 
 
@@ -75,6 +75,9 @@ class ContextData(object):
                         self.cfg_data[section][k] = config.getboolean(section, k)
                     except ValueError as e:
                         self.cfg_data[section][k] = v
+
+        # override logger file
+        self.cfg_data['logger']['file'] = self.logfile
 
         self.evars = self.cfg_data.get('evars', {})
 
