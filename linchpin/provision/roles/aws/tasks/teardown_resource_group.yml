@@ -2,18 +2,29 @@
   debug:
     msg: "The current server obj is {{ res_grp }}"
 
-- name: "Including credentials of current resource {{ res_grp['resource_group_name'] }}"
-  include_vars: "roles/aws/vars/{{ res_grp['assoc_creds'] | default(res_grp['credentials']) }}.yml"
-  no_log: true 
+- name: "Set cred profile"
+  set_fact:
+    cred_profile: "{{ res_grp['credentials']['profile'] | default('default') }}"
+
+- name: "Get creds from auth driver"
+  auth_driver:
+    name: "{{ res_grp['credentials']['name']  }}"
+    cred_type: "aws"
+    cred_path: "{{ creds_path }}"
+    driver: "file"
+  register: auth_var
+  ignore_errors: true
+
+- name: "Set auth_var "
+  set_fact:
+    auth_var: "{{ auth_var['output'][cred_profile] | default('') }}"
+  ignore_errors: true
 
 - name: "Parsing topology output file"
   output_parser:
     output_file: "{{ topo_output_file }}"
   register: topo_output
 
-#- name: "teardown AWS ec2 resources"
-#  include: teardown_res_defs.yml
-#  when: state == "absent"
 
 # patch for res_type to type translation
 - name: "Add attribute res_type to res_grp resource_definitions"

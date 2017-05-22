@@ -21,7 +21,7 @@
 
 - name: "Set auth_var "
   set_fact:
-    auth_var: "{{ auth_var['output'][cred_profile]['test'] | default('') }}"
+    auth_var: "{{ auth_var['output'][cred_profile] | default('') }}"
   ignore_errors: true
 
 - name: "provisioning resource definitions of current group"
