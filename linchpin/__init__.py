@@ -89,7 +89,7 @@ def runcli(ctx, config, workspace, verbose, version, creds_path):
     if creds_path is not None:
         ctx.creds_path = os.path.realpath(os.path.expanduser(creds_path))
     else:
-        ctx.creds_path = None
+        ctx.creds_path = str(None)
 
     ctx.log_debug("ctx.workspace: {0}".format(ctx.workspace))
     ctx.log_debug("ctx.creds_path: {0}".format(ctx.creds_path))
