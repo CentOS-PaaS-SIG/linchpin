@@ -1,15 +1,19 @@
 - name: "provisioning/deprovisioning  keypair"
   os_keypair:
-    auth:
-      auth_url: "{{ endpoint }}"
-      username: "{{ username }}"
-      password: "{{ password }}"
-      project_name: "{{ project }}"
+    auth: "{{ auth_var | default(omit) }}"
     name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     state: "{{ state }}"
     wait: "yes"
   register: res_def_output
-  when: not async
+  when: not async and auth_var['changed']== true
+
+- name: "provisioning/deprovisioning  keypair"
+  os_keypair:
+    name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+    state: "{{ state }}"
+    wait: "yes"
+  register: res_def_output
+  when: not async and auth_var['changed']== false
 
 - name: "Generate keyfile "
   copy: 
@@ -24,18 +28,24 @@
 
 - name: "Async:: provisioning/deprovisioning  keypair"
   os_keypair:
-    auth:
-      auth_url: "{{ endpoint }}"
-      username: "{{ username }}"
-      password: "{{ password }}"
-      project_name: "{{ project }}"
+    auth: "{{ auth_var | default(omit) }}"
     name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     state: "{{ state }}"
     wait: "yes"
   register: res_def_output
   async: "{{ async_timeout }}"
   poll: 0
-  when: async
+  when: async and auth_var['changed']== true
+
+- name: "Async:: provisioning/deprovisioning  keypair"
+  os_keypair:
+    name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+    state: "{{ state }}"
+    wait: "yes"
+  register: res_def_output
+  async: "{{ async_timeout }}"
+  poll: 0
+  when: async and auth_var['changed']== false
 
 - name: 'Async:: Check on keypair create task'
   async_status: jid={{ res_def_output.ansible_job_id }}

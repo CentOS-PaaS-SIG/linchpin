@@ -9,18 +9,6 @@
             "description": "Date of creation",
             "type": "string"
         },
-        "site": {
-            "description": "site of provisioning ",
-            "type": "string"
-        },
-        "credentials": {
-             "description": "contains various credential_vaults names",
-             "type": "array",
-             "items":{
-                "type":"string"
-             },
-             "minimum":1
-        },
         "resource_groups": {
             "description": "contains list of resources ",
             "type": "array",
@@ -705,7 +693,18 @@
                 },
                 "credentials": {
                     "description":"contains creds file associated to this resource",
-                    "type":"string"
+                    "type":"object",
+		    "properties": {
+	                "profile": {
+			  "type": "string"
+			},
+		        "auth_type": {
+		          "type": "string"
+			},
+			"name": {
+			  "type": "string"
+			}
+		    }
                 }
             },
             "required":["resource_group_name","resource_group_type","resource_definitions","credentials"],
@@ -736,7 +735,18 @@
                 },
                 "credentials": {
                     "description":"contains creds file associated to this resource",
-                    "type":"string"
+		    "type":"object",
+                    "properties": {
+                        "profile": {
+                          "type": "string"
+                        },
+                        "auth_type": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                    }
                 }
             },
             "required":["resource_group_name","resource_group_type","resource_definitions","credentials"],
@@ -763,7 +773,15 @@
                 },
                 "credentials": {
                     "description":"contains creds file associated to this resource",
-                    "type":"string"
+                    "type":"object",
+		    "properties": {
+                        "auth_type": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                    }
                 }
             },
             "required":["resource_group_name","resource_group_type","resource_definitions","credentials"],

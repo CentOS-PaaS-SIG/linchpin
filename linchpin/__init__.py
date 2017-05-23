@@ -64,8 +64,11 @@ class LinchpinAliases(click.Group):
         help='Enable verbose output')
 @click.option('--version', is_flag=True,
         help='Prints the version and exits')
+@click.option('-cp', '--creds-path', type=click.Path(), envvar='LP_CREDS',
+        help='Use the specified credentials path if WORKSPACE environment variable '
+        'is not set')
 @pass_context
-def runcli(ctx, config, workspace, verbose, version):
+def runcli(ctx, config, workspace, verbose, version, creds_path):
     """linchpin: hybrid cloud orchestration"""
 
     ctx.verbose = verbose
@@ -80,8 +83,16 @@ def runcli(ctx, config, workspace, verbose, version):
 
     if workspace is not None:
         ctx.workspace = os.path.realpath(os.path.expanduser(workspace))
+    else:
+        ctx.workspace = os.getenv('PWD')
+
+    if creds_path is not None:
+        ctx.creds_path = os.path.realpath(os.path.expanduser(creds_path))
+    else:
+        ctx.creds_path = str(None)
 
     ctx.log_debug("ctx.workspace: {0}".format(ctx.workspace))
+    ctx.log_debug("ctx.creds_path: {0}".format(ctx.creds_path))
 
     ctx.pinfile = ctx.cfgs['init']['pinfile']
 

@@ -40,6 +40,7 @@ class LinchpinContext(object):
         self.lib_path = os.path.realpath(os.path.join(lib_path, os.pardir))
 
         self.workspace = os.path.realpath(os.path.curdir)
+        self.creds_path = None
 
 
     def load_config(self, lpconfig=None):
