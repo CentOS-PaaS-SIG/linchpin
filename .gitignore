@@ -5,6 +5,10 @@ ansible.cfg
 
 # generated files
 docs/build/
+_autosummary
+docs/source/generated/
+
+# packaging files
 build
 dist
 *.egg-info/

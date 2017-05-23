@@ -103,6 +103,8 @@ def init(ctx):
     """
     Initializes a linchpin project, which generates an example PinFile, and
     creates the necessary directory structure for topologies and layouts.
+
+    :param ctx: Context object defined by the click.make_pass_decorator method
     """
 
     ws = ctx.workspace
@@ -138,11 +140,14 @@ def up(ctx, pinfile, targets):
     """
     Provisions nodes from the given target(s) in the given PinFile.
 
-    \b
-    TARGET ...
-    Provision ONLY the listed target(s). If omitted, ALL targets in the appropriate PinFile
-    will be provisioned.
+    :param ctx: Context object defined by the click.make_pass_decorator method
 
+    :param pinfile:
+        path to pinfile (Default: ctx.workspace)
+
+    :param targets
+        Provision ONLY the listed target(s). If omitted, ALL targets in the
+        appropriate PinFile will be provisioned.
     """
 
     if pinfile is None:
@@ -183,10 +188,14 @@ def destroy(ctx, pinfile, targets):
     """
     Destroys nodes from the given target(s) in the given PinFile.
 
-    \b
-    TARGET ...
-    Destroy ONLY the listed target(s). If omitted, ALL targets in the appropriate Pinfile
-    will be destroyed.
+    :param ctx: Context object defined by the click.make_pass_decorator method
+
+    :param pinfile:
+        path to pinfile (Default: ctx.workspace)
+
+    :param targets:
+        Destroy ONLY the listed target(s). If omitted, ALL targets in the
+        appropriate Pinfile will be destroyed.
 
     """
 
