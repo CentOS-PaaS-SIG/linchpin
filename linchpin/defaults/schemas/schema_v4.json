@@ -773,7 +773,15 @@
                 },
                 "credentials": {
                     "description":"contains creds file associated to this resource",
-                    "type":"string"
+                    "type":"object",
+		    "properties": {
+                        "auth_type": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                    }
                 }
             },
             "required":["resource_group_name","resource_group_type","resource_definitions","credentials"],
