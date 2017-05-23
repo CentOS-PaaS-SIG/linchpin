@@ -8,7 +8,7 @@ Getting Started
 Foreword
 ````````
 
-Once linch-pin is installed, according to the directions in :doc:`intro_installation`, it is time to become familiar with how it is used.
+Once LinchPin is installed, according to the directions in :doc:`intro_installation`, it is time to become familiar with how it is used.
 
 
 .. _understanding_terminology:
