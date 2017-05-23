@@ -55,6 +55,7 @@ class LinchpinAPI(object):
         :param key: key to get from config file, within section
 
         :param default: default value to return if nothing is found.
+
         Does not apply if section is not provided.
         """
 

@@ -15,7 +15,12 @@ The main goal of linch-pin is to facilitate provisioning and orchestration of re
    config
    topologies
    linchpincli
+   libdocs
    license
+
+.. autosummary::
+   :toctree: _autosummary
+   :show-inheritance:
 
 
 Indices and tables

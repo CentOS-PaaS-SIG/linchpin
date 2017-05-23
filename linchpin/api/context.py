@@ -189,7 +189,7 @@ class LinchpinContext(object):
     def setup_logging(self):
 
         """
-        .. attention:: Abstract method must be implemented in a subclass
+        .. attention:: Please implement this function in a subclass
 
         Setup logging to the console only
 
