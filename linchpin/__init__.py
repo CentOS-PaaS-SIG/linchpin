@@ -64,7 +64,7 @@ class LinchpinAliases(click.Group):
         help='Enable verbose output')
 @click.option('--version', is_flag=True,
         help='Prints the version and exits')
-@click.option('-cp', '--creds-path', type=click.Path(), envvar='LP_CREDS',
+@click.option('--creds-path', type=click.Path(), envvar='LP_CREDS',
         help='Use the specified credentials path if WORKSPACE environment variable '
         'is not set')
 @pass_context
