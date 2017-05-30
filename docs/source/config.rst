@@ -10,3 +10,4 @@ to specify the resources required.
     config_general
     config_topologies
     config_layout
+    config_ansiblevars
