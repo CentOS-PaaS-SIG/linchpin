@@ -152,7 +152,7 @@ class LinchpinAPI(object):
             t_f = yaml.load(t_f)
             topology_name = t_f["topology_name"]
         except Exception as e:
-            ctx.log_info("{0}".format(str(e)))
+            self.ctx.log_info("{0}".format(str(e)))
             topology_name = self.get_evar("topology").split("/")[-1]
             # defaults to file name if there is any error
             topology_name = topology_name.split(".")[-2]
