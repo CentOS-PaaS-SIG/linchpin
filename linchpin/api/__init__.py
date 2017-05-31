@@ -142,6 +142,7 @@ class LinchpinAPI(object):
 
         self._hook_observers.append(callback)
 
+
     def set_magic_vars(self):
         """
         Function inbuilt to set magic vars for ansible context
@@ -225,6 +226,7 @@ class LinchpinAPI(object):
                                                         target, playbook))
             self.set_evar('topology', self.find_topology(
                     pf[target]["topology"]))
+
             if 'layout' in pf[target]:
                 self.set_evar('layout_file', (
                     '{0}/{1}/{2}'.format(self.ctx.workspace,
@@ -347,7 +349,7 @@ class LinchpinAPI(object):
         if topology in topos:
             return os.path.realpath('{0}/{1}'.format(topo_path, topology))
 
-        return None
+        raise LinchpinError('Topology {0} not found in workspace'.format(topology))
 
 
     def _invoke_playbook(self, playbook='up', console=True):
