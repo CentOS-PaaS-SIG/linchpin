@@ -1,10 +1,12 @@
 Introduction
 ============
 
-Before, using linchpin playbook collection , we'll learn about how to install ansible and linchpin dependencies.
+Before getting heavily into LinchPin, let's cover some of the basics. The topics below will cover everything needed to get going with LinchPin. For more advanced topics, refer to the :doc:`main documentation page <index>`.
 
 .. toctree::
-   :maxdepth: 1
+   :tocdepth: 1
 
-   intro_installation
-   intro_getting_started
+
+* :doc:`installation`
+* :doc:`getting_started`
+* :doc:`configuration`

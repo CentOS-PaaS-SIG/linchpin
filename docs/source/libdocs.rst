@@ -1,5 +1,5 @@
-LinchPin Python API
-===================
+Python API Reference
+====================
 
 This page contains the list of project's modules
 
