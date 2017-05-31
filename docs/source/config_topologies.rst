@@ -1,14 +1,12 @@
-Topology Generation
-===================
+Topologies
+==========
 
-Broadly, a topology is a specification of which resources from which environments
+A topology is a specification of which resources from which environments
 are being requested from a linchpin run. Since each environment has different sets
 of requirements, the exact values and structure of a topology file will vary based
 on where resources are to be provisioned. In this document some broad discussion of
 topologies will be addressed. More extensive examples pertaining to specific environments
 will be given in a separate section of the documentation.
-
-.. contents:: Topics
 
 Topology
 ````````

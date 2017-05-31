@@ -1,6 +1,10 @@
 Getting Started
 ===============
 
+.. toctree::
+   :maxdepth: 1
+   :tocdepth: 1
+
 .. contents:: Topics
 
 .. _foreword:
@@ -8,34 +12,86 @@ Getting Started
 Foreword
 ````````
 
-Once LinchPin is installed, according to the directions in :doc:`intro_installation`, it is time to become familiar with how it is used.
+Now that LinchPin is installed according to :doc:`installation`, it is time to see how it works. This guide is essentially a quick start guide to getting up and running with LinchPin.
 
+LinchPin is a command-line utility, a Python API, and Ansible playbooks. This document focuses on the command-line interface.
 
-.. _understanding_terminology:
+.. _terminology:
 
 Terminology
 ```````````
 
-Linchpin makes use of a number of broad concepts it hopes are familiar enough to unify thinking and rationale surrounding collections of
-systems in a variety of cloud, self-hosted, and local environments. Some of the more important terms are explained below
+LinchPin, while it attempts to be a simple tool for provisioning resources, still does have some complexity. To that end, this section attempts to define the minimal bits of terminology needed to understand how to use the ``linchpin`` command-line utility.
 
 Topology
 --------
 
-A topology is the term given, in linchpin, to a file that specifies the set of resources that ought to be provisioned in each of the various
-environments. A topology file is a YAML-formatted file (which means it can also be in JSON format, as JSON is a strict subset of YAML) which
-includes the definitions of all the resources to provision.
+.. include:: includes/topologies.rst
 
-Credentials
------------
+Inventory Layout
+----------------
 
-Many of the environments where systems can be hosted require some form of authentication. This could be a username and password, an SSH key,
-an existing Kerberos certificate, or some other system. Each environment will have its own method for configuring and passing in these
-credentials. Look into each particular environment's specific documentation for a discussion on configuring any needed credentials prior to
-provisioning resources from it.
+.. include:: includes/layouts.rst
 
-Layout
-------
+PinFile
+-------
 
-A layout is a set of optinos which maps the generated hosts in an environment to output variables and inventory groups when generating out
-the resulting inventory hosts.
+.. include:: includes/pinfile.rst
+
+Running ``linchpin``
+````````````````````
+
+As stated above, this guide is about using the command-line utility, ``linchpin``. First off, simply execute ``linchpin`` to see some options.
+
+.. code-block:: bash
+
+    $ linchpin
+    Usage: linchpin [OPTIONS] COMMAND [ARGS]...
+
+      linchpin: hybrid cloud orchestration
+
+    Options:
+      -c, --config PATH       Path to config file
+      -w, --workspace PATH    Use the specified workspace if the familiar Jenkins
+                              $WORKSPACE environment variable is not set
+      -v, --verbose           Enable verbose output
+      --version               Prints the version and exits
+      --creds-path PATH       Use the specified credentials path if WORKSPACE
+                              environment variable is not set
+      -h, --help              Show this message and exit.
+
+    Commands:
+      init     Initializes a linchpin project.
+      up       Provisions nodes from the given target(s) in...
+      destroy  Destroys nodes from the given target(s) in...
+
+What can be seen immediately is a simple description, along with options and arguments that can be passed to the command. The three commands found near the bottom of this help are where the focus will be for this document.
+
+Initialization (init)
+---------------------
+
+.. include:: includes/initialization.rst
+
+Provisioning (up)
+------------------
+
+.. include:: includes/provisioning.rst
+
+Teardown (destroy)
+------------------
+
+.. include:: includes/teardown_destroy.rst
+
+Multi-Target Actions
+--------------------
+
+.. include:: includes/multi_target_actions.rst
+
+.. seealso::
+
+    :doc:`linchpincli`
+        Linchpin Command-Line Interface
+    `User Mailing List <https://www.redhat.com/mailman/listinfo/linchpin>`_
+        Subscribe and participate. A great place for Q&A
+    `irc.freenode.net <http://irc.freenode.net>`_
+        #linchpin IRC chat channel
