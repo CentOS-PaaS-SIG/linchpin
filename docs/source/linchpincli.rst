@@ -1,5 +1,5 @@
-LinchPin Command Line
-=====================
+Command-Line Reference
+=======================
 
 Linchpin's command line interface is availble with the ``linchpin`` command,
 and comes installed with LinchPin automatically. The command has

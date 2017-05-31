@@ -14,7 +14,11 @@ of linchpin.conf, to alter linchpin's default behavior.
 
     topology
     topology_file
-        YAML definition for provisioning and teardown and which providers to use.
+        A set of rules, written in YAML, that define the way the provisioned
+        systems should look after executing linchpin.
+
+        Generally, the `topology` and `topology_file` values are
+        interchangeable, except after the file has been processed.
 
     schema
     schema_file
@@ -49,7 +53,8 @@ of linchpin.conf, to alter linchpin's default behavior.
             layout / layout_file = /<layouts_folder>
             resources / resources_file = /resources_folder>
             inventory / inventory_file = /<inventories_folder>
-            schema is not affected by this pathing
+
+            .. note:: schema is not affected by this pathing
 
         If the ``WORKSPACE`` environment variable is set, it will be used here. If it
         is not, this variable can be set on the command line with ``-w/--workspace``, and defaults
@@ -149,4 +154,7 @@ recommended not to change them. These values are defined in ``<lp_path>/linchpin
 
         landing location for inventory outputs
 
-Test Term: :term:`async`
+.. seealso::
+
+    :doc:`glossary`
+        Glossary

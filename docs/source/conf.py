@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# linch-pin documentation build configuration file, created by
+# LinchPin documentation build configuration file, created by
 # sphinx-quickstart on Wed Jul  6 17:09:59 2016.
 #
 # This file is execfile()d with the current directory set to its
@@ -55,7 +55,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'linchpin'
-copyright = u'2016, Red Hat, Inc.'
+copyright = u'2017, Red Hat, Inc.'
 author = u'Samvaran Kashyap Rallabandi'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -135,7 +135,9 @@ html_theme = 'sphinx_rtd_theme'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {
+    'navigation_depth': 2,
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []
@@ -143,7 +145,7 @@ html_theme = 'sphinx_rtd_theme'
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
 #
-# html_title = u'linch-pin v0.0.1'
+# html_title = u'LinchPin v1.0.0'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #
@@ -243,7 +245,7 @@ html_static_path = []
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'linch-pindoc'
+htmlhelp_basename = 'linchpin_doc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -269,7 +271,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'linch-pin.tex', u'linch-pin Documentation',
+    (master_doc, 'linchpin.tex', u'LinchPin Documentation',
      u'Samvaran Kashyap Rallabandi', 'manual'),
 ]
 
@@ -305,7 +307,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'linch-pin', u'linch-pin Documentation',
+    (master_doc, 'LinchPin', u'LinchPin Documentation',
      [author], 1)
 ]
 
@@ -320,8 +322,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'linch-pin', u'linch-pin Documentation',
-     author, 'linch-pin', 'One line description of project.',
+    (master_doc, 'LinchPin', u'LinchPin Documentation',
+     author, 'LinchPin', 'One line description of project.',
      'Miscellaneous'),
 ]
 
