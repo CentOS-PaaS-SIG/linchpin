@@ -1,51 +1,52 @@
-linch-pin
-----------
+LinchPin
+--------
 
-Linch-pin provides a collection of Ansible playbooks for provisioning and
+LinchPin provides a command-line interface and Python API for provisioning and
 managing resources across multiple infrastructures. Where multiple
 infrastructure resource types can be defined with a single topology file.
 
-Linch-pin can also generate inventory files for use with additional ansible
-playbooks. These are applied using an inventory layout file (work in progress).
+LinchPin can also generate inventory files for use with additional Ansible
+playbooks. These are applied using an inventory layout file.
 
-Contributing
-++++++++++++
+Contributing and Community Participation
+++++++++++++++++++++++++++++++++++++++++
 
-Developers are encouraged to contribute to the Linch-Pin project. Please visit
-`Contributing <http://github.com/CentOS-PaaS-SIG/linch-pin/tree/develop/CONTRIBUTING.rst>`_
+Developers are encouraged to contribute to the LinchPin project. Please visit
+`Contributing <http://github.com/CentOS-PaaS-SIG/linchpin/tree/develop/CONTRIBUTING.rst>`_
 for details.
+
+* Subscribe and participate on the `LinchPin Mailing List <https://www.redhat.com/mailman/listinfo/linchpin>`_
+* Join the `#linchpin` IRC chat channel on `freenode <https://webchat.freenode.net/?channels=#linchpin>`_
 
 Installation
 ++++++++++++
 
-`Installation documentation <http://linch-pin.readthedocs.io/en/latest/intro_installation.html>`_
+`Installation documentation <http://linchpin.readthedocs.io/en/latest/intro_installation.html>`_
+
+QuickStart
+++++++++++
+
+The `Getting Started Guide <http://linchpin.readthedocs.io/en/develop/getting_started.html>`_ is a quick guide for LinchPin from the Command-Line.
 
 General Configuration
 +++++++++++++++++++++
 
-`General Configuration documentation <http://linch-pin.readthedocs.io/en/latest/config_general.html>`_
+`General Configuration documentation <http://linchpin.readthedocs.io/en/latest/config_general.html>`_
 
-Credentials
-++++++++++++
-
-* `Openstack credentials examples <https://github.com/CentOS-PaaS-SIG/linch-pin/tree/develop/linchpin/provision/roles/openstack/vars>`_
-* `AWS credential examples <https://github.com/CentOS-PaaS-SIG/linch-pin/tree/develop/cli_cleanup/linchpin/provision/roles/aws/vars>`_
-* `GCE credentials examples <https://github.com/CentOS-PaaS-SIG/linch-pin/tree/develop/linchpin/provision/roles/gcloud/vars>`_
-
-Example Topology
+Example Topologies
 +++++++++++++++++++++
 
-`Example Topologies <http://linch-pin.readthedocs.io/en/latest/topologies.html>`_
+`Example Topologies <http://linchpin.readthedocs.io/en/latest/topologies.html>`_
 
 Example Inventory Layout (openshift 3 node cluster)
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 
-`Example Layouts <http://linch-pin.readthedocs.io/en/latest/config_layout.html>`_
+`Example Layouts <http://linchpin.readthedocs.io/en/latest/config_layout.html>`_
 
-Using Linch-Pin
+Using LinchPin
 +++++++++++++++
 
-Probably the best way to see linch-pin in action, is to watch the
-presentation given at
-`DevConf 2017 <https://www.youtube.com/watch?v=Tb7Zti5Xao8>`_
+Check out the `Getting Started Guide <http://linchpin.readthedocs.io/en/develop/getting_started.html>`_ for a quick guide on how to use LinchPin from the Command-Line.
+
+For API documentation, check out the `Python API Reference <http://linchpin.readthedocs.io/en/develop/libdocs.html>`_.
 

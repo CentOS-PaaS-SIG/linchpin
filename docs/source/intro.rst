@@ -10,3 +10,11 @@ Before getting heavily into LinchPin, let's cover some of the basics. The topics
 * :doc:`installation`
 * :doc:`getting_started`
 * :doc:`configuration`
+
+
+.. seealso::
+
+    `User Mailing List <https://www.redhat.com/mailman/listinfo/linchpin>`_
+        Subscribe and participate. A great place for Q&A
+    `irc.freenode.net <http://irc.freenode.net>`_
+        #linchpin IRC chat channel
