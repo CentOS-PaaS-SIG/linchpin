@@ -70,16 +70,18 @@ def _handle_results(ctx, results):
 
     for k,v in results.iteritems():
         if not isinstance(v, int):
-            trs, retval = v
+            trs = v
 
-            if retval and trs is not None:
+            if trs is not None:
                 trs.reverse()
                 tr = trs[0]
-                msg = tr._check_key('msg')
-                ctx.log_state("{0} failed with error '{1}'".format(
-                                                        tr._task,
-                                                        msg))
-                sys.exit(retval)
+                if tr.is_failed():
+                    msg = tr._check_key('msg')
+                    ctx.log_state("Target '{0}': {1} failed with error '{2}'".format(
+                                                            k,
+                                                            tr._task,
+                                                            msg))
+                    sys.exit(retval)
         else:
             if v: sys.exit(v)
 
