@@ -1,20 +1,43 @@
 #!/usr/bin/env python
 
 import os
+import sys
 import ast
 import yaml
 from collections import namedtuple
+from contextlib import contextmanager
 
 from ansible.inventory import Inventory
 from ansible.vars import VariableManager
 from ansible.parsing.dataloader import DataLoader
 from ansible.executor.playbook_executor import PlaybookExecutor
 
+
 from linchpin.api.utils import yaml2json
 from linchpin.api.callbacks import PlaybookCallback
 from linchpin.hooks import LinchpinHooks
 from linchpin.hooks.state import State
 from linchpin.exceptions import LinchpinError
+
+
+@contextmanager
+def suppress_stdout():
+    """
+    This context manager provides tooling to make Ansible's Display class
+    not output anything when used
+    """
+
+    with open(os.devnull, "w") as devnull:
+        old_stdout = sys.stdout
+        old_stderr = sys.stderr
+        sys.stdout = devnull
+        sys.stderr = devnull
+
+        try:
+            yield
+        finally:
+            sys.stdout = old_stdout
+            sys.stderr = old_stderr
 
 
 class LinchpinAPI(object):
@@ -182,7 +205,7 @@ class LinchpinAPI(object):
 
         # playbooks check whether from_cli is defined
         # if not, vars get loaded from linchpin.conf
-        self.set_evar('from_cli', True)
+        self.set_evar('from_api', True)
         self.set_evar('lp_path', self.lp_path)
 
         #do we display the ansible output to the console?
@@ -230,8 +253,6 @@ class LinchpinAPI(object):
 
 
         for target in targets:
-            self.ctx.log_state('target: {0}, action: {1}\n'.format(
-                                                        target, playbook))
             self.set_evar('topology', self.find_topology(
                     pf[target]["topology"]))
 
@@ -256,8 +277,17 @@ class LinchpinAPI(object):
                 self.hook_state = '{0}{1}'.format('pre', playbook)
 
             #invoke the appropriate playbook
-            results[target] = self._invoke_playbook(playbook=playbook,
+            return_code, results[target] = self._invoke_playbook(
+                                            playbook=playbook,
                                             console=ansible_console)
+
+            if not return_code:
+                self.ctx.log_state('target {0} is {1}'.format(
+                                                        target, playbook))
+
+            # FIXME Check the result[target] value here, and fail if applicable.
+            # It's possible that a flag might allow more targets to run, then
+            # return an error code at the end.
 
             if 'post' in self.pb_hooks:
                 self.hook_state = '{0}{1}'.format('post', playbook)
@@ -360,6 +390,7 @@ class LinchpinAPI(object):
         raise LinchpinError('Topology {0} not found in workspace'.format(topology))
 
 
+
     def _invoke_playbook(self, playbook='up', console=True):
         """
         Uses the Ansible API code to invoke the specified linchpin playbook
@@ -428,16 +459,21 @@ class LinchpinAPI(object):
                                 passwords=passwords)
 
         if not console:
+            results = {}
+            return_code = 0
+
             cb = PlaybookCallback()
-            pbex._tqm._stdout_callback = cb
+
+            with suppress_stdout():
+                pbex._tqm._stdout_callback = cb
+
             return_code = pbex.run()
             results = cb.results
 
-            return results, return_code
+            return return_code, results
         else:
-            results = pbex.run()
-
-        return results
+            # the console only returns a return_code
+            return pbex.run()
 
 
 #    def lp_topo_list(self, upstream=None):
