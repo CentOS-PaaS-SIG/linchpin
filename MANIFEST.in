@@ -1,8 +1,10 @@
 include requirements.txt
 include README.rst
+include LICENSE
 
 include linchpin/linchpin.conf
 
+recursive-include docs *
 recursive-include linchpin/examples *
 recursive-include linchpin/templates *
 recursive-include linchpin/defaults *
