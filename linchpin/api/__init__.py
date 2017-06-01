@@ -200,11 +200,19 @@ class LinchpinAPI(object):
                                             self.get_evar('resources_folder',
                                                     default='resources')))
 
-        self.set_evar('inventory_dir', '{0}/{1}'.format(
+        # playbooks still use this var, keep it here
+        self.set_evar('default_inventories_path', '{0}/{1}'.format(
                                         self.ctx.workspace,
                                         self.get_evar('inventories_folder',
                                                 default='inventories')))
+
+        # add this because of magic_var evaluation in ansible
+        self.set_evar('inventory_dir', self.get_evar(
+                                        'default_inventories_path',
+                                        default='inventories'))
+
         self.set_evar('state', 'present')
+
 
         if playbook == 'destroy':
             self.set_evar('state', 'absent')
@@ -218,7 +226,7 @@ class LinchpinAPI(object):
         elif len(targets) == 0:
             targets = set(pf.keys()).difference()
         else:
-            raise  LinchpinError("One or more Invalid targets found")
+            raise LinchpinError("One or more Invalid targets found")
 
 
         for target in targets:
@@ -372,7 +380,7 @@ class LinchpinAPI(object):
                               variable_manager=variable_manager,
                               host_list=[])
         passwords = {}
-        utils.VERBOSITY = 4
+        #utils.VERBOSITY = 4
 
         Options = namedtuple('Options', ['listtags',
                                          'listtasks',
@@ -409,7 +417,7 @@ class LinchpinAPI(object):
                           become=False,
                           become_method='sudo',
                           become_user='root',
-                          verbosity=utils.VERBOSITY,
+                          verbosity=0,
                           check=False)
 
         pbex = PlaybookExecutor(playbooks=[playbook_path],
@@ -424,6 +432,8 @@ class LinchpinAPI(object):
             pbex._tqm._stdout_callback = cb
             return_code = pbex.run()
             results = cb.results
+
+            return results, return_code
         else:
             results = pbex.run()
 
