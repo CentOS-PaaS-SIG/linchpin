@@ -80,3 +80,11 @@ As an alternative, LinchPin can be installed via github. This may be done in ord
     (linchpin) $ git clone git://github.com/CentOS-PaaS-SIG/linch-pin
     ..snip..
     (linchpin) $ pip install ./linch-pin
+
+
+.. seealso::
+
+    `User Mailing List <https://www.redhat.com/mailman/listinfo/linchpin>`_
+        Subscribe and participate. A great place for Q&A
+    `irc.freenode.net <http://irc.freenode.net>`_
+        #linchpin IRC chat channel
