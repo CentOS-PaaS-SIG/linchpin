@@ -20,7 +20,7 @@ PKG_TYPES="sdist bdist_wheel"
 SETUP_CMD="python setup.py"
 CLEAN_CMD="clean"
 REG_CMD="register"
-UPLOAD_CMD="upload ${PKG_TYPES}"
+UPLOAD_CMD="${PKG_TYPES} upload"
 
 # find extraneous files and remove them
 CRUFTIES=('coverage.xml' 'linchpin.log')
@@ -28,7 +28,7 @@ CRUFTIES=('coverage.xml' 'linchpin.log')
 echo "REMOVING CRUFTY FILES"
 
 for CRUFT in "${CRUFTIES[@]}"; do
-    echo "find -name ${CRUFT} -delete"
+    find -name "${CRUFT}" -delete
 done
 
 CLEAN="${SETUP_CMD} ${CLEAN_CMD}"
