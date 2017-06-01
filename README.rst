@@ -16,7 +16,7 @@ Developers are encouraged to contribute to the LinchPin project. Please visit
 for details.
 
 * Subscribe and participate on the `LinchPin Mailing List <https://www.redhat.com/mailman/listinfo/linchpin>`_
-* Join the `#linchpin` IRC chat channel on `https://webchat.freenode.net/?channels <https://webchat.freenode.net/?channels=#linchpin>`_
+* Join the `#linchpin` IRC chat channel on `freenode <https://webchat.freenode.net/?channels=#linchpin>`_
 
 Installation
 ++++++++++++
