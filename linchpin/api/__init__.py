@@ -1,20 +1,43 @@
 #!/usr/bin/env python
 
 import os
+import sys
 import ast
 import yaml
 from collections import namedtuple
+from contextlib import contextmanager
 
 from ansible.inventory import Inventory
 from ansible.vars import VariableManager
 from ansible.parsing.dataloader import DataLoader
 from ansible.executor.playbook_executor import PlaybookExecutor
 
+
 from linchpin.api.utils import yaml2json
 from linchpin.api.callbacks import PlaybookCallback
 from linchpin.hooks import LinchpinHooks
 from linchpin.hooks.state import State
 from linchpin.exceptions import LinchpinError
+
+
+@contextmanager
+def suppress_stdout():
+    """
+    This context manager provides tooling to make Ansible's Display class
+    not output anything when used
+    """
+
+    with open(os.devnull, "w") as devnull:
+        old_stdout = sys.stdout
+        old_stderr = sys.stderr
+        sys.stdout = devnull
+        sys.stderr = devnull
+
+        try:
+            yield
+        finally:
+            sys.stdout = old_stdout
+            sys.stderr = old_stderr
 
 
 class LinchpinAPI(object):
@@ -142,6 +165,7 @@ class LinchpinAPI(object):
 
         self._hook_observers.append(callback)
 
+
     def set_magic_vars(self):
         """
         Function inbuilt to set magic vars for ansible context
@@ -181,7 +205,7 @@ class LinchpinAPI(object):
 
         # playbooks check whether from_cli is defined
         # if not, vars get loaded from linchpin.conf
-        self.set_evar('from_cli', True)
+        self.set_evar('from_api', True)
         self.set_evar('lp_path', self.lp_path)
 
         #do we display the ansible output to the console?
@@ -199,11 +223,19 @@ class LinchpinAPI(object):
                                             self.get_evar('resources_folder',
                                                     default='resources')))
 
-        self.set_evar('inventory_dir', '{0}/{1}'.format(
+        # playbooks still use this var, keep it here
+        self.set_evar('default_inventories_path', '{0}/{1}'.format(
                                         self.ctx.workspace,
                                         self.get_evar('inventories_folder',
                                                 default='inventories')))
+
+        # add this because of magic_var evaluation in ansible
+        self.set_evar('inventory_dir', self.get_evar(
+                                        'default_inventories_path',
+                                        default='inventories'))
+
         self.set_evar('state', 'present')
+
 
         if playbook == 'destroy':
             self.set_evar('state', 'absent')
@@ -217,14 +249,13 @@ class LinchpinAPI(object):
         elif len(targets) == 0:
             targets = set(pf.keys()).difference()
         else:
-            raise  LinchpinError("One or more Invalid targets found")
+            raise LinchpinError("One or more Invalid targets found")
 
 
         for target in targets:
-            self.ctx.log_state('target: {0}, action: {1}\n'.format(
-                                                        target, playbook))
             self.set_evar('topology', self.find_topology(
                     pf[target]["topology"]))
+
             if 'layout' in pf[target]:
                 self.set_evar('layout_file', (
                     '{0}/{1}/{2}'.format(self.ctx.workspace,
@@ -246,8 +277,17 @@ class LinchpinAPI(object):
                 self.hook_state = '{0}{1}'.format('pre', playbook)
 
             #invoke the appropriate playbook
-            results[target] = self._invoke_playbook(playbook=playbook,
+            return_code, results[target] = self._invoke_playbook(
+                                            playbook=playbook,
                                             console=ansible_console)
+
+            if not return_code:
+                self.ctx.log_state('target {0} is {1}'.format(
+                                                        target, playbook))
+
+            # FIXME Check the result[target] value here, and fail if applicable.
+            # It's possible that a flag might allow more targets to run, then
+            # return an error code at the end.
 
             if 'post' in self.pb_hooks:
                 self.hook_state = '{0}{1}'.format('post', playbook)
@@ -347,7 +387,8 @@ class LinchpinAPI(object):
         if topology in topos:
             return os.path.realpath('{0}/{1}'.format(topo_path, topology))
 
-        return None
+        raise LinchpinError('Topology {0} not found in workspace'.format(topology))
+
 
 
     def _invoke_playbook(self, playbook='up', console=True):
@@ -370,7 +411,7 @@ class LinchpinAPI(object):
                               variable_manager=variable_manager,
                               host_list=[])
         passwords = {}
-        utils.VERBOSITY = 4
+        #utils.VERBOSITY = 4
 
         Options = namedtuple('Options', ['listtags',
                                          'listtasks',
@@ -407,7 +448,7 @@ class LinchpinAPI(object):
                           become=False,
                           become_method='sudo',
                           become_user='root',
-                          verbosity=utils.VERBOSITY,
+                          verbosity=0,
                           check=False)
 
         pbex = PlaybookExecutor(playbooks=[playbook_path],
@@ -418,14 +459,21 @@ class LinchpinAPI(object):
                                 passwords=passwords)
 
         if not console:
+            results = {}
+            return_code = 0
+
             cb = PlaybookCallback()
-            pbex._tqm._stdout_callback = cb
+
+            with suppress_stdout():
+                pbex._tqm._stdout_callback = cb
+
             return_code = pbex.run()
             results = cb.results
-        else:
-            results = pbex.run()
 
-        return results
+            return return_code, results
+        else:
+            # the console only returns a return_code
+            return pbex.run()
 
 
 #    def lp_topo_list(self, upstream=None):

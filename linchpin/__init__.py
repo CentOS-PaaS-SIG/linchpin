@@ -10,8 +10,9 @@ from distutils import dir_util
 from jinja2 import Environment, PackageLoader
 
 from linchpin.cli import LinchpinCli
-from linchpin.cli.context import LinchpinCliContext
 from linchpin.version import __version__
+from linchpin.exceptions import *
+from linchpin.cli.context import LinchpinCliContext
 
 
 pass_context = click.make_pass_decorator(LinchpinCliContext, ensure=True)
@@ -49,6 +50,40 @@ class LinchpinAliases(click.Group):
 
         rv = click.Group.get_command(self, ctx, cmd)
         return rv
+
+
+def _handle_results(ctx, results):
+    """
+    Handle results from the Ansible API. Either as a return value (retval)
+    when running with the ansible console enabled, or as a list of TaskResult
+    objects, and a return value.
+
+    If a target fails along the way, this method immediately exits with the
+    appropriate return value (retval). If the ansible console is disabled, an
+    error message will be printed before exiting.
+
+    :param results:
+        The dictionary of results for each target.
+    """
+
+    retval = 0
+
+    for k,v in results.iteritems():
+        if not isinstance(v, int):
+            trs = v
+
+            if trs is not None:
+                trs.reverse()
+                tr = trs[0]
+                if tr.is_failed():
+                    msg = tr._check_key('msg')
+                    ctx.log_state("Target '{0}': {1} failed with error '{2}'".format(
+                                                            k,
+                                                            tr._task,
+                                                            msg))
+                    sys.exit(retval)
+        else:
+            if v: sys.exit(v)
 
 
 @click.command(cls=LinchpinAliases,
@@ -112,22 +147,29 @@ def init(ctx):
 
     pf_w_path = os.path.realpath('{0}/{1}'.format(ws, pf))
 
-    src = ctx.cfgs['init']['source']
+    src = ctx.get_cfg('init', 'source', 'templates/')
     src_w_path = os.path.realpath('{0}/{1}'.format(ctx.lib_path, src))
 
     src_pf = os.path.realpath('{0}.lp_example'.format(pf_w_path))
 
-    if os.path.exists(pf_w_path):
-        if not click.confirm(
-            '{0} already exists, overwrite it?'.format(pf_w_path),
-            default=False):
-            sys.exit(0)
+    try:
 
-    dir_util.copy_tree(src_w_path, ws, verbose=1)
-    os.rename(src_pf, pf_w_path)
+        if os.path.exists(pf_w_path):
+            if not click.confirm(
+                '{0} already exists, overwrite it?'.format(pf_w_path),
+                default=False):
+                sys.exit(0)
 
-    ctx.log_state('{0} and file structure created at {1}'.format(
-        ctx.pinfile, ctx.workspace))
+        dir_util.copy_tree(src_w_path, ws, verbose=1)
+        os.rename(src_pf, pf_w_path)
+
+        ctx.log_state('{0} and file structure created at {1}'.format(
+            ctx.pinfile, ctx.workspace))
+
+    except Exception as e:
+        ctx.log_state('Error: {0}'.format(e))
+        sys.exit(1)
+
 
 
 @runcli.command()
@@ -145,7 +187,7 @@ def up(ctx, pinfile, targets):
     :param pinfile:
         path to pinfile (Default: ctx.workspace)
 
-    :param targets
+    :param targets:
         Provision ONLY the listed target(s). If omitted, ALL targets in the
         appropriate PinFile will be provisioned.
     """
@@ -156,11 +198,19 @@ def up(ctx, pinfile, targets):
     pf_w_path = '{0}/{1}'.format(ctx.workspace, pinfile)
 
     if not os.path.exists(pf_w_path):
-        return ctx.log_state('{0} not found in provided workspace: '
+        ctx.log_state('{0} not found in provided workspace: '
             '{1}'.format(pinfile, ctx.workspace))
+        sys.exit(1)
 
     lpcli = LinchpinCli(ctx)
-    lpcli.lp_up(pf_w_path, targets)
+    try:
+        results = lpcli.lp_up(pf_w_path, targets)
+
+        _handle_results(ctx, results)
+
+    except LinchpinError as e:
+        ctx.log_state(e)
+        sys.exit(1)
 
 
 @runcli.command()
@@ -195,7 +245,7 @@ def destroy(ctx, pinfile, targets):
 
     :param targets:
         Destroy ONLY the listed target(s). If omitted, ALL targets in the
-        appropriate Pinfile will be destroyed.
+        appropriate PinFile will be destroyed.
 
     """
 
@@ -209,7 +259,17 @@ def destroy(ctx, pinfile, targets):
             '{1}'.format(pinfile, ctx.workspace))
 
     lpcli = LinchpinCli(ctx)
-    lpcli.lp_destroy(pf_w_path, targets)
+    try:
+        results = lpcli.lp_destroy(pf_w_path, targets)
+
+        _handle_results(ctx, results)
+
+        for target in targets:
+            ctx.log_state('Target {0} is destroyed'.format(target))
+
+    except LinchpinError as e:
+        ctx.log_state(e)
+        sys.exit(1)
 
 
 @runcli.command()
