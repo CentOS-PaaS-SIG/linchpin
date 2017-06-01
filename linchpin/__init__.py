@@ -264,6 +264,9 @@ def destroy(ctx, pinfile, targets):
 
         _handle_results(ctx, results)
 
+        for target in targets:
+            ctx.log_state('Target {0} is destroyed'.format(target))
+
     except LinchpinError as e:
         ctx.log_state(e)
         sys.exit(1)

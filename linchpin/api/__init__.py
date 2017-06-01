@@ -282,8 +282,8 @@ class LinchpinAPI(object):
                                             console=ansible_console)
 
             if not return_code:
-                self.ctx.log_state("Action '{0}' on Target '{1}' is "
-                        "complete".format(playbook, target))
+                self.ctx.log_state('target {0} is {1}'.format(
+                                                        target, playbook))
 
             # FIXME Check the result[target] value here, and fail if applicable.
             # It's possible that a flag might allow more targets to run, then
