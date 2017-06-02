@@ -97,16 +97,7 @@
     libvirt_res_grps: "{{ filtered_res_grps['libvirt'] | default([])}}"
     rax_res_grps: "{{ filtered_res_grps['rackspace'] | default([]) }}"
     bkr_res_grps: "{{ filtered_res_grps['beaker'] | default([]) }}"
-
-- name: "filtering the output for openshift v3"
-  set_fact:
-    openshift_res_grps: "{{ outputs.resource_groups | selectattr('res_group_type', 'equalto', 'openshift') | list }}"
-  when: v3_schema_valid
-
-- name: "filtering the output for openshift v4"
-  set_fact:
-    openshift_res_grps: "{{ outputs.resource_groups | selectattr('resource_group_type', 'equalto', 'openshift') | list }}"
-  when: not v3_schema_valid
+    openshift_res_grps: "{{ filtered_res_grps['openshift'] | default([]) }}"
 
 - name: "Registering resource group vars from topology"
   set_fact:
