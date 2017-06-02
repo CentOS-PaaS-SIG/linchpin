@@ -277,7 +277,12 @@ class LinchpinAPI(object):
                 self.hook_state = '{0}{1}'.format('pre', playbook)
 
             #invoke the appropriate playbook
-            return_code, results[target] = self._invoke_playbook(
+            if not ansible_console:
+                return_code, results[target] = self._invoke_playbook(
+                                            playbook=playbook,
+                                            console=ansible_console)
+            if ansible_console:
+                return_code = self._invoke_playbook(
                                             playbook=playbook,
                                             console=ansible_console)
 
