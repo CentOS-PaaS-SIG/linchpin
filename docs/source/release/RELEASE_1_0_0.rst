@@ -10,7 +10,7 @@ Enhancements
 
 - Beaker provisioner
 
-- Convert from lincnpin_config.yml to linchpin.conf
+- Convert from linchpin_config.yml to linchpin.conf
   - Add tooling to load configurations from linchpin.conf
 
 - LinchPin Context to manage environment
