@@ -473,7 +473,8 @@ class LinchpinAPI(object):
             return return_code, results
         else:
             # the console only returns a return_code
-            return pbex.run()
+            return_code = pbex.run()
+            return return_code, None
 
 
 #    def lp_topo_list(self, upstream=None):
