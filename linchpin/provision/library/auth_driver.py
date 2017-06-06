@@ -30,7 +30,7 @@ options:
     description:
       defaults to file type. 
     required: true
-      
+
 author: Samvaran Kashyap Rallabandi -
 '''
 
@@ -58,8 +58,10 @@ class ConfigDict(ConfigParser.ConfigParser):
             d[k].pop('__name__', None)
         return d
 
+
 def list_files(path):
     return glob.glob(path+"/*.*")
+
 
 def parse_file(filename):
     cred_str = open(filename, "r").read()
@@ -79,7 +81,9 @@ def parse_file(filename):
                 module.fail_json(msg= "Error  {0} ".format(str(e)))
     return out
 
+
 def get_cred(name, creds_path):
+
     paths = creds_path.split(";")
     files = []
     for path in paths:
@@ -88,8 +92,12 @@ def get_cred(name, creds_path):
             if name == filename.split("/")[-1].split(".")[0]:
                 out = parse_file(filename)
                 return out, path
+
     module.fail_json(msg= "Error: Credential not found")
+
+
 def main():
+
     global module
     module = AnsibleModule(
     argument_spec={
