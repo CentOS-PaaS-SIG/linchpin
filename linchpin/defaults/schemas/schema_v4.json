@@ -52,10 +52,10 @@
                 "keypair": {
                     "type":"string"
                 },
-		            "fip_pool": {
-		                "type":"string"
-		            },
-		            "security_groups": {
+                    "fip_pool": {
+                        "type":"string"
+                    },
+                    "security_groups": {
                     "type":"string"
                 }
             },
@@ -690,24 +690,9 @@
                                 {"$ref": "#/definitions/os_sg"}
                              ]
                     }
-                },
-                "credentials": {
-                    "description":"contains creds file associated to this resource",
-                    "type":"object",
-		    "properties": {
-	                "profile": {
-			  "type": "string"
-			},
-		        "auth_type": {
-		          "type": "string"
-			},
-			"name": {
-			  "type": "string"
-			}
-		    }
                 }
             },
-            "required":["resource_group_name","resource_group_type","resource_definitions","credentials"],
+            "required":["resource_group_name","resource_group_type","resource_definitions"],
             "additionalProperties": true
         },
         "aws": {
@@ -732,24 +717,9 @@
                                 {"$ref": "#/definitions/aws_sg"}
                             ]
                     }
-                },
-                "credentials": {
-                    "description":"contains creds file associated to this resource",
-		    "type":"object",
-                    "properties": {
-                        "profile": {
-                          "type": "string"
-                        },
-                        "auth_type": {
-                          "type": "string"
-                        },
-                        "name": {
-                          "type": "string"
-                        }
-                    }
                 }
             },
-            "required":["resource_group_name","resource_group_type","resource_definitions","credentials"],
+            "required":["resource_group_name","resource_group_type","resource_definitions"],
             "additionalProperties": true
         },
         "gcloud": {
@@ -770,21 +740,9 @@
                                 {"$ref": "#/definitions/gcloud_gce"}
                             ]
                     }
-                },
-                "credentials": {
-                    "description":"contains creds file associated to this resource",
-                    "type":"object",
-		    "properties": {
-                        "auth_type": {
-                          "type": "string"
-                        },
-                        "name": {
-                          "type": "string"
-                        }
-                    }
                 }
             },
-            "required":["resource_group_name","resource_group_type","resource_definitions","credentials"],
+            "required":["resource_group_name","resource_group_type","resource_definitions"],
             "additionalProperties": true
         },
         "duffy": {
@@ -834,10 +792,6 @@
                             {"$ref": "#/definitions/libvirt_network"}
                         ]
                     }
-                },
-                "assoc_creds": {
-                    "description":"contains creds file associated to this resource",
-                    "type":"string"
                 }
             },
             "required":["resource_group_name","resource_group_type","resource_definitions"],
@@ -861,13 +815,9 @@
                                 {"$ref": "#/definitions/rax_server"}
                             ]
                     }
-                },
-                "credentials": {
-                    "description":"contains creds file associated to this resource",
-                    "type":"string"
                 }
             },
-            "required":["resource_group_name","resource_group_type","resource_definitions","credentials"],
+            "required":["resource_group_name","resource_group_type","resource_definitions"],
             "additionalProperties": true
         }
     }

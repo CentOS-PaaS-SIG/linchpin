@@ -15,6 +15,7 @@ if [ $# -lt 1 ]; then
 fi
 
 PROMPT=1
+LP_PATH=${1}
 
 PKG_TYPES="sdist bdist_wheel"
 SETUP_CMD="python setup.py"
@@ -24,11 +25,16 @@ UPLOAD_CMD="${PKG_TYPES} upload"
 
 # find extraneous files and remove them
 CRUFTIES=('coverage.xml' 'linchpin.log')
+CRUFTY_DIRS=('linchpin.egg-info' 'build' 'dist' 'docs/build' 'provision/outputs')
 
 echo "REMOVING CRUFTY FILES"
 
 for CRUFT in "${CRUFTIES[@]}"; do
-    find -name "${CRUFT}" -delete
+    find ${LP_PATH} -name "${CRUFT}" -delete
+done
+
+for CRUFT_DIR in "${CRUFTY_DIRS[@]}"; do
+    rm -rf ${LP_PATH}/${CRUFT_DIR}
 done
 
 CLEAN="${SETUP_CMD} ${CLEAN_CMD}"

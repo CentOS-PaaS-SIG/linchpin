@@ -60,10 +60,10 @@
                 "keypair": {
                     "type":"string"
                 },
-		            "fip_pool": {
-		                "type":"string"
-		            },
-		            "security_groups": {
+                    "fip_pool": {
+                        "type":"string"
+                    },
+                    "security_groups": {
                     "type":"string"
                 }
             },
@@ -644,17 +644,17 @@
                     "description":"contains creds file associated to this resource",
                     "type":"string"
                 },
-		"credentials": {
-	            "type": "object",
-		    "properties":{
-		        "name": {
-			  "type": "string"
-			},
-			"auth_type": {
-			  "type": "string"
-			}
-		    }
-		}
+                "credentials": {
+                    "type": "object",
+                    "properties":{
+                        "name": {
+                      "type": "string"
+                    },
+                    "auth_type": {
+                      "type": "string"
+                    }
+                }
+            }
             },
             "required":["resource_group_name","res_group_type","res_defs"],
             "additionalProperties": true
