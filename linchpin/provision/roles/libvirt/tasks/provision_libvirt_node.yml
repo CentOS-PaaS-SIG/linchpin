@@ -4,7 +4,7 @@
 
 - name: "does node already exist"
   virt:
-    name: "{{ nodeinfo[0] }}_{{ nodeinfo[1]['res_name'] | default(nodeinfo[1]['name']) }}_{{ nodeinfo[2] }}"
+    name: "{{ nodeinfo[0] }}_{{ nodeinfo[1]['name'] | default(nodeinfo[1]['res_name']) }}_{{ nodeinfo[2] }}"
     command: status
     uri: "{{ nodeinfo[1]['uri'] | default('qemu:///system') }}"
   with_nested:
@@ -28,23 +28,27 @@
   include: copy_image_src.yml
   when: node_exists['failed'] is defined
 
-- name: "define node"
-  template:
-    src: "../templates/libvirt_node.xml.j2"
-    dest: "/tmp/{{ definition[1]['res_name'] }}_{{ definition[2] }}"
-  with_nested:
-    - ["{{ res_grp_name }}"]
-    - ["{{ res_def }}"]
-    - "{{ res_count.stdout }}"
-    - ["{{ local_image_path }}"]
-    - ["{{ img_src_ext }}"]
-  loop_control:
-    loop_var: definition
-  when:  node_exists['failed'] is defined
+- name: set qemu_path
+  set_fact:
+      qemu_path: "{{ (ansible_distribution in ['CentOS','RedHat']) | ternary('/usr/libexec/', '/usr/bin/') }}"
+
+#- name: "define node template"
+#  template:
+#    src: "../templates/libvirt_node.xml.j2"
+#    dest: "/tmp/{{ definition[0] }}_{{ definition[1]['name'] | default(definition[1]['res_name']) }}_{{ definition[2] }}"
+#  with_nested:
+#    - ["{{ res_grp_name }}"]
+#    - ["{{ res_def }}"]
+#    - "{{ res_count.stdout }}"
+#    - ["{{ local_image_path }}"]
+#    - ["{{ img_src_ext }}"]
+#  loop_control:
+#    loop_var: definition
+#  when:  node_exists['failed'] is defined
 
 - name: "define node"
   virt:
-    name: "{{ definition[0] }}_{{ definition[1]['res_name'] | default(definition[1]['name']) }}_{{ definition[2] }}"
+    name: "{{ definition[0] }}_{{ definition[1]['name'] | default(definition[1]['res_name']) }}_{{ definition[2] }}"
     command: define
     xml: "{{ lookup('template', 'libvirt_node.xml.j2') }}"
     uri: "{{ definition[1]['uri'] | default('qemu:///system') }}"
@@ -58,15 +62,6 @@
     loop_var: definition
   when:  node_exists['failed'] is defined
 
-#- name: "map ip and mac addresses in network"
-#  virt_net:
-#    command: modify
-#    xml: "{{ lookup('template', 'libvirt_modify_mac.xml.j2') }}"
-#  with_items:
-#    - "{{ res_def['networks'] }}"
-#  loop_control:
-#    loop_var: map_item
-
 - name: "start relevant networks"
   virt_net:
     state: active
@@ -78,7 +73,7 @@
 
 - name: "start node"
   virt:
-    name: "{{ instance[0] }}_{{ instance[1]['res_name'] | default(instance[1]['name']) }}_{{ instance[2] }}"
+    name: "{{ instance[0] }}_{{ instance[1]['name'] | default(instance[1]['res_name']) }}_{{ instance[2] }}"
     state: running
     uri: "{{ instance[1]['uri'] | default('qemu:///system') }}"
   with_nested:
@@ -91,10 +86,9 @@
     loop_var: instance
   when: not async
 
-
 - name: mac_and_ip | extract mac address
   shell: >
-    virsh -c {{ node[1]['uri']| default('qemu:///system') }} dumpxml {{ node[0] }}_{{ node[1]['res_name'] }}_{{ node[2] }}
+    virsh -c {{ node[1]['uri']| default('qemu:///system') }} dumpxml {{ node[0] }}_{{ node[1]['name'] | default(node[1]['res_name']) }}_{{ node[2] }}
     | grep 'mac address'
     | cut -f 2 -d "'"
   with_nested:
@@ -143,7 +137,7 @@
 
 - name: "dump node data"
   virt:
-    name: "{{ data[0] }}_{{ data[1]['res_name'] }}_{{ data[2] }}"
+    name: "{{ data[0] }}_{{ data[1]['name'] | default(data[1]['res_name']) }}_{{ data[2] }}"
     command: get_xml
     uri: "{{ data[1]['uri'] | default('qemu:///system') }}"
   with_nested:

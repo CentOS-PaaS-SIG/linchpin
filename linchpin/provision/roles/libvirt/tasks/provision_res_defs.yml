@@ -1,18 +1,21 @@
 #- name: "provision libvirt storage"
 #  include: provision_libvirt_storage.yml
 #  when: res_def['res_type']=="libvirt_storage" and state == "present"
+- name: set resource_type
+  set_fact:
+    resource_type: "{{ res_def['res_type'] | default(res_def['type']) }}"
 
 - name: "provision libvirt network"
   include: provision_libvirt_network.yml
-  when: res_def['res_type']=="libvirt_network" and state == "present"
+  when: resource_type=="libvirt_network" and state == "present"
 
 - name: "provision libvirt node"
   include: provision_libvirt_node.yml
-  when: res_def['res_type']=="libvirt_node" and state == "present"
+  when: resource_type=="libvirt_node" and state == "present"
 
 - name: "teardown libvirt node"
   include: teardown_libvirt_node.yml
-  when: res_def['res_type']=="libvirt_node" and state == "absent"
+  when: resource_type=="libvirt_node" and state == "absent"
 
 #- name: "teardown libvirt network"
 #  include: teardown_libvirt_network.yml
