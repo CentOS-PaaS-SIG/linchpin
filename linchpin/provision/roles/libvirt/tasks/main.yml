@@ -10,6 +10,10 @@
 #  with_items:
 #    - "{{ libvirt_res_grps }}"
 
+- name: "Gather facts"
+  setup:
+    filter: ansible_*
+
 - name: "declaring output vars"
   set_fact:
     topology_outputs_libvirt_nodes: []

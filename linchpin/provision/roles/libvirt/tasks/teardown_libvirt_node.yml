@@ -4,7 +4,7 @@
 
 - name: "halt node"
   virt:
-    name: "{{ instance[0] }}_{{ instance[1]['res_name'] }}_{{ instance[2] }}"
+    name: "{{ instance[0] }}_{{ instance[1]['name'] | default(instance[1]['res_name']) }}_{{ instance[2] }}"
     state: destroyed
     uri: "{{ instance[1]['uri'] | default('qemu:///system') }}"
   with_nested:
@@ -18,7 +18,7 @@
 
 - name: "undefine node"
   virt:
-    name: "{{ instance[0] }}_{{ instance[1]['res_name'] }}_{{ instance[2] }}"
+    name: "{{ instance[0] }}_{{ instance[1]['name'] | default(instance[1]['res_name']) }}_{{ instance[2] }}"
     command: undefine
     uri: "{{ instance[1]['uri'] | default('qemu:///system') }}"
   with_nested:
