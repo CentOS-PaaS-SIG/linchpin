@@ -6,9 +6,15 @@
   set_fact:
     auth_var: ""
 
+- name: "set cred profile to default"
+  set_fact:
+    cred_profile: "default"
+
 - name: "set cred profile"
   set_fact:
     cred_profile: "{{ res_grp['credentials']['profile'] | default('default') }}"
+  when: res_grp['credentials'] is defined
+
 
 - name: "Get creds from auth driver"
   auth_driver:
@@ -18,11 +24,13 @@
     driver: "file"
   register: auth_var
   ignore_errors: true
+  when: cred_profile != 'default'
 
 - name: "set auth_var "
   set_fact:
     auth_var: "{{ auth_var['output']['clouds'][cred_profile]['auth'] | default(omit) }}"
   ignore_errors: true
+  when: cred_profile != 'default'
 
 - name: "provisioning resource definitions of current group"
   include: provision_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
