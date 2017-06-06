@@ -22,7 +22,7 @@
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
     flavor: "{{ res_def['flavor'] }}"
-    nics:  "{{ res_def['networks'] | os_net }}"
+    nics:  "{{ res_def['networks'] | default(omit) | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
     count: "{{ res_def['count'] }}"
