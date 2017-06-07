@@ -5,28 +5,29 @@
 
 - name: "set default_cred_profile when res_grp[credentials] is undefined"
   set_fact:
-    cred_profile: "{{ cred_profile | default({}) | combine({ cred: 'default' }) }}"
-  with_items:
-    - 'name'
-    - 'profile'
-  loop_control:
-    loop_var: cred
+    cred_profile: 'default'
   when: res_grp['credentials'] is not defined
+
+- name: "set default_cred_profile when res_grp[credentials] is undefined"
+  set_fact:
+    cred_name: 'default'
+  when: res_grp['credentials'] is not defined
+
+- name: "set cred_profile when res_grp[credentials] is defined"
+  set_fact:
+    cred_profile: "{{ res_grp['credentials']['profile'] }}"
+  when: res_grp['credentials'] is defined
 
 - name: "set default_cred_profile when res_grp[credentials] is defined"
   set_fact:
-    cred_profile: "{{ res_grp['credentials']['name'] }}"
+    cred_name: "{{ res_grp['credentials']['name'] }}"
   when: res_grp['credentials'] is defined
-
-- name: cred_profile
-  debug:
-    var: cred_profile
 
 - name: "Get creds from auth driver"
   auth_driver:
-    name: "{{ cred_profile['name'] }}"
+    filename: "{{ cred_name }}" # don't include the .yaml
     cred_type: "openstack"
-    cred_path: "{{ creds_path | default('/tmp/clouds.yaml') }}"
+    cred_path: "{{ creds_path | default('~/.config/openstack/') }}"
     driver: "file"
   register: auth_var
   ignore_errors: true
