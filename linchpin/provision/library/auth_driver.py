@@ -79,14 +79,14 @@ def parse_file(filename):
     return out
 
 
-def get_cred(name, creds_path):
+def get_cred(fname, creds_path):
 
     paths = creds_path.split(os.path.pathsep)
     files = []
     for path in paths:
         path = os.path.realpath(os.path.expanduser(path))
         for filename in os.listdir(path):
-            if name == os.path.splitext(filename)[0]:
+            if fname == filename:
                 full_file_path = '{0}/{1}'.format(path, filename)
                 out = parse_file(full_file_path)
                 return out, path
