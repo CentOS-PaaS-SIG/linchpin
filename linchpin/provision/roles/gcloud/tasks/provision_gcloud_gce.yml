@@ -7,7 +7,7 @@
     image: "{{ res_def['image']  }}"
     state: "{{ state }}"
     service_account_email: "{{ auth_var['output']['client_email'] }}"
-    credentials_file: "{{ auth_var['path'] }}/{{ auth_var['params']['name'] }}.json"
+    credentials_file: "{{ auth_var['path'] }}/{{ auth_var['params']['filename'] }}.json"
     project_id: "{{ auth_var['output']['project_id'] }}"
   register: res_def_output
   when: not async
@@ -26,7 +26,7 @@
     image: "{{ res_def['image']  }}"
     state: "{{ state }}"
     service_account_email: "{{ auth_var['output']['client_email'] }}"
-    credentials_file: "{{ auth_var['path'] }}/{{ auth_var['params']['name'] }}.json"
+    credentials_file: "{{ auth_var['path'] }}/{{ auth_var['params']['filename'] }}.json"
     project_id: "{{ auth_var['output']['project_id'] }}"
   register: res_def_output
   when: async
