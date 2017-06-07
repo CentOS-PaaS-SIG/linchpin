@@ -698,7 +698,7 @@
                          "auth_type": {
                            "type": "string"
                          },
-                         "name": {
+                         "filename": {
                            "type": "string"
                          }
                      }

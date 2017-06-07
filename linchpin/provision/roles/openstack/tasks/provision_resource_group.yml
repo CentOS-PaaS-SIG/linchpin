@@ -10,7 +10,7 @@
 
 - name: "set default_cred_profile when res_grp[credentials] is undefined"
   set_fact:
-    cred_name: 'default'
+    cred_filename: 'clouds.yaml'
   when: res_grp['credentials'] is not defined
 
 - name: "set cred_profile when res_grp[credentials] is defined"
@@ -18,14 +18,14 @@
     cred_profile: "{{ res_grp['credentials']['profile'] }}"
   when: res_grp['credentials'] is defined
 
-- name: "set default_cred_profile when res_grp[credentials] is defined"
+- name: "set default_cred_filename when res_grp[credentials] is defined"
   set_fact:
-    cred_name: "{{ res_grp['credentials']['name'] }}"
+    cred_filename: "{{ res_grp['credentials']['filename'] }}"
   when: res_grp['credentials'] is defined
 
 - name: "Get creds from auth driver"
   auth_driver:
-    filename: "{{ cred_name }}" # don't include the .yaml
+    filename: "{{ cred_filename }}" # don't include the .yaml
     cred_type: "openstack"
     cred_path: "{{ creds_path | default('~/.config/openstack/') }}"
     driver: "file"
