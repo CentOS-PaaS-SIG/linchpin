@@ -43,6 +43,7 @@ import shlex
 import tempfile
 import yaml
 import glob
+
 try:
     import configparser as ConfigParser
 except ImportError:
@@ -57,10 +58,6 @@ class ConfigDict(ConfigParser.ConfigParser):
             d[k] = dict(self._defaults, **d[k])
             d[k].pop('__name__', None)
         return d
-
-
-def list_files(path):
-    return glob.glob(path+"/*.*")
 
 
 def parse_file(filename):
@@ -84,13 +81,14 @@ def parse_file(filename):
 
 def get_cred(name, creds_path):
 
-    paths = creds_path.split(";")
+    paths = creds_path.split(os.path.pathsep)
     files = []
     for path in paths:
-        files = list_files(path)
-        for filename in files:
-            if name == filename.split("/")[-1].split('.')[0]:
-                out = parse_file(filename)
+        path = os.path.realpath(os.path.expanduser(path))
+        for filename in os.listdir(path):
+            if name == os.path.splitext(filename)[0]:
+                full_file_path = '{0}/{1}'.format(path, filename)
+                out = parse_file(full_file_path)
                 return out, path
 
     module.fail_json(msg= "Error: Credential not found")
