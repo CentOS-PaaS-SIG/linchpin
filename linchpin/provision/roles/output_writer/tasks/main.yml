@@ -31,9 +31,9 @@
   when: not async
   ignore_errors: yes
 
-- name: "DEBUG:: topology_outputs"
-  debug:
-    msg: "{{ topology_outputs }}"
+#- name: "DEBUG:: topology_outputs"
+#  debug:
+#    msg: "{{ topology_outputs }}"
 
 - name: "Generate outputs when async is false"
   template:
