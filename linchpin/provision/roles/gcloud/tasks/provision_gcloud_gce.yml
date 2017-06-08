@@ -27,7 +27,7 @@
     state: "{{ state }}"
     service_account_email: "{{ auth_var['output']['client_email'] }}"
     credentials_file: "{{ auth_var['path'] }}/{{ auth_var['params']['filename'] }}"
-    project_id: "{{ auth_var['project_id'] }}"
+    project_id: "{{ auth_var['output']['project_id'] }}"
   register: res_def_output
   when: async
   async: "{{ async_timeout }}"
