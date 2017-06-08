@@ -46,7 +46,7 @@ class GenericInventory(InventoryFilter):
     def get_hosts_by_count(self, host_dict, count):
         """
         currently this function gets all the ips/hostname according to the
-        order in which inventories are specified , later can be modified
+        order in which inventories are specified. later can be modified
         to work with user input
         """
         all_hosts = []
@@ -75,3 +75,4 @@ class GenericInventory(InventoryFilter):
         output = StringIO.StringIO()
         self.config.write(output)
         return output.getvalue()
+
