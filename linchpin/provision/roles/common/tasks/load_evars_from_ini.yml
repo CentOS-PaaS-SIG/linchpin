@@ -68,9 +68,9 @@
   when: workspace is defined
 
 
-#- name: evars_tmp
+#- name: evars_ini
 #  debug:
-#    var: evars_tmp
+#    var: evars_ini
 
 #- fail:
 #    msg: "stopping execution for now"

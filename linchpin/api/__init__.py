@@ -213,8 +213,6 @@ class LinchpinAPI(object):
         if self.ctx.cfgs.get('ansible'):
             ansible_console = ast.literal_eval(self.ctx.cfgs['ansible'].get('console', 'False'))
 
-        self.set_evar('creds_path', self.ctx.creds_path)
-
         if not ansible_console:
             ansible_console = self.ctx.verbose
 

@@ -17,11 +17,12 @@ class OpenstackInventory(InventoryFilter):
     def get_host_ips(self, topo):
         host_public_ips = []
         for group in topo['os_server_res']:
-            if isinstance(group['openstack'], list):
-                for server in group['openstack']:
+            grp = group.get('openstack', [])
+            if isinstance(grp, list):
+                for server in grp:
                     host_public_ips.append(str(server['accessIPv4']))
-            if isinstance(group['openstack'], dict):
-                host_public_ips.append(str(group['openstack']['accessIPv4']))
+            if isinstance(grp, dict):
+                host_public_ips.append(str(grp['accessIPv4']))
         return host_public_ips
 
     def get_inventory(self, topo, layout):

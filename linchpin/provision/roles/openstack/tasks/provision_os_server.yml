@@ -1,38 +1,43 @@
-- name: "provision/deprovision os_server resources by looping on count"
+- name: "provisioning os_server resources with provided auth"
   os_server2:
     state: "{{ state }}"
-    auth: "{{ auth_var | default(omit) }}"
+    auth: "{{ auth_var }}"
     name: "{{ res_grp_name }}_{{ res_def['res_name'] | default(res_def['name']) }}"
     image: "{{ res_def['image'] }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
     flavor: "{{ res_def['flavor'] }}"
-    nics:  "{{ res_def['networks'] | os_net }}"
+    nics:  "{{ res_def['networks'] | default(omit) | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
     count: "{{ res_def['count'] }}"
-  when: not async and auth_var['changed'] == true
   register: res_def_output
-
-- name: "provision/deprovision os_server resources by looping on count"
-  os_server2:
-    state: "{{ state }}"
-    name: "{{ res_grp_name }}_{{ res_def['res_name'] | default(res_def['name']) }}"
-    image: "{{ res_def['image'] }}"
-    key_name: "{{ res_def['keypair'] }}"
-    api_timeout: 99999
-    flavor: "{{ res_def['flavor'] }}"
-    nics:  "{{ res_def['networks'] | os_net }}"
-    floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
-    security_groups: "{{ res_def['security_groups'] | default(omit) }}"
-    count: "{{ res_def['count'] }}"
-  when: not async and auth_var['changed'] == false
-  register: res_def_output
+  when: not async and auth_var is defined
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_server: "{{ topology_outputs_os_server + [res_def_output] }}"
-  when: not async
+  when: not async and auth_var is defined
+
+- name: "provisioning os_server resources"
+  os_server2:
+    state: "{{ state }}"
+    name: "{{ res_grp_name }}_{{ res_def['res_name'] | default(res_def['name']) }}"
+    image: "{{ res_def['image'] }}"
+    key_name: "{{ res_def['keypair'] }}"
+    api_timeout: 99999
+    flavor: "{{ res_def['flavor'] }}"
+    nics:  "{{ res_def['networks'] | default(omit) | os_net }}"
+    floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
+    security_groups: "{{ res_def['security_groups'] | default(omit) }}"
+    count: "{{ res_def['count'] }}"
+  register: res_def_output
+  when: not async and auth_var is not defined
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os_server: "{{ topology_outputs_os_server + [res_def_output] }}"
+  when: not async and auth_var is not defined
 
 - name: "provision/deprovision os_server resources by looping on count"
   os_server2:
@@ -50,7 +55,12 @@
   async: "{{ async_timeout | default(1000) }}"
   poll: 0
   register: res_def_output
-  when: async and auth_var['changed'] == true
+  when: async and auth_var is defined
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os_server: "{{ topology_outputs_os_server + [res_def_output] }}"
+  when: not async and auth_var is defined
 
 - name: "provision/deprovision os_server resources by looping on count"
   os_server2:
@@ -67,8 +77,7 @@
   async: "{{ async_timeout | default(1000) }}"
   poll: 0
   register: res_def_output
-  when: async and auth_var['changed'] == false 
-
+  when: async and auth_var is not defined
 
 # following tasks saves the async job details
 - name: "Async:: save the job id"

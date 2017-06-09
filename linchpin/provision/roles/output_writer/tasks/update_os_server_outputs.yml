@@ -1,7 +1,7 @@
 - name: "register var for async_outputs_os_server"
   set_fact:
-    async_outputs_os_server: [] 
-  
+    async_outputs_os_server: []
+
 - name: "Wait on jobs"
   include: wait_on_os_server.yml
   vars:

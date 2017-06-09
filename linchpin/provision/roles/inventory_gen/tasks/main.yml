@@ -25,11 +25,15 @@
   set_fact:
     inventory_layout: "{{ layout_file | default( default_layouts_path+'/'+'openshift-3node-cluster.yml') | ordered_yaml }}"
 
-- name: "Updating inventory_file with the absolute path"
+- name: "Updating inventory_path with the absolute path"
   set_fact:
-    inventory_file: "{{ inventory_file | default( inventory_dir+'/'+outputs.topology_name ) }}"
+    inventory_path: "{{ inventory_path | default( default_inventories_path+'/'+outputs.topology_name ) }}.inventory"
+
+#- name: inventory_layout
+#  debug:
+#    var: inventory_layout
 
 - name: "Generate Generic Inventory"
   template:
     src: "templates/generic_inventory_formatter.j2"
-    dest: "{{ inventory_file }}"
+    dest: "{{ inventory_path }}"

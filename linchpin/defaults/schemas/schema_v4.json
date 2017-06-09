@@ -690,7 +690,19 @@
                                 {"$ref": "#/definitions/os_sg"}
                              ]
                     }
-                }
+                },
+                "credentials": {
+                    "description":"contains credentials associated to this resource",
+                    "type":"object",
+                     "properties": {
+                         "auth_type": {
+                           "type": "string"
+                         },
+                         "filename": {
+                           "type": "string"
+                         }
+                     }
+                 }
             },
             "required":["resource_group_name","resource_group_type","resource_definitions"],
             "additionalProperties": true
@@ -717,6 +729,21 @@
                                 {"$ref": "#/definitions/aws_sg"}
                             ]
                     }
+                },
+                "credentials": {
+                    "description":"contains credentials associated to this resource",
+                    "type":"object",
+                    "properties": {
+                        "profile": {
+                          "type": "string"
+                        },
+                        "auth_type": {
+                          "type": "string"
+                        },
+                        "filename": {
+                          "type": "string"
+                        }
+                    }
                 }
             },
             "required":["resource_group_name","resource_group_type","resource_definitions"],
@@ -739,6 +766,18 @@
                             [
                                 {"$ref": "#/definitions/gcloud_gce"}
                             ]
+                    }
+                },
+                "credentials": {
+                    "description":"contains credentials associated to this resource",
+                    "type":"object",
+                    "properties": {
+                        "auth_type": {
+                          "type": "string"
+                        },
+                        "filename": {
+                          "type": "string"
+                        }
                     }
                 }
             },
@@ -765,7 +804,7 @@
                     }
                 },
                 "credentials": {
-                    "description":"contains creds file associated to this resource",
+                    "description":"contains credentials associated to this resource",
                     "type":"string"
                 }
             },
@@ -815,6 +854,10 @@
                                 {"$ref": "#/definitions/rax_server"}
                             ]
                     }
+                },
+                "credentials":{
+                    "description":"contains credentials associated with this resource",
+                    "type":"string"
                 }
             },
             "required":["resource_group_name","resource_group_type","resource_definitions"],

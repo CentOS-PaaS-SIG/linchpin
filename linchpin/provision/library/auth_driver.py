@@ -30,7 +30,7 @@ options:
     description:
       defaults to file type. 
     required: true
-      
+
 author: Samvaran Kashyap Rallabandi -
 '''
 
@@ -43,6 +43,7 @@ import shlex
 import tempfile
 import yaml
 import glob
+
 try:
     import configparser as ConfigParser
 except ImportError:
@@ -58,8 +59,6 @@ class ConfigDict(ConfigParser.ConfigParser):
             d[k].pop('__name__', None)
         return d
 
-def list_files(path):
-    return glob.glob(path+"/*.*")
 
 def parse_file(filename):
     cred_str = open(filename, "r").read()
@@ -79,33 +78,40 @@ def parse_file(filename):
                 module.fail_json(msg= "Error  {0} ".format(str(e)))
     return out
 
-def get_cred(name, creds_path):
-    paths = creds_path.split(";")
+
+def get_cred(fname, creds_path):
+
+    paths = creds_path.split(os.path.pathsep)
     files = []
     for path in paths:
-        files = list_files(path)
-        for filename in files:
-            if name == filename.split("/")[-1].split(".")[0]:
-                out = parse_file(filename)
+        path = os.path.realpath(os.path.expanduser(path))
+        for filename in os.listdir(path):
+            if fname == filename:
+                full_file_path = '{0}/{1}'.format(path, filename)
+                out = parse_file(full_file_path)
                 return out, path
+
     module.fail_json(msg= "Error: Credential not found")
+
+
 def main():
+
     global module
     module = AnsibleModule(
     argument_spec={
-            'name':     {'required': True, 'aliases': ['name']},
-            'cred_type':     {'required': False, 'aliases': ['credential_type']},
+            'filename': {'required': True, 'aliases': ['name']},
+            'cred_type': {'required': False, 'aliases': ['credential_type']},
             'cred_path': {'required': True, 'aliases': ['credential_store']},
             'driver': {'required': True, 'aliases': ['driver_type']},
         },
         required_one_of=[],
         supports_check_mode=True
     )
-    name = module.params["name"]
+    filename = module.params["filename"]
     cred_type = module.params["cred_type"]
     cred_path = module.params["cred_path"]
     driver_type = module.params["driver"]
-    output, path = get_cred(name, cred_path)
+    output, path = get_cred(filename, cred_path)
     changed = True
     module.exit_json(changed=changed, output=output, params=module.params, path=path)
 

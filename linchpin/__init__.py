@@ -122,14 +122,11 @@ def runcli(ctx, config, workspace, verbose, version, creds_path):
         ctx.workspace = os.getenv('PWD')
 
     if creds_path is not None:
-        ctx.creds_path = os.path.realpath(os.path.expanduser(creds_path))
-    else:
-        ctx.creds_path = str(None)
+        ctx.set_evar('creds_path', os.path.realpath(os.path.expanduser(creds_path)))
 
     ctx.log_debug("ctx.workspace: {0}".format(ctx.workspace))
-    ctx.log_debug("ctx.creds_path: {0}".format(ctx.creds_path))
 
-    ctx.pinfile = ctx.cfgs['init']['pinfile']
+    ctx.pinfile = ctx.get_cfg('init', 'pinfile', default='PinFile')
 
 
 @runcli.command('init', short_help='Initializes a linchpin project.')

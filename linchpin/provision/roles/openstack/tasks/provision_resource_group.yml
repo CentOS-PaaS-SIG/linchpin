@@ -1,27 +1,40 @@
-- name: "DEBUG:: provisioning resource group {{ res_grp }}"
-  debug:
-    msg: "The current server obj is {{ res_grp }} "
-
+---
 - name: "Unset the authvar from previous run"
   set_fact:
     auth_var: ""
 
-- name: "set cred profile"
+- name: "set default_cred_profile when res_grp[credentials] is undefined"
   set_fact:
-    cred_profile: "{{ res_grp['credentials']['profile'] | default('default') }}"
+    cred_profile: 'default'
+  when: res_grp['credentials'] is not defined
+
+- name: "set default_cred_profile when res_grp[credentials] is undefined"
+  set_fact:
+    cred_filename: 'clouds.yaml'
+  when: res_grp['credentials'] is not defined
+
+- name: "set cred_profile when res_grp[credentials] is defined"
+  set_fact:
+    cred_profile: "{{ res_grp['credentials']['profile'] }}"
+  when: res_grp['credentials'] is defined
+
+- name: "set default_cred_filename when res_grp[credentials] is defined"
+  set_fact:
+    cred_filename: "{{ res_grp['credentials']['filename'] }}"
+  when: res_grp['credentials'] is defined
 
 - name: "Get creds from auth driver"
   auth_driver:
-    name: "{{ res_grp['credentials']['name']  }}"
+    filename: "{{ cred_filename }}" # don't include the .yaml
     cred_type: "openstack"
-    cred_path: "{{ creds_path }}"
+    cred_path: "{{ creds_path | default('~/.config/openstack/') }}"
     driver: "file"
   register: auth_var
   ignore_errors: true
 
-- name: "set auth_var "
+- name: "set auth_var"
   set_fact:
-    auth_var: "{{ auth_var['output']['clouds'][cred_profile]['auth'] | default(omit) }}"
+    auth_var: "{{ auth_var['output']['clouds'][cred_profile]['auth'] }}"
   ignore_errors: true
 
 - name: "provisioning resource definitions of current group"
