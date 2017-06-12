@@ -27,7 +27,7 @@
   auth_driver:
     filename: "{{ cred_filename }}" # don't include the .yaml
     cred_type: "openstack"
-    cred_path: "{{ creds_path | default('~/.config/openstack/') }}"
+    cred_path: "{{ creds_path | default(default_credentials_path) }}"
     driver: "file"
   register: auth_var
   ignore_errors: true

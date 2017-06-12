@@ -14,7 +14,7 @@
   auth_driver:
     filename: "{{ res_grp['credentials']['filename']  }}"
     cred_type: "gcloud"
-    cred_path: "{{ creds_path }}"
+    cred_path: "{{ creds_path | default(default_credentials_path) }}"
     driver: "file"
   register: auth_var
   ignore_errors: true
