@@ -58,7 +58,7 @@ class LinchpinCliContext(LinchpinContext):
           * $PWD/linchpin.conf
           * ~/.linchpin.conf
           * /etc/linchpin.conf
-          * linchpin/library/path/linchpin.conf
+          * /linchpin/library/path/linchpin.conf
 
         Alternatively, a full path to the linchpin configuration file
         can be passed.

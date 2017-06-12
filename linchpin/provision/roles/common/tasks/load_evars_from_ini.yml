@@ -47,6 +47,7 @@
     default_layouts_path: "{{ lookup('ini', 'default_layouts_path section=evars file={{ lpconfig }}') }}"
     default_resources_path: "{{ lookup('ini', 'default_resources_path section=evars file={{ lpconfig }}') }}"
     default_inventories_path: "{{ lookup('ini', 'default_inventories_path section=evars file={{ lpconfig }}') }}"
+    default_credentials_path: "{{ lookup('ini', 'default_credentials_path section=evars file={{ lpconfig }}') }}"
   when: workspace is not defined
 
 - name: set remaining evars from linchpin.conf
