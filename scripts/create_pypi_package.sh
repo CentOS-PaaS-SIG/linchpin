@@ -7,10 +7,10 @@ else
 fi
 
 if [ $# -lt 1 ]; then
-  echo "Usage $0 <lp-path> <pypi-site>"
+  echo "Usage $0 <lp-path> [<pypi-site>]"
   echo
   echo lp-path: path to linchpin source
-  echo pypi-site: path to linchpin source
+  echo 'pypi-site: path to linchpin source (default: pypitest)'
   exit 1
 fi
 
@@ -24,8 +24,8 @@ REG_CMD="register"
 UPLOAD_CMD="${PKG_TYPES} upload"
 
 # find extraneous files and remove them
-CRUFTIES=('coverage.xml' 'linchpin.log')
-CRUFTY_DIRS=('linchpin.egg-info' 'build' 'dist' 'docs/build' 'provision/outputs')
+CRUFTIES=('coverage.xml' 'linchpin.log', '*.pyc', '*.retry', '*.sw*')
+CRUFTY_DIRS=('linchpin.egg-info' 'build' 'dist' 'docs/build' 'provision/outputs', 'provision/inventories')
 
 echo "REMOVING CRUFTY FILES"
 
