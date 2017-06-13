@@ -188,9 +188,9 @@ class LinchpinContext(object):
     def setup_logging(self):
 
         """
-        .. attention:: Please implement this function in a subclass
-
         Setup logging to the console only
+
+        .. attention:: Please implement this function in a subclass
 
         """
 
@@ -225,18 +225,22 @@ class LinchpinContext(object):
 
 
     def log_info(self, msg):
-        """Logs a message"""
+        """Logs an INFO message"""
 
         self.log(msg, level=logging.INFO)
 
 
     def log_debug(self, msg):
-        """Logs a message"""
+        """Logs a DEBUG message"""
 
         self.log(msg, level=logging.DEBUG)
 
 
     def log_state(self, msg):
-        """Logs a debug message"""
+        """
+        Logs nothing, just calls pass
 
-        self.log_debug(msg)
+        .. attention:: state messages need to be implemented in a subclass
+        """
+
+        pass
