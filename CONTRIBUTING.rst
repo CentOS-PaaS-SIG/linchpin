@@ -6,7 +6,7 @@ This handy guide should provide simple guidelines for getting started,
 submitting a patch, etc.
 
 Any questions regarding this guide, or in general? Please feel free to
-`file an issue <https://github.com/CentOS-PaaS-SIG/linch-pin/issues>`_.
+`file an issue <https://github.com/CentOS-PaaS-SIG/linchpin/issues>`_.
 
 
 Cloning the Repository
@@ -17,7 +17,7 @@ Documentation for forking can be found `here
 <https://help.github.com/articles/fork-a-repo/>`_.
 
 This should generate a forked repository with a format similar to
-``https://github.com/<github-username>/linch-pin``.
+``https://github.com/<github-username>/linchpin``.
 
 Once the fork has been created, clone the repository onto a development machine.
 
@@ -25,11 +25,11 @@ Once the fork has been created, clone the repository onto a development machine.
 
     $ cd ~/sandbox
 
-    $ git clone git@github.com:<github-username>/linch-pin.git
+    $ git clone git@github.com:<github-username>/linchpin.git
     or
-    $ git clone https://github.com/<github-username>/linch-pin
+    $ git clone https://github.com/<github-username>/linchpin
 
-    $ cd linch-pin
+    $ cd linchpin
     $ git branch
     * develop
 
@@ -41,12 +41,12 @@ need to be added.
 
     $ pwd
     ~/sandbox/linchpin
-    $ git remote add upstream git://github.com/CentOS-PaaS-SIG/linch-pin.git
+    $ git remote add upstream git://github.com/CentOS-PaaS-SIG/linchpin.git
     $ git remote -v
-    origin  git@github.com:<github-username>/linch-pin.git (fetch)
-    origin  git@github.com:<github-username>/linch-pin.git (push)
-    upstream    git://github.com/CentOS-PaaS-SIG/linch-pin.git (fetch)
-    upstream    git://github.com/CentOS-PaaS-SIG/linch-pin.git (push)
+    origin  git@github.com:<github-username>/linchpin.git (fetch)
+    origin  git@github.com:<github-username>/linchpin.git (push)
+    upstream    git://github.com/CentOS-PaaS-SIG/linchpin.git (fetch)
+    upstream    git://github.com/CentOS-PaaS-SIG/linchpin.git (push)
 
 Having two remotes makes rebasing upstream changes much easier. How to pull in
 changes from upstream will be covered later in this document. Additionally,
@@ -65,7 +65,7 @@ In this way, each feature can track its changes and not conflict with others.
     Switched to a new branch 'contributing_docs'
     $ git push -u origin contributing_docs
     Total 0 (delta 0), reused 0 (delta 0)
-    To github.com:<github-user>/linch-pin.git
+    To github.com:<github-user>/linchpin.git
      * [new branch]      contributing_docs -> contributing_docs
     Branch contributing_docs set up to track remote branch contributing_docs from origin.
 
@@ -102,8 +102,8 @@ submit a Pull Request. Please follow the github article,
 Submit the Pull Request (PR) against the ``develop`` branch.
 
 .. note:: The LinchPin project works from the ``develop`` branch. As features
-    are completed toward the next release (currently `1.0.0,
-    <https://github.com/CentOS-PaaS-SIG/linch-pin/milestone/6>`_).
+    are completed toward the next release (currently `1.1.0,
+    <https://github.com/CentOS-PaaS-SIG/linchpin/milestone/3>`_).
 
 Once the PR is created, it will need to be reviewed, and CI automation testing
 must be executed. It is possible that additional commits will be needed to
@@ -125,10 +125,10 @@ to rebase into the local ``develop`` branch on the developer's machine.
 
     $ git checkout develop
     $ git pull --rebase upstream develop
-    From github.com:CentOS-PaaS-SIG/linch-pin
+    From github.com:CentOS-PaaS-SIG/linchpin
      * branch            develop    -> FETCH_HEAD
     First, rewinding head to replay your work on top of it...
-    Fast-forwarded master to f7cd72f04ff9f03538c54c4f46e90344393613f0.
+    Fast-forwarded develop to f7cd72f04ff9f03538c54c4f46e90344393613f0.
 
 In some cases, there may be issues with rebasing. Usually because there is
 an uncommitted, but changed file. Stash the changes, and rerun the pull.
@@ -141,10 +141,10 @@ an uncommitted, but changed file. Stash the changes, and rerun the pull.
     HEAD is now at b932757 fixup contributing link to point to develop
 
     $ git pull --rebase upstream develop
-    From github.com:CentOS-PaaS-SIG/linch-pin
+    From github.com:CentOS-PaaS-SIG/linchpin
      * branch            develop    -> FETCH_HEAD
     First, rewinding head to replay your work on top of it...
-    Fast-forwarded master to f7cd72f04ff9f03538c54c4f46e90344393613f0.
+    Fast-forwarded develop to f7cd72f04ff9f03538c54c4f46e90344393613f0.
 
     $ git stash pop
     On branch develop
@@ -163,25 +163,22 @@ Release Process
 +++++++++++++++
 
 To better familiarize contributors with the development model used by LinchPin,
-there are two basic trees used to manage development. The master and
-develop upstream branches.
+the develop branch is used for both releases (using tags) and for forward looking
+development.
 
-The master branch tracks what is currently in production and stable. The
-develop branch tracks current and future features. In the state as of 15 May
-2017, the latest release is 0.9.1. In development (develop branch), the work
-being done is focusing on releasing a new 1.0.0 release. Currently at 1.0.0a5.
+A tag in the develop branch tracks what is currently in production and stable
+(eg v1.0.1). The HEAD (or tip) of the develop branch tracks current and future
+features. In the state as of 13 June 2017, the latest release tagged is v1.0.1.
+The HEAD of develop is just beyond this tag, but is focused on releasing a
+new 1.1.0 release.
 
 As a release approaches, there will be three basic stages in develop.
 
-  1. New feature development, unstable development
-  2. Alpha versions, indicated by updating version.py (eg. 1.0.0a3). These
-  updates are not ready for production, but are approaching stable. Generally
-  this implies feature completeness, but not fully vetted, tested, etc.
-  3. Beta versions, indicated by updating version.py (eg. 1.0.0b2). These
-  updates are very close to production. Once the release is stable, the beta
-  (b2) will be removed from the version and pushed to the master branch.
+#. New feature development, unstable development
+#. Alpha versions, indicated by updating version.py (eg. 1.1.0a3). These updates are not ready for production, but are approaching stable. Generally this implies feature completeness, but not fully vetted, tested, etc.
+#. Beta versions, indicated by updating version.py (eg. 1.1.0b2). These updates are very close to production. Once the release is stable, the beta (b2) will be removed from the version and a release will be created and announced.
 
-Once a release is pushed to master, it will be tagged and released to pypi,
+Once a release tag is pushed to develop, it will be released to pypi,
 followed (hopefully) with an RPM release.
 
 
@@ -210,7 +207,7 @@ be advantageous to remove the branches from the remote.
 .. code-block:: bash
 
     $ git push origin :contributing_docs
-    To github.com:<github-user>/linch-pin.git
+    To github.com:<github-user>/linchpin.git
      - [deleted]         contributing_docs
 
 
