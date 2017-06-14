@@ -23,8 +23,8 @@ from linchpin.version import __version__
 
 class LinchpinCliContext(LinchpinContext):
     """
-    LPContext object, which will be used to manage the cli,
-    and load the configuration file.
+    Context object, which will be used to manage the cli,
+    and load the configuration file
     """
 
 
@@ -50,6 +50,7 @@ class LinchpinCliContext(LinchpinContext):
     def load_config(self, lpconfig=None):
         """
         Create self.cfgs from the linchpin configuration file.
+
         .. note:: Overrides load_config in linchpin.api.LinchpinContext
 
         These are the only hardcoded values, which are used to find the config
@@ -126,7 +127,7 @@ class LinchpinCliContext(LinchpinContext):
     def setup_logging(self):
 
         """
-        Setup logging to a file, console, or both.  Modifying the linchpin.conf
+        Setup logging to a file, console, or both.  Modifying the `linchpin.conf`
         appropriately will provide functionality.
 
         """
@@ -173,7 +174,8 @@ class LinchpinCliContext(LinchpinContext):
         :param lvl: keyword argument defining the log level
 
         :param msg_type: keyword argument giving more flexibility.
-        Only `STATE` is currently implemented.
+
+        .. note:: Only msg_type `STATE` is currently implemented.
         """
 
         lvl = kwargs.get('level')
@@ -195,15 +197,15 @@ class LinchpinCliContext(LinchpinContext):
 
 
     def log_state(self, msg):
-        """Logs a message to stdout."""
+        """Logs a message to stdout"""
 
         self.log(msg, msg_type='STATE', level=logging.DEBUG)
 
     def log_info(self, msg):
-        """Logs a message to """
+        """Logs an INFO message """
         self.log(msg, level=logging.INFO)
 
     def log_debug(self, msg):
-        """Logs a message to stderr."""
+        """Logs a DEBUG message"""
         self.log(msg, level=logging.DEBUG)
 

@@ -8,8 +8,14 @@ command line interface composer.
 .. automodule:: linchpin
     :members:
     :undoc-members:
-    :exclude-members: main,runcli
+    :exclude-members: main,runcli,LinchpinAliases
 
 .. autofunction:: init
 .. autofunction:: up
+.. autofunction:: rise
 .. autofunction:: destroy
+.. autofunction:: drop
+
+.. automodule:: linchpin.version
+    :members:
+    :undoc-members:

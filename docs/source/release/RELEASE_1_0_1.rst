@@ -14,5 +14,10 @@ Bug Fixes
 * `Authorization failing with linchpin 1.0.0 <https://github.com/CentOS-PaaS-SIG/linchpin/issues/274>`_
 * `Inventory generation fails as resource outputs are not generated <https://github.com/CentOS-PaaS-SIG/linchpin/issues/275>`_
 
+Enhancements
+------------
+
+* `Make a default path for credentials <https://github.com/CentOS-PaaS-SIG/linchpin/issues/280>`_
+
 
 
