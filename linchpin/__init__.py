@@ -106,20 +106,20 @@ def _handle_results(ctx, results):
 def runcli(ctx, config, workspace, verbose, version, creds_path):
     """linchpin: hybrid cloud orchestration"""
 
-    ctx.verbose = verbose
-
-    ctx.load_config(lpconfig=config)
-    ctx.load_global_evars()
-    ctx.setup_logging()
-
-    if version:
-        ctx.log_state('linchpin version {0}'.format(ctx.version))
-        sys.exit(0)
-
     if workspace is not None:
         ctx.workspace = os.path.realpath(os.path.expanduser(workspace))
     else:
         ctx.workspace = os.getenv('PWD')
+
+    ctx.load_config(lpconfig=config)
+    #workspace arg in load_config used to extend linchpin.conf
+    ctx.load_global_evars()
+    ctx.setup_logging()
+    ctx.verbose = verbose
+
+    if version:
+        ctx.log_state('linchpin version {0}'.format(ctx.version))
+        sys.exit(0)
 
     if creds_path is not None:
         ctx.set_evar('creds_path', os.path.realpath(os.path.expanduser(creds_path)))
@@ -287,8 +287,6 @@ def drop(ctx, pinfile, targets):
     """
 
     pass
-
-
 
 
 

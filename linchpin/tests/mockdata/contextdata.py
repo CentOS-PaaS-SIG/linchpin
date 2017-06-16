@@ -80,6 +80,53 @@ class ContextData(object):
         self.cfg_data['logger']['file'] = self.logfile
 
         self.evars = self.cfg_data.get('evars', {})
+    
+    def load_new_config(self, provider='dummy'):
+        self.cfg_data = {}
+
+        expanded_path = None
+
+        CONFIG_PATH = [
+            '{0}/{1}/conf/linchpin.conf'.format(self.lib_path, provider),
+            '{0}/{1}/conf/other_configs/linchpin.conf'.format(self.lib_path, provider)
+        ]
+
+        existing_paths = []
+        for path in CONFIG_PATH:
+            expanded_path = (
+                "{0}".format(os.path.realpath(os.path.expanduser(path))))
+
+            if os.path.exists(expanded_path):
+                existing_paths.append(expanded_path)
+
+        if len(existing_paths) == 0:
+            raise Linchpinerror('Configuration file not foud in'
+                                ' path: {0}'.format(CONFIG_PATH))
+        try:
+            for path in existing_paths:
+                config = ConfigParser.SafeConfigParser()
+                f = open(path)
+                config.readfp(f)
+                f.close()
+
+                for section in config.sections():
+                    self.cfg_data[section] = {}
+                    for k, v in config.items(section):
+                        if section != 'evars':
+                            self.cfg_data[section][k] = v
+                        else:
+                            try:
+                                self.cfg_data[section][k] = config.getboolean(section, k)
+                            except ValueError as e:
+                                self.cfg_data[section][k] = v
+        except ConfigParser.InterpolationSyntaxError as e:
+            raise LinchpinError('Unable to parse configuration file properly:'
+                            '{0}'.format(e))
+    
+        # override logger file
+        self.cfg_data['logger']['file'] = self.logfile
+
+        self.evars = self.cfg_data.get('evars', {})
 
 
     def get_temp_filename(self):

@@ -38,7 +38,8 @@ def setup_load_config():
     provider = 'dummy'
 
     cd = ContextData()
-    cd.load_config_data(provider)
+    #cd.load_config_data(provider)
+    cd.load_new_config(provider)
     cd.parse_config()
     config_path = cd.get_temp_filename()
     config_data = cd.cfg_data
@@ -74,6 +75,26 @@ def setup_lp_api():
 
     lpa = LinchpinAPI(lpc)
 
+
+@with_setup(setup_lp_api)
+def test_config_extension():
+    test_dict = {
+                'alex': '/path/to/alex',
+                'clint': '/path/to/clint', 
+                'bob': '/path/to/bob'
+            }
+    assert_dict_equal(test_dict, lpa.ctx.cfgs['users'])
+
+@with_setup(setup_lp_api)
+def test_config_override():
+    test_dict = {
+                'credentials': 'True',
+                'hooks': 'False',
+                'inventories': 'True',
+                'layouts': 'False',
+                'resources': 'False'
+            }
+    assert_dict_equal(test_dict, lpa.ctx.cfgs['core_workspace_dirs'])
 
 @with_setup(setup_lp_api)
 def test_set_cfg():
