@@ -14,6 +14,27 @@
     loop_var: instance
   register: res_def_output
   when: not async
+  ignore_errors: yes
+
+- name: "get XML definition of vm"
+  command: "virsh dumpxml {{ instance[0] }}_{{ instance[1]['name'] | default(instance[1]['res_name']) }}_{{ instance[2] }}"
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ res_def }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: instance
+  register: res_def_output
+  when: not async
+  register: vm_xml_dump
+
+- name: "debug of vm_xml_dump"
+  debug:
+    msg: "{{ vm_xml_dump }}"
+
+- name: "debug of vm_xml_dump"
+  debug:
+    msg: "{{ vm_xml_dump | get_libvirt_files }}"
 
 - name: "undefine node"
   virt:
@@ -27,4 +48,10 @@
     loop_var: instance
   register: res_def_output
   when: not async
+
+- name: "Delete associated image files"
+  file:
+    state: absent
+    path: "{{ item }}"
+  with_items: "{{ vm_xml_dump | get_libvirt_files }}"
 
