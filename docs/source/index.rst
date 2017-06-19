@@ -20,6 +20,7 @@ This documentation covers the current released version of LinchPin (|version|). 
    installation
    getting_started
    configuration
+   topologies
    community
    libdocs
    releases

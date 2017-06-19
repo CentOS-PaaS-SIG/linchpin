@@ -239,7 +239,7 @@ def main():
     module = AnsibleModule(argument_spec={
         'whiteboard': {'required': False, 'type': 'str'},
         'recipesets': {'required': True, 'type': 'list'},
-        'job_group': {'required': True, 'type': 'str'},
+        'job_group': {'default': '', 'type': 'str'},
         'state': {'default': 'present', 'choices': ['present', 'absent']},
         'cancel_message': {'default': 'Job canceled by Ansible'}
     })
@@ -250,11 +250,14 @@ def main():
     for recipeset in params.recipesets:
         for x in range(0, recipeset['count']):
             if params.state == 'present':
+                extra_params = {}
+                if params.job_group:
+                    extra_params['job_group'] = params.job_group
                 # Make provision
-                job_id = factory.provision(debug=True, wait=True,\
-                                           recipesets=[recipeset],\
-                                           job_group=params.job_group,
-                                           whiteboard=params.whiteboard)
+                job_id = factory.provision(debug=True, wait=True,
+                                           recipesets=[recipeset],
+                                           whiteboard=params.whiteboard,
+                                           **extra_params)
                 job_ids.extend(job_id)
             else:
                 factory.cancel_jobs(recipeset['ids'], params.cancel_message)
