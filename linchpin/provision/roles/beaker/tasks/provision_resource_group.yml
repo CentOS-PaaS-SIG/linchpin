@@ -5,7 +5,7 @@
     whiteboard: "{{ res.whiteboard | default('Provisioned with linchpin') }}"
     recipesets: "{{ res.recipesets }}"
     state: present
-    job_group: "{{ res.job_group }}"
+    job_group: "{{ res.job_group | default('') }}"
   with_items: "{{ bkr_res_grps }}"
   loop_control:
     loop_var: res

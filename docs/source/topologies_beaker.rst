@@ -16,7 +16,7 @@ Beaker Server
     resource_groups:
       - resource_group_name: test1
         res_group_type: beaker
-        job_group: ci-ops-central
+        job_group: your-beaker-group
         whiteboard: Arbitrary Job whiteboard string
         recipesets:
           - distro: RHEL-6.5
@@ -40,9 +40,12 @@ Beaker Server
 Requiring Specific Hosts
 ````````````````````````
 
-By default, any host available to the named ``job_group`` can be selected for use in a given job.
+By default, any host available to your beaker user can be selected for use in a given job.
 If a specific host, or hosts, is desired, ``hostrequires`` filters can be used to refine the hosts
 selected for use in a given job.
+
+Force a Specific Host
+^^^^^^^^^^^^^^^^^^^^^
 
 The reservation of a specific hostname can be done with the ``force`` keyword nested within a
 recipeset's ``hostrequires`` mapping. Additional filtering,
@@ -53,19 +56,20 @@ any other filters.
 For example::
 
     hostrequires:
-      - force: beaker.machine.hostname
+      force: beaker.machine.hostname
 
-Beaker supports globbing via the "like" operator::
+Select from a named System Pool
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Beaker also supports provisioning from a named system pool::
 
     hostrequires:
-      - tag: hostname
-        op: like
-        value: beaker-%.machine.hostname
+      - tag: pool
+        op: "="
+        value: system-pool-name
 
-This glob will match hostnames like ``beaker-01.machine.hostname``, allowing you to select from
-a subset of machines available in the given job group. This acts like any other "hostrequires"
-filter, so it can be combined with those filters to futher ensure that only nodes with required
-cababilities are selected for a job (unlike when ``force`` is used).
+This filter will automatically select a system from the named system pool, but unlike the ``force``
+keyword additional filters will also be applied.
 
 .. note::
 

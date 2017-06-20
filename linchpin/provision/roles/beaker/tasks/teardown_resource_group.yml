@@ -42,5 +42,4 @@
   bkr_server:
     recipesets: "[ {{ combined }} ]"
     state: absent
-    job_group: "{{ res_grp['job_group'] }}"
-
+    job_group: "{{ res_grp['job_group'] | default('') }}"

@@ -190,29 +190,33 @@
                                      "type": "array"
                                  },
                                  "hostrequires": {
-                                     "type": "array",
-                                     "items": {
-                                         "oneOf": [
-                                             {
-                                                 "type": "object",
-                                                 "properties": {
-                                                     "force": {
-                                                         "type": "string"
-                                                     }
-                                                 },
-                                                 "required": ["force"]
+                                     "oneOf": [
+                                         {
+                                             "type": "array",
+                                              "items": {
+                                                  "allOf": [
+                                                      {
+                                                          "type": "object",
+                                                          "properties": {
+                                                              "tag": {
+                                                                  "type": "string"
+                                                              }
+                                                          },
+                                                          "required": ["tag"]
+                                                      }
+                                                 ]
+                                              }
+                                         },
+                                         {
+                                             "type": "object",
+                                             "properties": {
+                                                 "force": {
+                                                     "type": "string"
+                                                 }
                                              },
-                                             {
-                                                 "type": "object",
-                                                 "properties": {
-                                                     "tag": {
-                                                         "type": "string"
-                                                     }
-                                                 },
-                                                 "required": ["tag"]
-                                             }
-                                          ]
-                                     }
+                                             "required": ["force"]
+                                         }
+                                     ]
                                  },
                                  "bkr_data": {
                                     "type": "object"
@@ -229,7 +233,7 @@
                      }
                  }
              },
-             "required": ["job_group", "recipesets"]
+             "required": ["recipesets"]
          },
         "gcloud_gce": {
             "type" : "object",
