@@ -2,7 +2,7 @@ import requests
 import json
 
 
-class GitHub:
+class GitHub(object):
 
     def __init__(self, url):
         try:

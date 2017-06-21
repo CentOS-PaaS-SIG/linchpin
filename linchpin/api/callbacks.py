@@ -1,4 +1,3 @@
-import ansible
 from ansible.plugins.callback import CallbackBase
 
 

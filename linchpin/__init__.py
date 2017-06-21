@@ -100,7 +100,7 @@ def _handle_results(ctx, results):
 @click.option('--version', is_flag=True,
         help='Prints the version and exits')
 @click.option('--creds-path', type=click.Path(), envvar='LP_CREDS',
-        help='Use the specified credentials path if WORKSPACE environment variable '
+        help='Use the specified credentials path if CREDS_PATH environment variable '
         'is not set')
 @pass_context
 def runcli(ctx, config, workspace, verbose, version, creds_path):

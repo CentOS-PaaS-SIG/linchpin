@@ -24,18 +24,6 @@ class DuffyInventory(InventoryFilter):
     def get_host_ips(self, topo):
         return self.get_hostnames(topo)
 
-    def add_hosts_to_groups(self, config, inven_hosts, layout):
-        # create a ip to host mapping based on count
-        hosts = {}
-        for host_name in layout['hosts']:
-            count = layout['hosts'][host_name]['count']
-            host_list = []
-            hosts[host_name] = [host_list.append(inven_hosts.pop())
-                                for inven_hosts in range(count)]
-            for ip in host_ips:
-                for host_group in layout['hosts'][host_name]['host_groups']:
-                    config.set(host_group, ip)
-        return config
 
     def get_inventory(self, topo, layout):
         if len(topo['duffy_res']) == 0:
