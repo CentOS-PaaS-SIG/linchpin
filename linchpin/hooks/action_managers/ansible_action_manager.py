@@ -1,16 +1,15 @@
 import os
 import yaml
 import json
-import ansible
 
 from cerberus import Validator
 from collections import namedtuple
 
+import ansible
 from ansible import utils
 from ansible.inventory import Inventory
 from ansible.vars import VariableManager
 from ansible.parsing.dataloader import DataLoader
-from ansible.plugins.callback import CallbackBase
 from ansible.executor.playbook_executor import PlaybookExecutor
 
 from linchpin.exceptions import HookError
@@ -92,7 +91,7 @@ class AnsibleActionManager(ActionManager):
         self.variable_manager = VariableManager()
         self.passwords = {}
 
-        if inventory_file in self.target_data and self.context:
+        if 'inventory_file' in self.target_data and self.context:
             self.inventory = Inventory(loader=self.loader,
                                        variable_manager=self.variable_manager,
                                        host_list=self.target_data["inventory_file"])

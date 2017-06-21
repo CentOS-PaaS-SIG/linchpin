@@ -1,3 +1,5 @@
+import StringIO
+
 try:
     from configparser import ConfigParser
 except ImportError:
@@ -36,5 +38,6 @@ class BeakerInventory(InventoryFilter):
         # add ip addresses to each host
         self.add_ips_to_groups(inven_hosts, layout)
         self.add_common_vars(host_groups, layout)
+        output = StringIO.StringIO()
         self.config.write(output)
         return output.getvalue()

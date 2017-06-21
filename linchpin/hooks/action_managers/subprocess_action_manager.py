@@ -83,7 +83,7 @@ class SubprocessActionManager(ActionManager):
         """
 
         # set os.environpath if exists
-        if path in self.action_data:
+        if 'path' in self.action_data:
             os.environ["PATH"] += ":"+self.action_data["path"]
 
 

@@ -165,7 +165,7 @@ class LinchpinHooks(object):
             for a_b in action_blocks:
                 action_type = a_b['type']
                 ab_ctx = a_b['context'] if 'context' in a_b else True
-                if not 'path' in a_b:
+                if 'path' not in a_b:
                     # if the path is not defined it defaults to
                     # workspace/hooks/typeofhook/name
                     a_b['path'] = '{0}/{1}/{2}/{3}/'.format(
