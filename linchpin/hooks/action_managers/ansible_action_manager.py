@@ -92,7 +92,7 @@ class AnsibleActionManager(ActionManager):
         self.variable_manager = VariableManager()
         self.passwords = {}
 
-        if self.target_data.has_key("inventory_file") and self.context:
+        if inventory_file in self.target_data and self.context:
             self.inventory = Inventory(loader=self.loader,
                                        variable_manager=self.variable_manager,
                                        host_list=self.target_data["inventory_file"])
@@ -193,7 +193,7 @@ class AnsibleActionManager(ActionManager):
                             path,
                             playbook
                             )
-            if action.has_key("vars"):
+            if "vars" in action:
                 var_file = "{0}/{1}".format(
                            path,
                            action.get("vars")
@@ -203,7 +203,7 @@ class AnsibleActionManager(ActionManager):
                 if ("yaml" in ext) or ("yml" in ext):
                     extra_vars = yaml.load(extra_vars)
                 else:
-                   extra_vars = json.loads(extra_vars)
+                    extra_vars = json.loads(extra_vars)
             e_vars = action.get("extra_vars", {})
             extra_vars.update(e_vars)
             if self.context:
