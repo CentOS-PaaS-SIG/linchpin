@@ -10,6 +10,7 @@
     nics:  "{{ res_def['networks'] | default(omit) | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
+    userdata: "{{ res_def['userdata'] | default(omit) }}"
     count: "{{ res_def['count'] }}"
   register: res_def_output
   when: not async and auth_var is defined
@@ -30,6 +31,7 @@
     nics:  "{{ res_def['networks'] | default(omit) | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
+    userdata: "{{ res_def['userdata'] | default(omit) }}"
     count: "{{ res_def['count'] }}"
   register: res_def_output
   when: not async and auth_var is not defined
@@ -51,6 +53,7 @@
     nics:  "{{ res_def['networks'] | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
+    userdata: "{{ res_def['userdata'] | default(omit) }}"
     count: "{{ res_def['count'] }}"
   async: "{{ async_timeout | default(1000) }}"
   poll: 0
@@ -73,6 +76,7 @@
     nics:  "{{ res_def['networks'] | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
+    userdata: "{{ res_def['userdata'] | default(omit) }}"
     count: "{{ res_def['count'] }}"
   async: "{{ async_timeout | default(1000) }}"
   poll: 0
