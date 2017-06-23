@@ -57,6 +57,9 @@
                     },
                     "security_groups": {
                     "type":"string"
+                },
+                "userdata": {
+                    "type": "string"
                 }
             },
             "required":["flavor","type","image","count","keypair"]
