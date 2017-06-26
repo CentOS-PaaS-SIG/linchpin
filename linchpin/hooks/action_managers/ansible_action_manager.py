@@ -1,27 +1,27 @@
 import os
 import yaml
 import json
+
+from cerberus import Validator
+from collections import namedtuple
+
 import ansible
 from ansible import utils
-from collections import namedtuple
-from ansible import utils
-from ansible.parsing.dataloader import DataLoader
-from ansible.vars import VariableManager
 from ansible.inventory import Inventory
+from ansible.vars import VariableManager
+from ansible.parsing.dataloader import DataLoader
 from ansible.executor.playbook_executor import PlaybookExecutor
-from ansible.plugins.callback import CallbackBase
-from action_manager import ActionManager
-from cerberus import Validator
 
 from linchpin.exceptions import HookError
+from linchpin.hooks.action_managers.action_manager import ActionManager
 
 
 class AnsibleActionManager(ActionManager):
 
     def __init__(self, name, action_data, target_data, **kwargs):
-        
+
         """
-        AnsibleActionManager constructor 
+        AnsibleActionManager constructor
         :param name: Name of Action Manager , ( ie., ansible)
         :param action_data: dictionary of action_block consists of set of actions
         example:
@@ -41,11 +41,12 @@ class AnsibleActionManager(ActionManager):
         self.context = kwargs.get("context", True)
         self.kwargs = kwargs
 
+
     def validate(self):
 
         """
         Validates the action_block based on the cerberus schema
-        example:: ansible_action_block:::: 
+        example:: ansible_action_block::::
         - name: build_openshift_cluster
           type: ansible
           actions:
@@ -73,13 +74,15 @@ class AnsibleActionManager(ActionManager):
         }
         v = Validator(schema)
         status = v.validate(self.action_data)
+
         if not status:
             raise HookError("Invalid syntax: LinchpinHook:"+str((v.errors)))
         else:
             return status
 
+
     def load(self):
-        
+
         """
         Loads the ansible specific managers and loaders
         """
@@ -87,7 +90,8 @@ class AnsibleActionManager(ActionManager):
         self.loader = DataLoader()
         self.variable_manager = VariableManager()
         self.passwords = {}
-        if self.target_data.has_key("inventory_file") and self.context:
+
+        if 'inventory_file' in self.target_data and self.context:
             self.inventory = Inventory(loader=self.loader,
                                        variable_manager=self.variable_manager,
                                        host_list=self.target_data["inventory_file"])
@@ -95,6 +99,7 @@ class AnsibleActionManager(ActionManager):
             self.inventory = Inventory(loader=self.loader,
                                        variable_manager=self.variable_manager,
                                        host_list=["localhost"])
+
         Options = namedtuple('Options', ['listtags',
                                          'listtasks',
                                          'listhosts',
@@ -113,7 +118,9 @@ class AnsibleActionManager(ActionManager):
                                          'become_user',
                                          'verbosity',
                                          'check'])
+
         utils.VERBOSITY = 4
+
         self.options = Options(listtags=False,
                           listtasks=False,
                           listhosts=False,
@@ -135,7 +142,7 @@ class AnsibleActionManager(ActionManager):
 
 
     def get_ansible_runner(self, playbook_path, extra_vars):
-        
+
         """
         Fetches ansible runner based on playbook_path and extra_vars
         :param playbook_path: path to playbook
@@ -143,17 +150,20 @@ class AnsibleActionManager(ActionManager):
         """
 
         self.variable_manager.extra_vars = extra_vars
-        # though verbosity through api doesnot work
+
+        # verbosity through api doesn't work
         pbex = PlaybookExecutor(playbooks=[playbook_path],
                                 inventory=self.inventory,
                                 variable_manager=self.variable_manager,
                                 loader=self.loader,
                                 options=self.options,
                                 passwords=self.passwords)
+
         return pbex
 
+
     def get_ctx_params(self):
-        
+
         """
         Reformats the ansible specific variables
         """
@@ -162,11 +172,12 @@ class AnsibleActionManager(ActionManager):
         ctx_params["resource_file"] = self.target_data.get("resource_file",None)
         ctx_params["layout_file"] = self.target_data.get("layout_file",None)
         ctx_params["inventory_file"] = self.target_data.get("inventory_file",None)
+
         return ctx_params
 
 
     def execute(self):
-        
+
         """
         Executes the action_block in the PinFile
         """
@@ -181,7 +192,7 @@ class AnsibleActionManager(ActionManager):
                             path,
                             playbook
                             )
-            if action.has_key("vars"):
+            if "vars" in action:
                 var_file = "{0}/{1}".format(
                            path,
                            action.get("vars")
@@ -191,7 +202,7 @@ class AnsibleActionManager(ActionManager):
                 if ("yaml" in ext) or ("yml" in ext):
                     extra_vars = yaml.load(extra_vars)
                 else:
-                   extra_vars = json.loads(extra_vars)
+                    extra_vars = json.loads(extra_vars)
             e_vars = action.get("extra_vars", {})
             extra_vars.update(e_vars)
             if self.context:

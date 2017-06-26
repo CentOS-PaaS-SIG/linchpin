@@ -149,7 +149,6 @@ class LinchpinAPI(object):
         if hook_state is None:
             return
         else:
-#            hook_state = hook_state.split('::')[0]
             self.ctx.log_debug('hook {0} initiated'.format(hook_state))
             self._hook_state = State(hook_state, None, self.ctx)
 

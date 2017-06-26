@@ -42,7 +42,6 @@ import os
 import shlex
 import tempfile
 import yaml
-import glob
 
 try:
     import configparser as ConfigParser

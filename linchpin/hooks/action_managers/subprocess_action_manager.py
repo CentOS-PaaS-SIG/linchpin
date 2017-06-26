@@ -31,6 +31,7 @@ class SubprocessActionManager(ActionManager):
         self.context = kwargs.get('context', True)
         self.kwargs = kwargs
 
+
     def validate(self):
 
         """
@@ -74,18 +75,20 @@ class SubprocessActionManager(ActionManager):
         else:
             return status
 
+
     def load(self):
-        
+
         """
         Adds the shell script to the os path if mentioned
         """
 
         # set os.environpath if exists
-        if self.action_data.has_key("path"):
+        if 'path' in self.action_data:
             os.environ["PATH"] += ":"+self.action_data["path"]
 
+
     def add_context_params(self, action):
-        
+
         """
         Adds ctx params to the action_block run when context is true
         :param file_path: path to the script
@@ -97,8 +100,9 @@ class SubprocessActionManager(ActionManager):
             command += " %s=%s " %(key, self.target_data[key])
         return command
 
+
     def execute(self):
-        
+
         """
         Executes the action_block in the PinFile
         """

@@ -73,7 +73,7 @@ class ActionBlockRouter(object):
         '''
 
         action_class = ACTION_MANAGERS.get(class_name, None)
-        if action_class == None:
+        if action_class is None:
             raise ActionManagerError('Action Class {0} not found '.format(class_name))
         return action_class
 
@@ -120,7 +120,7 @@ class LinchpinHooks(object):
 
         hooks_data = self.api.target_data.get('hooks', None)
 
-        if hooks_data and hooks_data.has_key(str(state)):
+        if hooks_data and str(state) in hooks_data:
             self.api.ctx.log_debug('running {0} hooks'.format(state))
 
             self.prepare_ctx_params()
@@ -131,7 +131,7 @@ class LinchpinHooks(object):
             state_data = hooks_data.get(str(state), None)
 
             # Print out error message if the hooks are not found
-            if state_data == None:
+            if state_data is None:
                 self.api.ctx.log_state('{0} hook not found in PinFile'.format(state))
                 return
 
@@ -164,17 +164,18 @@ class LinchpinHooks(object):
             # a_b -> abbr for action_block
             for a_b in action_blocks:
                 action_type = a_b['type']
-                ctx = a_b['context'] if a_b.has_key('context') else True
-                if not a_b.has_key('path'):
+                ab_ctx = a_b['context'] if 'context' in a_b else True
+                if 'path' not in a_b:
                     # if the path is not defined it defaults to
                     # workspace/hooks/typeofhook/name
                     a_b['path'] = '{0}/{1}/{2}/{3}/'.format(
                                    self.api.ctx.workspace,
-                                   self.api.get_cfg('evars', 'hooks_folder','hooks'),
+                                   self.api.get_evar('hooks_folder', default='hooks'),
                                    a_b['type'],
                                    a_b['name']
                                    )
-                if a_b.has_key('action_manager'):
+
+                if 'action_manager' in a_b:
                     # fetches the action object from the path
                     # add path to python path
                     sys.path.append(a_b['path'])
@@ -198,13 +199,13 @@ class LinchpinHooks(object):
                     # get the class
                     class_ = getattr(module, class_name)
                     # a_b_obj is action_block_object
-                    a_b_obj = class_(action_type, a_b, tgt_data, context=ctx)
+                    a_b_obj = class_(action_type, a_b, tgt_data, context=ab_ctx)
                 else:
-                    a_b_obj = ActionBlockRouter(action_type, a_b, tgt_data, context=ctx)
+                    a_b_obj = ActionBlockRouter(action_type, a_b, tgt_data, context=ab_ctx)
                 try:
-                    self.api.ctx.log_state('start hook {0}:{1}'.format(
+                    self.api.ctx.log_state('-------\n'
+                                            'start hook {0}:{1}'.format(
                                                 a_b['type'], a_b['name']))
-                    self.api.ctx.log_state('----------\n')
 
                     # validates the class object
                     a_b_obj.validate()
@@ -212,8 +213,7 @@ class LinchpinHooks(object):
                     a_b_obj.execute()
 
                     # intentionally using print here
-                    self.api.ctx.log_state('----------\n')
-                    self.api.ctx.log_state('end hook {0}:{1}'.format(
+                    self.api.ctx.log_state('end hook {0}:{1}\n-------'.format(
                                                 a_b['type'],a_b['name']))
                 except Exception as e:
                     self.api.ctx.log_info(str(e))

@@ -1,14 +1,7 @@
 #!/usr/bin/env python
 
 import os
-import sys
-import ast
-import shutil
 import logging
-
-from distutils import dir_util
-from collections import OrderedDict
-from jinja2 import Environment, PackageLoader
 
 try:
     import configparser as ConfigParser
