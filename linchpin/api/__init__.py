@@ -247,7 +247,7 @@ class LinchpinAPI(object):
         elif len(targets) == 0:
             targets = set(pf.keys()).difference()
         else:
-            raise LinchpinError("One or more Invalid targets found")
+            raise LinchpinError("One or more invalid targets found")
 
 
         for target in targets:

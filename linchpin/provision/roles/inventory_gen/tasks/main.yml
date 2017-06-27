@@ -5,7 +5,7 @@
 #    msg: "{{ layout_file }}"
 #  when: state == "present"
 
-- include_vars: "{{ resources_file | default( default_resources_path+'/'+outputs.topology_name+'.output.yaml' ) }}"
+- include_vars: "{{ resources_file | default( default_resources_path+'/'+outputs.topology_name+'.output' ) }}"
 
 - name: "Updating topology_outputs"
   set_fact:
