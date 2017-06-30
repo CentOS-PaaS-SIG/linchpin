@@ -19,6 +19,7 @@
       beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
       libvirt_res: "{{ topology_outputs_libvirt_nodes | default([]) }}"
       openshift_res: "{{ topology_outputs_openshift_resources | default([]) }}"
+      ovirt_vms_res: "{{ topology_outputs_ovirt_vms | default([]) }}"
   when: not async
 
 - name: "Create output directories"
@@ -62,6 +63,7 @@
       rax_server_res: "{{ topology_outputs_rax_server | default([]) }}"
       beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
       libvirt_res: "{{ topology_outputs_libvirt_nodes | default([]) }}"
+      ovirt_vms_res: "{{ topology_outputs_ovirt_vms | default([]) }}"
   when: async
 
 # currently adding a single playbook that can manage all the async outputs based on the resource groups
@@ -89,6 +91,7 @@
       rax_server_res: "{{ topology_outputs_rax_server | default([]) }}"
       beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
       libvirt_res: "{{ topology_outputs_libvirt_nodes | default([]) }}"
+      ovirt_vms_res: "{{ topology_outputs_ovirt_vms | default([]) }}"
   when: async
 
 # pretty much the same output generation when async is False

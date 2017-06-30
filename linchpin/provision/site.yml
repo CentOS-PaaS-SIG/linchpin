@@ -20,6 +20,7 @@
     - { role: 'rackspace', when: rax_res_grps | length > 0 }
     - { role: 'beaker', when: bkr_res_grps | length > 0 }
     - { role: 'openshift', when: openshift_res_grps | length > 0 }
+    - { role: 'ovirt', when: ovirt_res_grps | length > 0 }
 
 - name: "Writing contents to file"
   hosts: localhost

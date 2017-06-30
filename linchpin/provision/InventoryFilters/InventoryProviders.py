@@ -10,6 +10,7 @@ from GCloudInventory import GCloudInventory
 from InventoryFilter import InventoryFilter
 from LibvirtInventory import LibvirtInventory
 from OpenstackInventory import OpenstackInventory
+from OvirtInventory import OvirtInventory
 
 filter_classes = {
            "aws_inv": AWSInventory,
@@ -19,6 +20,7 @@ filter_classes = {
            "gcloud_inv": GCloudInventory,
            "libvirt_inv": LibvirtInventory,
            "os_inv": OpenstackInventory,
+           "ovirt_inv": OvirtInventory,
 }
 
 
