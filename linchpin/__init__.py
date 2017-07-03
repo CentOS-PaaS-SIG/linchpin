@@ -3,6 +3,12 @@
 import os
 import sys
 import click
+import shutil
+import logging
+import requests
+
+from distutils import dir_util
+from jinja2 import Environment, PackageLoader
 
 from linchpin.cli import LinchpinCli
 from linchpin.exceptions import LinchpinError
@@ -15,7 +21,7 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 class LinchpinAliases(click.Group):
 
-    lp_commands = ['init', 'up', 'destroy']
+    lp_commands = ['init', 'up', 'destroy', 'fetch']
     lp_aliases = {
         'rise': 'up',
         'drop': 'destroy',
