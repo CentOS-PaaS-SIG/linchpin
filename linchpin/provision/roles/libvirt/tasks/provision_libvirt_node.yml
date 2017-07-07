@@ -2,6 +2,14 @@
   shell: python -c "print [x for x in range( 0, {{ res_def['count'] | default(1) }} )]"
   register: res_count
 
+- name: "Get host from uri"
+  set_fact:
+    uri_hostname: "{{ res_def['uri'] | get_host_from_uri }}"
+
+- name: "debug"
+  debug:
+    msg: "{{ uri_hostname }}"
+
 - name: "does node already exist"
   virt:
     name: "{{ libvirt_resource_name }}_{{ nodeinfo[1] }}"
@@ -15,6 +23,10 @@
     loop_var: nodeinfo
   register: node_exists
 
+- name: "debug of node_exist"
+  debug:
+    msg: "{{ node_exists }}"
+
 - name: set empty local_image_path
   set_fact:
     local_image_path: ''
@@ -23,13 +35,26 @@
   set_fact:
     img_src_ext: ''
 
-- name: "copy image_src"
-  include: copy_image_src.yml
-  when: node_exists['failed'] is defined
+- name: "copy image_src: localhost"
+  include: copy_image_src_local.yml remote_user={{ res_def['remote_user'] | default('root') }}
+  when: node_exists['failed'] is defined and uri_hostname == 'localhost'
+
+- name: "copy image_src: remote"
+  include: copy_image_src_remote.yml remote_user={{ res_def['remote_user'] | default('root') }}
+  when: node_exists['failed'] is defined and uri_hostname != 'localhost'
+
+
+- name: "debug: after copy image_src "
+  debug:
+    msg: "{{ libvirt_image_path }}"
+
+- name: "node exists debug"
+  debug:
+    msg: "{{ node_exists }}"
 
 - name: set qemu_path
   set_fact:
-      qemu_path: "{{ (ansible_distribution in ['CentOS','RedHat']) | ternary('/usr/libexec/', '/usr/bin/') }}"
+    qemu_path: "{{ (ansible_distribution in ['CentOS','RedHat']) | ternary('/usr/libexec/', '/usr/bin/') }}"
 
 - name: "define node"
   virt:
@@ -39,35 +64,260 @@
     uri: "{{ definition[0]['uri'] | default('qemu:///system') }}"
   with_nested:
     - ["{{ res_def }}"]
-    - "{{ res_count.stdout }}"
-    - ["{{ local_image_path }}"]
+
+#- name: "define node template"
+#  template:
+#    src: "../templates/libvirt_node.xml.j2"
+#    dest: "/tmp/{{ definition[0] }}_{{ definition[1]['name'] | default(definition[1]['res_name']) }}_{{ definition[2] }}"
+#  with_nested:
+#    - ["{{ res_grp_name }}"]
+#    - ["{{ res_def }}"]
+#    - "{{ res_count.stdout }}"
+#    - ["{{ local_image_path }}"]
+#    - ["{{ img_src_ext }}"]
+#  loop_control:
+#    loop_var: definition
+#  when:  node_exists['failed'] is defined
+#
+- name: "Generate ssh keys"
+  shell: "ssh-keygen -t rsa -f ~/.ssh/{{ res_grp_name }} -N '';cat ~/.ssh/{{ res_grp_name }} >> ~/.ssh/authorized_keys"
+  args:
+    creates: "~/.ssh/{{ res_grp_name }}"
+  when: res_def['copy_ssh_keys'] is defined and res_def['copy_ssh_keys'] == true and uri_hostname =='localhost'
+
+- name: "Generate ssh keys"
+  shell: "ssh-keygen -t rsa -f ~/.ssh/{{ res_grp_name }} -N '';cat ~/.ssh/{{ res_grp_name }} >> ~/.ssh/authorized_keys"
+  args:
+    creates: "~/.ssh/{{ res_grp_name }}"
+  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+  delegate_to: "{{ uri_hostname }}"
+  when: res_def['copy_ssh_keys'] is defined and res_def['copy_ssh_keys'] == true and uri_hostname != 'localhost'
+
+- name: "cat out contents of public key"
+  shell: "cat ~/.ssh/{{ res_grp_name }}.pub"
+  register: pubkey
+  when: res_def['copy_ssh_keys'] is defined and res_def['copy_ssh_keys'] == true and uri_hostname == 'localhost'
+
+- name: "cat out contents of public key"
+  shell: "cat ~/.ssh/{{ res_grp_name }}.pub"
+  register: pubkey
+  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+  delegate_to: "{{ uri_hostname }}"
+  when: res_def['copy_ssh_keys'] is defined and res_def['copy_ssh_keys'] == true and uri_hostname != 'localhost'
+
+- debug:
+    msg: "{{ node_exists }}"
+
+- name: "Add additional storage"
+  command: "qemu-img resize {{ definition[2] }}/{{ definition[0] }}_{{ definition[1] }}_{{ definition[5] }}.{{ definition[3] }} +{{ definition[4] }}G"
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ libvirt_image_path }}"]
     - ["{{ img_src_ext }}"]
+    - ["{{ res_def['additional_storage'] | default('1') }}"]
+    - "{{ res_count.stdout }}"
   loop_control:
     loop_var: definition
-  when:  node_exists['failed'] is defined
+  when: res_def['additional_storage'] is defined and node_exists['failed'] is defined and uri_hostname == 'localhost'
+
+- name: "Add additional storage"
+  command: "qemu-img resize {{ definition[2] }}/{{ definition[0] }}_{{ definition[1] }}_{{ definition[5] }}.{{ definition
+[3] }} +{{ definition[4] }}G"
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ libvirt_image_path }}"]
+    - ["{{ img_src_ext }}"]
+    - ["{{ res_def['additional_storage'] | default('1') }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: definition
+  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+  delegate_to: "{{ uri_hostname }}"
+  when: res_def['additional_storage'] is defined and node_exists['failed'] is defined and uri_hostname != 'localhost'
+
+- name: "Create directories"
+  file:
+    path: "/tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}"
+    state: "directory"
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ libvirt_resource_name }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: definition
+  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+  delegate_to: "{{ uri_hostname }}"
+  when: node_exists['failed'] is defined and uri_hostname != 'localhost'
+
+- name: "Prepare cloud-config/user-data"
+  template:
+    src: "templates/cloud-config/user-data"
+    dest: "/tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}/user-data"
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ libvirt_resource_name }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: definition
+  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+  delegate_to: "{{ uri_hostname }}"
+  when: res_def['cloud_config'] is not defined and node_exists['failed'] is defined and uri_hostname != 'localhost'
+
+- name: "Prepare cloud-config/meta-data"
+  template:
+    src: "templates/cloud-config/meta-data"
+    dest: "/tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}/meta-data"
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ libvirt_resource_name }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: definition
+  when: node_exists['failed'] is defined and uri_hostname == 'localhost'
+
+- name: "Prepare cloud-config/meta-data"
+  template:
+    src: "templates/cloud-config/meta-data"
+    dest: "/tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}/meta-data"
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ libvirt_resource_name }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: definition
+  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+  delegate_to: "{{ uri_hostname }}"
+  when: node_exists['failed'] is defined and uri_hostname != 'localhost'
+
+- name: "Generate ci data cd image for cloud-init"
+  command: mkisofs -o /tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}.iso -V cidata -r -J --quiet /tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}/user-data /tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}/meta-data
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ libvirt_resource_name }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: definition
+  when: res_def['cloud_config'] is not defined and node_exists['failed'] is defined and uri_hostname == 'localhost'
+
+- name: "Generate ci data cd image for cloud-init"
+  command: "mkisofs -o /tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}.iso -V cidata -r -J --quiet /tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}/user-data /tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}/meta-data"
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ libvirt_resource_name }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: definition
+  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+  delegate_to: "{{ uri_hostname }}"
+  when: res_def['cloud_config'] is not defined and node_exists['failed'] is defined and uri_hostname != 'localhost'
+
+
+- name: "Generate ci data cd image for cloud-init when cloud config is defined"
+  command: mkisofs -o /tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[3] }}.iso -V cidata -r -J --quiet {{ definition[2] }}  /tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[3] }}/meta-data
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ res_def['cloud_config']['file'] }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: definition
+  when: res_def['cloud_config'] is defined and node_exists['failed'] is defined and uri_hostname == 'localhost'
+
+- name: "Generate ci data cd image for cloud-init when cloud config is defined"
+  command: mkisofs -o /tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[3] }}.iso -V cidata -r -J --quiet {{ definition[2] }}  /tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[3] }}/meta-data
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ res_def['cloud_config']['file'] }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: definition
+  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+  delegate_to: "{{ uri_hostname }}"
+  when: res_def['cloud_config'] is defined and node_exists['failed'] is defined and uri_hostname != 'localhost'
+ 
+
+- name: "Generate add admin script"
+  template:
+    src: "templates/add_account.sh"
+    dest: "/tmp/add_account-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}"
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ libvirt_resource_name }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: definition
+  when: node_exists['failed'] is not defined and uri_hostname == 'localhost'
+
+- name: "Generate add admin script"
+  template:
+    src: "templates/add_account.sh"
+    dest: "/tmp/add_account-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}"
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ libvirt_resource_name }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: definition
+  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+  delegate_to: "{{ uri_hostname }}"
+  when: node_exists['failed'] is not defined and uri_hostname != 'localhost'
+
+- name: "Install VM"
+  command: virt-install --connect {{ definition[7] }} --import --name {{ definition[0] }}_{{ definition[1] }}_{{ definition[8] }} --autostart --network {{ definition[4] }},model=virtio --ram {{ definition[5] }} --disk path={{ definition[2] }}/{{ definition[0] }}_{{ definition[1] }}_{{ definition[8] }}.{{ definition[3] }},format={{ definition[6] }},bus=virtio,cache=none --disk path=/tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[8] }}.iso,device=cdrom --wait 10 --os-type=linux --nographics
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ libvirt_image_path }}"]
+    - ["{{ img_src_ext }}"]
+    - ["{{ res_def['network'] | default(' bridge=virbr0')  }}"]
+    - ["{{ res_def['memory'] | default(1024)  }}"]
+    - ["{{ res_def['format'] | default('qcow2')  }}"]
+    - ["{{ res_def['uri'] }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: definition
+  ignore_errors: yes
+  when: node_exists['failed'] is defined 
+
+- name: Remove cloud-init cdrom
+  command: virsh -c {{ definition[2] }} change-media {{ definition[0] }}_{{ definition[1] }}_{{ definition[3] }} hda --eject --config
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ res_def['uri'] }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: definition
+  ignore_errors: yes
+  when: node_exists['failed'] is defined 
+
+- name: Start VM
+  virt:
+    name: "{{ definition[0] }}_{{ definition[1] }}_{{ definition[3] }}"
+    state: "running"
+    uri: "{{ definition[2] }}"
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ res_def['uri'] }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: definition
+  ignore_errors: yes
 
 - name: "start relevant networks"
   virt_net:
     state: active
-    name: "{{ net_item['name'] }}"
-  with_items:
-    - "{{ res_def['networks'] }}"
+    name: "{{ net_item[0]['name'] }}"
+    uri: "{{ net_item[1] }}"
+  with_nested:
+    - ["{{ res_def['networks'] }}"]
+    - ["{{ res_def['uri'] }}"]
   loop_control:
     loop_var: net_item
-
-- name: "start node"
-  virt:
-    name: "{{ libvirt_resource_name }}_{{ instance[1] }}"
-    state: running
-    uri: "{{ instance[0]['uri'] | default('qemu:///system') }}"
-  with_nested:
-    - ["{{ res_def }}"]
-    - "{{ res_count.stdout }}"
-    - ["{{ local_image_path }}"]
-    - ["{{ img_src_ext }}"]
-  loop_control:
-    loop_var: instance
-  when: not async
 
 - name: mac_and_ip | extract mac address
   shell: >
@@ -81,10 +331,6 @@
     loop_var: node
   register: extract_mac_address_result
 
-#- name: extract_mac_address_result
-#  debug:
-#    var: extract_mac_address_result.results[0].stdout
-
 - name: mac_and_ip | wait for dhcp ip address
   shell: |
     until arp -an | grep -q -F {{ extract_mac_address_result.results[mac].stdout }}; do
@@ -96,6 +342,22 @@
   loop_control:
     loop_var: mac
   register: extract_ip_address_result
+  when: uri_hostname == 'localhost'
+
+- name: mac_and_ip | wait for dhcp ip address
+  shell: |
+    until arp -an | grep -q -F {{ extract_mac_address_result.results[mac].stdout }}; do
+      sleep 1
+    done
+    arp -an | grep -F {{ extract_mac_address_result.results[mac].stdout }} | cut -f 2 -d "(" | cut -f 1 -d ")"
+  with_items:
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: mac
+  register: extract_ip_address_result_remote
+  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+  delegate_to: "{{ uri_hostname }}"
+  when: uri_hostname != 'localhost'
 
 - name: "dump node data"
   virt:
@@ -117,4 +379,13 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: xml_item
-  when: not async
+  when: not async and uri_hostname == 'localhost'
+
+- name: "Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
+  set_fact:
+    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [extract_ip_address_result_remote.results[xml_item].stdout] }}"
+  with_items:
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: xml_item
+  when: not async and uri_hostname != 'localhost'
