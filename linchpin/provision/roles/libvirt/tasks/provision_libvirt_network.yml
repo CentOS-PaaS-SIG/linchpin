@@ -20,4 +20,5 @@
 - name: "start network"
   virt_net:
     state: active
+    uri: "{{ res_def['uri'] | default('qemu:///system') }}"
     name: "{{ res_def['res_name'] | default(res_def['name']) }}"
