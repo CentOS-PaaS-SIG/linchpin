@@ -1,0 +1,25 @@
+#cloud-config
+#password: fedora
+#chpasswd: {expire: False}
+#ssh_pwauth: True
+ssh_authorized_keys:
+  - "{{ pubkey_local["stdout"] }}"
+# Add users to the system. Users are added after groups are added.
+users:
+  - name: admin
+    gecos: Admin User
+    groups: wheel
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh-import-id: None
+    lock_passwd: true
+    ssh-authorized-keys:
+      - {{ pubkey_local["stdout"] }}
+
+timezone: UTC
+
+runcmd:
+ - systemctl disable cloud-init.service
+ - systemctl disable cloud-init-local.service
+ - systemctl disable cloud-final.service
+ - systemctl disable cloud-config.service
+ - poweroff
