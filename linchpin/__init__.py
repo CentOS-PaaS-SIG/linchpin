@@ -13,6 +13,7 @@ from jinja2 import Environment, PackageLoader
 from linchpin.cli import LinchpinCli
 from linchpin.exceptions import LinchpinError
 from linchpin.cli.context import LinchpinCliContext
+from linchpin.api.repository_controls import REPOSITORY_CONTROL
 
 
 pass_context = click.make_pass_decorator(LinchpinCliContext, ensure=True)
@@ -250,7 +251,14 @@ def drop(ctx, targets):
     pass
 
 
-def _get_pinfile_path(pinfile=None, exists=True):
+@runcli.command()
+@click.option('-l','--list',is_flag=True, default=False, required=False)
+@click.argument('fetch_type', default=None, required=True)
+@click.argument('remote', default=None, required=True)
+@click.argument('local', default=None, required=False, type=click.Path(exists=True))
+@pass_context
+def fetch(ctx, list, fetch_type, remote, local):
+
     """
     Return full path to the pinfile
 
@@ -258,6 +266,37 @@ def _get_pinfile_path(pinfile=None, exists=True):
         pinfile (Default: ctx.workspace)
 
     """
+    valid_type = False
+    fetch_types = [
+        'workspace',
+        'layout',
+        'topology',
+        'hooks',
+        'credentials',
+        'PinFile',
+        'resource',
+        'inventories'
+    ]
+    for item in fetch_types:
+        if item == fetch_type:
+            valid_type= True
+            break
+    if not valid_type:
+        ctx.log_state('{0} is not a valid type'.format(fetch_type))
+        sys.exit(1)           
+
+    local = os.path.abspath(local)
+    
+    #TODO: ADD CODE THAT DISTINGUISHES REMOTE PROTOCOLS E.G. GITHUB, BITBUCKET, SVN, MERCURIAL
+
+    github = REPOSITORY_CONTROL.get("github", None)(fetch_type, remote, local)
+    if list:
+        github.list_files()
+    else:
+        github.fetch_files()
+
+
+def _get_pinfile_path(pinfile=None, exists=True):
 
     if not pinfile:
         pinfile = lpcli.pinfile
