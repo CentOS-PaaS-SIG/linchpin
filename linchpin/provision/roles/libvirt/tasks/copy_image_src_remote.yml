@@ -98,7 +98,7 @@
   copy:
     src: "{{ img_src }}"
     dest: "{{ img_item[0] }}{{ img_item[1] }}_{{ img_item[2] }}_{{ img_item[3] }}.{{ img_item[4] }}"
-    remote_src: false
+    remote_src: true
   with_nested:
     - ["{{ local_image_path }}"]
     - ["{{ res_grp_name }}"]
