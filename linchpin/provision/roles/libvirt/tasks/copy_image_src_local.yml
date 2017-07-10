@@ -83,8 +83,8 @@
   stat:
     path: "{{ img_src }}"
   become: yes
-  register: lismt
-  when: lismt.stat.mime_type == "application/x-xz"
+  register: ismt
+  when: lismt_local.stat.mime_type == "application/x-xz"
 
   #- name: "DEBUG: ismt"
   #  debug:
@@ -93,7 +93,7 @@
 - name: uncompress xz local_image_src
   command: "xz -d --keep --force {{ local_image_src }}"
   become: yes
-  when: lismt.stat.mime_type == "application/x-xz" and ismt.stat.exists == false
+  when: lismt_local.stat.mime_type == "application/x-xz" and ismt.stat.exists == false
 
 - name: "cp img_src to match node name"
   copy:
