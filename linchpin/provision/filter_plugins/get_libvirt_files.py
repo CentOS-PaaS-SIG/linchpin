@@ -15,8 +15,9 @@ def get_libvirt_files(output):
             disks = device.findall('disk')
             for disk in disks:
                 if disk.attrib["type"] == 'file':
-                    source = disk.findall('source')[0]
-                    files.append(source.attrib['file'])
+                    if len(disk.findall('source')) > 0:
+                        source = disk.findall('source')[0]
+                        files.append(source.attrib['file'])
     return files
 
 class FilterModule(object):
