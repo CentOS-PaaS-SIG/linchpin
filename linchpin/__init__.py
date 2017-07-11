@@ -289,7 +289,7 @@ def fetch(ctx, list, fetch_type, remote, local):
     
     #TODO: ADD CODE THAT DISTINGUISHES REMOTE PROTOCOLS E.G. GITHUB, BITBUCKET, SVN, MERCURIAL
 
-    github = REPOSITORY_CONTROL.get("github", None)(ctx, fetch_type, remote, local)
+    github = REPOSITORY_CONTROL.get("github", None)(ctx,fetch_type, remote, local)
     if list:
         github.list_files()
     else:
