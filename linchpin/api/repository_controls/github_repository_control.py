@@ -8,20 +8,19 @@ class GithubRepositoryControl(RepositoryControl):
 #TODO: HANDLE ERROR CHECKING -- USE linchpin/linchpin/exception
 # to create RepositoryControlError(LinchpinError)
 
-    def __init__(self, fetch_type, url, local):
+    def __init__(self, ctx, fetch_type, url, local):
         #Need to parse this: https://github.com/agharibi/SampleLinchpinDirectory
         #API follows this standard: GET /repos/:owner/:repo/contents/:path
 
         self.local = local.rstrip('/')
         self.fetch_type = fetch_type
         self.fetch_types = {
-        'workspace': '',
         'layout': 'layouts',
         'topology': 'topologies',
         'hooks': 'hooks',
         'credentials': 'credentials',
-        'PinFile': 'PinFile',
-        'resource': 'resources',
+        'PinFile': '',
+        'resources': 'resources',
         'inventory': 'inventories'
         }
 
@@ -49,17 +48,17 @@ class GithubRepositoryControl(RepositoryControl):
                 if len(split_url) > 3:
                     path = '/'.join(split_url[3:])
             except IndexError:
-                print "invalid URL"
+               print ("invalid URL")
                 sys.exit(1)
 
         
         if path == "":
-            self.url = '{0}/{1}/{2}/contents/{3}'.format(
-                base_url, username, repo, self.fetch_types[fetch_type])
+            self.root_url = '{0}/{1}/{2}/contents'.format(
+                base_url, username, repo)
         else:
             path = path.rstrip('/')
-            self.url = '{0}/{1}/{2}/contents/{3}/{4}'.format(
-                base_url, username, repo, path, self.fetch_types[fetch_type])
+            self.root_url = '{0}/{1}/{2}/contents/{3}'.format(
+                base_url, username, repo, path)
 
 
             
@@ -68,7 +67,7 @@ class GithubRepositoryControl(RepositoryControl):
         if fetch_type == 'workspace' or fetch_type == 'PinFile':
             print "Cannot list " + fetch_type
             sys.exit(1)
-        r = requests.get(self.url)
+        r = requests.get(self.build_section_url(self.fetch_type))
         if r.status_code != 200:
             print "Request failed"
             sys.exit(1)
@@ -79,31 +78,42 @@ class GithubRepositoryControl(RepositoryControl):
 
 
     def fetch_files(self):
-        r = requests.get(self.url)
-        if  self.fetch_type == 'PinFile':
-            print "Dealing with this later"#TODO: DEAl with this
-            sys.exit(1)
-        if r.status_code != 200:
-            print "Request failed"
-            sys.exit(1)
         if self.fetch_type == "workspace":
-            print "Fetching workspace..."
-            for key in self.fetch_types:
-                if not os.path.isdir('./{0}'.format(fetch_types[key]))
-                    os.makedirs(self.fetch_types[key])
-                self.fetch_section(r, key)
-            print "done"
+            self.fetch_workspace()
         else:
-            self.fetch_section(r, self.fetch_type)
+            self.fetch_section(self.fetch_type)
 
-    def fetch_section(self, request, section):
+
+    def fetch_workspace(self):
+        print "Fetching workspace..."
+
+        for key in self.fetch_types:
+            if key == "workspace":
+                continue
+            if not os.path.isdir('{0}/{1}'.format(self.local, self.fetch_types[key])):
+                os.makedirs('{0}/{1}'.format(self.local, self.fetch_types[key]))
+            self.fetch_section(key)
+
+        print "Workspace successfully fetched!"
+        
+
+    def fetch_section(self, section):
         print 'Fetching {0}...'.format(section)
-        section_path= '{0}/{1}'.format(self.local.rstrip('/'),self.fetch_types[section])
 
+        section_path = '{0}/{1}'.format(self.local.rstrip('/'),self.fetch_types[section])
+        fetch_url = self.build_section_url(section)
+        request = requests.get(fetch_url)
+
+        if request.status_code != 200:
+            print "Request failed"
+            return
         if not os.path.isdir(self.local):
             print '{0} is an invalid filepath. Please specify a valid workspace.'.format(self.local)
             sys.exit(1)
         for item in request.json():
+            if item["name"] == ".empty":
+                print "This directory is empty. There is nothing to fetch."
+                break
             if item["type"] == "file":
                 fd = requests.get(item["download_url"],stream=True)
                 with open('{0}/{1}'.format(section_path, item["name"]),'wb') as f:
@@ -111,3 +121,6 @@ class GithubRepositoryControl(RepositoryControl):
                         if chunk:
                             f.write(chunk)
         print "done!"
+    
+    def build_section_url(self, section):
+        return '{0}/{1}'.format(self.root_url, self.fetch_types[section])
