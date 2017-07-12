@@ -2,10 +2,6 @@
   shell: python -c "print [x for x in range( 0, {{ res_def['count'] | default(1) }} )]"
   register: res_count
 
-- name: "Get host from uri"
-  set_fact:
-    uri_hostname: "{{ res_def['uri'] | get_host_from_uri }}"
-
 - name: "does node already exist"
   virt:
     name: "{{ libvirt_resource_name }}_{{ nodeinfo[1] }}"
@@ -51,28 +47,19 @@
   set_fact:
     qemu_path: "{{ (ansible_distribution in ['CentOS','RedHat']) | ternary('/usr/libexec/', '/usr/bin/') }}"
 
-- name: "define node"
-  virt:
-    name: "{{ libvirt_resource_name }}_{{ definition[1] }}"
-    command: define
-    xml: "{{ lookup('template', 'libvirt_node.xml.j2') }}"
-    uri: "{{ definition[0]['uri'] | default('qemu:///system') }}"
+- name: "define node template"
+  template:
+    src: "../templates/libvirt_node.xml.j2"
+    dest: "/tmp/{{ definition[0] }}_{{ definition[1]['name'] | default(definition[1]['res_name']) }}_{{ definition[2] }}"
   with_nested:
+    - ["{{ res_grp_name }}"]
     - ["{{ res_def }}"]
-
-#- name: "define node template"
-#  template:
-#    src: "../templates/libvirt_node.xml.j2"
-#    dest: "/tmp/{{ definition[0] }}_{{ definition[1]['name'] | default(definition[1]['res_name']) }}_{{ definition[2] }}"
-#  with_nested:
-#    - ["{{ res_grp_name }}"]
-#    - ["{{ res_def }}"]
-#    - "{{ res_count.stdout }}"
-#    - ["{{ local_image_path }}"]
-#    - ["{{ img_src_ext }}"]
-#  loop_control:
-#    loop_var: definition
-#  when:  node_exists['failed'] is defined and res_def['cloud_config'] is not defined
+    - "{{ res_count.stdout }}"
+    - ["{{ local_image_path }}"]
+    - ["{{ img_src_ext }}"]
+  loop_control:
+    loop_var: definition
+  when:  node_exists['failed'] is defined and res_def['cloud_config'] is not defined
 
 - name: "Generate ssh keys"
   shell: "ssh-keygen -t rsa -f ~/.ssh/{{ res_grp_name }} -N '';cat ~/.ssh/{{ res_grp_name }} >> ~/.ssh/authorized_keys"
@@ -144,7 +131,7 @@
     loop_var: definition
   remote_user: "{{ res_def['remote_user'] | default('root') }}"
   delegate_to: "{{ uri_hostname }}"
-  when: node_exists['failed'] is defined and uri_hostname != 'localhost'
+  when: node_exists['failed'] is defined and uri_hostname != 'localhost' and res_def['cloud_config'] is defined
 
 - name: "Create directories"
   file:
@@ -168,7 +155,7 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: definition
-  when: res_def['cloud_config'] is not defined and node_exists['failed'] is defined and uri_hostname == 'localhost'
+  when: node_exists['failed'] is defined and uri_hostname == 'localhost' and res_def['cloud_config'] is defined 
 
 - name: "Prepare cloud-config/user-data-local"
   template:
@@ -211,6 +198,19 @@
   remote_user: "{{ res_def['remote_user'] | default('root') }}"
   delegate_to: "{{ uri_hostname }}"
   when: res_def['cloud_config'] is not defined and node_exists['failed'] is defined and uri_hostname != 'localhost'
+#- name: "Prepare cloud-config/user-data-remote"
+#  template:
+#    src: "templates/cloud-config/user-data-fixed-remote"
+#    dest: "/tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}/user-data"
+#  with_nested:
+#    - ["{{ res_grp_name }}"]
+#    - ["{{ res_def['name'] | default(res_def['res_name']) }}"]
+#    - "{{ res_count.stdout }}"
+#  loop_control:
+#    loop_var: definition
+#  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+#  delegate_to: "{{ uri_hostname }}"
+#  when: res_def['cloud_config'] is not defined and node_exists['failed'] is defined and uri_hostname != 'localhost'
 
 - name: "Prepare cloud-config/meta-data"
   template:
@@ -222,7 +222,7 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: definition
-  when: node_exists['failed'] is defined and uri_hostname == 'localhost'
+  when: node_exists['failed'] is defined and uri_hostname == 'localhost' and res_def['cloud_config'] is defined
 
 - name: "Prepare cloud-config/meta-data remote"
   template:
@@ -236,29 +236,8 @@
     loop_var: definition
   remote_user: "{{ res_def['remote_user'] | default('root') }}"
   delegate_to: "{{ uri_hostname }}"
-  when: node_exists['failed'] is defined and uri_hostname != 'localhost'
+  when: node_exists['failed'] is defined and uri_hostname != 'localhost' and res_def['cloud_config'] is defined
 
-- name: "Generate ci data cd image for cloud-init local"
-  command: mkisofs -o /tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}.iso -V cidata -r -J --quiet /tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}/user-data /tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}/meta-data
-  with_nested:
-    - ["{{ res_grp_name }}"]
-    - ["{{ libvirt_resource_name }}"]
-    - "{{ res_count.stdout }}"
-  loop_control:
-    loop_var: definition
-  when: res_def['cloud_config'] is not defined and node_exists['failed'] is defined and uri_hostname == 'localhost'
-
-- name: "Generate ci data cd image for cloud-init remote host"
-  command: "mkisofs -o /tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}.iso -V cidata -r -J --quiet /tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}/user-data /tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}/meta-data"
-  with_nested:
-    - ["{{ res_grp_name }}"]
-    - ["{{ libvirt_resource_name }}"]
-    - "{{ res_count.stdout }}"
-  loop_control:
-    loop_var: definition
-  remote_user: "{{ res_def['remote_user'] | default('root') }}"
-  delegate_to: "{{ uri_hostname }}"
-  when: res_def['cloud_config'] is not defined and node_exists['failed'] is defined and uri_hostname != 'localhost'
 
 - name: "Generate ci data cd image for cloud-init when cloud config is defined"
   command: mkisofs -o /tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}.iso -V cidata -r -J --quiet /tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}/user-data  /tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[2] }}/meta-data
@@ -323,7 +302,7 @@
   loop_control:
     loop_var: definition
   ignore_errors: yes
-  when: node_exists['failed'] is defined 
+  when: node_exists['failed'] is defined and res_def['cloud_config'] is defined
 
 - name: "Remove cloud-init cdrom "
   command: virsh -c {{ definition[2] }} change-media {{ definition[0] }}_{{ definition[1] }}_{{ definition[3] }} hda --eject --config
@@ -335,7 +314,23 @@
   loop_control:
     loop_var: definition
   ignore_errors: yes
-  when: node_exists['failed'] is defined 
+  when: node_exists['failed'] is defined and res_def['cloud_config'] is defined
+
+- name: "define node when the cloud_config not defined"
+  virt:
+    name: "{{ definition[0] }}_{{ definition[1]['name'] | default(definition[1]['res_name']) }}_{{ definition[2] }}"
+    command: define
+    xml: "{{ lookup('template', 'libvirt_node.xml.j2') }}"
+    uri: "{{ definition[1]['uri'] | default('qemu:///system') }}"
+  with_nested:
+    - ["{{ res_grp_name }}"]
+    - ["{{ res_def }}"]
+    - "{{ res_count.stdout }}"
+    - ["{{ local_image_path }}"]
+    - ["{{ img_src_ext }}"]
+  loop_control:
+    loop_var: definition
+  when:  node_exists['failed'] is defined and res_def['cloud_config'] is not defined
 
 - name: "Start VM"
   virt:

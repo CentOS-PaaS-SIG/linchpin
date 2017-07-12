@@ -7,6 +7,19 @@
     uri: "{{ res_def['uri'] | default('qemu:///system') }}"
   register: res_def_output
   when: not async
+  ignore_errors: yes
+
+#- name: "define network remote host"
+#  virt_net:
+#    name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+#    command: define
+#    xml: "{{ lookup('template', 'libvirt_network.xml.j2') }}"
+#    uri: "{{ res_def['uri'] | default('qemu:///system') }}"
+#  register: res_def_output
+#  delegate_to: "{{ uri_hostname }}"
+#  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+#  when: not async
+#  ignore_errors: yes
 
 #- name: "map ip and mac addresses in network"
 #  virt_net:
