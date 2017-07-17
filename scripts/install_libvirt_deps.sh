@@ -13,10 +13,11 @@ VENV_LIB_PATH=lib/python2.7/site-packages
 LIBSELINUX_PATH=/usr/lib64/python2.7/site-packages
 
 if [ -n "${VIRTUAL_ENV}" ]; then
+
     if [ "${USER}" != "root" ]; then
-        sudo dnf install libselinux-python -q &> /dev/null
+        sudo dnf install libvirt-devel libselinux-python -yq &> /dev/null
     else
-        dnf install libselinux-python -q &> /dev/null
+        dnf install libvirt-devel libselinux-python -yq &> /dev/null
     fi
 
     ln -s ${LIBSELINUX_PATH}/selinux ${VIRTUAL_ENV}/${VENV_LIB_PATH} &> /dev/null
