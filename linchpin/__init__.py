@@ -255,7 +255,8 @@ def drop(ctx, targets):
 @click.option('-l','--list',is_flag=True, default=False, required=False)
 @click.argument('fetch_type', default=None, required=True)
 @click.argument('remote', default=None, required=True)
-@click.argument('local', default=None, required=False, type=click.Path(exists=True))
+@click.argument('local', default=None, required=False,
+                    type=click.Path(exists=True))
 @pass_context
 def fetch(ctx, list, fetch_type, remote, local):
 
@@ -266,6 +267,7 @@ def fetch(ctx, list, fetch_type, remote, local):
         pinfile (Default: ctx.workspace)
 
     """
+    local = os.path.abspath(local)
     valid_type = False
     fetch_types = [
         'workspace',
@@ -274,8 +276,6 @@ def fetch(ctx, list, fetch_type, remote, local):
         'hooks',
         'credentials',
         'PinFile',
-        'resources',
-        'inventories'
     ]
     for item in fetch_types:
         if item == fetch_type:
@@ -285,15 +285,19 @@ def fetch(ctx, list, fetch_type, remote, local):
         ctx.log_state('{0} is not a valid type'.format(fetch_type))
         sys.exit(1)           
 
-    local = os.path.abspath(local)
     
     #TODO: ADD CODE THAT DISTINGUISHES REMOTE PROTOCOLS E.G. GITHUB, BITBUCKET, SVN, MERCURIAL
 
-    github = REPOSITORY_CONTROL.get("github", None)(ctx,fetch_type, remote, local)
-    if list:
-        github.list_files()
-    else:
-        github.fetch_files()
+    repo_control = None
+
+    if remote.find("file://", 0, 7) != -1:
+        repo_control = REPOSITORY_CONTROL.get("local", None)(ctx, fetch_type,
+            remote, local)
+    repo_control.fetch_files()
+        
+        
+    #github = REPOSITORY_CONTROL.get("github", None)(ctx,fetch_type, remote, local)
+    
 
 
 def _get_pinfile_path(pinfile=None, exists=True):
