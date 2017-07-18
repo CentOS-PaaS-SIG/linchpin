@@ -8,9 +8,5 @@ class RepositoryControl(object):
         pass
 
     @abstractmethod
-    def list_files(self):
-        pass
-
-    @abstractmethod
     def fetch_files(self):
         pass

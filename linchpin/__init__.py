@@ -269,17 +269,10 @@ def fetch(ctx, list, fetch_type, remote, local):
     """
     local = os.path.abspath(local)
     valid_type = False
-    fetch_types = [
-        'workspace',
-        'layout',
-        'topology',
-        'hooks',
-        'credentials',
-        'PinFile',
-    ]
-    for item in fetch_types:
+    for item in ctx.cfgs['fetch_aliases']:
         if item == fetch_type:
             valid_type= True
+            fetch_type = ctx.cfgs['fetch_aliases'].get(fetch_type, None)
             break
     if not valid_type:
         ctx.log_state('{0} is not a valid type'.format(fetch_type))

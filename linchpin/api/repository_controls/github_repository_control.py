@@ -65,20 +65,6 @@ class GithubRepositoryControl(RepositoryControl):
 
 
             
-    def list_files(self):
-        fetch_type = self.fetch_type
-        if fetch_type == 'workspace' or fetch_type == 'PinFile':
-            self.ctx.log_state("Cannot list " + fetch_type)
-            sys.exit(1)
-        r = requests.get(self.build_section_url(self.fetch_type))
-        if r.status_code != 200:
-            self.ctx.log_state("Request failed")
-            sys.exit(1)
-
-        self.ctx.log_state("Fetching {0} list".format(fetch_type))
-        for item in r.json():
-            self.ctx.log_state(item["name"])
-
 
     def fetch_files(self):
         if self.fetch_type == "workspace":
@@ -128,3 +114,18 @@ class GithubRepositoryControl(RepositoryControl):
     
     def build_section_url(self, section):
         return '{0}/{1}'.format(self.root_url, self.fetch_types[section])
+
+    def list_files(self):
+        fetch_type = self.fetch_type
+        if fetch_type == 'workspace' or fetch_type == 'PinFile':
+            self.ctx.log_state("Cannot list " + fetch_type)
+            sys.exit(1)
+        r = requests.get(self.build_section_url(self.fetch_type))
+        if r.status_code != 200:
+            self.ctx.log_state("Request failed")
+            sys.exit(1)
+
+        self.ctx.log_state("Fetching {0} list".format(fetch_type))
+        for item in r.json():
+            self.ctx.log_state(item["name"])
+
