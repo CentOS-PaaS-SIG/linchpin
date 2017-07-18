@@ -24,16 +24,21 @@ REG_CMD="register"
 UPLOAD_CMD="${PKG_TYPES} upload"
 
 # find extraneous files and remove them
-CRUFTIES=('coverage.xml' 'linchpin.log', '*.pyc', '*.retry', '*.sw*')
-CRUFTY_DIRS=('linchpin.egg-info' 'build' 'dist' 'docs/build' 'provision/outputs', 'provision/inventories')
+CRUFTIES=('coverage.xml' 'linchpin.log' '*.pyc', '*.retry', '*.sw*')
+CRUFTY_DIRS=('linchpin.egg-info' 'build' 'dist' 'docs/build' 'provision/outputs' 'provision/inventories')
 
 echo "REMOVING CRUFTY FILES"
 
 for CRUFT in "${CRUFTIES[@]}"; do
+    #echo find ${LP_PATH} -name "${CRUFT}" -delete
     find ${LP_PATH} -name "${CRUFT}" -delete
 done
 
+echo
+echo "REMOVING CRUFTY DIRS"
+
 for CRUFT_DIR in "${CRUFTY_DIRS[@]}"; do
+    #echo rm -rf ${LP_PATH}/${CRUFT_DIR}
     rm -rf ${LP_PATH}/${CRUFT_DIR}
 done
 
@@ -41,8 +46,9 @@ CLEAN="${SETUP_CMD} ${CLEAN_CMD}"
 REG="${SETUP_CMD} ${REG_CMD} -r ${PYPI}"
 UPLOAD="${SETUP_CMD} ${UPLOAD_CMD} -r ${PYPI}"
 
-for ACTION in "${CLEAN}" "${REG}" "${UPLOAD}"; do
+for ACTION in "${CLEAN}" "${UPLOAD}"; do
     if [ ${PROMPT} -eq 1 ]; then
+        echo
         read -p "Run ${ACTION} ([Y]/n)? " yn
         case $yn in
             [Yy]* ) echo "RUNNING ${ACTION}"; ${ACTION};;
