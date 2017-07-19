@@ -108,8 +108,6 @@ def runcli(ctx, config, workspace, verbose, version, creds_path):
 
     if workspace is not None:
         ctx.workspace = os.path.realpath(os.path.expanduser(workspace))
-    else:
-        ctx.workspace = os.getenv('PWD')
 
     ctx.load_config(lpconfig=config)
     #workspace arg in load_config used to extend linchpin.conf
