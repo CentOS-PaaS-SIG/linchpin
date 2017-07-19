@@ -28,3 +28,8 @@ configure/inventory/local/
 *coverage*
 nosetests.xml
 *.log
+
+# IDE files
+.idea
+.pydevproject
+
