@@ -118,8 +118,6 @@ def runcli(ctx, config, workspace, verbose, version, creds_path):
 
     if workspace is not None:
         ctx.workspace = os.path.realpath(os.path.expanduser(workspace))
-    else:
-        ctx.workspace = os.getenv('PWD')
 
     if creds_path is not None:
         ctx.set_evar('creds_path', os.path.realpath(os.path.expanduser(creds_path)))
