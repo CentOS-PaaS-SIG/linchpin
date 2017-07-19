@@ -39,12 +39,19 @@ class LinchpinContext(object):
         """
         Create self.cfgs from the linchpin configuration file.
 
-        These are the only hardcoded values, which are used to find
-        the config file. The linchpin.conf file is found
-        at `/linchpin/library/path/linchpin.conf`.
+        .. note:: Overrides load_config in linchpin.api.LinchpinContext
 
-        Alternatively, a full path to the linchpin configuration file
-        can be passed.
+        These are the only hardcoded values, which are used to find the config
+        file. The search path consists of the following::
+
+          * /linchpin/library/path/linchpin.conf
+          * /etc/linchpin.conf
+          * ~/.config/linchpin/linchpin.conf
+          * path/to/workspace/linchpin.conf
+        
+        Linchpin will continuously override and extend the configuration as
+        newer configurations are added and modified. Alternatively, a full path to 
+        the linchpin configuration file can be passed.
 
         :param lpconfig: absolute path to a linchpin config (default: None)
 
@@ -53,16 +60,19 @@ class LinchpinContext(object):
         self.cfgs = {}
 
         expanded_path = None
-        config_found = False
 
         if lpconfig:
             CONFIG_PATH = [ lpconfig ]
         else:
             # simply modify this variable to adjust where linchpin.conf can be found
-            CONFIG_PATH = [
-                '{0}/linchpin.conf'.format(self.lib_path)
-            ]
-
+            CONFIG_PATH = [ 
+                '{0}/linchpin.conf'.format(self.lib_path),
+                '/etc/linchpin.conf',
+                '~/.config/linchpin/linchpin.conf',
+                '{0}/linchpin.conf'.format(self.workspace) 
+                #self.workspace is set in runcli beforehand, will never be None
+            ]   
+        existing_paths = []
         for path in CONFIG_PATH:
             expanded_path = (
                 "{0}".format(os.path.realpath(os.path.expanduser(path))))
@@ -71,37 +81,31 @@ class LinchpinContext(object):
             if os.path.exists(expanded_path):
                 # logging before the config file is setup doesn't work
                 # if messages are needed before this, use print.
-                config_found = True
-                break
-
-        if not config_found:
+                existing_paths.append(expanded_path)
+        if len(existing_paths) == 0:
             raise LinchpinError('Configuration file not found in'
                                 ' path: {0}'.format(CONFIG_PATH))
-
-        config = ConfigParser.SafeConfigParser()
         try:
-            f = open(path)
-            config.readfp(f)
-            f.close()
+            for path in existing_paths:
+                config = ConfigParser.SafeConfigParser()
+                f = open(path)
+                config.readfp(f)
+                f.close()
+                
+                for section in config.sections():
+                    self.cfgs[section] = {}
+                    for k, v in config.items(section):
+                        if section != 'evars':
+                            self.cfgs[section][k] = v
+                        else:
+                            try:
+                                self.cfgs[section][k] = config.getboolean(section, k)
+                            except ValueError as e:
+                                self.cfgs[section][k] = v
         except ConfigParser.InterpolationSyntaxError as e:
             raise LinchpinError('Unable to parse configuration file properly:'
-                    ' {0}'.format(e))
-
-        for section in config.sections():
-            if section not in self.cfgs:
-                self.cfgs[section] = {}
-
-            # add evars to the ansible extra_vars when running a playbook.
-            for k, v in config.items(section):
-                if section != 'evars':
-                    self.cfgs[section][k] = v
-                else:
-                    try:
-                        self.cfgs[section][k] = config.getboolean(section, k)
-                    except ValueError as e:
-                        self.cfgs[section][k] = v
-
-
+                        ' {0}'.format(e))
+                        
     def load_global_evars(self):
 
         """
