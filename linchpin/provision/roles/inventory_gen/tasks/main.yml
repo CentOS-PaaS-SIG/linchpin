@@ -5,7 +5,8 @@
 #    msg: "{{ layout_file }}"
 #  when: state == "present"
 
-- include_vars: "{{ resources_file | default( default_resources_path+'/'+outputs.topology_name+'.output' ) }}"
+- include_vars: "{{ resources_file | default( default_resources_path+'/'+
+outputs.topology_name.replace(' ', '_').lower()+'.output' ) }}"
 
 - name: "Updating topology_outputs"
   set_fact:
@@ -23,11 +24,13 @@
 # parse inventory generation files here : can be overridden by extravar layout_file currently defaulted to openshift-3node-cluster.yml
 - name: "Parse inventory layout as a ordered dict"
   set_fact:
-    inventory_layout: "{{ layout_file | default( default_layouts_path+'/'+'openshift-3node-cluster.yml') | ordered_yaml }}"
+    inventory_layout: "{{ layout_file | default( default_layouts_path+'/'+
+    'openshift-3node-cluster.yml') | ordered_yaml }}"
 
 - name: "Updating inventory_path with the absolute path"
   set_fact:
-    inventory_path: "{{ inventory_path | default( default_inventories_path+'/'+outputs.topology_name ) }}.inventory"
+    inventory_path: "{{ inventory_path | default( default_inventories_path+'/'+
+    outputs.topology_name.replace(' ', '_').lower() ) }}.inventory"
 
 #- name: inventory_layout
 #  debug:
