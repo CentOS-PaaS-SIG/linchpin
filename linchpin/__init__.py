@@ -13,7 +13,6 @@ from jinja2 import Environment, PackageLoader
 from linchpin.cli import LinchpinCli
 from linchpin.exceptions import LinchpinError
 from linchpin.cli.context import LinchpinCliContext
-from linchpin.api.repository_controls import REPOSITORY_CONTROL
 
 
 pass_context = click.make_pass_decorator(LinchpinCliContext, ensure=True)
@@ -286,10 +285,16 @@ def fetch(ctx, list, fetch_type, remote, local):
     if remote.find("file://", 0, 7) != -1:
         repo_control = REPOSITORY_CONTROL.get("local", None)(ctx, fetch_type,
             remote, local)
+    elif remote.find("https://", 0, 8) != -1 or remote.find("http://", 0, 7) != -1:
+        repo_control = REPOSITORY_CONTROL.get("http", None)(ctx, fetch_type,
+                remote, local)
+    else:
+        ctx.log_state("The remote protocol specified is not supported")
+        sys.exit(1)
+            
     repo_control.fetch_files()
         
         
-    #github = REPOSITORY_CONTROL.get("github", None)(ctx,fetch_type, remote, local)
     
 
 
@@ -312,7 +317,6 @@ def _get_pinfile_path(pinfile=None, exists=True):
 # @pass_config
 # def topology(config):
 #     pass
-#
 #
 # @topology.command(name='list')
 # @click.option('--upstream',

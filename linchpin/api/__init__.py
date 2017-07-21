@@ -412,6 +412,10 @@ class LinchpinAPI(object):
         pass
 
 
+    def lp_fetch(self):
+        pass
+
+
     def find_topology(self, topology):
         """
         Find the topology to be acted upon. This could be pulled from a
