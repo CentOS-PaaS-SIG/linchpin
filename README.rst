@@ -21,7 +21,7 @@ for details.
 Installation
 ++++++++++++
 
-`Installation documentation <http://linchpin.readthedocs.io/en/latest/intro_installation.html>`_
+`Installation documentation <http://linchpin.readthedocs.io/en/develop/installation.html>`_
 
 QuickStart
 ++++++++++
