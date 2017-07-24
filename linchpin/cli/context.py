@@ -42,7 +42,7 @@ class LinchpinCliContext(LinchpinContext):
         #                       os.path.realpath(__file__))).rstrip('/')
         # self.lib_path = os.path.realpath(os.path.join(lib_path, os.pardir))
         #
-        #self.workspace = os.path.realpath(os.path.curdir)
+        # self.cfgs = {}
 
         LinchpinContext.__init__(self)
 
