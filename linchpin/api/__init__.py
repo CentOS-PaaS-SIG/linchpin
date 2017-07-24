@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import re
 import sys
 import ast
 import yaml
@@ -14,6 +15,7 @@ from ansible.executor.playbook_executor import PlaybookExecutor
 
 from linchpin.api.utils import yaml2json
 from linchpin.api.callbacks import PlaybookCallback
+from linchpin.api.fetch import FETCH_CLASS
 from linchpin.hooks import LinchpinHooks
 from linchpin.hooks.state import State
 from linchpin.exceptions import LinchpinError
@@ -412,8 +414,48 @@ class LinchpinAPI(object):
         pass
 
 
-    def lp_fetch(self):
-        pass
+    def lp_fetch(self, src, fetch_type, remote_uri=None):
+
+        fetch_aliases = {
+                "topology": self.get_evar("topologies_folder"),
+                "layout": self.get_evar("layouts_folder"),
+                "resources": self.get_evar("resources_folder"),
+                "hooks": self.get_evar("hooks_folder"),
+                "workspace": "workspace"
+                }
+
+        fetch_dir = fetch_aliases.get(fetch_type, None)
+
+        if fetch_dir is None:
+            raise LinchpinError(fetch_type + " is not a valid type")
+
+        if remote_uri:
+            dest = remote_uri
+        else:
+            dest = self.ctx.workspace
+
+        cache_path = os.path.abspath(os.path.join(os.path.expanduser('~'),
+                '.cache/linchpin'))
+        if not os.path.exists(cache_path):
+            os.mkdir(cache_path)
+        
+        fetch_protocol = ""
+        if re.match('((git|ssh|http(s)?)|(git@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?',
+                src):
+            fetch_protocol = "FetchGit"
+        elif re.match('^(http|https)://', src):
+            fetch_protocol = "FetchHttp"
+        elif re.match('^(file)://', src):
+            fetch_protocol = "FetchLocal"
+        else:
+            raise LinchpinError("The protocol speficied is not supported")
+        
+
+        #rc = ast.literal_eval(fetch_protocol)(self.ctx, fetch_type, src, dest)
+        fetch_class = FETCH_CLASS[fetch_protocol] (self.ctx, fetch_type, src,
+                dest)
+        rc.fetch_files()
+        rc.copy_files()
 
 
     def find_topology(self, topology):

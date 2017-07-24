@@ -251,14 +251,11 @@ def drop(ctx, targets):
 
 
 @runcli.command()
-@click.option('-l','--list',is_flag=True, default=False, required=False)
+@click.option('-r','--remote-uri', required = False)
 @click.argument('fetch_type', default=None, required=True)
 @click.argument('remote', default=None, required=True)
-@click.argument('local', default=None, required=False,
-                    type=click.Path(exists=True))
 @pass_context
-def fetch(ctx, list, fetch_type, remote, local):
-
+def fetch(ctx, remote_uri, fetch_type, remote):
     """
     Return full path to the pinfile
 
@@ -266,37 +263,14 @@ def fetch(ctx, list, fetch_type, remote, local):
         pinfile (Default: ctx.workspace)
 
     """
-    local = os.path.abspath(local)
-    valid_type = False
-    for item in ctx.cfgs['fetch_aliases']:
-        if item == fetch_type:
-            valid_type= True
-            fetch_type = ctx.cfgs['fetch_aliases'].get(fetch_type, None)
-            break
-    if not valid_type:
-        ctx.log_state('{0} is not a valid type'.format(fetch_type))
-        sys.exit(1)           
-
-    
-    #TODO: ADD CODE THAT DISTINGUISHES REMOTE PROTOCOLS E.G. GITHUB, BITBUCKET, SVN, MERCURIAL
-
-    repo_control = None
-
-    if remote.find("file://", 0, 7) != -1:
-        repo_control = REPOSITORY_CONTROL.get("local", None)(ctx, fetch_type,
-            remote, local)
-    elif remote.find("https://", 0, 8) != -1 or remote.find("http://", 0, 7) != -1:
-        repo_control = REPOSITORY_CONTROL.get("http", None)(ctx, fetch_type,
-                remote, local)
-    else:
-        ctx.log_state("The remote protocol specified is not supported")
-        sys.exit(1)
-            
-    repo_control.fetch_files()
+    lpcli = LinchpinCli(ctx)
+    lpcli.lp_fetch(remote, fetch_type, remote_uri)
+#    try:
+#        lpcli.lp_fetch(remote, fetch_type, remote_uri)
+#    except Exception as e:
+#        raise LinchpinError("An error has occurred")
         
         
-    
-
 
 def _get_pinfile_path(pinfile=None, exists=True):
 
