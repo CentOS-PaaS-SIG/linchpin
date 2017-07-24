@@ -35,7 +35,7 @@ setup(
         'krbV': ["python-krbV"],
         'beaker':  ['beaker-client>=23.3'],
         'docs': ["docutils","sphinx","sphinx_rtd_theme"],
-        'tests': ["nose","mock","coverage"],
+        'tests': ["nose","mock","coverage","flake8"],
         'libvirt': ["libvirt-python>=3.0.0", "lxml"],
     },
 #    dependency_links = ['https://github.com/eevee/camel/archive/v0.1.tar.gz#egg=camel-99.1'],

@@ -2,4 +2,16 @@ sudo: false
 
 language: python
 
-script: nosetests -s linchpin/tests/{cli,api}/*
+python:
+  - "2.7"
+  - "3.6"
+
+cache: pip
+
+install:
+  - pip install .
+  - pip install .[tests]
+
+script:
+  - 
+  - nosetests -s linchpin/tests/{cli,api}/*
