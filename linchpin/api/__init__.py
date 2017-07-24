@@ -69,6 +69,9 @@ class LinchpinAPI(object):
         self.hooks = LinchpinHooks(self)
         self.target_data = {}
 
+        if not self.workspace:
+            self.workspace = os.path.realpath(os.path.curdir)
+
 
     def get_cfg(self, section=None, key=None, default=None):
         """
@@ -128,6 +131,24 @@ class LinchpinAPI(object):
 
 
     @property
+    def workspace(self):
+        """
+        getter function for context workspace
+        """
+
+        return self.ctx.workspace
+
+
+    @workspace.setter
+    def workspace(self, workspace):
+        """
+        setter for context workspace
+        """
+
+        self.ctx.workspace = workspace
+
+
+    @property
     def hook_state(self):
         """
         getter function for hook_state property of the API object
@@ -180,7 +201,7 @@ class LinchpinAPI(object):
             topology_name = self.get_evar("topology").split("/")[-1]
             # defaults to file name if there is any error
             topology_name = topology_name.split(".")[-2]
-        inv_file = '{0}/{1}/{2}{3}'.format(self.ctx.workspace,
+        inv_file = '{0}/{1}/{2}{3}'.format(self.workspace,
                         self.get_evar('inventories_folder'),
                         topology_name,
                         self.get_cfg('extensions','inventory' ,'inventory')

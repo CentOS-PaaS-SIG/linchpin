@@ -106,8 +106,6 @@ def _handle_results(ctx, results):
 def runcli(ctx, config, workspace, verbose, version, creds_path):
     """linchpin: hybrid cloud orchestration"""
 
-    if workspace is not None:
-        ctx.workspace = os.path.realpath(os.path.expanduser(workspace))
 
     ctx.load_config(lpconfig=config)
     #workspace arg in load_config used to extend linchpin.conf
@@ -121,6 +119,9 @@ def runcli(ctx, config, workspace, verbose, version, creds_path):
 
     if creds_path is not None:
         ctx.set_evar('creds_path', os.path.realpath(os.path.expanduser(creds_path)))
+
+    if workspace is not None:
+        ctx.workspace = os.path.realpath(os.path.expanduser(workspace))
 
     ctx.log_debug("ctx.workspace: {0}".format(ctx.workspace))
 
@@ -166,6 +167,28 @@ def init(ctx):
         sys.exit(1)
 
 
+def _get_pinfile_path(ctx, pinfile):
+    """
+    Return full path to the pinfile
+
+    :param pinfile:
+        pinfile (Default: ctx.workspace)
+
+    """
+
+    if pinfile is None:
+        pinfile = ctx.pinfile
+
+
+    pf_w_path = '{0}/{1}'.format(ctx.workspace, pinfile)
+
+    if not os.path.exists(pf_w_path):
+        ctx.log_state('{0} not found in provided workspace: '
+            '{1}'.format(pinfile, ctx.workspace))
+        sys.exit(1)
+
+    return pf_w_path
+
 
 @runcli.command()
 @click.option('-p', '--pinfile', envvar='PINFILE',
@@ -187,15 +210,7 @@ def up(ctx, pinfile, targets):
         appropriate PinFile will be provisioned.
     """
 
-    if pinfile is None:
-        pinfile = ctx.pinfile
-
-    pf_w_path = '{0}/{1}'.format(ctx.workspace, pinfile)
-
-    if not os.path.exists(pf_w_path):
-        ctx.log_state('{0} not found in provided workspace: '
-            '{1}'.format(pinfile, ctx.workspace))
-        sys.exit(1)
+    pf_w_path = _get_pinfile_path(ctx, pinfile)
 
     lpcli = LinchpinCli(ctx)
     try:
@@ -244,14 +259,7 @@ def destroy(ctx, pinfile, targets):
 
     """
 
-    if pinfile is None:
-        pinfile = ctx.pinfile
-
-    pf_w_path = '{0}/{1}'.format(ctx.workspace, pinfile)
-
-    if not os.path.exists(pf_w_path):
-        return ctx.log_state('{0} not found in provided workspace: '
-            '{1}'.format(pinfile, ctx.workspace))
+    pf_w_path = _get_pinfile_path(ctx, pinfile)
 
     lpcli = LinchpinCli(ctx)
     try:

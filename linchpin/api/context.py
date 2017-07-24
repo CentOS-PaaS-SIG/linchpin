@@ -32,7 +32,7 @@ class LinchpinContext(object):
             os.path.realpath(__file__))).rstrip('/')
         self.lib_path = os.path.realpath(os.path.join(lib_path, os.pardir))
 
-        self.workspace = os.path.realpath(os.path.curdir)
+        self.cfgs = {}
 
 
     def load_config(self, lpconfig=None):
@@ -48,7 +48,7 @@ class LinchpinContext(object):
           * /etc/linchpin.conf
           * ~/.config/linchpin/linchpin.conf
           * path/to/workspace/linchpin.conf
-        
+
         Linchpin will continuously override and extend the configuration as
         newer configurations are added and modified. Alternatively, a full path to 
         the linchpin configuration file can be passed.
@@ -57,21 +57,19 @@ class LinchpinContext(object):
 
         """
 
-        self.cfgs = {}
-
         expanded_path = None
 
         if lpconfig:
             CONFIG_PATH = [ lpconfig ]
         else:
             # simply modify this variable to adjust where linchpin.conf can be found
-            CONFIG_PATH = [ 
+            CONFIG_PATH = [
                 '{0}/linchpin.conf'.format(self.lib_path),
                 '/etc/linchpin.conf',
                 '~/.config/linchpin/linchpin.conf',
                 '{0}/linchpin.conf'.format(self.workspace) 
                 #self.workspace is set in runcli beforehand, will never be None
-            ]   
+            ]
         existing_paths = []
         for path in CONFIG_PATH:
             expanded_path = (
@@ -91,7 +89,7 @@ class LinchpinContext(object):
                 f = open(path)
                 config.readfp(f)
                 f.close()
-                
+
                 for section in config.sections():
                     self.cfgs[section] = {}
                     for k, v in config.items(section):
@@ -105,7 +103,7 @@ class LinchpinContext(object):
         except ConfigParser.InterpolationSyntaxError as e:
             raise LinchpinError('Unable to parse configuration file properly:'
                         ' {0}'.format(e))
-                        
+
     def load_global_evars(self):
 
         """
@@ -180,6 +178,26 @@ class LinchpinContext(object):
         """
 
         self.set_cfg('evars', key, value)
+
+
+    @property
+    def workspace(self):
+
+        """
+        getter function for workspace
+        """
+
+        return self.get_cfg('lp', 'workspace')
+
+
+    @workspace.setter
+    def workspace(self, workspace):
+
+        """
+        setter for workspace
+        """
+
+        self.set_cfg('lp', 'workspace', workspace)
 
 
     def setup_logging(self):
