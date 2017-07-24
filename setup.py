@@ -38,9 +38,8 @@ setup(
         'tests': ["nose","mock","coverage","flake8"],
         'libvirt': ["libvirt-python>=3.0.0", "lxml"],
     },
-#    dependency_links = ['https://github.com/eevee/camel/archive/v0.1.tar.gz#egg=camel-99.1'],
     zip_safe=False,
     packages=find_packages(),
-    include_package_data=True,
-    scripts=['scripts/linchpin_complete.sh']
+    include_package_data=True
+#    scripts=['scripts/linchpin_complete.sh']
 )
