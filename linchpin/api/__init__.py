@@ -436,6 +436,8 @@ class LinchpinAPI(object):
 
         cache_path = os.path.abspath(os.path.join(os.path.expanduser('~'),
                 '.cache/linchpin'))
+        print cache_path
+        print os.path.exists(cache_path)
         if not os.path.exists(cache_path):
             os.mkdir(cache_path)
         
@@ -454,8 +456,9 @@ class LinchpinAPI(object):
         #rc = ast.literal_eval(fetch_protocol)(self.ctx, fetch_type, src, dest)
         fetch_class = FETCH_CLASS[fetch_protocol] (self.ctx, fetch_type, src,
                 dest)
-        rc.fetch_files()
-        rc.copy_files()
+        tmpdir = fetch_class.fetch_files()
+        print tmpdir
+        fetch_class.copy_files()
 
 
     def find_topology(self, topology):
