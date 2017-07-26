@@ -159,7 +159,7 @@ def init(ctx):
 @click.argument('targets', metavar='TARGETS', required=False,
         nargs=-1)
 @pass_context
-def up(ctx, pinfile, targets):
+def up(ctx, targets):
     """
     Provisions nodes from the given target(s) in the given PinFile.
 
@@ -189,7 +189,7 @@ def up(ctx, pinfile, targets):
 @click.argument('targets', metavar='TARGET', required=False,
         nargs=-1)
 @pass_context
-def rise(ctx, pinfile, targets):
+def rise(ctx, targets):
     """
     DEPRECATED. Use 'up'
 
@@ -202,7 +202,7 @@ def rise(ctx, pinfile, targets):
 @click.argument('targets', metavar='TARGET', required=False,
         nargs=-1)
 @pass_context
-def destroy(ctx, pinfile, targets):
+def destroy(ctx, targets):
     """
     Destroys nodes from the given target(s) in the given PinFile.
 
@@ -234,7 +234,7 @@ def destroy(ctx, pinfile, targets):
 @click.argument('targets', metavar='TARGET', required=False,
         nargs=-1)
 @pass_context
-def drop(ctx, pinfile, targets):
+def drop(ctx, targets):
     """
     DEPRECATED. Use 'destroy'.
 
