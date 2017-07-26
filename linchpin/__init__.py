@@ -6,7 +6,6 @@ import click
 import shutil
 import logging
 
-from distutils import dir_util
 from jinja2 import Environment, PackageLoader
 
 from linchpin.cli import LinchpinCli
@@ -86,12 +85,14 @@ def _handle_results(ctx, results):
             if v: sys.exit(v)
 
 
-@click.command(cls=LinchpinAliases,
-                invoke_without_command=True,
-                no_args_is_help=True,
-                context_settings=CONTEXT_SETTINGS)
+@click.group(cls=LinchpinAliases,
+             invoke_without_command=True,
+             no_args_is_help=True,
+             context_settings=CONTEXT_SETTINGS)
 @click.option('-c', '--config', type=click.Path(), envvar='LP_CONFIG',
         help='Path to config file')
+@click.option('-p', '--pinfile', envvar='PINFILE',
+              help='Use a name for the PinFile different from the configuration.')
 @click.option('-w', '--workspace', type=click.Path(), envvar='WORKSPACE',
         help='Use the specified workspace if the familiar Jenkins $WORKSPACE environment variable '
         'is not set')
@@ -103,7 +104,7 @@ def _handle_results(ctx, results):
         help='Use the specified credentials path if CREDS_PATH environment variable '
         'is not set')
 @pass_context
-def runcli(ctx, config, workspace, verbose, version, creds_path):
+def runcli(ctx, config, pinfile, workspace, verbose, version, creds_path):
     """linchpin: hybrid cloud orchestration"""
 
 
@@ -112,6 +113,10 @@ def runcli(ctx, config, workspace, verbose, version, creds_path):
     ctx.load_global_evars()
     ctx.setup_logging()
     ctx.verbose = verbose
+
+    if pinfile:
+        ctx.log_info('pinfile name changed to {0}'.format(pinfile))
+        ctx.pinfile = pinfile
 
     if version:
         ctx.log_state('linchpin version {0}'.format(ctx.version))
@@ -122,10 +127,12 @@ def runcli(ctx, config, workspace, verbose, version, creds_path):
 
     if workspace is not None:
         ctx.workspace = os.path.realpath(os.path.expanduser(workspace))
+        ctx.log_debug("ctx.workspace: {0}".format(ctx.workspace))
 
-    ctx.log_debug("ctx.workspace: {0}".format(ctx.workspace))
 
-    ctx.pinfile = ctx.get_cfg('init', 'pinfile', default='PinFile')
+    # global LinchpinCli placeholder
+    global lpcli
+    lpcli = LinchpinCli(ctx)
 
 
 @runcli.command('init', short_help='Initializes a linchpin project.')
@@ -138,65 +145,21 @@ def init(ctx):
     :param ctx: Context object defined by the click.make_pass_decorator method
     """
 
-    ws = ctx.workspace
-    pf = ctx.pinfile
-
-    pf_w_path = os.path.realpath('{0}/{1}'.format(ws, pf))
-
-    src = ctx.get_cfg('init', 'source', 'templates/')
-    src_w_path = os.path.realpath('{0}/{1}'.format(ctx.lib_path, src))
-
-    src_pf = os.path.realpath('{0}.lp_example'.format(pf_w_path))
+    pf_w_path = _get_pinfile_path(exists=False)
 
     try:
-
-        if os.path.exists(pf_w_path):
-            if not click.confirm(
-                '{0} already exists, overwrite it?'.format(pf_w_path),
-                default=False):
-                sys.exit(0)
-
-        dir_util.copy_tree(src_w_path, ws, verbose=1)
-        os.rename(src_pf, pf_w_path)
-
-        ctx.log_state('{0} and file structure created at {1}'.format(
-            ctx.pinfile, ctx.workspace))
-
-    except Exception as e:
-        ctx.log_state('Error: {0}'.format(e))
+        # lpcli.lp_init(pf_w_path, targets) # TODO implement targets option
+        lpcli.lp_init(pf_w_path)
+    except LinchpinError as e:
+        ctx.log_state(e)
         sys.exit(1)
-
-
-def _get_pinfile_path(ctx, pinfile):
-    """
-    Return full path to the pinfile
-
-    :param pinfile:
-        pinfile (Default: ctx.workspace)
-
-    """
-
-    if pinfile is None:
-        pinfile = ctx.pinfile
-
-
-    pf_w_path = '{0}/{1}'.format(ctx.workspace, pinfile)
-
-    if not os.path.exists(pf_w_path):
-        ctx.log_state('{0} not found in provided workspace: '
-            '{1}'.format(pinfile, ctx.workspace))
-        sys.exit(1)
-
-    return pf_w_path
 
 
 @runcli.command()
-@click.option('-p', '--pinfile', envvar='PINFILE',
-        help='Use a different PinFile than the one in the current workspace.')
 @click.argument('targets', metavar='TARGETS', required=False,
         nargs=-1)
 @pass_context
-def up(ctx, pinfile, targets):
+def up(ctx, targets):
     """
     Provisions nodes from the given target(s) in the given PinFile.
 
@@ -210,9 +173,8 @@ def up(ctx, pinfile, targets):
         appropriate PinFile will be provisioned.
     """
 
-    pf_w_path = _get_pinfile_path(ctx, pinfile)
+    pf_w_path = _get_pinfile_path()
 
-    lpcli = LinchpinCli(ctx)
     try:
         results = lpcli.lp_up(pf_w_path, targets)
 
@@ -224,12 +186,10 @@ def up(ctx, pinfile, targets):
 
 
 @runcli.command()
-@click.option('-p', '--pinfile', envvar='PINFILE',
-        help='Use a name for the PinFile different from the configuration.')
 @click.argument('targets', metavar='TARGET', required=False,
         nargs=-1)
 @pass_context
-def rise(ctx, pinfile, targets):
+def rise(ctx, targets):
     """
     DEPRECATED. Use 'up'
 
@@ -239,12 +199,10 @@ def rise(ctx, pinfile, targets):
 
 
 @runcli.command()
-@click.option('-p', '--pinfile', envvar='PINFILE',
-        help='Use a different PinFile than the one in the current workspace.')
 @click.argument('targets', metavar='TARGET', required=False,
         nargs=-1)
 @pass_context
-def destroy(ctx, pinfile, targets):
+def destroy(ctx, targets):
     """
     Destroys nodes from the given target(s) in the given PinFile.
 
@@ -259,7 +217,7 @@ def destroy(ctx, pinfile, targets):
 
     """
 
-    pf_w_path = _get_pinfile_path(ctx, pinfile)
+    pf_w_path = _get_pinfile_path(ctx)
 
     lpcli = LinchpinCli(ctx)
     try:
@@ -273,12 +231,10 @@ def destroy(ctx, pinfile, targets):
 
 
 @runcli.command()
-@click.option('-p', '--pinfile', envvar='PINFILE',
-        help='Use a name for the PinFile different from the configuration.')
 @click.argument('targets', metavar='TARGET', required=False,
         nargs=-1)
 @pass_context
-def drop(ctx, pinfile, targets):
+def drop(ctx, targets):
     """
     DEPRECATED. Use 'destroy'.
 
@@ -293,6 +249,29 @@ def drop(ctx, pinfile, targets):
     """
 
     pass
+
+
+def _get_pinfile_path(pinfile=None, exists=True):
+    """
+    Return full path to the pinfile
+
+    :param pinfile:
+        pinfile (Default: ctx.workspace)
+
+    """
+
+    if not pinfile:
+        pinfile = lpcli.pinfile
+
+    pf_w_path = '{0}/{1}'.format(lpcli.workspace, pinfile)
+
+    if not os.path.exists(pf_w_path) and exists:
+        lpcli.ctx.log_state('{0} not found in provided workspace: '
+            '{1}'.format(pinfile, lpcli.workspace))
+        sys.exit(1)
+
+    return pf_w_path
+
 
 
 
@@ -484,4 +463,5 @@ def drop(ctx, pinfile, targets):
 #    pprint.pprint(result)
 
 def main():
-    print("entrypoint")
+    #print("entrypoint")
+    pass

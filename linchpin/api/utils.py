@@ -3,17 +3,8 @@
 import os
 import sys
 import yaml
-#import json
-#import click
-#import shutil
-#import pprint
-#import inspect
-#import ansible
-#import requests
-#import jsonschema as jsch
-#
-#from tabulate import tabulate
-#from jinja2 import Environment, PackageLoader
+
+from linchpin.exceptions import LinchpinError
 
 
 def yaml2json(pf):
@@ -25,7 +16,7 @@ def yaml2json(pf):
             pf = yaml.load(stream)
             return pf
         except yaml.YAMLError as exc:
-            print(exc)
+            raise LinchpinError(exc)
 
 
 

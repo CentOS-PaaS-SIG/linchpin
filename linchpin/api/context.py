@@ -181,6 +181,26 @@ class LinchpinContext(object):
 
 
     @property
+    def pinfile(self):
+
+        """
+        getter function for pinfile name
+        """
+
+        return self.get_cfg('init', 'pinfile')
+
+
+    @pinfile.setter
+    def pinfile(self, pinfile):
+
+        """
+        setter for workspace
+        """
+
+        self.set_cfg('init', 'pinfile', pinfile)
+
+
+    @property
     def workspace(self):
 
         """

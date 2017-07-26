@@ -131,6 +131,24 @@ class LinchpinAPI(object):
 
 
     @property
+    def pinfile(self):
+        """
+        getter function for pinfile name
+        """
+
+        return self.ctx.pinfile
+
+
+    @pinfile.setter
+    def pinfile(self, pinfile):
+        """
+        setter for pinfile name
+        """
+
+        self.ctx.pinfile = pinfile
+
+
+    @property
     def workspace(self):
         """
         getter function for context workspace
