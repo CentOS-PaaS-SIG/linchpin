@@ -102,7 +102,6 @@ def _handle_results(ctx, results):
 def runcli(ctx, config, pinfile, workspace, verbose, version, creds_path):
     """linchpin: hybrid cloud orchestration"""
 
-
     ctx.load_config(lpconfig=config)
     # workspace arg in load_config used to extend linchpin.conf
     ctx.load_global_evars()
@@ -124,7 +123,6 @@ def runcli(ctx, config, pinfile, workspace, verbose, version, creds_path):
     if workspace is not None:
         ctx.workspace = os.path.realpath(os.path.expanduser(workspace))
         ctx.log_debug("ctx.workspace: {0}".format(ctx.workspace))
-
 
     # global LinchpinCli placeholder
     global lpcli
@@ -213,9 +211,8 @@ def destroy(ctx, targets):
 
     """
 
-    pf_w_path = _get_pinfile_path(ctx)
+    pf_w_path = _get_pinfile_path()
 
-    lpcli = LinchpinCli(ctx)
     try:
         results = lpcli.lp_destroy(pf_w_path, targets)
 
