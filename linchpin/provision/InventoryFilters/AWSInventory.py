@@ -1,13 +1,6 @@
 #!/usr/bin/env python
 
-import abc
 import StringIO
-from ansible import errors
-
-try:
-    from configparser import ConfigParser
-except ImportError:
-    from ConfigParser import ConfigParser
 
 from InventoryFilter import InventoryFilter
 

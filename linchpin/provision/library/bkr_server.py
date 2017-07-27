@@ -8,10 +8,12 @@ import xml.dom.minidom
 import xml.etree.ElementTree as eT
 
 from bkr.client.task_watcher import watch_tasks
-from bkr.client import BeakerCommand, BeakerWorkflow, BeakerJob, \
-    BeakerRecipeSet, BeakerRecipe, conf
+from bkr.client import BeakerCommand, BeakerWorkflow, BeakerJob
+from bkr.client import BeakerRecipeSet, BeakerRecipe, conf
 from bkr.common.hub import HubProxy
 from bkr.common.pyconfig import PyConfigParser
+
+from ansible.module_utils.basic import AnsibleModule
 
 # WANT_JSON
 # We want JSON input from Ansible. Please give it to us
@@ -116,16 +118,18 @@ class BkrFactory(BkrConn):
             # Add Host Requirements
             if 'force' in hostrequires:
                 # hostRequires element is created by BeakerRecipe, use it
-                hostrequires_node = recipe_template.node.getElementsByTagName('hostRequires')[0]
-                # all other filters are ignored if the hostname is forced, so the use of 'force'
-                # is mutually exclusive with the use of any other 'hostRequires' filters
+                (hostrequires_node = recipe_template.node.getElementsByTagName('hostRequires')[0])  # noqa E501
+                # all other filters are ignored if the hostname is forced,
+                # so the use of 'force' is mutually exclusive with the use
+                # of any other 'hostRequires' filters
                 hostrequires_node.setAttribute('force', hostrequires['force'])
             else:
                 for requirement in hostrequires:
-                    # If force is not used, a requirement can be any number of differently
-                    # formatted XML elements, each with their own combination of element name and
-                    # valid attrs. So, the best we can do is generate XML based on the input, and
-                    # only the "tag" key is required.
+                    # If force is not used, a requirement can be any number
+                    # of differently formatted XML elements, each with their
+                    # own combination of element name and valid attrs. So,
+                    # the best we can do is generate XML based on the input,
+                    # and only the "tag" key is required.
                     tag_name = requirement.pop('tag')
                     requirement_node = self.doc.createElement(tag_name)
                     for attr, value in requirement.items():
@@ -245,7 +249,7 @@ def main():
     })
     params = type('Args', (object,), module.params)
     factory = BkrFactory()
-    logs = []
+    # logs = []
     job_ids = []
     for recipeset in params.recipesets:
         for x in range(0, recipeset['count']):
@@ -270,6 +274,4 @@ def main():
         module.exit_json(success=True, changed=True)
 
 
-# import module snippets
-from ansible.module_utils.basic import *
 main()

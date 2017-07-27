@@ -52,15 +52,15 @@ class LinchpinAPI(object):
         self.ctx = ctx
         base_path = '/'.join(os.path.dirname(__file__).split('/')[0:-2])
         pkg = self.get_cfg(section='lp',
-                        key='pkg',
-                        default='linchpin')
+                           key='pkg',
+                           default='linchpin')
         self.lp_path = '{0}/{1}'.format(base_path, pkg)
         self.set_evar('from_api', True)
 
         self.hook_state = None
         self._hook_observers = []
         self.playbook_pre_states = self.get_cfg('playbook_pre_states',
-                                                {'up': 'preup', 
+                                                {'up': 'preup',
                                                  'destroy': 'predestroy'})
         self.playbook_post_states = self.get_cfg('playbook_post_states',
                                                  {'up': 'postup',
@@ -110,7 +110,8 @@ class LinchpinAPI(object):
 
         :param key: key to use
 
-        :param default: default value to return if nothing is found (default: None)
+        :param default: default value to return if nothing is found
+        (default: None)
         """
 
         return self.ctx.get_evar(key, default)
@@ -177,8 +178,8 @@ class LinchpinAPI(object):
     @hook_state.setter
     def hook_state(self, hook_state):
         """
-        hook_state property setter , splits the hook_state string in subhook_state and sets
-        linchpin.hook_state object
+        hook_state property setter , splits the hook_state string in
+        subhook_state and sets linchpin.hook_state object
 
         :param hook_state: valid hook_state string mentioned in linchpin.conf
         """
@@ -218,11 +219,14 @@ class LinchpinAPI(object):
             topology_name = self.get_evar("topology").split("/")[-1]
             # defaults to file name if there is any error
             topology_name = topology_name.split(".")[-2]
+
         inv_file = '{0}/{1}/{2}{3}'.format(self.workspace,
-                        self.get_evar('inventories_folder'),
-                        topology_name,
-                        self.get_cfg('extensions','inventory' ,'inventory')
-                    )
+                                           self.get_evar('inventories_folder'),
+                                           topology_name,
+                                           self.get_cfg('extensions',
+                                                        'inventory',
+                                                        'inventory'))
+
         self.set_evar('inventory_file', inv_file)
         self.set_evar('topology_name', topology_name)
 
@@ -246,29 +250,31 @@ class LinchpinAPI(object):
         self.set_evar('from_api', True)
         self.set_evar('lp_path', self.lp_path)
 
-        #do we display the ansible output to the console?
+        # do we display the ansible output to the console?
         ansible_console = False
         if self.ctx.cfgs.get('ansible'):
-            ansible_console = ast.literal_eval(self.ctx.cfgs['ansible'].get('console', 'False'))
+            ansible_console = (
+                ast.literal_eval(self.ctx.cfgs['ansible'].get('console',
+                                                              'False')))
 
         if not ansible_console:
             ansible_console = self.ctx.verbose
 
         self.set_evar('default_resources_path', '{0}/{1}'.format(
-                                            self.ctx.workspace,
-                                            self.get_evar('resources_folder',
-                                                    default='resources')))
+                      self.ctx.workspace,
+                      self.get_evar('resources_folder',
+                                    default='resources')))
 
         # playbooks still use this var, keep it here
-        self.set_evar('default_inventories_path', '{0}/{1}'.format(
-                                        self.ctx.workspace,
-                                        self.get_evar('inventories_folder',
-                                                default='inventories')))
+        self.set_evar('default_inventories_path',
+                      '{0}/{1}'.format(self.ctx.workspace,
+                                       self.get_evar('inventories_folder',
+                                                     default='inventories')))
 
         # add this because of magic_var evaluation in ansible
         self.set_evar('inventory_dir', self.get_evar(
-                                        'default_inventories_path',
-                                        default='inventories'))
+                      'default_inventories_path',
+                      default='inventories'))
 
         self.set_evar('state', 'present')
 
@@ -279,8 +285,8 @@ class LinchpinAPI(object):
         results = {}
 
         # determine what targets is equal to
-        if (set(targets) == set(pf.keys()).intersection(targets) and
-                                                        len(targets) > 0):
+        if (set(targets) ==
+                set(pf.keys()).intersection(targets) and len(targets) > 0):
             pass
         elif len(targets) == 0:
             targets = set(pf.keys()).difference()
@@ -290,13 +296,14 @@ class LinchpinAPI(object):
 
         for target in targets:
             self.set_evar('topology', self.find_topology(
-                    pf[target]["topology"]))
+                          pf[target]["topology"]))
 
             if 'layout' in pf[target]:
-                self.set_evar('layout_file', (
-                    '{0}/{1}/{2}'.format(self.ctx.workspace,
-                                self.get_evar('layouts_folder'),
-                                pf[target]["layout"])))
+                self.set_evar('layout_file',
+                              '{0}/{1}/{2}'.format(self.ctx.workspace,
+                                                   self.get_evar(
+                                                       'layouts_folder'),
+                                                   pf[target]["layout"]))
 
             # parse topology_file and set inventory_file
             self.set_magic_vars()
@@ -312,14 +319,15 @@ class LinchpinAPI(object):
             if 'pre' in self.pb_hooks:
                 self.hook_state = '{0}{1}'.format('pre', playbook)
 
-            #invoke the appropriate playbook
-            return_code, results[target] = self._invoke_playbook(
-                                            playbook=playbook,
-                                            console=ansible_console)
+            # invoke the appropriate playbook
+            return_code, results[target] = (
+                self._invoke_playbook(playbook=playbook,
+                                      console=ansible_console)
+            )
 
             if not return_code:
                 self.ctx.log_state("Action '{0}' on Target '{1}' is "
-                        "complete".format(playbook, target))
+                                   "complete".format(playbook, target))
 
             # FIXME Check the result[target] value here, and fail if applicable.
             # It's possible that a flag might allow more targets to run, then
@@ -415,15 +423,17 @@ class LinchpinAPI(object):
         """
 
         topo_path = os.path.realpath('{0}/{1}'.format(
-                self.ctx.workspace,
-                self.get_evar('topologies_folder', 'topologies')))
+                                     self.ctx.workspace,
+                                     self.get_evar('topologies_folder',
+                                                   'topologies')))
 
         topos = os.listdir(topo_path)
 
         if topology in topos:
             return os.path.realpath('{0}/{1}'.format(topo_path, topology))
 
-        raise LinchpinError('Topology {0} not found in workspace'.format(topology))
+        raise LinchpinError('Topology {0} not found in'
+                            ' workspace'.format(topology))
 
 
 
@@ -436,9 +446,14 @@ class LinchpinAPI(object):
         """
 
         pb_path = '{0}/{1}'.format(self.lp_path,
-                            self.ctx.get_evar('playbooks_folder', 'provision'))
-        module_path = '{0}/{1}/'.format(pb_path, self.get_cfg('lp', 'module_folder', 'library'))
-        playbook_path = '{0}/{1}'.format(pb_path, self.get_cfg('playbooks', playbook, 'site.yml'))
+                                   self.ctx.get_evar('playbooks_folder',
+                                                     'provision'))
+        module_path = '{0}/{1}/'.format(pb_path, self.get_cfg('lp',
+                                                              'module_folder',
+                                                              'library'))
+        playbook_path = '{0}/{1}'.format(pb_path, self.get_cfg('playbooks',
+                                                               playbook,
+                                                               'site.yml'))
 
         loader = DataLoader()
         variable_manager = VariableManager()
@@ -447,7 +462,7 @@ class LinchpinAPI(object):
                               variable_manager=variable_manager,
                               host_list=[])
         passwords = {}
-        #utils.VERBOSITY = 4
+        # utils.VERBOSITY = 4
 
         Options = namedtuple('Options', ['listtags',
                                          'listtasks',

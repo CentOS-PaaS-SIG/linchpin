@@ -1,9 +1,5 @@
 #!/usr/bin/env python
-import os
-import sys
-import abc
-import StringIO
-from ansible import errors
+
 
 def translate_ruletype(ruletype):
     if ruletype == "inbound":
@@ -12,6 +8,7 @@ def translate_ruletype(ruletype):
         return "egress"
     else:
         return "invalid ruletype "
+
 
 class FilterModule(object):
     ''' A filter to fix network format '''

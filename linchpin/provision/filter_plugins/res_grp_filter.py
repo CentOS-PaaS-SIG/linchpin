@@ -1,9 +1,5 @@
 #!/usr/bin/env python
-import os
-import sys
-import abc
-import StringIO
-from ansible import errors
+
 
 def filter_groups(resource_group_types, resource_groups, *args):
     output = {}
@@ -14,6 +10,7 @@ def filter_groups(resource_group_types, resource_groups, *args):
                 if (arg in group) and (group[arg] == group_type):
                         output[group_type].append(group)
     return output
+
 
 class FilterModule(object):
     ''' A filter to fix network format '''

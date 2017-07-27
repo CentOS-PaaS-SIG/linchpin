@@ -1,7 +1,6 @@
 #!/usr/bin/env python
+
 import abc
-import StringIO
-from ansible import errors
 
 try:
     from configparser import ConfigParser
@@ -54,16 +53,17 @@ class InventoryFilter(object):
             return
         for host_group in inv['host_groups']:
             if "children" in inv['host_groups'][host_group]:
-                self.config.add_section(host_group+":"+"children")
+                self.config.add_section("{0}:children".format(host_group))
                 for child in inv['host_groups'][host_group]['children']:
-                    self.config.set(host_group+":"+"children", child)
+                    self.config.set("{0}:children".format(host_group), child)
+
 
     def set_vars(self, inv):
         if 'host_groups' not in inv.keys():
             return
         for host_group in inv['host_groups']:
             if "vars" in inv['host_groups'][host_group]:
-                self.config.add_section(host_group+":"+"vars")
+                self.config.add_section("{0}:vars".format(host_group))
                 for var in inv['host_groups'][host_group]['vars']:
                     grp_vars = inv['host_groups'][host_group]['vars'][var]
                     grp_vars = str(grp_vars)
@@ -72,7 +72,6 @@ class InventoryFilter(object):
     def add_ips_to_groups(self, inven_hosts, layout):
         # create a ip to host mapping based on count
         ip_to_host = {}
-        host_grps = self.get_layout_host_groups(layout)
         inven_hosts.reverse()
         for host_name in layout['hosts']:
             if 'count' in layout['hosts'][host_name]:

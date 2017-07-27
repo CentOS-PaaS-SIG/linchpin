@@ -1,8 +1,8 @@
+#!/usr/bin/env python
+
 import os
 import ast
 from setuptools import setup, find_packages
-from pip.req import parse_requirements
-import os
 
 with open('linchpin/version.py') as f:
     for line in f:
@@ -21,25 +21,25 @@ ignore_dir = ['.git']
 setup(
     name='linchpin',
     version=ver,
-    description = 'Ansible based multi cloud orchestrator',
-    author = 'samvaran kashyap rallabandi',
-    author_email = 'linchpin@redhat.com',
-    url = 'http://linchpin.readthedocs.io/',
+    description='Ansible based multi cloud orchestrator',
+    author='samvaran kashyap rallabandi',
+    author_email='linchpin@redhat.com',
+    url='http://linchpin.readthedocs.io/',
     setup_requires=required,
     install_requires=required,
     entry_points='''
         [console_scripts]
         linchpin=linchpin:runcli
     ''',
-    extras_require = {
+    extras_require={
         'krbV': ["python-krbV"],
-        'beaker':  ['beaker-client>=23.3'],
-        'docs': ["docutils","sphinx","sphinx_rtd_theme"],
-        'tests': ["nose","mock","coverage","flake8"],
+        'beaker': ['beaker-client>=23.3'],
+        'docs': ["docutils", "sphinx", "sphinx_rtd_theme"],
+        'tests': ["nose", "mock", "coverage", "flake8"],
         'libvirt': ["libvirt-python>=3.0.0", "lxml"],
     },
     zip_safe=False,
     packages=find_packages(),
     include_package_data=True
-#    scripts=['scripts/linchpin_complete.sh']
+    # scripts=['scripts/linchpin_complete.sh']
 )

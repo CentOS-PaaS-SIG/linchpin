@@ -1,25 +1,10 @@
 #!/usr/bin/env python
 
-import abc
 import StringIO
 from camel import Camel
-from ansible import errors
 
-try:
-    from configparser import ConfigParser
-except ImportError:
-    from ConfigParser import ConfigParser
-
-from AWSInventory import AWSInventory
-from BeakerInventory import BeakerInventory
-from DuffyInventory import DuffyInventory
-from DummyInventory import DummyInventory
-from GCloudInventory import GCloudInventory
 from InventoryFilter import InventoryFilter
-from LibvirtInventory import LibvirtInventory
-from OpenstackInventory import OpenstackInventory
-
-from InventoryProviders import get_driver, get_all_drivers
+from InventoryProviders import get_all_drivers
 
 
 class GenericInventory(InventoryFilter):
@@ -55,7 +40,7 @@ class GenericInventory(InventoryFilter):
         return all_hosts[:count]
 
     def get_inventory(self, topo, layout):
-        layout =  Camel().load(layout)
+        layout = Camel().load(layout)
         # get all the topology host_ips
         host_ip_dict = self.get_host_ips(topo)
         # get the count of all layout hosts needed
@@ -75,4 +60,3 @@ class GenericInventory(InventoryFilter):
         output = StringIO.StringIO()
         self.config.write(output)
         return output.getvalue()
-

@@ -13,6 +13,7 @@
 #- name: cwd
 #  debug:
 #    var: cwd
+
 - name: use linchpin_config if provided
   set_fact:
     lpconfig: "{{ linchpin_config }}"

@@ -1,32 +1,33 @@
 """
 Inventory Providers List
 """
+from linchpin.exceptions import LinchpinError
 
 from AWSInventory import AWSInventory
 from BeakerInventory import BeakerInventory
 from DuffyInventory import DuffyInventory
 from DummyInventory import DummyInventory
 from GCloudInventory import GCloudInventory
-from InventoryFilter import InventoryFilter
 from LibvirtInventory import LibvirtInventory
 from OpenstackInventory import OpenstackInventory
 
 filter_classes = {
-           "aws_inv": AWSInventory,
-           "beaker_inv": BeakerInventory,
-           "duffy_inv": DuffyInventory,
-           "dummy_inv": DummyInventory,
-           "gcloud_inv": GCloudInventory,
-           "libvirt_inv": LibvirtInventory,
-           "os_inv": OpenstackInventory,
+    "aws_inv": AWSInventory,
+    "beaker_inv": BeakerInventory,
+    "duffy_inv": DuffyInventory,
+    "dummy_inv": DummyInventory,
+    "gcloud_inv": GCloudInventory,
+    "libvirt_inv": LibvirtInventory,
+    "os_inv": OpenstackInventory,
 }
 
 
 def get_driver(provider):
-    try:
-        filter_class = filter_classes[provider]
-    except KeyError:
-        print("key not found in dictionary")
+
+    if provider not in filter_classes:
+            raise LinchpinError("Key {0} not found in"
+                                " dictionary".format(provider))
+
     return filter_classes[provider]
 
 
