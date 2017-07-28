@@ -9,7 +9,7 @@ from fetch import Fetch
 class FetchLocal(Fetch):
 
     def __init__(self, ctx, fetch_type, src, dest, cache_dir, root):
-        super(Fetch, self).__init__(ctx, fetch_type, dest, root)
+        super(FetchLocal, self).__init__(ctx, fetch_type, dest, root)
 
         self.cache_dir = os.path.join(cache_dir, "local")
         if not os.path.exists(self.cache_dir):
