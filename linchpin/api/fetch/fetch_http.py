@@ -6,11 +6,7 @@ from fetch import Fetch
 
 class FetchHttp(Fetch):
     def __init__(self, ctx, fetch_type, src, dest, cache_dir, root):
-        self.ctx = ctx
-        self.fetch_type = fetch_type
-        self.dest = dest
-        self.root = root
-        self.tempdirs = []
+        super(FetchHttp, self).__init__(ctx, fetch_type, dest, root)
 
         self.cache_dir = os.path.join(cache_dir, "http")
         if not os.path.exists(self.cache_dir):
@@ -41,6 +37,7 @@ class FetchHttp(Fetch):
         if retval == 1:
             from shutil import rmtree
             self.ctx.log_state("An error occurred while fetching files")
+            #Give wget args using wget_args.join() with error^^^
             rmtree(tempdir)
             sys.exit(1)
         return tempdir

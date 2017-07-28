@@ -6,9 +6,12 @@ from abc import ABCMeta, abstractmethod
 class Fetch(object):
     __metaclass__ = ABCMeta
 
-    @abstractmethod
-    def __init__(self):
-        pass
+    def __init__(self, ctx, fetch_type, dest, root):
+        self.ctx = ctx
+        self.fetch_type = fetch_type
+        self.root = root
+        self.tempdirs = []
+        self.dest = os.path.abspath(os.path.realpath(dest))
 
     @abstractmethod
     def fetch_files(self):

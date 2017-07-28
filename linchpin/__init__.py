@@ -259,8 +259,6 @@ def fetch(ctx, fetch_type, remote, root):
     """
     Fetches a aspecified linchpin directory from a remote location.
 
-    Currently supported protocols include http, git, and local.
-
     Fetch types: topology, layout, resources, hooks, workspace
 
     """

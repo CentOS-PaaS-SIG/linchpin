@@ -5,14 +5,10 @@ from fetch import Fetch
 
 class FetchGit(Fetch):
     def __init__(self, ctx, fetch_type, src, dest, cache_dir, root):
-        self.ctx = ctx
-        self.fetch_type = fetch_type
+        super(FetchGit, self).__init__(ctx, fetch_type, dest, root)
         self.src = src
-        self.dest = dest
-        self.root = root
-        self.cache_dir = os.path.join(cache_dir, "git")
-        self.tempdirs = []
 
+        self.cache_dir = os.path.join(cache_dir, "git")
         if not os.path.exists(self.cache_dir):
             os.mkdir(self.cache_dir)
 

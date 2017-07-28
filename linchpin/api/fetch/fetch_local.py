@@ -9,18 +9,14 @@ from fetch import Fetch
 class FetchLocal(Fetch):
 
     def __init__(self, ctx, fetch_type, src, dest, cache_dir, root):
-        self.ctx = ctx
-        self.fetch_type = fetch_type
-        self.cache_dir = os.path.join(cache_dir, "local")
-        self.root = root
-        self.tempdirs = []
+        super(Fetch, self).__init__(ctx, fetch_type, dest, root)
 
+        self.cache_dir = os.path.join(cache_dir, "local")
         if not os.path.exists(self.cache_dir):
             os.mkdir(self.cache_dir)
 
         src_parse = urlparse.urlparse(src)
         self.src = os.path.abspath(os.path.join(src_parse.netloc, src_parse.path))
-        self.dest = os.path.abspath(os.path.realpath(dest))
 
     
         if not os.path.exists(self.src):
