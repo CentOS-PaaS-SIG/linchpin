@@ -5,7 +5,7 @@ import re
 import sys
 import ast
 import yaml
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 from contextlib import contextmanager
 
 from ansible.inventory import Inventory
@@ -414,7 +414,13 @@ class LinchpinAPI(object):
         pass
 
 
-    def lp_fetch(self, src, fetch_type, remote_uri=None):
+    def lp_fetch(self, src, fetch_type, root):
+        if root is not None:
+            root = list(filter(None,root.split(',')))
+
+        dest = self.ctx.workspace
+        if not os.path.exists(dest):
+            raise LinchpinError(dest + " does not exist")
 
         fetch_aliases = {
                 "topology": self.get_evar("topologies_folder"),
@@ -422,42 +428,39 @@ class LinchpinAPI(object):
                 "resources": self.get_evar("resources_folder"),
                 "hooks": self.get_evar("hooks_folder"),
                 "workspace": "workspace"
+                #TODO: CHANGE THIS WHEN REBASING
                 }
 
         fetch_dir = fetch_aliases.get(fetch_type, None)
-
         if fetch_dir is None:
             raise LinchpinError(fetch_type + " is not a valid type")
 
-        if remote_uri:
-            dest = remote_uri
-        else:
-            dest = self.ctx.workspace
 
         cache_path = os.path.abspath(os.path.join(os.path.expanduser('~'),
                 '.cache/linchpin'))
-        print cache_path
-        print os.path.exists(cache_path)
         if not os.path.exists(cache_path):
             os.mkdir(cache_path)
-        
-        fetch_protocol = ""
-        if re.match('((git|ssh|http(s)?)|(git@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?',
-                src):
-            fetch_protocol = "FetchGit"
-        elif re.match('^(http|https)://', src):
-            fetch_protocol = "FetchHttp"
-        elif re.match('^(file)://', src):
-            fetch_protocol = "FetchLocal"
-        else:
-            raise LinchpinError("The protocol speficied is not supported")
-        
 
-        #rc = ast.literal_eval(fetch_protocol)(self.ctx, fetch_type, src, dest)
-        fetch_class = FETCH_CLASS[fetch_protocol] (self.ctx, fetch_type, src,
-                dest)
-        tmpdir = fetch_class.fetch_files()
-        print tmpdir
+        #TODO: USE DICTIONARY LOOKUP _OR_ LEARN ABOUT PYTHON GENERATORS
+        protocol_regex = OrderedDict([
+                ('((git|ssh|http(s)?)|(git@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?',
+                'FetchGit'),
+                ('^(http|https)://', 'FetchHttp'),
+                ('^(file)://', 'FetchLocal')
+                ])
+        fetch_protocol = None
+        for regex,obj in protocol_regex.items():
+            if re.match(regex, src):
+                fetch_protocol = obj
+                break
+        if fetch_protocol is None:
+            raise LinchpinError("The protocol speficied is not supported")
+
+
+        fetch_class = FETCH_CLASS[fetch_protocol] (self.ctx, fetch_dir, src,
+                dest, cache_path, root)
+        fetch_class.fetch_files()
+
         fetch_class.copy_files()
 
 

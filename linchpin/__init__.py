@@ -251,22 +251,23 @@ def drop(ctx, targets):
 
 
 @runcli.command()
-@click.option('-r','--remote-uri', required = False)
 @click.argument('fetch_type', default=None, required=True)
 @click.argument('remote', default=None, required=True)
+@click.option('-r','--root', required=False, default=None)
 @pass_context
-def fetch(ctx, remote_uri, fetch_type, remote):
+def fetch(ctx, fetch_type, remote, root):
     """
-    Return full path to the pinfile
+    Fetches a aspecified linchpin directory from a remote location.
 
-    :param pinfile:
-        pinfile (Default: ctx.workspace)
+    Currently supported protocols include http, git, and local.
+
+    Fetch types: topology, layout, resources, hooks, workspace
 
     """
     lpcli = LinchpinCli(ctx)
-    lpcli.lp_fetch(remote, fetch_type, remote_uri)
+    lpcli.lp_fetch(remote, fetch_type, root)
 #    try:
-#        lpcli.lp_fetch(remote, fetch_type, remote_uri)
+#        lpcli.lp_fetch(remote, fetch_type, root)
 #    except Exception as e:
 #        raise LinchpinError("An error has occurred")
         
