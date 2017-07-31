@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from ansible import errors
 try:
     from configparser import ConfigParser
 except ImportError:
@@ -32,18 +31,18 @@ def add_sections(config, section_list):
 def set_children(config, inv):
     for host_group in inv['host_groups']:
         if "children" in inv['host_groups'][host_group]:
-            config.add_section(host_group+":"+"children")
+            config.add_section("{0}:children".format(host_group))
             for child in inv['host_groups'][host_group]['children']:
-                config.set(host_group+":"+"children", child)
+                config.set("{0}:children".format(host_group), child)
     return config
 
 
 def set_vars(config, inv):
     for host_group in inv['host_groups']:
         if "vars" in inv['host_groups'][host_group]:
-            config.add_section(host_group+":"+"vars")
+            config.add_section("{0}:vars".format(host_group))
             for var in inv['host_groups'][host_group]['vars']:
-                config.set(host_group + ":" + "vars",
+                config.set("{0}:vars".format(host_group),
                            var,
                            inv['host_groups'][host_group]['vars'][var])
     return config
@@ -85,8 +84,8 @@ def add_common_vars(config, host_groups, layout):
 
 def openstack_inventory(topo, layout):
     inventory = ConfigParser(allow_no_value=True)
-    no_of_groups = len(topo['os_server_res'])
-    layout_hosts = get_layout_hosts(layout)
+    # no_of_groups = len(topo['os_server_res'])
+    # layout_hosts = get_layout_hosts(layout)
     inven_hosts = get_host_ips(topo)
     # adding sections to respective host groups
     host_groups = get_layout_host_groups(layout)

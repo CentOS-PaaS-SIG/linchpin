@@ -5,16 +5,12 @@
 #
 # Topology validator for Ansible based infra provsioning tool linch-pin
 
-from ansible.module_utils.basic import *
-import datetime
-import sys
-import json
 import os
-import shlex
-import tempfile
+import json
 import yaml
 import jsonschema
-from jsonschema import validate
+
+from ansible.module_utils.basic import AnsibleModule
 
 DOCUMENTATION = '''
 ---
@@ -44,6 +40,7 @@ author: Samvaran Kashyap Rallabandi -
 
 
 class JSONSchema:
+
     def __init__(self, data_file_path, schema_file_path):
         self.data_file = data_file_path
         self.schema_file = schema_file_path
@@ -53,7 +50,9 @@ class JSONSchema:
         schema = open(self.schema_file).read()
 
         try:
-            result = jsonschema.validate(json.loads(data), json.loads(schema))
+            # result may be needed, commented out in case it can be used
+            # result = jsonschema.validate(json.loads(data), json.loads(schema))
+            jsonschema.validate(json.loads(data), json.loads(schema))
             return (True, json.loads(data))
         except jsonschema.ValidationError as e:
             return (False, "ValidationError: {0}".format(e.message))
@@ -101,7 +100,8 @@ def validate_grp_names(data):
        len(dup_grp_names) != len(res_grp_names):
         msg = "error: duplicate names found in resource_group_name \
                attributes please check the results for duplicate names"
-        return {"msg": msg, "result": str(dup_grp_names)+str(dup_grp_vars)}
+        return {"msg": msg, "result": "{0}{1}".format(str(dup_grp_names),
+                                                      str(dup_grp_vars))}
     else:
         return True
 
@@ -118,14 +118,15 @@ def validate_values(module, data_file_path):
 
 def main():
     module = AnsibleModule(
-    argument_spec={
+        argument_spec={
             'data': {'required': True, 'aliases': ['topology']},
             'schema': {'required': True},
-            'data_format': {'required': False,'choices':['json','yaml','yml']},
+            'data_format': {'required': False,
+                            'choices': ['json', 'yaml', 'yml']},
         },
         required_one_of=[],
         supports_check_mode=True
-        )
+    )
     data_file_path = os.path.expanduser(module.params['data'])
     schema_file_path = os.path.expanduser(module.params['schema'])
     check_file_paths(module, data_file_path, schema_file_path)
@@ -145,5 +146,6 @@ def main():
                 "output": out}
 
         module.fail_json(msg=resp)
+
 
 main()

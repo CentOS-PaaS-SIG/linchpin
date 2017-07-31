@@ -8,11 +8,12 @@ from linchpin.exceptions import HookError
 class RubyActionManager(ActionManager):
 
     def __init__(self, name, action_data, target_data, **kwargs):
-        
+
         """
         RubyActionManager constructor
         :param name: Name of Action Manager , ( ie., ruby)
-        :param action_data: dictionary of action_block consists of set of actions
+        :param action_data: dictionary of action_block consists of
+        a set of actions
         example:
         - name: nameofhook
           type: ruby
@@ -29,30 +30,33 @@ class RubyActionManager(ActionManager):
         self.context = kwargs.get('context', True)
         self.kwargs = kwargs
 
+
     def validate(self):
 
         """
         Validates the action_block based on the cerberus schema
         """
 
-        schema= {
-        'name': {'type': 'string', 'required': True },
-        'type': { 'type': 'string', 'allowed': ['ruby']},
-        'path': {'type': 'string', 'required': False},
-        'context': {'type': 'boolean', 'required': False},
-        'actions': {
-                     'type': 'list',
-                     'schema': {'type':'string'},
-                     'required': True
-                   }
+        schema = {
+            'name': {'type': 'string', 'required': True},
+            'type': {'type': 'string', 'allowed': ['ruby']},
+            'path': {'type': 'string', 'required': False},
+            'context': {'type': 'boolean', 'required': False},
+            'actions': {
+                'type': 'list',
+                'schema': {'type': 'string'},
+                'required': True
+            }
         }
+
         v = Validator(schema)
         status = v.validate(self.action_data)
+
         if not status:
-            raise HookError("Invalid syntax: LinchpinHook:"+str((v.errors)))
+            raise HookError("Invalid syntax: {0}".format(str((v.errors))))
         else:
             return status
-        pass
+
 
     def add_ctx_params(self, file_path, context=True):
 
@@ -64,14 +68,16 @@ class RubyActionManager(ActionManager):
 
         if not context:
             return file_path
+
         params = file_path
         for key in self.target_data:
-            params += " %s=%s " %(key, self.target_data[key])
-        return "{0} {1}".format(file_path,
-                                    params)
+            params += " {0}={1} ".format(key, self.target_data[key])
+
+        return "{0} {1}".format(file_path, params)
+
 
     def execute(self):
-        
+
         """
         Executes the action_block in the PinFile
         """
@@ -82,7 +88,8 @@ class RubyActionManager(ActionManager):
             file_path = "{0}/{1}".format(
                         path,
                         action
-                        )
+            )
+
             command = self.add_ctx_params(file_path, context)
             success = run_rb(command)
             return success

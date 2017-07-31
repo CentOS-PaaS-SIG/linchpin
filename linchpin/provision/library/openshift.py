@@ -14,6 +14,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>
 
+
+import yaml
+import json
+import base64
+
+from copy import copy
+
+# import module snippets
+from ansible.module_utils.basic import AnsibleModule    # NOQA
+from ansible.module_utils.urls import import fetch_url     # NOQA
+
+
 DOCUMENTATION = '''
 ---
 module: openshift
@@ -126,11 +138,6 @@ api_response:
             phase: "Active"
 '''
 
-import yaml
-import base64
-
-from copy import copy
-
 ############################################################################
 ############################################################################
 # For API coverage, this Anislbe module provides capability to operate on
@@ -141,46 +148,45 @@ from copy import copy
 # 'create a'. The script then iterates over all of these base objects
 # to get the endpoint URL and was used to generate the KIND_URL map.
 #
-#import json
-#from urllib2 import urlopen
+#  from urllib2 import urlopen
 #
-#apis = {}
-#cluster_apis = {}
+#  apis = {}
+#  cluster_apis = {}
 #
-#def load_api(api):
-#    v1 = json.load(api)
+#  def load_api(api):
+#      v1 = json.load(api)
 #
-#    for a in v1['apis']:
-#        p = a['path']
-#        for o in a['operations']:
-#            if o["summary"].startswith("create a") and o["type"] != "v1.Event":
-#                if "{namespace}" in p:
-#                    apis[o["type"]] = p
-#                else:
-#                    cluster_apis[o["type"]] = p
+#      for a in v1['apis']:
+#          p = a['path']
+#          for o in a['operations']:
+#              if o["summary"].startswith("create a") and o["type"] != "v1.Event":  # noqa E501
+#                  if "{namespace}" in p:
+#                      apis[o["type"]] = p
+#                  else:
+#                      cluster_apis[o["type"]] = p
 #
-#def print_kind_url_map():
-#    results = ['"{0}": "{1}"'.format(a[3:].lower(), apis[a])
-#               for a in apis.keys()]
-#    cluster_results = ['"{0}": "{1}"'.format(a[3:].lower(), cluster_apis[a])
-#                       for a in cluster_apis.keys()]
-#    results.sort()
-#    cluster_results.sort()
-#    print "KIND_URL = {"
-#    print ",\n".join(results)
-#    print "}"
-#    print "CLUSTER_URL = {"
-#    print ",\n".join(cluster_results)
-#    print "}"
+#  def print_kind_url_map():
+#      results = ['"{0}": "{1}"'.format(a[3:].lower(), apis[a])
+#                 for a in apis.keys()]
+#      cluster_results = ['"{0}": "{1}"'.format(a[3:].lower(), cluster_apis[a])
+#                         for a in cluster_apis.keys()]
+#      results.sort()
+#      cluster_results.sort()
+#      print "KIND_URL = {"
+#      print ",\n".join(results)
+#      print "}"
+#      print "CLUSTER_URL = {"
+#      print ",\n".join(cluster_results)
+#      print "}"
 #
-#if __name__ == '__main__':
-#    k = urlopen("https://raw.githubusercontent.com/openshift"
-#               "/origin/master/api/swagger-spec/api-v1.json")
-#    o = urlopen("https://raw.githubusercontent.com/openshift"
-#               "/origin/master/api/swagger-spec/oapi-v1.json")
-#    load_api(k)
-#    load_api(o)
-#    print_kind_url_map()
+#  if __name__ == '__main__':
+#      k = urlopen("https://raw.githubusercontent.com/openshift"
+#                 "/origin/master/api/swagger-spec/api-v1.json")
+#      o = urlopen("https://raw.githubusercontent.com/openshift"
+#                 "/origin/master/api/swagger-spec/oapi-v1.json")
+#      load_api(k)
+#      load_api(o)
+#      print_kind_url_map()
 ############################################################################
 ############################################################################
 
@@ -190,35 +196,35 @@ KIND_URL = {
     "buildconfig": "/oapi/v1/namespaces/{namespace}/buildconfigs",
     "configmap": "/api/v1/namespaces/{namespace}/configmaps",
     "deploymentconfig": "/oapi/v1/namespaces/{namespace}/deploymentconfigs",
-    "deploymentconfigrollback": "/oapi/v1/namespaces/{namespace}/deploymentconfigrollbacks",
-    "egressnetworkpolicy": "/oapi/v1/namespaces/{namespace}/egressnetworkpolicies",
+    "deploymentconfigrollback": "/oapi/v1/namespaces/{namespace}/deploymentconfigrollbacks",  # noqa: E501
+    "egressnetworkpolicy": "/oapi/v1/namespaces/{namespace}/egressnetworkpolicies",  # noqa: E501
     "imagestream": "/oapi/v1/namespaces/{namespace}/imagestreams",
     "imagestreamimport": "/oapi/v1/namespaces/{namespace}/imagestreamimports",
     "imagestreammapping": "/oapi/v1/namespaces/{namespace}/imagestreammappings",
     "imagestreamtag": "/oapi/v1/namespaces/{namespace}/imagestreamtags",
     "limitrange": "/api/v1/namespaces/{namespace}/limitranges",
-    "localresourceaccessreview": "/oapi/v1/namespaces/{namespace}/localresourceaccessreviews",
-    "localsubjectaccessreview": "/oapi/v1/namespaces/{namespace}/localsubjectaccessreviews",
-    "persistentvolumeclaim": "/api/v1/namespaces/{namespace}/persistentvolumeclaims",
+    "localresourceaccessreview": "/oapi/v1/namespaces/{namespace}/localresourceaccessreviews",  # noqa: E501
+    "localsubjectaccessreview": "/oapi/v1/namespaces/{namespace}/localsubjectaccessreviews",  # noqa: E501
+    "persistentvolumeclaim": "/api/v1/namespaces/{namespace}/persistentvolumeclaims",  # noqa: E501
     "pod": "/api/v1/namespaces/{namespace}/pods",
-    "podsecuritypolicyreview": "/oapi/v1/namespaces/{namespace}/podsecuritypolicyreviews",
-    "podsecuritypolicyselfsubjectreview": "/oapi/v1/namespaces/{namespace}/podsecuritypolicyselfsubjectreviews",
-    "podsecuritypolicysubjectreview": "/oapi/v1/namespaces/{namespace}/podsecuritypolicysubjectreviews",
+    "podsecuritypolicyreview": "/oapi/v1/namespaces/{namespace}/podsecuritypolicyreviews",  # noqa: E501
+    "podsecuritypolicyselfsubjectreview": "/oapi/v1/namespaces/{namespace}/podsecuritypolicyselfsubjectreviews",  # noqa: E501
+    "podsecuritypolicysubjectreview": "/oapi/v1/namespaces/{namespace}/podsecuritypolicysubjectreviews",  # noqa: E501
     "podtemplate": "/api/v1/namespaces/{namespace}/podtemplates",
     "policy": "/oapi/v1/namespaces/{namespace}/policies",
     "policybinding": "/oapi/v1/namespaces/{namespace}/policybindings",
-    "replicationcontroller": "/api/v1/namespaces/{namespace}/replicationcontrollers",
-    "resourceaccessreview": "/oapi/v1/namespaces/{namespace}/resourceaccessreviews",
+    "replicationcontroller": "/api/v1/namespaces/{namespace}/replicationcontrollers",  # noqa: E501
+    "resourceaccessreview": "/oapi/v1/namespaces/{namespace}/resourceaccessreviews",  # noqa: E501
     "resourcequota": "/api/v1/namespaces/{namespace}/resourcequotas",
     "role": "/oapi/v1/namespaces/{namespace}/roles",
     "rolebinding": "/oapi/v1/namespaces/{namespace}/rolebindings",
-    "rolebindingrestriction": "/oapi/v1/namespaces/{namespace}/rolebindingrestrictions",
+    "rolebindingrestriction": "/oapi/v1/namespaces/{namespace}/rolebindingrestrictions",  # noqa: E501
     "route": "/oapi/v1/namespaces/{namespace}/routes",
     "secret": "/api/v1/namespaces/{namespace}/secrets",
-    "selfsubjectrulesreview": "/oapi/v1/namespaces/{namespace}/selfsubjectrulesreviews",
+    "selfsubjectrulesreview": "/oapi/v1/namespaces/{namespace}/selfsubjectrulesreviews",  # noqa: E501
     "service": "/api/v1/namespaces/{namespace}/services",
     "serviceaccount": "/api/v1/namespaces/{namespace}/serviceaccounts",
-    "subjectaccessreview": "/oapi/v1/namespaces/{namespace}/subjectaccessreviews",
+    "subjectaccessreview": "/oapi/v1/namespaces/{namespace}/subjectaccessreviews",  # noqa: E501
     "subjectrulesreview": "/oapi/v1/namespaces/{namespace}/subjectrulesreviews",
     "template": "/oapi/v1/namespaces/{namespace}/templates"
 }
@@ -259,8 +265,8 @@ CLUSTER_URL = {
     "persistentvolumeclaim": "/api/v1/persistentvolumeclaims",
     "pod": "/api/v1/pods",
     "podsecuritypolicyreview": "/oapi/v1/podsecuritypolicyreviews",
-    "podsecuritypolicyselfsubjectreview": "/oapi/v1/podsecuritypolicyselfsubjectreviews",
-    "podsecuritypolicysubjectreview": "/oapi/v1/podsecuritypolicysubjectreviews",
+    "podsecuritypolicyselfsubjectreview": "/oapi/v1/podsecuritypolicyselfsubjectreviews",  # noqa: E501
+    "podsecuritypolicysubjectreview": "/oapi/v1/podsecuritypolicysubjectreviews",  # noqa: E501
     "podtemplate": "/api/v1/podtemplates",
     "policy": "/oapi/v1/policies",
     "policybinding": "/oapi/v1/policybindings",
@@ -313,74 +319,101 @@ def api_request(module, url, method="GET", headers={}, data=None):
     headers.update(base_headers)
     if data:
         data = json.dumps(data)
-    response, info = fetch_url(module, url, method=method, headers=headers, data=data)
+    response, info = fetch_url(module,
+                               url,
+                               method=method,
+                               headers=headers,
+                               data=data)
+
     if int(info['status']) == -1:
-        module.fail_json(msg="Failed to execute the API request: %s" % info['msg'], url=url, method=method, headers=headers)
+        module.fail_json(msg="Failed to execute the API request:"
+                         " {0}".format(info['msg']),
+                         url=url,
+                         method=method,
+                         headers=headers)
+
     if response is not None:
         body = json.loads(response.read())
     return info, body
 
 
 def openshift_create_resource(module, url, data):
-    info, body = api_request(module, url, method="POST", data=data, headers={"Content-Type": "application/json"})
+    info, body = api_request(module,
+                             url,
+                             method="POST",
+                             data=data,
+                             headers={"Content-Type": "application/json"})
+
     if info['status'] == 409:
         name = data["metadata"].get("name", None)
         info, body = api_request(module, url + "/" + name)
         return False, body
     elif info['status'] >= 400:
-        module.fail_json(msg="failed to create the resource: %s" % info['msg'], url=url)
+        module.fail_json(msg="failed to create the resource:"
+                             " {0}".format(info['msg']), url=url)
     return True, body
 
 
 def openshift_delete_resource(module, url, data):
     name = data.get('metadata', {}).get('name')
     if name is None:
-        module.fail_json(msg="Missing a named resource in object metadata when trying to remove a resource")
+        module.fail_json(msg="Missing a named resource in object metadata"
+                             " when trying to remove a resource")
 
     url = url + '/' + name
     info, body = api_request(module, url, method="DELETE")
     if info['status'] == 404:
         return False, "Resource name '%s' already absent" % name
     elif info['status'] >= 400:
-        module.fail_json(msg="failed to delete the resource '%s': %s" % (name, info['msg']), url=url)
-    return True, "Successfully deleted resource name '%s'" % name
+        module.fail_json(msg="failed to delete the resource"
+                             " '{0}': {1}".format(name, info['msg']), url=url)
+    return True, "Successfully deleted resource name '{0}'".format(name)
 
 
 def openshift_replace_resource(module, url, data):
     name = data.get('metadata', {}).get('name')
     if name is None:
-        module.fail_json(msg="Missing a named resource in object metadata when trying to replace a resource")
+        module.fail_json(msg="Missing a named resource in object metadata when"
+                             " trying to replace a resource")
 
     headers = {"Content-Type": "application/json"}
     url = url + '/' + name
-    info, body = api_request(module, url, method="PUT", data=data, headers=headers)
+    info, body = api_request(module,
+                             url, method="PUT", data=data, headers=headers)
+
     if info['status'] == 409:
         name = data["metadata"].get("name", None)
         info, body = api_request(module, url + "/" + name)
         return False, body
     elif info['status'] >= 400:
-        module.fail_json(msg="failed to replace the resource '%s': %s" % (name, info['msg']), url=url)
+        module.fail_json(msg="failed to replace the resource"
+                             "'{0}': {1}".format(name, info['msg']), url=url)
     return True, body
 
 
 def openshift_update_resource(module, url, data):
     name = data.get('metadata', {}).get('name')
     if name is None:
-        module.fail_json(msg="Missing a named resource in object metadata when trying to update a resource")
+        module.fail_json(msg="Missing a named resource in object metadata when"
+                             " trying to update a resource")
 
     headers = {"Content-Type": "application/strategic-merge-patch+json"}
     url = url + '/' + name
-    info, body = api_request(module, url, method="PATCH", data=data, headers=headers)
+    info, body = api_request(module,
+                             url, method="PATCH", data=data, headers=headers)
+
     if info['status'] == 409:
         name = data["metadata"].get("name", None)
         info, body = api_request(module, url + "/" + name)
         return False, body
     elif info['status'] >= 400:
-        module.fail_json(msg="failed to update the resource '%s': %s" % (name, info['msg']), url=url)
+        module.fail_json(msg="failed to update the resource"
+                             " '{0}': {1}".format(name, info['msg']), url=url)
     return True, body
 
 
 base_headers = {}
+
 
 def main():
     module = AnsibleModule(
@@ -394,10 +427,11 @@ def main():
             api_endpoint=dict(required=True),
             file_reference=dict(required=False),
             inline_data=dict(required=False),
-            state=dict(default="present", choices=["present", "absent", "update", "replace"])
+            state=dict(default="present",
+                       choices=["present", "absent", "update", "replace"])
         ),
-        mutually_exclusive = (('file_reference', 'inline_data')),
-        required_one_of = (('file_reference', 'inline_data'),),
+        mutually_exclusive=(('file_reference', 'inline_data')),
+        required_one_of=(('file_reference', 'inline_data'),),
     )
 
     decode_cert_data(module)
@@ -406,10 +440,13 @@ def main():
     state = module.params.get('state')
     inline_data = module.params.get('inline_data')
     file_reference = module.params.get('file_reference')
-    base_headers['Authorization'] = 'Bearer {0}'.format(module.params.get('api_token'))
+    base_headers['Authorization'] = \
+        'Bearer {0}'.format(module.params.get('api_token'))
 
     if inline_data:
-        if not isinstance(inline_data, dict) and not isinstance(inline_data, list):
+        if not isinstance(inline_data,
+                          dict) and not isinstance(inline_data,
+                                                   list):
             data = yaml.load(inline_data)
         else:
             data = inline_data
@@ -421,7 +458,8 @@ def main():
             if not data:
                 module.fail_json(msg="No valid data could be found.")
         except:
-            module.fail_json(msg="The file '%s' was not found or contained invalid YAML/JSON data" % file_reference)
+            module.fail_json(msg="The file '{0}' not found/contained invalid"
+                                 " YAML/JSON data".format(file_reference))
 
     # set the transport type and build the target endpoint url
     transport = 'https'
@@ -433,7 +471,7 @@ def main():
 
     # make sure the data is a list
     if not isinstance(data, list):
-        data = [ data ]
+        data = [data]
 
     for item in data:
         namespace = None
@@ -446,29 +484,33 @@ def main():
                 else:
                     url = target_endpoint + KIND_URL[kind]
             except KeyError:
-                module.fail_json(msg="invalid resource kind specified in the data: '%s'" % kind)
+                module.fail_json(msg="invalid resource kind specified"
+                                     " in the data: '%s'" % kind)
             url = url.replace("{namespace}", namespace)
         else:
             url = target_endpoint
 
         if state == 'present':
-            item_changed, item_body = openshift_create_resource(module, url, item)
+            item_changed, item_body = openshift_create_resource(module,
+                                                                url,
+                                                                item)
         elif state == 'absent':
-            item_changed, item_body = openshift_delete_resource(module, url, item)
+            item_changed, item_body = openshift_delete_resource(module,
+                                                                url,
+                                                                item)
         elif state == 'replace':
-            item_changed, item_body = openshift_replace_resource(module, url, item)
+            item_changed, item_body = openshift_replace_resource(module,
+                                                                 url,
+                                                                 item)
         elif state == 'update':
-            item_changed, item_body = openshift_update_resource(module, url, item)
+            item_changed, item_body = openshift_update_resource(module,
+                                                                url,
+                                                                item)
 
         changed |= item_changed
         body.append(item_body)
 
     module.exit_json(changed=changed, api_response=body)
-
-
-# import module snippets
-from ansible.module_utils.basic import *    # NOQA
-from ansible.module_utils.urls import *     # NOQA
 
 
 if __name__ == '__main__':

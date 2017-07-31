@@ -1,4 +1,4 @@
-from linchpin.exceptions import StateError
+
 
 class State(object):
 

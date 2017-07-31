@@ -18,10 +18,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
 #
-import datetime
-import traceback
-import ast
-from ansible.module_utils.basic import *
+import os
+import json
+
+from ansible.module_utils.basic import AnsibleModule
 DOCUMENTATION = '''
 ---
 module: async_status
@@ -87,11 +87,12 @@ def main():
     try:
         data = file(log_path).read()
         if ((module_name == 'os_server' or module_name == 'os_volume') and
-            (len(data.split("\n")) == 4)):
+                (len(data.split("\n")) == 4)):
             data = open(log_path).readlines()
             data = data[2]
+
         data = json.loads(data)
-        #data = ast.literal_eval(data)
+        # data = ast.literal_eval(data)
     except Exception:
         if not data:
             # file not written yet?  That means it is running
@@ -116,5 +117,5 @@ def main():
 
     module.exit_json(**data)
 
-# import module snippets
+
 main()

@@ -4,18 +4,26 @@
 # Author: Samvaran Kashyap Rallabandi -  <srallaba@redhat.com>
 #
 # Auth driver  for Ansible based infra provsioning tool, linch-pin
+
+import os
+import yaml
+import json
+
+from ansible.module_utils.basic import AnsibleModule
+
 DOCUMENTATION = '''
 ---
 version_added: "0.1"
 module: auth_driver
 short_description: auth_driver module in ansible
 description:
-  - This module allows a user to fetch credentials on request and egister it as variable in ansible.
+  - This module allows a user to fetch credentials on request and register it
+    as variable in ansible.
 
 options:
   name:
     description:
-      name of the credential file to be used 
+      name of the credential file to be used
     required: true
   cred_type:
     description:
@@ -28,20 +36,11 @@ options:
     required: false
   driver:
     description:
-      defaults to file type. 
+      defaults to file type.
     required: true
 
-author: Samvaran Kashyap Rallabandi -
 '''
 
-from ansible.module_utils.basic import *
-import datetime
-import sys
-import json
-import os
-import shlex
-import tempfile
-import yaml
 
 try:
     import configparser as ConfigParser
@@ -74,14 +73,14 @@ def parse_file(filename):
                 out = config.as_dict()
                 f.close()
             except Exception as e:
-                module.fail_json(msg= "Error  {0} ".format(str(e)))
+                module.fail_json(msg="Error: {0} ".format(str(e)))
     return out
 
 
 def get_cred(fname, creds_path):
 
     paths = creds_path.split(os.path.pathsep)
-    files = []
+    # files = []
     for path in paths:
         path = os.path.realpath(os.path.expanduser(path))
         for filename in os.listdir(path):
@@ -90,14 +89,14 @@ def get_cred(fname, creds_path):
                 out = parse_file(full_file_path)
                 return out, path
 
-    module.fail_json(msg= "Error: Credential not found")
+    module.fail_json(msg="Error: Credential not found")
 
 
 def main():
 
     global module
     module = AnsibleModule(
-    argument_spec={
+        argument_spec={
             'filename': {'required': True, 'aliases': ['name']},
             'cred_type': {'required': False, 'aliases': ['credential_type']},
             'cred_path': {'required': True, 'aliases': ['credential_store']},
@@ -107,11 +106,13 @@ def main():
         supports_check_mode=True
     )
     filename = module.params["filename"]
-    cred_type = module.params["cred_type"]
+    cred_type = module.params["cred_type"]  # noqa F841
     cred_path = module.params["cred_path"]
-    driver_type = module.params["driver"]
+    driver_type = module.params["driver"]  # noqa F841
     output, path = get_cred(filename, cred_path)
     changed = True
-    module.exit_json(changed=changed, output=output, params=module.params, path=path)
+    module.exit_json(changed=changed,
+                     output=output, params=module.params, path=path)
+
 
 main()

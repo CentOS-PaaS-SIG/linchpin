@@ -3,18 +3,11 @@
 #
 # Author: Samvaran Kashyap Rallabandi -  <srallaba@redhat.com>
 #
-# output parser  for Ansible based infra provsioning tooli, linch-pin
-from ansible.module_utils.basic import *
-import datetime
-import sys
-import json
+
 import os
-import shlex
-import tempfile
 import yaml
-import jsonschema
-from jsonschema import validate
-from ansible.module_utils.basic import *
+
+from ansible.module_utils.basic import AnsibleModule
 
 DOCUMENTATION = '''
 ---
@@ -50,17 +43,16 @@ def check_file_paths(module, *args):
 
 def main():
     module = AnsibleModule(
-             argument_spec=dict(
-                           output_file=dict(
-                                       required=True,
-                                       aliases=[
-                                           'topology_output_file',
-                                           'resources_file']
-                           )
-             ),
-             required_one_of=[],
-             supports_check_mode=True)
+        argument_spec=dict(output_file=dict(required=True,
+                                            aliases=[
+                                                'topology_output_file',
+                                                'resources_file'
+                                            ])),
+        required_one_of=[],
+        supports_check_mode=True)
+
     data_file_path = os.path.expanduser(module.params['output_file'])
+
     check_file_paths(module, data_file_path)
     content = open(data_file_path, "r").read()
     c = yaml.load(content)
@@ -70,5 +62,6 @@ def main():
         module.exit_json(changed=changed, output=resp)
     else:
         module.fail_json(msg=resp)
+
 
 main()

@@ -50,8 +50,8 @@ class LinchpinContext(object):
           * path/to/workspace/linchpin.conf
 
         Linchpin will continuously override and extend the configuration as
-        newer configurations are added and modified. Alternatively, a full path to 
-        the linchpin configuration file can be passed.
+        newer configurations are added and modified. Alternatively, a full path
+        to the linchpin configuration file can be passed.
 
         :param lpconfig: absolute path to a linchpin config (default: None)
 
@@ -60,15 +60,16 @@ class LinchpinContext(object):
         expanded_path = None
 
         if lpconfig:
-            CONFIG_PATH = [ lpconfig ]
+            CONFIG_PATH = [lpconfig]
         else:
-            # simply modify this variable to adjust where linchpin.conf can be found
+            # simply modify this variable to adjust where
+            # linchpin.conf can be found
             CONFIG_PATH = [
                 '{0}/linchpin.conf'.format(self.lib_path),
                 '/etc/linchpin.conf',
                 '~/.config/linchpin/linchpin.conf',
-                '{0}/linchpin.conf'.format(self.workspace) 
-                #self.workspace is set in runcli beforehand, will never be None
+                '{0}/linchpin.conf'.format(self.workspace)
+                # self.workspace is set in runcli beforehand, will never be None
             ]
         existing_paths = []
         for path in CONFIG_PATH:
@@ -97,12 +98,14 @@ class LinchpinContext(object):
                             self.cfgs[section][k] = v
                         else:
                             try:
-                                self.cfgs[section][k] = config.getboolean(section, k)
+                                self.cfgs[section][k] = (
+                                    config.getboolean(section, k)
+                                )
                             except ValueError as e:
                                 self.cfgs[section][k] = v
         except ConfigParser.InterpolationSyntaxError as e:
             raise LinchpinError('Unable to parse configuration file properly:'
-                        ' {0}'.format(e))
+                                ' {0}'.format(e))
 
     def load_global_evars(self):
 
@@ -158,7 +161,8 @@ class LinchpinContext(object):
 
         :param key: key to use
 
-        :param default: default value to return if nothing is found (default: None)
+        :param default: default value to return if nothing is found
+        (default: None)
         """
 
         if key:

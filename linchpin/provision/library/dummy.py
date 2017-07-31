@@ -5,9 +5,14 @@
 #
 # Provision a dummy server. Useful for testing the linchpin api provisioner
 # without using actual resources.
-#
 
-#---- Documentation Start ----------------------------------------------------#
+import os
+import re
+import tempfile
+
+from ansible.module_utils.basic import AnsibleModule
+
+# ---- Documentation Start ----------------#
 DOCUMENTATION = '''
 ---
 version_added: "0.1"
@@ -43,11 +48,7 @@ EXAMPLES = '''
 
 '''
 
-#---- Logic Start ------------------------------------------------------------#
-import os, re, sys, json, random, string, tempfile
-
-from ansible.constants import mk_boolean
-from ansible.module_utils.basic import *
+# ---- Logic Start ----------------------#
 
 
 class Dummy:
@@ -122,7 +123,7 @@ class Dummy:
                     hosts_to_del.append(line)
                     changed = True
 
-        num2del =  len(lines)-count
+        num2del = len(lines) - count
         out = hosts_to_del[0:num2del]
 
         with open(self.DUMMY_FILE, 'w') as f:
@@ -157,13 +158,14 @@ class Dummy:
 
         return json_output
 
+
 def main():
 
     module = AnsibleModule(
         argument_spec=dict(
-            name = dict(type='str'),
-            count = dict(default=1, type='int'),
-            state = dict(choices=['present', 'absent']),
+            name=dict(type='str'),
+            count=dict(default=1, type='int'),
+            state=dict(choices=['present', 'absent']),
         ),
     )
 
@@ -185,5 +187,5 @@ def main():
         module.fail_json(msg=str(e))
 
 
-#---- Import Ansible Utilities (Ansible Framework) ---------------------------#
+# ---- Import Ansible Utilities (Ansible Framework) -------------------#
 main()
