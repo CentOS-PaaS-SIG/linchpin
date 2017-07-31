@@ -4,7 +4,7 @@ import urlparse
 import tempfile
 
 from fetch import Fetch
-from linchpin.exception import LinchpinError
+from linchpin.exceptions import LinchpinError
 
 
 class FetchLocal(Fetch):

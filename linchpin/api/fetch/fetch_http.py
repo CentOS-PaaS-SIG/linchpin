@@ -4,7 +4,7 @@ import tempfile
 import requests
 
 from fetch import Fetch
-from linchpin.exception import LinchpinError
+from linchpin.exceptions import LinchpinError
 
 class FetchHttp(Fetch):
     def __init__(self, ctx, fetch_type, src, dest, cache_dir, root):
@@ -37,7 +37,7 @@ class FetchHttp(Fetch):
 
         if retval == 1:
             from shutil import rmtree
-            raise LinchpinError("Unable to fetch files with the following
-                    command {0}".format(wget_args.join(' ')))
+            raise LinchpinError('Unable to fetch files with the following'
+                    ' command {0}'.format(wget_args.join(' ')))
             rmtree(tempdir)
         return tempdir
