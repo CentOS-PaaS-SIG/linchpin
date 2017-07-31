@@ -1,9 +1,10 @@
 import os
-import sys
 import shutil
 import urlparse
 import tempfile
+
 from fetch import Fetch
+from linchpin.exception import LinchpinError
 
 
 class FetchLocal(Fetch):
@@ -20,11 +21,9 @@ class FetchLocal(Fetch):
 
     
         if not os.path.exists(self.src):
-            ctx.log_state('{0} is not a valid path'.format(src))
-            sys.exit(1)
+            raise LinchpinError('{0} is not a valid path'.format(src))
         if os.path.samefile(self.src, self.dest):
-            ctx.log_state("Provide two different locations")
-            sys.exit(1)
+            raise LinchpinError("Provide two different locations")
 
 
     def fetch_files(self):
@@ -50,6 +49,6 @@ class FetchLocal(Fetch):
                     shutil.copy2(s, d)
             except OSEerror as e:
                 if e.errno == 17:
-                    self.ctx.log_state('The {0} directory already'
+                    raise LinchpinError('The {0} directory already'
                     'exists'.format(item))
 

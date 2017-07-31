@@ -2,7 +2,9 @@ import os
 import subprocess
 import tempfile
 import requests
+
 from fetch import Fetch
+from linchpin.exception import LinchpinError
 
 class FetchHttp(Fetch):
     def __init__(self, ctx, fetch_type, src, dest, cache_dir, root):
@@ -13,8 +15,7 @@ class FetchHttp(Fetch):
             os.mkdir(self.cache_dir)
 
         if requests.get(src).status_code != 200:
-            self.ctx.log_state("The entered url is invalid")
-            sys.exit(1)
+            raise LinchpinError("The entered url is invalid")
         self.src = src.rstrip('/')
 
     def fetch_files(self):
@@ -36,8 +37,7 @@ class FetchHttp(Fetch):
 
         if retval == 1:
             from shutil import rmtree
-            self.ctx.log_state("An error occurred while fetching files")
-            #Give wget args using wget_args.join() with error^^^
+            raise LinchpinError("Unable to fetch files with the following
+                    command {0}".format(wget_args.join(' ')))
             rmtree(tempdir)
-            sys.exit(1)
         return tempdir
