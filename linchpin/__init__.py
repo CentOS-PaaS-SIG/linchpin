@@ -262,12 +262,10 @@ def fetch(ctx, fetch_type, remote, root):
     Fetch types: topology, layout, resources, hooks, workspace
 
     """
-    lpcli = LinchpinCli(ctx)
-    lpcli.lp_fetch(remote, fetch_type, root)
-#    try:
-#        lpcli.lp_fetch(remote, fetch_type, root)
-#    except Exception as e:
-#        raise LinchpinError("An error has occurred")
+    try:
+        lpcli.lp_fetch(remote, fetch_type, root)
+    except Exception as e:
+        raise LinchpinError("An error has occurred")
         
         
 
