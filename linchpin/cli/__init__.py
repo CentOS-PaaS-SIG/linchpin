@@ -39,9 +39,9 @@ class LinchpinCli(LinchpinAPI):
 
         try:
             if os.path.exists(pf_w_path):
-                if not click.confirm(
-                    '{0} already exists, overwrite it?'.format(pf_w_path),
-                    default=False):
+                if not click.confirm('{0} already exists,'
+                                     'overwrite it?'.format(pf_w_path),
+                                     default=False):
                     sys.exit(0)
 
             dir_util.copy_tree(src_w_path, self.workspace, verbose=1)

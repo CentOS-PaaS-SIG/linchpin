@@ -1,24 +1,9 @@
 #!/usr/bin/env python
 
-import os
-import sys
 import ast
-import shutil
 import logging
 
-from distutils import dir_util
-from collections import OrderedDict
-from jinja2 import Environment, PackageLoader
-
-try:
-    import configparser as ConfigParser
-except ImportError:
-    import ConfigParser as ConfigParser
-
 from linchpin.api.context import LinchpinContext
-from linchpin.exceptions import LinchpinError
-from linchpin.cli import LinchpinCli
-from linchpin.version import __version__
 
 
 class LinchpinCliContext(LinchpinContext):
@@ -53,40 +38,42 @@ class LinchpinCliContext(LinchpinContext):
     def setup_logging(self):
 
         """
-        Setup logging to a file, console, or both.  Modifying the `linchpin.conf`
+        Setup logging to a file, console, or both. Modifying the `linchpin.conf`
         appropriately will provide functionality.
 
         """
 
-        self.enable_logging = ast.literal_eval(self.cfgs['logger'].get('enable', 'True'))
+        self.enable_logging = ast.literal_eval(
+            self.cfgs['logger'].get('enable', 'True'))
 
         if self.enable_logging:
 
             # create logger
             self.logger = logging.getLogger('lp_logger')
             self.logger.setLevel(eval(self.cfgs['logger'].get('level',
-                                                            'logging.DEBUG')))
+                                                              'logging.DEBUG')))
 
             fh = logging.FileHandler(self.cfgs['logger'].get('file',
-                                                            'linchpin.log'))
+                                                             'linchpin.log'))
             fh.setLevel(eval(self.cfgs['logger'].get('level',
-                                                    'logging.DEBUG')))
+                                                     'logging.DEBUG')))
             formatter = logging.Formatter(
-                            self.cfgs['logger'].get('format',
-                            '%(levelname)s %(asctime)s %(message)s'))
+                self.cfgs['logger'].get('format',
+                                        '%(levelname)s'
+                                        ' %(asctime)s %(message)s'))
             fh.setFormatter(formatter)
             self.logger.addHandler(fh)
 
 
         self.console = logging.getLogger('lp_console')
         self.console.setLevel(eval(self.cfgs['console'].get('level',
-                                                        'logging.INFO')))
+                                                            'logging.INFO')))
 
         ch = logging.StreamHandler()
         ch.setLevel(eval(self.cfgs['console'].get('level',
-                                                'logging.INFO')))
+                                                  'logging.INFO')))
         formatter = logging.Formatter(
-                        self.cfgs['console'].get('format', '%(message)s'))
+            self.cfgs['console'].get('format', '%(message)s'))
         ch.setFormatter(formatter)
         self.console.addHandler(ch)
 
@@ -134,4 +121,3 @@ class LinchpinCliContext(LinchpinContext):
     def log_debug(self, msg):
         """Logs a DEBUG message"""
         self.log(msg, level=logging.DEBUG)
-

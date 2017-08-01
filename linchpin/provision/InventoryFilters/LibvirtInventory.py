@@ -1,13 +1,6 @@
 #!/usr/bin/env python
 
-import abc
 import StringIO
-from ansible import errors
-
-try:
-    from configparser import ConfigParser
-except ImportError:
-    from ConfigParser import ConfigParser
 
 from InventoryFilter import InventoryFilter
 
@@ -28,8 +21,6 @@ class LibvirtInventory(InventoryFilter):
         if len(topo['libvirt_res']) == 0:
             return ""
 
-        inventory = ConfigParser(allow_no_value=True)
-        layout_hosts = self.get_layout_hosts(layout)
         inven_hosts = self.get_host_ips(topo)
 
         # adding sections to respective host groups

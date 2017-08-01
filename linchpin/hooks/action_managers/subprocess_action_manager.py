@@ -1,5 +1,4 @@
 import os
-import sys
 import subprocess
 from action_manager import ActionManager
 from cerberus import Validator
@@ -14,7 +13,8 @@ class SubprocessActionManager(ActionManager):
         """
         SubprocessActionManager constructor
         :param name: Name of Action Manager , ( ie., shell)
-        :param action_data: dictionary of action_block consists of set of actions
+        :param action_data: dictionary of action_block
+        consists of set of actions
         example:
         - name: hookname
           type: shell
@@ -44,34 +44,27 @@ class SubprocessActionManager(ActionManager):
           actions:
             - thisisshell.sh
         """
-        schema= { 'name': { 
-                           'type':'string',
-                           'required': True
-                          },
-                  'type': { 
-                           'type': 'string',
-                           'allowed': ['shell', 'subprocess']
-                          },
-                  'path': {
-                           'type': 'string',
-                           'required': False
-                          },
-                  'context': {
-                           'type': 'boolean',
-                           'required': False
-                           },
-                  'actions': { 
-                               'type': 'list',
-                               'schema': {
-                                          'type': 'string'
-                                         },
-                               'required': True
-                             }
+
+        schema = {
+            'name': {'type': 'string', 'required': True},
+            'type': {
+                'type': 'string',
+                'allowed': ['shell', 'subprocess']
+            },
+            'path': {'type': 'string', 'required': False},
+            'context': {'type': 'boolean', 'required': False},
+            'actions': {
+                'type': 'list',
+                'schema': {'type': 'string'},
+                'required': True
+            }
         }
+
         v = Validator(schema)
         status = v.validate(self.action_data)
+
         if not status:
-            raise HookError("Invalid syntax: LinchpinHook:"+str((v.errors)))
+            raise HookError("Invalid Syntax: {0}".format(str(v.errors)))
         else:
             return status
 
@@ -84,7 +77,7 @@ class SubprocessActionManager(ActionManager):
 
         # set os.environpath if exists
         if 'path' in self.action_data:
-            os.environ["PATH"] += ":"+self.action_data["path"]
+            os.environ["PATH"] += ":{0}".format(self.action_data["path"])
 
 
     def add_context_params(self, action):
@@ -97,7 +90,7 @@ class SubprocessActionManager(ActionManager):
 
         command = action
         for key in self.target_data:
-            command += " %s=%s " %(key, self.target_data[key])
+            command += " {0}={1} ".format(key, self.target_data[key])
         return command
 
 

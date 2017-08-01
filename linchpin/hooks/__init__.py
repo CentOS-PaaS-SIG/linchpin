@@ -46,12 +46,12 @@ openstack:
 
 """
 
-import pprint
 import ast
 import sys
 
 from linchpin.hooks.action_managers import ACTION_MANAGERS
 from linchpin.exceptions import ActionManagerError
+
 
 class ActionBlockRouter(object):
     """
@@ -60,7 +60,9 @@ class ActionBlockRouter(object):
 
     def __init__(self, name, *args, **kwargs):
 
-        self.__implementation = self.__get_implementation(name)(name, *args, **kwargs)
+        self.__implementation = self.__get_implementation(name)(name,
+                                                                *args,
+                                                                **kwargs)
 
     def __getattr__(self, name):
 
@@ -69,12 +71,13 @@ class ActionBlockRouter(object):
     def __get_implementation(self, class_name):
         '''
         Fetches implementation of lcass from linchpin.hooks.action_managers
-        :param name: action manager class name  
+        :param name: action manager class name
         '''
 
         action_class = ACTION_MANAGERS.get(class_name, None)
         if action_class is None:
-            raise ActionManagerError('Action Class {0} not found '.format(class_name))
+            raise ActionManagerError('Action Class {0}'
+                                     'not found '.format(class_name))
         return action_class
 
 
@@ -99,14 +102,19 @@ class LinchpinHooks(object):
         topology_name = self.api.get_evar("topology_name")
 
         res_file = '{0}{1}'.format(topology_name,
-                            self.api.get_cfg('extensions', 'resource'))
-        res_file = '{0}/{1}'.format(
-               self.api.target_data['extra_vars']['default_resources_path'],
-               res_file
-               )
+                                   self.api.get_cfg('extensions', 'resource'))
+
+        res_pthT = self.api.target_data['extra_vars']['default_resources_path']
+        res_file = '{0}/{1}'.format(res_pthT, res_file)
         self.api.target_data['extra_vars']['resource_file'] = res_file
-        self.api.target_data['extra_vars']['inventory_file'] = self.api.get_evar("inventory_file")
-        self.api.target_data['extra_vars']['inventory_dir'] = self.api.get_evar("inventory_dir")
+
+        # do this to avoid E113 from flake8
+        inv_file_tmp = self.api.get_evar("inventory_file")
+        self.api.target_data['extra_vars']['inventory_file'] = inv_file_tmp
+
+        # do this to avoid E113 from flake8
+        inv_dir_tmp = self.api.get_evar("inventory_dir")
+        self.api.target_data['extra_vars']['inventory_dir'] = inv_dir_tmp
 
 
     def run_hooks(self, state, is_global=False):
@@ -132,7 +140,8 @@ class LinchpinHooks(object):
 
             # Print out error message if the hooks are not found
             if state_data is None:
-                self.api.ctx.log_state('{0} hook not found in PinFile'.format(state))
+                self.api.ctx.log_state('{0} hook not found'
+                                       ' in PinFile'.format(state))
                 return
 
             # current target data extravars are fetched
@@ -169,11 +178,11 @@ class LinchpinHooks(object):
                     # if the path is not defined it defaults to
                     # workspace/hooks/typeofhook/name
                     a_b['path'] = '{0}/{1}/{2}/{3}/'.format(
-                                   self.api.ctx.workspace,
-                                   self.api.get_evar('hooks_folder', default='hooks'),
-                                   a_b['type'],
-                                   a_b['name']
-                                   )
+                        self.api.ctx.workspace,
+                        self.api.get_evar('hooks_folder',
+                                          default='hooks'),
+                        a_b['type'],
+                        a_b['name'])
 
                 if 'action_manager' in a_b:
                     # fetches the action object from the path
@@ -184,28 +193,35 @@ class LinchpinHooks(object):
                                                    a_b['action_manager'])
                     # get module src
                     module_src = open(module_path, 'r').read()
-                    # strip .py ext from module path 
+                    # strip .py ext from module path
                     module_path = module_path.strip('.py')
                     # strip .py ext from action_manager
                     a_b['action_manager'] = a_b['action_manager'].strip('.py')
                     # parse the module
                     module_src = ast.parse(module_src)
                     # get all classes inside the class
-                    classes = [node.name for node in ast.walk(module_src) if isinstance(node, ast.ClassDef)]
+                    classes = ([node.name
+                               for node in ast.walk(module_src)
+                               if isinstance(node, ast.ClassDef)])
+
                     # choose the first name as the class name
                     class_name = classes[0]
-                    # import the module with class name, it should work coz python path is appended
+                    # import the module with class name, it should work
                     module = __import__(a_b['action_manager'])
                     # get the class
                     class_ = getattr(module, class_name)
                     # a_b_obj is action_block_object
                     a_b_obj = class_(action_type, a_b, tgt_data, context=ab_ctx)
                 else:
-                    a_b_obj = ActionBlockRouter(action_type, a_b, tgt_data, context=ab_ctx)
+                    a_b_obj = ActionBlockRouter(action_type,
+                                                a_b,
+                                                tgt_data,
+                                                context=ab_ctx)
                 try:
                     self.api.ctx.log_state('-------\n'
-                                            'start hook {0}:{1}'.format(
-                                                a_b['type'], a_b['name']))
+                                           'start hook'
+                                           ' {0}:{1}'.format(a_b['type'],
+                                                             a_b['name']))
 
                     # validates the class object
                     a_b_obj.validate()
@@ -214,6 +230,6 @@ class LinchpinHooks(object):
 
                     # intentionally using print here
                     self.api.ctx.log_state('end hook {0}:{1}\n-------'.format(
-                                                a_b['type'],a_b['name']))
+                                           a_b['type'], a_b['name']))
                 except Exception as e:
                     self.api.ctx.log_info(str(e))

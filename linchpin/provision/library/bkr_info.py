@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 import os
-import xml.etree.ElementTree as eT
 
-from bkr.client import conf, BeakerCommand
-from bkr.common.hub import HubProxy
-from bkr.common.pyconfig import PyConfigParser
-from json import dumps, loads
 from time import sleep
 from sys import stderr
+from json import dumps
+import xml.etree.ElementTree as eT
+from ansible.module_utils.basic import AnsibleModule
+
+from bkr.client import BeakerCommand
+from bkr.common.hub import HubProxy
+from bkr.common.pyconfig import PyConfigParser
 
 
 BEAKER_CONF = \
@@ -53,11 +55,12 @@ class BeakerTargets(object):
                 status = resource['status']
                 print >> stderr, "status: %s, result: %s" % (status, result)
                 if status not in ['Cancelled', 'Aborted']:
-                    if result == 'Pass' or (result == 'Warn' and self.skip_no_system):
+                    if (result == 'Pass' or
+                       (result == 'Warn' and self.skip_no_system)):
                         pass_count += 1
                     elif result in ['Fail', 'Warn', 'Panic', 'Completed']:
-                        raise Exception("System failed with state '{0}'"\
-                                .format(result))
+                        raise Exception("System failed with state"
+                                        " '{0}'".format(result))
                 elif status == 'Aborted':
                     if result == 'Warn' and self.skip_no_system:
                         pass_count += 1
@@ -69,8 +72,11 @@ class BeakerTargets(object):
             if pass_count == all_count:
                 return job_results['resources']
             sleep(WAIT_TIME)
-        raise Exception("{0} system(s) never completed in {1} polling attempts. {2}"\
-                .format(all_count - pass_count, attempts, dumps(job_results)))
+        raise Exception("{0} system(s) never completed in {1}"
+                        " polling attempts. {2}".format(all_count - pass_count,
+                                                        attempts,
+                                                        dumps(job_results)))
+
 
     def _check_jobs(self, ids):
         """
@@ -112,12 +118,11 @@ def main():
     })
     beaker = BeakerTargets(mod.params)
     try:
-        results=beaker.get_system_statuses()
+        results = beaker.get_system_statuses()
         mod.exit_json(hosts=results, changed=True, success=True)
     except Exception as ex:
         mod.fail_json(msg=str(ex))
 
 
 # import module snippets
-from ansible.module_utils.basic import *
 main()

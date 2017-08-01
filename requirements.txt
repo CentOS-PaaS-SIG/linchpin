@@ -5,12 +5,12 @@ pyopenssl
 boto>=2.40.0
 apache-libcloud>=0.20.1
 jsonschema>=2.5.1
-shade>=1.8.0,!=1.21.0
 click
 tabulate
 camel
 yamlordereddictloader
 ansible==2.3.1
 python-openstackclient
+shade>=1.8.0,!=1.21.0
 naked
 cerberus

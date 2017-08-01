@@ -1,13 +1,6 @@
 #!/usr/bin/env python
-import abc
-import json
-import StringIO
-from ansible import errors
 
-try:
-    from configparser import ConfigParser
-except ImportError:
-    from ConfigParser import ConfigParser
+import StringIO
 
 from InventoryFilter import InventoryFilter
 
@@ -29,7 +22,6 @@ class OpenstackInventory(InventoryFilter):
 
         if len(topo['os_server_res']) == 0:
             return ""
-        no_of_groups = len(topo['os_server_res'])
         inven_hosts = self.get_host_ips(topo)
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)

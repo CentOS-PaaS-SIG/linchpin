@@ -1,9 +1,5 @@
 #!/usr/bin/env python
-import os
-import sys
-import abc
-import StringIO
-from ansible import errors
+
 
 def format_rules(rules, rule_type):
     rules_output = []
@@ -16,6 +12,7 @@ def format_rules(rules, rule_type):
             rule_output['proto'] = rule['proto']
             rules_output.append(rule_output)
     return rules_output
+
 
 class FilterModule(object):
     ''' A filter to format AWS EC2 security group rules '''
