@@ -47,7 +47,7 @@ class FetchLocal(Fetch):
                     shutil.copytree(s, d)
                 else:
                     shutil.copy2(s, d)
-            except OSEerror as e:
+            except OSError as e:
                 if e.errno == 17:
                     raise LinchpinError('The {0} directory already'
                     'exists'.format(item))

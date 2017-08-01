@@ -1,7 +1,10 @@
 import os
 import sys
 import shutil
+import configparser
+
 from abc import ABCMeta, abstractmethod
+from linchpin.exceptions import LinchpinError
 
 class Fetch(object):
     __metaclass__ = ABCMeta
@@ -12,6 +15,18 @@ class Fetch(object):
         self.root = root
         self.tempdirs = []
         self.dest = os.path.abspath(os.path.realpath(dest))
+        
+        self.config = configparser.ConfigParser()
+        self.config_path = os.path.abspath(os.path.join(os.path.expanduser('~'),
+                        '.cache/linchpin/fetch.conf'))
+        if not os.path.exists(self.config_path):
+            self.config['http'] = {}
+            self.config['git'] = {}
+            self.config['local'] = {}
+            with open(self.config_path, 'w') as configfile:
+                self.config.write(configfile)
+        else:
+            self.config.read(config_path)
 
     @abstractmethod
     def fetch_files(self):
@@ -39,15 +54,18 @@ class Fetch(object):
     def transfer_section(self, section):
 
         dest_dir = os.path.join(self.dest, section)
+        dir_exists = True
         if section not in os.listdir(self.dest):
+            dir_exists = False
             os.mkdir(dest_dir)
 
         for path in self.tempdirs:
             src_dir = os.path.join(path, section)
             if not os.path.exists(src_dir):
-                self.ctx.log_state('The {0} directory does not exist in '
+                if not dir_exists:
+                    shutil.rmtree(dest_dir)
+                raise LinchpinError('The {0} directory does not exist in '
                         '{1}'.format(self.fetch_type, self.src))
-                sys.exit(1)
             self.transfer_files(src_dir, dest_dir)
 
     def transfer_files(self, src, dest):
@@ -63,3 +81,8 @@ class Fetch(object):
                     if e.errno == 17:
                         self.ctx.log_state('The {0} directory already'
                                 'exists'.format(item))
+
+    def write_cfg(self, section, key, value):
+        self.config[section][key] = value
+        with open(self.config_path, 'w') as configfile:
+            config.write(configfile)

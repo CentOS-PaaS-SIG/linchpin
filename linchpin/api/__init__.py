@@ -416,7 +416,7 @@ class LinchpinAPI(object):
 
     def lp_fetch(self, src, fetch_type, root):
         if root is not None:
-            root = list(filter(None,root.split(',')))
+            root = list(filter(None, root.split(',')))
 
         dest = self.ctx.workspace
         if not os.path.exists(dest):
@@ -428,12 +428,9 @@ class LinchpinAPI(object):
                 "resources": self.get_evar("resources_folder"),
                 "hooks": self.get_evar("hooks_folder"),
                 "workspace": "workspace"
-                #TODO: CHANGE THIS WHEN REBASING
                 }
 
-        fetch_dir = fetch_aliases.get(fetch_type, None)
-        if fetch_dir is None:
-            raise LinchpinError(fetch_type + " is not a valid type")
+        fetch_dir = fetch_aliases.get(fetch_type, "workspace")
 
 
         cache_path = os.path.abspath(os.path.join(os.path.expanduser('~'),
@@ -441,7 +438,6 @@ class LinchpinAPI(object):
         if not os.path.exists(cache_path):
             os.mkdir(cache_path)
 
-        #TODO: USE DICTIONARY LOOKUP _OR_ LEARN ABOUT PYTHON GENERATORS
         protocol_regex = OrderedDict([
                 ('((git|ssh|http(s)?)|(git@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?',
                 'FetchGit'),

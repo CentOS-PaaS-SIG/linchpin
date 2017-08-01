@@ -3,6 +3,7 @@ import subprocess
 import tempfile
 import requests
 
+from shutil import rmtree
 from fetch import Fetch
 from linchpin.exceptions import LinchpinError
 
@@ -35,9 +36,7 @@ class FetchHttp(Fetch):
                 '--cut-dirs={0}'.format(len(list_args)), src, '-P', tempdir]
         retval = subprocess.call(wget_args)
 
-        if retval == 1:
-            from shutil import rmtree
+        if retval != 0:
             raise LinchpinError('Unable to fetch files with the following'
                     ' command {0}'.format(wget_args.join(' ')))
-            rmtree(tempdir)
         return tempdir
