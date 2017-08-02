@@ -50,5 +50,5 @@ class FetchLocal(Fetch):
             except OSError as e:
                 if e.errno == 17:
                     raise LinchpinError('The {0} directory already'
-                    'exists'.format(item))
+                    ' exists'.format(item))
 

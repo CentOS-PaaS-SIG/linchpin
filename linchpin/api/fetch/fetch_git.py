@@ -15,7 +15,14 @@ class FetchGit(Fetch):
             os.mkdir(self.cache_dir)
 
     def fetch_files(self):
-        td = self.call_clone()
+        key = "{0}|{1}".format(self.dest, self.src)
+
+        fetch_dir = self.cfgs["git"].get(key, None)
+        td = self.call_clone(fetch_dir)
+
+        if fetch_dir is None:
+            self.write_cfg("git", key, td)
+
         if self.root is not None:
             for ext in self.root:
                 self.tempdirs.append(os.path.join(td, ext.lstrip('/')))
@@ -23,9 +30,14 @@ class FetchGit(Fetch):
             self.tempdirs.append(td)
 
 
-    def call_clone(self):
-        tempdir = tempfile.mkdtemp(prefix="git_", dir=self.cache_dir)
-        retval = subprocess.call(['git', 'clone', '--quiet', self.src, tempdir])
+    def call_clone(self, fetch_dir=None):
+        if fetch_dir:
+            retval = subprocess.call(['git', '-C', fetch_dir, 'pull', '--quiet'])
+            tempdir = fetch_dir
+        else:
+            tempdir = tempfile.mkdtemp(prefix="git_", dir=self.cache_dir)
+            retval = subprocess.call(['git', 'clone', '--quiet', self.src, tempdir])
+
         if retval != 0:
             raise LinchpinError("Unable to clone {0}".format(self.src))
         return tempdir

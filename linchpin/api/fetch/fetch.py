@@ -16,17 +16,9 @@ class Fetch(object):
         self.tempdirs = []
         self.dest = os.path.abspath(os.path.realpath(dest))
         
-        self.config = configparser.ConfigParser()
         self.config_path = os.path.abspath(os.path.join(os.path.expanduser('~'),
                         '.cache/linchpin/fetch.conf'))
-        if not os.path.exists(self.config_path):
-            self.config['http'] = {}
-            self.config['git'] = {}
-            self.config['local'] = {}
-            with open(self.config_path, 'w') as configfile:
-                self.config.write(configfile)
-        else:
-            self.config.read(config_path)
+        self.cfgs = self.read_cfg()
 
     @abstractmethod
     def fetch_files(self):
@@ -80,9 +72,43 @@ class Fetch(object):
             except OSError as e:
                     if e.errno == 17:
                         self.ctx.log_state('The {0} directory already'
-                                'exists'.format(item))
+                                ' exists'.format(item))
+    def read_cfg(self):
+        config = configparser.ConfigParser(delimiters=('='))
+        config.optionxform = str
+
+        cfgs = {}
+        if not os.path.exists(self.config_path):
+            config['http'] = {}
+            config['git'] = {}
+            config['local'] = {}
+            with open(self.config_path, 'w') as configfile:
+                config.write(configfile)
+            print "config created"
+        else:
+            config.read(self.config_path)
+
+        for section in config.sections():
+            cfgs[section] = {}
+            if config.items(section) is None:
+                continue
+            for k, v in config.items(section):
+                cfgs[section][k] = v
+            
+        
+        print "config read"
+        for section in config.sections():
+            print "SECTION: " + section
+            for item in config[section]:
+                print 'key: {0}, value: {1}'.format(item,
+                        config[section][item])
+        return cfgs
 
     def write_cfg(self, section, key, value):
-        self.config[section][key] = value
+        config = configparser.ConfigParser(delimiters=('='))
+        config.optionxform = str
+        config.read(self.config_path)
+        config[section][key] = value
+
         with open(self.config_path, 'w') as configfile:
             config.write(configfile)
