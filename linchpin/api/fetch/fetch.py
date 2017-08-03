@@ -26,25 +26,13 @@ class Fetch(object):
 
     def copy_files(self):
         if self.fetch_type == 'workspace':
-            workspace_dirs = [
-                    self.ctx.get_evar("topologies_folder"),
-                    self.ctx.get_evar("layouts_folder"),
-                    self.ctx.get_evar("resources_folder"),
-                    self.ctx.get_evar("hooks_folder"),
-                    ]
             for path in self.tempdirs:
-                pinfile = os.path.join(path, self.ctx.get_cfg("init",
-                    "pinfile"))
-                if os.path.exists(pinfile):
-                    shutil.copy2(pinfile, self.dest)
-            for section in workspace_dirs:
-                self.transfer_section(section)
+                self.copy_dir(path, self.dest)
         else:
             self.transfer_section(self.fetch_type)
 
 
     def transfer_section(self, section):
-
         dest_dir = os.path.join(self.dest, section)
         dir_exists = True
         if section not in os.listdir(self.dest):
@@ -58,21 +46,23 @@ class Fetch(object):
                     shutil.rmtree(dest_dir)
                 raise LinchpinError('The {0} directory does not exist in '
                         '{1}'.format(self.fetch_type, self.src))
-            self.transfer_files(src_dir, dest_dir)
+            self.copy_dir(src_dir, dest_dir)
 
-    def transfer_files(self, src, dest):
-        for item in os.listdir(src):
-            try:
-                s = os.path.join(src, item)
-                d = os.path.join(dest, item)
-                if os.path.isdir(s):
-                    shutil.copytree(s, d)
-                else:
-                    shutil.copy2(s, d)
-            except OSError as e:
-                    if e.errno == 17:
-                        self.ctx.log_state('The {0} directory already'
-                                ' exists'.format(item))
+    def copy_dir(self, src, dest):
+        for root, dirs, files in os.walk(src):
+            files = [f for f in files if not f[0] == '.']
+            dirs[:] = [d for d in dirs if not d[0] == '.']
+            if not os.path.isdir(root):
+                os.makedirs(root)
+            for file in files:
+                rel_path = root.replace(src, '').lstrip(os.sep)
+                dest_path = os.path.join(dest, rel_path)
+
+                if not os.path.isdir(dest_path):
+                    os.makedirs(dest_path)
+
+                shutil.copyfile(os.path.join(root, file), os.path.join(dest_path, file))
+
     def read_cfg(self):
         config = configparser.ConfigParser(delimiters=('='))
         config.optionxform = str
@@ -84,7 +74,6 @@ class Fetch(object):
             config['local'] = {}
             with open(self.config_path, 'w') as configfile:
                 config.write(configfile)
-            print "config created"
         else:
             config.read(self.config_path)
 
@@ -94,14 +83,7 @@ class Fetch(object):
                 continue
             for k, v in config.items(section):
                 cfgs[section][k] = v
-            
         
-        print "config read"
-        for section in config.sections():
-            print "SECTION: " + section
-            for item in config[section]:
-                print 'key: {0}, value: {1}'.format(item,
-                        config[section][item])
         return cfgs
 
     def write_cfg(self, section, key, value):
