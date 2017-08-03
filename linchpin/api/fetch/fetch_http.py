@@ -20,23 +20,46 @@ class FetchHttp(Fetch):
         self.src = src.rstrip('/')
 
     def fetch_files(self):
+
         if self.root is not None:
             for ext in self.root:
                 src = os.path.join(self.src, ext.lstrip('/'))
-                self.tempdirs.append(self.call_wget(src))
-        else:
-            self.tempdirs.append(self.call_wget(self.src))
+                key = "{0}|{1}".format(self.dest, src)
+                fetch_dir = self.cfgs["http"].get(key, None)
 
-    def call_wget(self, src):
+                td = self.call_wget(src, fetch_dir)
+                self.tempdirs.append(td)
+
+                if not fetch_dir:
+                    self.write_cfg("http", key, td)
+        else:
+            key = "{0}|{1}".format(self.dest, self.src)
+            fetch_dir = self.cfgs["http"].get(key, None)
+
+            td = self.call_wget(self.src, fetch_dir)
+            self.tempdirs.append(td)
+
+            if not fetch_dir:
+                self.write_cfg("http", key, td)
+
+    def call_wget(self, src, fetch_dir=None):
         list_args = src.split('/')
         list_args = list_args[3:]
-        tempdir = tempfile.mkdtemp(prefix="http_", dir=self.cache_dir)
+        tempdir = None
 
-        wget_args = ['wget', '-r', '-np', '-nH', '-q', '--reject', '*.html',
-                '--cut-dirs={0}'.format(len(list_args)), src, '-P', tempdir]
+        if fetch_dir is None:
+            tempdir = tempfile.mkdtemp(prefix="http_", dir=self.cache_dir)
+            wget_args = ['wget', '-r', '-np', '-nH', '-q', '--reject', '*.html',
+                    '--cut-dirs={0}'.format(len(list_args)), src, '-P', tempdir]
+        else:
+            tempdir = fetch_dir
+            wget_args = ['wget', '-r', '-np', '-N', '-nH', '-q', '--reject',
+                    '*.html', '--cut-dirs={0}'.format(len(list_args)), src,
+                    '-P', tempdir]
+
         retval = subprocess.call(wget_args)
 
         if retval != 0:
             raise LinchpinError('Unable to fetch files with the following'
-                    ' command {0}'.format(wget_args.join(' ')))
+                    ' command {0}'.format(" ".join(wget_args)))
         return tempdir
