@@ -251,7 +251,7 @@ def drop(ctx, targets):
 
 
 @runcli.command()
-@click.argument('fetch_type', default=None, required=False, nargs=-1)
+@click.argument('fetch_type', default=None, required=False,nargs=-1)
 @click.argument('remote', default=None, required=True, nargs=1)
 @click.option('-r','--root', default=None, required=False)
 @pass_context
@@ -263,7 +263,7 @@ def fetch(ctx, fetch_type, remote, root):
 
     """
     try:
-        lpcli.lp_fetch(remote, fetch_type, root)
+        lpcli.lp_fetch(remote, ''.join(fetch_type), root)
     except Exception as e:
         raise LinchpinError(e)
         

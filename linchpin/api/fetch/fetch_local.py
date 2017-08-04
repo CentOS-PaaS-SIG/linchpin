@@ -27,28 +27,21 @@ class FetchLocal(Fetch):
 
 
     def fetch_files(self):
+        paths = []
         if self.root is not None:
             for ext in self.root:
-                td = tempfile.mkdtemp(prefix="local_", dir=self.cache_dir)
-                src = os.path.join(self.src, ext.lstrip('/'))
-                self.get_files(src, td)
-                self.tempdirs.append(td)
+                paths.append(os.path.join(self.src, ext.lstrip('/')))
         else:
-            tempdir = tempfile.mkdtemp(prefix="local_", dir=self.cache_dir)
-            self.get_files(self.src, tempdir)
+            paths.append(self.src)
+
+        for path in paths:
+            key = "{0}|{1}".format(self.dest, path)
+            fetch_dir = self.cfgs["local"].get(key, None)
+            if not fetch_dir:
+                td = tempfile.mkdtemp(prefix="local_", dir=self.cache_dir)
+                self.write_cfg("local", key, td)
+            else:
+                td = fetch_dir
+
+            self.copy_dir(path, td)
             self.tempdirs.append(td)
-
-    def get_files(self, src, tempdir):
-        for item in os.listdir(src):
-            try:
-                s = os.path.join(src, item)
-                d = os.path.join(tempdir, item)
-                if os.path.isdir(s):
-                    shutil.copytree(s, d)
-                else:
-                    shutil.copy2(s, d)
-            except OSError as e:
-                if e.errno == 17:
-                    raise LinchpinError('The {0} directory already'
-                    ' exists'.format(item))
-

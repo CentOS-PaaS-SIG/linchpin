@@ -20,7 +20,6 @@ class FetchHttp(Fetch):
         self.src = src.rstrip('/')
 
     def fetch_files(self):
-
         if self.root is not None:
             for ext in self.root:
                 src = os.path.join(self.src, ext.lstrip('/'))

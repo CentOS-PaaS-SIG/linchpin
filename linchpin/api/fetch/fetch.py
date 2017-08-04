@@ -61,7 +61,13 @@ class Fetch(object):
                 if not os.path.isdir(dest_path):
                     os.makedirs(dest_path)
 
-                shutil.copyfile(os.path.join(root, file), os.path.join(dest_path, file))
+                s = os.path.join(root, file)
+                d = os.path.join(dest_path, file)
+
+                if (not os.path.exists(d)) or (os.stat(d).st_mtime -
+                        os.stat(dest).st_mtime > 1) :
+                    shutil.copy2(s, d)
+
 
     def read_cfg(self):
         config = configparser.ConfigParser(delimiters=('='))
