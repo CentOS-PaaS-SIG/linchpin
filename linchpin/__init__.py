@@ -264,8 +264,10 @@ def fetch(ctx, fetch_type, remote, root):
     """
     try:
         lpcli.lp_fetch(remote, ''.join(fetch_type), root)
-    except Exception as e:
-        raise LinchpinError(e)
+    except LinchpinError as e:
+        ctx.log_state(e)
+        sys.exit(1)
+
         
         
 
