@@ -1,5 +1,4 @@
 import os
-import shutil
 import urlparse
 import tempfile
 
@@ -17,9 +16,9 @@ class FetchLocal(Fetch):
             os.mkdir(self.cache_dir)
 
         src_parse = urlparse.urlparse(src)
-        self.src = os.path.abspath(os.path.join(src_parse.netloc, src_parse.path))
+        self.src = os.path.abspath(os.path.join(
+            src_parse.netloc, src_parse.path))
 
-    
         if not os.path.exists(self.src):
             raise LinchpinError('{0} is not a valid path'.format(src))
         if os.path.samefile(self.src, self.dest):

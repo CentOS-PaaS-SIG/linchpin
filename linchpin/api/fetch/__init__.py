@@ -3,8 +3,8 @@ from fetch_http import FetchHttp
 from fetch_git import FetchGit
 
 FETCH_CLASS = {
-        "FetchLocal" : FetchLocal,
-        "FetchHttp": FetchHttp,
-        "FetchGit": FetchGit
-        }
+    "FetchLocal": FetchLocal,
+    "FetchHttp": FetchHttp,
+    "FetchGit": FetchGit
+}
 __all__ = ["FetchLocal", "FetchHttp", "FetchGit"]

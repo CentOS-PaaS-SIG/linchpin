@@ -3,11 +3,12 @@ import subprocess
 import tempfile
 import requests
 
-from shutil import rmtree
 from fetch import Fetch
 from linchpin.exceptions import LinchpinError
 
+
 class FetchHttp(Fetch):
+
     def __init__(self, ctx, fetch_type, src, dest, cache_dir, root):
         super(FetchHttp, self).__init__(ctx, fetch_type, dest, root)
 
@@ -49,16 +50,17 @@ class FetchHttp(Fetch):
         if fetch_dir is None:
             tempdir = tempfile.mkdtemp(prefix="http_", dir=self.cache_dir)
             wget_args = ['wget', '-r', '-np', '-nH', '-q', '--reject', '*.html',
-                    '--cut-dirs={0}'.format(len(list_args)), src, '-P', tempdir]
+                         '--cut-dirs={0}'.format(len(list_args)),
+                         src, '-P', tempdir]
         else:
             tempdir = fetch_dir
             wget_args = ['wget', '-r', '-np', '-N', '-nH', '-q', '--reject',
-                    '*.html', '--cut-dirs={0}'.format(len(list_args)), src,
-                    '-P', tempdir]
+                         '*.html', '--cut-dirs={0}'.format(len(list_args)), src,
+                         '-P', tempdir]
 
         retval = subprocess.call(wget_args)
 
         if retval != 0:
             raise LinchpinError('Unable to fetch files with the following'
-                    ' command {0}'.format(" ".join(wget_args)))
+                                ' command {0}'.format(" ".join(wget_args)))
         return tempdir

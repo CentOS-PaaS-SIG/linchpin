@@ -423,29 +423,30 @@ class LinchpinAPI(object):
             raise LinchpinError(dest + " does not exist")
 
         fetch_aliases = {
-                "topology": self.get_evar("topologies_folder"),
-                "layout": self.get_evar("layouts_folder"),
-                "resources": self.get_evar("resources_folder"),
-                "hooks": self.get_evar("hooks_folder"),
-                "workspace": "workspace"
-                }
+            "topology": self.get_evar("topologies_folder"),
+            "layout": self.get_evar("layouts_folder"),
+            "resources": self.get_evar("resources_folder"),
+            "hooks": self.get_evar("hooks_folder"),
+            "workspace": "workspace"
+        }
 
         fetch_dir = fetch_aliases.get(fetch_type, "workspace")
 
 
         cache_path = os.path.abspath(os.path.join(os.path.expanduser('~'),
-                '.cache/linchpin'))
+                                                  '.cache/linchpin'))
         if not os.path.exists(cache_path):
             os.mkdir(cache_path)
 
         protocol_regex = OrderedDict([
-                ('((git|ssh|http(s)?)|(git@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?',
+            ('((git|ssh|http(s)?)|(git@[\w\.]+))'
+                '(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?',
                 'FetchGit'),
-                ('^(http|https)://', 'FetchHttp'),
-                ('^(file)://', 'FetchLocal')
-                ])
+            ('^(http|https)://', 'FetchHttp'),
+            ('^(file)://', 'FetchLocal')
+        ])
         fetch_protocol = None
-        for regex,obj in protocol_regex.items():
+        for regex, obj in protocol_regex.items():
             if re.match(regex, src):
                 fetch_protocol = obj
                 break
@@ -453,8 +454,8 @@ class LinchpinAPI(object):
             raise LinchpinError("The protocol speficied is not supported")
 
 
-        fetch_class = FETCH_CLASS[fetch_protocol] (self.ctx, fetch_dir, src,
-                dest, cache_path, root)
+        fetch_class = FETCH_CLASS[fetch_protocol](self.ctx, fetch_dir, src,
+                                                  dest, cache_path, root)
         fetch_class.fetch_files()
 
         fetch_class.copy_files()

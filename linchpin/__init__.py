@@ -3,12 +3,6 @@
 import os
 import sys
 import click
-import shutil
-import logging
-import requests
-
-from distutils import dir_util
-from jinja2 import Environment, PackageLoader
 
 from linchpin.cli import LinchpinCli
 from linchpin.exceptions import LinchpinError
@@ -251,9 +245,9 @@ def drop(ctx, targets):
 
 
 @runcli.command()
-@click.argument('fetch_type', default=None, required=False,nargs=-1)
+@click.argument('fetch_type', default=None, required=False, nargs=-1)
 @click.argument('remote', default=None, required=True, nargs=1)
-@click.option('-r','--root', default=None, required=False)
+@click.option('-r', '--root', default=None, required=False)
 @pass_context
 def fetch(ctx, fetch_type, remote, root):
     """
@@ -268,8 +262,6 @@ def fetch(ctx, fetch_type, remote, root):
         ctx.log_state(e)
         sys.exit(1)
 
-        
-        
 
 def _get_pinfile_path(pinfile=None, exists=True):
 

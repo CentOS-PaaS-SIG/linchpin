@@ -1,10 +1,10 @@
 import os
-import sys
 import shutil
 import configparser
 
 from abc import ABCMeta, abstractmethod
 from linchpin.exceptions import LinchpinError
+
 
 class Fetch(object):
     __metaclass__ = ABCMeta
@@ -15,9 +15,8 @@ class Fetch(object):
         self.root = root
         self.tempdirs = []
         self.dest = os.path.abspath(os.path.realpath(dest))
-        
         self.config_path = os.path.abspath(os.path.join(os.path.expanduser('~'),
-                        '.cache/linchpin/fetch.conf'))
+                                           '.cache/linchpin/fetch.conf'))
         self.cfgs = self.read_cfg()
 
     @abstractmethod
@@ -45,7 +44,7 @@ class Fetch(object):
                 if not dir_exists:
                     shutil.rmtree(dest_dir)
                 raise LinchpinError('The {0} directory does not exist in '
-                        '{1}'.format(self.fetch_type, self.src))
+                                    '{1}'.format(self.fetch_type, self.src))
             self.copy_dir(src_dir, dest_dir)
 
     def copy_dir(self, src, dest):
@@ -59,13 +58,19 @@ class Fetch(object):
                 dest_path = os.path.join(dest, rel_path)
 
                 if not os.path.isdir(dest_path):
-                    os.makedirs(dest_path)
+                    try:
+                        os.makedirs(dest_path)
+                    except OSError as e:
+                        if e.errno == 17:
+                            raise LinchpinError('File {0} already exists'
+                                                ' in destination directory'
+                                                .format(e.filename))
 
                 s = os.path.join(root, file)
                 d = os.path.join(dest_path, file)
 
                 if (not os.path.exists(d)) or (os.stat(d).st_mtime -
-                        os.stat(dest).st_mtime > 1) :
+                                               os.stat(dest).st_mtime > 1):
                     shutil.copy2(s, d)
 
 
@@ -89,7 +94,6 @@ class Fetch(object):
                 continue
             for k, v in config.items(section):
                 cfgs[section][k] = v
-        
         return cfgs
 
     def write_cfg(self, section, key, value):
