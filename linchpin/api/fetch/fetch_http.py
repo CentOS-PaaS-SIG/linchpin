@@ -16,8 +16,17 @@ class FetchHttp(Fetch):
         if not os.path.exists(self.cache_dir):
             os.mkdir(self.cache_dir)
 
-        if requests.get(src).status_code != 200:
+        try:
+            r = requests.get(src)
+            r.raise_for_status()
+        except requests.exceptions.HTTPError:
+            raise LinchpinError("An HTTP error occurred")
+        except requests.exceptions.RequestException:
+            raise LinchpinError("Could not connect to given URL")
+
+        if r.status_code != 200:
             raise LinchpinError("The entered url is invalid")
+
         self.src = src.rstrip('/')
 
     def fetch_files(self):
@@ -49,18 +58,18 @@ class FetchHttp(Fetch):
 
         if fetch_dir is None:
             tempdir = tempfile.mkdtemp(prefix="http_", dir=self.cache_dir)
-            wget_args = ['wget', '-r', '-np', '-nH', '-q', '--reject', '*.html',
+            wget_args = ['wget', '-r', '-np', '-nH', '-q', '--reject', 'html',
                          '--cut-dirs={0}'.format(len(list_args)),
                          src, '-P', tempdir]
         else:
             tempdir = fetch_dir
             wget_args = ['wget', '-r', '-np', '-N', '-nH', '-q', '--reject',
-                         '*.html', '--cut-dirs={0}'.format(len(list_args)), src,
+                         'html', '--cut-dirs={0}'.format(len(list_args)), src,
                          '-P', tempdir]
 
         retval = subprocess.call(wget_args)
 
         if retval != 0:
             raise LinchpinError('Unable to fetch files with the following'
-                                ' command {0}'.format(" ".join(wget_args)))
+                                ' command:\n{0}'.format(" ".join(wget_args)))
         return tempdir

@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from nose.tools import *
 
@@ -188,6 +189,26 @@ def test_run_playbook():
             failed = True
 
     assert not failed
+
+@with_setup(setup_lp_api)
+def test_fetch_local():
+    lpc.workspace = '/tmp/workspace'
+    if not os.path.exists(lpc.workspace):
+        os.mkdir(lpc.workspace)
+
+    lpa = LinchpinAPI(lpc)
+    src_path = os.path.join(os.path.expanduser('~'),
+                        'linchpin/linchpin/tests/mockdata/dummy/fetch_workspace/ws1')
+    src_uri = 'file://{0}'.format(src_path)
+    lpa.lp_fetch(src_uri, 'workspace', None)
+
+    src_list = os.listdir(src_path)
+    dest_list = os.listdir(lpc.workspace)
+    src_list.sort()
+    dest_list.sort()
+    shutil.rmtree(lpc.workspace)
+    shutil.rmtree(os.path.join(os.path.expanduser('~'), '.cache/linchpin/'))
+    assert_list_equal(src_list, dest_list)
 
 
 def main():

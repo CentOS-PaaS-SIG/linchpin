@@ -1,6 +1,10 @@
 import os
 import shutil
-import configparser
+try:
+    import configparser
+except ImportError:
+        import ConfigParser as configparser
+
 
 from abc import ABCMeta, abstractmethod
 from linchpin.exceptions import LinchpinError
@@ -75,14 +79,14 @@ class Fetch(object):
 
 
     def read_cfg(self):
-        config = configparser.ConfigParser(delimiters=('='))
+        config = configparser.ConfigParser()
         config.optionxform = str
 
         cfgs = {}
         if not os.path.exists(self.config_path):
-            config['http'] = {}
-            config['git'] = {}
-            config['local'] = {}
+            config.add_section('http')
+            config.add_section('git')
+            config.add_section('local')
             with open(self.config_path, 'w') as configfile:
                 config.write(configfile)
         else:
@@ -93,14 +97,14 @@ class Fetch(object):
             if config.items(section) is None:
                 continue
             for k, v in config.items(section):
-                cfgs[section][k] = v
+                config.set(section, k, v)
         return cfgs
 
     def write_cfg(self, section, key, value):
-        config = configparser.ConfigParser(delimiters=('='))
+        config = configparser.ConfigParser()
         config.optionxform = str
         config.read(self.config_path)
-        config[section][key] = value
+        config.set(section, key, value)
 
         with open(self.config_path, 'w') as configfile:
             config.write(configfile)
