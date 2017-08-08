@@ -97,7 +97,7 @@ class Fetch(object):
             if config.items(section) is None:
                 continue
             for k, v in config.items(section):
-                config.set(section, k, v)
+                cfgs[section][k] = v
         return cfgs
 
     def write_cfg(self, section, key, value):

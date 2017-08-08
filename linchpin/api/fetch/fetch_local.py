@@ -34,7 +34,8 @@ class FetchLocal(Fetch):
             paths.append(self.src)
 
         for path in paths:
-            key = "{0}|{1}".format(self.dest, path)
+            key = "{0}|{1}".format(self.dest.replace(':', ''),
+                                   path.replace(':', ''))
             fetch_dir = self.cfgs["local"].get(key, None)
             if not fetch_dir:
                 td = tempfile.mkdtemp(prefix="local_", dir=self.cache_dir)

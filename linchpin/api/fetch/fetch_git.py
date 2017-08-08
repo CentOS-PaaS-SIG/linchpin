@@ -16,7 +16,9 @@ class FetchGit(Fetch):
             os.mkdir(self.cache_dir)
 
     def fetch_files(self):
-        key = "{0}|{1}".format(self.dest, self.src)
+        # key cannot contain ':' since linchpin does not support python 3
+        key = "{0}|{1}".format(self.dest.replace(':', ''),
+                               self.src.replace(':', ''))
 
         fetch_dir = self.cfgs["git"].get(key, None)
         td = self.call_clone(fetch_dir)

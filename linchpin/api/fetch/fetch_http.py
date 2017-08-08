@@ -33,7 +33,8 @@ class FetchHttp(Fetch):
         if self.root is not None:
             for ext in self.root:
                 src = os.path.join(self.src, ext.lstrip('/'))
-                key = "{0}|{1}".format(self.dest, src)
+                key = "{0}|{1}".format(self.dest.replace(':', ''),
+                                       src.replace(':', ''))
                 fetch_dir = self.cfgs["http"].get(key, None)
 
                 td = self.call_wget(src, fetch_dir)
@@ -42,7 +43,8 @@ class FetchHttp(Fetch):
                 if not fetch_dir:
                     self.write_cfg("http", key, td)
         else:
-            key = "{0}|{1}".format(self.dest, self.src)
+            key = "{0}|{1}".format(self.dest.replace(':', ''),
+                                   self.src.replace(':', ''))
             fetch_dir = self.cfgs["http"].get(key, None)
 
             td = self.call_wget(self.src, fetch_dir)
@@ -70,6 +72,10 @@ class FetchHttp(Fetch):
         retval = subprocess.call(wget_args)
 
         if retval != 0:
+            try:
+                os.rmdir(tempdir)
+            except OSError:
+                pass
             raise LinchpinError('Unable to fetch files with the following'
                                 ' command:\n{0}'.format(" ".join(wget_args)))
         return tempdir
