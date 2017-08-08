@@ -1,0 +1,25 @@
+---
+- hosts: '{{ hosts | default("all") }}'
+  become: '{{ become | default("no") }}'
+  become_user: '{{ become_user | default("root") }}'
+  remote_user: '{{ remote_user | default("root") }}'
+  tasks:
+    - debug:
+        msg: "hello"
+    - shell: "cat /tmp/inventory.json"
+      register: inv_cat
+    - set_fact:
+        inv: "{{ inv_cat.stdout | regex_replace('\\\"', '\"') }}"
+    - name: "declare ip_list"
+      set_fact:
+        ip_list: []
+    - include: fetch_ips.yml ip_dict={{ item }}
+      with_items: "{{ inv }}"
+    - name: "render fixed template openshift template for 3 node cluster"
+      template:
+        src: openshift_3node_template.j2
+        dest: /tmp/openshift_3node.inv
+    - name: "render 1 node inventory"
+      template:
+        src: general_1node_template.j2
+        dest: /tmp/general_1node.inv

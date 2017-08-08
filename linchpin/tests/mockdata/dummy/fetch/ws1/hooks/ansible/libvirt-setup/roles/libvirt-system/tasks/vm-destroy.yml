@@ -1,0 +1,13 @@
+- name: Stop VM
+  virt:
+    name: "{{ vm_name }}"
+    state: "destroyed"
+
+- name: Undefine VM
+  virt:
+    name: "{{ vm_name }}"
+    command: "undefine"
+
+- name: Remove libvirt image
+  file: path="{{ qemu_img_path }}/{{ vm_name }}.img" state=absent
+  when: qemu_img_path is defined

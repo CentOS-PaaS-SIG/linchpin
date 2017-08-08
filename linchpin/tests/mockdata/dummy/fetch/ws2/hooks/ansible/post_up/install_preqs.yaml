@@ -1,0 +1,107 @@
+---
+- hosts: example
+  remote_user: root
+  tasks:
+    - debug:
+        msg: "Trye"
+    - name: "install yum utils"
+      yum:
+        name: "yum-utils"
+        state: "latest"
+    - name: "Add config manager"
+      shell: "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
+    - name: "Install docker ce"
+      yum:
+        name: "docker-ce"
+        state: "present"
+    - name: "install epel release"
+      yum: 
+        name: "epel-release"
+        state: "present"
+    - name: "Install libvirtd and dependencies"
+      yum:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - qemu-kvm
+        - qemu-img
+        - virt-manager
+        - libvirt
+        - libvirt-python
+        - libvirt-client
+        - virt-install
+        - virt-viewer
+        - bridge-utils
+    - name: "install linchpin prereq"
+      yum:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      with_items:
+        - git
+        - python-pip
+        - libselinux-python
+        - python-devel
+        - libffi-devel
+        - openssl-devel
+        - redhat-rpm-config
+        - gcc
+    - name: "start libvirt "
+      command: "systemctl start libvirtd"
+    - name: "enable libvirt "
+      command: "systemctl enable libvirtd"
+#    - name: "install virtualenv"
+#      pip: 
+#        name: "virtualenv"
+#        state: "present"
+#    - git:
+#        repo: "https://github.com/CentOS-PaaS-SIG/linch-pin/"
+#        dest: "/tmp/linchpin"
+#      ignore_errors: yes
+#    - pip:
+#        name: file:///tmp/linchpin
+#        virtualenv: /tmp/lpvenv
+#      ignore_errors: yes
+#    - name: clone ci-pipeline too
+#      git:
+#        repo: "https://github.com/CentOS-PaaS-SIG/ci-pipeline"
+#        dest: "/tmp/ci-pipeline"
+#      ignore_errors: yes
+# ############
+#    - name: "add a libvirt group"
+#      group:
+#        name: libvirt
+#        state: present
+#    - name: "change configuration file"
+#      lineinfile:
+#        destfile: /etc/libvirt/libvirtd.conf
+#        regexp: '^#unix_sock_group = "libvirt"'
+#        insertafter: '^#unix_sock_group '
+#        line: 'unix_sock_group = "libvirt"'
+#    - name: "change configuration file"
+#      lineinfile:
+#        destfile: /etc/libvirt/libvirtd.conf
+#        regexp: '^#unix_sock_rw_perms = "0770"'
+#        insertafter: '^#unix_sock_rw_perms'
+#        line: 'unix_sock_rw_perms = "0770"'
+#    - name: "restart libvirt "
+#      command: "systemctl restart libvirtd"
+#    - name: "create libvirt group"
+#      group:
+#        name: "libvirt"
+#    - name: "Create a ssh user"
+#      user:
+#        name: "e2euser2"
+#    - name: "add to group"
+#      command: "usermod -G libvirt -a root"
+#    - name: Generate SSH keys
+#      shell: ssh-keygen -b 2048 -t rsa -f /root/.ssh/id_rsa -q -N ""
+#      ignore_errors: yes
+#    - name: Generate SSH keys
+#      shell: ssh-keygen -b 2048 -t rsa -f /home/e2euser/id_rsa -q -N ""
+#      ignore_errors: yes
+#    - name: Set authorized key took from file
+#      authorized_key:
+#        user: e2euser
+#        state: present
+#        path: "/home/e2euser/id_rsa.pub"

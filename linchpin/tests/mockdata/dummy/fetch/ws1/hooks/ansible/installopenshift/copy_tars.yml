@@ -1,0 +1,40 @@
+---
+- hosts: '{{ hosts | default("all") }}'
+  become: '{{ become | default("no") }}'
+  become_user: '{{ become_user | default("root") }}'
+  remote_user: '{{ remote_user | default("root") }}'
+  tasks:
+    - name: copy the tests 
+      copy:
+        src: paas-sig-ci-patched.tar.gz 
+        dest: /tmp/paas-sig-ci-patched.tar.gz
+    - name: copy the openshift-ansible
+      copy:
+        src: openshift-ansible-patched.tar.gz
+        dest: /tmp/openshift-ansible-patched.tar.gz
+    - name: extract the files
+      unarchive:
+        src: /tmp/openshift-ansible-patched.tar.gz
+        dest: /tmp/
+        remote_src: true
+    - name: extract tests
+      unarchive:
+        src: /tmp/paas-sig-ci-patched.tar.gz
+        dest: /tmp/
+        remote_src: true
+    - name: install python3
+      yum:
+        name: "python34"
+        state: "present"
+    - name: "Install pre req deps"
+      command:  "ansible-playbook -i /tmp/openshift_3node.yml install_deps.yml -e'ansible_python_interpreter=/usr/bin/python3'"
+      args:
+        chdir: "/tmp/openshift-ansible"
+    - name: "Install openshift"
+      command:  "ansible-playbook -i /tmp/openshift_3node.yml playbooks/byo/config.yml -e 'ansible_python_interpreter=/usr/bin/python3' -e'openshift_disable_check=memory_availability' "
+      args:
+        chdir: "/tmp/openshift-ansible"
+    - name: "run e2e tests"
+      command:  "ansible-playbook -i /tmp/openshift_3node.yml run_e2e_tests.yml"
+      args:
+        chdir: "/tmp/paas-sig-ci/playbooks/openshift"

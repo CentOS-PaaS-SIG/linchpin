@@ -1,0 +1,6 @@
+---
+
+- name: Allocate VM storage on LVM
+  lvol: vg={{ storage }} lv=lv_{{ item.key }}_root size={{ item.value.disk }}
+  when: storage is defined
+  with_dict: '{{ libvirt_systems }}'

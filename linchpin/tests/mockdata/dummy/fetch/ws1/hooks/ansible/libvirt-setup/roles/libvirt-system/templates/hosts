@@ -1,0 +1,4 @@
+[libvirt]
+{% for ip_d in ips %}
+{{ ip_d["name"] }} ansible_ssh_host={{ ip_d["ip"] }}
+{% endfor %}

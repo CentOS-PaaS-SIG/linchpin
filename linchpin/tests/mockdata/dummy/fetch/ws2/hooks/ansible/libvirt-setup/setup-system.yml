@@ -1,0 +1,52 @@
+---
+- hosts: '{{ hosts | default("all") }}'
+  become: '{{ become | default("no") }}'
+  become_user: '{{ become_user | default("root") }}'
+  remote_user: '{{ remote_user | default("root") }}'
+  tasks:
+      - name: Determine if we have EPEL 7
+        command: "/bin/sh -c 'test -f /etc/yum.repos.d/epel.repo || test -f /etc/yum.repos.d/epel7.repo'"
+        ignore_errors: True
+        register: have_epel7
+        changed_when: False
+
+      - name: Install EPEL 7 rpm
+        yum: name=https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm state=latest
+        when: have_epel7.rc != 0
+
+      - copy:
+          dest: /etc/yum.repos.d/walters-buildtools.repo
+          content: |
+              [walters-buildtools]
+              name=Copr repo for buildtools owned by walters
+              baseurl=https://copr-be.cloud.fedoraproject.org/results/walters/buildtools/epel-7-$basearch/
+              gpgcheck=1
+              gpgkey=https://copr-be.cloud.fedoraproject.org/results/walters/buildtools/pubkey.gpg
+              enabled=1
+              enabled_metadata=1
+
+      - copy:
+          dest: /etc/yum.repos.d/atomic7-testing.repo
+          content: |
+              [atomic7-testing]
+              name=CentOS7 Atomic Testing
+              baseurl=http://cbs.centos.org/repos/atomic7-testing/x86_64/os/
+              gpgcheck=0
+              enabled=1
+
+      - yum: name={{ item }} state=latest
+        with_items:
+            - rsync
+            - virt-install
+            - ansible
+            - ostree
+            - rpm-ostree
+            - rpmdistro-gitoverlay
+            - libvirt-daemon
+            - libvirt-daemon-kvm
+            - net-tools
+            - python34
+
+      - service: name={{ item }} state=started
+        with_items:
+            - libvirt

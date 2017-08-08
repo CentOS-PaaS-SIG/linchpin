@@ -1,0 +1,69 @@
+---
+- name: "Delete prefetched image "
+  file:
+    path: "/var/lib/libvirt/images/{{ img_url | basename }}"
+    state: "absent"
+  ignore_errors: yes
+
+- name: "Get the image"
+  get_url:
+    url: "{{ img_url | default('https://download.fedoraproject.org/pub/fedora/linux/releases/25/CloudImages/x86_64/images/Fedora-Cloud-Base-25-1.3.x86_64.qcow2') }}"
+    dest: /var/lib/libvirt/images/ 
+    mode: 0777
+  register: task_result
+  until: task_result.changed == true
+  retries: 5
+  delay: 5
+  ignore_errors: yes  
+
+- name: "Generate ssh keys"
+  shell: "ssh-keygen -t rsa -f ~/.ssh/id_rsa -N '';cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys" 
+  args:
+    creates: /root/.ssh/id_rsa
+
+- name: "cat out contents of id_rsa.pub"
+  shell: "cat /root/.ssh/id_rsa.pub"
+  register: pubkey
+
+- name: set facts for the run
+  set_fact:
+    qemu_img_path: "{{ qemu_img_path | default('/var/lib/libvirt/images') }}"
+    bridge: "{{ bridge| default('virbr0') }}"
+    memory: "{{ memory| default(3072) }}"
+    img_url: "{{ img_url | default('https://download.fedoraproject.org/pub/fedora/linux/releases/25/CloudImages/x86_64/images/Fedora-Cloud-Base-25-1.3.x86_64.qcow2') }}"
+    admin_ssh_rsa: "{{ pubkey['stdout'] }}"
+    admin_passwd: "{{ admin_passwd | default('adminpass') }}"
+    name: "{{ name | default('testvmsk') }}"
+    count: "{{ count | default(2) }}"
+    disk_size: "{{ disk_size | default(10000) }}"
+    ips: []
+
+- include: vm-init.yml
+  when: state=='present'
+
+- name: "register resource count"
+  shell: python -c "print [x for x in range( 0, {{ count | default(1) }} )]"
+  register: res_count
+  
+- name: Allocate VM storage on LVM
+  lvol:
+    vg: "{{ storage }}"
+    lv: "lv_{{ item[0] }}{{ item[2] }}_root"
+    size: "{{ item[1] }}"
+  when: storage is defined and state=='present'
+  with_nested:
+    - ["{{ name }}"]
+    - ["{{ disk_size }}"]
+    - "{{ res_count.stdout }}"
+
+- include: vm-import.yml vm_name={{ item[0] }}{{ item[1] }}
+  with_nested:
+    - ["{{ name }}"]
+    - "{{ res_count.stdout }}"
+  when: state == 'present'
+
+- include: vm-destroy.yml vm_name={{ item[0] }}{{ item[1] }}
+  with_nested:
+    - ["{{ name }}"]
+    - "{{ res_count.stdout }}"
+  when: state == 'absent'

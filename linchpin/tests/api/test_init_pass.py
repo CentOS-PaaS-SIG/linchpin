@@ -198,7 +198,7 @@ def test_fetch_local():
 
     lpa = LinchpinAPI(lpc)
     src_path = os.path.join(os.path.expanduser('~'),
-                        'linchpin/linchpin/tests/mockdata/dummy/fetch_workspace/ws1')
+                        'linchpin/linchpin/tests/mockdata/dummy/fetch/ws1')
     src_uri = 'file://{0}'.format(src_path)
     lpa.lp_fetch(src_uri, 'workspace', None)
 

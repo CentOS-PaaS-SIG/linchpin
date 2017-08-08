@@ -1,0 +1,33 @@
+[OSEv3:children]
+masters
+nodes
+etcd
+
+[OSEv3:vars]
+#ansible_ssh_private_key_file=/tmp/ci-factory
+ansible_ssh_user=root
+#ansible_become=True
+deployment_type=origin
+containerized=True
+openshift_release=v1.3.1
+openshift_router_selector='router=true'
+openshift_registry_selector='registry=true'
+openshift_master_default_subdomain=10.8.200.138.xip.io
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+openshift_master_htpasswd_users={'admin': '$apr1$zgSjCrLt$1KSuj66CggeWSv.D.BXOA1', 'user': '$apr1$.gw8w9i1$ln9bfTRiD6OwuNTG5LvW50'}
+
+[masters]
+{{ context[0] }} openshift_hostname={{ context[0] }} openshift_public_hostname={{ context[0] }}
+
+[nodes]
+{{ context[2] }} openshift_hostname={{ context[2] }} openshift_public_hostname={{ context[2] }} openshift_node_labels="{'router':'true','registry':'true'}"
+{{ context[1] }} openshift_hostname={{ context[1] }} openshift_public_hostname={{ context[1] }} openshift_node_labels="{'router':'true','registry':'true'}"
+{{ context[0] }} openshift_hostname={{ context[0] }} openshift_public_hostname={{ context[0] }} openshift_schedulable=false 
+
+[etcd]
+{{ context[0] }}
+
+[all]
+{{ context[2] }} openshift_hostname={{ context[2] }} openshift_public_hostname={{ context[2] }}
+{{ context[1] }} openshift_hostname={{ context[1] }} openshift_public_hostname={{ context[1] }}
+{{ context[0] }} openshift_hostname={{ context[0] }} openshift_public_hostname={{ context[0] }}

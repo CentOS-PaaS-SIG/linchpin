@@ -1,0 +1,11 @@
+---
+- name: This is a hello-world example
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Debug task.
+      debug:
+        msg: "hello"
+    - name: "linchpin context vars"
+      debug:
+        msg: "{{ test_var }}"
