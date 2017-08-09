@@ -236,7 +236,7 @@ def test_fetch_local():
 @with_setup(setup_lp_fetch_env)
 def test_fetch_git():
     src_url = 'https://github.com/agharibi/SampleLinchpinDirectory.git'
-    lpa.lp_fetch(src_url, 'topology', 'ws1')
+    lpa.lp_fetch(src_url, 'topologies', 'ws1')
 
     src_list = ['topologies']
     dest_list = os.listdir(lpc.workspace)
@@ -249,8 +249,8 @@ def test_fetch_git():
 @with_setup(setup_lp_fetch_env)
 def test_fetch_cache():
     src_url = 'https://github.com/agharibi/SampleLinchpinDirectory.git'
-    lpa.lp_fetch(src_url, 'topology', 'ws1')
-    lpa.lp_fetch(src_url, 'topology', 'ws1')
+    lpa.lp_fetch(src_url, 'topologies', 'ws1')
+    lpa.lp_fetch(src_url, 'topologies', 'ws1')
 
     cache_path = os.path.join(os.path.expanduser('~'), '.cache/linchpin/git')
 

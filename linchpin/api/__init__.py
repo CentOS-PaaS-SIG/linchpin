@@ -423,8 +423,8 @@ class LinchpinAPI(object):
             raise LinchpinError(dest + " does not exist")
 
         fetch_aliases = {
-            "topology": self.get_evar("topologies_folder"),
-            "layout": self.get_evar("layouts_folder"),
+            "topologies": self.get_evar("topologies_folder"),
+            "layouts": self.get_evar("layouts_folder"),
             "resources": self.get_evar("resources_folder"),
             "hooks": self.get_evar("hooks_folder"),
             "workspace": "workspace"
