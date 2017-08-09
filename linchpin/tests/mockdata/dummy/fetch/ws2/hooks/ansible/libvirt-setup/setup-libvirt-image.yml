@@ -1,7 +1,0 @@
----
-- hosts: '{{ hosts | default("all") }}'
-  become: '{{ become | default("no") }}'
-  become_user: '{{ become_user | default("root") }}'
-  remote_user: '{{ remote_user | default("root") }}'
-  roles:
-    - libvirt-system

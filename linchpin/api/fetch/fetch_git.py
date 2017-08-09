@@ -16,7 +16,11 @@ class FetchGit(Fetch):
             os.mkdir(self.cache_dir)
 
     def fetch_files(self):
-        # key cannot contain ':' since linchpin does not support python 3
+        # The key cannot contain ':' since linchpin does not support python 3.
+        # Configparser uses ':' as a delmiter, which poses problem when using
+        # urls in key during parsing. Delimiters can be specified when
+        # initializing a configparser object in python 3 so this does not
+        # become an issue.
         key = "{0}|{1}".format(self.dest.replace(':', ''),
                                self.src.replace(':', ''))
 
