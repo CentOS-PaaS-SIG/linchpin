@@ -247,13 +247,18 @@ def drop(ctx, targets):
 @runcli.command()
 @click.argument('fetch_type', default=None, required=False, nargs=-1)
 @click.argument('remote', default=None, required=True, nargs=1)
-@click.option('-r', '--root', default=None, required=False)
+@click.option('-r', '--root', default=None, required=False,
+              help='Use this to specify the subdirectory of the workspace of'
+              ' the root url')
 @pass_context
 def fetch(ctx, fetch_type, remote, root):
     """
-    Fetches a aspecified linchpin directory from a remote location.
+    Fetches a specified linchpin workspace or component from a remote location.
 
-    Fetch types: topology, layout, resources, hooks, workspace
+    :param fetch_type: Specifies which component of a workspace the user
+    wants to fetch. Types include: topology, layout, resources, hooks, workspace
+
+    :param REMOTE: The URL or URI of the remote directory
 
     """
     try:
