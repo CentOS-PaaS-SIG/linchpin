@@ -1,0 +1,12 @@
+- name: Install libvirt
+  yum: name={{ item }}
+  with_items:
+    - libvirt
+    - libvirt-python
+    - virt-install
+    - genisoimage
+- name: Enable/Start libvirtd
+  service: name=libvirtd state=started enabled=yes
+- name: get list of vms
+  virt: command=list_vms
+  register: virt_vms

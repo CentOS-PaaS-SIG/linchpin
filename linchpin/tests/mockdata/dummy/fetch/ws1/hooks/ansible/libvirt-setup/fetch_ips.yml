@@ -1,0 +1,22 @@
+- name: debug
+  debug:
+    msg: "{{ ip_dict }}"
+- name: "virsh dump xml"
+  command: "virsh dumpxml {{ ip_dict['name'] }}"
+  register: xmldump
+- name: "debug xml dump"
+  debug:
+    msg: "{{ xmldump }}"
+- name: "parse xml for mac "
+  set_fact: 
+    mac_addr: "{{ xmldump.stdout | regex_findall('mac address=.*') | get_mac }}"
+- name: "get arp output"
+  command: "arp -na"
+  register: arpoutput
+- name: "debug arp"
+  set_fact:
+    ipaddr: "{{ arpoutput.stdout_lines | get_ip_arp(mac_addr) }}"
+
+- name: "append to ip_list"
+  set_fact:
+    ip_list: "{{ ip_list + [ipaddr] }}"

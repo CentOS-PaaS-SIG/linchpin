@@ -1,0 +1,163 @@
+- name: "set fact for vm exists"
+  set_fact:
+    vm_exists: false
+  when: vm_name not in virt_vms.list_vms 
+
+- name: "set fact for vm exists"
+  set_fact:
+    vm_exists: true 
+  when: vm_name in virt_vms.list_vms 
+
+- name: VM template folder
+  action: file dest=/tmp/vm-{{ vm_name }} state=directory
+  when: vm_exists == false
+
+- name: Figure out Base Image Name
+  set_fact:
+     base_image: "{{ img_url | basename | regex_replace('\\.(gz|xz)$', '') }}"
+  when: vm_exists == false
+
+#- name: "Get {{ img_url }}"
+#  get_url:
+#    url: "{{ img_url }}"
+#    dest: "/tmp/{{ img_url | basename }}"
+#  ignore_errors: yes
+#  register: task_result
+#  until: task_result.changed == true
+#  retries: 3
+#  when: vm_exists == false
+
+- name: "Copy the image to tmp"
+  copy:
+    src: "/var/lib/libvirt/images/{{ img_url | basename }}"
+    dest: "/tmp/{{ img_url | basename }}"
+    remote_src: true
+
+- stat: path="/tmp/{{ base_image }}.gz"
+  register: base_image_gz
+  when: vm_exists == false
+
+- stat: path="/tmp/{{ base_image }}.xz"
+  register: base_image_xz
+  when: vm_exists == false
+- name: Extract {{ base_image }}.xz"
+  command: xz -d /tmp/{{ base_image }}.xz
+  when: base_image_xz.stat.exists == True and vm_exists == false 
+
+- name: Extract {{ base_image }}.gz"
+  command: gzip -d /tmp/{{ base_image }}.gz
+  when: base_image_gz.stat.exists == True and vm_exists == false 
+
+- name: Install {{ base_image }} to LVM
+  command: qemu-img convert -O raw /tmp/{{ base_image }} /dev/{{ storage }}/lv_{{ vm_name }}_root
+  when: storage is defined and vm_exists == false
+
+- name: Install {{ base_image }} to FILE
+  command: creates="{{ qemu_img_path }}/{{ vm_name }}.img"
+           cp "/tmp/{{ base_image }}" "{{ qemu_img_path }}/{{ vm_name }}.img"
+  when: qemu_img_path is defined and vm_exists == false
+
+- name: Remove {{ base_image }}
+  file: path="/tmp/{{ base_image }}" state=absent
+  when: vm_exists == false
+
+- name: "Add more storage to base image"
+  command: qemu-img resize "{{ qemu_img_path }}/{{ vm_name }}.img" +10G
+
+- name: Prepare cloud-config/user-data
+  template: src="templates/cloud-config/user-data" dest="/tmp/vm-{{ vm_name }}/user-data"
+
+- name: Prepare cloud-config/meta-data
+  template: src="templates/cloud-config/meta-data" dest="/tmp/vm-{{ vm_name }}/meta-data"
+  when: vm_exists == false
+
+- name: Generate cidata cd image for cloud-init
+  command: mkisofs -o /tmp/vm-{{ vm_name }}.iso -V cidata -r -J --quiet /tmp/vm-{{ vm_name }}/user-data /tmp/vm-{{ vm_name }}/meta-data
+  when: vm_exists == false
+
+- name: Generate add admin script
+  template: src="templates/add_account.sh" dest="/tmp/add_account-{{ vm_name }}"
+  when: vm_exists == false
+
+- name: Execute add admin script
+  command: virt-customize --run /tmp/add_account-{{ vm_name }} --selinux-relabel -a "{{ qemu_img_path }}/{{ vm_name }}.img"
+  when: virt_customize is defined and vm_exists == false
+
+- name: Disable cloud-config for virt-install
+  set_fact:
+     disk_cdrom: ""
+  when: item.value.virt_customize is defined and vm_exists == false
+
+- name: Enable cloud-config for virt-install
+  set_fact:
+     disk_cdrom: "--disk path=/tmp/vm-{{ vm_name }}.iso,device=cdrom --wait 10"
+  when: item.value.virt_customize is not defined and vm_exists == false
+
+- name: Enable LVM Install
+  set_fact:
+     disk: "--disk /dev/{{ storage }}/lv_{{ vm_name }}_root,bus=virtio"
+  when: storage is defined and vm_exists == false
+
+- name: Enable FILE Install
+  set_fact:
+     disk: "--disk path={{ qemu_img_path }}/{{ vm_name }}.img,format=qcow2,bus=virtio,cache=none"
+  when: qemu_img_path is defined and vm_exists == false
+
+- name: "debug to look"
+  debug:
+    msg: "storage: {{ storage | default('nothing') }} disk:{{ disk | default('nothing')}}"
+
+
+### Install the VM using the image we downloaded
+- name: Install VM
+  command: virt-install --import --name {{ vm_name }} --autostart --network bridge={{ bridge }},model=virtio --ram {{ memory }} {{ disk }} {{ disk_cdrom }} --os-type=linux --nographics
+  when: vm_exists == false
+  ignore_errors: yes
+
+- name: Remove cloud-init cdrom
+  command: virsh change-media {{ vm_name }} hda --eject --config
+  when: virt_customize is not defined and vm_exists == false
+
+- name: Start VM
+  virt:
+    name: "{{ vm_name }}"
+    state: "running"
+  when: virt_customize is not defined and vm_exists == false
+
+- name: Give host time to boot
+  pause: seconds=20
+  when: virt_customize is defined and vm_exists == false
+
+- name: Register hosts ip address
+  shell: arp -na | grep $(virsh dumpxml {{ vm_name }} | xmllint --xpath 'string(//mac/@address)' -) | awk '{ print $2}' | sed 's/[\(\)]//g'
+  register: ip_address
+  when: vm_exists == false
+
+- name: "create ipdict"
+  set_fact:
+    ip_dict:
+      name: "{{ vm_name }}"
+      ip: "{{ ip_address.stdout }}"
+  when: vm_exists == false
+
+- name: "Save ip addreses"
+  set_fact:
+    ips: "{{ ips + [ip_dict] }}"
+  when: vm_exists == false
+
+- name: Record hosts ip address
+  template: src="templates/hosts" dest="/tmp/libvirt-hosts"
+ # delegate_to: 127.0.0.1
+  when: vm_exists == false
+
+- name: "Dump the dict"
+  copy:
+    content: "{{ ips }}"
+    dest: "/tmp/inventory.json"
+  ignore_errors: yes
+
+- wait_for: host={{ ip_address.stdout }} port=22 state=started timeout=60
+  tags:
+  - post_install
+  when: vm_exists == false
+  ignore_errors: yes
