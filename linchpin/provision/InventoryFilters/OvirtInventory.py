@@ -23,7 +23,7 @@ class OvirtInventory(InventoryFilter):
 
         if len(topo['ovirt_vms_res']) == 0:
             return ""
-        no_of_groups = len(topo['ovirt_vms_res'])
+        #no_of_groups = len(topo['ovirt_vms_res'])
         inven_hosts = self.get_host_ips(topo)
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)
