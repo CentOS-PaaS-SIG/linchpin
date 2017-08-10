@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding: utf-8 -*-
-
+# flake8: noqa
 # Copyright (c) 2014 Hewlett-Packard Development Company, L.P.
 # Copyright (c) 2013, Benno Joy <benno@ansible.com>
 # Copyright (c) 2013, John Dewey <john@dewey.ws>
@@ -17,20 +17,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this software.  If not, see <http://www.gnu.org/licenses/>.
-
-# flake8: noqa
-
-from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.openstack import *
-
-
-try:
-    import shade
-    from shade import meta
-    HAS_SHADE = True
-except ImportError:
-    HAS_SHADE = False
-
 
 ANSIBLE_METADATA = {'status': ['preview'],
                     'supported_by': 'community',
@@ -206,6 +192,16 @@ options:
      required: false
      default: true
      version_added: "2.2"
+   availability_zone:
+     description:
+       - Availability zone in which to create the server.
+     required: false
+   count:
+     description:
+       - number of instances to launch
+     required: false
+     default: None
+     version_added: "2.3"
 requirements:
     - "python >= 2.6"
     - "shade"
@@ -312,12 +308,12 @@ EXAMPLES = '''
            username: admin
            password: admin
            project_name: admin
-         name: vm1
-         image: 4f905f38-e52a-43d2-b6ec-754a13ffb529
-         key_name: ansible_key
-         timeout: 200
-         flavor: 4
-         nics: "net-id=4cb08b20-62fe-11e5-9d70-feff819cdc9f,net-id=542f0430-62fe-11e5-9d70-feff819cdc9f..."
+        name: vm1
+        image: 4f905f38-e52a-43d2-b6ec-754a13ffb529
+        key_name: ansible_key
+        timeout: 200
+        flavor: 4
+        nics: "net-id=4cb08b20-62fe-11e5-9d70-feff819cdc9f,net-id=542f0430-62fe-11e5-9d70-feff819cdc9f..."
 
 - name: Creates a new instance and attaches to a network and passes metadata to the instance
   os_server:
@@ -350,7 +346,7 @@ EXAMPLES = '''
     key_name: ansible_key
     timeout: 200
     flavor: 4
-      network: another_network
+    network: another_network
 
 # Create a new instance with 4G of RAM on a 75G Ubuntu Trusty volume
 - name: launch a compute instance
@@ -383,6 +379,18 @@ EXAMPLES = '''
         - photos
         - music
 '''
+
+from ansible.module_utils.basic import AnsibleModule		
+from ansible.module_utils.openstack import openstack_full_argument_spec,\
+                                           openstack_find_nova_addresses,\
+                                           openstack_module_kwargs
+
+try:
+    import shade
+    from shade import meta
+    HAS_SHADE = True
+except ImportError:
+    HAS_SHADE = False
 
 
 def _exit_hostvars(module, cloud, server, changed=True):
@@ -442,6 +450,18 @@ def _network_args(module, cloud):
     return args
 
 
+def _parse_meta(meta):
+    if isinstance(meta, str):
+        metas = {}
+        for kv_str in meta.split(","):
+            k, v = kv_str.split("=")
+            metas[k] = v
+        return metas
+    if not meta:
+        return {}
+    return meta
+
+
 def _delete_server(module, cloud):
     try:
         cloud.delete_server(
@@ -496,12 +516,7 @@ def _create_server(module, cloud):
 
     nics = _network_args(module, cloud)
 
-    if isinstance(module.params['meta'], str):
-        metas = {}
-        for kv_str in module.params['meta'].split(","):
-            k, v = kv_str.split("=")
-            metas[k] = v
-        module.params['meta'] = metas
+    module.params['meta'] = _parse_meta(module.params['meta'])
 
     bootkwargs = dict(
         name=module.params['name'],
@@ -534,6 +549,27 @@ def _create_server(module, cloud):
     _exit_hostvars(module, cloud, server)
 
 
+def _update_server(module, cloud, server):
+    changed = False
+
+    module.params['meta'] = _parse_meta(module.params['meta'])
+
+    # cloud.set_server_metadata only updates the key=value pairs, it doesn't
+    # touch existing ones
+    update_meta = {}
+    for (k, v) in module.params['meta'].items():
+        if k not in server.metadata or server.metadata[k] != v:
+            update_meta[k] = v
+
+    if update_meta:
+        cloud.set_server_metadata(server, update_meta)
+        changed = True
+        # Refresh server vars
+        server = cloud.get_server(module.params['name'])
+
+    return (changed, server)
+
+
 def _create_server_count(module, cloud):
     count = module.params['count']
     name = module.params['name']
@@ -556,14 +592,8 @@ def _create_server_count(module, cloud):
         if not flavor_dict:
             module.fail_json(msg="Could not find any matching flavor")
 
-    nics = _network_args(module, cloud)
 
-    if isinstance(module.params['meta'], str):
-        metas = {}
-        for kv_str in module.params['meta'].split(","):
-            k, v = kv_str.split("=")
-            metas[k] = v
-        module.params['meta'] = metas
+    module.params['meta'] = _parse_meta(module.params['meta'])
 
     server_names = [ name+str(i) for i in range(1, count+1) ]
     servers = []
@@ -577,6 +607,7 @@ def _create_server_count(module, cloud):
                          but not Active state: " + server.status)
             servers.append(server)
         else:
+            nics = _network_args(module, cloud)
             bootkwargs = dict(
                 name=server_name,
                 image=image_id,
@@ -667,7 +698,8 @@ def _get_server_state(module, cloud):
                 msg="The instance is available but not Active state: "
                     + server.status)
         (ip_changed, server) = _check_floating_ips(module, cloud, server)
-        _exit_hostvars(module, cloud, server, ip_changed)
+        (server_changed, server) = _update_server(module, cloud, server)
+        _exit_hostvars(module, cloud, server, ip_changed or server_changed)
     if server and state == 'absent':
         return True
     if state == 'absent':
@@ -762,5 +794,6 @@ def main():
         module.fail_json(msg=str(e), extra_data=e.extra_data)
 
 
+# this is magic, see lib/ansible/module_common.py
 if __name__ == '__main__':
     main()

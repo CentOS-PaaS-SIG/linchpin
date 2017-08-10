@@ -15,7 +15,7 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 class LinchpinAliases(click.Group):
 
-    lp_commands = ['init', 'up', 'destroy']
+    lp_commands = ['init', 'up', 'destroy', 'fetch']
     lp_aliases = {
         'rise': 'up',
         'drop': 'destroy',
@@ -244,14 +244,31 @@ def drop(ctx, targets):
     pass
 
 
+@runcli.command()
+@click.argument('fetch_type', default=None, required=False, nargs=-1)
+@click.argument('remote', default=None, required=True, nargs=1)
+@click.option('-r', '--root', default=None, required=False,
+              help='Use this to specify the subdirectory of the workspace of'
+              ' the root url')
+@pass_context
+def fetch(ctx, fetch_type, remote, root):
+    """
+    Fetches a specified linchpin workspace or component from a remote location.
+
+    :param fetch_type: Specifies which component of a workspace the user
+    wants to fetch. Types include: topology, layout, resources, hooks, workspace
+
+    :param REMOTE: The URL or URI of the remote directory
+
+    """
+    try:
+        lpcli.lp_fetch(remote, ''.join(fetch_type), root)
+    except LinchpinError as e:
+        ctx.log_state(e)
+        sys.exit(1)
+
+
 def _get_pinfile_path(pinfile=None, exists=True):
-    """
-    Return full path to the pinfile
-
-    :param pinfile:
-        pinfile (Default: ctx.workspace)
-
-    """
 
     if not pinfile:
         pinfile = lpcli.pinfile
@@ -270,7 +287,6 @@ def _get_pinfile_path(pinfile=None, exists=True):
 # @pass_config
 # def topology(config):
 #     pass
-#
 #
 # @topology.command(name='list')
 # @click.option('--upstream',

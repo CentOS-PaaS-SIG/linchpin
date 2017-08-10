@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
 import os
+import re
 import sys
 import ast
 import yaml
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 from contextlib import contextmanager
 
 from ansible.inventory import Inventory
@@ -14,6 +15,7 @@ from ansible.executor.playbook_executor import PlaybookExecutor
 
 from linchpin.api.utils import yaml2json
 from linchpin.api.callbacks import PlaybookCallback
+from linchpin.api.fetch import FETCH_CLASS
 from linchpin.hooks import LinchpinHooks
 from linchpin.hooks.state import State
 from linchpin.exceptions import LinchpinError
@@ -410,6 +412,53 @@ class LinchpinAPI(object):
         """
 
         pass
+
+
+    def lp_fetch(self, src, fetch_type, root):
+        if root is not None:
+            root = list(filter(None, root.split(',')))
+
+        dest = self.ctx.workspace
+        if not os.path.exists(dest):
+            raise LinchpinError(dest + " does not exist")
+
+        fetch_aliases = {
+            "topologies": self.get_evar("topologies_folder"),
+            "layouts": self.get_evar("layouts_folder"),
+            "resources": self.get_evar("resources_folder"),
+            "hooks": self.get_evar("hooks_folder"),
+            "workspace": "workspace"
+        }
+
+        fetch_dir = fetch_aliases.get(fetch_type, "workspace")
+
+
+        cache_path = os.path.abspath(os.path.join(os.path.expanduser('~'),
+                                                  '.cache/linchpin'))
+        if not os.path.exists(cache_path):
+            os.mkdir(cache_path)
+
+        protocol_regex = OrderedDict([
+            ('((git|ssh|http(s)?)|(git@[\w\.]+))'
+                '(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?',
+                'FetchGit'),
+            ('^(http|https)://', 'FetchHttp'),
+            ('^(file)://', 'FetchLocal')
+        ])
+        fetch_protocol = None
+        for regex, obj in protocol_regex.items():
+            if re.match(regex, src):
+                fetch_protocol = obj
+                break
+        if fetch_protocol is None:
+            raise LinchpinError("The protocol speficied is not supported")
+
+
+        fetch_class = FETCH_CLASS[fetch_protocol](self.ctx, fetch_dir, src,
+                                                  dest, cache_path, root)
+        fetch_class.fetch_files()
+
+        fetch_class.copy_files()
 
 
     def find_topology(self, topology):
