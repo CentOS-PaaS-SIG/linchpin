@@ -18,6 +18,7 @@ outputs.topology_name.replace(' ', '_').lower()+'.output' ) }}"
       duffy_res: "{{ duffy_res }}"
       beaker_res: "{{ beaker_res }}"
       libvirt_res: "{{ libvirt_res }}"
+      ovirt_vms_res: "{{ ovirt_vms_res }}"
   when: state == "present" and inventory_layout is defined
 
 

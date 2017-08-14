@@ -98,6 +98,7 @@
     rax_res_grps: "{{ filtered_res_grps['rackspace'] | default([]) }}"
     bkr_res_grps: "{{ filtered_res_grps['beaker'] | default([]) }}"
     openshift_res_grps: "{{ filtered_res_grps['openshift'] | default([]) }}"
+    ovirt_res_grps: "{{ filtered_res_grps['ovirt'] | default([]) }}"
 
 - name: "Registering resource group vars from topology"
   set_fact:

@@ -1,0 +1,7 @@
+---
+# oVirt credentials example
+default:
+  url: https://ovirt.exampl.com/ovirt-engine/api
+  username: admin@internal
+  password: 123456
+  ca_file: /etc/pki/ovirt-engine/ca.pem

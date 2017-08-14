@@ -23,7 +23,8 @@
                         {"$ref": "#/definitions/libvirt"},
                         {"$ref": "#/definitions/duffy"},
                         {"$ref": "#/definitions/bkr_server"},
-                        {"$ref": "#/definitions/openshift_resource"}
+                        {"$ref": "#/definitions/openshift_resource"},
+                        {"$ref": "#/definitions/ovirt"}
                     ]
             }
         }
@@ -379,6 +380,122 @@
             },
             "required":["name","type"]
         },
+        "ovirt_vms": {
+            "type" : "object",
+            "properties" : {
+                "name": {
+                    "type":"string"
+                },
+                "type": {
+                    "type":"string",
+                    "pattern":"ovirt_vms"
+                },
+                "template": {
+                    "type":"string"
+                },
+                "cluster": {
+                    "type":"string"
+                },
+                "memory": {
+                    "type":"string"
+                },
+                "cpu_cores": {
+                    "type":"integer"
+                },
+                "cpu_shares": {
+                    "type":"integer"
+                },
+                "cpu_sockets": {
+                    "type":"integer"
+                },
+                "memory_guaranteed": {
+                    "type":"string"
+                },
+                "high_availability": {
+                    "type":"boolean"
+                },
+                "cloud_init": {
+                    "type":"object",
+                    "properties" : {
+                        "nic_ip_address": {
+                            "type":"string"
+                        },
+                        "nic_boot_protocol": {
+                            "type":"string"
+                        },
+                        "nic_netmask": {
+                            "type":"string"
+                        },
+                        "nic_gateway": {
+                            "type":"string"
+                        },
+                        "nic_name": {
+                            "type":"string"
+                        },
+                        "nic_on_boot": {
+                            "type":"string"
+                        },
+                        "host_name": {
+                            "type":"string"
+                        }
+                    }
+                },
+                "host": {
+                    "type":"string"
+                },
+                "cd_iso": {
+                    "type":"string"
+                },
+                "type": {
+                    "type":"string"
+                },
+		"operating_system": {
+                    "type":"string"
+		},
+		"disks": {
+                    "type":"array",
+		    "items": {
+                    "type":"object",
+                        "properties": {
+                            "name": {
+                                "type":"string"
+                            },
+                            "id": {
+                                "type":"string"
+                            },
+                            "interface": {
+                                "type":"string"
+                            },
+                            "bootable": {
+                                "type":"boolean"
+                            }
+                        }
+		    }
+		},
+		"nics": {
+                    "type":"array",
+		    "items": {
+                    "type":"object",
+                        "properties": {
+                            "name": {
+                                "type":"string"
+                            },
+                            "profile_name": {
+                                "type":"string"
+                            },
+                            "interface": {
+                                "type":"string"
+                            },
+                            "mac_address": {
+                                "type": "string"
+                            }
+                        }
+
+                    }
+		}
+            },
+            "required":["cluster"]
+        },
         "aws_ec2_key": {
             "type" : "object",
             "properties" : {
@@ -714,6 +831,42 @@
             "required":["resource_group_name","resource_group_type","resource_definitions"],
             "additionalProperties": true
         },
+	"ovirt": {
+            "type" : "object",
+            "properties" : {
+                "resource_group_name": {
+                    "type":"string"
+                },
+                "resource_group_type": {
+                    "type":"string",
+                    "pattern":"ovirt"
+                },
+                "resource_definitions":{
+                    "type": "array",
+                    "items" : {
+                        "oneOf" :
+                            [
+                                {"$ref": "#/definitions/ovirt_vms"}
+                             ]
+                    }
+                },
+                "credentials": {
+                    "description":"contains credentials associated to this resource",
+                    "type":"object",
+                     "properties": {
+                         "profile": {
+                           "type": "string"
+                         },
+                         "filename": {
+                           "type": "string"
+                         }
+                     }
+                 }
+            },
+            "required":["resource_group_name","resource_group_type","resource_definitions"],
+            "additionalProperties": true
+        },
+
         "aws": {
             "type" : "object",
             "properties" : {
