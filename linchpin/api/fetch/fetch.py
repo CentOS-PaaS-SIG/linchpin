@@ -75,7 +75,14 @@ class Fetch(object):
 
                 if (not os.path.exists(d)) or (os.stat(d).st_mtime -
                                                os.stat(dest).st_mtime > 1):
-                    shutil.copy2(s, d)
+                    try:
+                        if os.path.islink(s) and os.path.exists(os.readlink(s)):
+                            linkto = os.readlink(s)
+                            os.symlink(linkto, d)
+                        else:
+                            shutil.copy2(s, d)
+                    except (IOError, OSError):
+                        pass
 
 
     def read_cfg(self):
