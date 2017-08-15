@@ -46,7 +46,7 @@ class LinchpinAliases(click.Group):
         return rv
 
 
-def _handle_results(ctx, results):
+def _handle_results(ctx, results, return_code):
     """
     Handle results from the Ansible API. Either as a return value (retval)
     when running with the ansible console enabled, or as a list of TaskResult
@@ -60,7 +60,6 @@ def _handle_results(ctx, results):
         The dictionary of results for each target.
     """
 
-    retval = 0
 
     for k, v in results.iteritems():
         if not isinstance(v, int):
@@ -73,10 +72,8 @@ def _handle_results(ctx, results):
                     msg = tr._check_key('msg')
                     ctx.log_state("Target '{0}': {1} failed with"
                                   " error '{2}'".format(k, tr._task, msg))
-                    sys.exit(retval)
-        else:
-            if v:
-                sys.exit(v)
+
+    sys.exit(return_code)
 
 
 @click.group(cls=LinchpinAliases,
@@ -170,9 +167,9 @@ def up(ctx, targets):
     pf_w_path = _get_pinfile_path()
 
     try:
-        results = lpcli.lp_up(pf_w_path, targets)
+        return_code, results = lpcli.lp_up(pf_w_path, targets)
 
-        _handle_results(ctx, results)
+        _handle_results(ctx, results, return_code)
 
     except LinchpinError as e:
         ctx.log_state(e)
@@ -214,9 +211,9 @@ def destroy(ctx, targets):
     pf_w_path = _get_pinfile_path()
 
     try:
-        results = lpcli.lp_destroy(pf_w_path, targets)
+        return_code, results = lpcli.lp_destroy(pf_w_path, targets)
 
-        _handle_results(ctx, results)
+        _handle_results(ctx, results, return_code)
 
     except LinchpinError as e:
         ctx.log_state(e)

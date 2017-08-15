@@ -209,7 +209,7 @@ def test_get_evar_item():
 def test_run_playbook():
 
     pf_w_path = '{0}/{1}'.format(lpc.workspace, pinfile)
-    results = lpa.run_playbook(pf_w_path, targets=[provider])
+    return_code, results = lpa.run_playbook(pf_w_path, targets=[provider])
 
     for res in results[provider]:
         name = res._task.get_name()
