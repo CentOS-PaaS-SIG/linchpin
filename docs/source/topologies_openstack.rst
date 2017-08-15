@@ -245,7 +245,73 @@ Openstack Full Stack
         test_var2: "test_var2 msg is grp2 hello"
         test_var3: "test_var3 msg is grp2 hello"
 
-.. note::
 
-  Source of the above mentioned examples can be found at `Example Topologies <https://github.com/CentOS-PaaS-SIG/linch-pin/tree/master/ex_topo>`_
+Steps to provision Single Host
+==============================
+
+.. contents:: Topics
+
+.. _Steps to provision Single Host:
+
+Credentials
+```````````
+* save openstack credentials in standard ``clouds.yml`` file using below
+  format and save the directory path containing clouds.yml in environment variable ``CREDS_PATH``.
+
+.. code-block:: yaml
+
+   
+   ---
+    clouds: 
+      devstack:
+        auth:
+          username: "admin"
+          password: "Secret123"
+          project_name: "my-tenant"
+          auth_url: "http://192.168.122.33:5000/v2.0"
+          
+Topology
+````````
+* create topology file under ``$WORKSPACE/topologies/openstack_topology.yml``
+  as show below:
+
+.. code-block:: yaml
+
+   ---
+    topology_name: "osp-test"
+    resource_groups:
+      -
+        resource_group_name: "lp-test"
+        resource_group_type: "openstack"
+        resource_definitions:
+          - name: "test1"
+            type: "os_server"
+            flavor: "m1.small"
+            image: "rhel-6.5_jeos"
+            count: 1
+            keypair: "ci-factory"
+            networks:
+              - "e2e-openstack"
+            fip_pool: "192.168.122.1/24"
+        credentials:
+            filename: "clouds.yml"
+            profile: "devstack"
+
+Provision
+`````````
+
+* provision the above topology
+      
+.. code-block:: bash
+   
+   $ cd $WORKSPACE
+   $ export CREDS_PATH="/path/to/credential_dir/"
+   $ linchpin -v up 
+
  
+* Alternatively one could pass credentials path as an argument to linchpin
+
+.. code-block:: bash
+
+   $ cd $WORKSPACE
+   $ linchpin -v --creds-path /path/to/dir_containing_clouds.yml/ up
