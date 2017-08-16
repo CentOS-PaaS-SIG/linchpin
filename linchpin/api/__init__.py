@@ -338,7 +338,7 @@ class LinchpinAPI(object):
             if 'post' in self.pb_hooks:
                 self.hook_state = '{0}{1}'.format('post', playbook)
 
-        return return_code, results
+        return (return_code, results)
 
 
     def lp_rise(self, pinfile, targets='all'):

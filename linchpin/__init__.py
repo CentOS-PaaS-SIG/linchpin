@@ -46,7 +46,7 @@ class LinchpinAliases(click.Group):
         return rv
 
 
-def _handle_results(ctx, results, return_code):
+def _handle_results(ctx, results, return_code=1):
     """
     Handle results from the Ansible API. Either as a return value (retval)
     when running with the ansible console enabled, or as a list of TaskResult
@@ -60,7 +60,6 @@ def _handle_results(ctx, results, return_code):
         The dictionary of results for each target.
     """
 
-
     for k, v in results.iteritems():
         if not isinstance(v, int):
             trs = v
@@ -72,8 +71,12 @@ def _handle_results(ctx, results, return_code):
                     msg = tr._check_key('msg')
                     ctx.log_state("Target '{0}': {1} failed with"
                                   " error '{2}'".format(k, tr._task, msg))
-
-    sys.exit(return_code)
+                    sys.exit(return_code)
+            elif return_code:
+                sys.exit(return_code)
+        else:
+            if v:
+                sys.exit(v)
 
 
 @click.group(cls=LinchpinAliases,
