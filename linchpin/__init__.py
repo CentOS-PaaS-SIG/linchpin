@@ -46,7 +46,7 @@ class LinchpinAliases(click.Group):
         return rv
 
 
-def _handle_results(ctx, results, return_code=1):
+def _handle_results(ctx, results, return_code):
     """
     Handle results from the Ansible API. Either as a return value (retval)
     when running with the ansible console enabled, or as a list of TaskResult
