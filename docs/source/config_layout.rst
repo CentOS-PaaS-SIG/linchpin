@@ -61,3 +61,4 @@ Then your hosts object would look like this::
         count: 2
         host_groups:
           - ldap
+          - frontend
