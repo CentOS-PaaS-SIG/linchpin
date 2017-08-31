@@ -1,16 +1,11 @@
-Babel!=2.4.0,>=2.3.4
-requests!=2.12.2,!=2.13.0,>=2.10.0
 setuptools>=17.1
 pyopenssl
 boto>=2.40.0
 apache-libcloud>=0.20.1
-jsonschema>=2.5.1
 click
-tabulate
 camel
 yamlordereddictloader
 ansible>=2.3.1
-python-openstackclient
-shade>=1.8.0,!=1.21.0
+shade>=1.22.2
 naked
 cerberus
