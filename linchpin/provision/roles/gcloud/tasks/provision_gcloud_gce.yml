@@ -1,5 +1,5 @@
 - name: "Provision/Teardown resource by looping on count"
-  gce2:
+  gce:
     name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     num_instances: "{{ res_def['count'] | default(omit)}}"
     zone: "{{ res_def['region'] }}"
@@ -18,7 +18,7 @@
   when: not async
 
 - name: "Async:: Provision/Teardown resource by looping on count"
-  gce2:
+  gce:
     name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     num_instances: "{{ res_def['count'] | default(omit)}}"
     zone: "{{ res_def['region'] }}"
