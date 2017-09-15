@@ -1,15 +1,13 @@
 import os
 import sys
 import logging
-import json
-import io
 
 import xml.dom.minidom
 import xml.etree.ElementTree as eT
 
 from bkr.client.task_watcher import watch_tasks
 from bkr.client import BeakerCommand, BeakerWorkflow, BeakerJob
-from bkr.client import BeakerRecipeSet, BeakerRecipe, conf
+from bkr.client import BeakerRecipeSet, BeakerRecipe
 from bkr.common.hub import HubProxy
 from bkr.common.pyconfig import PyConfigParser
 
