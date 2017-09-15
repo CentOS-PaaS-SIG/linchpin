@@ -1,15 +1,13 @@
 import os
 import sys
 import logging
-import json
-import io
 
 import xml.dom.minidom
 import xml.etree.ElementTree as eT
 
 from bkr.client.task_watcher import watch_tasks
 from bkr.client import BeakerCommand, BeakerWorkflow, BeakerJob
-from bkr.client import BeakerRecipeSet, BeakerRecipe, conf
+from bkr.client import BeakerRecipeSet, BeakerRecipe
 from bkr.common.hub import HubProxy
 from bkr.common.pyconfig import PyConfigParser
 
@@ -118,7 +116,7 @@ class BkrFactory(BkrConn):
             # Add Host Requirements
             if 'force' in hostrequires:
                 # hostRequires element is created by BeakerRecipe, use it
-                (hostrequires_node = recipe_template.node.getElementsByTagName('hostRequires')[0])  # noqa E501
+                hostrequires_node = recipe_template.node.getElementsByTagName('hostRequires')[0]  # noqa E501
                 # all other filters are ignored if the hostname is forced,
                 # so the use of 'force' is mutually exclusive with the use
                 # of any other 'hostRequires' filters
