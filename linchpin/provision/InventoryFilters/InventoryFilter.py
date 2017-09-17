@@ -103,5 +103,7 @@ class InventoryFilter(object):
                 host_string = item
                 for var in common_vars:
                     if common_vars[var] == "__IP__":
-                        host_string += " " + var + "=" + item + " "
+                        host_string += " " + var + "=" + item
+                    else:
+                        host_string += " " + var + "=" + common_vars[var]
                 self.config.set(group, host_string)
