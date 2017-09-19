@@ -260,6 +260,9 @@
                 },
                 "count": {
                     "type":"number"
+                },
+		"tags": {
+                    "type":"string"
                 }
             },
             "required":["type","flavor","count","region","image","name"]
