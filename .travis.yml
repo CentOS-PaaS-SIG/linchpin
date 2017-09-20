@@ -11,7 +11,6 @@ cache: pip
 install:
   - pip install -U setuptools
   - pip install -U pip
-  - pip install -U 'ansible>=2.3.1,<2.4.0'
   - pip install .
   - pip install .[tests]
 
