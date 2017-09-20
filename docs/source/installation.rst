@@ -83,9 +83,9 @@ As an alternative, LinchPin can be installed via github. This may be done in ord
 
 .. code-block:: bash
 
-    (linchpin) $ git clone git://github.com/CentOS-PaaS-SIG/linch-pin
+    (linchpin) $ git clone git://github.com/CentOS-PaaS-SIG/linchpin
     ..snip..
-    (linchpin) $ pip install file://$PWD/linch-pin
+    (linchpin) $ pip install file://$PWD/linchpin
 
 
 .. seealso::
