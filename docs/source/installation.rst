@@ -42,12 +42,18 @@ Installing LinchPin
 
 Create a virtualenv to install the package using the following sequence of commands (requires virtualenvwrapper).
 
+
 .. code-block:: bash
 
     $ mkvirtualenv linchpin
     ..snip..
     (linchpin) $ pip install linchpin
     ..snip..
+
+.. note:: mkvirtualenv is optional dependency you can install from `http://virtualenvwrapper.readthedocs.io/en/latest/install.html` , if you would like to use python virtualenv use following commands instead.
+   mkdir linchpin
+   virtualenv linchpin
+   source linchpin/bin/activate
 
 To deactivate the virtualenv.
 
@@ -77,9 +83,9 @@ As an alternative, LinchPin can be installed via github. This may be done in ord
 
 .. code-block:: bash
 
-    (linchpin) $ git clone git://github.com/CentOS-PaaS-SIG/linch-pin
+    (linchpin) $ git clone git://github.com/CentOS-PaaS-SIG/linchpin
     ..snip..
-    (linchpin) $ pip install ./linch-pin
+    (linchpin) $ pip install file://$PWD/linchpin
 
 
 .. seealso::
