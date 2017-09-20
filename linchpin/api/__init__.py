@@ -2,43 +2,18 @@
 
 import os
 import re
-import sys
 import ast
 import yaml
-from collections import namedtuple, OrderedDict
-from contextlib import contextmanager
 
-from ansible.inventory import Inventory
-from ansible.vars import VariableManager
-from ansible.parsing.dataloader import DataLoader
-from ansible.executor.playbook_executor import PlaybookExecutor
+from collections import OrderedDict
 
 from linchpin.api.utils import yaml2json
-from linchpin.api.callbacks import PlaybookCallback
 from linchpin.api.fetch import FETCH_CLASS
+from linchpin.api.ansible_runner import ansible_runner
+
 from linchpin.hooks import LinchpinHooks
 from linchpin.hooks.state import State
 from linchpin.exceptions import LinchpinError
-
-
-@contextmanager
-def suppress_stdout():
-    """
-    This context manager provides tooling to make Ansible's Display class
-    not output anything when used
-    """
-
-    with open(os.devnull, "w") as devnull:
-        old_stdout = sys.stdout
-        old_stderr = sys.stderr
-        sys.stdout = devnull
-        sys.stderr = devnull
-
-        try:
-            yield
-        finally:
-            sys.stdout = old_stdout
-            sys.stderr = old_stderr
 
 
 class LinchpinAPI(object):
@@ -231,6 +206,7 @@ class LinchpinAPI(object):
 
         self.set_evar('inventory_file', inv_file)
         self.set_evar('topology_name', topology_name)
+
 
     def run_playbook(self, pinfile, targets='all', playbook='up'):
         """
@@ -485,7 +461,6 @@ class LinchpinAPI(object):
                             ' workspace'.format(topology))
 
 
-
     def _invoke_playbook(self, playbook='up', console=True):
         """
         Uses the Ansible API code to invoke the specified linchpin playbook
@@ -503,75 +478,9 @@ class LinchpinAPI(object):
         playbook_path = '{0}/{1}'.format(pb_path, self.get_cfg('playbooks',
                                                                playbook,
                                                                'site.yml'))
+        extra_var = self.get_evar()
 
-        loader = DataLoader()
-        variable_manager = VariableManager()
-        variable_manager.extra_vars = self.get_evar()
-        inventory = Inventory(loader=loader,
-                              variable_manager=variable_manager,
-                              host_list=[])
-        passwords = {}
-        # utils.VERBOSITY = 4
-
-        Options = namedtuple('Options', ['listtags',
-                                         'listtasks',
-                                         'listhosts',
-                                         'syntax',
-                                         'connection',
-                                         'module_path',
-                                         'forks',
-                                         'remote_user',
-                                         'private_key_file',
-                                         'ssh_common_args',
-                                         'ssh_extra_args',
-                                         'sftp_extra_args',
-                                         'scp_extra_args',
-                                         'become',
-                                         'become_method',
-                                         'become_user',
-                                         'verbosity',
-                                         'check'])
-
-        options = Options(listtags=False,
-                          listtasks=False,
-                          listhosts=False,
-                          syntax=False,
-                          connection='ssh',
-                          module_path=module_path,
-                          forks=100,
-                          remote_user='test',
-                          private_key_file=None,
-                          ssh_common_args=None,
-                          ssh_extra_args=None,
-                          sftp_extra_args=None,
-                          scp_extra_args=None,
-                          become=False,
-                          become_method='sudo',
-                          become_user='root',
-                          verbosity=0,
-                          check=False)
-
-        pbex = PlaybookExecutor(playbooks=[playbook_path],
-                                inventory=inventory,
-                                variable_manager=variable_manager,
-                                loader=loader,
-                                options=options,
-                                passwords=passwords)
-
-        if not console:
-            results = {}
-            return_code = 0
-
-            cb = PlaybookCallback()
-
-            with suppress_stdout():
-                pbex._tqm._stdout_callback = cb
-
-            return_code = pbex.run()
-            results = cb.results
-
-            return return_code, results
-        else:
-            # the console only returns a return_code
-            return_code = pbex.run()
-            return return_code, None
+        return ansible_runner(playbook_path,
+                              module_path,
+                              extra_var,
+                              console=console)

@@ -3,14 +3,8 @@ import yaml
 import json
 
 from cerberus import Validator
-from collections import namedtuple
 
-from ansible import utils
-from ansible.inventory import Inventory
-from ansible.vars import VariableManager
-from ansible.parsing.dataloader import DataLoader
-from ansible.executor.playbook_executor import PlaybookExecutor
-
+from linchpin.api.ansible_runner import ansible_runner
 from linchpin.exceptions import HookError
 from linchpin.hooks.action_managers.action_manager import ActionManager
 
@@ -89,82 +83,6 @@ class AnsibleActionManager(ActionManager):
         Loads the ansible specific managers and loaders
         """
 
-        self.loader = DataLoader()
-        self.variable_manager = VariableManager()
-        self.passwords = {}
-
-        if 'inventory_file' in self.target_data and self.context:
-            self.inventory = (
-                Inventory(loader=self.loader,
-                          variable_manager=self.variable_manager,
-                          host_list=self.target_data["inventory_file"]))
-        else:
-            self.inventory = Inventory(loader=self.loader,
-                                       variable_manager=self.variable_manager,
-                                       host_list=["localhost"])
-
-        Options = namedtuple('Options', ['listtags',
-                                         'listtasks',
-                                         'listhosts',
-                                         'syntax',
-                                         'connection',
-                                         'module_path',
-                                         'forks',
-                                         'remote_user',
-                                         'private_key_file',
-                                         'ssh_common_args',
-                                         'ssh_extra_args',
-                                         'sftp_extra_args',
-                                         'scp_extra_args',
-                                         'become',
-                                         'become_method',
-                                         'become_user',
-                                         'verbosity',
-                                         'check'])
-
-        utils.VERBOSITY = 4
-
-        self.options = Options(listtags=False,
-                               listtasks=False,
-                               listhosts=False,
-                               syntax=False,
-                               connection='ssh',
-                               module_path="",
-                               forks=100,
-                               remote_user='root',
-                               private_key_file=None,
-                               ssh_common_args=None,
-                               ssh_extra_args=None,
-                               sftp_extra_args=None,
-                               scp_extra_args=None,
-                               become=False,
-                               become_method="sudo",
-                               become_user='root',
-                               verbosity=utils.VERBOSITY,
-                               check=False)
-
-
-    def get_ansible_runner(self, playbook_path, extra_vars):
-
-        """
-        Fetches ansible runner based on playbook_path and extra_vars
-        :param playbook_path: path to playbook
-        :param extra_vars: variables to be passed
-        """
-
-        self.variable_manager.extra_vars = extra_vars
-
-        # verbosity through api doesn't work
-        pbex = PlaybookExecutor(playbooks=[playbook_path],
-                                inventory=self.inventory,
-                                variable_manager=self.variable_manager,
-                                loader=self.loader,
-                                options=self.options,
-                                passwords=self.passwords)
-
-        return pbex
-
-
     def get_ctx_params(self):
 
         """
@@ -179,7 +97,6 @@ class AnsibleActionManager(ActionManager):
             self.target_data.get("inventory_file", None))
 
         return ctx_params
-
 
     def execute(self):
 
@@ -212,7 +129,10 @@ class AnsibleActionManager(ActionManager):
 
             if self.context:
                 extra_vars.update(self.get_ctx_params())
-
-            pbex = self.get_ansible_runner(playbook, extra_vars)
-            # if desired, results can be collected with results = pbex.run()
-            pbex.run()
+            if 'inventory_file' in self.target_data and self.context:
+                return ansible_runner(playbook,
+                                      "",
+                                      extra_vars,
+                                      self.target_data["inventory_file"])
+            else:
+                return ansible_runner(playbook, "", extra_vars)
