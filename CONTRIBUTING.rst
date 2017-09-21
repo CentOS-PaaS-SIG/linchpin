@@ -72,9 +72,6 @@ In this way, each feature can track its changes and not conflict with others.
 .. note:: the ``-u`` option. This is a nicety of git, allowing future pushes
     to assume the remote ``origin`` and the branch ``contributing_docs``.
 
-Once the feature branch is created, development work continues as normal.
-After some code has been created, edited, or removed, please commit this work.
-
 .. code-block:: bash
 
     $ git add CONTRIBUTING.rst
@@ -90,13 +87,28 @@ Follow the guidance in the article by Chris Beams
 .. note:: It is considered useful to commit often. Usually small bits of work
     are easier to revert than large swaths of code across multiple files.
 
+Once the feature branch is created, development work continues as normal.
+After some code has been created, edited, or removed, please commit this work.
+
+
+Testing
++++++++
+
+Please test all commits before pushing.
+
+1. make sure you have all the extras_require packages installed, as listed in `setup.py <https://github.com/CentOS-PaaS-SIG/linchpin/blob/develop/setup.py>`_
+
+   * Specifically, one could perform ``pip install linchpin[tests]`` to install the requirements
+
+2. From the repository-root, follow the ``install`` and ``script`` sections of `.travis.yaml <https://github.com/CentOS-PaaS-SIG/linchpin/blob/develop/.travis.yml>`_
+3. The tests will have passed if all script commands exit with code 0
+
 
 Submit a Pull Request
 +++++++++++++++++++++
 
-Once a set of commits for the feature have been completed. It is time to
-submit a Pull Request. Please follow the github article,
-`Creating a pull request
+Once a set of commits for the feature have been completed and tested. It is time to
+submit a Pull Request. Please follow the github article, `Creating a pull request
 <https://help.github.com/articles/creating-a-pull-request/>`_.
 
 Submit the Pull Request (PR) against the ``develop`` branch.
