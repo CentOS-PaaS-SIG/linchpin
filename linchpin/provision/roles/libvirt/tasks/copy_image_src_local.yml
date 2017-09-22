@@ -57,34 +57,34 @@
 - name: "set image_src for uncompressed files"
   set_fact:
     img_src: "{{ local_image_src }}"
-  when: lismt_local.stat.mime_type == "application/octet-stream"
+  when: lismt_local.stat.mimetype == "application/octet-stream"
 
 - name: "set image_src basename to remove .xz extension"
   set_fact:
     img_src_basename: "{{ res_def['image_src'].split('.xz')[0] | basename }}"
-  when: lismt_local.stat.mime_type == "application/x-xz"
+  when: lismt_local.stat.mimetype == "application/x-xz"
 
 - name: "set img_src for xz compressed files"
   set_fact:
     img_src: "{{ local_image_path }}{{ img_src_basename }}"
-  when: lismt_local.stat.mime_type == "application/x-xz"
+  when: lismt_local.stat.mimetype == "application/x-xz"
 
 - name: "get img_src_basename extension"
   set_fact:
     img_src_ext: "{{ image_src_basename.split('.')[-1] }}"
-  when: lismt_local.stat.mime_type != "application/x-xz"
+  when: lismt_local.stat.mimetype != "application/x-xz"
 
 - name: "get img_src_basename extension"
   set_fact:
     img_src_ext: "{{ image_src_basename.split('.')[-2] }}"
-  when: lismt_local.stat.mime_type == "application/x-xz"
+  when: lismt_local.stat.mimetype == "application/x-xz"
 
 - name: Does img_src exist at local_image_path
   stat:
     path: "{{ img_src }}"
   become: yes
   register: ismt
-  when: lismt_local.stat.mime_type == "application/x-xz"
+  when: lismt_local.stat.mimetype == "application/x-xz"
 
   #- name: "DEBUG: ismt"
   #  debug:
@@ -93,7 +93,7 @@
 - name: uncompress xz local_image_src
   command: "xz -d --keep --force {{ local_image_src }}"
   become: yes
-  when: lismt_local.stat.mime_type == "application/x-xz" and ismt.stat.exists == false
+  when: lismt_local.stat.mimetype == "application/x-xz" and ismt.stat.exists == false
 
 - name: "cp img_src to match node name"
   copy:

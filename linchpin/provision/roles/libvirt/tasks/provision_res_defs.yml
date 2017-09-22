@@ -3,7 +3,8 @@
 #  include: provision_libvirt_storage.yml
 - name: "Get host from uri"
   set_fact:
-    uri_hostname: "{{ res_def['uri'] | get_host_from_uri }}"
+    #uri_hostname: "{{ res_def['uri'] | get_host_from_uri }}"
+    uri_hostname: "localhost"
 
 #  when: res_def['res_type']=="libvirt_storage" and state == "present"
 - name: set resource_type
