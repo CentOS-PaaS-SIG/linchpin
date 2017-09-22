@@ -48,6 +48,12 @@ class LinchpinAPI(object):
         if not self.workspace:
             self.workspace = os.path.realpath(os.path.curdir)
 
+        # create localhost file in workspace for user if it doesn't exist
+        if not os.path.exists('{0}/localhost'.format(self.workspace)):
+            with open('{0}/localhost'.format(self.workspace), 'w') as f:
+                f.write('localhost\n')
+
+
 
     def get_cfg(self, section=None, key=None, default=None):
         """
