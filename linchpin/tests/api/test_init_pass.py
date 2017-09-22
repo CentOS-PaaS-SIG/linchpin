@@ -205,22 +205,25 @@ def test_get_evar_item():
 #    lpc.load_config()
 #    lpa = LinchpinAPI(lpc)
 
+
 @with_setup(setup_lp_api)
 def test_run_playbook():
 
     pf_w_path = '{0}/{1}'.format(lpc.workspace, pinfile)
     return_code, results = lpa.run_playbook(pf_w_path, targets=[provider])
 
+    failed = False
     for res in results[provider]:
         name = res._task.get_name()
-        failed = False
         if res.is_failed():
             failed = True
 
     assert not failed
 
+
 @with_setup(setup_lp_fetch_env)
 def test_fetch_local():
+
     src_path = os.path.join(mockpath, 'fetch/ws1')
     src_uri = 'file://{0}'.format(src_path)
     lpa.lp_fetch(src_uri, 'workspace', None)
@@ -233,18 +236,20 @@ def test_fetch_local():
     shutil.rmtree(os.path.join(os.path.expanduser('~'), '.cache/linchpin/'))
     assert_list_equal(src_list, dest_list)
 
+
 @with_setup(setup_lp_fetch_env)
 def test_fetch_git():
     src_url = 'https://github.com/agharibi/SampleLinchpinDirectory.git'
     lpa.lp_fetch(src_url, 'topologies', 'ws1')
 
-    src_list = ['topologies']
+    src_list = ['topologies', 'localhost']
     dest_list = os.listdir(lpc.workspace)
 
     shutil.rmtree(lpc.workspace)
     shutil.rmtree(os.path.join(os.path.expanduser('~'), '.cache/linchpin/'))
 
     assert_list_equal(src_list, dest_list)
+
 
 @with_setup(setup_lp_fetch_env)
 def test_fetch_cache():
