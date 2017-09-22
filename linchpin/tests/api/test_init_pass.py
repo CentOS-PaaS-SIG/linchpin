@@ -213,10 +213,12 @@ def test_run_playbook():
     return_code, results = lpa.run_playbook(pf_w_path, targets=[provider])
 
     failed = False
-    for res in results[provider]:
-        name = res._task.get_name()
-        if res.is_failed():
-            failed = True
+    if return_code:
+        failed = True
+        for res in results[provider]:
+            name = res._task.get_name()
+            if res.is_failed():
+                print('name: {}'.format(name))
 
     assert not failed
 
@@ -239,10 +241,11 @@ def test_fetch_local():
 
 @with_setup(setup_lp_fetch_env)
 def test_fetch_git():
+
     src_url = 'https://github.com/agharibi/SampleLinchpinDirectory.git'
     lpa.lp_fetch(src_url, 'topologies', 'ws1')
 
-    src_list = ['topologies', 'localhost']
+    src_list = ['topologies']
     dest_list = os.listdir(lpc.workspace)
 
     shutil.rmtree(lpc.workspace)
@@ -253,6 +256,7 @@ def test_fetch_git():
 
 @with_setup(setup_lp_fetch_env)
 def test_fetch_cache():
+
     src_url = 'https://github.com/agharibi/SampleLinchpinDirectory.git'
     lpa.lp_fetch(src_url, 'topologies', 'ws1')
     lpa.lp_fetch(src_url, 'topologies', 'ws1')
