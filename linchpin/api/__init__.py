@@ -49,6 +49,8 @@ class LinchpinAPI(object):
             self.workspace = os.path.realpath(os.path.curdir)
 
 
+
+
     def get_cfg(self, section=None, key=None, default=None):
         """
         Get cfgs value(s) by section and/or key, or the whole cfgs object
@@ -208,7 +210,7 @@ class LinchpinAPI(object):
         self.set_evar('topology_name', topology_name)
 
 
-    def run_playbook(self, pinfile, targets='all', playbook='up'):
+    def run_playbook(self, pinfile, targets=[], playbook='up'):
         """
         This function takes a list of targets, and executes the given
         playbook (provison, destroy, etc.) for each provided target.
@@ -271,6 +273,10 @@ class LinchpinAPI(object):
         else:
             raise LinchpinError("One or more invalid targets found")
 
+        # create localhost file in workspace for user if it doesn't exist
+        if not os.path.exists('{0}/localhost'.format(self.workspace)):
+            with open('{0}/localhost'.format(self.workspace), 'w') as f:
+                f.write('localhost\n')
 
         for target in targets:
             self.set_evar('topology', self.find_topology(
@@ -296,6 +302,7 @@ class LinchpinAPI(object):
 
             if 'pre' in self.pb_hooks:
                 self.hook_state = '{0}{1}'.format('pre', playbook)
+
 
             # invoke the appropriate playbook
             return_code, results[target] = (

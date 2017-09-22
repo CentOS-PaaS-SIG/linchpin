@@ -80,8 +80,10 @@ class ContextData(object):
         self.cfg_data['logger']['file'] = self.logfile
 
         self.evars = self.cfg_data.get('evars', {})
-    
+
+
     def load_new_config(self, provider='dummy'):
+
         self.cfg_data = {}
 
         expanded_path = None
@@ -100,7 +102,7 @@ class ContextData(object):
                 existing_paths.append(expanded_path)
 
         if len(existing_paths) == 0:
-            raise Linchpinerror('Configuration file not foud in'
+            raise LinchpinError('Configuration file not foud in'
                                 ' path: {0}'.format(CONFIG_PATH))
         try:
             for path in existing_paths:
@@ -122,7 +124,7 @@ class ContextData(object):
         except ConfigParser.InterpolationSyntaxError as e:
             raise LinchpinError('Unable to parse configuration file properly:'
                             '{0}'.format(e))
-    
+
         # override logger file
         self.cfg_data['logger']['file'] = self.logfile
 
