@@ -23,7 +23,7 @@ from copy import copy
 
 # import module snippets
 from ansible.module_utils.basic import AnsibleModule    # NOQA
-from ansible.module_utils.urls import import fetch_url     # NOQA
+from ansible.module_utils.urls import fetch_url     # NOQA
 
 
 DOCUMENTATION = '''
