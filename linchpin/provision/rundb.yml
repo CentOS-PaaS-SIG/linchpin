@@ -1,0 +1,28 @@
+---
+
+- name: "RunDB Testing"
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: "set table"
+      set_fact:
+        rundb_table: test-this
+    - name: "set db_path"
+      set_fact:
+        rundb_path: /tmp/rundb-test.json
+    - name: "initialize rundb"
+      rundb:
+        conn_str: "{{ rundb_path }}"
+        operation: init
+        table: "{{ rundb_table }}"
+      register: rundb_id
+    - name: "rundb_id value"
+      debug:
+        var: rundb_id
+
+
+#operation:
+#run_id:
+#table: (aka target in linchpin)
+#key:
+#value:

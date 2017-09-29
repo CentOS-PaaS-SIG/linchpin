@@ -1,0 +1,7 @@
+{
+    "ANSIBLE_MODULE_ARGS": {
+        "table": "test-debug",
+        "conn_str": "/tmp/rundb-debug.json",
+        "operation": "init"
+    }
+}
