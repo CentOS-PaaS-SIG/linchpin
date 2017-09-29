@@ -2,6 +2,7 @@
 
 import os
 import re
+import sys
 import ast
 import yaml
 
@@ -10,9 +11,10 @@ from collections import OrderedDict
 from linchpin.api.utils import yaml2json
 from linchpin.api.fetch import FETCH_CLASS
 from linchpin.api.ansible_runner import ansible_runner
-
-from linchpin.hooks import LinchpinHooks
 from linchpin.hooks.state import State
+from linchpin.hooks import LinchpinHooks
+from linchpin.rundb import DB_SCHEMA
+
 from linchpin.exceptions import LinchpinError
 
 
@@ -28,10 +30,12 @@ class LinchpinAPI(object):
 
         self.ctx = ctx
         base_path = '/'.join(os.path.dirname(__file__).split('/')[0:-2])
-        pkg = self.get_cfg(section='lp',
-                           key='pkg',
-                           default='linchpin')
+        pkg = self.get_cfg(section='lp', key='pkg', default='linchpin')
         self.lp_path = '{0}/{1}'.format(base_path, pkg)
+
+        # assign the run_db to the API class
+        self.run_db = self.ctx.run_db
+
         self.set_evar('from_api', True)
 
         self.hook_state = None
@@ -47,8 +51,6 @@ class LinchpinAPI(object):
 
         if not self.workspace:
             self.workspace = os.path.realpath(os.path.curdir)
-
-
 
 
     def get_cfg(self, section=None, key=None, default=None):
@@ -210,120 +212,6 @@ class LinchpinAPI(object):
         self.set_evar('topology_name', topology_name)
 
 
-    def run_playbook(self, pinfile, targets=[], playbook='up'):
-        """
-        This function takes a list of targets, and executes the given
-        playbook (provison, destroy, etc.) for each provided target.
-
-        :param pinfile: Provided PinFile, with available targets,
-
-        :param targets: A tuple of targets to run. (default: 'all')
-        """
-
-        pf = yaml2json(pinfile)
-
-        # playbooks check whether from_api is defined
-        self.ctx.log_debug('from_api: {0}'.format(self.get_evar('from_api')))
-
-        # playbooks check whether from_cli is defined
-        # if not, vars get loaded from linchpin.conf
-        self.set_evar('from_api', True)
-        self.set_evar('lp_path', self.lp_path)
-
-        # do we display the ansible output to the console?
-        ansible_console = False
-        if self.ctx.cfgs.get('ansible'):
-            ansible_console = (
-                ast.literal_eval(self.ctx.cfgs['ansible'].get('console',
-                                                              'False')))
-
-        if not ansible_console:
-            ansible_console = self.ctx.verbose
-
-        self.set_evar('default_resources_path', '{0}/{1}'.format(
-                      self.ctx.workspace,
-                      self.get_evar('resources_folder',
-                                    default='resources')))
-
-        # playbooks still use this var, keep it here
-        self.set_evar('default_inventories_path',
-                      '{0}/{1}'.format(self.ctx.workspace,
-                                       self.get_evar('inventories_folder',
-                                                     default='inventories')))
-
-        # add this because of magic_var evaluation in ansible
-        self.set_evar('inventory_dir', self.get_evar(
-                      'default_inventories_path',
-                      default='inventories'))
-
-        self.set_evar('state', 'present')
-
-
-        if playbook == 'destroy':
-            self.set_evar('state', 'absent')
-
-        results = {}
-
-        # determine what targets is equal to
-        if (set(targets) ==
-                set(pf.keys()).intersection(targets) and len(targets) > 0):
-            pass
-        elif len(targets) == 0:
-            targets = set(pf.keys()).difference()
-        else:
-            raise LinchpinError("One or more invalid targets found")
-
-        # create localhost file in workspace for user if it doesn't exist
-        if not os.path.exists('{0}/localhost'.format(self.workspace)):
-            with open('{0}/localhost'.format(self.workspace), 'w') as f:
-                f.write('localhost\n')
-
-        for target in targets:
-            self.set_evar('topology', self.find_topology(
-                          pf[target]["topology"]))
-
-            if 'layout' in pf[target]:
-                self.set_evar('layout_file',
-                              '{0}/{1}/{2}'.format(self.ctx.workspace,
-                                                   self.get_evar(
-                                                       'layouts_folder'),
-                                                   pf[target]["layout"]))
-
-            # parse topology_file and set inventory_file
-            self.set_magic_vars()
-
-            # set the current target data
-            self.target_data = pf[target]
-            self.target_data["extra_vars"] = self.get_evar()
-
-            # note : changing the state triggers the hooks
-            self.pb_hooks = self.get_cfg('hookstates', playbook)
-            self.ctx.log_debug('calling: {0}{1}'.format('pre', playbook))
-
-            if 'pre' in self.pb_hooks:
-                self.hook_state = '{0}{1}'.format('pre', playbook)
-
-
-            # invoke the appropriate playbook
-            return_code, results[target] = (
-                self._invoke_playbook(playbook=playbook,
-                                      console=ansible_console)
-            )
-
-            if not return_code:
-                self.ctx.log_state("Action '{0}' on Target '{1}' is "
-                                   "complete".format(playbook, target))
-
-            # FIXME Check the result[target] value here, and fail if applicable.
-            # It's possible that a flag might allow more targets to run, then
-            # return an error code at the end.
-
-            if 'post' in self.pb_hooks:
-                self.hook_state = '{0}{1}'.format('post', playbook)
-
-        return (return_code, results)
-
-
     def lp_rise(self, pinfile, targets='all'):
         """
         DEPRECATED
@@ -466,6 +354,144 @@ class LinchpinAPI(object):
 
         raise LinchpinError('Topology {0} not found in'
                             ' workspace'.format(topology))
+
+
+    def run_playbook(self, pinfile, targets=[], playbook='up'):
+        """
+        This function takes a list of targets, and executes the given
+        playbook (provison, destroy, etc.) for each provided target.
+
+        :param pinfile: Provided PinFile, with available targets,
+
+        :param targets: A tuple of targets to run. (default: 'all')
+        """
+
+        pf = yaml2json(pinfile)
+
+        # playbooks check whether from_api is defined
+        self.ctx.log_debug('from_api: {0}'.format(self.get_evar('from_api')))
+
+        # playbooks check whether from_cli is defined
+        # if not, vars get loaded from linchpin.conf
+        self.set_evar('from_api', True)
+        self.set_evar('lp_path', self.lp_path)
+
+        # do we display the ansible output to the console?
+        ansible_console = False
+        if self.ctx.cfgs.get('ansible'):
+            ansible_console = (
+                ast.literal_eval(self.ctx.cfgs['ansible'].get('console',
+                                                              'False')))
+
+        if not ansible_console:
+            ansible_console = self.ctx.verbose
+
+        self.set_evar('default_resources_path', '{0}/{1}'.format(
+                      self.ctx.workspace,
+                      self.get_evar('resources_folder',
+                                    default='resources')))
+
+        # playbooks still use this var, keep it here
+        self.set_evar('default_inventories_path',
+                      '{0}/{1}'.format(self.ctx.workspace,
+                                       self.get_evar('inventories_folder',
+                                                     default='inventories')))
+
+        # add this because of magic_var evaluation in ansible
+        self.set_evar('inventory_dir', self.get_evar(
+                      'default_inventories_path',
+                      default='inventories'))
+
+        self.set_evar('state', 'present')
+
+
+        if playbook == 'destroy':
+            self.set_evar('state', 'absent')
+
+        results = {}
+
+        # determine what targets is equal to
+        if (set(targets) ==
+                set(pf.keys()).intersection(targets) and len(targets) > 0):
+            pass
+        elif len(targets) == 0:
+            targets = set(pf.keys()).difference()
+        else:
+            raise LinchpinError("One or more invalid targets found")
+
+        # create localhost file in workspace for user if it doesn't exist
+        if not os.path.exists('{0}/localhost'.format(self.workspace)):
+            with open('{0}/localhost'.format(self.workspace), 'w') as f:
+                f.write('localhost\n'
+                        'ansible_python_interpreter={0}\n'.format(sys.executable)) # noqa
+
+        for target in targets:
+
+            # initialize run_db table
+
+            DB_SCHEMA['action'] = playbook
+            run_id = self.run_db.init_table(target, DB_SCHEMA)
+            self.set_evar('run_id', run_id)
+
+            self.set_evar('topology', self.find_topology(
+                          pf[target]["topology"]))
+
+            self.run_db.update_record(target,
+                                      run_id,
+                                      'inputs',
+                                      {'topology': pf[target]['topology']})
+
+            if 'layout' in pf[target]:
+                self.set_evar('layout_file',
+                              '{0}/{1}/{2}'.format(self.ctx.workspace,
+                                                   self.get_evar(
+                                                       'layouts_folder'),
+                                                   pf[target]["layout"]))
+
+                self.run_db.update_record(target,
+                                          run_id,
+                                          'inputs',
+                                          {'layouts': pf[target]['layout']})
+
+
+            # parse topology_file and set inventory_file
+            self.set_magic_vars()
+
+            # set the current target data
+            self.target_data = pf[target]
+            self.target_data["extra_vars"] = self.get_evar()
+
+            # note : changing the state triggers the hooks
+            self.pb_hooks = self.get_cfg('hookstates', playbook)
+            self.ctx.log_debug('calling: {0}{1}'.format('pre', playbook))
+
+            if 'pre' in self.pb_hooks:
+                self.hook_state = '{0}{1}'.format('pre', playbook)
+
+            #FIXME need to add run_db data for hooks results
+
+            # invoke the appropriate playbook
+            return_code, results[target] = (
+                self._invoke_playbook(playbook=playbook,
+                                      console=ansible_console)
+            )
+
+#            run_id = self.run_db.update_record(run_id, results, return_code)
+
+            if not return_code:
+                self.ctx.log_state("Action '{0}' on Target '{1}' is "
+                                   "complete".format(playbook, target))
+
+            # FIXME Check the result[target] value here, and fail if applicable.
+            # It's possible that a flag might allow more targets to run, then
+            # return an error code at the end.
+
+            if 'post' in self.pb_hooks:
+                self.hook_state = '{0}{1}'.format('post', playbook)
+
+        self.run_db.close()
+
+        return (return_code, results)
 
 
     def _invoke_playbook(self, playbook='up', console=True):
