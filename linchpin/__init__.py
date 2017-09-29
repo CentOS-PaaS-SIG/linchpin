@@ -106,6 +106,8 @@ def runcli(ctx, config, pinfile, workspace, verbose, version, creds_path):
     # workspace arg in load_config used to extend linchpin.conf
     ctx.load_global_evars()
     ctx.setup_logging()
+    ctx.setup_run_db()
+
     ctx.verbose = verbose
 
     if pinfile:
