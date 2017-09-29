@@ -42,6 +42,7 @@ def ansible_runner_2x(playbook_path,
                       console=True):
     variable_manager = VariableManager()
     loader = DataLoader()
+    extra_var["ansible_python_interpreter"] = sys.executable
     variable_manager.extra_vars = extra_var
     inventory = Inventory(loader=loader,
                           variable_manager=variable_manager,
@@ -101,6 +102,7 @@ def ansible_runner_24x(playbook_path,
                        inventory_src,
                        console=True):
     loader = DataLoader()
+    extra_var["ansible_python_interpreter"] = sys.executable
     variable_manager = VariableManager(loader=loader)
     variable_manager.extra_vars = extra_var
     inventory = Inventory(loader=loader, sources=[inventory_src])
