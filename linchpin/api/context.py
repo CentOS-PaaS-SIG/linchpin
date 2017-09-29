@@ -8,6 +8,11 @@ try:
 except ImportError:
     import ConfigParser as ConfigParser
 
+from uuid import getnode as get_mac
+
+from linchpin.rundb.basedb import BaseDB
+from linchpin.rundb.drivers import DB_DRIVERS
+
 from linchpin.exceptions import LinchpinError
 from linchpin.version import __version__
 
@@ -117,6 +122,31 @@ class LinchpinContext(object):
         """
 
         self.evars = self.cfgs.get('evars', {})
+
+
+    def setup_run_db(self):
+        """
+        Configures the run database parameters, sets them into extra_vars
+        """
+
+        run_db_type = self.get_cfg(section='lp',
+                                   key='run_db_type',
+                                   default='TinyRunDB')
+        run_db_conn = self.get_cfg(section='lp',
+                                   key='run_db_conn',
+                                   default='~/.config/linchpin/run_db-::mac::.json')
+        run_db_conn_type = self.get_cfg(section='lp',
+                                   key='run_db_conn_type',
+                                   default='file')
+
+        if run_db_conn_type == 'file':
+            run_db_conn_int = run_db_conn.replace('::mac::', str(get_mac()))
+            run_db_conn_int = os.path.expanduser(run_db_conn_int)
+
+        self.set_evar('run_db_type', run_db_type)
+        self.set_evar('run_db_conn', run_db_conn_int)
+
+        self.run_db = BaseDB(DB_DRIVERS[run_db_type], conn_str=run_db_conn_int)
 
 
     def get_cfg(self, section=None, key=None, default=None):

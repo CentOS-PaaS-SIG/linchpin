@@ -13,11 +13,10 @@ class BaseDB(RunDB):
     def __str__(self):
         return self.driver.__str__()
 
-    def add_record(self, table, record_data):
-        return self.driver.add_record(table, record_data)
+    def init_table(self, table, record_data):
+        return self.driver.init_table(table, record_data)
 
     def update_record(self, table, run_id, key, value):
-        print('update_record: {}'.format(run_id))
         return self.driver.update_record(table, run_id, key, value)
 
     def remove_record(self, table, key, value):

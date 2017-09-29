@@ -22,7 +22,7 @@ class TinyRunDB(BaseDB):
             return "{0} at {1}".format(self.name, self.conn_str)
         return "{0} at {1}".format(self.name, 'None')
 
-    def add_record(self, table, record_data):
+    def init_table(self, table, record_data):
         t = self.db.table(name=table)
         return t.insert(record_data)
 
