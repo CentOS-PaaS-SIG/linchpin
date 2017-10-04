@@ -1,15 +1,13 @@
 from abc import ABCMeta, abstractmethod
 
-# this needs an key/value for 'action' (up/destroy added at runtime)
-DB_SCHEMA = {'inputs': [], 'outputs': []}
 
 class RunDB(object):
 
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def init_table(self, table, record_data):
-        return self.driver.init_table(table, record_data)
+    def init_table(self, table):
+        return self.driver.init_table(table)
 
     @abstractmethod
     def update_record(self, table, run_id, key, value):

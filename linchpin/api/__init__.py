@@ -5,15 +5,21 @@ import re
 import sys
 import ast
 import yaml
+import json
+import time
 
 from collections import OrderedDict
+from uuid import getnode as get_mac
 
+from linchpin.api.ansible_runner import ansible_runner
 from linchpin.api.utils import yaml2json
 from linchpin.api.fetch import FETCH_CLASS
-from linchpin.api.ansible_runner import ansible_runner
+
 from linchpin.hooks.state import State
 from linchpin.hooks import LinchpinHooks
-from linchpin.rundb import DB_SCHEMA
+
+from linchpin.rundb.basedb import BaseDB
+from linchpin.rundb.drivers import DB_DRIVERS
 
 from linchpin.exceptions import LinchpinError
 
@@ -32,9 +38,6 @@ class LinchpinAPI(object):
         base_path = '/'.join(os.path.dirname(__file__).split('/')[0:-2])
         pkg = self.get_cfg(section='lp', key='pkg', default='linchpin')
         self.lp_path = '{0}/{1}'.format(base_path, pkg)
-
-        # assign the run_db to the API class
-        self.run_db = self.ctx.run_db
 
         self.set_evar('from_api', True)
 
@@ -356,6 +359,30 @@ class LinchpinAPI(object):
                             ' workspace'.format(topology))
 
 
+    def setup_rundb(self):
+        """
+        Configures the run database parameters, sets them into extra_vars
+        """
+
+        rundb_type = self.get_cfg(section='lp',
+                                   key='rundb_type',
+                                   default='TinyRunDB')
+        rundb_conn = self.get_cfg(section='lp',
+                                   key='rundb_conn',
+                                   default='~/.config/linchpin/rundb-::mac::.json')
+        rundb_conn_type = self.get_cfg(section='lp',
+                                   key='rundb_conn_type',
+                                   default='file')
+        if rundb_conn_type == 'file':
+            rundb_conn_int = rundb_conn.replace('::mac::', str(get_mac()))
+            rundb_conn_int = os.path.expanduser(rundb_conn_int)
+
+        self.set_evar('rundb_type', rundb_type)
+        self.set_evar('rundb_conn', rundb_conn_int)
+
+        return BaseDB(DB_DRIVERS[rundb_type], rundb_conn_int)
+
+
     def run_playbook(self, pinfile, targets=[], playbook='up'):
         """
         This function takes a list of targets, and executes the given
@@ -422,24 +449,43 @@ class LinchpinAPI(object):
         # create localhost file in workspace for user if it doesn't exist
         if not os.path.exists('{0}/localhost'.format(self.workspace)):
             with open('{0}/localhost'.format(self.workspace), 'w') as f:
-                f.write('localhost\n'
-                        'ansible_python_interpreter={0}\n'.format(sys.executable)) # noqa
+                f.write('localhost\n')
 
         for target in targets:
 
-            # initialize run_db table
+            # initialize rundb table
 
-            DB_SCHEMA['action'] = playbook
-            run_id = self.run_db.init_table(target, DB_SCHEMA)
+            dateformat = self.get_cfg('logger',
+                                      'dateformat',
+                                      '%m/%d/%Y %I:%M:%S %p')
+
+            # this needs an key/value for 'action' (up/destroy added at runtime)
+
+            rundb = self.setup_rundb()
+
+            rundb_schema = json.loads(self.get_cfg(section='lp', key='rundb_schema'))
+            rundb.schema = rundb_schema
+            self.set_evar('rundb_schema', rundb_schema)
+
+            run_id = rundb.init_table(target)
+
+            start = time.strftime(dateformat)
+            rundb.update_record(target, run_id, 'start', start)
+            rundb.update_record(target, run_id, 'action', playbook)
+
             self.set_evar('run_id', run_id)
 
             self.set_evar('topology', self.find_topology(
                           pf[target]["topology"]))
 
-            self.run_db.update_record(target,
-                                      run_id,
-                                      'inputs',
-                                      {'topology': pf[target]['topology']})
+            rundb.update_record(target,
+                                run_id,
+                                'inputs',
+                                [
+                                    {'topology':
+                                        {'file': pf[target]['topology']}
+                                    }
+                                ])
 
             if 'layout' in pf[target]:
                 self.set_evar('layout_file',
@@ -448,10 +494,14 @@ class LinchpinAPI(object):
                                                        'layouts_folder'),
                                                    pf[target]["layout"]))
 
-                self.run_db.update_record(target,
-                                          run_id,
-                                          'inputs',
-                                          {'layouts': pf[target]['layout']})
+                rundb.update_record(target,
+                                    run_id,
+                                    'inputs',
+                                    [
+                                        {'layouts':
+                                            {'file': pf[target]['layout']}
+                                        }
+                                    ])
 
 
             # parse topology_file and set inventory_file
@@ -468,15 +518,13 @@ class LinchpinAPI(object):
             if 'pre' in self.pb_hooks:
                 self.hook_state = '{0}{1}'.format('pre', playbook)
 
-            #FIXME need to add run_db data for hooks results
+            #FIXME need to add rundb data for hooks results
 
             # invoke the appropriate playbook
             return_code, results[target] = (
                 self._invoke_playbook(playbook=playbook,
                                       console=ansible_console)
             )
-
-#            run_id = self.run_db.update_record(run_id, results, return_code)
 
             if not return_code:
                 self.ctx.log_state("Action '{0}' on Target '{1}' is "
@@ -489,7 +537,12 @@ class LinchpinAPI(object):
             if 'post' in self.pb_hooks:
                 self.hook_state = '{0}{1}'.format('post', playbook)
 
-        self.run_db.close()
+            end = time.strftime(dateformat)
+            rundb.update_record(target, run_id, 'end', end)
+            #rundb.update_record(target, run_id, 'outputs', [results])
+            rundb.update_record(target, run_id, 'rc', return_code)
+
+            rundb.close()
 
         return (return_code, results)
 
