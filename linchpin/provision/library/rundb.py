@@ -6,7 +6,6 @@ import json
 
 from ansible.module_utils.basic import AnsibleModule
 
-from linchpin.rundb import DB_SCHEMA
 from linchpin.rundb.basedb import BaseDB
 from linchpin.rundb.drivers import DB_DRIVERS
 
@@ -14,7 +13,7 @@ from linchpin.rundb.drivers import DB_DRIVERS
 DOCUMENTATION = '''
 ---
 version_added: "0.1"
-module: run_db
+module: rundb
 short_description: A run database for linchpin, though it could be used for anything transactional really.
 description:
   - This module allows a user to store and retrive values.
@@ -28,6 +27,11 @@ options:
     description:
       Connection string to the database, can be file or url
     required: true
+  db_schema:
+    description:
+      Database schema to use when running operations.
+      The schema is required for an 'init' operation.
+    required: false
   operation:
     description:
       Operation being performed on the database
@@ -35,9 +39,10 @@ options:
     required: true
     default: update
   run_id:
-    description: The run_id value describes the current transaction.
-                 The run_id is returned from an 'init' operation.
-                 The run_id is required for an 'update' operation.
+    description:
+      The run_id value describes the current transaction.
+      The run_id is returned for an 'init' operation.
+      The run_id is required for an 'update' operation.
     required: false
     default: None
   table: (aka target in linchpin)
@@ -91,45 +96,45 @@ def main():
     op = module.params['operation']
     key = module.params['key']
     value = module.params['value']
+    run_id = module.params['run_id']
 
     is_changed = False
+    output = "noop"
     try:
-        run_db = BaseDB(DB_DRIVERS[db_type], conn_str=conn_str)
+        rundb = BaseDB(DB_DRIVERS[db_type], conn_str=conn_str)
 
         if op in ['init', 'purge']:
             if op == "init":
-
-                DB_SCHEMA['action'] = action
-                output = run_db.init_table(table, DB_SCHEMA)
+                rundb.schema = value
+                output = rundb.init_table(table)
                 if output:
                     is_changed = True
+            if op == "purge":
+                output = rundb.purge(table=target)
+
+        elif op in ['update','search']:
+            if op == "update":
+                if run_id and key and value:
+                    output = rundb.update_record(table, run_id, key, [value])
+                else:
+                    msg = ("'table', 'run_id, 'key', and 'value' required"
+                           " for update operation")
+                    module.fail_json(msg=msg)
+
+            if op == "search":
+                output = "noop"
 
         else:
             msg = ("Module 'action' required".format(action))
             module.fail_json(msg=msg)
 
-        run_db.close()
+        rundb.close()
         module.exit_json(output=output, changed=is_changed)
 
     except Exception as e:
         module.fail_json(msg=str(e))
 
 
-#        if op == "purge":
-#            output = run_db.purge(table=target)
-#
-#    if op in ['update','search']:
-#
-#        if action == "update":
-#            if run_id and key and value:
-#                output = run_db.update_record(table, run_id, key, value)
-#            else:
-#                msg = ("'table', 'run_id, 'key', and 'value' required"
-#                       " for update operation")
-#                module.fail_json(msg=msg)
-#
-#        if op == "search":
-#            output = "noop"
 #
 #            module.exit_json(output=output, changed=output)
 #        except Exception as e:

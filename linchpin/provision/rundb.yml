@@ -7,6 +7,9 @@
     - name: "set table"
       set_fact:
         rundb_table: test-this
+    - name: schema
+      set_fact:
+        rundb_schema: '{"inputs": [], "outputs": [], "start": "", "end": "", "rc": 0, "action": ""}'
     - name: "set db_path"
       set_fact:
         rundb_path: /tmp/rundb-test.json
@@ -15,7 +18,23 @@
         conn_str: "{{ rundb_path }}"
         operation: init
         table: "{{ rundb_table }}"
+        value: "{{ rundb_schema }}"
       register: rundb_id
+
+    - name: "rundb_id value"
+      debug:
+        var: rundb_id
+
+    - name: "update rundb"
+      rundb:
+        conn_str: "{{ rundb_path }}"
+        operation: update
+        table: "{{ rundb_table }}"
+        key: "inputs"
+        value: "{{ {'topology': {'data': 'DATA of some sort'}} }}"
+        run_id: "{{ rundb_id.output }}"
+      register: rundb_id
+
     - name: "rundb_id value"
       debug:
         var: rundb_id
