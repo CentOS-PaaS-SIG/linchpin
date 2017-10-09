@@ -12,8 +12,12 @@
 #  debug:
 #    var: from_api
 
-- name: "load ini evars from linchpin.conf"
-  include: load_evars_from_ini.yml
+- name: "load ini variables from linchpin.conf"
+  include: load_vars_from_ini.yml
+  when: from_api is not defined
+
+- name: "initialize rundb"
+  include: initialize_rundb.yml
   when: from_api is not defined
 
 - name: "if topology_file is passed, set topology to its value"
@@ -35,7 +39,7 @@
 
 - name: "assign output from provided schema"
   set_fact:
-     outputs: "{{ out['out'] }}"
+     topo_data: "{{ out['out'] }}"
   when: schema is defined
 
 - name: "check topology file against schema_v3"
@@ -47,14 +51,14 @@
   when: schema is not defined
   ignore_errors: true
 
-- name: "Set state for schema_v3 validation"
+- name: "Set validity for schema_v3 validation"
   set_fact:
     v3_schema_valid: "{{ v3_out['isvalid'] | default(false) }}"
   when: schema is not defined
 
 - name: "assign schema_v3 output"
   set_fact:
-     outputs: "{{ v3_out['out'] }}"
+     topo_data: "{{ v3_out['out'] }}"
   when: schema is not defined and v3_schema_valid
 
 - name: "check topology file against schema_v4"
@@ -72,8 +76,17 @@
 
 - name: "assign output from schema_v4"
   set_fact:
-     outputs: "{{ v4_out['out'] }}"
+     topo_data: "{{ v4_out['out'] }}"
   when: schema is not defined and not v3_schema_valid
+
+- name: "add topology data to run_db"
+  rundb:
+    conn_str: "{{ rundb_conn }}"
+    operation: update
+    table: "{{ target }}"
+    key: "inputs"
+    value: [{ 'topology_data': "{{ topo_data }}" }]
+    run_id: "{{ rundb_id }}"
 
 - name: "set fact for saving topology_job_ids"
   set_fact:
@@ -81,11 +94,11 @@
 
 - name: "Get the resource group types defined in topology"
   set_fact:
-      res_grp_types: "{{ outputs.resource_groups | mapmultipleattr('res_group_type','resource_group_type') }}"
+      res_grp_types: "{{ topo_data.resource_groups | mapmultipleattr('res_group_type','resource_group_type') }}"
 
 - name: "Filter resource_groups by type"
   set_fact:
-    filtered_res_grps : "{{ res_grp_types | res_grp_filter( outputs.resource_groups, 'res_group_type','resource_group_type')  }}"
+    filtered_res_grps : "{{ res_grp_types | res_grp_filter( topo_data.resource_groups, 'res_group_type','resource_group_type')  }}"
 
 - name: "Assigning facts with respect to their group type"
   set_fact:
@@ -102,9 +115,22 @@
 
 - name: "Registering resource group vars from topology"
   set_fact:
-    res_grp_vars: "{{ outputs.resource_group_vars }}"
-  when: outputs.resource_group_vars is defined
+    res_grp_vars: "{{ topo_data.resource_group_vars }}"
+  when: topo_data.resource_group_vars is defined
 
 - name: "output vars"
   set_fact:
     topology_outputs: {}
+
+- name: "record end time"
+  rundb:
+    conn_str: "{{ rundb_conn }}"
+    operation: update
+    table: "{{ target }}"
+    key: "end"
+    value: "{{ dateformat | strftime }}"
+    run_id: "{{ rundb_id }}"
+
+- name: fail
+  fail:
+    msg: stop
