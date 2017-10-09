@@ -7,6 +7,7 @@ import ast
 import yaml
 import json
 import time
+import hashlib
 
 from collections import OrderedDict
 from uuid import getnode as get_mac
@@ -373,12 +374,17 @@ class LinchpinAPI(object):
         rundb_conn_type = self.get_cfg(section='lp',
                                    key='rundb_conn_type',
                                    default='file')
+        self.rundb_hash = self.get_cfg(section='lp',
+                                       key='rundb_hash',
+                                       default='sha256')
+
         if rundb_conn_type == 'file':
             rundb_conn_int = rundb_conn.replace('::mac::', str(get_mac()))
             rundb_conn_int = os.path.expanduser(rundb_conn_int)
 
         self.set_evar('rundb_type', rundb_type)
         self.set_evar('rundb_conn', rundb_conn_int)
+        self.set_evar('rundb_hash', self.rundb_hash)
 
         return BaseDB(DB_DRIVERS[rundb_type], rundb_conn_int)
 
@@ -454,12 +460,11 @@ class LinchpinAPI(object):
         for target in targets:
 
             # initialize rundb table
-
             dateformat = self.get_cfg('logger',
                                       'dateformat',
                                       '%m/%d/%Y %I:%M:%S %p')
 
-            # this needs an key/value for 'action' (up/destroy added at runtime)
+            self.set_evar('target', target)
 
             rundb = self.setup_rundb()
 
@@ -473,7 +478,13 @@ class LinchpinAPI(object):
             rundb.update_record(target, run_id, 'start', start)
             rundb.update_record(target, run_id, 'action', playbook)
 
-            self.set_evar('run_id', run_id)
+            uhash = hashlib.new(self.rundb_hash,
+                                ':'.join([target,str(run_id), start]))
+
+            print('uhash: {}'.format(uhash.hexdigest()[-4:]))
+
+            self.set_evar('rundb_id', run_id)
+            self.set_evar('uhash', uhash)
 
             self.set_evar('topology', self.find_topology(
                           pf[target]["topology"]))
@@ -482,9 +493,7 @@ class LinchpinAPI(object):
                                 run_id,
                                 'inputs',
                                 [
-                                    {'topology':
-                                        {'file': pf[target]['topology']}
-                                    }
+                                    {'topology_file': pf[target]['topology']}
                                 ])
 
             if 'layout' in pf[target]:
@@ -498,9 +507,7 @@ class LinchpinAPI(object):
                                     run_id,
                                     'inputs',
                                     [
-                                        {'layouts':
-                                            {'file': pf[target]['layout']}
-                                        }
+                                        {'layouts_file': pf[target]['layout']}
                                     ])
 
 
