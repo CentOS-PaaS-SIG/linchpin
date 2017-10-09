@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import ast
 import json
 
 from ansible.module_utils.basic import AnsibleModule
@@ -86,7 +87,7 @@ def main():
             table=dict(type='str', required=True),
             action=dict(type='str', required=False, default='up'),
             key=dict(type='str', required=False),
-            value=dict(type='dict', required=False)
+            value=dict(type='str', required=False),
         ),
     )
     db_type = module.params['db_type']
@@ -99,23 +100,39 @@ def main():
     run_id = module.params['run_id']
 
     is_changed = False
-    output = "noop"
+    output = None
     try:
         rundb = BaseDB(DB_DRIVERS[db_type], conn_str=conn_str)
 
+        val = value
+        # if value looks like a dict it is a dict!
+        if value and value.startswith("{") or value.startswith("["):
+            try:
+                val = json.loads(value)
+            except Exception as e:
+#                module.fail_json(msg='error: {}'.format(e))
+                try:
+                    val = ast.literal_eval(value)
+                    valtype = type(val)
+                except Exception as e:
+                    module.fail_json(msg=e)
+
         if op in ['init', 'purge']:
             if op == "init":
-                rundb.schema = value
-                output = rundb.init_table(table)
-                if output:
-                    is_changed = True
+                if val:
+                    rundb.schema = val
+                    output = rundb.init_table(table)
+                else:
+                    msg = ("'table' and 'value' required for init operation")
+                    module.fail_json(msg=msg)
             if op == "purge":
                 output = rundb.purge(table=target)
 
         elif op in ['update','search']:
             if op == "update":
-                if run_id and key and value:
-                    output = rundb.update_record(table, run_id, key, [value])
+                if run_id and key and val:
+                    runid = int(run_id)
+                    output = rundb.update_record(table, run_id, key, val)[0]
                 else:
                     msg = ("'table', 'run_id, 'key', and 'value' required"
                            " for update operation")
@@ -128,7 +145,9 @@ def main():
             msg = ("Module 'action' required".format(action))
             module.fail_json(msg=msg)
 
-        rundb.close()
+        if output:
+            is_changed = True
+
         module.exit_json(output=output, changed=is_changed)
 
     except Exception as e:
