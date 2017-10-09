@@ -7,6 +7,13 @@ from tinydb.middlewares import CachingMiddleware
 
 from linchpin.rundb.basedb import BaseDB
 
+def savedb(func):
+    def func_wrapper(*args, **kwargs):
+        args[0]._opendb()
+        x = func(*args, **kwargs)
+        args[0]._closedb()
+        return x
+    return func_wrapper
 
 class TinyRunDB(BaseDB):
 
@@ -14,10 +21,12 @@ class TinyRunDB(BaseDB):
         self.name = 'TinyRunDB'
         self.conn_str = conn_str
         self.default_table = 'linchpin'
-        self.db = TinyDB(conn_str,
+
+
+    def _opendb(self):
+        self.db = TinyDB(self.conn_str,
                          storage=CachingMiddleware(JSONStorage),
                          default_table=self.default_table)
-
 
     def __str__(self):
         if self.conn_str:
@@ -36,11 +45,12 @@ class TinyRunDB(BaseDB):
         self._schema.update(schema)
 
 
+    @savedb
     def init_table(self, table):
         t = self.db.table(name=table)
         return t.insert(self.schema)
 
-
+    @savedb
     def update_record(self, table, run_id, key, value):
         t = self.db.table(name=table)
         return t.update(add(key, value), eids=[run_id])
@@ -67,7 +77,7 @@ class TinyRunDB(BaseDB):
         return self.db.purge_tables()
 
 
-    def close(self):
-        return self.db.close()
+    def _closedb(self):
+        self.db.close()
 
 
