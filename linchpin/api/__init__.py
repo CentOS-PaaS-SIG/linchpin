@@ -478,10 +478,12 @@ class LinchpinAPI(object):
             rundb.update_record(target, run_id, 'start', start)
             rundb.update_record(target, run_id, 'action', playbook)
 
-            uhash = hashlib.new(self.rundb_hash,
+            uh = hashlib.new(self.rundb_hash,
                                 ':'.join([target,str(run_id), start]))
+            uhash = uh.hexdigest()[-4:]
+            rundb.update_record(target, run_id, 'uhash', uhash)
 
-            print('uhash: {}'.format(uhash.hexdigest()[-4:]))
+            print('uhash: {}'.format(uhash))
 
             self.set_evar('rundb_id', run_id)
             self.set_evar('uhash', uhash)
@@ -548,8 +550,6 @@ class LinchpinAPI(object):
             rundb.update_record(target, run_id, 'end', end)
             #rundb.update_record(target, run_id, 'outputs', [results])
             rundb.update_record(target, run_id, 'rc', return_code)
-
-            rundb.close()
 
         return (return_code, results)
 
