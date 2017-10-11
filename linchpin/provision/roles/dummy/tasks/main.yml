@@ -1,9 +1,4 @@
 ---
-# This playbook will initiate provisioning for the duffy resources groups.
-- name: "DEBUG:: Dummy resource group list"
-  debug:
-    msg: "Currently provisioning the resources under list dummy_res_grps {{ dummy_res_grps }}"
-
 - name: "declaring output vars"
   set_fact:
     topology_outputs_dummy: []
