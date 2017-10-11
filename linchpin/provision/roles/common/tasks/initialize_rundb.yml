@@ -39,6 +39,15 @@
     value: "{{ start_time }}"
     run_id: "{{ rundb_id }}"
 
+- name: "record topology_file"
+  rundb:
+    conn_str: "{{ rundb_conn }}"
+    operation: update
+    table: "{{ target }}"
+    key: "inputs"
+    value: [{ 'topology_file': "{{ topology_file }}" }]
+    run_id: "{{ rundb_id }}"
+
 - name: "record action"
   rundb:
     conn_str: "{{ rundb_conn }}"

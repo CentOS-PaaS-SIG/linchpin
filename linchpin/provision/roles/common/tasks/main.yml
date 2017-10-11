@@ -1,16 +1,8 @@
 ---
-
-#- name: schema_v3
-#  debug:
-#    var: schema_v3
-#
-#- name: topology
-#  debug:
-#    var: topology
-#
-#- name: from_api
-#  debug:
-#    var: from_api
+- name: "if topology_file is passed, set topology to its value"
+  set_fact:
+    topology: "{{ topology_file }}"
+  when: topology_file is defined
 
 - name: "load ini variables from linchpin.conf"
   include: load_vars_from_ini.yml
@@ -19,11 +11,6 @@
 - name: "initialize rundb"
   include: initialize_rundb.yml
   when: from_api is not defined
-
-- name: "if topology_file is passed, set topology to its value"
-  set_fact:
-    topology: "{{ topology_file }}"
-  when: topology_file is defined
 
 - name: "if schema_file is passed, set schema to its value"
   set_fact:
@@ -122,15 +109,3 @@
   set_fact:
     topology_outputs: {}
 
-- name: "record end time"
-  rundb:
-    conn_str: "{{ rundb_conn }}"
-    operation: update
-    table: "{{ target }}"
-    key: "end"
-    value: "{{ dateformat | strftime }}"
-    run_id: "{{ rundb_id }}"
-
-- name: fail
-  fail:
-    msg: stop

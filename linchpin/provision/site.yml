@@ -24,12 +24,12 @@
 
 - name: "Writing contents to file"
   hosts: localhost
-  gather_facts: false
+  gather_facts: True
   roles:
-    - { role: 'output_writer'}
+    - { role: 'gather_resources'}
 
-- name: "inventory generation role"
-  hosts: localhost
-  gather_facts: false
-  roles:
-    - { role: 'inventory_gen', when: state == 'present' and (layout_file is defined or layout is defined) }
+#- name: "inventory generation role"
+#  hosts: localhost
+#  gather_facts: True
+#  roles:
+#    - { role: 'inventory_gen', when: state == 'present' and (layout_file is defined or layout is defined) }
