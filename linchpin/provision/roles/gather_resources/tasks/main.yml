@@ -1,0 +1,42 @@
+---
+- name: "Updating topology_outputs"
+  set_fact:
+    topology_outputs:
+      dummy_res: "{{ topology_outputs_dummy | default([]) }}"
+      os_server_res: "{{ topology_outputs_os_server | default([]) }}"
+      os_keypair_res: "{{ topology_outputs_os_keypair | default([]) }}"
+      os_volume_res: "{{ topology_outputs_os_volume | default([]) }}"
+      os_obj_res: "{{ topology_outputs_os_object | default([]) }}"
+      os_heat_res: "{{ topology_outputs_os_heat | default([]) }}"
+      os_sg_res: "{{ topology_outputs_os_sg | default([]) }}"
+      aws_ec2_res: "{{ topology_outputs_aws_ec2 | default([]) }}"
+      aws_s3_res: "{{ topology_outputs_aws_s3 | default([]) }}"
+      aws_ec2_key_res: "{{ topology_outputs_aws_ec2_key | default([]) }}"
+      aws_cfn_res: "{{ topology_outputs_aws_cfn | default([]) }}"
+      gcloud_gce_res: "{{ topology_outputs_gce | default([]) }}"
+      duffy_res: "{{ topology_outputs_duffy | default([]) }}"
+      rax_server_res: "{{ topology_outputs_rax_server | default([]) }}"
+      beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
+      libvirt_res: "{{ topology_outputs_libvirt_nodes | default([]) }}"
+      openshift_res: "{{ topology_outputs_openshift_resources | default([]) }}"
+      ovirt_vms_res: "{{ topology_outputs_ovirt_vms | default([]) }}"
+  when: not async
+
+# need to figure out how to deal with async outputs here.
+# Probably similar to the outputs below, but we must gather data first.
+
+# this task only records the outputs necessary.
+# No more will the outputter record a record for every
+# possible provider. This is done with the with_dict/when item.value test
+# 
+- name: "Add outputs to the rundb"
+  rundb:
+    conn_str: "{{ rundb_conn }}"
+    operation: update
+    table: "{{ target }}"
+    key: "outputs"
+    value: "[{{ {item.key: item.value} }}]"
+    run_id: "{{ rundb_id }}"
+  with_dict: "{{ topology_outputs }}"
+  when: (item.value | length > 0)
+
