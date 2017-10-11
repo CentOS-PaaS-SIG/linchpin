@@ -39,6 +39,3 @@ class BaseDB(RunDB):
 
     def purge(self, table=None):
         return self.driver.purge(table)
-
-    def close(self):
-        return self.driver.close()

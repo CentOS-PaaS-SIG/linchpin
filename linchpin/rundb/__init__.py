@@ -28,8 +28,3 @@ class RunDB(object):
     @abstractmethod
     def purge(self, table=None):
         return self.driver.purge(table)
-
-    @abstractmethod
-    def close(self):
-        return self.driver.close()
-
