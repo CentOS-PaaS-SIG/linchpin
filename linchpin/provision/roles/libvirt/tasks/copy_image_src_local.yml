@@ -8,11 +8,12 @@
     msg: "{{ local_image_path  }}  {{ libvirt_image_path }}"
 
 
-- name: ensure local_image_path directory exists
+- name: "delegate_to localhost :ensure local_image_path directory exists"
   file:
     path: "{{ local_image_path }}"
     state: directory
     mode: 0755
+  delegate_to: 127.0.0.1
 
 - name: "set image_src_basename"
   set_fact:
@@ -28,6 +29,7 @@
   stat:
     path: "{{ local_image_src }}"
   register: lis_local
+  delegate_to: 127.0.0.1
 
 
 - name: Download image_src
@@ -37,6 +39,7 @@
   become: yes
   when: lis_local.stat.exists == false
   ignore_errors: yes
+  delegate_to: 127.0.0.1
 
 # identify file type
 
@@ -46,6 +49,7 @@
     mime: true
   become: yes
   register: lismt_local
+  delegate_to: 127.0.0.1
 
 - name: Determine image_src mime_type
   stat:
@@ -53,31 +57,37 @@
     mime: true
   become: yes
   register: lismt_local
+  delegate_to: 127.0.0.1
 
 - name: "set image_src for uncompressed files"
   set_fact:
     img_src: "{{ local_image_src }}"
   when: lismt_local.stat.mimetype == "application/octet-stream"
+  delegate_to: 127.0.0.1
 
 - name: "set image_src basename to remove .xz extension"
   set_fact:
     img_src_basename: "{{ res_def['image_src'].split('.xz')[0] | basename }}"
   when: lismt_local.stat.mimetype == "application/x-xz"
+  delegate_to: 127.0.0.1
 
 - name: "set img_src for xz compressed files"
   set_fact:
     img_src: "{{ local_image_path }}{{ img_src_basename }}"
   when: lismt_local.stat.mimetype == "application/x-xz"
+  delegate_to: 127.0.0.1
 
 - name: "get img_src_basename extension"
   set_fact:
     img_src_ext: "{{ image_src_basename.split('.')[-1] }}"
   when: lismt_local.stat.mimetype != "application/x-xz"
+  delegate_to: 127.0.0.1
 
 - name: "get img_src_basename extension"
   set_fact:
     img_src_ext: "{{ image_src_basename.split('.')[-2] }}"
   when: lismt_local.stat.mimetype == "application/x-xz"
+  delegate_to: 127.0.0.1
 
 - name: Does img_src exist at local_image_path
   stat:
@@ -85,6 +95,7 @@
   become: yes
   register: ismt
   when: lismt_local.stat.mimetype == "application/x-xz"
+  delegate_to: 127.0.0.1
 
   #- name: "DEBUG: ismt"
   #  debug:
@@ -94,12 +105,14 @@
   command: "xz -d --keep --force {{ local_image_src }}"
   become: yes
   when: lismt_local.stat.mimetype == "application/x-xz" and ismt.stat.exists == false
+  delegate_to: 127.0.0.1
 
 - name: "cp img_src to match node name"
   copy:
     src: "{{ img_src }}"
     dest: "{{ img_item[0] }}{{ img_item[1] }}_{{ img_item[2] }}_{{ img_item[3] }}.{{ img_item[4] }}"
     remote_src: false
+  delegate_to: 127.0.0.1
   with_nested:
     - ["{{ local_image_path }}"]
     - ["{{ res_grp_name }}"]
