@@ -3,6 +3,10 @@
   set_fact:
     topology_outputs_dummy: []
 
+#- name: "DEBUG dummy_res_grps"
+#  debug:
+#    var: dummy_res_grps
+
 - name: "Initiating Provisioning of dummy resource group"
   include: provision_resource_group.yml res_grp={{ item }}
   with_items:
@@ -10,9 +14,7 @@
   when: state == "present"
 
 - name: "Initiating Teardown of dummy resource group"
-  include: teardown_resource_group.yml res_grp={{ item.0 }} topo_output_file={{ item.1 }}
-  with_nested:
+  include: teardown_resource_group.yml res_grp={{ item }}
+  with_items:
     - "{{ dummy_res_grps }}"
-    - ["{{ resources_file | default( default_resources_path+'/'+
-    outputs.topology_name.replace(' ', '_').lower()+'.output' ) }}"]
   when: state == "absent"
