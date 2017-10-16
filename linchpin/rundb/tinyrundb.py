@@ -5,9 +5,9 @@ from tinydb.storages import JSONStorage
 from tinydb.operations import add, delete
 from tinydb.middlewares import CachingMiddleware
 
-from linchpin.rundb.basedb import BaseDB
+from .basedb import BaseDB
 
-def savedb(func):
+def usedb(func):
     def func_wrapper(*args, **kwargs):
         args[0]._opendb()
         x = func(*args, **kwargs)
@@ -45,16 +45,29 @@ class TinyRunDB(BaseDB):
         self._schema.update(schema)
 
 
-    @savedb
+    @usedb
     def init_table(self, table):
         t = self.db.table(name=table)
         return t.insert(self.schema)
 
-    @savedb
+    @usedb
     def update_record(self, table, run_id, key, value):
         t = self.db.table(name=table)
         return t.update(add(key, value), eids=[run_id])
 
+
+    @usedb
+    def get_record(self, table, action='up', run_id=None):
+        t = self.db.table(name=table)
+        if not run_id:
+            run_id=len(t.all())
+
+        for rid in range(int(run_id), 0, -1):
+            record = t.get(eid=int(rid))
+            if record['action'] == action:
+                return record
+
+        return None
 
     def remove_record(self, table, key, value):
         pass
