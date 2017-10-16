@@ -216,17 +216,17 @@ class LinchpinAPI(object):
         self.set_evar('topology_name', topology_name)
 
 
-    def lp_rise(self, pinfile, targets='all'):
+    def lp_rise(self, pinfile, targets='all', run_id=None):
         """
         DEPRECATED
 
         An alias for lp_up. Used only for backward compatibility.
         """
 
-        self.lp_up(pinfile, targets)
+        self.lp_up(pinfile, targets, run_id=run_id)
 
 
-    def lp_up(self, pinfile, targets='all'):
+    def lp_up(self, pinfile, targets='all', run_id=None):
         """
         This function takes a list of targets, and provisions them according
         to their topology. If an layout argument is provided, an inventory
@@ -239,20 +239,20 @@ class LinchpinAPI(object):
             A tuple of targets to provision.
         """
 
-        return self.run_playbook(pinfile, targets, playbook="up")
+        return self.run_playbook(pinfile, targets, playbook="up", run_id=run_id)
 
 
-    def lp_drop(self, pinfile, targets):
+    def lp_drop(self, pinfile, targets, run_id=None):
         """
         DEPRECATED
 
         An alias for lp_destroy. Used only for backward compatibility.
         """
 
-        return self.lp_destroy(pinfile, targets)
+        return self.lp_destroy(pinfile, targets, run_id=run_id)
 
 
-    def lp_destroy(self, pinfile, targets='all'):
+    def lp_destroy(self, pinfile, targets='all', run_id=None):
         """
         This function takes a list of targets, and performs a destructive
         teardown, including undefining nodes, according to the target.
@@ -266,7 +266,7 @@ class LinchpinAPI(object):
             A tuple of targets to destroy.
         """
 
-        return self.run_playbook(pinfile, targets, playbook="destroy")
+        return self.run_playbook(pinfile, targets, playbook="destroy", run_id=run_id)
 
 
     def lp_down(self, pinfile, targets='all'):
@@ -389,7 +389,7 @@ class LinchpinAPI(object):
         return BaseDB(DB_DRIVERS[rundb_type], rundb_conn_int)
 
 
-    def run_playbook(self, pinfile, targets=[], playbook='up'):
+    def run_playbook(self, pinfile, targets=[], playbook='up', run_id=None):
         """
         This function takes a list of targets, and executes the given
         playbook (provison, destroy, etc.) for each provided target.
@@ -397,6 +397,14 @@ class LinchpinAPI(object):
         :param pinfile: Provided PinFile, with available targets,
 
         :param targets: A tuple of targets to run. (default: 'all')
+
+        .. .note:: The `run_id` value differs from the `rundb_id`, in that
+                   the `run_id` is an existing value in the database.
+                   The `rundb_id` value is created to store the new record.
+                   If the `run_id` is passed, it is used to collect an existing
+                   `uhash` value from the given `run_id`, which is in turn used
+                   to perform an idempotent reprovision, or destroy provisioned
+                   resources.
         """
 
         pf = yaml2json(pinfile)
@@ -472,27 +480,39 @@ class LinchpinAPI(object):
             rundb.schema = rundb_schema
             self.set_evar('rundb_schema', rundb_schema)
 
-            run_id = rundb.init_table(target)
-
             start = time.strftime(dateformat)
-            rundb.update_record(target, run_id, 'start', start)
-            rundb.update_record(target, run_id, 'action', playbook)
+            uhash = None
 
-            uh = hashlib.new(self.rundb_hash,
-                                ':'.join([target,str(run_id), start]))
-            uhash = uh.hexdigest()[-4:]
-            rundb.update_record(target, run_id, 'uhash', uhash)
+            # generate a new rundb_id
+            # (don't confuse it with an already existing run_id)
+            rundb_id = rundb.init_table(target)
 
-            print('uhash: {}'.format(uhash))
+            if playbook == 'up' and not run_id:
+                uh = hashlib.new(self.rundb_hash,
+                                 ':'.join([target,str(rundb_id), start]))
+                uhash = uh.hexdigest()[-4:]
+            elif playbook == 'destroy' or run_id:
+                # look for the action='up' records to destroy
+                test = rundb.get_record(target, action='up', run_id=run_id)
+                uhash = test.get('uhash')
+            else:
+                raise LinchpinError("run_id '{0}' does not match any existing"
+                                    " records".format(run_id))
 
-            self.set_evar('rundb_id', run_id)
+            self.ctx.log_state('uhash: {}'.format(uhash))
+            rundb.update_record(target, rundb_id, 'uhash', uhash)
+
+            rundb.update_record(target, rundb_id, 'start', start)
+            rundb.update_record(target, rundb_id, 'action', playbook)
+
+            self.set_evar('rundb_id', rundb_id)
             self.set_evar('uhash', uhash)
 
             self.set_evar('topology', self.find_topology(
                           pf[target]["topology"]))
 
             rundb.update_record(target,
-                                run_id,
+                                rundb_id,
                                 'inputs',
                                 [
                                     {'topology_file': pf[target]['topology']}
@@ -506,7 +526,7 @@ class LinchpinAPI(object):
                                                    pf[target]["layout"]))
 
                 rundb.update_record(target,
-                                    run_id,
+                                    rundb_id,
                                     'inputs',
                                     [
                                         {'layouts_file': pf[target]['layout']}
@@ -547,9 +567,8 @@ class LinchpinAPI(object):
                 self.hook_state = '{0}{1}'.format('post', playbook)
 
             end = time.strftime(dateformat)
-            rundb.update_record(target, run_id, 'end', end)
-            #rundb.update_record(target, run_id, 'outputs', [results])
-            rundb.update_record(target, run_id, 'rc', return_code)
+            rundb.update_record(target, rundb_id, 'end', end)
+            rundb.update_record(target, rundb_id, 'rc', return_code)
 
         return (return_code, results)
 

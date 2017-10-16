@@ -153,8 +153,10 @@ def init(ctx):
 @runcli.command()
 @click.argument('targets', metavar='TARGETS', required=False,
                 nargs=-1)
+@click.option('-r', '--run-id', metavar='run_id',
+              help='Idempotently provision using `run-id` data')
 @pass_context
-def up(ctx, targets):
+def up(ctx, targets, run_id):
     """
     Provisions nodes from the given target(s) in the given PinFile.
 
@@ -171,7 +173,7 @@ def up(ctx, targets):
     pf_w_path = _get_pinfile_path()
 
     try:
-        return_code, results = lpcli.lp_up(pf_w_path, targets)
+        return_code, results = lpcli.lp_up(pf_w_path, targets, run_id=run_id)
 
         _handle_results(ctx, results, return_code)
 
@@ -181,8 +183,7 @@ def up(ctx, targets):
 
 
 @runcli.command()
-@click.argument('targets', metavar='TARGET', required=False,
-                nargs=-1)
+@click.argument('targets', metavar='TARGET', required=False, nargs=-1)
 @pass_context
 def rise(ctx, targets):
     """
@@ -196,8 +197,10 @@ def rise(ctx, targets):
 @runcli.command()
 @click.argument('targets', metavar='TARGET', required=False,
                 nargs=-1)
+@click.option('-r', '--run-id', metavar='run_id',
+              help='Destroy resources using `run-id` data')
 @pass_context
-def destroy(ctx, targets):
+def destroy(ctx, targets, run_id):
     """
     Destroys nodes from the given target(s) in the given PinFile.
 
@@ -215,7 +218,7 @@ def destroy(ctx, targets):
     pf_w_path = _get_pinfile_path()
 
     try:
-        return_code, results = lpcli.lp_destroy(pf_w_path, targets)
+        return_code, results = lpcli.lp_destroy(pf_w_path, targets, run_id=run_id)
 
         _handle_results(ctx, results, return_code)
 
