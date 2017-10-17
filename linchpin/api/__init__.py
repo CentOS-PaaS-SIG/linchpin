@@ -49,7 +49,8 @@ class LinchpinAPI(object):
                                                  'destroy': 'predestroy'})
         self.playbook_post_states = self.get_cfg('playbook_post_states',
                                                  {'up': 'postup',
-                                                  'destroy': 'postdestroy'})
+                                                  'destroy': 'postdestroy',
+                                                  'postinv': 'inventory'})
         self.hooks = LinchpinHooks(self)
         self.target_data = {}
 
@@ -190,7 +191,7 @@ class LinchpinAPI(object):
         self._hook_observers.append(callback)
 
 
-    def set_magic_vars(self):
+    def set_magic_vars(self, uhash):
         """
         Function inbuilt to set magic vars for ansible context
         """
@@ -205,9 +206,10 @@ class LinchpinAPI(object):
             # defaults to file name if there is any error
             topology_name = topology_name.split(".")[-2]
 
-        inv_file = '{0}/{1}/{2}{3}'.format(self.workspace,
+        inv_file = '{0}/{1}/{2}-{3}{4}'.format(self.workspace,
                                            self.get_evar('inventories_folder'),
                                            topology_name,
+                                           uhash,
                                            self.get_cfg('extensions',
                                                         'inventory',
                                                         'inventory'))
@@ -239,7 +241,7 @@ class LinchpinAPI(object):
             A tuple of targets to provision.
         """
 
-        return self.run_playbook(pinfile, targets, playbook="up", run_id=run_id)
+        return self.run_playbook(pinfile, targets, action="up", run_id=run_id)
 
 
     def lp_drop(self, pinfile, targets, run_id=None):
@@ -266,7 +268,7 @@ class LinchpinAPI(object):
             A tuple of targets to destroy.
         """
 
-        return self.run_playbook(pinfile, targets, playbook="destroy", run_id=run_id)
+        return self.run_playbook(pinfile, targets, action="destroy", run_id=run_id)
 
 
     def lp_down(self, pinfile, targets='all'):
@@ -389,10 +391,10 @@ class LinchpinAPI(object):
         return BaseDB(DB_DRIVERS[rundb_type], rundb_conn_int)
 
 
-    def run_playbook(self, pinfile, targets=[], playbook='up', run_id=None):
+    def run_playbook(self, pinfile, targets=[], action='up', run_id=None):
         """
         This function takes a list of targets, and executes the given
-        playbook (provison, destroy, etc.) for each provided target.
+        action (up, destroy, etc.) for each provided target.
 
         :param pinfile: Provided PinFile, with available targets,
 
@@ -446,7 +448,7 @@ class LinchpinAPI(object):
         self.set_evar('state', 'present')
 
 
-        if playbook == 'destroy':
+        if action == 'destroy':
             self.set_evar('state', 'absent')
 
         results = {}
@@ -487,24 +489,28 @@ class LinchpinAPI(object):
             # (don't confuse it with an already existing run_id)
             rundb_id = rundb.init_table(target)
 
-            if playbook == 'up' and not run_id:
+            if action == 'up' and not run_id:
                 uh = hashlib.new(self.rundb_hash,
                                  ':'.join([target,str(rundb_id), start]))
                 uhash = uh.hexdigest()[-4:]
-            elif playbook == 'destroy' or run_id:
+            elif action == 'destroy' or run_id:
                 # look for the action='up' records to destroy
                 test = rundb.get_record(target, action='up', run_id=run_id)
                 uhash = test.get('uhash')
+                self.ctx.log_debug('using data from run_id: {}'.format(run_id))
             else:
                 raise LinchpinError("run_id '{0}' does not match any existing"
                                     " records".format(run_id))
 
-            self.ctx.log_state('uhash: {}'.format(uhash))
+
+            self.ctx.log_debug('rundb_id: {}'.format(rundb_id))
+            self.ctx.log_debug('uhash: {}'.format(uhash))
             rundb.update_record(target, rundb_id, 'uhash', uhash)
 
             rundb.update_record(target, rundb_id, 'start', start)
-            rundb.update_record(target, rundb_id, 'action', playbook)
+            rundb.update_record(target, rundb_id, 'action', action)
 
+            self.set_evar('action', action)
             self.set_evar('rundb_id', rundb_id)
             self.set_evar('uhash', uhash)
 
@@ -525,46 +531,66 @@ class LinchpinAPI(object):
                                                        'layouts_folder'),
                                                    pf[target]["layout"]))
 
+                ws = self.ctx.workspace
+                layout_folder = self.get_evar("layouts_folder",
+                                              default='layouts')
+                layout_file =  pf[target]['layout']
+                layout_path = '{0}/{1}/{2}'.format(ws,
+                                                   layout_folder,
+                                                   layout_file)
+                layout_data = yaml2json(layout_path)
+
                 rundb.update_record(target,
                                     rundb_id,
                                     'inputs',
                                     [
-                                        {'layouts_file': pf[target]['layout']}
+                                        {'layout_file': layout_file}
                                     ])
 
+                rundb.update_record(target,
+                                    rundb_id,
+                                    'inputs',
+                                    [
+                                        {'layout_data': layout_data}
+                                    ])
 
             # parse topology_file and set inventory_file
-            self.set_magic_vars()
+            self.set_magic_vars(uhash)
 
             # set the current target data
             self.target_data = pf[target]
             self.target_data["extra_vars"] = self.get_evar()
 
             # note : changing the state triggers the hooks
-            self.pb_hooks = self.get_cfg('hookstates', playbook)
-            self.ctx.log_debug('calling: {0}{1}'.format('pre', playbook))
+            self.hooks.rundb = (rundb, rundb_id)
+            self.pb_hooks = self.get_cfg('hookstates', action)
+            self.ctx.log_debug('calling: {0}{1}'.format('pre', action))
 
             if 'pre' in self.pb_hooks:
-                self.hook_state = '{0}{1}'.format('pre', playbook)
+                self.hook_state = '{0}{1}'.format('pre', action)
 
             #FIXME need to add rundb data for hooks results
 
-            # invoke the appropriate playbook
+            # invoke the appropriate action
             return_code, results[target] = (
-                self._invoke_playbook(playbook=playbook,
+                self._invoke_playbook(action=action,
                                       console=ansible_console)
             )
 
             if not return_code:
                 self.ctx.log_state("Action '{0}' on Target '{1}' is "
-                                   "complete".format(playbook, target))
+                                   "complete".format(action, target))
 
             # FIXME Check the result[target] value here, and fail if applicable.
             # It's possible that a flag might allow more targets to run, then
             # return an error code at the end.
 
+            # add post provision hook for inventory generation
+            if 'inv' in self.pb_hooks:
+                self.hook_state = 'postinv'
+
             if 'post' in self.pb_hooks:
-                self.hook_state = '{0}{1}'.format('post', playbook)
+                self.hook_state = '{0}{1}'.format('post', action)
 
             end = time.strftime(dateformat)
             rundb.update_record(target, rundb_id, 'end', end)
@@ -573,11 +599,11 @@ class LinchpinAPI(object):
         return (return_code, results)
 
 
-    def _invoke_playbook(self, playbook='up', console=True):
+    def _invoke_playbook(self, action='up', console=True):
         """
         Uses the Ansible API code to invoke the specified linchpin playbook
 
-        :param playbook: Which ansible playbook to run (default: 'up')
+        :param action: Which ansible action to run (default: 'up')
         :param console: Whether to display the ansible console (default: True)
         """
 
@@ -588,7 +614,7 @@ class LinchpinAPI(object):
                                                               'module_folder',
                                                               'library'))
         playbook_path = '{0}/{1}'.format(pb_path, self.get_cfg('playbooks',
-                                                               playbook,
+                                                               action,
                                                                'site.yml'))
         extra_var = self.get_evar()
 
