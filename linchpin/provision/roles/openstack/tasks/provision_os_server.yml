@@ -1,8 +1,9 @@
-- name: "provisioning os_server resources with provided auth"
+---
+- name: "provision/teardown os_server resources with provided auth"
   os_server2:
     state: "{{ state }}"
     auth: "{{ auth_var }}"
-    name: "{{ res_grp_name }}_{{ res_def['res_name'] | default(res_def['name']) }}"
+    name: "{{ os_resource_name }}"
     image: "{{ res_def['image'] }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
@@ -20,10 +21,10 @@
     topology_outputs_os_server: "{{ topology_outputs_os_server + [res_def_output] }}"
   when: not async and auth_var is defined
 
-- name: "provisioning os_server resources"
+- name: "provision/teardown os_server resources"
   os_server2:
     state: "{{ state }}"
-    name: "{{ res_grp_name }}_{{ res_def['res_name'] | default(res_def['name']) }}"
+    name: "{{ os_resource_name }}"
     image: "{{ res_def['image'] }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
@@ -39,13 +40,13 @@
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_server: "{{ topology_outputs_os_server + [res_def_output] }}"
-  when: not async and auth_var is not defined
+  when: not async and auth_var is not defined and not res_def_output['skipped']
 
-- name: "provision/deprovision os_server resources by looping on count"
+- name: "provision/teardown os_server resources by looping on count"
   os_server2:
     state: "{{ state }}"
     auth: "{{ auth_var | provide_default(omit) }}"
-    name: "{{ res_grp_name }}_{{ res_def['res_name'] | default(res_def['name']) }}"
+    name: "{{ os_resource_name }}"
     image: "{{ res_def['image'] }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
@@ -63,12 +64,12 @@
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_server: "{{ topology_outputs_os_server + [res_def_output] }}"
-  when: not async and auth_var is defined
+  when: not async and auth_var is defined and not res_def_output['skipped']
 
-- name: "provision/deprovision os_server resources by looping on count"
+- name: "provision/teardown os_server resources by looping on count"
   os_server2:
     state: "{{ state }}"
-    name: "{{ res_grp_name }}_{{ res_def['res_name'] | default(res_def['name']) }}"
+    name: "{{ os_resource_name }}"
     image: "{{ res_def['image'] }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
@@ -87,4 +88,5 @@
 - name: "Async:: save the job id"
   set_fact:
     topology_outputs_os_server: "{{ topology_outputs_os_server + [ res_def_output ] }}"
-  when: async
+  when: async and not res_def_output['skipped']
+

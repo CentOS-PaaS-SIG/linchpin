@@ -28,14 +28,14 @@
 # this task only records the outputs necessary.
 # No more will the outputter record a record for every
 # possible provider. This is done with the with_dict/when item.value test
-# 
+
 - name: "Add outputs to the rundb"
   rundb:
     conn_str: "{{ rundb_conn }}"
     operation: update
     table: "{{ target }}"
     key: "outputs"
-    value: "[{{ {item.key: item.value} }}]"
+    value: "[{{ {'resources': item.value} }}]"
     run_id: "{{ rundb_id }}"
   with_dict: "{{ topology_outputs }}"
   when: (item.value | length > 0)

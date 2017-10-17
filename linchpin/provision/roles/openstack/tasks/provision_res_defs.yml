@@ -1,26 +1,12 @@
+---
+- name: "Get the resource name"
+  set_fact:
+    rsrc_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
 
-- name: "provision resources of type {{ res_def['res_type'] | default(res_def['type']) }}"
+- name: "Create name using uhash value"
+  set_fact:
+    os_resource_name: "{{ rsrc_name + '-' + uhash + '-' }}"
+
+- name: "provision/teardown resources of type {{ res_def['res_type'] | default(res_def['type']) }}"
   include: "provision_{{ res_def['res_type'] | default(res_def['type']) }}.yml"
-
-# needs to be reverted when the performance is not as expected with dynamic includes 
-
-#- name: "provision keypairs "
-#  include: provision_os_keypair.yml
-#  when: res_def['res_type']=="os_keypair"
-
-#- name: "provision os_server resources"
-#  include: provision_os_server.yml 
-#  when: res_def['res_type']=="os_server"
-
-#- name: "provision os_heat resources"
-#  include: provision_os_heat.yml 
-#  when: res_def['res_type']=="os_heat"
-
-#- name: "provision os_volume resources"
-#  include: provision_os_volume.yml
-#  when: res_def['res_type']=="os_volume"
-
-#- name: "provision os_object resources"
-#  include: provision_os_object.yml
-#  when: res_def['res_type']=="os_object"
 
