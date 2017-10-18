@@ -1,41 +1,18 @@
 ---
+# parse inventory generation files here
 
-#- name: "DEBUG:: layout_file"
-#  debug:
-#    msg: "{{ layout_file }}"
-#  when: state == "present"
-
-- include_vars: "{{ resources_file | default( default_resources_path+'/'+
-outputs.topology_name.replace(' ', '_').lower()+'.output' ) }}"
-
-- name: "Updating topology_outputs"
+- name: "set topology_name"
   set_fact:
-    topology_outputs:
-      dummy_res: "{{ dummy_res }}"
-      os_server_res: "{{ os_server_res }}"
-      aws_ec2_res: "{{ aws_ec2_res }}"
-      gcloud_gce_res: "{{ gcloud_gce_res }}"
-      duffy_res: "{{ duffy_res }}"
-      beaker_res: "{{ beaker_res }}"
-      libvirt_res: "{{ libvirt_res }}"
-      ovirt_vms_res: "{{ ovirt_vms_res }}"
-  when: state == "present" and inventory_layout is defined
+    topology_name: "{{ topo_data['topology_name'] }}"
 
-
-# parse inventory generation files here : can be overridden by extravar layout_file currently defaulted to openshift-3node-cluster.yml
 - name: "Parse inventory layout as a ordered dict"
   set_fact:
-    inventory_layout: "{{ layout_file | default( default_layouts_path+'/'+
-    'openshift-3node-cluster.yml') | ordered_yaml }}"
+    inventory_layout: "{{ layout_file | ordered_yaml }}"
 
 - name: "Updating inventory_path with the absolute path"
   set_fact:
     inventory_path: "{{ inventory_path | default( default_inventories_path+'/'+
-    outputs.topology_name.replace(' ', '_').lower() ) }}.inventory"
-
-#- name: inventory_layout
-#  debug:
-#    var: inventory_layout
+    topology_name.replace(' ', '_').lower() ) + '-' + uhash }}.inventory"
 
 - name: "Generate Generic Inventory"
   template:
