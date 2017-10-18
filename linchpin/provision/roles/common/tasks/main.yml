@@ -105,6 +105,10 @@
     res_grp_vars: "{{ topo_data.resource_group_vars }}"
   when: topo_data.resource_group_vars is defined
 
+- name: "assign async value"
+  set_fact:
+    async: "{{ _async }}"
+
 - name: "output vars"
   set_fact:
     topology_outputs: {}

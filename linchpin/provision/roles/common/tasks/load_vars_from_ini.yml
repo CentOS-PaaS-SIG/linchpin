@@ -32,9 +32,9 @@
 
 - name: set boolean evars from linchpin.conf
   set_fact:
-    async: "{{ lookup('ini', 'async section=evars file={{ lpconfig }}') }}"
+    _async: "{{ lookup('ini', '_async section=evars file={{ lpconfig }}') }}"
     output: "{{ lookup('ini', 'output section=evars file={{ lpconfig }}') }}"
-    check_mode: "{{ lookup('ini', 'check_mode section=evars file={{ lpconfig }}') }}"
+    _check_mode: "{{ lookup('ini', '_check_mode section=evars file={{ lpconfig }}') }}"
 
 - name: set schema evars from linchpin.conf
   set_fact:
