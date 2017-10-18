@@ -88,9 +88,9 @@ def test_get_evar():
     lpc = LinchpinCliContext()
     lpc.load_config(config_path)
     lpc.load_global_evars()
-    evar_value = lpc.get_evar('async')
+    evar_value = lpc.get_evar('_async')
 
-    assert_equal(evar_value, evars_data['async'])
+    assert_equal(evar_value, evars_data['_async'])
 
 
 @with_setup(setup_context_data)

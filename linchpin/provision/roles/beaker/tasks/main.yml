@@ -8,7 +8,7 @@
 - name: "Initiating Provision of beaker resource group"
   include: provision_resource_group.yml
   when: state == "present"
-  check_mode: "{{ check_mode }}"
+  check_mode: "{{ _check_mode }}"
 
 - name: "Initiating Teardown of beaker resource group"
   include: teardown_resource_group.yml res_grp={{ item.0 }} topo_output_file={{ item.1 }}

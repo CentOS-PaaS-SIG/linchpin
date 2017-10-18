@@ -22,7 +22,7 @@
     template_parameters: "{{ cfn_params }}"
     tags:
       Stack: "{{ res_def['res_name'] | default(res_def['name']) }}"
-  register: res_def_output 
+  register: res_def_output
   when: not async
 
 - name: "Provision cloud formation stack"
