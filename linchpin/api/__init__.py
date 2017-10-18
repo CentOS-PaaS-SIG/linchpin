@@ -510,7 +510,7 @@ class LinchpinAPI(object):
             rundb.update_record(target, rundb_id, 'start', start)
             rundb.update_record(target, rundb_id, 'action', action)
 
-            self.set_evar('action', action)
+            self.set_evar('_action', action)
             self.set_evar('rundb_id', rundb_id)
             self.set_evar('uhash', uhash)
 
