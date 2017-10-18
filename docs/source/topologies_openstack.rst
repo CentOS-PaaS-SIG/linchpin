@@ -246,13 +246,6 @@ Openstack Full Stack
         test_var3: "test_var3 msg is grp2 hello"
 
 
-Steps to provision Single Host
-==============================
-
-.. contents:: Topics
-
-.. _Steps to provision Single Host:
-
 Credentials
 ```````````
 * save openstack credentials in standard ``clouds.yml`` file using below

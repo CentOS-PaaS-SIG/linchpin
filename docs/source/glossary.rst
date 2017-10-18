@@ -6,7 +6,7 @@ The following is a list of terms used throughout the LinchPin documentation.
 
 .. glossary::
 
-    async
+   _ async/async
         *(boolean, default: False)*
 
         Used to enable asynchronous provisioning/teardown
@@ -16,7 +16,7 @@ The following is a list of terms used throughout the LinchPin documentation.
 
         How long the resouce collection (formerly outputs_writer) process should wait
 
-    check_mode
+    _check_mode/check_mode
         *(boolean, default: no)*
 
         This option does nothing at this time, though it may eventually be used for dry-run
