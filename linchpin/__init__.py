@@ -218,7 +218,9 @@ def destroy(ctx, targets, run_id):
     pf_w_path = _get_pinfile_path()
 
     try:
-        return_code, results = lpcli.lp_destroy(pf_w_path, targets, run_id=run_id)
+        return_code, results = lpcli.lp_destroy(pf_w_path,
+                                                targets,
+                                                run_id=run_id)
 
         _handle_results(ctx, results, return_code)
 

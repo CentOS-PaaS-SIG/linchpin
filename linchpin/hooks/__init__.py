@@ -110,15 +110,14 @@ class LinchpinHooks(object):
         that is being set. these parameters are based topology name.
         """
 
-        topology_name = self.api.get_evar("topology_name")
-
-        res_file = '{0}{1}'.format(topology_name,
-                                   self.api.get_cfg('extensions', 'resource'))
-
         # resources are no longer stored in a file
-        # commenting out now and will remove later when rundb is fully integrated
+        # commenting out now and will remove later
+        # when rundb is fully integrated
 
-        # res_pthT = self.api.target_data['extra_vars']['default_resources_path']
+        # topology_name = self.api.get_evar("topology_name")
+        # res_file = '{0}{1}'.format(topology_name,
+        #                           self.api.get_cfg('extensions', 'resource'))
+        # res_pthT = self.api.target_data['extra_vars']['default_resources_path'] # noqa
         # res_file = '{0}/{1}'.format(res_pthT, res_file)
         # self.api.target_data['extra_vars']['resource_file'] = res_file
 
@@ -138,7 +137,9 @@ class LinchpinHooks(object):
         layout_data = {}
         results_data = {}
 
-        data = self._rundb.get_record(target, action=action, run_id=self._rundb_id)
+        data = self._rundb.get_record(target,
+                                      action=action,
+                                      run_id=self._rundb_id)
 
         for inp in data['inputs']:
             if 'layout_data' in inp:

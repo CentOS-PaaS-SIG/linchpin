@@ -1,11 +1,10 @@
-
-
-from tinydb import TinyDB, Query
+from tinydb import TinyDB
 from tinydb.storages import JSONStorage
-from tinydb.operations import add, delete
+from tinydb.operations import add
 from tinydb.middlewares import CachingMiddleware
 
 from .basedb import BaseDB
+
 
 def usedb(func):
     def func_wrapper(*args, **kwargs):
@@ -14,6 +13,7 @@ def usedb(func):
         args[0]._closedb()
         return x
     return func_wrapper
+
 
 class TinyRunDB(BaseDB):
 
@@ -60,7 +60,7 @@ class TinyRunDB(BaseDB):
     def get_record(self, table, action='up', run_id=None):
         t = self.db.table(name=table)
         if not run_id:
-            run_id=len(t.all())
+            run_id = len(t.all())
 
         for rid in range(int(run_id), 0, -1):
             record = t.get(eid=int(rid))
@@ -92,5 +92,3 @@ class TinyRunDB(BaseDB):
 
     def _closedb(self):
         self.db.close()
-
-

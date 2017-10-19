@@ -2,7 +2,6 @@
 
 import os
 import re
-import sys
 import ast
 import yaml
 import json
@@ -206,13 +205,15 @@ class LinchpinAPI(object):
             # defaults to file name if there is any error
             topology_name = topology_name.split(".")[-2]
 
+        inv_folder = str(self.get_evar('inventories_folder'))
+
         inv_file = '{0}/{1}/{2}-{3}{4}'.format(self.workspace,
-                                           self.get_evar('inventories_folder'),
-                                           topology_name,
-                                           uhash,
-                                           self.get_cfg('extensions',
-                                                        'inventory',
-                                                        'inventory'))
+                                               inv_folder,
+                                               topology_name,
+                                               uhash,
+                                               self.get_cfg('extensions',
+                                                            'inventory',
+                                                            'inventory'))
 
         self.set_evar('inventory_file', inv_file)
         self.set_evar('topology_name', topology_name)
@@ -268,7 +269,10 @@ class LinchpinAPI(object):
             A tuple of targets to destroy.
         """
 
-        return self.run_playbook(pinfile, targets, action="destroy", run_id=run_id)
+        return self.run_playbook(pinfile,
+                                 targets,
+                                 action="destroy",
+                                 run_id=run_id)
 
 
     def lp_down(self, pinfile, targets='all'):
@@ -367,15 +371,16 @@ class LinchpinAPI(object):
         Configures the run database parameters, sets them into extra_vars
         """
 
-        rundb_type = self.get_cfg(section='lp',
-                                   key='rundb_type',
-                                   default='TinyRunDB')
+        rundb_conn_default = '~/.config/linchpin/rundb-::mac::.json'
         rundb_conn = self.get_cfg(section='lp',
-                                   key='rundb_conn',
-                                   default='~/.config/linchpin/rundb-::mac::.json')
+                                  key='rundb_conn',
+                                  default=rundb_conn_default)
+        rundb_type = self.get_cfg(section='lp',
+                                  key='rundb_type',
+                                  default='TinyRunDB')
         rundb_conn_type = self.get_cfg(section='lp',
-                                   key='rundb_conn_type',
-                                   default='file')
+                                       key='rundb_conn_type',
+                                       default='file')
         self.rundb_hash = self.get_cfg(section='lp',
                                        key='rundb_hash',
                                        default='sha256')
@@ -478,7 +483,8 @@ class LinchpinAPI(object):
 
             rundb = self.setup_rundb()
 
-            rundb_schema = json.loads(self.get_cfg(section='lp', key='rundb_schema'))
+            rundb_schema = json.loads(self.get_cfg(section='lp',
+                                      key='rundb_schema'))
             rundb.schema = rundb_schema
             self.set_evar('rundb_schema', rundb_schema)
 
@@ -491,7 +497,7 @@ class LinchpinAPI(object):
 
             if action == 'up' and not run_id:
                 uh = hashlib.new(self.rundb_hash,
-                                 ':'.join([target,str(rundb_id), start]))
+                                 ':'.join([target, str(rundb_id), start]))
                 uhash = uh.hexdigest()[-4:]
             elif action == 'destroy' or run_id:
                 # look for the action='up' records to destroy
@@ -534,7 +540,7 @@ class LinchpinAPI(object):
                 ws = self.ctx.workspace
                 layout_folder = self.get_evar("layouts_folder",
                                               default='layouts')
-                layout_file =  pf[target]['layout']
+                layout_file = pf[target]['layout']
                 layout_path = '{0}/{1}/{2}'.format(ws,
                                                    layout_folder,
                                                    layout_file)
@@ -569,7 +575,7 @@ class LinchpinAPI(object):
             if 'pre' in self.pb_hooks:
                 self.hook_state = '{0}{1}'.format('pre', action)
 
-            #FIXME need to add rundb data for hooks results
+            # FIXME need to add rundb data for hooks results
 
             # invoke the appropriate action
             return_code, results[target] = (

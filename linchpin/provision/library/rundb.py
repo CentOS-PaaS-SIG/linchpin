@@ -10,12 +10,15 @@ from ansible.module_utils.basic import AnsibleModule
 from linchpin.rundb.basedb import BaseDB
 from linchpin.rundb.drivers import DB_DRIVERS
 
+
 # ---- Documentation Start ----------------#
 DOCUMENTATION = '''
 ---
 version_added: "0.1"
 module: rundb
-short_description: A run database for linchpin, though it could be used for anything transactional really.
+short_description: A run database for linchpin, though it
+                   could be used for anything transactional
+                   really.
 description:
   - This module allows a user to store and retrive values.
 options:
@@ -79,10 +82,10 @@ def main():
             db_type=dict(type='str', required=False, default='TinyRunDB'),
             conn_str=dict(type='str', required=True),
             operation=dict(choices=['init',
-                                 'update',
-                                 'purge',
-                                 'search'],
-                        default='update'),
+                                    'update',
+                                    'purge',
+                                    'get'],
+                           default='update'),
             run_id=dict(type='int', required=False),
             table=dict(type='str', required=True),
             action=dict(type='str', required=False, default='up'),
@@ -110,10 +113,8 @@ def main():
             try:
                 val = json.loads(value)
             except Exception as e:
-#                module.fail_json(msg='error: {}'.format(e))
                 try:
                     val = ast.literal_eval(value)
-                    valtype = type(val)
                 except Exception as e:
                     module.fail_json(msg=e)
 
@@ -126,19 +127,19 @@ def main():
                     msg = ("'table' and 'value' required for init operation")
                     module.fail_json(msg=msg)
             if op == "purge":
-                output = rundb.purge(table=target)
+                output = rundb.purge(table=table)
 
-        elif op in ['update','search']:
+        elif op in ['update', 'get']:
             if op == "update":
                 if run_id and key and val:
                     runid = int(run_id)
-                    output = rundb.update_record(table, run_id, key, val)[0]
+                    output = rundb.update_record(table, runid, key, val)[0]
                 else:
                     msg = ("'table', 'run_id, 'key', and 'value' required"
                            " for update operation")
                     module.fail_json(msg=msg)
 
-            if op == "search":
+            if op == "get":
                 output = "noop"
 
         else:
