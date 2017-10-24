@@ -1,0 +1,20 @@
+- name: "waiting on each job id when state is present"
+  async_status_custom:
+    jid: "{{ os_server_group['ansible_job_id'] }}"
+    module_name: "os_server"
+  register: job_result_present
+  until: job_result_present.finished
+  retries: 30
+  when: state == "present"
+
+- name: "waiting on each job id when state is absent"
+  async_status_custom:
+    jid: "{{ os_server_group['ansible_job_id'] }}"
+  register: job_result_absent
+  until: job_result_absent.finished
+  retries: 30
+  when: state == "absent"
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    async_outputs_os_server: "{{ async_outputs_os_server + [job_result_present] }}"

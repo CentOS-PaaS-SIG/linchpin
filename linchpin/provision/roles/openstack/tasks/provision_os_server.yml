@@ -40,9 +40,9 @@
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_server: "{{ topology_outputs_os_server + [res_def_output] }}"
-  when: not async and auth_var is not defined and not res_def_output['skipped']
+  when: not async and auth_var is not defined and res_def_output['skipped'] is not defined
 
-- name: "provision/teardown os_server resources by looping on count"
+- name: "Async:: provision/teardown os_server resources by looping on count"
   os_server2:
     state: "{{ state }}"
     auth: "{{ auth_var | provide_default(omit) }}"
@@ -61,12 +61,12 @@
   register: res_def_output
   when: async and auth_var is defined
 
-- name: "Append outputitem to topology_outputs"
+- name: "Async:: Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_server: "{{ topology_outputs_os_server + [res_def_output] }}"
-  when: not async and auth_var is defined and not res_def_output['skipped']
+  when: async and auth_var is defined and res_def_output['skipped'] is not defined
 
-- name: "provision/teardown os_server resources by looping on count"
+- name: "Async:: Provision/teardown os_server resources by looping on count"
   os_server2:
     state: "{{ state }}"
     name: "{{ os_resource_name }}"
@@ -87,6 +87,6 @@
 # following tasks saves the async job details
 - name: "Async:: save the job id"
   set_fact:
-    topology_outputs_os_server: "{{ topology_outputs_os_server + [ res_def_output ] }}"
-  when: async and not res_def_output['skipped']
+   topology_outputs_os_server: "{{ topology_outputs_os_server + [ res_def_output ] }}"
+  when: async and res_def_output['skipped'] is not defined
 
