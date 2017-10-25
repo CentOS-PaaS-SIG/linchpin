@@ -455,7 +455,7 @@ def main():
             f.close()
             if not data:
                 module.fail_json(msg="No valid data could be found.")
-        except:
+        except Exception:
             module.fail_json(msg="The file '{0}' not found/contained invalid"
                                  " YAML/JSON data".format(file_reference))
 
