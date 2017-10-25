@@ -1,15 +1,4 @@
 ---
-# tasks file for libvirt
-#- name: "DEBUG: Libvirt resource group list"
-#  debug:
-#    msg: "Resources under list libvirt_res_grps {{ libvirt_res_grps }}"
-
-#- name: "debug task libvirt resources are"
-#  debug:
-#    var: "{{ item }}"
-#  with_items:
-#    - "{{ libvirt_res_grps }}"
-
 - name: "Gather facts"
   setup:
     filter: ansible_*
