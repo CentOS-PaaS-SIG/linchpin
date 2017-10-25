@@ -288,13 +288,13 @@
   when: node_exists['failed'] is not defined and uri_hostname != 'localhost'
 
 - name: "Install VM"
-  command: virt-install --connect {{ definition[7] }} --import --name {{ definition[0] }}_{{ definition[1] }}_{{ definition[8] }} --autostart --network {{ definition[4] }},model=virtio --ram {{ definition[5] }} --disk path={{ definition[2] }}/{{ definition[0] }}_{{ definition[1] }}_{{ definition[8] }}.{{ definition[3] }},format={{ definition[6] }},bus=virtio,cache=none --disk path=/tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[8] }}.iso,device=cdrom --wait 10 --os-type=linux --nographics
+  command: "virt-install --connect {{ definition[7] }} --import --name {{ definition[0] }}_{{ definition[1] }}_{{ definition[8] }} --autostart --network bridge={{ definition[4] }},model=virtio --ram {{ definition[5] }} --disk path={{ definition[2] }}/{{ definition[0] }}_{{ definition[1] }}_{{ definition[8] }}.{{ definition[3] }},format={{ definition[6] }},bus=virtio,cache=none --disk path=/tmp/vm-{{ definition[0] }}_{{ definition[1] }}_{{ definition[8] }}.iso,device=cdrom --wait 10 --os-type=linux --nographics"
   with_nested:
     - ["{{ res_grp_name }}"]
     - ["{{ libvirt_resource_name }}"]
     - ["{{ libvirt_image_path }}"]
     - ["{{ img_src_ext }}"]
-    - ["{{ res_def['network'] | default(' bridge=virbr0')  }}"]
+    - ["{{ res_def['network_bridge'] | default('virbr0')  }}"]
     - ["{{ res_def['memory'] | default(1024)  }}"]
     - ["{{ res_def['format'] | default('qcow2')  }}"]
     - ["{{ res_def['uri'] }}"]
