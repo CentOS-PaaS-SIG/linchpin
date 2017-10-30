@@ -1,4 +1,8 @@
 ---
+#- name: auth_var
+#  debug:
+#    var: auth_var
+
 - name: "provision/teardown os_server resources with provided auth"
   os_server2:
     state: "{{ state }}"

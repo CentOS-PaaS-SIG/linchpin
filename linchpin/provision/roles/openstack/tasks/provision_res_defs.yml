@@ -2,10 +2,12 @@
 - name: "Set os_res_type value"
   set_fact:
     os_res_type: "{{ res_def['type'] | default(res_def['res_type']) }}"
+  when: async
 
 - name: "Add resource type to openstack_types"
   set_fact:
     async_types: "{{ async_types + [os_res_type] }}"
+  when: async
 
 - name: "Get the resource name"
   set_fact:
