@@ -1,0 +1,6 @@
+---
+- name: "Wait on jobs"
+  include: wait_on_aws_ec2.yml
+  vars:
+    aws_ec2_group: "{{ item }}"
+  with_items:  "{{ async_outputs_aws_ec2 }}"

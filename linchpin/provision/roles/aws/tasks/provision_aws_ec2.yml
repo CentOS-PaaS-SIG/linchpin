@@ -1,8 +1,8 @@
+---
 - name: "Set default res_grp_vars when not defined"
   set_fact:
     res_grp_vars:
-      -
-        name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+      - name: "{{ res_def['res_name'] | default(res_def['name']) }}"
         resource_group_name: "{{ res_grp_name  }}"
   when: res_grp_vars is not defined
 
@@ -15,7 +15,7 @@
     image: "{{ res_def['image'] }}"
     region: "{{ res_def['region'] }}"
     wait: yes
-    group: "{{ res_def['security_group']| default('default') }}" 
+    group: "{{ res_def['security_group']| default('default') }}"
     count: "{{ res_def['count'] }}"
     vpc_subnet_id: "{{ res_def['vpc_subnet_id']| default(omit) }}"
     assign_public_ip: "{{ res_def['assign_public_ip']| default(omit) }}"
@@ -49,5 +49,5 @@
 
 - name: "Async:: Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_aws_ec2: "{{ topology_outputs_aws_ec2 + [res_def_output] }}"
+    async_outputs_aws_ec2: "{{ async_outputs_aws_ec2 + [res_def_output] }}"
   when: async

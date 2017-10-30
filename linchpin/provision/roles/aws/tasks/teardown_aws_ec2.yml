@@ -1,4 +1,9 @@
-- name: "Teardown of AWS_EC2 Resource"
+---
+#- name: "debug orig_run_id"
+#  debug:
+#    var: orig_run_id
+
+- name: "Teardown of AWS_EC2 Resourcei"
   ec2:
     aws_access_key: "{{ res_def_item.0 }}"
     aws_secret_key: "{{  res_def_item.1 }}"
@@ -49,6 +54,6 @@
   set_fact:
     topology_outputs_aws_ec2: "{{ topology_outputs_aws_ec2 + [output_item] }}"
 
-- name: "debug statement showing outputs"
-  debug:
-    msg: "{{ topology_outputs_aws_ec2 }}"
+#- name: "debug statement showing outputs"
+#  debug:
+#    msg: "{{ topology_outputs_aws_ec2 }}"

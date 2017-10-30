@@ -1,7 +1,3 @@
-- name: "DEBUG:: provisioning resource group {{ res_grp }}"
-  debug:
-    msg: "The current Resource Group obj is {{ res_grp }} "
-
 - name: "Unset the authvar from previous run"
   set_fact:
     auth_var: ""
@@ -9,6 +5,7 @@
 - name: "Set cred profile"
   set_fact:
     cred_profile: "{{ res_grp['credentials']['profile'] | default('default') }}"
+  when: res_grp['credentials'] is defined
 
 - name: "Get creds from auth driver"
   auth_driver:
@@ -18,11 +15,12 @@
     driver: "file"
   register: auth_var
   ignore_errors: true
+  when: cred_profile is defined
 
 - name: "Set auth_var "
   set_fact:
     auth_var: "{{ auth_var['output'][cred_profile] | default('') }}"
-  ignore_errors: true
+  when: cred_profile is defined
 
 - name: "provisioning resource definitions of current group"
   include: provision_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
