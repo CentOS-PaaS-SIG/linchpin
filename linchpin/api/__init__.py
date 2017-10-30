@@ -501,7 +501,8 @@ class LinchpinAPI(object):
                 uhash = uh.hexdigest()[-4:]
             elif action == 'destroy' or run_id:
                 # look for the action='up' records to destroy
-                test = rundb.get_record(target, action='up', run_id=run_id)
+                test, orig_run_id = rundb.get_record(target, action='up', run_id=run_id)
+                self.set_evar('orig_run_id', orig_run_id)
                 uhash = test.get('uhash')
                 self.ctx.log_debug('using data from run_id: {}'.format(run_id))
             else:

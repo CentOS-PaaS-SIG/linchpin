@@ -109,7 +109,7 @@ def main():
 
         val = value
         # if value looks like a dict it is a dict!
-        if value and value.startswith("{") or value.startswith("["):
+        if value and (value.startswith("{") or value.startswith("[")):
             try:
                 val = json.loads(value)
             except Exception as e:
@@ -140,7 +140,14 @@ def main():
                     module.fail_json(msg=msg)
 
             if op == "get":
-                output = "noop"
+                if run_id and key:
+                    runid = int(run_id)
+                    record = rundb.get_record(table, action=action, run_id=runid)[0]
+                    if record.has_key(key):
+                        output = record.get(key)
+                    else:
+                        msg = "key '{0}' was not found in record".format(key)
+                        module.fail_json(msg=msg)
 
         else:
             msg = ("Module 'action' required".format(action))

@@ -65,7 +65,7 @@ class TinyRunDB(BaseDB):
         for rid in range(int(run_id), 0, -1):
             record = t.get(eid=int(rid))
             if record['action'] == action:
-                return record
+                return record, int(rid)
 
         return None
 
