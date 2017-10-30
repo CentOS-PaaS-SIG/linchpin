@@ -1,0 +1,6 @@
+---
+- name: "Wait on jobs"
+  include: wait_on_os_volume.yml
+  vars:
+    os_volume_group: "{{ item }}"
+  with_items:  "{{ topology_outputs_os_volume }}"

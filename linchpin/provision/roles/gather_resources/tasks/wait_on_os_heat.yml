@@ -1,0 +1,11 @@
+---
+- name: "waiting on each job id"
+  async_status_custom:
+    jid: "{{ os_heat_group['ansible_job_id'] }}"
+  register: job_result
+  until: job_result.finished
+  retries: 30
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os_heat: "{{ topology_outputs_os_heat + [job_result] }}"

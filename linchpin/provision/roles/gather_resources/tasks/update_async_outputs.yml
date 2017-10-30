@@ -1,10 +1,11 @@
+---
 - name: "os_server: wait and update outputs using jobids "
   include: update_os_server_outputs.yml
   when: async and 'os_server' in async_types
 
 - name: "os_obj: wait and update outputs using jobids "
   include: update_os_obj_outputs.yml
-  when: async and 'os_obj' in async_types
+  when: async and 'os_object' in async_types
 
 - name: "os_volume: wait and update outputs using jobids "
   include: update_os_volume_outputs.yml
