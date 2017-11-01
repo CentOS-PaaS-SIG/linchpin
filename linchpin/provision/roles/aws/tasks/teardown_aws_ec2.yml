@@ -3,7 +3,7 @@
 #  debug:
 #    var: orig_run_id
 
-- name: "Teardown of AWS_EC2 Resourcei"
+- name: "Teardown of AWS_EC2 Resource"
   ec2:
     aws_access_key: "{{ res_def_item.0 }}"
     aws_secret_key: "{{  res_def_item.1 }}"

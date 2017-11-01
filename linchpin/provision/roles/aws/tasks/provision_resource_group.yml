@@ -1,6 +1,7 @@
+---
 - name: "Unset the authvar from previous run"
   set_fact:
-    auth_var: ""
+    auth_var: !!null
 
 - name: "Set cred profile"
   set_fact:
@@ -13,14 +14,14 @@
     cred_type: "aws"
     cred_path: "{{ creds_path | default(default_credentials_path) }}"
     driver: "file"
-  register: auth_var
+  register: auth_variable
   ignore_errors: true
-  when: cred_profile is defined
+  when: res_grp['credentials'] is defined
 
-- name: "Set auth_var "
+- name: "Set auth_var"
   set_fact:
-    auth_var: "{{ auth_var['output'][cred_profile] | default('') }}"
-  when: cred_profile is defined
+    auth_var: "{{ auth_variable['output'][cred_profile] | default('') }}"
+  when: cred_profile is defined and auth_variable['changed']
 
 - name: "provisioning resource definitions of current group"
   include: provision_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
