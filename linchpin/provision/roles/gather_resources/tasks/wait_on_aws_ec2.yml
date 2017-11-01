@@ -1,3 +1,4 @@
+---
 - name: "waiting on each job id"
   async_status_custom:
     jid: "{{ aws_ec2_group['ansible_job_id'] }}"

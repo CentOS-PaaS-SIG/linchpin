@@ -1,6 +1,6 @@
 - name: "Provision/Teardown resource by looping on count"
   gce:
-    name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+    name: "{{ gce_resource_name }}"
     num_instances: "{{ res_def['count'] | default(omit)}}"
     zone: "{{ res_def['region'] }}"
     machine_type: "{{ res_def['flavor']  }}"
@@ -15,12 +15,12 @@
 
 - name: "Appending outputitem to topology_outputs"
   set_fact:
-    topology_outputs_gce: "{{ topology_outputs_gce + [res_def_output] }}"
+    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce + [res_def_output] }}"
   when: not async
 
 - name: "Async:: Provision/Teardown resource by looping on count"
   gce:
-    name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+    name: "{{ gce_resource_name }}"
     num_instances: "{{ res_def['count'] | default(omit)}}"
     zone: "{{ res_def['region'] }}"
     machine_type: "{{ res_def['flavor']  }}"
@@ -37,5 +37,5 @@
 
 - name: "Appending outputitem to topology_outputs"
   set_fact:
-    topology_outputs_gce: "{{ topology_outputs_gce + [ res_def_output ] }}"
+    async_outputs_gcloud_gce: "{{ async_outputs_gcloud_gce + [ res_def_output ] }}"
   when: async

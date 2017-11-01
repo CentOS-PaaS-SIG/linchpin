@@ -1,7 +1,4 @@
-- name: "DEBUG:: provisioning resource group {{ res_grp }}"
-  debug:
-    msg: "The current server obj is {{ res_grp }}"
-
+---
 - name: "Unset the authvar from previous run"
   set_fact:
     auth_var: ""
@@ -19,10 +16,11 @@
   register: auth_var
   ignore_errors: true
 
-- name: "set auth_var "
+- name: "set auth_var"
   set_fact:
     auth_var: "{{ auth_var['output'][cred_profile]['test'] | default('') }}"
   ignore_errors: true
+  when: auth_var['output'] is defined
 
 - name: "provisioning resource definitions of current group"
   include: provision_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
