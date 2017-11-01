@@ -58,16 +58,19 @@ class TinyRunDB(BaseDB):
 
     @usedb
     def get_record(self, table, action='up', run_id=None):
+
         t = self.db.table(name=table)
         if not run_id:
             run_id = len(t.all())
+            if not run_id:
+                return (None, 0)
 
         for rid in range(int(run_id), 0, -1):
             record = t.get(eid=int(rid))
             if record['action'] == action:
-                return record, int(rid)
+                return (record, int(rid))
 
-        return None
+        return (None, 0)
 
     def remove_record(self, table, key, value):
         pass

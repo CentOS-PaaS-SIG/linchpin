@@ -501,10 +501,15 @@ class LinchpinAPI(object):
                 uhash = uh.hexdigest()[-4:]
             elif action == 'destroy' or run_id:
                 # look for the action='up' records to destroy
-                test, orig_run_id = rundb.get_record(target, action='up', run_id=run_id)
-                self.set_evar('orig_run_id', orig_run_id)
-                uhash = test.get('uhash')
-                self.ctx.log_debug('using data from run_id: {}'.format(run_id))
+                data, orig_run_id = rundb.get_record(target, action='up', run_id=run_id)
+                if data:
+                    self.set_evar('orig_run_id', orig_run_id)
+                    uhash = data.get('uhash')
+                    self.ctx.log_debug('using data from run_id: {}'.format(run_id))
+                else:
+                    raise LinchpinError("Attempting to perform '{0}' action on"
+                                        " target: '{1}' failed. No records"
+                                        " available.".format(action, target))
             else:
                 raise LinchpinError("run_id '{0}' does not match any existing"
                                     " records".format(run_id))
