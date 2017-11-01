@@ -137,17 +137,20 @@ class LinchpinHooks(object):
         layout_data = {}
         results_data = {}
 
-        data = self._rundb.get_record(target,
+        data, run_id = self._rundb.get_record(target,
                                       action=action,
                                       run_id=self._rundb_id)
 
-        for inp in data['inputs']:
+        inputs = [i for i in data['inputs'] if data['inputs']]
+        outputs = [i for i in data['outputs'] if data['outputs']]
+
+        for inp in inputs:
             if 'layout_data' in inp:
                 layout_data = inp
             if 'topology_data' in inp:
                 topology_data = inp
 
-        for out in data['outputs']:
+        for out in outputs:
             if 'resources' in out:
                 results_data = out
 
