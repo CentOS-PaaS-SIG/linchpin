@@ -477,7 +477,7 @@ class LinchpinAPI(object):
             # initialize rundb table
             dateformat = self.get_cfg('logger',
                                       'dateformat',
-                                      '%m/%d/%Y %I:%M:%S %p')
+                                      default='%m/%d/%Y %I:%M:%S %p')
 
             self.set_evar('target', target)
 
@@ -501,11 +501,15 @@ class LinchpinAPI(object):
                 uhash = uh.hexdigest()[-4:]
             elif action == 'destroy' or run_id:
                 # look for the action='up' records to destroy
-                data, orig_run_id = rundb.get_record(target, action='up', run_id=run_id)
+                data, orig_run_id = rundb.get_record(target,
+                                                     action='up',
+                                                     run_id=run_id)
+
                 if data:
                     self.set_evar('orig_run_id', orig_run_id)
                     uhash = data.get('uhash')
-                    self.ctx.log_debug('using data from run_id: {}'.format(run_id))
+                    self.ctx.log_debug("using data from"
+                                       " run_id: {}".format(run_id))
                 else:
                     raise LinchpinError("Attempting to perform '{0}' action on"
                                         " target: '{1}' failed. No records"

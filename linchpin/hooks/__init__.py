@@ -138,8 +138,8 @@ class LinchpinHooks(object):
         results_data = {}
 
         data, run_id = self._rundb.get_record(target,
-                                      action=action,
-                                      run_id=self._rundb_id)
+                                              action=action,
+                                              run_id=self._rundb_id)
 
         inputs = [i for i in data['inputs'] if data['inputs']]
         outputs = [i for i in data['outputs'] if data['outputs']]

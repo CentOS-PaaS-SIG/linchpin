@@ -142,7 +142,10 @@ def main():
             if op == "get":
                 if run_id and key:
                     runid = int(run_id)
-                    record = rundb.get_record(table, action=action, run_id=runid)[0]
+                    record = rundb.get_record(table,
+                                              action=action,
+                                              run_id=runid)[0]
+
                     if record.has_key(key):
                         output = record.get(key)
                     else:
