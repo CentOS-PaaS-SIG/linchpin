@@ -11,9 +11,7 @@
   check_mode: "{{ _check_mode }}"
 
 - name: "Initiating Teardown of beaker resource group"
-  include: teardown_resource_group.yml res_grp={{ item.0 }} topo_output_file={{ item.1 }}
-  with_nested:
+  include: teardown_resource_group.yml res_grp={{ item }}
+  with_items:
     - "{{ bkr_res_grps }}"
-    - ["{{ resources_file | default( default_resources_path+'/'+
-    outputs.topology_name.replace(' ', '_').lower()+'.output' ) }}"]
   when: state == "absent"

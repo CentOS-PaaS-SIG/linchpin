@@ -37,11 +37,6 @@
   set_fact:
     topo_output_resources: "{{ topo_output.output[0]['resources'] }}"
 
-- name: debug topo_output_resources
-  debug:
-    var: topo_output_resources
-
-
 # patch for res_type to type translation
 - name: "Add attribute res_type to res_grp resource_definitions"
   set_fact:
