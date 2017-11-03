@@ -146,7 +146,7 @@ def main():
                                               action=action,
                                               run_id=runid)[0]
 
-                    if record.has_key(key):
+                    if key in record:
                         output = record.get(key)
                     else:
                         msg = "key '{0}' was not found in record".format(key)
