@@ -61,9 +61,18 @@
                 },
                 "userdata": {
                     "type": "string"
+                },
+                "boot_from_volume": {
+                    "type": "boolean"
+                },
+                "volume_size": {
+                    "type": "number"
+                },
+                "boot_volume": {
+                    "type": "string"
                 }
             },
-            "required":["flavor","type","image","count","keypair"]
+            "required":["flavor","type","count","keypair"]
         },
         "dummy": {
             "type" : "object",

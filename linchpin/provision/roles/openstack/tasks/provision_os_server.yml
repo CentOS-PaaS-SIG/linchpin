@@ -8,7 +8,7 @@
     state: "{{ state }}"
     auth: "{{ auth_var }}"
     name: "{{ os_resource_name }}"
-    image: "{{ res_def['image'] }}"
+    image: "{{ res_def['image'] | default(omit) }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
     flavor: "{{ res_def['flavor'] }}"
@@ -17,6 +17,10 @@
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
     userdata: "{{ res_def['userdata'] | default(omit) }}"
     count: "{{ res_def['count'] }}"
+    boot_from_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
+    terminate_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
+    volume_size: "{{ res_def['volume_size'] | default(omit) }}"
+    boot_volume: "{{ res_def['boot_volume'] | default(omit) }}"
   register: res_def_output
   when: not async and auth_var is defined
 
@@ -29,7 +33,7 @@
   os_server2:
     state: "{{ state }}"
     name: "{{ os_resource_name }}"
-    image: "{{ res_def['image'] }}"
+    image: "{{ res_def['image'] | default(omit) }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
     flavor: "{{ res_def['flavor'] }}"
@@ -38,6 +42,10 @@
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
     userdata: "{{ res_def['userdata'] | default(omit) }}"
     count: "{{ res_def['count'] }}"
+    boot_from_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
+    terminate_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
+    volume_size: "{{ res_def['volume_size'] | default(omit) }}"
+    boot_volume: "{{ res_def['boot_volume'] | default(omit) }}"
   register: res_def_output
   when: not async and auth_var is not defined
 
@@ -51,7 +59,7 @@
     state: "{{ state }}"
     auth: "{{ auth_var | provide_default(omit) }}"
     name: "{{ os_resource_name }}"
-    image: "{{ res_def['image'] }}"
+    image: "{{ res_def['image'] | default(omit) }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
     flavor: "{{ res_def['flavor'] }}"
@@ -60,6 +68,10 @@
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
     userdata: "{{ res_def['userdata'] | default(omit) }}"
     count: "{{ res_def['count'] }}"
+    boot_from_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
+    terminate_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
+    volume_size: "{{ res_def['volume_size'] | default(omit) }}"
+    boot_volume: "{{ res_def['boot_volume'] | default(omit) }}"
   async: "{{ async_timeout | default(1000) }}"
   poll: 0
   register: res_def_output
@@ -74,7 +86,7 @@
   os_server2:
     state: "{{ state }}"
     name: "{{ os_resource_name }}"
-    image: "{{ res_def['image'] }}"
+    image: "{{ res_def['image'] | default(omit) }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
     flavor: "{{ res_def['flavor'] }}"
@@ -83,6 +95,10 @@
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
     userdata: "{{ res_def['userdata'] | default(omit) }}"
     count: "{{ res_def['count'] }}"
+    boot_from_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
+    terminate_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
+    volume_size: "{{ res_def['volume_size'] | default(omit) }}"
+    boot_volume: "{{ res_def['boot_volume'] | default(omit) }}"
   async: "{{ async_timeout | default(1000) }}"
   poll: 0
   register: res_def_output
