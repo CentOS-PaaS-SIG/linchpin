@@ -1,8 +1,4 @@
 ---
-#- name: "debug orig_run_id"
-#  debug:
-#    var: orig_run_id
-
 - name: "Teardown of AWS_EC2 Resource"
   ec2:
     aws_access_key: "{{ res_def_item.0 }}"
@@ -49,11 +45,7 @@
   poll: 0
   register: output_item
 
-# following tasks saves the async job details 
+# following tasks saves the async job details
 - name: "Async:: save the job id"
   set_fact:
     topology_outputs_aws_ec2: "{{ topology_outputs_aws_ec2 + [output_item] }}"
-
-#- name: "debug statement showing outputs"
-#  debug:
-#    msg: "{{ topology_outputs_aws_ec2 }}"
