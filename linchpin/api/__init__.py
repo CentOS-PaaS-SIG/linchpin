@@ -388,10 +388,16 @@ class LinchpinAPI(object):
         if rundb_conn_type == 'file':
             rundb_conn_int = rundb_conn.replace('::mac::', str(get_mac()))
             rundb_conn_int = os.path.expanduser(rundb_conn_int)
+            rundb_conn_dir = os.path.dirname(rundb_conn_int)
+
+            if not os.path.exists(rundb_conn_dir):
+                os.mkdir(rundb_conn_dir)
+
 
         self.set_evar('rundb_type', rundb_type)
         self.set_evar('rundb_conn', rundb_conn_int)
         self.set_evar('rundb_hash', self.rundb_hash)
+
 
         return BaseDB(DB_DRIVERS[rundb_type], rundb_conn_int)
 
