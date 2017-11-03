@@ -1,12 +1,19 @@
 ---
 # This playbook will initiate provisioning for the duffy resources groups.
-- name: "DEBUG:: Duffy resource group list"
+- name: debug duffy_res_grps
   debug:
-    msg: "Currently provisioning the resources under list duffy_res_grps {{ duffy_res_grps }}"
+    var: duffy_res_grps
 
 - name: "declaring output vars"
   set_fact:
     topology_outputs_duffy: []
+
+# normally we don't adjust the default, but we need to redo it here.
+# duffy puts its key by default in the user's home directory.
+- name: "Set cred path"
+  set_fact:
+    creds_path: "~/"
+  when: creds_path == default_credentials_path
 
 - name: "Initiating Provisioning of duffy resource group"
   include: provision_resource_group.yml res_grp={{ item }}
@@ -15,9 +22,7 @@
   when: state == "present"
 
 - name: "Initiating Teardown of duffy resource group"
-  include: teardown_resource_group.yml res_grp={{ item.0 }} topo_output_file={{ item.1 }}
+  include: teardown_resource_group.yml res_grp={{ item.0 }}
   with_nested:
     - "{{ duffy_res_grps }}"
-    - ["{{ resources_file | default( default_resources_path+'/'+
-    outputs.topology_name.replace(' ', '_').lower()+'.output' ) }}"]
   when: state == "absent"

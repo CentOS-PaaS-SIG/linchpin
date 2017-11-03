@@ -5,3 +5,7 @@
   loop_control:
     loop_var: res_def_item
   register: output_item
+
+- name: "Save the results"
+  set_fact:
+    topology_outputs_aws_ec2: "{{ topology_outputs_duffy + [output_item] }}"

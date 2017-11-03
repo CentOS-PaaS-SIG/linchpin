@@ -1,3 +1,9 @@
+---
+- name: "Set cred filename"
+  set_fact:
+    credentials: "{{ res_grp['credentials'] | default('') }}"
+  when: res_grp['credentials'] is defined
+
 - name: "Provision duffy resources by looping on count"
   duffy:
     state: "{{ state }}"
@@ -5,8 +11,8 @@
     version: "{{ res_def['version'] }}"
     arch: "{{ res_def['arch'] }}"
     count: "{{ res_def['count'] }}"
+    key_path: "{{ creds_path }}/{{ credentials }}"
   register: outputitem
-  when: res_def['res_type']=="duffy_node"
 
 - name: "set tmp var"
   set_fact:
