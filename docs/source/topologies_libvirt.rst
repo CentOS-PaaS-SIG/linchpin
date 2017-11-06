@@ -86,6 +86,43 @@ Complete Libvirt Topology
             networks:
               - name: linchpin-centos74
 
+Libvirt Topology With cloud init config
+```````````````````````````````````````
+.. code-block:: yaml
+
+    ---
+    topology_name: "libvirt"
+    resource_groups:
+      -
+        resource_group_name: "ex"
+        res_group_type: "libvirt"
+        res_defs:
+          - res_name: "fedoramachine"
+            res_type: "libvirt_node"
+            uri: "qemu:///system"
+            remote_user: "root" # remote user to be specified when not running as root
+            count: 1
+            driver: qemu
+            image_src: 'https://pubmirror2.math.uh.edu/fedora-buffet/alt/atomic/stable/Fedora-Atomic-25-20170705.0/CloudImages/x86_64/images/Fedora-Atomic-25-20170705.0.x86_64.qcow2' # image url to be specified
+            memory: 6144
+            vcpus: 3
+            arch: x86_64
+            copy_ssh_keys: true # option to specify ssh keys while booting instance 
+            network_bridge: "virbr0" # optional specification to be added default is other than virbr0
+            additional_storage: 15G # resizes the qcow2 images without requiring storage pools
+            cloud_config:  # parameter to sepecify the cloud_config strings
+              users:
+                - name: admin
+                  gecos: Admin User
+                  groups: wheel
+                  sudo: ALL=(ALL) NOPASSWD:ALL
+                  ssh-import-id: None
+                  lock_passwd: true
+            networks:
+              - name: default
+
+
+
 .. note:: as compared with the ``simple`` topology above, this topology
     defines and enables the network(s) with the res_type of libvirt_network.
 
