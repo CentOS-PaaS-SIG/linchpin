@@ -1,7 +1,4 @@
-- name: "Debug:: checking cfn parameters"
-  debug:
-    msg: "{{ res_grp_vars | selectattr('resource_group_name', 'equalto', res_grp_name ) | first }}"
-
+---
 - name: "Set cfn parameters for template"
   set_fact:
     cfn_grp_vars : "{{ res_grp_vars | selectattr('resource_group_name', 'equalto', res_grp_name ) | first }}"
@@ -22,7 +19,7 @@
     template_parameters: "{{ cfn_params }}"
     tags:
       Stack: "{{ res_def['res_name'] | default(res_def['name']) }}"
-  register: res_def_output 
+  register: res_def_output
   when: not async
 
 - name: "Provision cloud formation stack"

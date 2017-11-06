@@ -1,0 +1,6 @@
+---
+- name: "Wait on jobs"
+  include: wait_on_os_server.yml
+  vars:
+    os_server_group: "{{ item }}"
+  with_items:  "{{ topology_outputs_os_server }}"

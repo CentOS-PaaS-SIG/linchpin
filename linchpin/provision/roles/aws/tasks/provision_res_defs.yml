@@ -1,20 +1,29 @@
+---
+- name: "Set aws_res_type value"
+  set_fact:
+    aws_res_type: "{{ res_def['type'] | default(res_def['res_type']) }}"
+  when: async
+
+- name: "Add resource type to async_types"
+  set_fact:
+    async_types: "{{ async_types + [aws_res_type] }}"
+  when: async
+
+- name: "declaring async vars"
+  set_fact:
+    async_outputs_aws_ec2: []
+    async_outputs_aws_s3: []
+    async_outputs_aws_ec2_key: []
+    async_outputs_aws_cfn: []
+  when: async
+
+- name: "Get the resource name"
+  set_fact:
+    rsrc_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+
+- name: "Create name using uhash value"
+  set_fact:
+    aws_resource_name: "{{ rsrc_name + '-' + uhash + '-' }}"
+
 - name: "provision resource type : {{ res_def['res_type'] | default(res_def['type']) }}"
   include: "provision_{{ res_def['res_type'] | default(res_def['type'])}}.yml"
-
-# can be reverted if the provisioning is not optimized
-
-#- name: "provision aws_ec2_key "
-#  include: provision_aws_ec2_key.yml
-#  when: res_def['res_type']=="aws_ec2_key"
-
-#- name: "provision aws_ec2 resources"
-#  include: provision_aws_ec2.yml 
-#  when: res_def['res_type']=="aws_ec2"
-
-#- name: "provision aws_s3 resources"
-#  include: provision_aws_s3.yml 
-#  when: res_def['res_type']=="aws_s3"
-
-#- name: "provision aws_cfn resources"
-#  include: provision_aws_cfn.yml
-#  when: res_def['res_type']=="aws_cfn"

@@ -1,4 +1,8 @@
 ---
+#- name: debug res_grp
+#  debug:
+#    var: res_grp
+
 - name: "Teardown resource definitions of current group"
   include: teardown_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
   with_nested:

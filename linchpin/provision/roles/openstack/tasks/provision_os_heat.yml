@@ -1,7 +1,4 @@
-- name: "Debug:: checking heat parameters "
-  debug:
-    msg: "{{ res_grp_vars | selectattr('resource_group_name', 'equalto', res_grp_name ) | first }}"
-
+---
 - name: "Set Heat parameters for template"
   set_fact:
     heat_params : "{{ res_grp_vars | selectattr('resource_group_name', 'equalto', res_grp_name ) | first }}"

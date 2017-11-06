@@ -1,0 +1,114 @@
+---
+
+- name: "RunDB Testing"
+  hosts: localhost
+  gather_facts: True
+  tasks:
+    - name: "set table"
+      set_fact:
+        rundb_table: test-this
+    - name: "set db_path"
+      set_fact:
+        rundb_path: /tmp/rundb-test.json
+    - name: "set dateformat"
+      set_fact:
+        dateformat: "%m/%d/%Y %I:%M:%S %p"
+
+    - name: "initialize rundb"
+      rundb:
+        conn_str: "{{ rundb_path }}"
+        operation: init
+        table: "{{ rundb_table }}"
+        value: {'inputs': [], 'outputs': [], 'start': '', 'end': '', 'rc': 0, 'action': ''}
+      register: run_id
+
+    - name: "assign rundb_id"
+      set_fact:
+        rundb_id: "{{ run_id.output }}"
+
+    - name: "update rundb #2"
+      rundb:
+        conn_str: "{{ rundb_path }}"
+        operation: update
+        table: "{{ rundb_table }}"
+        key: "inputs"
+        value: [{'topology_file': 'somefile.yml'}]
+        run_id: "{{ rundb_id }}"
+
+    - name: "update rundb action"
+      rundb:
+        conn_str: "{{ rundb_path }}"
+        operation: update
+        table: "{{ rundb_table }}"
+        key: "action"
+        value: "up"
+        run_id: "{{ rundb_id }}"
+
+
+    - name: "record start time"
+      rundb:
+        conn_str: "{{ rundb_path }}"
+        operation: update
+        table: "{{ rundb_table }}"
+        key: "start"
+        value: "{{ dateformat | strftime(ansible_date_time.epoch) }}"
+        run_id: "{{ rundb_id }}"
+
+    - name: "set topo_data fact"
+      set_fact:
+        topo_data: '{
+                        "resource_groups": [
+                            {
+                                "res_defs": [
+                                    {
+                                        "dhcp_end": "192.168.71.112",
+                                        "dhcp_start": "192.168.71.101",
+                                        "ip": "192.168.71.100",
+                                        "res_name": "linchpin-centos71",
+                                        "res_type": "libvirt_network"
+                                    },
+                                    {
+                                        "arch": "x86_64",
+                                        "count": 1,
+                                        "image_src": "http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz",
+                                        "memory": 1024,
+                                        "networks": [
+                                            {
+                                                "name": "linchpin-centos71"
+                                            }
+                                        ],
+                                        "res_name": "centos71",
+                                        "res_type": "libvirt_node",
+                                        "uri": "qemu:///system",
+                                        "vcpus": 1
+                                    }
+                                ],
+                                "res_group_type": "libvirt",
+                                "resource_group_name": "ex"
+                            }
+                        ],
+                        "topology_name": "libvirt"
+                    }'
+
+    - name: "add topology data to run_db"
+      rundb:
+        conn_str: "{{ rundb_path }}"
+        operation: update
+        table: "{{ rundb_table }}"
+        key: "inputs"
+        value: [{ 'topology_data': "{{ topo_data }}" }]
+        run_id: "{{ rundb_id }}"
+
+    - name: "get topology data from input field"
+      rundb:
+        conn_str: "{{ rundb_path }}"
+        operation: get
+        table: "{{ rundb_table }}"
+        key: "inputs"
+        run_id: "{{ rundb_id }}"
+
+#operation:
+#run_id:
+#table: (aka target in linchpin)
+#key:
+#value:

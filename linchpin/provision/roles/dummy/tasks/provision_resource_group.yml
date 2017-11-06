@@ -1,8 +1,9 @@
-- name: "DEBUG:: provisioning resource group {{ res_grp }}"
-  debug:
-    msg: "The current server obj is {{ res_grp }} "
+---
+#- name: debug res_grp
+#  debug:
+#    var: res_grp
 
-- name: "provisioning resource definitions of current group"
+- name: "Provision resource definitions of current group"
   include: provision_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"

@@ -1,0 +1,23 @@
+---
+- name: "waiting on each job id"
+  async_status_custom:
+    jid: "{{ aws_ec2_group['ansible_job_id'] }}"
+  register: job_result
+  until: job_result.finished
+  retries: 30
+  when: state == "present"
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_aws_ec2: "{{ topology_outputs_aws_ec2 + [job_result] }}"
+  when: state == "present"
+
+- name: "set_job_id"
+  set_fact:
+    results: "{{ aws_ec2_group['results'] | first }}"
+  when: state == "absent"
+
+- name: "include wait"
+  include: wait.yml job_obj={{ item }}
+  with_items: "{{ results }}"
+  when: state == "absent"

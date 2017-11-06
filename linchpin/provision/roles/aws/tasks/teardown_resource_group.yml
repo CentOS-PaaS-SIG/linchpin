@@ -1,10 +1,12 @@
-- name: "DEBUG:: teardown of resource group {{ res_grp }}"
+---
+- name: current res_grp
   debug:
-    msg: "The current server obj is {{ res_grp }}"
+    var: res_grp
 
 - name: "Set cred profile"
   set_fact:
     cred_profile: "{{ res_grp['credentials']['profile'] | default('default') }}"
+  when: res_grp['credentials'] is defined
 
 - name: "Get creds from auth driver"
   auth_driver:
@@ -14,17 +16,26 @@
     driver: "file"
   register: auth_var
   ignore_errors: true
+  when: res_grp['credentials'] is defined
 
-- name: "Set auth_var "
+- name: "Set auth_var"
   set_fact:
     auth_var: "{{ auth_var['output'][cred_profile] | default('') }}"
   ignore_errors: true
+  when: auth_var is defined
 
-- name: "Parsing topology output file"
-  output_parser:
-    output_file: "{{ topo_output_file }}"
+- name: "Get topology output data"
+  rundb:
+    conn_str: "{{ rundb_conn }}"
+    operation: get
+    table: "{{ target }}"
+    key: "outputs"
+    run_id: "{{ orig_run_id }}"
   register: topo_output
 
+- name: "set topo_output_resources fact"
+  set_fact:
+    topo_output_resources: "{{ topo_output.output[0]['resources'] }}"
 
 # patch for res_type to type translation
 - name: "Add attribute res_type to res_grp resource_definitions"
@@ -36,7 +47,7 @@
   when: res_item.0['res_type'] == "aws_ec2"
   with_nested:
     - "{{ resource_definitions }}"
-    - "{{ topo_output['output']['content']['aws_ec2_res'] }}"
+    - "{{ topo_output_resources }}"
     - ["{{ res_grp['resource_group_name']  }}"]
   loop_control:
     loop_var: res_item

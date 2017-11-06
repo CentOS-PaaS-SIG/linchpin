@@ -1,11 +1,20 @@
-- name: "DEBUG:: teardown of resource group {{ res_grp }}"
-  debug:
-    msg: "The current server obj is {{ res_grp }} "
-
-- name: "Parsing resources file"
-  output_parser:
-    output_file: "{{ topo_output_file }}"
+---
+- name: "Get topology output data"
+  rundb:
+    conn_str: "{{ rundb_conn }}"
+    operation: get
+    table: "{{ target }}"
+    key: "outputs"
+    run_id: "{{ orig_run_id }}"
   register: topo_output
+
+- name: "set topo_output_resources fact"
+  set_fact:
+    topo_output_resources: "{{ topo_output.output[0]['resources'] }}"
+
+- name: debug topo_output_resources
+  debug:
+    var: topo_output_resources
 
 - name: "init job_ids"
   set_fact:
@@ -14,13 +23,13 @@
 - name: "build job_id list"
   set_fact:
     job_ids: "{{ job_ids + [ 'J:' + fact_item['id'] ] }}"
-  with_items: "{{ topo_output['output']['content']['beaker_res'] }}"
+  with_items: "{{ topo_output_resources }}"
   loop_control:
     loop_var: fact_item
 
-- name: job_ids
-  debug:
-    var: job_ids
+#- name: job_ids
+#  debug:
+#    var: job_ids
 
 - name: "make ids a dict"
   set_fact:

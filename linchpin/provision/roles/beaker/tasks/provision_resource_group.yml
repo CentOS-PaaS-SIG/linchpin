@@ -28,10 +28,6 @@
   when: state == 'present'
   register: _topology_outputs_beaker_server
 
-- name: debug
-  debug:
-    var: _topology_outputs_beaker_server
-
 - name: "append beaker outputs"
   set_fact:
     topology_outputs_beaker_server: "{{ topology_outputs_beaker_server + item.hosts }}"

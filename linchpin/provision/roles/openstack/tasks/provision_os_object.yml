@@ -10,7 +10,7 @@
     container_access: "{{ res_def['access'] | default('private') }}"
     wait: yes
     state: "{{ state }}"
-  when: res_def['count'] is not defined and auth_var['changed'] == true
+  when: res_def['count'] is not defined and auth_var is defined
 
 - name: "provision/deprovision swift containers"
   os_object:
@@ -18,7 +18,7 @@
     container_access: "{{ res_def['access'] | default('private') }}"
     wait: yes
     state: "{{ state }}"
-  when: res_def['count'] is not defined and auth_var['changed'] == false
+  when: res_def['count'] is not defined and auth_var is not defined
 
 - name: "provision/deprovision swift containers when count specified"
   os_object:
@@ -35,8 +35,8 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: container
-  register: res_def_output 
-  when: res_def['count'] is defined and not async and auth_var['changed'] == true
+  register: res_def_output
+  when: res_def['count'] is defined and not async and auth_var is defined
 
 - name: "provision/deprovision swift containers when count specified"
   os_object:
@@ -52,14 +52,14 @@
   loop_control:
     loop_var: container
   register: res_def_output
-  when: res_def['count'] is defined and not async and auth_var['changed'] == false
+  when: res_def['count'] is defined and not async and auth_var is not defined
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_object: "{{ topology_outputs_os_object + res_def_output.results }}"
   when: not async
 
-- name: "Async:: provision/deprovision swift containers when count specified"
+- name: "Async:: provision/deprovision swift containers when count specified and auth provided"
   os_object:
     auth: "{{ container.0 }}"
     container: "{{ container.1 }}_{{ container.4 }}"
@@ -77,7 +77,13 @@
   async: "{{ async_timeout }}"
   poll: 0
   register: res_def_output
-  when: res_def['count'] is defined and async and auth_var['changed'] == true
+  when: res_def['count'] is defined and async and auth_var is defined
+
+# following tasks saves the async job details
+- name: "Async:: save the job id"
+  set_fact:
+    topology_outputs_os_object: "{{ topology_outputs_os_object + [ res_def_output ] }}"
+  when: async
 
 - name: "Async:: provision/deprovision swift containers when count specified"
   os_object:
@@ -95,13 +101,7 @@
   async: "{{ async_timeout }}"
   poll: 0
   register: res_def_output
-  when: res_def['count'] is defined and async and auth_var['changed'] == false
-
-#- name: "Async: save the job id"
-#  set_fact:
-#    topology_job_ids: "{{ topology_job_ids + [ res_def_output ] }}"
-#  when: async
-
+  when: res_def['count'] is defined and async and auth_var is not defined
 
 # following tasks saves the async job details
 - name: "Async:: save the job id"

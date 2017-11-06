@@ -91,6 +91,17 @@ class LinchpinHooks(object):
 
         self.api = api
         self.api.bind_to_hook_state(self.run_hooks)
+        self._rundb = None
+        self._rundb_id = None
+
+    @property
+    def rundb(self):
+        return (self._rundb, self._rundb_id)
+
+    @rundb.setter
+    def rundb(self, data):
+        self._rundb = data[0]
+        self._rundb_id = data[1]
 
 
     def prepare_ctx_params(self):
@@ -99,22 +110,51 @@ class LinchpinHooks(object):
         that is being set. these parameters are based topology name.
         """
 
-        topology_name = self.api.get_evar("topology_name")
+        # resources are no longer stored in a file
+        # commenting out now and will remove later
+        # when rundb is fully integrated
 
-        res_file = '{0}{1}'.format(topology_name,
-                                   self.api.get_cfg('extensions', 'resource'))
+        # topology_name = self.api.get_evar("topology_name")
+        # res_file = '{0}{1}'.format(topology_name,
+        #                           self.api.get_cfg('extensions', 'resource'))
+        # res_pthT = self.api.target_data['extra_vars']['default_resources_path'] # noqa
+        # res_file = '{0}/{1}'.format(res_pthT, res_file)
+        # self.api.target_data['extra_vars']['resource_file'] = res_file
 
-        res_pthT = self.api.target_data['extra_vars']['default_resources_path']
-        res_file = '{0}/{1}'.format(res_pthT, res_file)
-        self.api.target_data['extra_vars']['resource_file'] = res_file
-
-        # do this to avoid E113 from flake8
         inv_file_tmp = self.api.get_evar("inventory_file")
         self.api.target_data['extra_vars']['inventory_file'] = inv_file_tmp
 
-        # do this to avoid E113 from flake8
         inv_dir_tmp = self.api.get_evar("inventory_dir")
         self.api.target_data['extra_vars']['inventory_dir'] = inv_dir_tmp
+
+
+    def prepare_inv_params(self):
+
+        target = self.api.get_evar('target', default=None)
+        action = self.api.get_evar('_action', default='up')
+
+        topology_data = {}
+        layout_data = {}
+        results_data = {}
+
+        data, run_id = self._rundb.get_record(target,
+                                              action=action,
+                                              run_id=self._rundb_id)
+
+        inputs = [i for i in data['inputs'] if data['inputs']]
+        outputs = [i for i in data['outputs'] if data['outputs']]
+
+        for inp in inputs:
+            if 'layout_data' in inp:
+                layout_data = inp
+            if 'topology_data' in inp:
+                topology_data = inp
+
+        for out in outputs:
+            if 'resources' in out:
+                results_data = out
+
+        return (topology_data, layout_data, results_data)
 
 
     def run_hooks(self, state, is_global=False):
@@ -127,6 +167,12 @@ class LinchpinHooks(object):
         """
 
         hooks_data = self.api.target_data.get('hooks', None)
+
+        # this will replace the above target_data and pull from the rundb
+        # run_data = self.prepare_inv_params()
+        if str(state) is 'postinv':
+            run_data = self.prepare_inv_params()
+            return self.run_inventory_gen(run_data)
 
         if hooks_data and str(state) in hooks_data:
             self.api.ctx.log_debug('running {0} hooks'.format(state))
@@ -147,6 +193,15 @@ class LinchpinHooks(object):
             # current target data extravars are fetched
             tgt_data = self.api.target_data.get('extra_vars', None)
             self.run_actions(state_data, tgt_data)
+
+
+    def run_inventory_gen(self, data):
+        # determine provisioned resources
+
+        # map outputted resources to inventory layout
+
+        # save to file
+        pass
 
 
     def run_actions(self, action_blocks, tgt_data, is_global=False):

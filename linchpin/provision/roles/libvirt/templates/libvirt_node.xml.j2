@@ -1,10 +1,10 @@
-<domain type='{{ definition[1]['driver'] | default('kvm') }}'>
-  <name>{{ definition[0] }}_{{ definition[1]['name'] | default(definition[1]['res_name']) }}_{{ definition[2] }}</name>
-  <memory unit='KiB'>{{ definition[1]['memory'] * 1024 | int }}</memory>
-  <vcpu placement='static'>{{ definition[1]['vcpus'] }}</vcpu>
+<domain type='{{ definition[0]['driver'] | default('kvm') }}'>
+  <name>{{ libvirt_resource_name }}_{{ definition[1] }}</name>
+  <memory unit='KiB'>{{ definition[0]['memory'] * 1024 | int }}</memory>
+  <vcpu placement='static'>{{ definition[0]['vcpus'] }}</vcpu>
   <os>
-    <type arch='{{ definition[1]['arch'] | default('x86_64') }}'>hvm</type>
-    <boot dev='{{ definition[1]['boot_dev'] | default('hd') }}'/>
+    <type arch='{{ definition[0]['arch'] | default('x86_64') }}'>hvm</type>
+    <boot dev='{{ definition[0]['boot_dev'] | default('hd') }}'/>
   </os>
   <features>
     <acpi/>
@@ -19,17 +19,17 @@
   <on_reboot>restart</on_reboot>
   <on_crash>destroy</on_crash>
   <devices>
-{% if definition[1]['driver'] is defined and definition[1]['driver'] == 'qemu' %}
+{% if definition[0]['driver'] is defined and definition[0]['driver'] == 'qemu' %}
     <emulator>/usr/bin/qemu-system-x86_64</emulator>
 {% else %}
     <emulator>{{ qemu_path }}qemu-kvm</emulator>
 {% endif %}
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2'/>
-      <source file='{{ definition[3] }}{{ definition[0] }}_{{ definition[1]['name'] | default(definition[1]['res_name']) }}_{{ definition[2] }}.{{ definition[4] }}'/>
+      <source file='{{ definition[2] }}{{ libvirt_resource_name }}_{{ definition[1] }}.{{ definition[3] }}'/>
       <target dev='vda' bus='virtio'/>
     </disk>
-{% for network in definition[1]['networks'] %}
+{% for network in definition[0]['networks'] %}
     <interface type='network'>
       <model type='virtio'/>
       <source network='{{ network['name'] }}'/>

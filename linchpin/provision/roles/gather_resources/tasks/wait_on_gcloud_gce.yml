@@ -1,0 +1,12 @@
+---
+- name: "wait on each job id"
+  async_status_custom:
+    jid: "{{ gcloud_gce_group['ansible_job_id'] }}"
+  register: job_result
+  until: job_result.finished
+  retries: 45
+
+- name: "Append outputitem"
+  set_fact:
+    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce + [job_result] }}"
+  when: state == "present"

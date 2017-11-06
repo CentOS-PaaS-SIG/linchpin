@@ -1,6 +1,4 @@
-#- name: "provision libvirt storage"
-#  include: provision_libvirt_storage.yml
-#  when: res_def['res_type']=="libvirt_storage" and state == "present"
+---
 - name: set resource_type
   set_fact:
     resource_type: "{{ res_def['res_type'] | default(res_def['type']) }}"
@@ -8,6 +6,14 @@
 - name: "provision libvirt network"
   include: provision_libvirt_network.yml
   when: resource_type=="libvirt_network" and state == "present"
+
+- name: "Set the resource node name"
+  set_fact:
+    rsrc_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+
+- name: "Create name using uhash value"
+  set_fact:
+    libvirt_resource_name: "{{ rsrc_name + '-' + uhash }}"
 
 - name: "provision libvirt node"
   include: provision_libvirt_node.yml

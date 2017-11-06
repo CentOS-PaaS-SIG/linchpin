@@ -83,7 +83,7 @@ recommended not to change them. These values are defined in ``<lp_path>/linchpin
 
 .. glossary::
 
-    async
+    _async
         *(boolean, default: False)*
 
         Used to enable asynchronous provisioning/teardown
@@ -98,7 +98,7 @@ recommended not to change them. These values are defined in ``<lp_path>/linchpin
 
         Controls whether resources will be written to the resources_file
 
-    check_mode
+    _check_mode
         *(boolean, default: no)*
 
         This option does nothing at this time, though it may eventually be used for dry-run

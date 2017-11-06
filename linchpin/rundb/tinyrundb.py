@@ -1,0 +1,97 @@
+from tinydb import TinyDB
+from tinydb.storages import JSONStorage
+from tinydb.operations import add
+from tinydb.middlewares import CachingMiddleware
+
+from .basedb import BaseDB
+
+
+def usedb(func):
+    def func_wrapper(*args, **kwargs):
+        args[0]._opendb()
+        x = func(*args, **kwargs)
+        args[0]._closedb()
+        return x
+    return func_wrapper
+
+
+class TinyRunDB(BaseDB):
+
+    def __init__(self, conn_str):
+        self.name = 'TinyRunDB'
+        self.conn_str = conn_str
+        self.default_table = 'linchpin'
+
+
+    def _opendb(self):
+        self.db = TinyDB(self.conn_str,
+                         storage=CachingMiddleware(JSONStorage),
+                         default_table=self.default_table)
+
+    def __str__(self):
+        if self.conn_str:
+            return "{0} at {2}".format(self.name, self.conn_str)
+        return "{0} at {1}".format(self.name, 'None')
+
+
+    @property
+    def schema(self):
+        return self._schema
+
+
+    @schema.setter
+    def schema(self, schema):
+        self._schema = dict()
+        self._schema.update(schema)
+
+
+    @usedb
+    def init_table(self, table):
+        t = self.db.table(name=table)
+        return t.insert(self.schema)
+
+    @usedb
+    def update_record(self, table, run_id, key, value):
+        t = self.db.table(name=table)
+        return t.update(add(key, value), eids=[run_id])
+
+
+    @usedb
+    def get_record(self, table, action='up', run_id=None):
+
+        t = self.db.table(name=table)
+        if not run_id:
+            run_id = len(t.all())
+            if not run_id:
+                return (None, 0)
+
+        for rid in range(int(run_id), 0, -1):
+            record = t.get(eid=int(rid))
+            if record['action'] == action:
+                return (record, int(rid))
+
+        return (None, 0)
+
+    def remove_record(self, table, key, value):
+        pass
+
+
+    def search(self, table, key=None):
+        t = self.db.table(name=table)
+        if key:
+            return t.search(key)
+        return t.all()
+
+
+    def query(self, table, query):
+        pass
+
+
+    def purge(self, table=None):
+        if table:
+            return self.db.purge_table(table)
+        return self.db.purge_tables()
+
+
+    def _closedb(self):
+        self.db.close()

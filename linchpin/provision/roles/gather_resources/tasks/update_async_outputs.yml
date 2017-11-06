@@ -1,0 +1,28 @@
+---
+- name: "os_server: wait and update outputs using jobids "
+  include: update_os_server_outputs.yml
+  when: async and 'os_server' in async_types
+
+- name: "os_obj: wait and update outputs using jobids "
+  include: update_os_obj_outputs.yml
+  when: async and 'os_object' in async_types
+
+- name: "os_volume: wait and update outputs using jobids "
+  include: update_os_volume_outputs.yml
+  when: async and 'os_volume' in async_types
+
+- name: "os_heat: wait and update outputs using jobids "
+  include: update_os_heat_outputs.yml
+  when: async and 'os_heat' in async_types
+
+- name: "aws_ec2: wait and update outputs using jobids"
+  include: update_aws_ec2_outputs.yml
+  when: async and 'aws_ec2' in async_types
+
+- name: "aws_cfn: wait and update outputs using jobids"
+  include: update_aws_cfn_outputs.yml
+  when: async and 'aws_cfn' in async_types
+
+- name: "gcloud_gce: wait and update outputs using jobids"
+  include: update_gcloud_gce_outputs.yml
+  when: async and 'gcloud_gce' in async_types
