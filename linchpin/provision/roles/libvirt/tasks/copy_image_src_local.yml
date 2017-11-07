@@ -110,13 +110,12 @@
 - name: "cp img_src to match node name"
   copy:
     src: "{{ img_src }}"
-    dest: "{{ img_item[0] }}{{ img_item[1] }}_{{ img_item[2] }}_{{ img_item[3] }}.{{ img_item[4] }}"
+    dest: "{{ img_item[0] }}{{ img_item[1] }}_{{ img_item[2] }}.{{ img_item[3] }}"
     remote_src: false
   delegate_to: 127.0.0.1
   with_nested:
     - ["{{ local_image_path }}"]
-    - ["{{ res_grp_name }}"]
-    - ["{{ res_def['res_name'] | default(res_def['name']) }}"]
+    - ["{{ libvirt_resource_name }}"]
     - "{{ res_count.stdout }}"
     - ["{{ img_src_ext }}"]
   loop_control:
