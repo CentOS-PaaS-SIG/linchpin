@@ -47,7 +47,6 @@
   set_fact:
     qemu_path: "{{ (ansible_distribution in ['CentOS','RedHat']) | ternary('/usr/libexec/', '/usr/bin/') }}"
 
-# {{ definition[3] }}/{{ definition[0] }}_{{ definition[1]['res_name'] }}_{{ definition[2] }}.{{ definition[4] }}
 - name: "define node template"
   template:
     src: "../templates/libvirt_node.xml.j2"
@@ -67,7 +66,7 @@
   shell: "ssh-keygen -t rsa -f ~/.ssh/{{ res_grp_name }} -N '';cat ~/.ssh/{{ res_grp_name }} >> ~/.ssh/authorized_keys"
   args:
     creates: "~/.ssh/{{ res_grp_name }}"
-  when: res_def['copy_ssh_keys'] is defined and res_def['copy_ssh_keys'] == true and uri_hostname =='localhost'
+  when: uri_hostname =='localhost'
 
 - name: "Generate ssh keys"
   shell: "ssh-keygen -t rsa -f ~/.ssh/{{ res_grp_name }} -N '';cat ~/.ssh/{{ res_grp_name }} >> ~/.ssh/authorized_keys"
@@ -75,19 +74,19 @@
     creates: "~/.ssh/{{ res_grp_name }}"
   remote_user: "{{ res_def['remote_user'] | default('root') }}"
   delegate_to: "{{ uri_hostname }}"
-  when: res_def['copy_ssh_keys'] is defined and res_def['copy_ssh_keys'] == true and uri_hostname != 'localhost'
+  when: uri_hostname != 'localhost'
 
 - name: "cat out contents of public key"
   shell: "cat ~/.ssh/{{ res_grp_name }}.pub"
   register: pubkey_local
-  when: res_def['copy_ssh_keys'] is defined and res_def['copy_ssh_keys'] == true and uri_hostname == 'localhost'
+  when: uri_hostname == 'localhost'
 
 - name: "cat out contents of public key"
   shell: "cat ~/.ssh/{{ res_grp_name }}.pub"
   register: pubkey_remote
   remote_user: "{{ res_def['remote_user'] | default('root') }}"
   delegate_to: "{{ uri_hostname }}"
-  when: res_def['copy_ssh_keys'] is defined and res_def['copy_ssh_keys'] == true and uri_hostname != 'localhost'
+  when: uri_hostname != 'localhost'
 
 - debug:
     msg: "{{ node_exists }}"
