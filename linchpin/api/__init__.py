@@ -480,6 +480,8 @@ class LinchpinAPI(object):
 
         for target in targets:
 
+            results[target] = {}
+
             # initialize rundb table
             dateformat = self.get_cfg('logger',
                                       'dateformat',
@@ -594,7 +596,7 @@ class LinchpinAPI(object):
             # FIXME need to add rundb data for hooks results
 
             # invoke the appropriate action
-            return_code, results[target] = (
+            return_code, results[target]['task_results'] = (
                 self._invoke_playbook(action=action,
                                       console=ansible_console)
             )
@@ -617,6 +619,9 @@ class LinchpinAPI(object):
             end = time.strftime(dateformat)
             rundb.update_record(target, rundb_id, 'end', end)
             rundb.update_record(target, rundb_id, 'rc', return_code)
+
+            run_data = rundb.get_record(target, action=action, run_id=rundb_id)
+            results[target]['rundb_data'] = {rundb_id: run_data[0]}
 
         return (return_code, results)
 
