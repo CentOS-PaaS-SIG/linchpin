@@ -48,8 +48,9 @@ class LinchpinAliases(click.Group):
 
 def _handle_results(ctx, results, return_code):
     """
-    Handle results from the Ansible API. Either as a return value (retval)
-    when running with the ansible console enabled, or as a list of TaskResult
+    Handle results from the RunDB output and Ansible API.
+    Either as a return value (retval) when running with the
+    ansible console enabled, or as a list of TaskResult
     objects, and a return value.
 
     If a target fails along the way, this method immediately exits with the
@@ -60,9 +61,30 @@ def _handle_results(ctx, results, return_code):
         The dictionary of results for each target.
     """
 
-    for k, v in results.iteritems():
-        if not isinstance(v, int):
-            trs = v
+    output = '\n{0:<20}\t{1:<6}\t{2:<5}\t{3:<10}\n'.format('Target',
+                                                           'Run ID',
+                                                           'uHash',
+                                                           'Exit Code')
+    output += '-------------------------------------------------\n'
+
+    for target, data in results.iteritems():
+        rundb_data = data['rundb_data']
+        task_results = data['task_results']
+
+        return_code = 99
+
+        # PRINT OUTPUT RESULTS HERE
+        for rundb_id, data in rundb_data.iteritems():
+
+            output += '{0:<20}\t{1:>6}\t{2:>5}'.format(target,
+                                                       rundb_id,
+                                                       data['uhash'])
+
+            return_code = data['rc']
+            output += '\t{0:>9}\n'.format(return_code)
+
+        if not isinstance(task_results, int):
+            trs = task_results
 
             if trs is not None:
                 trs.reverse()
@@ -70,13 +92,14 @@ def _handle_results(ctx, results, return_code):
                 if tr.is_failed():
                     msg = tr._check_key('msg')
                     ctx.log_state("Target '{0}': {1} failed with"
-                                  " error '{2}'".format(k, tr._task, msg))
-                    sys.exit(return_code)
-            elif return_code:
-                sys.exit(return_code)
+                                  " error '{2}'".format(target, tr._task, msg))
         else:
-            if v:
-                sys.exit(v)
+            if task_results:
+                return_code = task_results
+
+
+    ctx.log_state(output)
+    sys.exit(return_code)
 
 
 @click.group(cls=LinchpinAliases,
@@ -174,7 +197,6 @@ def up(ctx, targets, run_id):
 
     try:
         return_code, results = lpcli.lp_up(pf_w_path, targets, run_id=run_id)
-
         _handle_results(ctx, results, return_code)
 
     except LinchpinError as e:
