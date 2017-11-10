@@ -709,6 +709,12 @@
                 "boot_dev": {
                     "type":"string"
                 },
+		"additional_storage": {
+                    "type":"string"
+                },
+		"network_bridge": {
+                    "type":"string"
+                },
                 "networks": {
                     "type":"array",
                     "items" : {
