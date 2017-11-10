@@ -35,14 +35,6 @@
   include: copy_image_src_remote.yml remote_user={{ res_def['remote_user'] | default('root') }}
   when: node_exists['failed'] is defined and uri_hostname != 'localhost'
 
-- name: "debug: after copy image_src "
-  debug:
-    msg: "{{ libvirt_image_path }}"
-
-- name: "node exists debug"
-  debug:
-    msg: "{{ node_exists }}"
-
 - name: set qemu_path
   set_fact:
     qemu_path: "{{ (ansible_distribution in ['CentOS','RedHat']) | ternary('/usr/libexec/', '/usr/bin/') }}"
@@ -62,34 +54,45 @@
     loop_var: definition
   when:  node_exists['failed'] is defined and res_def['cloud_config'] is not defined
 
-- name: "Generate ssh keys"
-  shell: "ssh-keygen -t rsa -f ~/.ssh/{{ res_grp_name }} -N '';cat ~/.ssh/{{ res_grp_name }} >> ~/.ssh/authorized_keys"
-  args:
-    creates: "~/.ssh/{{ res_grp_name }}"
-  when: uri_hostname =='localhost'
+  # note: though default_ssh_key_path is fetched from linchpin.conf , default value is needed to make playbooks work independently regardless of linchpin.conf
+- name: "local: does ssh key already exists ?"
+  stat:
+    path: "{{ default_ssh_key_path | default('~/.ssh/') }}{{ res_def['ssh_key'] | default(res_grp['resource_group_name'])}}"
+  register: ssh_key_stat_local
 
-- name: "Generate ssh keys"
-  shell: "ssh-keygen -t rsa -f ~/.ssh/{{ res_grp_name }} -N '';cat ~/.ssh/{{ res_grp_name }} >> ~/.ssh/authorized_keys"
-  args:
-    creates: "~/.ssh/{{ res_grp_name }}"
+- name: "remote: does ssh key already exists ?"
+  stat:
+    path: "{{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] | default(res_grp['resource_group_name'])}}"
+  register: ssh_key_stat_remote
   remote_user: "{{ res_def['remote_user'] | default('root') }}"
   delegate_to: "{{ uri_hostname }}"
   when: uri_hostname != 'localhost'
 
-- name: "cat out contents of public key"
-  shell: "cat ~/.ssh/{{ res_grp_name }}.pub"
+- name: "local: Generate ssh keys when they donot exist"
+  shell: "ssh-keygen -t rsa -f {{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] | default(res_grp['resource_group_name']) }} -N '';cat {{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] | default(res_grp['resource_group_name']) }} >> ~/.ssh/authorized_keys"
+  args:
+    creates: "{{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] }}"
+  when: uri_hostname =='localhost' and ssh_key_stat_local.stat.exists == false
+
+- name: "remote: Generate ssh keys when they donot exist"
+  shell: "ssh-keygen -t rsa -f {{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] | default(res_grp['resource_group_name']) }} -N '';cat {{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] }} >> ~/.ssh/authorized_keys"
+  args:
+    creates: "{{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] }}"
+  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+  delegate_to: "{{ uri_hostname }}"
+  when: uri_hostname != 'localhost' and ssh_key_stat_remote.stat.exists == false
+
+- name: "local: cat out contents of public key"
+  shell: "cat {{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] | default(res_grp['resource_group_name']) }}.pub"
   register: pubkey_local
   when: uri_hostname == 'localhost'
 
-- name: "cat out contents of public key"
-  shell: "cat ~/.ssh/{{ res_grp_name }}.pub"
+- name: "remote: cat out contents of public key"
+  shell: "cat {{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] | default(res_grp['resource_group_name']) }}.pub"
   register: pubkey_remote
   remote_user: "{{ res_def['remote_user'] | default('root') }}"
   delegate_to: "{{ uri_hostname }}"
   when: uri_hostname != 'localhost'
-
-- debug:
-    msg: "{{ node_exists }}"
 
 - name: "Add additional storage"
   command: "qemu-img resize {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} +{{ definition[3] }}G"
