@@ -95,24 +95,24 @@
   when: uri_hostname != 'localhost'
 
 - name: "Add additional storage"
-  command: "qemu-img resize {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} +{{ definition[3] }}G"
+  command: "qemu-img resize {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} +{{ definition[3] }}"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - ["{{ libvirt_image_path }}"]
     - ["{{ img_src_ext }}"]
-    - ["{{ res_def['additional_storage'] | default('1') }}"]
+    - ["{{ res_def['additional_storage'] | default('1G') }}"]
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: definition
   when: res_def['additional_storage'] is defined and node_exists['failed'] is defined and uri_hostname == 'localhost'
 
 - name: "Add additional storage"
-  command: "qemu-img resize {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} +{{ definition[3] }}G"
+  command: "qemu-img resize {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} +{{ definition[3] }}"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - ["{{ libvirt_image_path }}"]
     - ["{{ img_src_ext }}"]
-    - ["{{ res_def['additional_storage'] | default('1') }}"]
+    - ["{{ res_def['additional_storage'] | default('1G') }}"]
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: definition
