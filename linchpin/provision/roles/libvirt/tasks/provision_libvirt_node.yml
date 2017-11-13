@@ -71,13 +71,13 @@
 - name: "local: Generate ssh keys when they donot exist"
   shell: "ssh-keygen -t rsa -f {{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] | default(res_grp['resource_group_name']) }} -N '';cat {{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] | default(res_grp['resource_group_name']) }} >> ~/.ssh/authorized_keys"
   args:
-    creates: "{{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] }}"
+    creates: "{{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] | default(res_grp['resource_group_name']) }}"
   when: uri_hostname =='localhost' and ssh_key_stat_local.stat.exists == false
 
 - name: "remote: Generate ssh keys when they donot exist"
   shell: "ssh-keygen -t rsa -f {{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] | default(res_grp['resource_group_name']) }} -N '';cat {{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] }} >> ~/.ssh/authorized_keys"
   args:
-    creates: "{{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] }}"
+    creates: "{{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] | default(res_grp['resource_group_name']) }}"
   remote_user: "{{ res_def['remote_user'] | default('root') }}"
   delegate_to: "{{ uri_hostname }}"
   when: uri_hostname != 'localhost' and ssh_key_stat_remote.stat.exists == false
