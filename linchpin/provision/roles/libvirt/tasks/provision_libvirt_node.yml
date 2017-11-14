@@ -15,27 +15,23 @@
     loop_var: nodeinfo
   register: node_exists
 
-- name: "debug of node_exist"
-  debug:
-    msg: "{{ node_exists }}"
-
-- name: set empty local_image_path
+- name: "set empty local_image_path"
   set_fact:
     local_image_path: ''
 
-- name: set empty img_src_ext
+- name: "set empty img_src_ext"
   set_fact:
     img_src_ext: ''
 
 - name: "copy image_src: localhost"
-  include: copy_image_src_local.yml remote_user={{ res_def['remote_user'] | default('root') }}
+  include: copy_image_src_local.yml
   when: node_exists['failed'] is defined and uri_hostname == 'localhost'
 
 - name: "copy image_src: remote"
-  include: copy_image_src_remote.yml remote_user={{ res_def['remote_user'] | default('root') }}
+  include: copy_image_src_remote.yml remote_user={{ res_def['remote_user'] | default(ansible_user_id) }}
   when: node_exists['failed'] is defined and uri_hostname != 'localhost'
 
-- name: set qemu_path
+- name: "set qemu_path"
   set_fact:
     qemu_path: "{{ (ansible_distribution in ['CentOS','RedHat']) | ternary('/usr/libexec/', '/usr/bin/') }}"
 
@@ -54,8 +50,8 @@
     loop_var: definition
   when:  node_exists['failed'] is defined and res_def['cloud_config'] is not defined
 
-  # note: though default_ssh_key_path is fetched from linchpin.conf , default value is needed to make playbooks work independently regardless of linchpin.conf
 - name: "local: does ssh key already exists ?"
+  # note: though default_ssh_key_path is fetched from linchpin.conf , default value is needed to make playbooks work independently regardless of linchpin.conf
   stat:
     path: "{{ default_ssh_key_path | default('~/.ssh/') }}{{ res_def['ssh_key'] | default(res_grp['resource_group_name'])}}"
   register: ssh_key_stat_local
@@ -64,7 +60,7 @@
   stat:
     path: "{{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] | default(res_grp['resource_group_name'])}}"
   register: ssh_key_stat_remote
-  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+  remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
   delegate_to: "{{ uri_hostname }}"
   when: uri_hostname != 'localhost'
 
@@ -78,7 +74,7 @@
   shell: "ssh-keygen -t rsa -f {{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] | default(res_grp['resource_group_name']) }} -N '';cat {{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] }} >> ~/.ssh/authorized_keys"
   args:
     creates: "{{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] | default(res_grp['resource_group_name']) }}"
-  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+  remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
   delegate_to: "{{ uri_hostname }}"
   when: uri_hostname != 'localhost' and ssh_key_stat_remote.stat.exists == false
 
@@ -90,7 +86,7 @@
 - name: "remote: cat out contents of public key"
   shell: "cat {{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] | default(res_grp['resource_group_name']) }}.pub"
   register: pubkey_remote
-  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+  remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
   delegate_to: "{{ uri_hostname }}"
   when: uri_hostname != 'localhost'
 
@@ -118,7 +114,7 @@
   loop_control:
     loop_var: definition
   become: yes
-  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+  remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
   delegate_to: "{{ uri_hostname }}"
   when: res_def['additional_storage'] is defined and node_exists['failed'] is defined and uri_hostname != 'localhost'
 
@@ -131,7 +127,7 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: definition
-  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+  remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
   delegate_to: "{{ uri_hostname }}"
   when: node_exists['failed'] is defined and uri_hostname != 'localhost' and res_def['cloud_config'] is defined
 
@@ -168,7 +164,7 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: definition
-  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+  remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
   delegate_to: "{{ uri_hostname }}"
   when: res_def['cloud_config'] is defined and node_exists['failed'] is defined and uri_hostname != 'localhost'
 
@@ -192,7 +188,7 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: definition
-  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+  remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
   delegate_to: "{{ uri_hostname }}"
   when: node_exists['failed'] is defined and uri_hostname != 'localhost' and res_def['cloud_config'] is defined
 
@@ -212,7 +208,7 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: definition
-  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+  remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
   delegate_to: "{{ uri_hostname }}"
   when: res_def['cloud_config'] is defined and node_exists['failed'] is defined and uri_hostname != 'localhost'
 
@@ -323,7 +319,7 @@
   loop_control:
     loop_var: mac
   register: extract_ip_address_result_remote
-  remote_user: "{{ res_def['remote_user'] | default('root') }}"
+  remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
   delegate_to: "{{ uri_hostname }}"
   when: uri_hostname != 'localhost'
 

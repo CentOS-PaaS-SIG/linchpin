@@ -1,13 +1,9 @@
 ---
-- name: set local_image_path
+- name: "set local_image_path"
   set_fact:
     local_image_path: "{{ libvirt_image_path }}"
 
-- name: "Inside copy image src "
-  debug:
-    msg: "{{ local_image_path  }}  {{ libvirt_image_path }}"
-
-- name: ensure local_image_path directory exists
+- name: "ensure local_image_path directory exists"
   file:
     path: "{{ local_image_path }}"
     state: directory
@@ -23,16 +19,15 @@
   set_fact:
     local_image_src: "{{ local_image_path }}{{ image_src_basename }}"
 
-# find the image_src, copy it to /var/lib/libvirt/linchpin/<res_name>
-
-- name: Does a local copy of image_src exist?
+- name: "does a local copy of image_src exist?"
+  # find the image_src, copy it to /var/lib/libvirt/linchpin/<res_name>
   stat:
     path: "{{ local_image_src }}"
   remote_user: "{{ remote_user | default('root') }}"
   delegate_to: "{{ uri_hostname }}"
   register: lis_remote
 
-- name: Download image_src
+- name: "download image_src"
   get_url:
     url: "{{ res_def['image_src'] }}"
     dest: "{{ local_image_src }}"
@@ -41,9 +36,8 @@
   when: lis_remote.stat.exists == false 
   ignore_errors: yes
 
-# identify file type
-
-- name: Determine image_src mime_type
+- name: "determine image_src mime_type"
+  # identify file type
   stat:
     path: "{{ local_image_src }}"
     mime: true
@@ -76,7 +70,7 @@
     img_src_ext: "{{ image_src_basename.split('.')[-2] }}"
   when: lismt_remote.stat.mime_type == "application/x-xz"
 
-- name: Does img_src exist at local_image_path
+- name: "does img_src exist at local_image_path?"
   stat:
     path: "{{ img_src }}"
   register: ismt_remote
@@ -84,11 +78,7 @@
   delegate_to: "{{ uri_hostname }}"
   when: lismt_remote.stat.mime_type == "application/x-xz"
 
-- name: "DEBUG: ismt"
-  debug:
-    msg: "{{ ismt_remote }}"
-
-- name: uncompress xz local_image_src
+- name: "uncompress xz local_image_src"
   command: "xz -d --keep --force {{ local_image_src }}"
   remote_user: "{{ res_def['remote_user'] | default('root') }}"
   delegate_to: "{{ uri_hostname }}"
