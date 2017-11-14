@@ -13,6 +13,7 @@
     path: "{{ local_image_path }}"
     state: directory
     mode: 0755
+  become: yes
 
 - name: "set image_src_basename"
   set_fact:
