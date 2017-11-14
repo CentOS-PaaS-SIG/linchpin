@@ -22,13 +22,18 @@ As LinchPin is heavily dependent on Ansible, this is a core requirement. Beyond 
 * gmp-devel
 * libselinux-python
 * make
+* gcc
+* redhat-rpm-config
+* libxml2-python
+* libxslt-python
 
 For Fedora/CentOS/RHEL the necessary packages should be installed.
 
 .. code-block:: bash
 
     $ sudo yum install python-virtualenv libffi-devel \
-    openssl-devel libyaml-devel gmp-devel libselinux-python make
+    openssl-devel libyaml-devel gmp-devel libselinux-python make \
+    gcc redhat-rpm-config libxml2-python libxslt-python
 
 .. note:: Fedora will present an output suggesting the use of `dnf` as a replacement for yum.
 
@@ -51,9 +56,9 @@ Create a virtualenv to install the package using the following sequence of comma
     ..snip..
 
 .. note:: mkvirtualenv is optional dependency you can install from `http://virtualenvwrapper.readthedocs.io/en/latest/install.html` , if you would like to use python virtualenv use following commands instead.
-   mkdir linchpin
-   virtualenv linchpin
-   source linchpin/bin/activate
+    mkdir linchpin
+    virtualenv linchpin
+    source linchpin/bin/activate
 
 To deactivate the virtualenv.
 
@@ -75,6 +80,120 @@ If testing or docs is desired, additional steps are required.
 
     (linchpin) $ pip install linchpin[docs]
     (linchpin) $ pip install linchpin[tests]
+
+
+Installing LinchPin on Fedora 26
+---------------------------------
+
+Install RPM pre-reqs
+
+.. code-block:: bash
+
+    $ dnf -y install python-virtualenv libffi-devel openssl-devel libyaml-devel gmp-devel libselinux-python make gcc redhat-rpm-config libxml2-python
+
+
+Create a working-directory
+
+.. code-block:: bash
+
+    $ mkdir mywork
+    $ cd mywork
+
+Create linchpin directory, make a virtual environment, activate the virtual environment
+
+.. code-block:: bash
+
+    $ mkdir linchpin
+    $ virtualenv --system-site-packages linchpin
+    $ source linchpin/bin/activate
+    (linchpin) $
+
+Install linchpin
+
+.. code-block:: bash
+
+    (linchpin) $ pip install linchpin
+
+Make a workspace, and initialize it to prove that linchpin itself works
+
+.. code-block:: bash
+
+    (linchpin) $ mkdir workspace
+    (linchpin) $ export WORKSPACE=./workspace
+    (linchpin) $ linchpin init
+    PinFile and file structure created at /root/work/workspace
+
+Installing LinchPin on RHEL 7.4
+---------------------------------
+
+Tested on RHEL 7.4 Server VM which was kickstarted and pre-installed with the following YUM package-groups and RPMs::
+
+* @core
+* @base
+* vim-enhanced
+* bash-completion
+* scl-utils
+* wget
+
+For RHEL 7, it is assumed that you have access to normal RHEL7 YUM repos via RHSM or by pointing at your own http YUM repos, specifically the following repos or their equivalents::
+
+* rhel-7-server-rpms
+* rhel-7-server-optional-rpms
+
+Install pre-req RPMs via YUM:
+
+.. code-block:: bash
+
+    $ yum install -y libffi-devel openssl-devel libyaml-devel gmp-devel libselinux-python make gcc redhat-rpm-config libxml2-devel libxslt-devel
+
+To get a working python 2.7 pip and virtualenv either use EPEL
+
+.. code-block:: bash
+
+    $ rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+
+Install python pip and virtualenv:
+
+.. code-block:: bash
+
+    yum install -y python2-pip python-virtualenv
+
+Create a working-directory
+
+.. code-block:: bash
+
+    $ mkdir mywork
+    $ cd mywork
+
+Create linchpin directory, make a virtual environment, activate the virtual environment
+
+.. code-block:: bash
+
+    $ mkdir linchpin
+    $ virtualenv --system-site-packages linchpin
+    $ source linchpin/bin/activate
+    (linchpin) $
+
+Inside the virtualenv, upgrade setuptools because setuptools via EPEL is too old.
+
+.. code-block:: bash
+
+    (linchpin) $ pip install -U setuptools
+
+Install linchpin
+
+.. code-block:: bash
+
+    (linchpin) $ pip install linchpin
+
+Make a workspace, and initialize it to prove that linchpin itself works
+
+.. code-block:: bash
+
+    (linchpin) $ mkdir workspace
+    (linchpin) $ export WORKSPACE=./workspace
+    (linchpin) $ linchpin init
+    PinFile and file structure created at /root/work/workspace
 
 Source Installation
 -------------------
