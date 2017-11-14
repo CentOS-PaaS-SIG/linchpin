@@ -40,7 +40,6 @@
     src: "../templates/libvirt_node.xml.j2"
     dest: "/tmp/{{ libvirt_resource_name }}_{{ definition[3] }}"
   with_nested:
-    - ["{{ libvirt_resource_name }}"]
     - ["{{ res_def['uri'] | default('qemu:///system') }}"]
     - ["{{ res_def }}"]
     - "{{ res_count.stdout }}"
@@ -242,12 +241,11 @@
 
 - name: "define node when the cloud_config not defined"
   virt:
-    name: "{{ definition[0] }}"
+    name: "{{ libvirt_resource_name }}"
     command: define
     xml: "{{ lookup('template', 'libvirt_node.xml.j2') }}"
     uri: "{{ definition[1] }}"
   with_nested:
-    - ["{{ libvirt_resource_name }}"]
     - ["{{ res_def['uri'] | default('qemu:///system') }}"]
     - ["{{ res_def }}"]
     - "{{ res_count.stdout }}"
