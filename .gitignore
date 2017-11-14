@@ -33,3 +33,5 @@ nosetests.xml
 .idea
 .pydevproject
 
+Dockerfiles/pip_install.sh
+Dockerfiles/lp_test_workspace

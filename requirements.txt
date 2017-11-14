@@ -10,3 +10,4 @@ shade>=1.22.2
 naked
 cerberus
 tinydb
+requests>=2.14.2
