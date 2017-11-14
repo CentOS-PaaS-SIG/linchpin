@@ -42,10 +42,6 @@
   when: not async
   ignore_errors: yes
 
-- name: debug
-  debug:
-    msg: "{{ vm_xml_dump | get_libvirt_files }}"
-
 - name: "Delete associated image files"
   file:
     state: absent
