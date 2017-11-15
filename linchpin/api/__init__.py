@@ -99,7 +99,7 @@ class LinchpinAPI(object):
         (default: None)
         """
 
-        return self.ctx.get_evar(key, default)
+        return self.ctx.get_evar(key=key, default=default)
 
 
     def set_evar(self, key, value):
@@ -340,6 +340,22 @@ class LinchpinAPI(object):
         fetch_class.fetch_files()
 
         fetch_class.copy_files()
+
+
+    def lp_journal(self, targets=[], fields=None, count=None):
+
+        rundb = self.setup_rundb()
+
+        journal = {}
+
+        if not len(targets):
+            targets = rundb.get_tables()
+
+
+        for target in targets:
+            journal[target] = rundb.get_records(table=target, count=count)
+
+        return journal
 
 
     def find_topology(self, topology):
