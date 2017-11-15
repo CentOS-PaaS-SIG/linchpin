@@ -309,7 +309,7 @@ def fetch(ctx, fetch_type, remote, root):
 @click.option('-c', '--count', metavar='COUNT', default=1, required=False,
               help='(up to) number of records to return (default: 10)')
 @click.option('-f', '--fields', metavar='FIELDS', required=False,
-               help='List the fields to display')
+              help='List the fields to display')
 @pass_context
 def journal(ctx, targets, fields, count):
     """
@@ -328,7 +328,7 @@ def journal(ctx, targets, fields, count):
     all_fields = json.loads(lpcli.get_cfg('lp', 'rundb_schema')).keys()
 
     if not fields:
-        fields = ['action','uhash','rc']
+        fields = ['action', 'uhash', 'rc']
     else:
         fields = fields.split(',')
 
@@ -336,9 +336,10 @@ def journal(ctx, targets, fields, count):
 
     if invalid_fields:
         ctx.log_state('The following fields passed in are not valid: {0}'
-                     ' \nValid fields are {1}'.format(fields, all_fields))
+                      ' \nValid fields are {1}'.format(fields, all_fields))
         sys.exit(89)
 
+    no_records = []
     output = 'run_id\t'
 
     for f in fields:
@@ -351,20 +352,34 @@ def journal(ctx, targets, fields, count):
     try:
         journal = lpcli.lp_journal(targets=targets, fields=fields, count=count)
 
-        for target,values in journal.iteritems():
-            print('\nTarget: {0}'.format(target))
-            print(output)
+        for target, values in journal.iteritems():
+
             keys = values.keys()
-            keys.sort(reverse=True)
-            for run_id in keys:
-                if int(run_id) > 0:
-                    out = '{0:<7}\t'.format(run_id)
-                    for f in fields:
-                        out += '{0:>8}\t'.format(values[run_id][f])
+            if len(keys):
+                print('\nTarget: {0}'.format(target))
+                print(output)
+                keys.sort(reverse=True)
+                for run_id in keys:
+                    if int(run_id) > 0:
+                        out = '{0:<7}\t'.format(run_id)
+                        for f in fields:
+                            out += '{0:>8}\t'.format(values[run_id][f])
 
-                    print(out)
+                        print(out)
+            else:
+                no_records.append(target)
 
-        print('\n')
+        if no_records:
+            no_out = '\nNo records for targets:'
+
+            for rec in no_records:
+                no_out += ' {0}'.format(rec)
+
+            no_out += '\n'
+
+            print(no_out)
+
+
 
 
     except LinchpinError as e:
