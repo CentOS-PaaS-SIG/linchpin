@@ -89,7 +89,7 @@ Install RPM pre-reqs
 
 .. code-block:: bash
 
-    $ dnf -y install python-virtualenv libffi-devel openssl-devel libyaml-devel gmp-devel libselinux-python make gcc redhat-rpm-config libxml2-python
+    $ sudo dnf -y install python-virtualenv libffi-devel openssl-devel libyaml-devel gmp-devel libselinux-python make gcc redhat-rpm-config libxml2-python
 
 
 Create a working-directory
@@ -121,7 +121,9 @@ Make a workspace, and initialize it to prove that linchpin itself works
     (linchpin) $ mkdir workspace
     (linchpin) $ export WORKSPACE=./workspace
     (linchpin) $ linchpin init
-    PinFile and file structure created at /root/work/workspace
+    PinFile and file structure created at /home/user/workspace
+
+.. note:: The WORKSPACE variable isn't specifically required if the workspace is $PWD.
 
 Installing LinchPin on RHEL 7.4
 ---------------------------------
@@ -144,19 +146,19 @@ Install pre-req RPMs via YUM:
 
 .. code-block:: bash
 
-    $ yum install -y libffi-devel openssl-devel libyaml-devel gmp-devel libselinux-python make gcc redhat-rpm-config libxml2-devel libxslt-devel
+    $ sudo yum install -y libffi-devel openssl-devel libyaml-devel gmp-devel libselinux-python make gcc redhat-rpm-config libxml2-devel libxslt-devel libxslt-python libxslt-python
 
 To get a working python 2.7 pip and virtualenv either use EPEL
 
 .. code-block:: bash
 
-    $ rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    $ sudo rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 
 Install python pip and virtualenv:
 
 .. code-block:: bash
 
-    yum install -y python2-pip python-virtualenv
+    $ sudo yum install -y python2-pip python-virtualenv
 
 Create a working-directory
 
@@ -193,7 +195,7 @@ Make a workspace, and initialize it to prove that linchpin itself works
     (linchpin) $ mkdir workspace
     (linchpin) $ export WORKSPACE=./workspace
     (linchpin) $ linchpin init
-    PinFile and file structure created at /root/work/workspace
+    PinFile and file structure created at /home.user/workspace
 
 Source Installation
 -------------------
