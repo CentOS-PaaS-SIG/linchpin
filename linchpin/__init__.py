@@ -2,6 +2,7 @@
 
 import os
 import sys
+import json
 import click
 
 from linchpin.cli import LinchpinCli
@@ -15,7 +16,7 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 class LinchpinAliases(click.Group):
 
-    lp_commands = ['init', 'up', 'destroy', 'fetch']
+    lp_commands = ['init', 'up', 'destroy', 'fetch', 'journal']
     lp_aliases = {
         'rise': 'up',
         'drop': 'destroy',
@@ -102,6 +103,21 @@ def _handle_results(ctx, results, return_code):
     sys.exit(return_code)
 
 
+def _get_pinfile_path(pinfile=None, exists=True):
+
+    if not pinfile:
+        pinfile = lpcli.pinfile
+
+    pf_w_path = '{0}/{1}'.format(lpcli.workspace, pinfile)
+
+    if not os.path.exists(pf_w_path) and exists:
+        lpcli.ctx.log_state('{0} not found in provided workspace: '
+                            '{1}'.format(pinfile, lpcli.workspace))
+        sys.exit(1)
+
+    return pf_w_path
+
+
 @click.group(cls=LinchpinAliases,
              invoke_without_command=True,
              no_args_is_help=True,
@@ -160,7 +176,7 @@ def init(ctx):
     Initializes a linchpin project, which generates an example PinFile, and
     creates the necessary directory structure for topologies and layouts.
 
-    :param ctx: Context object defined by the click.make_pass_decorator method
+    ctx: Context object defined by the click.make_pass_decorator method
     """
 
     pf_w_path = _get_pinfile_path(exists=False)
@@ -183,14 +199,10 @@ def up(ctx, targets, run_id):
     """
     Provisions nodes from the given target(s) in the given PinFile.
 
-    :param ctx: Context object defined by the click.make_pass_decorator method
+    pinfile:    Path to pinfile (Default: workspace path)
 
-    :param pinfile:
-        path to pinfile (Default: ctx.workspace)
-
-    :param targets:
-        Provision ONLY the listed target(s). If omitted, ALL targets in the
-        appropriate PinFile will be provisioned.
+    targets:    Provision ONLY the listed target(s). If omitted, ALL targets in
+    the appropriate PinFile will be provisioned.
     """
 
     pf_w_path = _get_pinfile_path()
@@ -226,14 +238,10 @@ def destroy(ctx, targets, run_id):
     """
     Destroys nodes from the given target(s) in the given PinFile.
 
-    :param ctx: Context object defined by the click.make_pass_decorator method
+    pinfile:    Path to pinfile (Default: workspace path)
 
-    :param pinfile:
-        path to pinfile (Default: ctx.workspace)
-
-    :param targets:
-        Destroy ONLY the listed target(s). If omitted, ALL targets in the
-        appropriate PinFile will be destroyed.
+    targets:    Destroy ONLY the listed target(s). If omitted, ALL targets in
+    the appropriate PinFile will be destroyed.
 
     """
 
@@ -283,10 +291,10 @@ def fetch(ctx, fetch_type, remote, root):
     """
     Fetches a specified linchpin workspace or component from a remote location.
 
-    :param fetch_type: Specifies which component of a workspace the user
-    wants to fetch. Types include: topology, layout, resources, hooks, workspace
+    fetch_type:     Specifies which component of a workspace the user wants to
+    fetch. Types include: topology, layout, resources, hooks, workspace
 
-    :param REMOTE: The URL or URI of the remote directory
+    remote:         The URL or URI of the remote directory
 
     """
     try:
@@ -296,19 +304,72 @@ def fetch(ctx, fetch_type, remote, root):
         sys.exit(1)
 
 
-def _get_pinfile_path(pinfile=None, exists=True):
+@runcli.command()
+@click.argument('targets', metavar='TARGETS', required=True, nargs=-1)
+@click.option('-c', '--count', metavar='COUNT', default=1, required=False,
+              help='(up to) number of records to return (default: 10)')
+@click.option('-f', '--fields', metavar='FIELDS', required=False,
+               help='List the fields to display')
+@pass_context
+def journal(ctx, targets, fields, count):
+    """
+    Display information stored in Run Database
 
-    if not pinfile:
-        pinfile = lpcli.pinfile
+    targets:    Display data for the listed target(s). If omitted, the latest
+                records for any/all targets in the RunDB will be displayed.
 
-    pf_w_path = '{0}/{1}'.format(lpcli.workspace, pinfile)
+    fields:     Comma separated list of fields to show in the display.
+    (default: uhash,rc)
 
-    if not os.path.exists(pf_w_path) and exists:
-        lpcli.ctx.log_state('{0} not found in provided workspace: '
-                            '{1}'.format(pinfile, lpcli.workspace))
+    (available fields are: uhash, rc, start, end, action)
+
+    """
+
+    all_fields = json.loads(lpcli.get_cfg('lp', 'rundb_schema')).keys()
+
+    if not fields:
+        fields = ['action','uhash','rc']
+    else:
+        fields = fields.split(',')
+
+    invalid_fields = [field for field in fields if field not in all_fields]
+
+    if invalid_fields:
+        ctx.log_state('The following fields passed in are not valid: {0}'
+                     ' \nValid fields are {1}'.format(fields, all_fields))
+        sys.exit(89)
+
+    output = 'run_id\t'
+
+    for f in fields:
+        output += '{0:>8}\t'.format(f)
+
+    output += '\n'
+    output += '--------------------------------------------------'
+
+
+    try:
+        journal = lpcli.lp_journal(targets=targets, fields=fields, count=count)
+
+        for target,values in journal.iteritems():
+            print('\nTarget: {0}'.format(target))
+            print(output)
+            keys = values.keys()
+            keys.sort(reverse=True)
+            for run_id in keys:
+                if int(run_id) > 0:
+                    out = '{0:<7}\t'.format(run_id)
+                    for f in fields:
+                        out += '{0:>8}\t'.format(values[run_id][f])
+
+                    print(out)
+
+        print('\n')
+
+
+    except LinchpinError as e:
+        ctx.log_state(e)
         sys.exit(1)
-
-    return pf_w_path
 
 
 def main():
