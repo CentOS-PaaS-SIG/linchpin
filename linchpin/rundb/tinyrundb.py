@@ -28,6 +28,7 @@ class TinyRunDB(BaseDB):
                          storage=CachingMiddleware(JSONStorage),
                          default_table=self.default_table)
 
+
     def __str__(self):
         if self.conn_str:
             return "{0} at {2}".format(self.name, self.conn_str)
@@ -50,6 +51,7 @@ class TinyRunDB(BaseDB):
         t = self.db.table(name=table)
         return t.insert(self.schema)
 
+
     @usedb
     def update_record(self, table, run_id, key, value):
         t = self.db.table(name=table)
@@ -71,6 +73,30 @@ class TinyRunDB(BaseDB):
                 return (record, int(rid))
 
         return (None, 0)
+
+
+    @usedb
+    def get_records(self, table, count=10):
+
+        records = {}
+        t = self.db.table(name=table)
+        start = len(t)
+        end = start - count
+
+        for i in xrange(start, end, -1):
+            records[i] = t.get(doc_id=i)
+
+        return records
+
+
+    @usedb
+    def get_tables(self):
+
+        tables = self.db.tables()
+        tables.remove(self.default_table)
+
+        return tables
+
 
     def remove_record(self, table, key, value):
         pass

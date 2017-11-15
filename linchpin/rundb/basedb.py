@@ -29,6 +29,12 @@ class BaseDB(RunDB):
     def get_record(self, table, action='up', run_id=None):
         return self.driver.get_record(table, run_id=run_id)
 
+    def get_records(self, table=[], count=10):
+        return self.driver.get_records(table=table, count=count)
+
+    def get_tables(self):
+        return self.driver.get_tables()
+
     def remove_record(self, table, key, value):
         return self.driver.remove_record(table, key, value)
 

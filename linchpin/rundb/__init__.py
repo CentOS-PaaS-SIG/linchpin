@@ -18,6 +18,14 @@ class RunDB(object):
         return self.driver.get_record(table, run_id=run_id)
 
     @abstractmethod
+    def get_records(self, table=[], count=10):
+        return self.driver.get_records(table=table, count=count)
+
+    @abstractmethod
+    def get_tables(self):
+        return self.driver.get_tables()
+
+    @abstractmethod
     def remove_record(self, table, key, value):
         return self.driver.remove_record(table, key, value)
 
