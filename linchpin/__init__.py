@@ -2,6 +2,7 @@
 
 import os
 import sys
+import json
 import click
 
 from linchpin.cli import LinchpinCli
@@ -15,7 +16,7 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 class LinchpinAliases(click.Group):
 
-    lp_commands = ['init', 'up', 'destroy', 'fetch']
+    lp_commands = ['init', 'up', 'destroy', 'fetch', 'journal']
     lp_aliases = {
         'rise': 'up',
         'drop': 'destroy',
@@ -48,8 +49,9 @@ class LinchpinAliases(click.Group):
 
 def _handle_results(ctx, results, return_code):
     """
-    Handle results from the Ansible API. Either as a return value (retval)
-    when running with the ansible console enabled, or as a list of TaskResult
+    Handle results from the RunDB output and Ansible API.
+    Either as a return value (retval) when running with the
+    ansible console enabled, or as a list of TaskResult
     objects, and a return value.
 
     If a target fails along the way, this method immediately exits with the
@@ -60,9 +62,30 @@ def _handle_results(ctx, results, return_code):
         The dictionary of results for each target.
     """
 
-    for k, v in results.iteritems():
-        if not isinstance(v, int):
-            trs = v
+    output = '\n{0:<20}\t{1:<6}\t{2:<5}\t{3:<10}\n'.format('Target',
+                                                           'Run ID',
+                                                           'uHash',
+                                                           'Exit Code')
+    output += '-------------------------------------------------\n'
+
+    for target, data in results.iteritems():
+        rundb_data = data['rundb_data']
+        task_results = data['task_results']
+
+        return_code = 99
+
+        # PRINT OUTPUT RESULTS HERE
+        for rundb_id, data in rundb_data.iteritems():
+
+            output += '{0:<20}\t{1:>6}\t{2:>5}'.format(target,
+                                                       rundb_id,
+                                                       data['uhash'])
+
+            return_code = data['rc']
+            output += '\t{0:>9}\n'.format(return_code)
+
+        if not isinstance(task_results, int):
+            trs = task_results
 
             if trs is not None:
                 trs.reverse()
@@ -70,13 +93,29 @@ def _handle_results(ctx, results, return_code):
                 if tr.is_failed():
                     msg = tr._check_key('msg')
                     ctx.log_state("Target '{0}': {1} failed with"
-                                  " error '{2}'".format(k, tr._task, msg))
-                    sys.exit(return_code)
-            elif return_code:
-                sys.exit(return_code)
+                                  " error '{2}'".format(target, tr._task, msg))
         else:
-            if v:
-                sys.exit(v)
+            if task_results:
+                return_code = task_results
+
+
+    ctx.log_state(output)
+    sys.exit(return_code)
+
+
+def _get_pinfile_path(pinfile=None, exists=True):
+
+    if not pinfile:
+        pinfile = lpcli.pinfile
+
+    pf_w_path = '{0}/{1}'.format(lpcli.workspace, pinfile)
+
+    if not os.path.exists(pf_w_path) and exists:
+        lpcli.ctx.log_state('{0} not found in provided workspace: '
+                            '{1}'.format(pinfile, lpcli.workspace))
+        sys.exit(1)
+
+    return pf_w_path
 
 
 @click.group(cls=LinchpinAliases,
@@ -137,7 +176,7 @@ def init(ctx):
     Initializes a linchpin project, which generates an example PinFile, and
     creates the necessary directory structure for topologies and layouts.
 
-    :param ctx: Context object defined by the click.make_pass_decorator method
+    ctx: Context object defined by the click.make_pass_decorator method
     """
 
     pf_w_path = _get_pinfile_path(exists=False)
@@ -160,21 +199,16 @@ def up(ctx, targets, run_id):
     """
     Provisions nodes from the given target(s) in the given PinFile.
 
-    :param ctx: Context object defined by the click.make_pass_decorator method
+    pinfile:    Path to pinfile (Default: workspace path)
 
-    :param pinfile:
-        path to pinfile (Default: ctx.workspace)
-
-    :param targets:
-        Provision ONLY the listed target(s). If omitted, ALL targets in the
-        appropriate PinFile will be provisioned.
+    targets:    Provision ONLY the listed target(s). If omitted, ALL targets in
+    the appropriate PinFile will be provisioned.
     """
 
     pf_w_path = _get_pinfile_path()
 
     try:
         return_code, results = lpcli.lp_up(pf_w_path, targets, run_id=run_id)
-
         _handle_results(ctx, results, return_code)
 
     except LinchpinError as e:
@@ -204,14 +238,10 @@ def destroy(ctx, targets, run_id):
     """
     Destroys nodes from the given target(s) in the given PinFile.
 
-    :param ctx: Context object defined by the click.make_pass_decorator method
+    pinfile:    Path to pinfile (Default: workspace path)
 
-    :param pinfile:
-        path to pinfile (Default: ctx.workspace)
-
-    :param targets:
-        Destroy ONLY the listed target(s). If omitted, ALL targets in the
-        appropriate PinFile will be destroyed.
+    targets:    Destroy ONLY the listed target(s). If omitted, ALL targets in
+    the appropriate PinFile will be destroyed.
 
     """
 
@@ -261,10 +291,10 @@ def fetch(ctx, fetch_type, remote, root):
     """
     Fetches a specified linchpin workspace or component from a remote location.
 
-    :param fetch_type: Specifies which component of a workspace the user
-    wants to fetch. Types include: topology, layout, resources, hooks, workspace
+    fetch_type:     Specifies which component of a workspace the user wants to
+    fetch. Types include: topology, layout, resources, hooks, workspace
 
-    :param REMOTE: The URL or URI of the remote directory
+    remote:         The URL or URI of the remote directory
 
     """
     try:
@@ -274,19 +304,87 @@ def fetch(ctx, fetch_type, remote, root):
         sys.exit(1)
 
 
-def _get_pinfile_path(pinfile=None, exists=True):
+@runcli.command()
+@click.argument('targets', metavar='TARGETS', required=True, nargs=-1)
+@click.option('-c', '--count', metavar='COUNT', default=1, required=False,
+              help='(up to) number of records to return (default: 10)')
+@click.option('-f', '--fields', metavar='FIELDS', required=False,
+              help='List the fields to display')
+@pass_context
+def journal(ctx, targets, fields, count):
+    """
+    Display information stored in Run Database
 
-    if not pinfile:
-        pinfile = lpcli.pinfile
+    targets:    Display data for the listed target(s). If omitted, the latest
+                records for any/all targets in the RunDB will be displayed.
 
-    pf_w_path = '{0}/{1}'.format(lpcli.workspace, pinfile)
+    fields:     Comma separated list of fields to show in the display.
+    (default: uhash,rc)
 
-    if not os.path.exists(pf_w_path) and exists:
-        lpcli.ctx.log_state('{0} not found in provided workspace: '
-                            '{1}'.format(pinfile, lpcli.workspace))
+    (available fields are: uhash, rc, start, end, action)
+
+    """
+
+    all_fields = json.loads(lpcli.get_cfg('lp', 'rundb_schema')).keys()
+
+    if not fields:
+        fields = ['action', 'uhash', 'rc']
+    else:
+        fields = fields.split(',')
+
+    invalid_fields = [field for field in fields if field not in all_fields]
+
+    if invalid_fields:
+        ctx.log_state('The following fields passed in are not valid: {0}'
+                      ' \nValid fields are {1}'.format(fields, all_fields))
+        sys.exit(89)
+
+    no_records = []
+    output = 'run_id\t'
+
+    for f in fields:
+        output += '{0:>8}\t'.format(f)
+
+    output += '\n'
+    output += '--------------------------------------------------'
+
+
+    try:
+        journal = lpcli.lp_journal(targets=targets, fields=fields, count=count)
+
+        for target, values in journal.iteritems():
+
+            keys = values.keys()
+            if len(keys):
+                print('\nTarget: {0}'.format(target))
+                print(output)
+                keys.sort(reverse=True)
+                for run_id in keys:
+                    if int(run_id) > 0:
+                        out = '{0:<7}\t'.format(run_id)
+                        for f in fields:
+                            out += '{0:>8}\t'.format(values[run_id][f])
+
+                        print(out)
+            else:
+                no_records.append(target)
+
+        if no_records:
+            no_out = '\nNo records for targets:'
+
+            for rec in no_records:
+                no_out += ' {0}'.format(rec)
+
+            no_out += '\n'
+
+            print(no_out)
+
+
+
+
+    except LinchpinError as e:
+        ctx.log_state(e)
         sys.exit(1)
-
-    return pf_w_path
 
 
 def main():

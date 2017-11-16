@@ -99,7 +99,7 @@ class LinchpinAPI(object):
         (default: None)
         """
 
-        return self.ctx.get_evar(key, default)
+        return self.ctx.get_evar(key=key, default=default)
 
 
     def set_evar(self, key, value):
@@ -342,6 +342,22 @@ class LinchpinAPI(object):
         fetch_class.copy_files()
 
 
+    def lp_journal(self, targets=[], fields=None, count=None):
+
+        rundb = self.setup_rundb()
+
+        journal = {}
+
+        if not len(targets):
+            targets = rundb.get_tables()
+
+
+        for target in targets:
+            journal[target] = rundb.get_records(table=target, count=count)
+
+        return journal
+
+
     def find_topology(self, topology):
         """
         Find the topology to be acted upon. This could be pulled from a
@@ -480,6 +496,8 @@ class LinchpinAPI(object):
 
         for target in targets:
 
+            results[target] = {}
+
             # initialize rundb table
             dateformat = self.get_cfg('logger',
                                       'dateformat',
@@ -594,7 +612,7 @@ class LinchpinAPI(object):
             # FIXME need to add rundb data for hooks results
 
             # invoke the appropriate action
-            return_code, results[target] = (
+            return_code, results[target]['task_results'] = (
                 self._invoke_playbook(action=action,
                                       console=ansible_console)
             )
@@ -617,6 +635,9 @@ class LinchpinAPI(object):
             end = time.strftime(dateformat)
             rundb.update_record(target, rundb_id, 'end', end)
             rundb.update_record(target, rundb_id, 'rc', return_code)
+
+            run_data = rundb.get_record(target, action=action, run_id=rundb_id)
+            results[target]['rundb_data'] = {rundb_id: run_data[0]}
 
         return (return_code, results)
 
