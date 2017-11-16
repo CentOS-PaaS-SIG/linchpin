@@ -24,8 +24,9 @@ class TinyRunDB(BaseDB):
 
 
     def _opendb(self):
-        self.db = TinyDB(self.conn_str,
-                         storage=CachingMiddleware(JSONStorage),
+        self.middleware = CachingMiddleware(JSONStorage)
+        self.middleware.WRITE_CACHE_SIZE = 500
+        self.db = TinyDB(self.conn_str, storage=self.middleware,
                          default_table=self.default_table)
 
 
