@@ -1,7 +1,7 @@
 PARENT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))/../)
 
-TARGETS := centos6 centos7 fedora25 fedora26 fedora27
-DRIVERS := dummy libvirt
+TARGETS := fedora27 centos7 fedora26 fedora25 centos6
+DRIVERS := dummy duffy libvirt
 
 .PHONY: all
 all: pip_install.sh
