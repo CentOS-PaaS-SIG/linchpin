@@ -306,8 +306,8 @@ def fetch(ctx, fetch_type, remote, root):
 
 @runcli.command()
 @click.argument('targets', metavar='TARGETS', required=True, nargs=-1)
-@click.option('-c', '--count', metavar='COUNT', default=1, required=False,
-              help='(up to) number of records to return (default: 10)')
+@click.option('-c', '--count', metavar='COUNT', default=3, required=False,
+              help='(up to) number of records to return (default: 3)')
 @click.option('-f', '--fields', metavar='FIELDS', required=False,
               help='List the fields to display')
 @pass_context
@@ -378,9 +378,6 @@ def journal(ctx, targets, fields, count):
             no_out += '\n'
 
             print(no_out)
-
-
-
 
     except LinchpinError as e:
         ctx.log_state(e)
