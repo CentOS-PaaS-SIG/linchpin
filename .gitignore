@@ -36,3 +36,4 @@ nosetests.xml
 
 Dockerfiles/pip_install.sh
 Dockerfiles/lp_test_workspace
+Dockerfiles/duffy-ansible-module
