@@ -64,9 +64,9 @@ def get_group_children(inv):
     for k, v in hg.iteritems():
         g_kids = v.get('children')
         if g_kids is not None:
-            inventory += '[{}:children]\n'.format(k)
+            inventory += '[{0}:children]\n'.format(k)
             for i in g_kids:
-                inventory += '{}\n'.format(i)
+                inventory += '{0}\n'.format(i)
 
     return inventory
 
@@ -79,9 +79,9 @@ def get_group_vars(inv):
     for k, v in hg.iteritems():
         g_vars = v.get('vars')
         if g_vars is not None:
-            inventory += '[{}:vars]\n'.format(k)
+            inventory += '[{0}:vars]\n'.format(k)
             for i, j in g_vars.iteritems():
-                inventory += '{}={}'.format(i, j)
+                inventory += '{0}={1}'.format(i, j)
                 if not isinstance(j, basestring) or not j.endswith('\n'):
                     inventory += '\n'
     return inventory
@@ -101,18 +101,18 @@ def duffy_inventory(topo, inv):
         g_vars = get_group_vars(inv)
         g_kids = get_group_children(inv)
     for k, v in groups.iteritems():
-        inventory += '[{}]\n'.format(k)
+        inventory += '[{0}]\n'.format(k)
         for i, j in v.iteritems():
             hv = ''
             for k, l in j.iteritems():
-                hv += ' {}={}'.format(k, l)
+                hv += ' {0}={1}'.format(k, l)
 
-            inventory += '{}{}\n'.format(i, hv)
+            inventory += '{0}{1}\n'.format(i, hv)
         inventory += '\n'
     if g_vars is not None:
-        inventory += '{}\n'.format(g_vars)
+        inventory += '{0}\n'.format(g_vars)
     if g_kids is not None:
-        inventory += '{}\n'.format(g_kids)
+        inventory += '{1}\n'.format(g_kids)
     inventory += '\n'
     return inventory
 

@@ -78,7 +78,6 @@ def _handle_results(ctx, results, return_code):
             if trs is not None:
                 trs.reverse()
                 tr = trs[0]
-                ctx.log_state('result: {}'.format(tr._result.get('rc')))
                 if tr.is_failed():
                     msg = tr._check_key('msg')
                     ctx.log_state("Target '{0}': {1} failed with"
