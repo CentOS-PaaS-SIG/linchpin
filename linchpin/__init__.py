@@ -72,18 +72,6 @@ def _handle_results(ctx, results, return_code):
         rundb_data = data['rundb_data']
         task_results = data['task_results']
 
-        return_code = 99
-
-        # PRINT OUTPUT RESULTS HERE
-        for rundb_id, data in rundb_data.iteritems():
-
-            output += '{0:<20}\t{1:>6}\t{2:>5}'.format(target,
-                                                       rundb_id,
-                                                       data['uhash'])
-
-            return_code = data['rc']
-            output += '\t{0:>9}\n'.format(return_code)
-
         if not isinstance(task_results, int):
             trs = task_results
 
@@ -97,6 +85,15 @@ def _handle_results(ctx, results, return_code):
         else:
             if task_results:
                 return_code = task_results
+
+        # PRINT OUTPUT RESULTS HERE
+        for rundb_id, data in rundb_data.iteritems():
+
+            output += '{0:<20}\t{1:>6}\t{2:>5}'.format(target,
+                                                       rundb_id,
+                                                       data['uhash'])
+
+            output += '\t{0:>9}\n'.format(return_code)
 
 
     ctx.log_state(output)
@@ -306,8 +303,8 @@ def fetch(ctx, fetch_type, remote, root):
 
 @runcli.command()
 @click.argument('targets', metavar='TARGETS', required=True, nargs=-1)
-@click.option('-c', '--count', metavar='COUNT', default=1, required=False,
-              help='(up to) number of records to return (default: 10)')
+@click.option('-c', '--count', metavar='COUNT', default=3, required=False,
+              help='(up to) number of records to return (default: 3)')
 @click.option('-f', '--fields', metavar='FIELDS', required=False,
               help='List the fields to display')
 @pass_context
@@ -319,7 +316,7 @@ def journal(ctx, targets, fields, count):
                 records for any/all targets in the RunDB will be displayed.
 
     fields:     Comma separated list of fields to show in the display.
-    (default: uhash,rc)
+    (Default: action, uhash, rc)
 
     (available fields are: uhash, rc, start, end, action)
 
@@ -343,7 +340,7 @@ def journal(ctx, targets, fields, count):
     output = 'run_id\t'
 
     for f in fields:
-        output += '{0:>8}\t'.format(f)
+        output += '{0:>10}\t'.format(f)
 
     output += '\n'
     output += '--------------------------------------------------'
@@ -363,7 +360,7 @@ def journal(ctx, targets, fields, count):
                     if int(run_id) > 0:
                         out = '{0:<7}\t'.format(run_id)
                         for f in fields:
-                            out += '{0:>8}\t'.format(values[run_id][f])
+                            out += '{0:>9}\t'.format(values[run_id][f])
 
                         print(out)
             else:
@@ -378,9 +375,6 @@ def journal(ctx, targets, fields, count):
             no_out += '\n'
 
             print(no_out)
-
-
-
 
     except LinchpinError as e:
         ctx.log_state(e)

@@ -218,7 +218,7 @@ def test_run_playbook():
         for res in results[provider]:
             name = res._task.get_name()
             if res.is_failed():
-                print('name: {}'.format(name))
+                print('name: {0}'.format(name))
 
     assert not failed
 

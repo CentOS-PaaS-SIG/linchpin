@@ -533,7 +533,7 @@ class LinchpinAPI(object):
                     self.set_evar('orig_run_id', orig_run_id)
                     uhash = data.get('uhash')
                     self.ctx.log_debug("using data from"
-                                       " run_id: {}".format(run_id))
+                                       " run_id: {0}".format(run_id))
                 else:
                     raise LinchpinError("Attempting to perform '{0}' action on"
                                         " target: '{1}' failed. No records"
@@ -543,8 +543,8 @@ class LinchpinAPI(object):
                                     " records".format(run_id))
 
 
-            self.ctx.log_debug('rundb_id: {}'.format(rundb_id))
-            self.ctx.log_debug('uhash: {}'.format(uhash))
+            self.ctx.log_debug('rundb_id: {0}'.format(rundb_id))
+            self.ctx.log_debug('uhash: {0}'.format(uhash))
             rundb.update_record(target, rundb_id, 'uhash', uhash)
 
             rundb.update_record(target, rundb_id, 'start', start)

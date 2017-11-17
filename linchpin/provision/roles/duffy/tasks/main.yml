@@ -13,7 +13,7 @@
 - name: "Set cred path"
   set_fact:
     creds_path: "~/"
-  when: creds_path == default_credentials_path
+  when: creds_path is not defined or creds_path == default_credentials_path
 
 - name: "Initiating Provisioning of duffy resource group"
   include: provision_resource_group.yml res_grp={{ item }}
