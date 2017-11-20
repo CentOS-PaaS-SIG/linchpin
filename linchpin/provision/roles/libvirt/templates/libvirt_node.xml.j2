@@ -44,8 +44,10 @@
     <serial type='pty'>
       <target port='0'/>
     </serial>
-    <console type='pty'>
+    <console type='pty' tty='/dev/pts/6'>
+      <source path='/dev/pts/6'/>
       <target type='serial' port='0'/>
+      <alias name='serial0'/>
     </console>
     <input type='mouse' bus='ps2'/>
     <input type='keyboard' bus='ps2'/>
