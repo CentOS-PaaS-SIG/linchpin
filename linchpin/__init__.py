@@ -1,386 +1,667 @@
 #!/usr/bin/env python
 
 import os
-import sys
+import re
+import ast
+import yaml
 import json
-import click
+import time
+import hashlib
 
-from linchpin.cli import LinchpinCli
+from collections import OrderedDict
+from uuid import getnode as get_mac
+
+from linchpin.ansible_runner import ansible_runner
+#from linchpin.utils import yaml2json
+from linchpin.fetch import FETCH_CLASS
+
+from linchpin.hooks.state import State
+from linchpin.hooks import LinchpinHooks
+
+from linchpin.rundb.basedb import BaseDB
+from linchpin.rundb.drivers import DB_DRIVERS
+
 from linchpin.exceptions import LinchpinError
-from linchpin.cli.context import LinchpinCliContext
 
+class LinchpinAPI(object):
 
-pass_context = click.make_pass_decorator(LinchpinCliContext, ensure=True)
-CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
-
-
-class LinchpinAliases(click.Group):
-
-    lp_commands = ['init', 'up', 'destroy', 'fetch', 'journal']
-    lp_aliases = {
-        'rise': 'up',
-        'drop': 'destroy',
-        'down': 'destroy',
-    }
-
-    def list_commands(self, ctx):
+    def __init__(self, ctx):
         """
-        Provide a list of available commands. Anhthing deprecated should
-        not be listed
+        LinchpinAPI constructor
+
+        :param ctx: context object from api/context.py
+
         """
 
-        return self.lp_commands
+        self.ctx = ctx
+        base_path = '/'.join(os.path.dirname(__file__).split('/')[0:-2])
+        pkg = self.get_cfg(section='lp', key='pkg', default='linchpin')
+        self.lp_path = '{0}/{1}'.format(base_path, pkg)
 
-    def get_command(self, ctx, name):
+        self.set_evar('from_api', True)
 
+        self.hook_state = None
+        self._hook_observers = []
+        self.playbook_pre_states = self.get_cfg('playbook_pre_states',
+                                                {'up': 'preup',
+                                                 'destroy': 'predestroy'})
+        self.playbook_post_states = self.get_cfg('playbook_post_states',
+                                                 {'up': 'postup',
+                                                  'destroy': 'postdestroy',
+                                                  'postinv': 'inventory'})
+        self.hooks = LinchpinHooks(self)
+        self.target_data = {}
+
+        if not self.workspace:
+            self.workspace = os.path.realpath(os.path.curdir)
+
+
+    def get_cfg(self, section=None, key=None, default=None):
         """
-        Track aliases for specific commands and the commands and return the
-        correct action.
+        Get cfgs value(s) by section and/or key, or the whole cfgs object
+
+        :param section: section from ini-style config file
+
+        :param key: key to get from config file, within section
+
+        :param default: default value to return if nothing is found.
+
+        Does not apply if section is not provided.
         """
 
-        cmd = self.lp_aliases.get(name)
-
-        if cmd is None:
-            cmd = name
-
-        rv = click.Group.get_command(self, ctx, cmd)
-        return rv
+        return self.ctx.get_cfg(section=section, key=key, default=default)
 
 
-def _handle_results(ctx, results, return_code):
-    """
-    Handle results from the RunDB output and Ansible API.
-    Either as a return value (retval) when running with the
-    ansible console enabled, or as a list of TaskResult
-    objects, and a return value.
+    def set_cfg(self, section, key, value):
+        """
+        Set a value in cfgs. Does not persist into a file,
+        only during the current execution.
 
-    If a target fails along the way, this method immediately exits with the
-    appropriate return value (retval). If the ansible console is disabled, an
-    error message will be printed before exiting.
 
-    :param results:
-        The dictionary of results for each target.
-    """
+        :param section: section within ini-style config file
 
-    output = '\n{0:<20}\t{1:<6}\t{2:<5}\t{3:<10}\n'.format('Target',
-                                                           'Run ID',
-                                                           'uHash',
-                                                           'Exit Code')
-    output += '-------------------------------------------------\n'
+        :param key: key to use
 
-    for target, data in results.iteritems():
-        rundb_data = data['rundb_data']
-        task_results = data['task_results']
+        :param value: value to set into section within config file
+        """
 
-        if not isinstance(task_results, int):
-            trs = task_results
+        self.ctx.set_cfg(section, key, value)
 
-            if trs is not None:
-                trs.reverse()
-                tr = trs[0]
-                if tr.is_failed():
-                    msg = tr._check_key('msg')
-                    ctx.log_state("Target '{0}': {1} failed with"
-                                  " error '{2}'".format(target, tr._task, msg))
+
+    def get_evar(self, key=None, default=None):
+        """
+        Get the current evars (extra_vars)
+
+        :param key: key to use
+
+        :param default: default value to return if nothing is found
+        (default: None)
+        """
+
+        return self.ctx.get_evar(key=key, default=default)
+
+
+    def set_evar(self, key, value):
+        """
+        Set a value into evars (extra_vars). Does not persist into a file,
+        only during the current execution.
+
+        :param key: key to use
+
+        :param value: value to set into evars
+        """
+
+        self.ctx.set_evar(key, value)
+
+
+    @property
+    def pinfile(self):
+        """
+        getter function for pinfile name
+        """
+
+        return self.ctx.pinfile
+
+
+    @pinfile.setter
+    def pinfile(self, pinfile):
+        """
+        setter for pinfile name
+        """
+
+        self.ctx.pinfile = pinfile
+
+
+    @property
+    def workspace(self):
+        """
+        getter function for context workspace
+        """
+
+        return self.ctx.workspace
+
+
+    @workspace.setter
+    def workspace(self, workspace):
+        """
+        setter for context workspace
+        """
+
+        self.ctx.workspace = workspace
+
+
+    @property
+    def hook_state(self):
+        """
+        getter function for hook_state property of the API object
+        """
+
+        return self.hook_state
+
+
+    @hook_state.setter
+    def hook_state(self, hook_state):
+        """
+        hook_state property setter , splits the hook_state string in
+        subhook_state and sets linchpin.hook_state object
+
+        :param hook_state: valid hook_state string mentioned in linchpin.conf
+        """
+
+        # call run_hooks after hook_state is being set
+        if hook_state is None:
+            return
         else:
-            if task_results:
-                return_code = task_results
+            self.ctx.log_debug('hook {0} initiated'.format(hook_state))
+            self._hook_state = State(hook_state, None, self.ctx)
 
-        # PRINT OUTPUT RESULTS HERE
-        for rundb_id, data in rundb_data.iteritems():
+            for callback in self._hook_observers:
+                callback(self._hook_state)
 
-            output += '{0:<20}\t{1:>6}\t{2:>5}'.format(target,
-                                                       rundb_id,
-                                                       data['uhash'])
-
-            output += '\t{0:>9}\n'.format(return_code)
-
-
-    ctx.log_state(output)
-    sys.exit(return_code)
 
+    def bind_to_hook_state(self, callback):
+        """
+        Function used by LinchpinHooksclass to add callbacks
 
-def _get_pinfile_path(pinfile=None, exists=True):
-
-    if not pinfile:
-        pinfile = lpcli.pinfile
+        :param callback: callback function
+        """
 
-    pf_w_path = '{0}/{1}'.format(lpcli.workspace, pinfile)
+        self._hook_observers.append(callback)
 
-    if not os.path.exists(pf_w_path) and exists:
-        lpcli.ctx.log_state('{0} not found in provided workspace: '
-                            '{1}'.format(pinfile, lpcli.workspace))
-        sys.exit(1)
 
-    return pf_w_path
+    def set_magic_vars(self, uhash):
+        """
+        Function inbuilt to set magic vars for ansible context
+        """
 
+        try:
+            t_f = open(self.get_evar("topology"), "r").read()
+            t_f = yaml.load(t_f)
+            topology_name = t_f["topology_name"]
+        except Exception as e:
+            self.ctx.log_info("{0}".format(str(e)))
+            topology_name = self.get_evar("topology").split("/")[-1]
+            # defaults to file name if there is any error
+            topology_name = topology_name.split(".")[-2]
 
-@click.group(cls=LinchpinAliases,
-             invoke_without_command=True,
-             no_args_is_help=True,
-             context_settings=CONTEXT_SETTINGS)
-@click.option('-c', '--config', type=click.Path(), envvar='LP_CONFIG',
-              help='Path to config file')
-@click.option('-p', '--pinfile', envvar='PINFILE',
-              help='Use a name for the PinFile different from'
-                   ' the configuration.')
-@click.option('-w', '--workspace', type=click.Path(), envvar='WORKSPACE',
-              help='Use the specified workspace if the familiar Jenkins'
-                   ' $WORKSPACE environment variable is not set')
-@click.option('-v', '--verbose', is_flag=True, default=False,
-              help='Enable verbose output')
-@click.option('--version', is_flag=True,
-              help='Prints the version and exits')
-@click.option('--creds-path', type=click.Path(), envvar='CREDS_PATH',
-              help='Use the specified credentials path if CREDS_PATH'
-                   'environment variable is not set')
-@pass_context
-def runcli(ctx, config, pinfile, workspace, verbose, version, creds_path):
-    """linchpin: hybrid cloud orchestration"""
+        inv_folder = str(self.get_evar('inventories_folder'))
 
-    ctx.load_config(lpconfig=config)
-    # workspace arg in load_config used to extend linchpin.conf
-    ctx.load_global_evars()
-    ctx.setup_logging()
+        inv_file = '{0}/{1}/{2}-{3}{4}'.format(self.workspace,
+                                               inv_folder,
+                                               topology_name,
+                                               uhash,
+                                               self.get_cfg('extensions',
+                                                            'inventory',
+                                                            'inventory'))
 
-    ctx.verbose = verbose
+        self.set_evar('inventory_file', inv_file)
+        self.set_evar('topology_name', topology_name)
 
-    if pinfile:
-        ctx.log_info('pinfile name changed to {0}'.format(pinfile))
-        ctx.pinfile = pinfile
 
-    if version:
-        ctx.log_state('linchpin version {0}'.format(ctx.version))
-        sys.exit(0)
+    def lp_rise(self, pinfile, targets='all', run_id=None):
+        """
+        DEPRECATED
 
-    if creds_path is not None:
-        ctx.set_evar('creds_path',
-                     os.path.realpath(os.path.expanduser(creds_path)))
+        An alias for lp_up. Used only for backward compatibility.
+        """
 
-    if workspace is not None:
-        ctx.workspace = os.path.realpath(os.path.expanduser(workspace))
-        ctx.log_debug("ctx.workspace: {0}".format(ctx.workspace))
+        self.lp_up(pinfile, targets, run_id=run_id)
 
-    # global LinchpinCli placeholder
-    global lpcli
-    lpcli = LinchpinCli(ctx)
 
+    def lp_up(self, pinfile, targets='all', run_id=None):
+        """
+        This function takes a list of targets, and provisions them according
+        to their topology. If an layout argument is provided, an inventory
+        will be generated for the provisioned nodes.
 
-@runcli.command('init', short_help='Initializes a linchpin project.')
-@pass_context
-def init(ctx):
-    """
-    Initializes a linchpin project, which generates an example PinFile, and
-    creates the necessary directory structure for topologies and layouts.
+        :param pinfile:
+            Provided PinFile, with available targets,
 
-    ctx: Context object defined by the click.make_pass_decorator method
-    """
+        :param targets:
+            A tuple of targets to provision.
+        """
 
-    pf_w_path = _get_pinfile_path(exists=False)
+        return self.run_playbook(pinfile, targets, action="up", run_id=run_id)
 
-    try:
-        # lpcli.lp_init(pf_w_path, targets) # TODO implement targets option
-        lpcli.lp_init(pf_w_path)
-    except LinchpinError as e:
-        ctx.log_state(e)
-        sys.exit(1)
 
+    def lp_drop(self, pinfile, targets, run_id=None):
+        """
+        DEPRECATED
 
-@runcli.command()
-@click.argument('targets', metavar='TARGETS', required=False,
-                nargs=-1)
-@click.option('-r', '--run-id', metavar='run_id',
-              help='Idempotently provision using `run-id` data')
-@pass_context
-def up(ctx, targets, run_id):
-    """
-    Provisions nodes from the given target(s) in the given PinFile.
+        An alias for lp_destroy. Used only for backward compatibility.
+        """
 
-    pinfile:    Path to pinfile (Default: workspace path)
+        return self.lp_destroy(pinfile, targets, run_id=run_id)
 
-    targets:    Provision ONLY the listed target(s). If omitted, ALL targets in
-    the appropriate PinFile will be provisioned.
-    """
 
-    pf_w_path = _get_pinfile_path()
+    def lp_destroy(self, pinfile, targets='all', run_id=None):
+        """
+        This function takes a list of targets, and performs a destructive
+        teardown, including undefining nodes, according to the target.
 
-    try:
-        return_code, results = lpcli.lp_up(pf_w_path, targets, run_id=run_id)
-        _handle_results(ctx, results, return_code)
+        .. seealso:: lp_down - currently unimplemented
 
-    except LinchpinError as e:
-        ctx.log_state(e)
-        sys.exit(1)
+        :param pinfile:
+            Provided PinFile, with available targets,
 
+        :param targets:
+            A tuple of targets to destroy.
+        """
 
-@runcli.command()
-@click.argument('targets', metavar='TARGET', required=False, nargs=-1)
-@pass_context
-def rise(ctx, targets):
-    """
-    DEPRECATED. Use 'up'
+        return self.run_playbook(pinfile,
+                                 targets,
+                                 action="destroy",
+                                 run_id=run_id)
 
-    """
 
-    pass
+    def lp_down(self, pinfile, targets='all'):
+        """
+        This function takes a list of targets, and performs a shutdown on
+        nodes in the target's topology. Only providers which support shutdown
+        from their API (Ansible) will support this option.
 
+        CURRENTLY UNIMPLEMENTED
 
-@runcli.command()
-@click.argument('targets', metavar='TARGET', required=False,
-                nargs=-1)
-@click.option('-r', '--run-id', metavar='run_id',
-              help='Destroy resources using `run-id` data')
-@pass_context
-def destroy(ctx, targets, run_id):
-    """
-    Destroys nodes from the given target(s) in the given PinFile.
+        .. seealso:: lp_destroy
 
-    pinfile:    Path to pinfile (Default: workspace path)
+        :param pinfile:
+            Provided PinFile, with available targets,
 
-    targets:    Destroy ONLY the listed target(s). If omitted, ALL targets in
-    the appropriate PinFile will be destroyed.
+        :param targets:
+            A tuple of targets to provision.
+        """
 
-    """
+        pass
 
-    pf_w_path = _get_pinfile_path()
 
-    try:
-        return_code, results = lpcli.lp_destroy(pf_w_path,
-                                                targets,
-                                                run_id=run_id)
+    def lp_fetch(self, src, fetch_type, root):
+        if root is not None:
+            root = list(filter(None, root.split(',')))
 
-        _handle_results(ctx, results, return_code)
+        dest = self.ctx.workspace
+        if not os.path.exists(dest):
+            raise LinchpinError(dest + " does not exist")
 
-    except LinchpinError as e:
-        ctx.log_state(e)
-        sys.exit(1)
+        fetch_aliases = {
+            "topologies": self.get_evar("topologies_folder"),
+            "layouts": self.get_evar("layouts_folder"),
+            "resources": self.get_evar("resources_folder"),
+            "hooks": self.get_evar("hooks_folder"),
+            "workspace": "workspace"
+        }
 
+        fetch_dir = fetch_aliases.get(fetch_type, "workspace")
 
-@runcli.command()
-@click.argument('targets', metavar='TARGET', required=False,
-                nargs=-1)
-@pass_context
-def drop(ctx, targets):
-    """
-    DEPRECATED. Use 'destroy'.
 
-    There are now two functions, `destroy` and `down` which perform node
-    teardown. The `destroy` functionality is the default, and if drop is
-    used, will be called.
+        cache_path = os.path.abspath(os.path.join(os.path.expanduser('~'),
+                                                  '.cache/linchpin'))
+        if not os.path.exists(cache_path):
+            os.mkdir(cache_path)
 
-    The `down` functionality is currently unimplemented, but will shutdown
-    and preserve instances. This feature will only work on providers that
-    support this option.
+        protocol_regex = OrderedDict([
+            ('((git|ssh|http(s)?)|(git@[\w\.]+))'
+                '(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?',
+                'FetchGit'),
+            ('^(http|https)://', 'FetchHttp'),
+            ('^(file)://', 'FetchLocal')
+        ])
+        fetch_protocol = None
+        for regex, obj in protocol_regex.items():
+            if re.match(regex, src):
+                fetch_protocol = obj
+                break
+        if fetch_protocol is None:
+            raise LinchpinError("The protocol speficied is not supported")
 
-    """
 
-    pass
+        fetch_class = FETCH_CLASS[fetch_protocol](self.ctx, fetch_dir, src,
+                                                  dest, cache_path, root)
+        fetch_class.fetch_files()
 
+        fetch_class.copy_files()
 
-@runcli.command()
-@click.argument('fetch_type', default=None, required=False, nargs=-1)
-@click.argument('remote', default=None, required=True, nargs=1)
-@click.option('-r', '--root', default=None, required=False,
-              help='Use this to specify the subdirectory of the workspace of'
-              ' the root url')
-@pass_context
-def fetch(ctx, fetch_type, remote, root):
-    """
-    Fetches a specified linchpin workspace or component from a remote location.
 
-    fetch_type:     Specifies which component of a workspace the user wants to
-    fetch. Types include: topology, layout, resources, hooks, workspace
+    def lp_journal(self, targets=[], fields=None, count=None):
 
-    remote:         The URL or URI of the remote directory
+        rundb = self.setup_rundb()
 
-    """
-    try:
-        lpcli.lp_fetch(remote, ''.join(fetch_type), root)
-    except LinchpinError as e:
-        ctx.log_state(e)
-        sys.exit(1)
+        journal = {}
 
+        if not len(targets):
+            targets = rundb.get_tables()
 
-@runcli.command()
-@click.argument('targets', metavar='TARGETS', required=True, nargs=-1)
-@click.option('-c', '--count', metavar='COUNT', default=3, required=False,
-              help='(up to) number of records to return (default: 3)')
-@click.option('-f', '--fields', metavar='FIELDS', required=False,
-              help='List the fields to display')
-@pass_context
-def journal(ctx, targets, fields, count):
-    """
-    Display information stored in Run Database
 
-    targets:    Display data for the listed target(s). If omitted, the latest
-                records for any/all targets in the RunDB will be displayed.
+        for target in targets:
+            journal[target] = rundb.get_records(table=target, count=count)
 
-    fields:     Comma separated list of fields to show in the display.
-    (Default: action, uhash, rc)
+        return journal
 
-    (available fields are: uhash, rc, start, end, action)
 
-    """
+    def find_topology(self, topology):
+        """
+        Find the topology to be acted upon. This could be pulled from a
+        registry.
 
-    all_fields = json.loads(lpcli.get_cfg('lp', 'rundb_schema')).keys()
+        :param topology:
+            name of topology from PinFile to be loaded
 
-    if not fields:
-        fields = ['action', 'uhash', 'rc']
-    else:
-        fields = fields.split(',')
+        """
 
-    invalid_fields = [field for field in fields if field not in all_fields]
+        topo_path = os.path.realpath('{0}/{1}'.format(
+                                     self.ctx.workspace,
+                                     self.get_evar('topologies_folder',
+                                                   'topologies')))
 
-    if invalid_fields:
-        ctx.log_state('The following fields passed in are not valid: {0}'
-                      ' \nValid fields are {1}'.format(fields, all_fields))
-        sys.exit(89)
+        topos = os.listdir(topo_path)
 
-    no_records = []
-    output = 'run_id\t'
+        if topology in topos:
+            return os.path.realpath('{0}/{1}'.format(topo_path, topology))
 
-    for f in fields:
-        output += '{0:>10}\t'.format(f)
+        raise LinchpinError('Topology {0} not found in'
+                            ' workspace'.format(topology))
 
-    output += '\n'
-    output += '--------------------------------------------------'
 
+    def setup_rundb(self):
+        """
+        Configures the run database parameters, sets them into extra_vars
+        """
 
-    try:
-        journal = lpcli.lp_journal(targets=targets, fields=fields, count=count)
+        rundb_conn_default = '~/.config/linchpin/rundb-::mac::.json'
+        rundb_conn = self.get_cfg(section='lp',
+                                  key='rundb_conn',
+                                  default=rundb_conn_default)
+        rundb_type = self.get_cfg(section='lp',
+                                  key='rundb_type',
+                                  default='TinyRunDB')
+        rundb_conn_type = self.get_cfg(section='lp',
+                                       key='rundb_conn_type',
+                                       default='file')
+        self.rundb_hash = self.get_cfg(section='lp',
+                                       key='rundb_hash',
+                                       default='sha256')
 
-        for target, values in journal.iteritems():
+        if rundb_conn_type == 'file':
+            rundb_conn_int = rundb_conn.replace('::mac::', str(get_mac()))
+            rundb_conn_int = os.path.expanduser(rundb_conn_int)
+            rundb_conn_dir = os.path.dirname(rundb_conn_int)
 
-            keys = values.keys()
-            if len(keys):
-                print('\nTarget: {0}'.format(target))
-                print(output)
-                keys.sort(reverse=True)
-                for run_id in keys:
-                    if int(run_id) > 0:
-                        out = '{0:<7}\t'.format(run_id)
-                        for f in fields:
-                            out += '{0:>9}\t'.format(values[run_id][f])
+            if not os.path.exists(rundb_conn_dir):
+                os.mkdir(rundb_conn_dir)
 
-                        print(out)
+
+        self.set_evar('rundb_type', rundb_type)
+        self.set_evar('rundb_conn', rundb_conn_int)
+        self.set_evar('rundb_hash', self.rundb_hash)
+
+
+        return BaseDB(DB_DRIVERS[rundb_type], rundb_conn_int)
+
+
+    def run_playbook(self, pinfile, targets=[], action='up', run_id=None):
+        """
+        This function takes a list of targets, and executes the given
+        action (up, destroy, etc.) for each provided target.
+
+        :param pinfile: Provided PinFile, with available targets,
+
+        :param targets: A tuple of targets to run. (default: 'all')
+
+        .. .note:: The `run_id` value differs from the `rundb_id`, in that
+                   the `run_id` is an existing value in the database.
+                   The `rundb_id` value is created to store the new record.
+                   If the `run_id` is passed, it is used to collect an existing
+                   `uhash` value from the given `run_id`, which is in turn used
+                   to perform an idempotent reprovision, or destroy provisioned
+                   resources.
+        """
+
+        #pf = yaml2json(pinfile)
+        pf = None
+
+        # playbooks check whether from_api is defined
+        self.ctx.log_debug('from_api: {0}'.format(self.get_evar('from_api')))
+
+        # playbooks check whether from_cli is defined
+        # if not, vars get loaded from linchpin.conf
+        self.set_evar('from_api', True)
+        self.set_evar('lp_path', self.lp_path)
+
+        # do we display the ansible output to the console?
+        ansible_console = False
+        if self.ctx.cfgs.get('ansible'):
+            ansible_console = (
+                ast.literal_eval(self.ctx.cfgs['ansible'].get('console',
+                                                              'False')))
+
+        if not ansible_console:
+            ansible_console = self.ctx.verbose
+
+        self.set_evar('default_resources_path', '{0}/{1}'.format(
+                      self.ctx.workspace,
+                      self.get_evar('resources_folder',
+                                    default='resources')))
+
+        # playbooks still use this var, keep it here
+        self.set_evar('default_inventories_path',
+                      '{0}/{1}'.format(self.ctx.workspace,
+                                       self.get_evar('inventories_folder',
+                                                     default='inventories')))
+
+        # add this because of magic_var evaluation in ansible
+        self.set_evar('inventory_dir', self.get_evar(
+                      'default_inventories_path',
+                      default='inventories'))
+
+        self.set_evar('state', 'present')
+
+
+        if action == 'destroy':
+            self.set_evar('state', 'absent')
+
+        results = {}
+
+        # determine what targets is equal to
+        if (set(targets) ==
+                set(pf.keys()).intersection(targets) and len(targets) > 0):
+            pass
+        elif len(targets) == 0:
+            targets = set(pf.keys()).difference()
+        else:
+            raise LinchpinError("One or more invalid targets found")
+
+        # create localhost file in workspace for user if it doesn't exist
+        if not os.path.exists('{0}/localhost'.format(self.workspace)):
+            with open('{0}/localhost'.format(self.workspace), 'w') as f:
+                f.write('localhost\n')
+
+        for target in targets:
+
+            results[target] = {}
+
+            # initialize rundb table
+            dateformat = self.get_cfg('logger',
+                                      'dateformat',
+                                      default='%m/%d/%Y %I:%M:%S %p')
+
+            self.set_evar('target', target)
+
+            rundb = self.setup_rundb()
+
+            rundb_schema = json.loads(self.get_cfg(section='lp',
+                                      key='rundb_schema'))
+            rundb.schema = rundb_schema
+            self.set_evar('rundb_schema', rundb_schema)
+
+            start = time.strftime(dateformat)
+            uhash = None
+
+            # generate a new rundb_id
+            # (don't confuse it with an already existing run_id)
+            rundb_id = rundb.init_table(target)
+
+            if action == 'up' and not run_id:
+                uh = hashlib.new(self.rundb_hash,
+                                 ':'.join([target, str(rundb_id), start]))
+                uhash = uh.hexdigest()[-4:]
+            elif action == 'destroy' or run_id:
+                # look for the action='up' records to destroy
+                data, orig_run_id = rundb.get_record(target,
+                                                     action='up',
+                                                     run_id=run_id)
+
+                if data:
+                    self.set_evar('orig_run_id', orig_run_id)
+                    uhash = data.get('uhash')
+                    self.ctx.log_debug("using data from"
+                                       " run_id: {0}".format(run_id))
+                else:
+                    raise LinchpinError("Attempting to perform '{0}' action on"
+                                        " target: '{1}' failed. No records"
+                                        " available.".format(action, target))
             else:
-                no_records.append(target)
-
-        if no_records:
-            no_out = '\nNo records for targets:'
-
-            for rec in no_records:
-                no_out += ' {0}'.format(rec)
-
-            no_out += '\n'
-
-            print(no_out)
-
-    except LinchpinError as e:
-        ctx.log_state(e)
-        sys.exit(1)
+                raise LinchpinError("run_id '{0}' does not match any existing"
+                                    " records".format(run_id))
 
 
-def main():
-    # print("entrypoint")
-    pass
+            self.ctx.log_debug('rundb_id: {0}'.format(rundb_id))
+            self.ctx.log_debug('uhash: {0}'.format(uhash))
+            rundb.update_record(target, rundb_id, 'uhash', uhash)
+
+            rundb.update_record(target, rundb_id, 'start', start)
+            rundb.update_record(target, rundb_id, 'action', action)
+
+            self.set_evar('_action', action)
+            self.set_evar('rundb_id', rundb_id)
+            self.set_evar('uhash', uhash)
+
+            self.set_evar('topology', self.find_topology(
+                          pf[target]["topology"]))
+
+            rundb.update_record(target,
+                                rundb_id,
+                                'inputs',
+                                [
+                                    {'topology_file': pf[target]['topology']}
+                                ])
+
+            if 'layout' in pf[target]:
+                self.set_evar('layout_file',
+                              '{0}/{1}/{2}'.format(self.ctx.workspace,
+                                                   self.get_evar(
+                                                       'layouts_folder'),
+                                                   pf[target]["layout"]))
+
+                ws = self.ctx.workspace
+                layout_folder = self.get_evar("layouts_folder",
+                                              default='layouts')
+                layout_file = pf[target]['layout']
+                layout_path = '{0}/{1}/{2}'.format(ws,
+                                                   layout_folder,
+                                                   layout_file)
+                layout_data = yaml2json(layout_path)
+
+                rundb.update_record(target,
+                                    rundb_id,
+                                    'inputs',
+                                    [
+                                        {'layout_file': layout_file}
+                                    ])
+
+                rundb.update_record(target,
+                                    rundb_id,
+                                    'inputs',
+                                    [
+                                        {'layout_data': layout_data}
+                                    ])
+
+            # parse topology_file and set inventory_file
+            self.set_magic_vars(uhash)
+
+            # set the current target data
+            self.target_data = pf[target]
+            self.target_data["extra_vars"] = self.get_evar()
+
+            # note : changing the state triggers the hooks
+            self.hooks.rundb = (rundb, rundb_id)
+            self.pb_hooks = self.get_cfg('hookstates', action)
+            self.ctx.log_debug('calling: {0}{1}'.format('pre', action))
+
+            if 'pre' in self.pb_hooks:
+                self.hook_state = '{0}{1}'.format('pre', action)
+
+            # FIXME need to add rundb data for hooks results
+
+            # invoke the appropriate action
+            return_code, results[target]['task_results'] = (
+                self._invoke_playbook(action=action,
+                                      console=ansible_console)
+            )
+
+            if not return_code:
+                self.ctx.log_state("Action '{0}' on Target '{1}' is "
+                                   "complete".format(action, target))
+
+            # FIXME Check the result[target] value here, and fail if applicable.
+            # It's possible that a flag might allow more targets to run, then
+            # return an error code at the end.
+
+            # add post provision hook for inventory generation
+            if 'inv' in self.pb_hooks:
+                self.hook_state = 'postinv'
+
+            if 'post' in self.pb_hooks:
+                self.hook_state = '{0}{1}'.format('post', action)
+
+            end = time.strftime(dateformat)
+            rundb.update_record(target, rundb_id, 'end', end)
+            rundb.update_record(target, rundb_id, 'rc', return_code)
+
+            run_data = rundb.get_record(target, action=action, run_id=rundb_id)
+            results[target]['rundb_data'] = {rundb_id: run_data[0]}
+
+        return (return_code, results)
+
+
+    def _invoke_playbook(self, action='up', console=True):
+        """
+        Uses the Ansible API code to invoke the specified linchpin playbook
+
+        :param action: Which ansible action to run (default: 'up')
+        :param console: Whether to display the ansible console (default: True)
+        """
+
+        pb_path = '{0}/{1}'.format(self.lp_path,
+                                   self.ctx.get_evar('playbooks_folder',
+                                                     'provision'))
+        module_path = '{0}/{1}/'.format(pb_path, self.get_cfg('lp',
+                                                              'module_folder',
+                                                              'library'))
+        playbook_path = '{0}/{1}'.format(pb_path, self.get_cfg('playbooks',
+                                                               action,
+                                                               'site.yml'))
+        extra_var = self.get_evar()
+
+        return ansible_runner(playbook_path,
+                              module_path,
+                              extra_var,
+                              console=console)

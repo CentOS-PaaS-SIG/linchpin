@@ -5,7 +5,7 @@ import sys
 import click
 from distutils import dir_util
 
-from linchpin.api import LinchpinAPI
+from linchpin import LinchpinAPI
 
 
 class LinchpinCli(LinchpinAPI):

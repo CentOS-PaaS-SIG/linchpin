@@ -3,7 +3,7 @@
 import ast
 import logging
 
-from linchpin.api.context import LinchpinContext
+from linchpin.context import LinchpinContext
 
 
 class LinchpinCliContext(LinchpinContext):
