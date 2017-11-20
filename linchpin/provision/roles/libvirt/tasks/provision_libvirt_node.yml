@@ -244,7 +244,7 @@
     name: "{{ libvirt_resource_name }}"
     command: define
     xml: "{{ lookup('template', 'libvirt_node.xml.j2') }}"
-    uri: "{{ definition[1] }}"
+    uri: "{{ definition[0] }}"
   with_nested:
     - ["{{ res_def['uri'] | default('qemu:///system') }}"]
     - ["{{ res_def }}"]
