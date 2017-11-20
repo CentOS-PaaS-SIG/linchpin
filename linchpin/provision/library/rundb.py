@@ -157,7 +157,8 @@ def main():
                         if key in record:
                             output = record.get(key)
                         else:
-                            msg = "key '{0}' was not found in record".format(key)
+                            msg = "key '{0}' was not found in"
+                            " record".format(key)
                             module.fail_json(msg=msg)
                 else:
                     msg = "The 'key' value must be passed"
