@@ -6,6 +6,7 @@ import ast
 import yaml
 import json
 import time
+import errno
 import hashlib
 
 from collections import OrderedDict
@@ -407,7 +408,14 @@ class LinchpinAPI(object):
             rundb_conn_dir = os.path.dirname(rundb_conn_int)
 
             if not os.path.exists(rundb_conn_dir):
-                os.mkdir(rundb_conn_dir)
+                try:
+                    os.makedirs(rundb_conn_dir)
+                except OSError as exc:
+                    if (exc.errno == errno.EEXIST and
+                            os.path.isdir(rundb_conn_dir)):
+                        pass
+                    else:
+                        raise
 
 
         self.set_evar('rundb_type', rundb_type)
