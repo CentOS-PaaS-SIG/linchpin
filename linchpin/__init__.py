@@ -12,7 +12,7 @@ from collections import OrderedDict
 from uuid import getnode as get_mac
 
 from linchpin.ansible_runner import ansible_runner
-#from linchpin.utils import yaml2json
+from linchpin.utils import yaml2json
 from linchpin.fetch import FETCH_CLASS
 
 from linchpin.hooks.state import State
@@ -29,12 +29,12 @@ class LinchpinAPI(object):
         """
         LinchpinAPI constructor
 
-        :param ctx: context object from api/context.py
+        :param ctx: context object from context.py
 
         """
 
         self.ctx = ctx
-        base_path = '/'.join(os.path.dirname(__file__).split('/')[0:-2])
+        base_path = '/'.join(os.path.dirname(__file__).split('/')[0:-1])
         pkg = self.get_cfg(section='lp', key='pkg', default='linchpin')
         self.lp_path = '{0}/{1}'.format(base_path, pkg)
 
@@ -435,8 +435,7 @@ class LinchpinAPI(object):
                    resources.
         """
 
-        #pf = yaml2json(pinfile)
-        pf = None
+        pf = yaml2json(pinfile)
 
         # playbooks check whether from_api is defined
         self.ctx.log_debug('from_api: {0}'.format(self.get_evar('from_api')))
@@ -636,7 +635,11 @@ class LinchpinAPI(object):
             rundb.update_record(target, rundb_id, 'end', end)
             rundb.update_record(target, rundb_id, 'rc', return_code)
 
-            run_data = rundb.get_record(target, action=action, run_id=rundb_id)
+            if action == 'destroy':
+                run_data = rundb.get_record(target, action=action, run_id=orig_run_id)
+            else:
+                run_data = rundb.get_record(target, action=action, run_id=rundb_id)
+
             results[target]['rundb_data'] = {rundb_id: run_data[0]}
 
         return (return_code, results)
