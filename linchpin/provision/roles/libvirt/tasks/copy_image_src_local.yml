@@ -46,13 +46,6 @@
   become: yes
   register: lismt_local
 
-- name: "determine image_src mime_type"
-  stat:
-    path: "{{ local_image_src }}"
-    mime: true
-  become: yes
-  register: lismt_local
-
 - name: "set image_src for uncompressed files"
   set_fact:
     img_src: "{{ local_image_src }}"
