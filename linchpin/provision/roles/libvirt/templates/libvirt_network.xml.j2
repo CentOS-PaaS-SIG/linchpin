@@ -1,7 +1,7 @@
 <network ipv6='yes'>
   <name>{{ res_def['res_name'] | default(res_def['name'])  }}</name>
   {% if res_def['bridge'] is defined %}
-  <bridge name={{ res_def['bridge'] }} stp='on' delay='0'/>
+  <bridge name="{{ res_def['bridge'] }}" stp='on' delay='0'/>
   {% endif %}/>
   <forward mode="{{ res_def['forward_mode'] | default('nat') }}"
 {% if res_def['forward_dev'] is defined %}
