@@ -8,7 +8,8 @@ WORKDIR $HOME
 RUN dnf -y install python-pip ansible curl gcc python-devel python2-shade \
                    openssl-devel libvirt-daemon-driver-* libvirt-daemon \
                    libvirt-daemon-kvm qemu-kvm libvirt-daemon-config-network \
-                   libvirt-python libvirt-devel redhat-rpm-config \
+                   libvirt-python libvirt-devel redhat-rpm-config file \
+                   openssh mkisofs libvirt-client virt-install net-tools \
     && yum clean all; \
     (cd /lib/systemd/system/sysinit.target.wants/; for i in *; \
      do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \

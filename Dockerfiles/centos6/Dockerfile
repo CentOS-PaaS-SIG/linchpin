@@ -9,7 +9,8 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.n
 RUN yum -y install python-pip ansible curl gcc python-devel openssl-devel \
                    libvirt-daemon-driver-* libvirt-daemon libvirt-daemon-kvm \
                    qemu-kvm libvirt-daemon-config-network libvirt-python \
-                   libvirt-devel libxml2-devel libxslt-devel && yum clean all
+                   libvirt-devel libxml2-devel libxslt-devel file openssh \
+                   mkisofs libvirt-client virt-install net-tools && yum clean all
 RUN pip install -U pip
 RUN pip install -U setuptools
 
