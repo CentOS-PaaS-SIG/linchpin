@@ -1,7 +1,7 @@
 - name: "set s3 mode when state is present"
   set_fact:
     s3_mode: "create"
-  when: state == "present" and res_def['res_type'] == 'aws_s3'
+  when: state == "present" and res_def['role'] == 'aws_s3'
 
 - name: "Provisioning AWS_S3 Resource"
   s3:
@@ -11,7 +11,7 @@
     mode: "{{ s3_mode }}"
     region: "{{ res_def['region'] }}"
     permission: "{{ res_def['permission']| default(omit) }}"
-  when: res_def['res_type'] == 'aws_s3'
+  when: res_def['role'] == 'aws_s3'
   register: res_def_output
 
 - name: "Append outputitem to topology_outputs"
