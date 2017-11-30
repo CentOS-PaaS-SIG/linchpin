@@ -37,13 +37,13 @@ def suppress_stdout():
 
 def ansible_runner_2x(playbook_path,
                       module_path,
-                      extra_var,
+                      extra_vars,
                       inventory_src='localhost',
                       console=True):
+
     variable_manager = VariableManager()
     loader = DataLoader()
-    extra_var["ansible_python_interpreter"] = sys.executable
-    variable_manager.extra_vars = extra_var
+    variable_manager.extra_vars = extra_vars
     inventory = Inventory(loader=loader,
                           variable_manager=variable_manager,
                           host_list=inventory_src)
@@ -66,6 +66,7 @@ def ansible_runner_2x(playbook_path,
                                      'become_user',
                                      'verbosity',
                                      'check'])
+
     options = Options(listtags=False,
                       listtasks=False,
                       listhosts=False,
@@ -98,13 +99,13 @@ def ansible_runner_2x(playbook_path,
 
 def ansible_runner_24x(playbook_path,
                        module_path,
-                       extra_var,
+                       extra_vars,
                        inventory_src,
                        console=True):
+
     loader = DataLoader()
-    extra_var["ansible_python_interpreter"] = sys.executable
     variable_manager = VariableManager(loader=loader)
-    variable_manager.extra_vars = extra_var
+    variable_manager.extra_vars = extra_vars
     inventory = Inventory(loader=loader, sources=[inventory_src])
     variable_manager.set_inventory(inventory)
     passwords = {}
@@ -147,6 +148,7 @@ def ansible_runner_24x(playbook_path,
                       verbosity=4,
                       diff=False,
                       check=False)
+
     pbex = PlaybookExecutor(playbooks=[playbook_path],
                             inventory=inventory,
                             variable_manager=variable_manager,
@@ -158,7 +160,7 @@ def ansible_runner_24x(playbook_path,
 
 def ansible_runner(playbook_path,
                    module_path,
-                   extra_var,
+                   extra_vars,
                    inventory_src='localhost',
                    console=True):
         """
@@ -166,16 +168,19 @@ def ansible_runner(playbook_path,
         :param playbook: Which ansible playbook to run (default: 'up')
         :param console: Whether to display the ansible console (default: True)
         """
+
+        extra_vars["ansible_python_interpreter"] = sys.executable
+
         if ansible24:
             pbex = ansible_runner_24x(playbook_path,
                                       module_path,
-                                      extra_var,
+                                      extra_vars,
                                       inventory_src,
                                       console)
         else:
             pbex = ansible_runner_2x(playbook_path,
                                      module_path,
-                                     extra_var,
+                                     extra_vars,
                                      inventory_src,
                                      console)
 
