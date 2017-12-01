@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 
 import os
+import re
 import sys
 import click
+
 from distutils import dir_util
+from collections import OrderedDict
 
 from linchpin import LinchpinAPI
+from linchpin.fetch import FETCH_CLASS
 
 
 class LinchpinCli(LinchpinAPI):
@@ -16,6 +20,45 @@ class LinchpinCli(LinchpinAPI):
         """
 
         LinchpinAPI.__init__(self, ctx)
+
+        if not self.workspace:
+            self.workspace = os.path.realpath(os.path.curdir)
+
+
+    @property
+    def pinfile(self):
+        """
+        getter function for pinfile name
+        """
+
+        return self.ctx.pinfile
+
+
+    @pinfile.setter
+    def pinfile(self, pinfile):
+        """
+        setter for pinfile name
+        """
+
+        self.ctx.pinfile = pinfile
+
+
+    @property
+    def workspace(self):
+        """
+        getter function for context workspace
+        """
+
+        return self.ctx.workspace
+
+
+    @workspace.setter
+    def workspace(self, workspace):
+        """
+        setter for context workspace
+        """
+
+        self.ctx.workspace = workspace
 
 
     def lp_init(self, pf_w_path, providers=['libvirt']):
