@@ -37,14 +37,14 @@
   set_fact:
     topo_output_resources: "{{ topo_output.output[0]['resources'] }}"
 
-# patch for res_type to type translation
-- name: "Add attribute res_type to res_grp resource_definitions"
+# patch for role to type translation
+- name: "Add attribute role to res_grp resource_definitions"
   set_fact:
-    resource_definitions: "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) | duplicateattr('type', 'res_type') }}"
+    resource_definitions: "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) | duplicateattr('role', 'role') }}"
 
 - name: "teardown of ec2 resource definitions of current group"
   include: teardown_aws_ec2.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.2 }}
-  when: res_item.0['res_type'] == "aws_ec2"
+  when: res_item.0['role'] == "aws_ec2"
   with_nested:
     - "{{ resource_definitions }}"
     - "{{ topo_output_resources }}"
@@ -54,7 +54,7 @@
 
 - name: "teardown of s3 resource def of current group"
   include: teardown_aws_s3.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
-  when: res_item.0['res_type'] == "aws_s3"
+  when: res_item.0['role'] == "aws_s3"
   with_nested:
     - "{{ resource_definitions }}"
     - ["{{ res_grp['resource_group_name']  }}"]
@@ -63,7 +63,7 @@
 
 - name: "teardown of aws_ec2_key resource def of current group"
   include: teardown_aws_ec2_key.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
-  when: res_item.0['res_type'] == "aws_ec2_key"
+  when: res_item.0['role'] == "aws_ec2_key"
   with_nested:
     - "{{ resource_definitions }}"
     - ["{{ res_grp['resource_group_name']  }}"]
@@ -72,7 +72,7 @@
 
 - name: "teardown cfn stack resource def of current group"
   include: teardown_aws_cfn.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
-  when: res_item.0['res_type'] == "aws_cfn"
+  when: res_item.0['role'] == "aws_cfn"
   with_nested:
     - "{{ resource_definitions }}"
     - ["{{ res_grp['resource_group_name'] }}"]

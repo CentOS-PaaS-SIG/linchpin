@@ -45,15 +45,6 @@
     value: "{{ start_time }}"
     run_id: "{{ rundb_id }}"
 
-- name: "record topology_file"
-  rundb:
-    conn_str: "{{ rundb_conn }}"
-    operation: update
-    table: "{{ target }}"
-    key: "inputs"
-    value: [{ 'topology_file': "{{ topology_file }}" }]
-    run_id: "{{ rundb_id }}"
-
 - name: "record action"
   rundb:
     conn_str: "{{ rundb_conn }}"
@@ -70,7 +61,7 @@
 
 - name: "get uhash from last 4 of full hash"
   set_fact:
-    uhash: "{{ uh[-4:] }}"
+    uhash_present: "{{ uh[-4:] }}"
   when: state == "present"
 
 - name: "get last run_id to destroy"
@@ -88,20 +79,41 @@
     operation: get
     table: "{{ target }}"
     key: uhash
-  register: uhash
+  register: uhash_absent
   when: state == "absent"
 
 - name: "get uhash from last 4 of full hash"
   set_fact:
-    uhash: "{{ uhash.output }}"
+    uhash_absent: "{{ uhash_absent.output }}"
   when: state == "absent"
 
-- name: "set unique-ish hash into rundb"
+- name: "set unique-ish hash into rundb when state is absent"
   rundb:
     conn_str: "{{ rundb_conn }}"
     operation: update
     table: "{{ target }}"
     key: "uhash"
-    value: "{{ uhash }}"
+    value: "{{ uhash_absent }}"
     run_id: "{{ rundb_id }}"
+  when: state == "absent"
+
+- name: "set unique-ish hash into rundb when state is present"
+  rundb:
+    conn_str: "{{ rundb_conn }}"
+    operation: update
+    table: "{{ target }}"
+    key: "uhash"
+    value: "{{ uhash_present }}"
+    run_id: "{{ rundb_id }}"
+  when: state == "present"
+
+
+- name: "get uhash from rundb"
+  rundb:
+    conn_str: "{{ rundb_conn }}"
+    operation: get
+    table: "{{ target }}"
+    key: "uhash"
+    run_id: "{{ rundb_id }}"
+  register: uhash
 

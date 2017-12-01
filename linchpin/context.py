@@ -28,9 +28,8 @@ class LinchpinContext(object):
         self.version = __version__
         self.verbose = False
 
-        lib_path = '{0}'.format(os.path.dirname(
-            os.path.realpath(__file__))).rstrip('/')
-        self.lib_path = os.path.realpath(os.path.join(lib_path, os.pardir))
+        self.lib_path = '{0}'.format(os.path.dirname(
+                                     os.path.realpath(__file__)))
 
         self.cfgs = {}
 
@@ -222,6 +221,7 @@ class LinchpinContext(object):
         """
 
         self.set_cfg('lp', 'workspace', workspace)
+        self.set_evar('workspace', workspace)
 
 
     def setup_logging(self):

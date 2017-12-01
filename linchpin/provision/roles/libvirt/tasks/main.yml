@@ -10,5 +10,5 @@
 - name: "Initiating libvirt resource group"
   include: provision_resource_group.yml res_grp={{ item }}
   with_items:
-    - "{{ libvirt_res_grps }}"
+    - "{{ resources }}"
   register: resource_grps_output

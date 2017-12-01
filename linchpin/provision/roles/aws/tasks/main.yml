@@ -6,15 +6,15 @@
     topology_outputs_aws_ec2_key: []
     topology_outputs_aws_cfn: []
 
-- name: "Initiating Provisioning of resources aws resource group"
+- name: "Initiating Provisioning of aws resource group"
   include: provision_resource_group.yml res_grp={{ item }}
   with_items:
-    - "{{ aws_res_grps }}"
+    - "{{ resources }}"
   when: state == "present"
   check_mode: "{{ _check_mode }}"
 
-- name: "Initiating Teardown of resources aws resource group"
+- name: "Initiating Teardown of aws resource group"
   include: teardown_resource_group.yml res_grp={{ item }}
   with_items:
-    - "{{ aws_res_grps }}"
+    - "{{ resources }}"
   when: state == "absent"
