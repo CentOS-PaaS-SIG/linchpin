@@ -9,7 +9,9 @@ from distutils import dir_util
 from collections import OrderedDict
 
 from linchpin import LinchpinAPI
+from linchpin.utils import yaml2json
 from linchpin.fetch import FETCH_CLASS
+from linchpin.exceptions import LinchpinError
 
 
 class LinchpinCli(LinchpinAPI):
@@ -158,7 +160,8 @@ class LinchpinCli(LinchpinAPI):
         pass
 
 
-    def _build_and_execute(self, pinfile, targets='all', action='up', run_id=None):
+    def _build_and_execute(self, pinfile, targets='all',
+                           action='up', run_id=None):
         """
         This function takes a list of targets, constructs a dictionary of tasks
         and passes it to the LinchpinAPI.do_action method for processing.
@@ -195,11 +198,10 @@ class LinchpinCli(LinchpinAPI):
 
             provision_data[target] = {}
 
-            topology_data = yaml2json(self.find_topology(pf[target]["topology"]))
+            topology_data = yaml2json(self.find_topology(pf[target]["topology"]))  # noqa: E501
 
             provision_data[target]['topology'] = topology_data
             layout_data = None
-            hooks_data = None
 
             if 'layout' in pf[target]:
                 self.set_evar('layout_file',
@@ -291,5 +293,3 @@ class LinchpinCli(LinchpinAPI):
 
         raise LinchpinError('Topology {0} not found in'
                             ' workspace'.format(topology))
-
-

@@ -254,13 +254,13 @@ class LinchpinAPI(object):
             pb_path = self._find_playbook_path(res_grp_type)
 
             try:
-                schema_path = "{0}/roles/{1}/files/schema.json".format(pb_path,
-                                                                       res_grp_type)
+                sp = "{0}/roles/{1}/files/schema.json".format(pb_path,
+                                                              res_grp_type)
 
-                schema = json.load(open(schema_path))
+                schema = json.load(open(sp))
             except Exception as e:
                 raise LinchpinError("Error with schema: '{0}'"
-                                    " {1}".format(schema_path, e))
+                                    " {1}".format(sp, e))
 
             res_defs = group.get('resource_definitions')
 
@@ -480,10 +480,12 @@ class LinchpinAPI(object):
             playbook_path = '{0}/{1}{2}'.format(pb_path, playbook, self.pb_ext)
 
             module_paths = []
-            module_folder = self.get_cfg('lp', 'module_folder', default='library')
+            module_folder = self.get_cfg('lp',
+                                         'module_folder',
+                                         default='library')
 
             for path in reversed(self.pb_path):
-               module_paths.append('{0}/{1}/'.format(path, module_folder))
+                module_paths.append('{0}/{1}/'.format(path, module_folder))
 
             extra_var = self.get_evar()
 
