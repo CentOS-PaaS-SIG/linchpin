@@ -1,18 +1,18 @@
 import os
-import shutil
+import sys
 
-from nose.tools import *
+from nose.tools import assert_equal
+from nose.tools import assert_dict_equal
+from nose.tools import assert_is_instance
+from nose.tools import assert_dict_contains_subset
+from nose.tools import with_setup
 
-import logging
-from unittest import TestCase
+from linchpin import LinchpinAPI
+from linchpin.utils import yaml2json
+from linchpin.context import LinchpinContext
+from linchpin.rundb import RunDB
+from linchpin.rundb.drivers import DB_DRIVERS
 
-try:
-    import configparser as ConfigParser
-except ImportError:
-    import ConfigParser as ConfigParser
-
-from linchpin.api import LinchpinAPI
-from linchpin.api.context import LinchpinContext
 from linchpin.tests.mockdata.contextdata import ContextData
 
 
@@ -20,6 +20,7 @@ def test_api_create():
 
     lpc = LinchpinContext()
     lpc.load_config()
+    lpc.load_global_evars()
     lpa = LinchpinAPI(lpc)
 
     assert_equal(isinstance(lpa, LinchpinAPI), True)
@@ -39,7 +40,6 @@ def setup_load_config():
     provider = 'dummy'
 
     cd = ContextData()
-    #cd.load_config_data(provider)
     cd.load_new_config(provider)
     cd.parse_config()
     config_path = cd.get_temp_filename()
@@ -55,86 +55,43 @@ def setup_lp_api():
 
     global lpc
     global lpa
-
+    global pf_data
     global target
-    global pinfile
-
-    base_path = '{0}'.format(os.path.dirname(
-        os.path.realpath(__file__))).rstrip('/')
-    lib_path = os.path.realpath(os.path.join(base_path, os.pardir))
+    global provision_data
+    global rundb
 
     setup_load_config()
-
-    pinfile = 'PinFile'
-    mock_path = '{0}/{1}/{2}'.format(lib_path, 'mockdata', provider)
 
     lpc = LinchpinContext()
     lpc.load_config(lpconfig=config_path)
     lpc.load_global_evars()
     lpc.setup_logging()
-    lpc.workspace = os.path.realpath(mock_path)
 
     lpa = LinchpinAPI(lpc)
 
-def setup_lp_fetch_env():
-    global lpc
-    global lpa
+    rundb = lpa.setup_rundb()
 
-    global target
-    global pinfile
-    global mockpath
+    pinfile = lpc.get_cfg('init', 'pinfile', default='PinFile')
 
     base_path = '{0}'.format(os.path.dirname(
         os.path.realpath(__file__))).rstrip('/')
-    lib_path = os.path.realpath(os.path.join(base_path, os.pardir))
+    mock_path = '{0}/{1}/{2}'.format(base_path, 'mockdata', provider)
 
-    setup_load_config()
+    pf_w_path = '{0}/PinFile'.format(mock_path, pinfile)
+    pf_data = yaml2json(pf_w_path)
 
-    pinfile = 'PinFile'
-    mock_path = '{0}/{1}/{2}'.format(lib_path, 'mockdata', provider)
+    topo_folder = lpc.get_evar('topologies_folder')
+    topo_file = pf_data[provider]["topology"]
+    topo_path = '{0}/{1}/{2}'.format(mock_path, topo_folder, topo_file)
+    topology_data = yaml2json(topo_path)
 
-    lpc = LinchpinContext()
-    lpc.load_config(lpconfig=config_path)
-    lpc.load_global_evars()
-    lpc.setup_logging()
-    lpc.workspace = '/tmp/workspace/'
-    mockpath = os.path.realpath(mock_path)
-
-    if not os.path.exists(lpc.workspace):
-        os.mkdir(lpc.workspace)
-
-    lpa = LinchpinAPI(lpc)
+    provision_data = {provider: {'topology': topology_data}}
 
 
 @with_setup(setup_lp_api)
-def test_config_extension():
-    test_dict = {
-                'alex': '/path/to/alex',
-                'clint': '/path/to/clint', 
-                'bob': '/path/to/bob'
-            }
-    assert_dict_equal(test_dict, lpa.ctx.cfgs['users'])
+def test_setup_rundb():
 
-@with_setup(setup_lp_api)
-def test_config_override():
-    test_dict = {
-                'credentials': 'True',
-                'hooks': 'False',
-                'inventories': 'True',
-                'layouts': 'False',
-                'resources': 'False'
-            }
-    assert_dict_equal(test_dict, lpa.ctx.cfgs['core_workspace_dirs'])
-
-@with_setup(setup_lp_api)
-def test_set_cfg():
-
-    test_dict = {'key': 'value', 'key2': 'value2'}
-
-    for k, v in test_dict.items():
-        lpa.set_cfg('test', k, v)
-
-    assert_dict_equal(test_dict, lpa.ctx.cfgs.get('test'))
+    assert_is_instance(rundb, RunDB)
 
 
 @with_setup(setup_lp_api)
@@ -159,15 +116,14 @@ def test_get_cfg_item():
 
 
 @with_setup(setup_lp_api)
-def test_set_evar():
+def test_set_cfg():
 
-    test_evars = {'ekey': 'evalue'}
+    test_dict = {'key': 'value', 'key2': 'value2'}
 
-    for k, v in test_evars.items():
-        lpa.set_evar(k, v)
-    lpa_evars = lpa.get_cfg('evars')
+    for k, v in test_dict.items():
+        lpa.set_cfg('test', k, v)
 
-    assert_dict_contains_subset(test_evars, lpa_evars)
+    assert_dict_equal(test_dict, lpa.ctx.cfgs.get('test'))
 
 
 @with_setup(setup_lp_api)
@@ -192,87 +148,111 @@ def test_get_evar_item():
     assert_equal(lpa.get_evar(key='ekey2'), test_evars.get('ekey2'))
 
 
-#def setup_lp_api():
-#
-#    """
-#    Perform setup of LinchpinContext, lpc.load_config, and LinchPinAPI
-#    """
-#
-#    global lpc
-#    global lpa
-#
-#    lpc = LinchpinContext()
-#    lpc.load_config()
-#    lpa = LinchpinAPI(lpc)
+@with_setup(setup_lp_api)
+def test_set_evar():
+
+    test_evars = {'ekey': 'evalue'}
+
+    for k, v in test_evars.items():
+        lpa.set_evar(k, v)
+    lpa_evars = lpa.get_cfg('evars')
+
+    assert_dict_contains_subset(test_evars, lpa_evars)
 
 
 @with_setup(setup_lp_api)
-def test_run_playbook():
+def test_set_hook_state():
 
-    pf_w_path = '{0}/{1}'.format(lpc.workspace, pinfile)
-    return_code, results = lpa.run_playbook(pf_w_path, targets=[provider])
+    pass
+
+
+@with_setup(setup_lp_api)
+def test_bind_to_hook_state():
+
+    pass
+
+
+
+@with_setup(setup_lp_api)
+def test_find_playbook_path():
+
+    pb_path = lpa._find_playbook_path(provider)
+
+    assert os.path.exists(os.path.expanduser(pb_path))
+
+
+@with_setup(setup_lp_api)
+def test_validate_topology():
+
+    success = False
+    topo = provision_data.get(provider).get('topology')
+    try:
+        resources = lpa._validate_topology(topo)
+        success = len(resources)
+    except Exception:
+        pass
+
+    assert success
+
+
+@with_setup(setup_lp_api)
+def test_do_action():
+
+    return_code, results = lpa.do_action(provision_data)
 
     failed = False
     if return_code:
         failed = True
-        for res in results[provider]:
-            name = res._task.get_name()
-            if res.is_failed():
-                print('name: {0}'.format(name))
+        for target, data in results.iteritems():
+            task_results = data['task_results'][0]
+
+            if not isinstance(task_results, int):
+                trs = task_results
+                if trs is not None:
+                    trs.reverse()
+                    tr = trs[0]
+                    if tr.is_failed():
+                        msg = tr._check_key('msg')
+                        print("Target '{0}': {1} failed with"
+                              " error '{2}'".format(target,
+                                                    tr._task,
+                                                    msg))
+            else:
+                if task_results:
+                    return_code = task_results
 
     assert not failed
 
 
-@with_setup(setup_lp_fetch_env)
-def test_fetch_local():
+@with_setup(setup_lp_api)
+def test_lp_journal():
 
-    src_path = os.path.join(mockpath, 'fetch/ws1')
-    src_uri = 'file://{0}'.format(src_path)
-    lpa.lp_fetch(src_uri, 'workspace', None)
-
-    src_list = os.listdir(src_path)
-    dest_list = os.listdir(lpc.workspace)
-    src_list.sort()
-    dest_list.sort()
-    shutil.rmtree(lpc.workspace)
-    shutil.rmtree(os.path.join(os.path.expanduser('~'), '.cache/linchpin/'))
-    assert_list_equal(src_list, dest_list)
+    x = lpa.lp_journal(targets=[provider])
+    assert x.get(provider)
 
 
-@with_setup(setup_lp_fetch_env)
-def test_fetch_git():
+@with_setup(setup_lp_api)
+def test_invoke_playbooks():
 
-    src_url = 'https://github.com/agharibi/SampleLinchpinDirectory.git'
-    lpa.lp_fetch(src_url, 'topologies', 'ws1')
+    topo = provision_data.get(provider).get('topology')
+    resources =  topo.get('resource_groups')
 
-    src_list = ['topologies']
-    dest_list = os.listdir(lpc.workspace)
+    #rundb_id = rundb.init_table(provider)
+    lpa.set_evar('rundb_id', 1)
 
-    shutil.rmtree(lpc.workspace)
-    shutil.rmtree(os.path.join(os.path.expanduser('~'), '.cache/linchpin/'))
+    lpa.set_evar('target', provider)
+    lpa.set_evar('resources', resources)
+    lpa.set_evar('uhash', 'test')
 
-    assert_list_equal(src_list, dest_list)
-
-
-@with_setup(setup_lp_fetch_env)
-def test_fetch_cache():
-
-    src_url = 'https://github.com/agharibi/SampleLinchpinDirectory.git'
-    lpa.lp_fetch(src_url, 'topologies', 'ws1')
-    lpa.lp_fetch(src_url, 'topologies', 'ws1')
-
-    cache_path = os.path.join(os.path.expanduser('~'), '.cache/linchpin/git')
-
-    cache_dir_list = os.listdir(cache_path)
-    shutil.rmtree(lpc.workspace)
-    shutil.rmtree(os.path.join(os.path.expanduser('~'), '.cache/linchpin/'))
-
-    assert_equal(1, len(cache_dir_list))
+    return_code, results = lpa._invoke_playbooks(resources,
+                                                 action='up',
+                                                 console=True)
+    assert return_code == 0
 
 
 def main():
-
     pass
+
 
 if __name__ == '__main__':
     sys.exit(main())

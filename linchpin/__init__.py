@@ -108,7 +108,6 @@ class LinchpinAPI(object):
         self.set_evar('rundb_conn', rundb_conn_f)
         self.set_evar('rundb_hash', self.rundb_hash)
 
-
         return BaseDB(DB_DRIVERS[rundb_type], rundb_conn_f)
 
 
@@ -309,14 +308,6 @@ class LinchpinAPI(object):
         if not ansible_console:
             ansible_console = self.ctx.verbose
 
-
-        self.set_evar('_action', action)
-
-        self.set_evar('state', 'present')
-
-        if action == 'destroy':
-            self.set_evar('state', 'absent')
-
         results = {}
 
         # initialize rundb table
@@ -474,6 +465,13 @@ class LinchpinAPI(object):
 
         return_code = 0
         results = []
+
+        self.set_evar('_action', action)
+        self.set_evar('state', 'present')
+
+        if action == 'destroy':
+            self.set_evar('state', 'absent')
+
 
         # print('resources: {}'.format(resources))
         for resource in resources:
