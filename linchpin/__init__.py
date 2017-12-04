@@ -50,7 +50,7 @@ class LinchpinAPI(object):
         base_path = '/'.join(os.path.dirname(__file__).split('/')[0:-1])
         pkg = self.get_cfg(section='lp', key='pkg', default='linchpin')
         lp_path = '{0}/{1}'.format(base_path, pkg)
-        self.pb_ext = self.get_cfg('playbooks', 'extension', default='.yml')
+        self.pb_ext = self.get_cfg('extensions', 'playbooks', default='.yml')
 
         # get external_provider_path
         xp_path = self.get_cfg('lp',
@@ -209,7 +209,7 @@ class LinchpinAPI(object):
         self._hook_observers.append(callback)
 
 
-    def lp_journal(self, targets=[], fields=None, count=None):
+    def lp_journal(self, targets=[], fields=None, count=1):
 
         rundb = self.setup_rundb()
 
@@ -282,7 +282,7 @@ class LinchpinAPI(object):
         This function takes a list of targets, and executes the given
         action (up, destroy, etc.) for each provided target.
 
-        :param pinfile_datra: PinFile as a dictionary, with target information
+        :param provision_data: PinFile as a dictionary, with target information
 
         :param targets: A tuple of targets to run. (Default: [])
 
@@ -467,6 +467,7 @@ class LinchpinAPI(object):
         """
         Uses the Ansible API code to invoke the specified linchpin playbook
 
+        :param resources: dict of resources to provision
         :param action: Which ansible action to run (default: 'up')
         :param console: Whether to display the ansible console (default: True)
         """
@@ -474,6 +475,7 @@ class LinchpinAPI(object):
         return_code = 0
         results = []
 
+        # print('resources: {}'.format(resources))
         for resource in resources:
             playbook = resource.get('resource_group_type')
             pb_path = self._find_playbook_path(playbook)
