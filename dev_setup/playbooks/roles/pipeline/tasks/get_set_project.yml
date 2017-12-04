@@ -1,0 +1,18 @@
+---
+# get and set the project in the openshift cluster
+
+- name: Query to see if project is already present
+  shell: "oc get project {{ project }} | grep 'Active' | awk '{print $3}'"
+  register: project_query
+  ignore_errors: true
+
+- name: Create project/namespace in the openshift cluster
+  shell: oc new-project "{{ project }}" --display-name="{{ project }}"
+  when: project_query.stdout == ""
+
+- name: add-role-to-user
+  shell: oc policy add-role-to-user edit -z default -n "{{ project }}"
+
+
+
+

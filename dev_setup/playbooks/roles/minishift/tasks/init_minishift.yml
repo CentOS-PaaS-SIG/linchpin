@@ -1,0 +1,20 @@
+---
+# start minishift
+- name: "Initialization of minishift cluster with profile {{ profile }}"
+  shell: "minishift start --profile {{ profile }} --disk-size {{ disk_size }} --memory {{ memory }} --iso-url file:///{{ minishift_dest_dir }}/minishift.iso"
+
+- name: Wait for the cluster to come up completely
+  pause:
+    minutes: 3
+
+- name: Stop the cluster
+  shell: minishift stop --profile {{ profile }}
+
+- name: Update the VM config
+  lineinfile:
+    path: "/etc/libvirt/qemu/{{ profile }}.xml"
+    insertafter: '\s+</features>'
+    line: "  <cpu mode='host-passthrough'/>"
+  become: yes
+
+

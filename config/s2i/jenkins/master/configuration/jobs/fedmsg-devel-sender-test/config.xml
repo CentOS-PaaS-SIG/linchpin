@@ -1,0 +1,30 @@
+
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+    <description></description>
+    <keepDependencies>false</keepDependencies>
+    <properties>
+        <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.25">
+            <autoRebuild>false</autoRebuild>
+            <rebuildDisabled>false</rebuildDisabled>
+        </com.sonyericsson.rebuild.RebuildSettings>
+    </properties>
+    <scm class="hudson.scm.NullSCM"/>
+    <canRoam>true</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers/>
+    <concurrentBuild>false</concurrentBuild>
+    <builders>
+        <com.redhat.jenkins.plugins.ci.CIMessageBuilder plugin="jms-messaging@1.0.20">
+            <providerName>fedora-fedmsg-devel</providerName>
+            <messageType>Custom</messageType>
+            <messageProperties>scott=true</messageProperties>
+            <messageContent></messageContent>
+            <failOnError>false</failOnError>
+        </com.redhat.jenkins.plugins.ci.CIMessageBuilder>
+    </builders>
+    <publishers/>
+    <buildWrappers/>
+</project>

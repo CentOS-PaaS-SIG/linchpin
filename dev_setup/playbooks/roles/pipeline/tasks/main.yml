@@ -1,0 +1,72 @@
+---
+# tasks file for pipeline
+
+# check if the minishift cluster is started if not then start the cluster
+- name: "Startup the minishift cluster"
+  include: start_mcluster.yml
+  when: start_minishift|bool == true
+
+# get ip of the cluster
+- name: "Get the cluster Server URL for project {{ project }}"
+  shell: oc status  | egrep '{{ project }}.*server' | awk '{print $NF}'
+  register: cluster_ip
+
+# set the oc client for the profile in use
+- name: "Set the oc client for the profile in use"
+  include: set_oc_client.yml
+
+# login to the cluster for the profile in use
+- include: login_to_cluster.yml
+
+# create project
+- name: "Create project {{ project }}"
+  include: get_set_project.yml
+
+# clone the pipeline repo
+- name: "Clone the pipeline repo {{ pipeline_repo }}"
+  include: clone_pipeline.yml
+  when: force_repo_clone|bool == true
+
+# include jq for querying container config files
+- name: Install jq for querying container config files
+  include: roles/prereqs/tasks/install_virtual_reqs.yml
+
+# setup_jenkins_infra.yml
+- name: "Setup Jenkins master/slaves infra"
+  include: setup_jenkins_infra.yml
+  when: setup_jenkins|bool == true
+
+- include: check_builds.yml
+  when: setup_jenkins|bool == true
+
+# setup_fedmsg_relay.yml
+- name: "Setup Fedmsg relay"
+  include: setup_fedmsg_relay.yml
+  when: setup_fedmsg|bool == true
+
+- include: check_builds.yml
+  when: setup_fedmsg|bool == true
+
+# setup_containers.yml
+- name: "Setup Pipeline containers"
+  include: setup_containers.yml
+  when: setup_containers|bool == true
+
+- include: check_builds.yml
+  when: setup_containers|bool == true
+
+# add security context constraints
+- include: add_scc.yml
+  when: modify_scc|bool == true
+
+# create sample pipeline
+
+# TODO: beyond the sample as we analyze teams we will start to accumlate patterns for pipeline examples
+# ex. platform-pipeline
+# ex. container-pipeline
+# ex. rhv-pipeline
+# ex. storage-pipeline
+#    |
+#    --> gluster-pipeline
+#    |
+#    --> ceph-pipeline

@@ -1,0 +1,11 @@
+---
+# clone the pipeline repo
+
+# git clone
+- name: "checkout the pipeline @ {{ pipeline_repo }} to {{ pipeline_dir }}"
+  git:
+    repo: "{{ pipeline_repo }}"
+    dest: "{{ pipeline_dir }}"
+    refspec: "{{ pipeline_refspec }}"
+    version: "{{ pipeline_branch }}"
+    force: yes

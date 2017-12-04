@@ -1,0 +1,39 @@
+---
+# Install minishift
+
+- name: Query for minishift compressed binary
+  shell: curl -s https://github.com/minishift/minishift/releases/ | grep 'minishift.*-linux-amd64.*' | head -1 | sed 's/.*<a href="\(.*\)" .*/https:\/\/github.com\1/'
+  register: release
+
+- name: "Pull down and extract minishift binary to {{ ansible_env.HOME }}"
+  unarchive:
+    src: "{{ release.stdout }}"
+    dest: "{{ ansible_env.HOME }}"
+    remote_src: yes
+  when: (minishift_bin.stat.exists == false or force_minishift_install|bool == true)
+
+- name: Set minishift_src_dir fact
+  set_fact:
+    minishift_src_dir: "{{ release.stdout | basename | regex_search(regexp,'\\1') | join(' ') }}"
+  vars:
+    regexp: '(minishift.*amd64).tgz'
+  when: (minishift_bin.stat.exists == false or force_minishift_install|bool == true)
+
+- name: "Create a new {{ minishift_dest_dir }} if it doesn't exist"
+  file:
+    path: "{{ minishift_dest_dir }}"
+    state: directory
+  when: (minishift_bin.stat.exists == false or force_minishift_install|bool == true)
+
+- name: "Copy minishift version files to {{ ansible_env.HOME }}/minishift/"
+  shell: cp {{ ansible_env.HOME }}/{{ minishift_src_dir }}/* {{ minishift_dest_dir }}/
+  when: (minishift_bin.stat.exists == false or force_minishift_install|bool == true)
+
+- name: "Delete {{ ansible_env.HOME }}/{{ minishift_src_dir }}"
+  file:
+    path: "{{ ansible_env.HOME }}/{{ minishift_src_dir }}"
+    state: absent
+  when: (minishift_bin.stat.exists == false or force_minishift_install|bool == true)
+
+- include: set_minishift_path.yml
+
