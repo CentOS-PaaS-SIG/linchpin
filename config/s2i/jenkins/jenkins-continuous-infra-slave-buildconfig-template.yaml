@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: jenkins-continuous-infra-slave-builder
+metadata:
+  annotations:
+    description: continuous-infra Slaves
+    iconClass: icon-jenkins
+    tags: instant-app,jenkins
+  name: jenkins-continuous-infra-slave-builder
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      slave-label: fedora-atomic jenkins-continuous-infra-slave continuous-infra-slave
+    labels:
+      role: jenkins-slave
+    name: jenkins-continuous-infra-slave
+  spec: {}
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: jenkins-continuous-infra-slave
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: jenkins-continuous-infra-slave:latest
+    resources: {}
+    source:
+      contextDir: ${CONTEXTDIR}
+      git:
+        ref: ${REPO_REF}
+        uri: ${REPO_URL}
+      type: Git
+    strategy:
+      dockerStrategy:
+      type: Docker
+    triggers:
+    - type: ConfigChange
+parameters:
+- description: Git repository with Dockerfile and slave entrypoint.
+  displayName: Repository URL
+  name: REPO_URL
+  value: https://github.com/CentOS-PaaS-SIG/ci-pipeline.git
+- description: The sub-directory inside the repository.
+  displayName: Context Directory
+  name: CONTEXTDIR
+  value: config/s2i/jenkins/slave
+- description: The git ref or tag to use for customization.
+  displayName: Git Reference
+  name: REPO_REF
+  value: master

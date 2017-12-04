@@ -1,0 +1,12 @@
+---
+# check if the minishift cluster is started if not then start the cluster
+
+# check if minishift is already up and running
+- name: "Check if the minishift profile is already up and running"
+  shell: "minishift status --profile {{ profile }} | head -1 | awk '{print $2}'"
+  register: minishift_status
+
+# start minishift profile
+- name: "Start minishift profile {{ profile }}"
+  shell: minishift start --profile {{ profile }} --disk-size {{ disk_size }} --memory {{ memory }} --iso-url file:///{{ minishift_dest_dir }}/minishift.iso
+  when: minishift_status.stdout == "Stopped"

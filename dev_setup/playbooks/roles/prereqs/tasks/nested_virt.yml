@@ -1,0 +1,45 @@
+---
+# Check and enable virtualization if necessary
+#  REBOOT WILL BE REQUIRED IF ENABLED
+- name: Check virtualization settings
+  shell: cat /proc/cpuinfo | grep vmx
+  register: cpuinfo
+  ignore_errors: true
+
+- name: Output of cpuinfo from proc
+  debug:
+    msg: "cpuinfo: {{ cpuinfo.stdout }}"
+
+- name: Exit if virtualization is not turned on in the BIOS
+  fail: msg="Please enable Intel virtualization (VT) within the host machine's BIOS"
+  when: "cpuinfo.stdout == ''"
+
+- name: Check virtualization settings
+  shell: cat /sys/module/kvm_intel/parameters/nested
+  register: nested
+
+- name: Output of kvm_intel nested
+  debug:
+    msg: "cpuinfo: {{ nested.stdout }}"
+
+- name: Setup nested virtualization - rmmod
+  shell: rmmod kvm-intel
+  become: true
+  when: "nested.stdout != 'Y'"
+
+- name: Setup nested virtualization - update dist.conf
+  shell: echo 'options kvm-intel nested=y' >> /etc/modprobe.d/dist.conf
+  become: true
+  when: "nested.stdout != 'Y'"
+
+- name: Setup nested virtualization - modprobe
+  shell: modprobe kvm-intel
+  become: true
+  when: "nested.stdout != 'Y'"
+
+- name: Exit if nested virtualization is off
+  fail: msg="NESTED VIRT HAS BEEN ENABLED PLEASE REBOOT"
+  when: "nested.stdout != 'Y'"
+
+
+
