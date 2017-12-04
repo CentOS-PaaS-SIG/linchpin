@@ -160,6 +160,30 @@ class LinchpinCli(LinchpinAPI):
         pass
 
 
+    def find_topology(self, topology):
+        """
+        Find the topology to be acted upon. This could be pulled from a
+        registry.
+
+        :param topology:
+            name of topology from PinFile to be loaded
+
+        """
+
+        topo_path = os.path.realpath('{0}/{1}'.format(
+                                     self.ctx.workspace,
+                                     self.get_evar('topologies_folder',
+                                                   'topologies')))
+
+        topos = os.listdir(topo_path)
+
+        if topology in topos:
+            return os.path.realpath('{0}/{1}'.format(topo_path, topology))
+
+        raise LinchpinError('Topology {0} not found in'
+                            ' workspace'.format(topology))
+
+
     def _build_and_execute(self, pinfile, targets='all',
                            action='up', run_id=None):
         """
@@ -269,27 +293,3 @@ class LinchpinCli(LinchpinAPI):
         fetch_class.fetch_files()
 
         fetch_class.copy_files()
-
-
-    def find_topology(self, topology):
-        """
-        Find the topology to be acted upon. This could be pulled from a
-        registry.
-
-        :param topology:
-            name of topology from PinFile to be loaded
-
-        """
-
-        topo_path = os.path.realpath('{0}/{1}'.format(
-                                     self.ctx.workspace,
-                                     self.get_evar('topologies_folder',
-                                                   'topologies')))
-
-        topos = os.listdir(topo_path)
-
-        if topology in topos:
-            return os.path.realpath('{0}/{1}'.format(topo_path, topology))
-
-        raise LinchpinError('Topology {0} not found in'
-                            ' workspace'.format(topology))
