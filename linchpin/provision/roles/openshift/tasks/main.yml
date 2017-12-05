@@ -1,0 +1,11 @@
+---
+# This playbook will provision OpenShift resources
+
+- name: allocate openshift output variables
+  set_fact:
+    topology_outputs_openshift_resources: []
+
+- name: "Initiating Provision/Teardown of openstack resource group"
+  include: provision_resource_group.yml res_grp={{ item }}
+  with_items:
+    - "{{ resources }}"

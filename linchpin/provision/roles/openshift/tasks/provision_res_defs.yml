@@ -1,0 +1,55 @@
+---
+#- name: debug res_def
+#  debug:
+#    var: def_item
+#  with_items: "{{ res_def }}"
+#  loop_control:
+#    loop_var: def_item
+
+- name: debug res_def['data']
+  debug:
+    var: def_item
+  with_items: "{{ res_def['data'] }}"
+  loop_control:
+    loop_var: def_item
+
+- name: "call OpenShift with filename"
+  openshift:
+    api_endpoint: "{{ openshift_api_endpoint }}"
+    api_token: "{{ openshift_api_token | default(omit) }}"
+    insecure: "{{ def_item['insecure'] | default(omit) }}"
+    file_reference: "{{ def_item['filename'] }}"
+    state: "{{ state }}"
+  register: openshift_host
+  when: res_def['role'] == 'openshift_external'
+  with_items: "{{ res_def['filename'] }}"
+  loop_control:
+    loop_var: def_item
+
+- name: add output to topology
+  set_fact:
+    topology_outputs_openshift_resources: "{{ topology_outputs_openshift_resources + [openshift_host] }}"
+  when:
+    - state == "present"
+    - res_def['filename'] is defined
+
+- name: "call OpenShift with inline data"
+  openshift:
+    api_endpoint: "{{ openshift_api_endpoint }}"
+    api_token: "{{ openshift_api_token | default(omit) }}"
+    insecure: "{{ def_item['insecure'] | default(omit) }}"
+    inline_data: "{{ def_item }}"
+    state: "{{ state }}"
+  register: openshift_host
+  when: res_def['role'] == 'openshift_inline'
+  with_items: "{{ res_def['data'] }}"
+  loop_control:
+    loop_var: def_item
+
+- name: add output to topology
+  set_fact:
+    topology_outputs_openshift_resources: "{{ topology_outputs_openshift_resources + [openshift_host] }}"
+  when:
+    - state == "present"
+    - res_def['data'] is defined
+
