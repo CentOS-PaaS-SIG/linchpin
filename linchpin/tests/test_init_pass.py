@@ -11,7 +11,6 @@ from linchpin import LinchpinAPI
 from linchpin.utils import yaml2json
 from linchpin.context import LinchpinContext
 from linchpin.rundb import RunDB
-from linchpin.rundb.drivers import DB_DRIVERS
 
 from linchpin.tests.mockdata.contextdata import ContextData
 
@@ -235,9 +234,8 @@ def test_lp_journal():
 def test_invoke_playbooks():
 
     topo = provision_data.get(provider).get('topology')
-    resources =  topo.get('resource_groups')
+    resources = topo.get('resource_groups')
 
-    #rundb_id = rundb.init_table(provider)
     lpa.set_evar('rundb_id', 1)
 
     lpa.set_evar('target', provider)
