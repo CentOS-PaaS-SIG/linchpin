@@ -1,0 +1,17 @@
+---
+# This playbook will initiate provisioning for the rackspace resources groups.
+
+- name: "declaring output vars"
+  set_fact:
+    topology_outputs_rax_server: []
+    topology_outputs_rax_object: []
+    topology_outputs_rax_volume: []
+    topology_outputs_rax_heat: []
+    topology_outputs_rax_keypair: []
+
+- name: "Initiating  Provisioning/Deprovioning of resources rackspace resource group"
+  include: provision_resource_group.yml res_grp={{ item }}
+  with_items:
+    - "{{ resources }}"
+  register: resource_grps_output
+  when: state == "present"
