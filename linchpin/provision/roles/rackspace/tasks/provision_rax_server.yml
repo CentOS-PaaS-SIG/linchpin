@@ -1,0 +1,19 @@
+---
+- name: "provision rax_server resources on count"
+  rax:
+    api_key: "{{ auth_var['api_key'] | default(omit) }}"
+    username: "{{ auth_var['username'] | default(omit) }}"
+    name: "{{ res_def['name'] }}"
+    flavor: "{{ res_def['flavor']  }}"
+    region: "{{ res_def['region']  }}"
+    image: "{{ res_def['image']  }}"
+    count: "{{ res_def['count'] | default('1') }}"
+    networks: "{{ res_def['networks']  }}"
+    keypair: "{{ res_def['keypair'] | default(omit)  }}"
+    wait: yes
+    state: "{{ state }}"
+  register: res_def_output
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_rax_server: "{{ topology_outputs_rax_server + [res_def_output] }}"
