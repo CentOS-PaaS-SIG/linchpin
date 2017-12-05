@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+
+# flake8: noqa
+
 import os
 
 from nose.tools import *
@@ -47,9 +51,14 @@ def test_load_config():
 
     lpc = LinchpinCliContext()
     lpc.load_config(lpconfig=config_path)
+    cfg_data = dict(config_data)
 
-#    assert_dict_equal.__self__.maxDiff = None
-    assert_dict_equal(config_data, lpc.cfgs)
+    # remove things that will always differ
+    for cfg in ['lp', 'evars']:
+        lpc.cfgs.pop(cfg)
+        cfg_data.pop(cfg)
+
+    assert_dict_equal(cfg_data, lpc.cfgs)
 
 
 @with_setup(setup_context_data)
@@ -76,8 +85,16 @@ def test_set_cfg():
 def test_load_global_evars():
 
     lpc = LinchpinCliContext()
-    lpc.load_config(config_path)
+    lpc.load_config(lpconfig=config_path)
     lpc.load_global_evars()
+
+    # remove workspace key as it's not from the config file
+    for k in lpc.evars.keys():
+        if k == 'workspace':
+            if lpc.evars.get(k):
+                lpc.evars.pop(k)
+            if evars_data.get(k):
+                evars_data.pop(k)
 
     assert_dict_equal(evars_data, lpc.evars)
 
@@ -86,7 +103,7 @@ def test_load_global_evars():
 def test_get_evar():
 
     lpc = LinchpinCliContext()
-    lpc.load_config(config_path)
+    lpc.load_config(lpconfig=config_path)
     lpc.load_global_evars()
     evar_value = lpc.get_evar('_async')
 
@@ -97,7 +114,7 @@ def test_get_evar():
 def test_set_evar():
 
     lpc = LinchpinCliContext()
-    lpc.load_config(config_path)
+    lpc.load_config(lpconfig=config_path)
     lpc.load_global_evars()
     lpc.set_evar('test', 'me')
 
@@ -107,9 +124,8 @@ def test_set_evar():
 @with_setup(setup_context_data)
 def test_logging_setup():
 
-
     lpc = LinchpinCliContext()
-    lpc.load_config(config_path)
+    lpc.load_config(lpconfig=config_path)
     lpc.setup_logging()
 
     assert os.path.isfile(logfile)
@@ -126,7 +142,7 @@ def test_log_msg():
     regex = '^{0}.*{1}'.format(logging.getLevelName(lvl), msg)
 
     lpc = LinchpinCliContext()
-    lpc.load_config(config_path)
+    lpc.load_config(lpconfig=config_path)
     lpc.setup_logging()
     lpc.log(msg, level=lvl)
 
@@ -143,7 +159,7 @@ def test_log_state():
     regex = '^{0}.*STATE - {1}'.format(logging.getLevelName(lvl), msg)
 
     lpc = LinchpinCliContext()
-    lpc.load_config(config_path)
+    lpc.load_config(lpconfig=config_path)
     lpc.setup_logging()
     lpc.log_state(msg)
 
@@ -160,7 +176,7 @@ def test_log_info():
     regex = '^{0}.*{1}'.format(logging.getLevelName(lvl), msg)
 
     lpc = LinchpinCliContext()
-    lpc.load_config(config_path)
+    lpc.load_config(lpconfig=config_path)
     lpc.setup_logging()
     lpc.log_info(msg)
 
@@ -177,7 +193,7 @@ def test_log_debug():
     regex = '^{0}.*{1}'.format(logging.getLevelName(lvl), msg)
 
     lpc = LinchpinCliContext()
-    lpc.load_config(config_path)
+    lpc.load_config(lpconfig=config_path)
     lpc.setup_logging()
     lpc.log_debug(msg)
 

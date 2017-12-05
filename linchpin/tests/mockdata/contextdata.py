@@ -2,14 +2,14 @@ import os
 
 import tempfile
 import ConfigParser
-from collections import OrderedDict
 
-from linchpin.api import LinchpinError
+from linchpin.exceptions import LinchpinError
 
 """
 Provide valid context data to test against.
 
 """
+
 
 class ContextData(object):
 
@@ -60,7 +60,7 @@ class ContextData(object):
             f.close()
         except ConfigParser.InterpolationSyntaxError as e:
             raise LinchpinError('Unable to parse configuration file properly:'
-                    ' {0}'.format(e))
+                                ' {0}'.format(e))
 
         for section in config.sections():
             if section not in self.cfg_data:
@@ -72,7 +72,8 @@ class ContextData(object):
                     self.cfg_data[section][k] = v
                 else:
                     try:
-                        self.cfg_data[section][k] = config.getboolean(section, k)
+                        self.cfg_data[section][k] = config.getboolean(section,
+                                                                      k)
                     except ValueError as e:
                         self.cfg_data[section][k] = v
 
@@ -90,7 +91,8 @@ class ContextData(object):
 
         CONFIG_PATH = [
             '{0}/{1}/conf/linchpin.conf'.format(self.lib_path, provider),
-            '{0}/{1}/conf/other_configs/linchpin.conf'.format(self.lib_path, provider)
+            '{0}/{1}/conf/other_configs/linchpin.conf'.format(self.lib_path,
+                                                              provider)
         ]
 
         existing_paths = []
@@ -118,12 +120,13 @@ class ContextData(object):
                             self.cfg_data[section][k] = v
                         else:
                             try:
-                                self.cfg_data[section][k] = config.getboolean(section, k)
+                                val = config.getboolean(section, k)
+                                self.cfg_data[section][k] = val
                             except ValueError as e:
                                 self.cfg_data[section][k] = v
         except ConfigParser.InterpolationSyntaxError as e:
             raise LinchpinError('Unable to parse configuration file properly:'
-                            '{0}'.format(e))
+                                '{0}'.format(e))
 
         # override logger file
         self.cfg_data['logger']['file'] = self.logfile
@@ -144,7 +147,7 @@ class ContextData(object):
                 self.parser.write(f)
         except Exception as e:
             raise LinchpinError('Unable to write configuration file:'
-                    ' {0}'.format(e))
+                                ' {0}'.format(e))
 
 
     def parse_config(self, config_data=None):
@@ -157,11 +160,10 @@ class ContextData(object):
         if not config_data:
             config_data = self.cfg_data
 
-        #we know that data is a dict, containing dicts
+        # we know that data is a dict, containing dicts
         for k, v in config_data.iteritems():
             self.parser.add_section(k)
             for kv, vv in v.iteritems():
                 if type(vv) is not str:
                     vv = str(vv)
                 self.parser.set(k, kv, vv)
-
