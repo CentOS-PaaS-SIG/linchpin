@@ -1,0 +1,45 @@
+---
+- name: "Unset the authvar from previous run"
+  set_fact:
+    auth_var: ""
+
+- name: "set cred profile"
+  set_fact:
+    cred_profile: "{{ res_grp['credentials']['profile'] | default('default') }}"
+
+- name: "Get creds from auth driver"
+  auth_driver:
+    filename: "{{ res_grp['credentials']['filename']  }}"
+    cred_type: "ovirt"
+    cred_path: "{{ creds_path | default(default_credentials_path) }}"
+    driver: "file"
+  register: auth_var
+  ignore_errors: true
+
+- name: "set auth_var"
+  set_fact:
+    auth_var: "{{ auth_var['output'][cred_profile] }}"
+  ignore_errors: true
+
+- block:
+  - name: Obtain SSO token with using username/password credentials
+    ovirt_auth:
+      url: "{{ auth_var['ovirt_url'] }}"
+      username: "{{ auth_var['ovirt_username'] }}"
+      ca_file: "{{ auth_var['ovirt_ca_file'] | default(omit) }}"
+      password: "{{ auth_var['ovirt_password'] }}"
+      insecure: "{{ auth_var['ovirt_ca_file'] is not defined }}"
+
+  - name: "Provisioning resource definitions of current group"
+    include: provision_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+    with_nested:
+      - "{{ res_grp['resource_definitions']) }}"
+      - ["{{ res_grp['resource_group_name'] }}"]
+    loop_control:
+      loop_var: res_item
+
+  always:
+    - name: Always revoke the SSO token
+      ovirt_auth:
+        state: absent
+        ovirt_auth: "{{ ovirt_auth }}"

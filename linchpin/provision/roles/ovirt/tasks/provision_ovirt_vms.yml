@@ -1,0 +1,63 @@
+- name: "Provision/deprovision ovirt_vms resources"
+  ovirt_vms:
+    state: "{{ state }}"
+    auth: "{{ ovirt_auth }}"
+    name: "{{ res_grp_name }}_{{ res_def['res_name'] }}"
+    template: "{{ res_def['template'] | default(omit) }}"
+    cluster: "{{ res_def['cluster'] }}"
+    memory: "{{ res_def['memory'] | default(omit) }}"
+    cpu_cores: "{{ res_def['cpu_cores'] | default(omit) }}"
+    cpu_shares: "{{ res_def['cpu_shares'] | default(omit) }}"
+    cpu_sockets: "{{ res_def['cpu_sockets'] | default(omit) }}"
+    memory_guaranteed: "{{ res_def['memory_guaranteed'] | default(omit) }}"
+    high_availability: "{{ res_def['high_availability'] | default(omit) }}"
+    cloud_init: "{{ res_def['cloud_init'] | default(omit) }}"
+    host: "{{ res_def['host'] | default(omit) }}"
+    cd_iso: "{{ res_def['cd_iso'] | default(omit) }}"
+    type: "{{ res_def['type'] | default(omit) }}"
+    operating_system: "{{ res_def['operating_system'] | default(omit) }}"
+    disks: "{{ res_def['disks'] | default(omit) }}"
+    nics: "{{ res_def['nics'] | default(omit) }}"
+    fetch_nested: true
+    nested_attributes: ips
+  when: not async
+  register: res_def_output
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_ovirt_vms: "{{ topology_outputs_ovirt_vms + [res_def_output] }}"
+  when: not async
+
+- name: "Provision/deprovision ovirt_vms resources"
+  ovirt_vms:
+    state: "{{ state }}"
+    auth: "{{ ovirt_auth }}"
+    name: "{{ res_grp_name }}_{{ res_def['res_name'] }}"
+    template: "{{ res_def['template'] | default(omit) }}"
+    cluster: "{{ res_def['cluster'] }}"
+    memory: "{{ res_def['memory'] | default(omit) }}"
+    cpu_cores: "{{ res_def['cpu_cores'] | default(omit) }}"
+    cpu_shares: "{{ res_def['cpu_shares'] | default(omit) }}"
+    cpu_sockets: "{{ res_def['cpu_sockets'] | default(omit) }}"
+    memory_guaranteed: "{{ res_def['memory_guaranteed'] | default(omit) }}"
+    high_availability: "{{ res_def['high_availability'] | default(omit) }}"
+    cloud_init: "{{ res_def['cloud_init'] | default(omit) }}"
+    host: "{{ res_def['host'] | default(omit) }}"
+    cd_iso: "{{ res_def['cd_iso'] | default(omit) }}"
+    type: "{{ res_def['type'] | default(omit) }}"
+    operating_system: "{{ res_def['operating_system'] | default(omit) }}"
+    disks: "{{ res_def['disks'] | default(omit) }}"
+    nics: "{{ res_def['nics'] | default(omit) }}"
+    fetch_nested: true
+    nested_attributes: ips
+  when: async == false
+  async: "{{ async_timeout | default(1000) }}"
+  poll: 0
+  register: res_def_output
+  when: async
+
+# following tasks saves the async job details
+- name: "Async:: save the job id"
+  set_fact:
+    topology_outputs_ovirt_vms: "{{ topology_outputs_ovirt_vms + [ res_def_output ] }}"
+  when: async
