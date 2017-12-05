@@ -1,0 +1,8 @@
+---
+- name: "Deeper into the abyss"
+  include: get_job_structure2.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  with_nested:
+    - "{{ res_grp['resource_definitions'] }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
