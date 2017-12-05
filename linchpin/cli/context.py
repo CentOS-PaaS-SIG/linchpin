@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import ast
 import logging
 
@@ -23,9 +24,8 @@ class LinchpinCliContext(LinchpinContext):
         # self.version = __version__
         # self.verbose = False
         #
-        # lib_path = '{0}'.format(os.path.dirname(
-        #                       os.path.realpath(__file__))).rstrip('/')
-        # self.lib_path = os.path.realpath(os.path.join(lib_path, os.pardir))
+        # self.lib_path = '{0}'.format(os.path.dirname(
+        #                              os.path.realpath(__file__)))
         #
         # self.cfgs = {}
 
@@ -33,7 +33,63 @@ class LinchpinCliContext(LinchpinContext):
 
 
     def load_config(self, lpconfig=None):
-        return super(LinchpinCliContext, self).load_config(lpconfig)
+
+        if not self.workspace:
+            self.workspace = os.path.realpath(os.path.curdir)
+
+        search_path = [
+            '{0}/linchpin.conf'.format(self.lib_path),
+            '/etc/linchpin.conf',
+            '~/.config/linchpin/linchpin.conf',
+            '{0}/linchpin.conf'.format(self.workspace)
+        ]
+
+        if lpconfig:
+            search_path = [lpconfig]
+
+        return super(LinchpinCliContext, self).load_config(search_path=search_path)
+
+
+    @property
+    def pinfile(self):
+
+        """
+        getter function for pinfile name
+        """
+
+        return self.get_cfg('init', 'pinfile')
+
+
+    @pinfile.setter
+    def pinfile(self, pinfile):
+
+        """
+        setter for workspace
+        """
+
+        self.set_cfg('init', 'pinfile', pinfile)
+
+
+    @property
+    def workspace(self):
+
+        """
+        getter function for workspace
+        """
+
+        return self.get_cfg('lp', 'workspace')
+
+
+    @workspace.setter
+    def workspace(self, workspace):
+
+        """
+        setter for workspace
+        """
+
+        self.set_cfg('lp', 'workspace', workspace)
+        self.set_evar('workspace', workspace)
+
 
     def setup_logging(self):
 

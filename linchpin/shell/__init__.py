@@ -70,7 +70,10 @@ def _handle_results(ctx, results, return_code):
 
     for target, data in results.iteritems():
         rundb_data = data['rundb_data']
-        task_results = data['task_results'][0]
+        task_results = data['task_results']
+
+        if task_results and isinstance(task_results[0], list):
+            task_results = task_results[0]
 
         if not isinstance(task_results, int):
             trs = task_results
