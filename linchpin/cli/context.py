@@ -47,7 +47,8 @@ class LinchpinCliContext(LinchpinContext):
         if lpconfig:
             search_path = [lpconfig]
 
-        return super(LinchpinCliContext, self).load_config(search_path=search_path)
+        return super(LinchpinCliContext,
+                     self).load_config(search_path=search_path)
 
 
     @property
