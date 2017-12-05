@@ -1,0 +1,12 @@
+---
+# This playbook will initiate provisioning for the oVirt resources groups.
+
+- name: "Declaring output vars"
+  set_fact:
+    topology_outputs_ovirt_vms: []
+
+- name: "Initiating Provisioning/Deprovisioning of resources oVirt resource group"
+  include: provision_resource_group.yml res_grp={{ item }}
+  with_items:
+    - "{{ resources }}"
+  register: resource_grps_output
