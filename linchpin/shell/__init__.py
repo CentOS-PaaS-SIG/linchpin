@@ -298,7 +298,7 @@ def fetch(ctx, fetch_type, remote, root):
 
     """
     try:
-        lpcli.lp_fetch(remote, ''.join(fetch_type), root)
+        lpcli.lp_fetch(remote, root=root, fetch_type=''.join(fetch_type))
     except LinchpinError as e:
         ctx.log_state(e)
         sys.exit(1)

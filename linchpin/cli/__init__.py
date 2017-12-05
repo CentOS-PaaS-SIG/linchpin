@@ -245,7 +245,7 @@ class LinchpinCli(LinchpinAPI):
         return self.do_action(provision_data, action=action, run_id=run_id)
 
 
-    def lp_fetch(self, src, fetch_type, root):
+    def lp_fetch(self, src, root=None, fetch_type='workspace'):
         if root is not None:
             root = list(filter(None, root.split(',')))
 
