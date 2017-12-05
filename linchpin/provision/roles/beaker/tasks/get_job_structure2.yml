@@ -1,0 +1,9 @@
+---
+- name: "combine dicts"
+  set_fact:
+   combined:  "{{ rd | combine(just_ids) }}"
+  with_items:
+    - "{{ res_def['recipesets'] }}"
+  loop_control:
+    loop_var: rd
+
