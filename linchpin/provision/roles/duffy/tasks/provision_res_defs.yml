@@ -1,0 +1,24 @@
+---
+- name: "Set cred filename"
+  set_fact:
+    credentials: "{{ res_grp['credentials'] | default('') }}"
+  when: res_grp['credentials'] is defined
+
+- name: "Provision duffy resources by looping on count"
+  duffy:
+    state: "{{ state }}"
+    name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+    version: "{{ res_def['version'] }}"
+    arch: "{{ res_def['arch'] }}"
+    count: "{{ res_def['count'] }}"
+    key_path: "{{ creds_path }}/{{ credentials }}"
+  register: outputitem
+
+- name: "set tmp var"
+  set_fact:
+    tmp: ["{{ outputitem }}"]
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_duffy: "{{ topology_outputs_duffy + tmp }}"
+
