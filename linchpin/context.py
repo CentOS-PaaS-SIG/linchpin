@@ -34,42 +34,35 @@ class LinchpinContext(object):
         self.cfgs = {}
 
 
-    def load_config(self, lpconfig=None):
+    def load_config(self, search_path=None):
         """
         Create self.cfgs from the linchpin configuration file.
 
-        .. note:: Overrides load_config in linchpin.api.LinchpinContext
+        The following paths are used to find the config file.
+        The search path defaults to the first-found order::
 
-        These are the only hardcoded values, which are used to find the config
-        file. The search path consists of the following::
-
-          * /linchpin/library/path/linchpin.conf
-          * /etc/linchpin.conf
           * ~/.config/linchpin/linchpin.conf
-          * path/to/workspace/linchpin.conf
+          * /etc/linchpin.conf
+          * /linchpin/library/path/linchpin.conf
 
-        Linchpin will continuously override and extend the configuration as
-        newer configurations are added and modified. Alternatively, a full path
-        to the linchpin configuration file can be passed.
+        An alternate search_path can be passed.
 
-        :param lpconfig: absolute path to a linchpin config (default: None)
+        :param search_path: A list of paths to search a linchpin config
+        (default: None)
 
         """
 
         expanded_path = None
 
-        if lpconfig:
-            CONFIG_PATH = [lpconfig]
+        if search_path:
+            CONFIG_PATH = search_path
         else:
-            # simply modify this variable to adjust where
-            # linchpin.conf can be found
             CONFIG_PATH = [
                 '{0}/linchpin.conf'.format(self.lib_path),
                 '/etc/linchpin.conf',
-                '~/.config/linchpin/linchpin.conf',
-                '{0}/linchpin.conf'.format(self.workspace)
-                # self.workspace is set in runcli beforehand, will never be None
+                '~/.config/linchpin/linchpin.conf'
             ]
+
         existing_paths = []
         for path in CONFIG_PATH:
             expanded_path = (
@@ -90,8 +83,10 @@ class LinchpinContext(object):
                 config.readfp(f)
                 f.close()
 
+
                 for section in config.sections():
-                    self.cfgs[section] = {}
+                    if not self.cfgs.get(section):
+                        self.cfgs[section] = {}
                     for k, v in config.items(section):
                         if section != 'evars':
                             self.cfgs[section][k] = v
@@ -105,6 +100,7 @@ class LinchpinContext(object):
         except ConfigParser.InterpolationSyntaxError as e:
             raise LinchpinError('Unable to parse configuration file properly:'
                                 ' {0}'.format(e))
+
 
     def load_global_evars(self):
 
@@ -181,47 +177,6 @@ class LinchpinContext(object):
         """
 
         self.set_cfg('evars', key, value)
-
-
-    @property
-    def pinfile(self):
-
-        """
-        getter function for pinfile name
-        """
-
-        return self.get_cfg('init', 'pinfile')
-
-
-    @pinfile.setter
-    def pinfile(self, pinfile):
-
-        """
-        setter for workspace
-        """
-
-        self.set_cfg('init', 'pinfile', pinfile)
-
-
-    @property
-    def workspace(self):
-
-        """
-        getter function for workspace
-        """
-
-        return self.get_cfg('lp', 'workspace')
-
-
-    @workspace.setter
-    def workspace(self, workspace):
-
-        """
-        setter for workspace
-        """
-
-        self.set_cfg('lp', 'workspace', workspace)
-        self.set_evar('workspace', workspace)
 
 
     def setup_logging(self):

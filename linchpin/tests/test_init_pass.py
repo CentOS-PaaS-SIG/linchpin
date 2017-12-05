@@ -63,7 +63,7 @@ def setup_lp_api():
     setup_load_config()
 
     lpc = LinchpinContext()
-    lpc.load_config(lpconfig=config_path)
+    lpc.load_config(search_path=[config_path])
     lpc.load_global_evars()
     lpc.setup_logging()
 
@@ -246,7 +246,7 @@ def test_invoke_playbooks():
 
     return_code, results = lpa._invoke_playbooks(resources,
                                                  action='up',
-                                                 console=True)
+                                                 console=False)
     assert return_code == 0
 
 

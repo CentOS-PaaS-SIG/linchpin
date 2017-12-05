@@ -23,9 +23,6 @@ class LinchpinCli(LinchpinAPI):
 
         LinchpinAPI.__init__(self, ctx)
 
-        if not self.workspace:
-            self.workspace = os.path.realpath(os.path.curdir)
-
 
     @property
     def pinfile(self):
