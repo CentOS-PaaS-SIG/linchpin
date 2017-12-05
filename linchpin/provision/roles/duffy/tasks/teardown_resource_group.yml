@@ -1,0 +1,25 @@
+---
+- name: "Set cred filename"
+  set_fact:
+    credentials: "{{ res_grp['credentials'] | default('') }}"
+  when: res_grp['credentials'] is defined
+
+- name: "Get topology output data"
+  rundb:
+    conn_str: "{{ rundb_conn }}"
+    operation: get
+    table: "{{ target }}"
+    key: "outputs"
+    run_id: "{{ orig_run_id }}"
+  register: topo_output
+
+- name: "set topo_output_resources fact"
+  set_fact:
+    topo_output_resources: "{{ topo_output.output[0]['resources'] }}"
+
+- name: debug topo_output"
+  debug:
+    var: topo_output_resources
+
+- name: "Teardown resource definitions of current group"
+  include: teardown_res_defs.yml ssid="{{ topo_output_resources[0]['ssid'] }}"

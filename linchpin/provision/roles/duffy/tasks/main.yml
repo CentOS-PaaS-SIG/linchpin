@@ -1,0 +1,28 @@
+---
+# This playbook will initiate provisioning for the duffy resources groups.
+- name: debug duffy resources
+  debug:
+    var: resources
+
+- name: "declaring output vars"
+  set_fact:
+    topology_outputs_duffy: []
+
+# normally we don't adjust the default, but we need to redo it here.
+# duffy puts its key by default in the user's home directory.
+- name: "Set cred path"
+  set_fact:
+    creds_path: "~/"
+  when: creds_path is not defined or creds_path == default_credentials_path
+
+- name: "Initiating Provisioning of duffy resource group"
+  include: provision_resource_group.yml res_grp={{ item }}
+  with_items:
+    - "{{ resources }}"
+  when: state == "present"
+
+- name: "Initiating Teardown of duffy resource group"
+  include: teardown_resource_group.yml res_grp={{ item.0 }}
+  with_nested:
+    - "{{ resources }}"
+  when: state == "absent"
