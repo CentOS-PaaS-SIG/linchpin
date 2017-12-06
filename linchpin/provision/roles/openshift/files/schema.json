@@ -1,0 +1,19 @@
+{
+    "res_defs": {
+        "type": "list",
+        "schema": {
+            "type": "dict",
+            "schema": {
+                "role": {
+                    "type": "string",
+                    "required": true,
+                    "allowed": ["openshift_inline", "openshift_external"]
+                },
+                "name": { "type": "string", "required": true },
+                "data": { "required": false },
+                "filename": { "required": false }
+            }
+        }
+    }
+}
+

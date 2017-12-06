@@ -1,17 +1,18 @@
-- name: "provisioning/deprovisioning of security group"
+---
+- name: "provisioning/deprovisioning of security group with auth"
   os_security_group:
     auth: "{{ auth_var | default(omit) }}"
     name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     state: "{{ state }}"
     wait: "yes"
-  when: auth_var['changed'] == true
+  when: auth_var is defined
 
-- name: "provisioning/deprovisioning of security group"
+- name: "provisioning/deprovisioning of security group no auth"
   os_security_group:
     name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     state: "{{ state }}"
     wait: "yes"
-  when: auth_var['changed'] == false
+  when: auth_var is not defined
 
 - name: "provisioning/deprovisioning of security group"
   os_security_group_rule:
@@ -32,7 +33,7 @@
   loop_control:
     loop_var: group
   register: res_def_output
-  when: state == "present" and auth_var['changed'] == true
+  when: state == "present" and auth_var is defined
 
 - name: "provisioning/deprovisioning of security group"
   os_security_group_rule:
@@ -51,8 +52,7 @@
   loop_control:
     loop_var: group
   register: res_def_output
-  when: state == "present" and auth_var['changed'] == false
- 
+  when: state == "present" and auth_var is not defined
 
 - name: "Append outputitem to topology_outputs"
   set_fact:

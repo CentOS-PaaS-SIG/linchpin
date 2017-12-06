@@ -6,12 +6,14 @@
     topology_outputs_beaker_server: []
 
 - name: "Initiating Provision of beaker resource group"
-  include: provision_resource_group.yml
+  include: provision_resource_group.yml res_defs={{ item }}
+  with_items:
+    - "{{ resources }}"
   when: state == "present"
   check_mode: "{{ _check_mode }}"
 
 - name: "Initiating Teardown of beaker resource group"
-  include: teardown_resource_group.yml res_grp={{ item }}
+  include: teardown_resource_group.yml res_defs={{ item }}
   with_items:
-    - "{{ bkr_res_grps }}"
+    - "{{ resources }}"
   when: state == "absent"

@@ -1,11 +1,13 @@
 ---
 - name: "waiting on each job id"
   async_status_custom:
-    jid: "{{ item['ansible_job_id'] }}"
+    jid: "{{ job_item['ansible_job_id'] }}"
   register: job_result
   until: job_result.finished
   retries: 30
   with_items: "{{ os_obj_group['results']}}"
+  loop_control:
+    loop_var: job_item
 
 - name: "Append outputitem to topology_outputs"
   set_fact:

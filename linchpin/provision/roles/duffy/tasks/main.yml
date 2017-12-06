@@ -1,8 +1,8 @@
 ---
 # This playbook will initiate provisioning for the duffy resources groups.
-- name: debug duffy_res_grps
+- name: debug duffy resources
   debug:
-    var: duffy_res_grps
+    var: resources
 
 - name: "declaring output vars"
   set_fact:
@@ -18,11 +18,11 @@
 - name: "Initiating Provisioning of duffy resource group"
   include: provision_resource_group.yml res_grp={{ item }}
   with_items:
-    - "{{ duffy_res_grps }}"
+    - "{{ resources }}"
   when: state == "present"
 
 - name: "Initiating Teardown of duffy resource group"
   include: teardown_resource_group.yml res_grp={{ item.0 }}
   with_nested:
-    - "{{ duffy_res_grps }}"
+    - "{{ resources }}"
   when: state == "absent"

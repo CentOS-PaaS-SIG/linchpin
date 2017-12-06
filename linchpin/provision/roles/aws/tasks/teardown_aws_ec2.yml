@@ -15,7 +15,7 @@
     - "{{ res_def['region'] }}"
     - "{{ tp_out['instances'][0]['tags']['resource_group_name'] }}"
     - "{{ res_grp_name }}"
-    - "{{ res_def['res_type'] }}"
+    - "{{ res_def['role'] }}"
     - "{{ async }}"
   loop_control:
     loop_var: res_def_item
@@ -37,7 +37,7 @@
     - "{{ res_def['region'] }}"
     - "{{ tp_out['instances'][0]['tags']['resource_group_name'] }}"
     - "{{ res_grp_name }}"
-    - "{{ res_def['res_type'] }}"
+    - "{{ res_def['role'] }}"
     - "{{ async }}"
   loop_control:
     loop_var: res_def_item
