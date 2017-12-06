@@ -149,7 +149,7 @@ def runcli(ctx, config, pinfile, workspace, verbose, version, creds_path):
     ctx.verbose = verbose
 
     if pinfile:
-        ctx.log_info('pinfile name changed to {0}'.format(pinfile))
+        ctx.log_info("Using pinfile named '{0}'".format(pinfile))
         ctx.pinfile = pinfile
 
     if version:

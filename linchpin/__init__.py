@@ -34,7 +34,6 @@ class LinchpinAPI(object):
         """
 
         self.ctx = ctx
-        self.set_evar('from_api', True)
 
         self.hook_state = None
         self._hook_observers = []
@@ -69,6 +68,7 @@ class LinchpinAPI(object):
 
         self.set_evar('lp_path', lp_path)
         self.set_evar('pb_path', self.pb_path)
+        self.set_evar('from_api', True)
 
 
     def setup_rundb(self):
@@ -242,7 +242,8 @@ class LinchpinAPI(object):
         try:
             for res_grp in topology.get('resource_groups'):
                 if 'res_group_type' in res_grp.keys():
-                    res_grp['resource_group_type'] = res_grp.pop('res_group_type')
+                    res_grp['resource_group_type'] = (
+                        res_grp.pop('res_group_type'))
                 for res_def in res_grp.get('resource_definitions'):
                     if 'res_name' in res_def.keys():
                         res_def['name'] = res_def.pop('res_name')
@@ -310,10 +311,6 @@ class LinchpinAPI(object):
                    resources.
         """
 
-        # playbooks check whether from_api is defined
-        # if not, vars get loaded from linchpin.conf
-        self.set_evar('from_api', True)
-
         ansible_console = False
         if self.ctx.cfgs.get('ansible'):
             ansible_console = (
@@ -331,7 +328,13 @@ class LinchpinAPI(object):
                                   'dateformat',
                                   default='%m/%d/%Y %I:%M:%S %p')
 
+        return_code = 99
+
         for target in provision_data.keys():
+
+            if not isinstance(provision_data[target], dict):
+                raise LinchpinError("Cannot process target '{0}'."
+                                    " No topology data".format(target))
 
             results[target] = {}
             self.set_evar('target', target)
@@ -408,7 +411,7 @@ class LinchpinAPI(object):
             self.set_evar('rundb_id', rundb_id)
             self.set_evar('uhash', uhash)
 
-            topology_data = provision_data[target]['topology']
+            topology_data = provision_data[target].get('topology')
 
             # if validation fails the first time, convert topo from old -> new
             try:
@@ -416,11 +419,11 @@ class LinchpinAPI(object):
             except SchemaError:
                 # if topology fails, try converting from old to new style
                 try:
-                   self._convert_topology(topology_data)
-                   resources = self._validate_topology(topology_data)
+                    self._convert_topology(topology_data)
+                    resources = self._validate_topology(topology_data)
                 except SchemaError:
-                   raise ValidationError("Topology '{0}' does not"
-                                         " validate".format(topology_data))
+                    raise ValidationError("Topology '{0}' does not"
+                                          " validate".format(topology_data))
 
 
 
@@ -532,11 +535,11 @@ class LinchpinAPI(object):
             for path in reversed(self.pb_path):
                 module_paths.append('{0}/{1}/'.format(path, module_folder))
 
-            extra_var = self.get_evar()
+            extra_vars = self.get_evar()
 
             return_code, res = ansible_runner(playbook_path,
                                               module_paths,
-                                              extra_var,
+                                              extra_vars,
                                               console=console)
 
             if res:
