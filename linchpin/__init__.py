@@ -366,7 +366,9 @@ class LinchpinAPI(object):
                                         8)
                     if not uhash:
                         uh = hashlib.new(self.rundb_hash,
-                                         ':'.join([target, str(rundb_id), start]))
+                                         ':'.join([target,
+                                                   str(rundb_id),
+                                                   start]))
                         uhash = uh.hexdigest()[-4:]
                         rundb.update_record(target,
                                             rundb_id,
@@ -378,10 +380,11 @@ class LinchpinAPI(object):
                                         " target: '{1}' failed. No records"
                                         " available.".format(action, target))
             else:
-                # it doesn't appear this code will will execute, but if it does...
+                # it doesn't appear this code will will execute,
+                # but if it does...
                 raise LinchpinError("Attempting '{0}' action on"
-                                     " target: '{1}' failed. No records"
-                                     " available.".format(action, target))
+                                    " target: '{1}' failed. No records"
+                                    " available.".format(action, target))
 
 
             self.ctx.log_debug('rundb_id: {0}'.format(rundb_id))
