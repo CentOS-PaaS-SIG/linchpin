@@ -68,10 +68,15 @@ class TinyRunDB(BaseDB):
             if not run_id:
                 return (None, 0)
 
-        for rid in range(int(run_id), 0, -1):
-            record = t.get(eid=int(rid))
-            if record['action'] == action:
-                return (record, int(rid))
+            for rid in range(int(run_id), 0, -1):
+                record = t.get(eid=int(rid))
+                if record and record['action'] == action:
+                    return (record, int(rid))
+        else:
+            record = t.get(eid=int(run_id))
+            if record:
+                return(record, int(run_id))
+
 
         return (None, 0)
 
