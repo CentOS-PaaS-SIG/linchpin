@@ -1,17 +1,25 @@
 #!/usr/bin/env python
 
 import yaml
+import json
 
-from linchpin.exceptions import LinchpinError
+from linchpin.exceptions import ValidationError
 
 
-def yaml2json(pf):
+def parse_json_yaml(f):
 
     """ parses yaml file into json object """
 
-    with open(pf, 'r') as stream:
+    d = None
+
+    with open(f, 'r') as stream:
+        data = stream.read()
         try:
-            pf = yaml.load(stream)
-            return pf
-        except yaml.YAMLError as exc:
-            raise LinchpinError(exc)
+            d = json.loads(data)
+        except Exception:
+            try:
+                d = yaml.safe_load(data)
+            except Exception as exc:
+                raise ValidationError(exc)
+
+    return d
