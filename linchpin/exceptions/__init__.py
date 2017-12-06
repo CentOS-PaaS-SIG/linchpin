@@ -27,3 +27,15 @@ class SchemaError(LinchpinError):
 
     def __init__(self, *args, **kwargs):
         LinchpinError.__init__(self, *args, **kwargs)
+
+
+class ValidationError(LinchpinError):
+
+    def __init__(self, *args, **kwargs):
+        LinchpinError.__init__(self, *args, **kwargs)
+
+
+class TopologyError(LinchpinError):
+
+    def __init__(self, *args, **kwargs):
+        LinchpinError.__init__(self, *args, **kwargs)
