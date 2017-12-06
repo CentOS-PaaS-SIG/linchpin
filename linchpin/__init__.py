@@ -17,8 +17,10 @@ from linchpin.hooks import LinchpinHooks
 from linchpin.rundb.basedb import BaseDB
 from linchpin.rundb.drivers import DB_DRIVERS
 
-from linchpin.exceptions import LinchpinError
 from linchpin.exceptions import SchemaError
+from linchpin.exceptions import LinchpinError
+from linchpin.exceptions import TopologyError
+from linchpin.exceptions import ValidationError
 
 
 class LinchpinAPI(object):
@@ -229,6 +231,27 @@ class LinchpinAPI(object):
                             " path: {1}".format(playbook, self.pb_path))
 
 
+    def _convert_topology(self, topology):
+        """
+        For backward compatiblity, convert the old topology format
+        into the new format. Should be pretty straightforward and simple.
+
+        ;param topology: topology dictionary
+        """
+
+        try:
+            for res_grp in topology.get('resource_groups'):
+                if 'res_group_type' in res_grp.keys():
+                    res_grp['resource_group_type'] = res_grp.pop('res_group_type')
+                for res_def in res_grp.get('resource_definitions'):
+                    if 'res_name' in res_def.keys():
+                        res_def['name'] = res_def.pop('res_name')
+                    if 'type' in res_def.keys():
+                        res_def['role'] = res_def.pop('type')
+        except Exception as e:
+            raise TopologyError(e)
+
+
     def _validate_topology(self, topology):
         """
         Validate the provided topology against the schema
@@ -391,16 +414,13 @@ class LinchpinAPI(object):
             try:
                 resources = self._validate_topology(topology_data)
             except SchemaError:
-                raise ValidationError("Topology '{0}' does not"
-                                      " validate".format(topology_data))
-                pass
-#                # if topology fails, try converting from old to new style
-#                topo_data = self._convert_topology(topology_data)
-#                try:
-#                    resources = self._validate_topology(topology_data)
-#                except SchemaError:
-#                    raise ValidationError('Topology '{0}' does not'
-#                                          ' validate'.format(topology_data))
+                # if topology fails, try converting from old to new style
+                try:
+                   self._convert_topology(topology_data)
+                   resources = self._validate_topology(topology_data)
+                except SchemaError:
+                   raise ValidationError("Topology '{0}' does not"
+                                         " validate".format(topology_data))
 
 
 
