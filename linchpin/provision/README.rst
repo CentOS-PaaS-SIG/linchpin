@@ -1,9 +1,49 @@
 Provisioning
 ------------
 
-To provide further provisioning beyond the core modules included in this directory. See https://github.com/herlo/linchpin-x (hopefully soon to be https://github.com/CentOS-PaaS-SIG/linchpin-x).
+Following is a list of provisioners supported by LinchPin. Please read the section below to see any requirements.
 
-Essentially, the `linchpin-x` repository can be cloned here, or set as a sub-module, which will then provide provisioning for these additional providers.
+
+Dummy
+=====
+
+Test provider. Creates a /tmp/dummy.hosts file with data from the provision.
+
+Libvirt
+=======
+
+Provisions systems a local or remote image, creating a virtual machine on a system running libvirt. See https://libvirt.org/ for more detail on how libvirt works.
+
+Reference::
+
+* http://docs.ansible.com/ansible/latest/list_of_cloud_modules.html#misc
+
+Openstack
+=========
+
+Provisions instances on an openstack server. Additionally supports security groups, objects, and volumes without teardown support. See https://openstack.org for more detail about how openstack works.
+
+Reference::
+
+* http://docs.ansible.com/ansible/latest/list_of_cloud_modules.html#openstack
+
+Amazon Web Services (aws)
+=========================
+
+Provisions Elastic Compute Cloud (ec2) instances on amazon web services. Additionally supports security groups, and ssh_key management without teardown support. See https://aws.amazon.com/ for more detail on how AWS works.
+
+Reference::
+
+* http://docs.ansible.com/ansible/latest/list_of_cloud_modules.html#amazon
+
+Google Cloud (gcloud)
+=====================
+
+Provisions instances in the Google Compute Engine (gce) on Google Cloud Platform. Additionally supports security groups, and ssh_key management without teardown support. See https://cloud.google.com/ for more detail on how gce works.
+
+Reference::
+
+* http://docs.ansible.com/ansible/latest/list_of_cloud_modules.html#amazon
 
 Beaker
 ======
