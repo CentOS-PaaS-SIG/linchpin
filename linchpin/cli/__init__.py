@@ -242,6 +242,9 @@ class LinchpinCli(LinchpinAPI):
 
                 provision_data[target]['layout'] = layout_data
 
+            if 'hooks' in pf[target]:
+                provision_data[target]['hooks'] = pf[target]['hooks']
+
         return self.do_action(provision_data, action=action, run_id=run_id)
 
 
