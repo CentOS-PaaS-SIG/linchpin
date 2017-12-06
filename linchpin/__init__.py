@@ -347,12 +347,34 @@ class LinchpinAPI(object):
                     self.ctx.log_debug("using data from"
                                        " run_id: {0}".format(run_id))
                 else:
+                    # add data to the current record so it doesn't cause
+                    # inconsistent results
+                    rundb.update_record(target,
+                                        rundb_id,
+                                        'action',
+                                        action)
+                    rundb.update_record(target,
+                                        rundb_id,
+                                        'rc',
+                                        8)
+                    if not uhash:
+                        uh = hashlib.new(self.rundb_hash,
+                                         ':'.join([target, str(rundb_id), start]))
+                        uhash = uh.hexdigest()[-4:]
+                        rundb.update_record(target,
+                                            rundb_id,
+                                            'uhash',
+                                            uhash)
+
+
                     raise LinchpinError("Attempting to perform '{0}' action on"
                                         " target: '{1}' failed. No records"
                                         " available.".format(action, target))
             else:
-                raise LinchpinError("run_id '{0}' does not match any existing"
-                                    " records".format(run_id))
+                # it doesn't appear this code will will execute, but if it does...
+                raise LinchpinError("Attempting '{0}' action on"
+                                     " target: '{1}' failed. No records"
+                                     " available.".format(action, target))
 
 
             self.ctx.log_debug('rundb_id: {0}'.format(rundb_id))
