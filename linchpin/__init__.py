@@ -340,8 +340,8 @@ class LinchpinAPI(object):
         for target in provision_data.keys():
 
             if not isinstance(provision_data[target], dict):
-                raise LinchpinError("Cannot process target '{0}'."
-                                    " No topology data".format(target))
+                raise LinchpinError("Cannot process target '{0}',"
+                                    " data unavailable.".format(target))
 
             results[target] = {}
             self.set_evar('target', target)
