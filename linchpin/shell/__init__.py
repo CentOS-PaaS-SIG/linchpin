@@ -103,21 +103,6 @@ def _handle_results(ctx, results, return_code):
     sys.exit(return_code)
 
 
-def _get_pinfile_path(pinfile=None, exists=True):
-
-    if not pinfile:
-        pinfile = lpcli.pinfile
-
-    pf_w_path = '{0}/{1}'.format(lpcli.workspace, pinfile)
-
-    if not os.path.exists(pf_w_path) and exists:
-        lpcli.ctx.log_state('{0} not found in provided workspace: '
-                            '{1}'.format(pinfile, lpcli.workspace))
-        sys.exit(1)
-
-    return pf_w_path
-
-
 @click.group(cls=LinchpinAliases,
              invoke_without_command=True,
              no_args_is_help=True,
@@ -148,6 +133,7 @@ def runcli(ctx, config, pinfile, workspace, verbose, version, creds_path):
 
     ctx.verbose = verbose
 
+    ctx.pinfile = None
     if pinfile:
         ctx.log_info("Using pinfile named '{0}'".format(pinfile))
         ctx.pinfile = pinfile
@@ -179,11 +165,12 @@ def init(ctx):
     ctx: Context object defined by the click.make_pass_decorator method
     """
 
-    pf_w_path = _get_pinfile_path(exists=False)
+    # add a providers option someday
+    providers = None
 
     try:
         # lpcli.lp_init(pf_w_path, targets) # TODO implement targets option
-        lpcli.lp_init(pf_w_path)
+        lpcli.lp_init(providers=providers)
     except LinchpinError as e:
         ctx.log_state(e)
         sys.exit(1)
@@ -205,12 +192,9 @@ def up(ctx, targets, run_id):
     the appropriate PinFile will be provisioned.
     """
 
-    pf_w_path = _get_pinfile_path()
-
     try:
-        return_code, results = lpcli.lp_up(pf_w_path, targets, run_id=run_id)
+        return_code, results = lpcli.lp_up(targets=targets, run_id=run_id)
         _handle_results(ctx, results, return_code)
-
     except LinchpinError as e:
         ctx.log_state(e)
         sys.exit(1)
@@ -245,15 +229,9 @@ def destroy(ctx, targets, run_id):
 
     """
 
-    pf_w_path = _get_pinfile_path()
-
     try:
-        return_code, results = lpcli.lp_destroy(pf_w_path,
-                                                targets,
-                                                run_id=run_id)
-
+        return_code, results = lpcli.lp_destroy(targets=targets, run_id=run_id)
         _handle_results(ctx, results, return_code)
-
     except LinchpinError as e:
         ctx.log_state(e)
         sys.exit(1)
