@@ -3,11 +3,21 @@
 import sys
 import yaml
 import json
-import yaml
-import json
 import subprocess
 
+from linchpin.exceptions import LinchpinError
 from linchpin.exceptions import ValidationError
+
+
+_mapping_tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
+
+
+def dict_representer(dumper, data):
+    return dumper.represent_mapping(_mapping_tag, data.iteritems())
+
+
+def dict_constructor(loader, node):
+    return dict(loader.construct_pairs(node))
 
 
 def parse_json_yaml(f):
@@ -18,7 +28,6 @@ def parse_json_yaml(f):
 
     # Setup support for ordered dicts so we do not lose ordering
     # when importing from YAML
-    _mapping_tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
     yaml.add_representer(dict, dict_representer)
     yaml.add_constructor(_mapping_tag, dict_constructor)
 
@@ -44,7 +53,8 @@ def run_script(script):
     (stdout, stderr) = sp.communicate()
 
     if sp.returncode != 0:
-        raise ValidationError("Script {0} had execution error ({1})".format(script, e))
+        raise ValidationError("Script {0} had execution error"
+                              " ({1})".format(script, e))
 
     return stdout
 
@@ -67,13 +77,6 @@ def load_pinfile(pinfile):
 
     return pf
 
-
-def dict_representer(dumper, data):
-    return dumper.represent_mapping(_mapping_tag, data.iteritems())
-
-
-def dict_constructor(loader, node):
-    return dict(loader.construct_pairs(node))
 
 
 def main():

@@ -235,15 +235,13 @@ def test_invoke_playbooks():
     topo = provision_data.get(provider).get('topology')
     resources = topo.get('resource_groups')
 
-    rundb = lpa.setup_rundb()
+    rundb = lpa.setup_rundb()  # noqa F841
     lpa.set_evar('rundb_id', 1)
 
     lpa.set_evar('target', provider)
     lpa.set_evar('resources', resources)
     lpa.set_evar('uhash', 'test')
 
-    #import pdb
-    #pdb.set_trace()
     return_code, results = lpa._invoke_playbooks(resources,
                                                  action='up',
                                                  console=True)

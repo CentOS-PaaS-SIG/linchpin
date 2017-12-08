@@ -9,12 +9,10 @@ from distutils import dir_util
 from collections import OrderedDict
 
 from linchpin import LinchpinAPI
-from linchpin.utils import run_script
 from linchpin.utils import load_pinfile
 from linchpin.utils import parse_json_yaml
 from linchpin.fetch import FETCH_CLASS
 from linchpin.exceptions import LinchpinError
-from linchpin.exceptions import ValidationError
 
 
 class LinchpinCli(LinchpinAPI):
@@ -121,8 +119,8 @@ class LinchpinCli(LinchpinAPI):
 
         if not os.path.exists(pf_w_path) and exists:
             pf_w_path = '{0}/{1}'.format(self.workspace, pinfile)
-            lpcli.ctx.log_state('{0} not found in provided workspace: '
-                                '{1}'.format(pinfile, lpcli.workspace))
+            self.ctx.log_state('{0} not found in provided workspace: '
+                               '{1}'.format(pinfile, self.workspace))
 
         return pf_w_path
 
