@@ -9,9 +9,12 @@ from distutils import dir_util
 from collections import OrderedDict
 
 from linchpin import LinchpinAPI
+from linchpin.utils import run_script
+from linchpin.utils import load_pinfile
 from linchpin.utils import parse_json_yaml
 from linchpin.fetch import FETCH_CLASS
 from linchpin.exceptions import LinchpinError
+from linchpin.exceptions import ValidationError
 
 
 class LinchpinCli(LinchpinAPI):
@@ -61,7 +64,7 @@ class LinchpinCli(LinchpinAPI):
         self.ctx.set_evar('workspace', workspace)
 
 
-    def lp_init(self, pf_w_path, providers=['libvirt']):
+    def lp_init(self, providers=['libvirt']):
         """
         Initializes a linchpin project. Creates the necessary directory
         structure, includes PinFile, topologies and layouts for the given
@@ -77,6 +80,8 @@ class LinchpinCli(LinchpinAPI):
 
         src = self.get_cfg('init', 'source', 'templates/')
         src_w_path = os.path.realpath('{0}/{1}'.format(self.ctx.lib_path, src))
+
+        pf_w_path = self._get_pinfile_path(exists=False)
 
         src_pf = os.path.realpath('{0}.lp_example'.format(pf_w_path))
 
@@ -97,7 +102,32 @@ class LinchpinCli(LinchpinAPI):
             sys.exit(1)
 
 
-    def lp_up(self, pinfile, targets='all', run_id=None):
+    def _get_pinfile_path(self, exists=True):
+        """
+        This function finds the self.pinfile. If the file is a full path,
+        it is expanded and used. If not found, the lp.default_pinfile
+        configuration value is used for the pinfile, the workspace is
+        prepended and returned.
+
+        :param exists:
+            Whether the pinfile is supposed to already exist (default: True)
+        """
+
+        pinfile = self.get_cfg('lp', 'default_pinfile')
+        if self.pinfile:
+            pinfile = self.pinfile
+
+        pf_w_path = os.path.abspath(os.path.expanduser(pinfile))
+
+        if not os.path.exists(pf_w_path) and exists:
+            pf_w_path = '{0}/{1}'.format(self.workspace, pinfile)
+            lpcli.ctx.log_state('{0} not found in provided workspace: '
+                                '{1}'.format(pinfile, lpcli.workspace))
+
+        return pf_w_path
+
+
+    def lp_up(self, targets=[], run_id=None):
         """
         This function takes a list of targets, and provisions them according
         to their topology.
@@ -112,16 +142,19 @@ class LinchpinCli(LinchpinAPI):
             An optional run_id if the task is idempotent or a destroy action
         """
 
-        pf = parse_json_yaml(pinfile)
-        provision_data = self._build(pf)
+        pf_w_path = self._get_pinfile_path()
+        pf = load_pinfile(pf_w_path)
 
-        return self._execute(provision_data,
-                             targets=targets,
-                             action='up',
-                             run_id=run_id)
+        if pf:
+            provision_data = self._build(pf)
+
+            return self._execute(provision_data,
+                                 targets=targets,
+                                 action='up',
+                                 run_id=run_id)
 
 
-    def lp_destroy(self, pinfile, targets=[], run_id=None):
+    def lp_destroy(self, targets=[], run_id=None):
         """
         This function takes a list of targets, and performs a destructive
         teardown, including undefining nodes, according to the target(s).
@@ -135,13 +168,16 @@ class LinchpinCli(LinchpinAPI):
             A tuple of targets to destroy.
         """
 
-        pf = parse_json_yaml(pinfile)
-        provision_data = self._build(pf)
+        pf_w_path = self._get_pinfile_path()
+        pf = load_pinfile(pf_w_path)
 
-        return self._execute(provision_data,
-                             targets,
-                             action="destroy",
-                             run_id=run_id)
+        if pf:
+            provision_data = self._build(pf)
+
+            return self._execute(provision_data,
+                                 targets=targets,
+                                 action="destroy",
+                                 run_id=run_id)
 
 
     def lp_down(self, pinfile, targets='all'):
@@ -193,7 +229,7 @@ class LinchpinCli(LinchpinAPI):
         This function constructs the provision_data from the pinfile inputs
 
         :param pf:
-            Provided PinFile json data, with all targets
+            Provided PinFile dict, with all targets
 
         """
 
