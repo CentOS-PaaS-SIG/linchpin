@@ -17,10 +17,13 @@
   hosts: localhost
   gather_facts: True
   roles:
-    - { role: 'gather_resources'}
+    - { role: 'gather_resources' }
 
 - name: "inventory generation role"
   hosts: localhost
   gather_facts: True
   roles:
-    - { role: 'inventory_gen', when: state == 'present' and (layout_file is defined or layout is defined) }
+    - role: 'inventory_gen'
+      when:
+        - state == 'present'
+        - layout_data is defined
