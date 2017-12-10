@@ -239,30 +239,32 @@ class LinchpinAPI(object):
         ;param topology: topology dictionary
         """
 
-        for res_grp in topology.get('resource_groups'):
-            if res_grp:
+        res_grps = topology.get('resource_groups')
+        if res_grps:
+            for res_grp in res_grps:
                 if 'res_group_type' in res_grp.keys():
                     res_grp['resource_group_type'] = (
                         res_grp.pop('res_group_type'))
-            else:
-                raise TopologyError('(resource_groups) do not validate'
-                                    ' in topology ({0})'.format(topology))
 
-            if 'res_defs' in res_grp.keys():
-                res_grp['resource_definitions'] = (
-                    res_grp.pop('res_defs'))
+                if 'res_defs' in res_grp.keys():
+                    res_grp['resource_definitions'] = (
+                        res_grp.pop('res_defs'))
 
-            for res_def in res_grp.get('resource_definitions'):
-                if res_def:
-                    if 'res_name' in res_def.keys():
-                        res_def['name'] = res_def.pop('res_name')
-                    if 'type' in res_def.keys():
-                        res_def['role'] = res_def.pop('type')
-                    if 'res_type' in res_def.keys():
-                        res_def['role'] = res_def.pop('res_type')
+                res_defs = res_grp.get('resource_definitions')
+                if res_defs:
+                    for res_def in res_defs:
+                        if 'res_name' in res_def.keys():
+                            res_def['name'] = res_def.pop('res_name')
+                        if 'type' in res_def.keys():
+                            res_def['role'] = res_def.pop('type')
+                        if 'res_type' in res_def.keys():
+                            res_def['role'] = res_def.pop('res_type')
                 else:
                     raise TopologyError('(resource_definitions) do not validate'
                                         ' in topology ({0})'.format(topology))
+        else:
+            raise TopologyError('(resource_groups) do not validate'
+                                ' in topology ({0})'.format(topology))
 
 
     def _validate_topology(self, topology):
