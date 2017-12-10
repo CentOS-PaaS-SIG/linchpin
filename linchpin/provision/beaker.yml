@@ -5,7 +5,7 @@
   hosts: localhost
   gather_facts: True
   roles:
-    - { role: "{{ default_roles_path }}/common" }
+    - { role: 'common' }
 
 - name:  "Provisioning beaker resources"
   hosts: localhost
@@ -17,7 +17,7 @@
   hosts: localhost
   gather_facts: True
   roles:
-    - { role: "{{ default_roles_path }}/gather_resources"}
+    - { role: 'gather_resources' }
 
 - name: "inventory generation role"
   hosts: localhost
