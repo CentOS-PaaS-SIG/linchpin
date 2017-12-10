@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import sys
 import yaml
 import json
 import subprocess
@@ -12,7 +11,10 @@ from linchpin.exceptions import LinchpinError
 from linchpin.exceptions import ValidationError
 
 
+
+
 def dict_representer(dumper, data):
+    _mapping_tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
     return dumper.represent_mapping(_mapping_tag, data.iteritems())
 
 
@@ -47,10 +49,15 @@ class DataParser(object):
             pinfile_data = stream.read()
 
             if data_w_path:
-                with open(data_w_path, 'r') as strm:
-                    pf_data = strm.read()
-                    pinfile_data = self.render(pinfile_data, pf_data)
-                    return self.parse_json_yaml(pinfile_data)
+                pf_data = data_w_path
+                try:
+                    with open(data_w_path, 'r') as strm:
+                        pf_data = strm.read()
+                except Exception:
+                    pass
+
+                pinfile_data = self.render(pinfile_data, pf_data)
+                return self.parse_json_yaml(pinfile_data)
 
         return self.load_pinfile(pf_w_path)
 

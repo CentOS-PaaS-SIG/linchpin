@@ -8,7 +8,7 @@ from nose.tools import assert_dict_contains_subset
 from nose.tools import with_setup
 
 from linchpin import LinchpinAPI
-from linchpin.utils import parse_json_yaml
+from linchpin.utils.dataparser import DataParser
 from linchpin.context import LinchpinContext
 from linchpin.rundb import RunDB
 
@@ -76,13 +76,17 @@ def setup_lp_api():
     lpa.set_evar('workspace', mock_path)
 
     pf_w_path = '{0}/PinFile'.format(mock_path, pinfile)
-    pf_data = parse_json_yaml(pf_w_path)
+
+    parser = DataParser()
+    pf_d = None
+    pf_data = parser.process(pf_w_path, pf_d)
 
     topo_folder = lpc.get_evar('topologies_folder')
     topo_file = pf_data[provider]["topology"]
     topo_path = '{0}/{1}/{2}'.format(mock_path, topo_folder, topo_file)
-    topology_data = parse_json_yaml(topo_path)
-    provision_data = {provider: {'topology': topology_data}}
+    with open(topo_path, 'r') as topo_stream:
+        topology_data = parser.parse_json_yaml(topo_stream)
+        provision_data = {provider: {'topology': topology_data}}
 
 
 @with_setup(setup_lp_api)
