@@ -10,13 +10,24 @@
     loop_var: res
   register: bkr
 
-#- name: debug bkr.results['ids']
-#  debug:
-#    var: result['ids']
-#  with_items: "{{ bkr.results }}"
-#  loop_control:
-#    loop_var: result
-#  when: state == 'present'
+- name: set blank bkr_id_values list
+  set_fact:
+    bkr_id_values: []
+  when: state == 'present'
+
+# per PR #180, print out beaker job ids
+- name: set bkr_id_values
+  set_fact:
+    bkr_id_values: "{{ bkr_id_values + result['ids'] }}"
+  with_items: "{{ bkr.results }}"
+  loop_control:
+    loop_var: result
+  when: state == 'present'
+
+# per PR #180, print out beaker job ids
+- name: print bkr_id_values
+  debug:
+    var: bkr_id_values
 
 - name: "fetch beaker details"
   bkr_info:
