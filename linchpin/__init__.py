@@ -260,11 +260,11 @@ class LinchpinAPI(object):
                         if 'res_type' in res_def.keys():
                             res_def['role'] = res_def.pop('res_type')
                 else:
-                    raise TopologyError('(resource_definitions) do not validate'
-                                        ' in topology ({0})'.format(topology))
+                    raise TopologyError("'resource_definitions' do not validate"
+                                        " in topology ({0})".format(topology))
         else:
-            raise TopologyError('(resource_groups) do not validate'
-                                ' in topology ({0})'.format(topology))
+            raise TopologyError("'resource_groups' do not validate"
+                                " in topology ({0})".format(topology))
 
 
     def _validate_topology(self, topology):

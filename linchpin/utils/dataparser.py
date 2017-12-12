@@ -121,8 +121,6 @@ class DataParser(object):
         # try to convert the data into json
         pf = None
         try:
-            import pdb
-            pdb.set_trace()
             with open(pinfile, 'r') as stream:
                 pf_data = stream.read()
                 pf = self.parse_json_yaml(pf_data)
