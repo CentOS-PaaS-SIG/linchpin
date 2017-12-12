@@ -8,7 +8,7 @@ from nose.tools import assert_dict_contains_subset
 from nose.tools import with_setup
 
 from linchpin import LinchpinAPI
-from linchpin.utils import yaml2json
+from linchpin.utils import parse_json_yaml
 from linchpin.context import LinchpinContext
 from linchpin.rundb import RunDB
 
@@ -57,7 +57,6 @@ def setup_lp_api():
     global pf_data
     global target
     global provision_data
-    global rundb
 
     setup_load_config()
 
@@ -68,28 +67,28 @@ def setup_lp_api():
 
     lpa = LinchpinAPI(lpc)
 
-    rundb = lpa.setup_rundb()
-
     pinfile = lpc.get_cfg('init', 'pinfile', default='PinFile')
 
     base_path = '{0}'.format(os.path.dirname(
         os.path.realpath(__file__))).rstrip('/')
     mock_path = '{0}/{1}/{2}'.format(base_path, 'mockdata', provider)
 
+    lpa.set_evar('workspace', mock_path)
+
     pf_w_path = '{0}/PinFile'.format(mock_path, pinfile)
-    pf_data = yaml2json(pf_w_path)
+    pf_data = parse_json_yaml(pf_w_path)
 
     topo_folder = lpc.get_evar('topologies_folder')
     topo_file = pf_data[provider]["topology"]
     topo_path = '{0}/{1}/{2}'.format(mock_path, topo_folder, topo_file)
-    topology_data = yaml2json(topo_path)
-
+    topology_data = parse_json_yaml(topo_path)
     provision_data = {provider: {'topology': topology_data}}
 
 
 @with_setup(setup_lp_api)
 def test_setup_rundb():
 
+    rundb = lpa.setup_rundb()
     assert_is_instance(rundb, RunDB)
 
 
@@ -236,6 +235,7 @@ def test_invoke_playbooks():
     topo = provision_data.get(provider).get('topology')
     resources = topo.get('resource_groups')
 
+    rundb = lpa.setup_rundb()  # noqa F841
     lpa.set_evar('rundb_id', 1)
 
     lpa.set_evar('target', provider)
@@ -244,7 +244,8 @@ def test_invoke_playbooks():
 
     return_code, results = lpa._invoke_playbooks(resources,
                                                  action='up',
-                                                 console=False)
+                                                 console=True)
+
     assert return_code == 0
 
 

@@ -9,7 +9,8 @@ from distutils import dir_util
 from collections import OrderedDict
 
 from linchpin import LinchpinAPI
-from linchpin.utils import yaml2json
+from linchpin.utils import load_pinfile
+from linchpin.utils import parse_json_yaml
 from linchpin.fetch import FETCH_CLASS
 from linchpin.exceptions import LinchpinError
 
@@ -58,9 +59,10 @@ class LinchpinCli(LinchpinAPI):
         """
 
         self.ctx.workspace = workspace
+        self.ctx.set_evar('workspace', workspace)
 
 
-    def lp_init(self, pf_w_path, providers=['libvirt']):
+    def lp_init(self, providers=['libvirt']):
         """
         Initializes a linchpin project. Creates the necessary directory
         structure, includes PinFile, topologies and layouts for the given
@@ -76,6 +78,8 @@ class LinchpinCli(LinchpinAPI):
 
         src = self.get_cfg('init', 'source', 'templates/')
         src_w_path = os.path.realpath('{0}/{1}'.format(self.ctx.lib_path, src))
+
+        pf_w_path = self._get_pinfile_path(exists=False)
 
         src_pf = os.path.realpath('{0}.lp_example'.format(pf_w_path))
 
@@ -96,7 +100,32 @@ class LinchpinCli(LinchpinAPI):
             sys.exit(1)
 
 
-    def lp_up(self, pinfile, targets='all', run_id=None):
+    def _get_pinfile_path(self, exists=True):
+        """
+        This function finds the self.pinfile. If the file is a full path,
+        it is expanded and used. If not found, the lp.default_pinfile
+        configuration value is used for the pinfile, the workspace is
+        prepended and returned.
+
+        :param exists:
+            Whether the pinfile is supposed to already exist (default: True)
+        """
+
+        pinfile = self.get_cfg('lp', 'default_pinfile')
+        if self.pinfile:
+            pinfile = self.pinfile
+
+        pf_w_path = os.path.abspath(os.path.expanduser(pinfile))
+
+        if not os.path.exists(pf_w_path) and exists:
+            pf_w_path = '{0}/{1}'.format(self.workspace, pinfile)
+            self.ctx.log_state('{0} not found in provided workspace: '
+                               '{1}'.format(pinfile, self.workspace))
+
+        return pf_w_path
+
+
+    def lp_up(self, targets=[], run_id=None):
         """
         This function takes a list of targets, and provisions them according
         to their topology.
@@ -111,13 +140,19 @@ class LinchpinCli(LinchpinAPI):
             An optional run_id if the task is idempotent or a destroy action
         """
 
-        return self._build_and_execute(pinfile,
-                                       targets=targets,
-                                       action='up',
-                                       run_id=run_id)
+        pf_w_path = self._get_pinfile_path()
+        pf = load_pinfile(pf_w_path)
+
+        if pf:
+            provision_data = self._build(pf)
+
+            return self._execute(provision_data,
+                                 targets=targets,
+                                 action='up',
+                                 run_id=run_id)
 
 
-    def lp_destroy(self, pinfile, targets='all', run_id=None):
+    def lp_destroy(self, targets=[], run_id=None):
         """
         This function takes a list of targets, and performs a destructive
         teardown, including undefining nodes, according to the target(s).
@@ -131,10 +166,16 @@ class LinchpinCli(LinchpinAPI):
             A tuple of targets to destroy.
         """
 
-        return self._build_and_execute(pinfile,
-                                       targets,
-                                       action="destroy",
-                                       run_id=run_id)
+        pf_w_path = self._get_pinfile_path()
+        pf = load_pinfile(pf_w_path)
+
+        if pf:
+            provision_data = self._build(pf)
+
+            return self._execute(provision_data,
+                                 targets=targets,
+                                 action="destroy",
+                                 run_id=run_id)
 
 
     def lp_down(self, pinfile, targets='all'):
@@ -168,7 +209,7 @@ class LinchpinCli(LinchpinAPI):
         """
 
         topo_path = os.path.realpath('{0}/{1}'.format(
-                                     self.ctx.workspace,
+                                     self.workspace,
                                      self.get_evar('topologies_folder',
                                                    'topologies')))
 
@@ -181,14 +222,66 @@ class LinchpinCli(LinchpinAPI):
                             ' workspace'.format(topology))
 
 
-    def _build_and_execute(self, pinfile, targets='all',
-                           action='up', run_id=None):
+    def _build(self, pf):
+        """
+        This function constructs the provision_data from the pinfile inputs
+
+        :param pf:
+            Provided PinFile dict, with all targets
+
+        """
+
+        ws = self.workspace
+
+        provision_data = {}
+
+        for target in pf.keys():
+
+            provision_data[target] = {}
+
+            if not isinstance(pf[target]['topology'], dict):
+                topology_data = (
+                    parse_json_yaml(self.find_topology(pf[target]["topology"])))
+            else:
+                topology_data = pf[target]['topology']
+
+            provision_data[target]['topology'] = topology_data
+
+
+            layout_data = None
+
+            if 'layout' in pf[target]:
+                if not isinstance(pf[target]['layout'], dict):
+                    self.set_evar('layout_file',
+                                  '{0}/{1}/{2}'.format(self.workspace,
+                                                       self.get_evar(
+                                                           'layouts_folder'),
+                                                       pf[target]["layout"]))
+
+                    layout_folder = self.get_evar("layouts_folder",
+                                                  default='layouts')
+                    layout_file = pf[target]['layout']
+                    layout_path = '{0}/{1}/{2}'.format(ws,
+                                                       layout_folder,
+                                                       layout_file)
+                    layout_data = parse_json_yaml(layout_path)
+
+                    provision_data[target]['layout'] = layout_data
+
+            if 'hooks' in pf[target]:
+                provision_data[target]['hooks'] = pf[target]['hooks']
+
+        return provision_data
+
+
+    def _execute(self, provision_data, targets=[],
+                 action='up', run_id=None):
         """
         This function takes a list of targets, constructs a dictionary of tasks
         and passes it to the LinchpinAPI.do_action method for processing.
 
-        :param pinfile:
-            Provided PinFile, with available targets
+        :param provision_data:
+            Provided PinFile json data, with available targets
 
         :param targets:
             A tuple of targets to provision
@@ -200,56 +293,22 @@ class LinchpinCli(LinchpinAPI):
             An optional run_id if the task is idempotent or a destroy action
         """
 
-        pf = yaml2json(pinfile)
+        prov_data = {}
 
-        # determine what targets is equal to
-        if (set(targets) ==
-                set(pf.keys()).intersection(targets) and len(targets) > 0):
-            pass
-        elif len(targets) == 0:
-            targets = set(pf.keys()).difference()
+        if len(targets):
+            for target in targets:
+                prov_data[target] = provision_data.get(target)
         else:
-            raise LinchpinError("One or more invalid targets found")
+            prov_data = provision_data
 
-        ws = self.ctx.workspace
-
-        provision_data = {}
-
-        for target in targets:
-
-            provision_data[target] = {}
-
-            topology_data = yaml2json(self.find_topology(pf[target]["topology"]))  # noqa: E501
-
-            provision_data[target]['topology'] = topology_data
-            layout_data = None
-
-            if 'layout' in pf[target]:
-                self.set_evar('layout_file',
-                              '{0}/{1}/{2}'.format(self.ctx.workspace,
-                                                   self.get_evar(
-                                                       'layouts_folder'),
-                                                   pf[target]["layout"]))
-
-                ws = self.ctx.workspace
-                layout_folder = self.get_evar("layouts_folder",
-                                              default='layouts')
-                layout_file = pf[target]['layout']
-                layout_path = '{0}/{1}/{2}'.format(ws,
-                                                   layout_folder,
-                                                   layout_file)
-                layout_data = yaml2json(layout_path)
-
-                provision_data[target]['layout'] = layout_data
-
-        return self.do_action(provision_data, action=action, run_id=run_id)
+        return self.do_action(prov_data, action=action, run_id=run_id)
 
 
     def lp_fetch(self, src, root=None, fetch_type='workspace'):
         if root is not None:
             root = list(filter(None, root.split(',')))
 
-        dest = self.ctx.workspace
+        dest = self.workspace
         if not os.path.exists(dest):
             raise LinchpinError(dest + " does not exist")
 

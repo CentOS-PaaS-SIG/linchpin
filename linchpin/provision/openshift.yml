@@ -5,7 +5,7 @@
   hosts: localhost
   gather_facts: True
   roles:
-    - { role: "{{ default_roles_path }}/common" }
+    - { role: 'common' }
 
 - name:  "Provisioning openshift resources"
   hosts: localhost
@@ -17,13 +17,13 @@
   hosts: localhost
   gather_facts: True
   roles:
-    - { role: "{{ default_roles_path }}/gather_resources"}
+    - { role: 'gather_resources' }
 
 - name: "inventory generation role"
   hosts: localhost
   gather_facts: True
   roles:
-    - role: "{{ default_roles_path }}/inventory_gen"
+    - role: 'inventory_gen'
       when:
         - state == 'present'
-        - layout_file is defined or layout is defined
+        - layout_data is defined

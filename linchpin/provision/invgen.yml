@@ -1,29 +1,49 @@
 ---
 #input: linchpin_config, output, layout
+
 #output: output dump to file
+
 - name: "Inventory Filter Testing"
   hosts: localhost
   gather_facts: false
-  vars_files:
-   - "{{ output }}"
+  vars:
+    - libvirt_res: ['192.168.122.4']
+    - layout:
+        inventory_layout:
+          vars:
+            hostname: __IP__
+          hosts:
+            example-node:
+              count: 3
+              host_groups:
+                - example
+
   tasks:
-    - name: "Parse inventory layout as a ordered dict"
+    - name: debug layout
+      debug: var=layout
+    - name: "Parse inventory layout as a ordered yaml"
       set_fact:
         inventory_layout: "{{ layout | ordered_yaml }}"
     - name: "Updating topology_outputs"
       set_fact:
         topology_outputs:
-          os_server_res: "{{ os_server_res }}"
-          aws_ec2_res: "{{  aws_ec2_res }}"
-          gcloud_gce_res: "{{ gcloud_gce_res }}"
-          duffy_res: "{{ duffy_res }}"
+          dummy_res: "{{ dummy_res | default([]) }}"
+          ovirt_vms_res: "{{  ovirt_vms_res | default([]) }}"
+          libvirt_res: "{{ libvirt_res | default([]) }}"
+          os_server_res: "{{ os_server_res | default([]) }}"
+          aws_ec2_res: "{{  aws_ec2_res | default([]) }}"
+          gcloud_gce_res: "{{ gcloud_gce_res | default([]) }}"
+          duffy_res: "{{ duffy_res | default([]) }}"
         inventory_type: "{{ inventory_type | default('generic') }}"
     - name: "debug"
       debug:
         msg: "{{ inventory_layout }}"
-    - debug: 
-        msg: "{{ topology_outputs | generic_inv(inventory_layout) }}" 
-      when: inventory_type == "generic"
+    - name: set inventory_output
+      set_fact:
+        inventory_output: "./{{ inventory_type }}.inventory"
+    - debug:
+        msg: "{{ topology_outputs | libvirt_inv(inventory_layout) }}"
+      when: inventory_type == "libvirt"
     - copy:
         content: "{{ topology_outputs | aws_inv(inventory_layout) }}"
         dest: "{{ inventory_output  }}"
@@ -33,7 +53,7 @@
       when: inventory_type == "openstack"
     - copy:
         content: "{{ topology_outputs | gcloud_inv(inventory_layout) }}"
-        dest: "{{ inventory_output  }}" 
+        dest: "{{ inventory_output  }}"
       when: inventory_type == "gcloud"
     - copy:
         content: "{{ topology_outputs | os_inv(inventory_layout) }}"

@@ -12,13 +12,15 @@ from uuid import getnode as get_mac
 from linchpin.ansible_runner import ansible_runner
 
 from linchpin.hooks.state import State
-# from linchpin.hooks import LinchpinHooks
+from linchpin.hooks import LinchpinHooks
 
 from linchpin.rundb.basedb import BaseDB
 from linchpin.rundb.drivers import DB_DRIVERS
 
-from linchpin.exceptions import LinchpinError
 from linchpin.exceptions import SchemaError
+from linchpin.exceptions import LinchpinError
+from linchpin.exceptions import TopologyError
+from linchpin.exceptions import ValidationError
 
 
 class LinchpinAPI(object):
@@ -32,20 +34,19 @@ class LinchpinAPI(object):
         """
 
         self.ctx = ctx
-        self.set_evar('from_api', True)
 
-#        self.hook_state = None
-#        self._hook_observers = []
-#        self.playbook_pre_states = self.get_cfg('playbook_pre_states',
-#                                                {'up': 'preup',
-#                                                 'destroy': 'predestroy'})
-#        self.playbook_post_states = self.get_cfg('playbook_post_states',
-#                                                 {'up': 'postup',
-#                                                  'destroy': 'postdestroy',
-#                                                  'postinv': 'inventory'})
-#        self.hooks = LinchpinHooks(self)
-#
-#        self.target_data = {}
+        self.hook_state = None
+        self._hook_observers = []
+        self.playbook_pre_states = self.get_cfg('playbook_pre_states',
+                                                {'up': 'preup',
+                                                 'destroy': 'predestroy'})
+        self.playbook_post_states = self.get_cfg('playbook_post_states',
+                                                 {'up': 'postup',
+                                                  'destroy': 'postdestroy',
+                                                  'postinv': 'inventory'})
+        self.hooks = LinchpinHooks(self)
+
+        self.target_data = {}
 
         base_path = '/'.join(os.path.dirname(__file__).split('/')[0:-1])
         pkg = self.get_cfg(section='lp', key='pkg', default='linchpin')
@@ -67,6 +68,7 @@ class LinchpinAPI(object):
 
         self.set_evar('lp_path', lp_path)
         self.set_evar('pb_path', self.pb_path)
+        self.set_evar('from_api', True)
 
 
     def setup_rundb(self):
@@ -229,6 +231,40 @@ class LinchpinAPI(object):
                             " path: {1}".format(playbook, self.pb_path))
 
 
+    def _convert_topology(self, topology):
+        """
+        For backward compatiblity, convert the old topology format
+        into the new format. Should be pretty straightforward and simple.
+
+        ;param topology: topology dictionary
+        """
+
+        for res_grp in topology.get('resource_groups'):
+            if res_grp:
+                if 'res_group_type' in res_grp.keys():
+                    res_grp['resource_group_type'] = (
+                        res_grp.pop('res_group_type'))
+            else:
+                raise TopologyError('(resource_groups) do not validate'
+                                    ' in topology ({0})'.format(topology))
+
+            if 'res_defs' in res_grp.keys():
+                res_grp['resource_definitions'] = (
+                    res_grp.pop('res_defs'))
+
+            for res_def in res_grp.get('resource_definitions'):
+                if res_def:
+                    if 'res_name' in res_def.keys():
+                        res_def['name'] = res_def.pop('res_name')
+                    if 'type' in res_def.keys():
+                        res_def['role'] = res_def.pop('type')
+                    if 'res_type' in res_def.keys():
+                        res_def['role'] = res_def.pop('res_type')
+                else:
+                    raise TopologyError('(resource_definitions) do not validate'
+                                        ' in topology ({0})'.format(topology))
+
+
     def _validate_topology(self, topology):
         """
         Validate the provided topology against the schema
@@ -287,10 +323,6 @@ class LinchpinAPI(object):
                    resources.
         """
 
-        # playbooks check whether from_cli is defined
-        # if not, vars get loaded from linchpin.conf
-        self.set_evar('from_api', True)
-
         ansible_console = False
         if self.ctx.cfgs.get('ansible'):
             ansible_console = (
@@ -308,12 +340,13 @@ class LinchpinAPI(object):
                                   'dateformat',
                                   default='%m/%d/%Y %I:%M:%S %p')
 
-#        # add this because of magic_var evaluation in ansible
-#        self.set_evar('inventory_dir', self.get_evar(
-#                      'default_inventories_path',
-#                      default='inventories'))
+        return_code = 99
 
         for target in provision_data.keys():
+
+            if not isinstance(provision_data[target], dict):
+                raise LinchpinError("Cannot process target '{0}',"
+                                    " data unavailable.".format(target))
 
             results[target] = {}
             self.set_evar('target', target)
@@ -390,8 +423,22 @@ class LinchpinAPI(object):
             self.set_evar('rundb_id', rundb_id)
             self.set_evar('uhash', uhash)
 
-            topology_data = provision_data[target]['topology']
-            resources = self._validate_topology(topology_data)
+            topology_data = provision_data[target].get('topology')
+
+            # if validation fails the first time, convert topo from old -> new
+            try:
+                resources = self._validate_topology(topology_data)
+            except SchemaError:
+                # if topology fails, try converting from old to new style
+                try:
+                    self._convert_topology(topology_data)
+                    resources = self._validate_topology(topology_data)
+                except SchemaError:
+                    raise ValidationError("Topology '{0}' does not"
+                                          " validate".format(topology_data))
+
+
+
             self.set_evar('topo_data', topology_data)
             self.set_evar('resources', resources)
 
@@ -416,24 +463,21 @@ class LinchpinAPI(object):
                                          provision_data[target]['layout']}
                                     ])
 
-        # set inventory_file
+            if provision_data[target].get('hooks', None):
+                hooks_data = provision_data[target].get('hooks')
+                self.set_evar('hooks_data', hooks_data)
 
-        # set the current target data
-        # this will differ with dynamic inputs
-#        self.target_data = pf[target]
-#        self.target_data["extra_vars"] = self.get_evar()
-
-        # note : changing the state triggers the hooks
-#        self.hooks.rundb = (rundb, rundb_id)
-#        self.pb_hooks = self.get_cfg('hookstates', action)
+            # note : changing the state triggers the hooks
+            self.hooks.rundb = (rundb, rundb_id)
+            self.pb_hooks = self.get_cfg('hookstates', action)
             self.ctx.log_debug('calling: {0}{1}'.format('pre', action))
 
-#        if 'pre' in self.pb_hooks:
-#            self.hook_state = '{0}{1}'.format('pre', action)
+            if 'pre' in self.pb_hooks:
+                self.hook_state = '{0}{1}'.format('pre', action)
 
-        # FIXME need to add rundb data for hooks results
+            # FIXME need to add rundb data for hooks results
 
-        # invoke the appropriate action
+            # invoke the appropriate action
             return_code, results[target]['task_results'] = (
                 self._invoke_playbooks(resources, action=action,
                                        console=ansible_console)
@@ -443,16 +487,16 @@ class LinchpinAPI(object):
                 self.ctx.log_state("Action '{0}' on Target '{1}' is "
                                    "complete".format(action, target))
 
-        # FIXME Check the result[target] value here, and fail if applicable.
-        # It's possible that a flag might allow more targets to run, then
-        # return an error code at the end.
+            # FIXME Check the result[target] value here, and fail if applicable.
+            # It's possible that a flag might allow more targets to run, then
+            # return an error code at the end.
 
-        # add post provision hook for inventory generation
-#        if 'inv' in self.pb_hooks:
-#            self.hook_state = 'postinv'
-#
-#        if 'post' in self.pb_hooks:
-#            self.hook_state = '{0}{1}'.format('post', action)
+            # add post provision hook for inventory generation
+            if 'inv' in self.pb_hooks:
+                self.hook_state = 'postinv'
+
+            if 'post' in self.pb_hooks:
+                self.hook_state = '{0}{1}'.format('post', action)
 
             end = time.strftime(dateformat)
             rundb.update_record(target, rundb_id, 'end', end)
@@ -490,8 +534,6 @@ class LinchpinAPI(object):
         if action == 'destroy':
             self.set_evar('state', 'absent')
 
-
-        # print('resources: {}'.format(resources))
         for resource in resources:
             playbook = resource.get('resource_group_type')
             pb_path = self._find_playbook_path(playbook)
@@ -505,11 +547,11 @@ class LinchpinAPI(object):
             for path in reversed(self.pb_path):
                 module_paths.append('{0}/{1}/'.format(path, module_folder))
 
-            extra_var = self.get_evar()
+            extra_vars = self.get_evar()
 
             return_code, res = ansible_runner(playbook_path,
                                               module_paths,
-                                              extra_var,
+                                              extra_vars,
                                               console=console)
 
             if res:
