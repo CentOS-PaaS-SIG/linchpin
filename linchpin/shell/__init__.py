@@ -112,6 +112,8 @@ def _handle_results(ctx, results, return_code):
 @click.option('-p', '--pinfile', envvar='PINFILE',
               help='Use a name for the PinFile different from'
                    ' the configuration.')
+@click.option('-d', '--template-data', metavar='template_data',
+              help='Template data passed to PinFile template')
 @click.option('-w', '--workspace', type=click.Path(), envvar='WORKSPACE',
               help='Use the specified workspace if the familiar Jenkins'
                    ' $WORKSPACE environment variable is not set')
@@ -123,7 +125,8 @@ def _handle_results(ctx, results, return_code):
               help='Use the specified credentials path if CREDS_PATH'
                    'environment variable is not set')
 @pass_context
-def runcli(ctx, config, pinfile, workspace, verbose, version, creds_path):
+def runcli(ctx, config, pinfile, template_data,
+           workspace, verbose, version, creds_path):
     """linchpin: hybrid cloud orchestration"""
 
     ctx.load_config(lpconfig=config)
@@ -132,6 +135,9 @@ def runcli(ctx, config, pinfile, workspace, verbose, version, creds_path):
     ctx.setup_logging()
 
     ctx.verbose = verbose
+
+    # if the pinfile is a template, data will be passed here
+    ctx.pf_data = template_data
 
     ctx.pinfile = None
     if pinfile:

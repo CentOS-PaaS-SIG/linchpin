@@ -9,10 +9,9 @@ from distutils import dir_util
 from collections import OrderedDict
 
 from linchpin import LinchpinAPI
-from linchpin.utils import load_pinfile
-from linchpin.utils import parse_json_yaml
 from linchpin.fetch import FETCH_CLASS
 from linchpin.exceptions import LinchpinError
+from linchpin.utils.dataparser import DataParser
 
 
 class LinchpinCli(LinchpinAPI):
@@ -23,6 +22,7 @@ class LinchpinCli(LinchpinAPI):
         """
 
         LinchpinAPI.__init__(self, ctx)
+        self.parser = DataParser()
 
 
     @property
@@ -41,6 +41,24 @@ class LinchpinCli(LinchpinAPI):
         """
 
         self.ctx.pinfile = pinfile
+
+
+    @property
+    def pf_data(self):
+        """
+        getter for pinfile template data
+        """
+
+        return self.ctx.pf_data
+
+
+    @pf_data.setter
+    def pf_data(self, pf_data):
+        """
+        setter for pinfile template data
+        """
+
+        self.ctx.pf_data = pf_data
 
 
     @property
@@ -125,7 +143,32 @@ class LinchpinCli(LinchpinAPI):
         return pf_w_path
 
 
-    def lp_up(self, targets=[], run_id=None):
+    def _get_data_path(self):
+        """
+        This function finds the template data path, or returns the data.
+        If the file is a full path, it is expanded and used.
+        If not found, the workspace is prepended. If still not found, it
+        is assumed what is passed in is data and returned to the caller.
+
+        :param data_path:
+            Consists of either a absolute path, relative path, or the actual
+            template data.
+        """
+
+        if not self.pf_data:
+            return None
+
+        data_w_path = os.path.abspath(os.path.expanduser(self.pf_data))
+
+        if not os.path.exists(data_w_path):
+            data_w_path = '{0}/{1}'.format(self.workspace, self.pf_data)
+            if not os.path.exists(data_w_path):
+                return self.pf_data
+
+        return data_w_path
+
+
+    def lp_up(self, targets=(), run_id=None):
         """
         This function takes a list of targets, and provisions them according
         to their topology.
@@ -141,7 +184,9 @@ class LinchpinCli(LinchpinAPI):
         """
 
         pf_w_path = self._get_pinfile_path()
-        pf = load_pinfile(pf_w_path)
+        pf_data = self._get_data_path()
+
+        pf = self.parser.process(pf_w_path, pf_data)
 
         if pf:
             provision_data = self._build(pf)
@@ -167,7 +212,9 @@ class LinchpinCli(LinchpinAPI):
         """
 
         pf_w_path = self._get_pinfile_path()
-        pf = load_pinfile(pf_w_path)
+        pf_data = self._get_data_path()
+
+        pf = self.parser.process(pf_w_path, pf_data)
 
         if pf:
             provision_data = self._build(pf)
@@ -241,7 +288,7 @@ class LinchpinCli(LinchpinAPI):
 
             if not isinstance(pf[target]['topology'], dict):
                 topology_data = (
-                    parse_json_yaml(self.find_topology(pf[target]["topology"])))
+                    self.parser.process(self.find_topology(pf[target]["topology"]))) # noqa E501
             else:
                 topology_data = pf[target]['topology']
 
@@ -264,8 +311,11 @@ class LinchpinCli(LinchpinAPI):
                     layout_path = '{0}/{1}/{2}'.format(ws,
                                                        layout_folder,
                                                        layout_file)
-                    layout_data = parse_json_yaml(layout_path)
+                    layout_data = self.parser.process(layout_path)
 
+                    provision_data[target]['layout'] = layout_data
+                else:
+                    layout_data = pf[target]['layout']
                     provision_data[target]['layout'] = layout_data
 
             if 'hooks' in pf[target]:
@@ -347,5 +397,4 @@ class LinchpinCli(LinchpinAPI):
         fetch_class = FETCH_CLASS[fetch_protocol](self.ctx, fetch_dir, src,
                                                   dest, cache_path, root)
         fetch_class.fetch_files()
-
         fetch_class.copy_files()
