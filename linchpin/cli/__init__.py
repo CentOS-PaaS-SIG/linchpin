@@ -189,7 +189,8 @@ class LinchpinCli(LinchpinAPI):
         pf = self.parser.process(pf_w_path, pf_data)
 
         if pf:
-            provision_data = self._build(pf)
+            provision_data = self._build(pf, pf_data)
+            print('provision_data: {}'.format(provision_data))
 
             return self._execute(provision_data,
                                  targets=targets,
@@ -217,7 +218,7 @@ class LinchpinCli(LinchpinAPI):
         pf = self.parser.process(pf_w_path, pf_data)
 
         if pf:
-            provision_data = self._build(pf)
+            provision_data = self._build(pf, pf_data)
 
             return self._execute(provision_data,
                                  targets=targets,
@@ -245,31 +246,30 @@ class LinchpinCli(LinchpinAPI):
         pass
 
 
-    def find_topology(self, topology):
+    def find_include(self, filename, ftype='topology'):
         """
-        Find the topology to be acted upon. This could be pulled from a
-        registry.
+        Find the included file to be acted upon.
 
         :param topology:
             name of topology from PinFile to be loaded
 
         """
 
-        topo_path = os.path.realpath('{0}/{1}'.format(
-                                     self.workspace,
-                                     self.get_evar('topologies_folder',
-                                                   'topologies')))
+        folder = self.get_evar('topologies_folder', 'topologies')
+        if ftype == 'layout':
+            folder = self.get_evar('layouts_folder', 'layouts')
 
-        topos = os.listdir(topo_path)
+        path = os.path.realpath('{0}/{1}'.format(self.workspace, folder))
+        files = os.listdir(path)
 
-        if topology in topos:
-            return os.path.realpath('{0}/{1}'.format(topo_path, topology))
+        if filename in files:
+            return os.path.realpath('{0}/{1}'.format(path, filename))
 
-        raise LinchpinError('Topology {0} not found in'
-                            ' workspace'.format(topology))
+        raise LinchpinError('{0} not found in'
+                            ' workspace'.format(filename))
 
 
-    def _build(self, pf):
+    def _build(self, pf, pf_data=None):
         """
         This function constructs the provision_data from the pinfile inputs
 
@@ -278,8 +278,6 @@ class LinchpinCli(LinchpinAPI):
 
         """
 
-        ws = self.workspace
-
         provision_data = {}
 
         for target in pf.keys():
@@ -287,32 +285,20 @@ class LinchpinCli(LinchpinAPI):
             provision_data[target] = {}
 
             if not isinstance(pf[target]['topology'], dict):
-                topology_data = (
-                    self.parser.process(self.find_topology(pf[target]["topology"]))) # noqa E501
+                topology_path = self.find_include(pf[target]["topology"])
+                topology_data = self.parser.process(topology_path, pf_data)
             else:
                 topology_data = pf[target]['topology']
 
             provision_data[target]['topology'] = topology_data
 
-
             layout_data = None
 
             if 'layout' in pf[target]:
                 if not isinstance(pf[target]['layout'], dict):
-                    self.set_evar('layout_file',
-                                  '{0}/{1}/{2}'.format(self.workspace,
-                                                       self.get_evar(
-                                                           'layouts_folder'),
-                                                       pf[target]["layout"]))
-
-                    layout_folder = self.get_evar("layouts_folder",
-                                                  default='layouts')
-                    layout_file = pf[target]['layout']
-                    layout_path = '{0}/{1}/{2}'.format(ws,
-                                                       layout_folder,
-                                                       layout_file)
-                    layout_data = self.parser.process(layout_path)
-
+                    layout_path = self.find_include(pf[target]["layout"],
+                                                    ftype='layout')
+                    layout_data = self.parser.process(layout_path, pf_data)
                     provision_data[target]['layout'] = layout_data
                 else:
                     layout_data = pf[target]['layout']
