@@ -129,7 +129,7 @@ class LinchpinCli(LinchpinAPI):
             Whether the pinfile is supposed to already exist (default: True)
         """
 
-        pinfile = self.get_cfg('lp', 'default_pinfile')
+        pinfile = self.get_cfg('lp', 'default_pinfile', default='PinFile')
         if self.pinfile:
             pinfile = self.pinfile
 

@@ -231,6 +231,58 @@ class LinchpinAPI(object):
                             " path: {1}".format(playbook, self.pb_path))
 
 
+    def _fix_broken_topologies(self, res_grp, res_grp_type):
+        """
+        Because the new tooling requires resource_definitions, both beaker
+        and openshift didn't previously suport this section in topologies.
+        This function is called if resource_definitions are not included
+        in the topology. The topology will be given a resource_definitions
+        section.
+
+        :param res_grp: The resource group to update
+
+        :param res_grp_type: Which type to convert (this may not matter)
+        """
+
+        res_defs = {}
+        # with beaker, there will only be one
+        # resource_definition upon conversion
+        if res_grp_type == 'beaker':
+            res_defs['role'] = 'bkr_server'
+            res_defs['whiteboard'] = res_grp.pop('whiteboard',
+                                                 'Provisioned with LinchPin')
+            res_defs['job_group'] = res_grp.pop('job_group')
+            res_defs['recipesets'] = res_grp.pop('recipesets')
+            res_grp['resource_definitions'] = [res_defs]
+
+            return res_grp
+
+        if res_grp_type == 'openshift':
+            res_defs = res_grp.pop('resources')
+
+            count = 0
+            for res in res_defs:
+                res['name'] = 'openshift-res_{0}'.format(str(count))
+                count += 1
+                if res.get('inline_data'):
+                    res['role'] = 'openshift_inline'
+                    res['data'] = res.pop('inline_data')
+                if res.get('file_reference'):
+                    res['role'] = 'openshift_external'
+                    res['filiename'] = res.pop('file_reference')
+
+            res_grp['resource_definitions'] = res_defs
+
+            # the old openshift role put credentials in the
+            # resource group definition. Moving to credentials
+            creds = {}
+            creds['api_endpoint'] = res_grp.pop('api_endpoint')
+            creds['api_token'] = res_grp.pop('api_token')
+            res_grp['credentials'] = creds
+
+            return res_grp
+
+
     def _convert_topology(self, topology):
         """
         For backward compatiblity, convert the old topology format
@@ -251,6 +303,15 @@ class LinchpinAPI(object):
                         res_grp.pop('res_defs'))
 
                 res_defs = res_grp.get('resource_definitions')
+                if not res_defs:
+                    # this means it's either a beaker or openshift topology
+                    res_grp_type = res_grp.get('resource_group_type')
+
+                    res_group = self._fix_broken_topologies(res_grp,
+                                                            res_grp_type)
+                    res_defs = res_group.get('resource_definitions')
+                    res_grp['resource_definitions'] = res_defs
+
                 if res_defs:
                     for res_def in res_defs:
                         if 'res_name' in res_def.keys():
@@ -353,9 +414,14 @@ class LinchpinAPI(object):
             results[target] = {}
             self.set_evar('target', target)
 
+            rundb_schema_default = ('{"action": "", "inputs": [],'
+                                    ' "outputs": [], "start": "",'
+                                    ' "end": "", "rc": 0, "uhash": ""}')
+
             rundb = self.setup_rundb()
             rundb_schema = json.loads(self.get_cfg(section='lp',
-                                      key='rundb_schema'))
+                                      key='rundb_schema',
+                                      default=rundb_schema_default))
             rundb.schema = rundb_schema
             self.set_evar('rundb_schema', rundb_schema)
 
@@ -438,8 +504,6 @@ class LinchpinAPI(object):
                 except SchemaError:
                     raise ValidationError("Topology '{0}' does not"
                                           " validate".format(topology_data))
-
-
 
             self.set_evar('topo_data', topology_data)
             self.set_evar('resources', resources)
