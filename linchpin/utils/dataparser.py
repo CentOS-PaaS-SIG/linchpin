@@ -139,3 +139,8 @@ class DataParser(object):
                 raise LinchpinError(e)
 
         return pf
+
+    def write_json(self, provision_data, pf_outfile):
+
+        with open(pf_outfile, 'w') as outfile:
+            json.dump(provision_data, outfile, indent=4)
