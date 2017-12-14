@@ -1,4 +1,4 @@
-setuptools>=17.1
+setuptools>=35.0
 pyopenssl
 boto>=2.40.0
 apache-libcloud>=0.20.1

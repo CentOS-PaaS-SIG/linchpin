@@ -30,13 +30,13 @@ class DataParser(object):
         self._mapping_tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
 
 
-    def process(self, pf_w_path, data_w_path=None):
+    def process(self, file_w_path, data_w_path=None):
         """ Processes the PinFile and any data (if a template)
         using Jinja2. Returns json of PinFile, topology, layout,
-        and hooks data
+        and hooks.
 
-        :param pf_w_path:
-            Full path to the provided Pinfile
+        :param file_w_path:
+            Full path to the provided file to process
 
         :param targets:
             A tuple of targets to provision
@@ -45,8 +45,8 @@ class DataParser(object):
             An optional run_id if the task is idempotent or a destroy action
         """
 
-        with open(pf_w_path, 'r') as stream:
-            pinfile_data = stream.read()
+        with open(file_w_path, 'r') as stream:
+            file_data = stream.read()
 
             if data_w_path:
                 pf_data = data_w_path
@@ -56,10 +56,10 @@ class DataParser(object):
                 except Exception:
                     pass
 
-                pinfile_data = self.render(pinfile_data, pf_data)
-                return self.parse_json_yaml(pinfile_data)
+                file_data = self.render(file_data, pf_data)
+                return self.parse_json_yaml(file_data)
 
-        return self.load_pinfile(pf_w_path)
+        return self.load_pinfile(file_w_path)
 
 
     def render(self, template, context):
@@ -90,7 +90,10 @@ class DataParser(object):
         yaml.add_representer(dict, dict_representer)
         yaml.add_constructor(self._mapping_tag, dict_constructor)
 
-        data = yaml.load(data)
+        try:
+            data = yaml.load(data)
+        except Exception as e:
+            raise LinchpinError('YAML parsing error: {}'.format(e))
 
         if isinstance(data, dict):
             return data
@@ -136,3 +139,8 @@ class DataParser(object):
                 raise LinchpinError(e)
 
         return pf
+
+    def write_json(self, provision_data, pf_outfile):
+
+        with open(pf_outfile, 'w') as outfile:
+            json.dump(provision_data, outfile, indent=4)

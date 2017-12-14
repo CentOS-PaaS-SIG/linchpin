@@ -33,13 +33,16 @@ setup(
     ''',
     extras_require={
         'krbV': ["python-krbV"],
-        'beaker': ['beaker-client>=23.3'],
+        'beaker': ['beaker-client>=23.3', 'python-krbV'],
         'docs': ["docutils", "sphinx", "sphinx_rtd_theme"],
         'tests': ["nose", "mock", "coverage", "flake8"],
         'libvirt': ["libvirt-python>=3.0.0", "lxml"],
     },
     zip_safe=False,
     packages=find_packages(),
-    include_package_data=True
-    # scripts=['scripts/linchpin_complete.sh']
+    include_package_data=True,
+    scripts=[
+        'scripts/install_libvirt_deps.sh',
+        'scripts/install_selinux_venv.sh'
+    ]
 )
