@@ -3,7 +3,7 @@ Using LinchPin
 
 Almost all interactions with LinchPin are done through the command-line interface.
 
-The interface is through the ``linchpin`` command. There are many subcommands available, and are covered :doc:`here <linchpin_cli>`. The most common are ``linchpin up`` and ``linchpin destroy``. If you run ``linchpin`` by itself, a help page will be displayed showing the available subcommands. Additionally, each subcommand has its own help by passing a ``-h``.
+The interface the ``linchpin`` command. There are many subcommands available, and are covered :doc:`here <linchpin_cli>`. The most common are ``linchpin up`` and ``linchpin destroy``. If you run ``linchpin`` by itself, a help page will be displayed showing the available subcommands. Additionally, each subcommand has its own help by passing a ``-h``.
 
 .. toctree::
    :tocdepth: 1

@@ -1,7 +1,9 @@
 Installation
 ============
 
-Currently, LinchPin can be run from any machine with Python 2.6+ (Python 3.x is currently experimental), and requires Ansible 2.3.1 or newer. There are many other dependencies, depending on the provider.
+Currently, LinchPin can be run from any machine with Python 2.6+ (Python 3.x is currently experimental), and requires Ansible 2.3.1 or newer. 
+
+.. note:: Some providers have additional dependencies. Additional software requirements can be found in the :doc:`providers` documentation.
 
 Refer to your specific operating system for directions on the best method to install Python, if it is not already installed. Many modern operating systems will have Python already installed. This is typically the case in all versions of Linux and OS X, but the version present might be older than the version needed for use with Ansible. You can check the version by typing ``python --version``.
 

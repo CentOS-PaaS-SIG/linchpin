@@ -14,7 +14,6 @@ This documentation covers the current released version of LinchPin (|version|). 
    :maxdepth: 1
 
    intro
-   getting_started
    linchpin_cli
    managing_resources
    providers

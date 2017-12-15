@@ -20,6 +20,8 @@ Specify an Alternate Workspace
     $ export WORKSPACE=/tmp/my_workspace
     $ linchpin up libvirt
 
+or
+
 .. code-block:: bash
 
     $ linchpin -vw /path/to/workspace destroy openshift
@@ -31,6 +33,8 @@ Provide Credentials
 
     $ export CREDS_PATH=/tmp/my_workspace
     $ linchpin -v up libvirt
+
+or
 
 .. code-block:: bash
 

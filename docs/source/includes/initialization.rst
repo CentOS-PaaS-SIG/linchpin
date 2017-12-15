@@ -17,10 +17,3 @@ Running ``linchpin init`` will generate the directory structure needed, along wi
     └── topologies
         └── dummy-topology.yml
 
-
-
-One important option here, is the :term:`workspace`. When passing this option, the system will use this as the location for the structure. The default is the current directory.
-
-The next sections cover the Topology, Layout, and PinFile in a bit more detail.
-
-

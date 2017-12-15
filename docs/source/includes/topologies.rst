@@ -12,5 +12,7 @@ The :term:`topology` is declarative, written in YAML or JSON (v1.5+), and define
             role: "dummy_node"
             count: 1
 
-This topology describes a single dummy system that will be provisioned when `linchpin up` is executed. Once provisioned, the resources outputs are stored for reference and later lookup. A current example of the dummy topology can be found :doc:`here examples/dummy.yml`.
+This topology describes a single dummy system that will be provisioned when `linchpin up` is executed. Once provisioned, the resources outputs are stored for reference and later lookup. Additional topology examples can be found `in the source code <https://github.com/CentOS-PaaS-SIG/linchpin/tree/develop/linchpin/examples/topologies>`_.
+
+.. FIXME: Update/Remove topologies. One per provider.
 

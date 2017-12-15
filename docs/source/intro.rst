@@ -11,5 +11,6 @@ If you are looking to get started right away, checkout the :doc:`getting_started
 
    intro_whatislinchpin
    installation
+   getting_started
    intro_using_linchpin
 

@@ -1,9 +1,6 @@
 Getting Started
 ===============
 
-.. toctree::
-   :maxdepth: 1
-
 .. contents:: Topics
 
 .. _foreword:
@@ -23,20 +20,34 @@ Initialization (init)
 
 .. include:: includes/initialization.rst
 
+The Workspace
+`````````````
+
+.. include:: includes/workspace.rst
+
+
+Resources
+---------
+
+With LinchPin, resources are king. Defining, managing and output are all declarative. Resources are managed via the :term:`PinFile`. The PinFile can hold two additional files, the :term:`topology`, and :term:`layout`. Linchpin also supports :doc:`hooks`.
+
+
 Topology
-~~~~~~~~
+````````
 
 .. include:: includes/topologies.rst
 
 Inventory Layout
-~~~~~~~~~~~~~~~~
+````````````````
 
 .. include:: includes/layouts.rst
 
+
 PinFile
-~~~~~~~
+```````
 
 .. include:: includes/pinfile.rst
+
 
 Provisioning (up)
 ------------------
