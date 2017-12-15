@@ -3,40 +3,26 @@ Commands (CLI)
 
 This document covers the ``linchpin`` Command Line Interface (CLI) in detail. For an overview, see :doc:`intro_using_linchpin`.
 
+.. _help:
+
 Getting Help
 ------------
 
 .. include:: includes/cli_help.rst
 
-.. _basic_usage:
+.. _opts_args:
 
-Basic Usage
------------
+General Options and Arguments
+-----------------------------
 
-.. include:: includes/cli_basic_usage.rst
+.. include:: cli/opts_args_detail.rst
 
-.. _options:
+.. _init:
 
-Options and Arguments
----------------------
+linchpin Init
+-------------
 
-.. include:: includes/cli_opts_args.rst
-
-.. _combining_options:
-
-Combining Options
------------------
-
-.. include:: includes/cli_combine_opts.rst
-
-.. _common_usage:
-
-Common Usage
-------------
-
-Here are some common use cases for the linchpin command-line.
-
-.. include:: includes/cli_common_usage.rst
+.. include:: cli/linchpin_init.rst
 
 
 
