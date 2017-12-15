@@ -221,6 +221,7 @@ class LinchpinContext(object):
         """
 
         self.set_cfg('lp', 'workspace', workspace)
+        self.set_evar('workspace', workspace)
 
 
     def setup_logging(self):
