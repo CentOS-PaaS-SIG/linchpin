@@ -1,20 +1,15 @@
 Introduction
 ============
 
-Before getting heavily into LinchPin, let's cover some of the basics. The topics below will cover everything needed to get going with LinchPin. For more advanced topics, refer to the :doc:`main documentation page <index>`.
+Before investigating the main components of LinchPin -- provisioning, topologies, hooks, layouts, etc.-- you'll learn how to get LinchPin installed and cover some basic concepts. We'll also cover how to use the ``linchpin`` command line interface, some configuration basics, and of course the provisioning providers.
+
 
 .. toctree::
-   :tocdepth: 1
+   :maxdepth: 1
 
+   intro_whatislinchpin
+   installation
+   intro_using_linchpin
+   intro_config
+   intro_providers
 
-* :doc:`installation`
-* :doc:`getting_started`
-* :doc:`configuration`
-
-
-.. seealso::
-
-    `User Mailing List <https://www.redhat.com/mailman/listinfo/linchpin>`_
-        Subscribe and participate. A great place for Q&A
-    `irc.freenode.net <http://irc.freenode.net>`_
-        #linchpin IRC chat channel

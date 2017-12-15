@@ -6,10 +6,10 @@ The following is a list of terms used throughout the LinchPin documentation.
 
 .. glossary::
 
-   _ async/async
+   _async
         *(boolean, default: False)*
 
-        Used to enable asynchronous provisioning/teardown
+        Used to enable asynchronous provisioning/teardown. Sets the Ansible `async` magic_var.
 
     async_timeout
         *(int, default: 1000)*
@@ -88,6 +88,7 @@ The following is a list of terms used throughout the LinchPin documentation.
         Controls whether resources will be written to the resources_file
 
     PinFile
+    pinfile
         A YAML file consisting of a :term:`topology` and an optional
         :term:`layout`, among other options. This file is used by the
         ``linchpin`` command-line, or Python API to determine what resources

@@ -1,13 +1,10 @@
 Configuration
 =============
 
-Before resources can be provisioned in any of the environments through the use of linchpin, the environment must be configured
-to specify the resources required.
-
 .. toctree::
-    :maxdepth: 1
+   :maxdepth: 1
 
-    config_general
-    config_topologies
-    config_layout
-    config_ansiblevars
+.. contents:: Topics
+
+Many components of LinchPin are adjustable via a configuration file (:term:`linchpin.conf`. For most cases, the included configuration should be sufficient.
+
