@@ -109,7 +109,7 @@ def _handle_results(ctx, results, return_code):
              context_settings=CONTEXT_SETTINGS)
 @click.option('-c', '--config', type=click.Path(), envvar='LP_CONFIG',
               help='Path to config file')
-@click.option('-p', '--pinfile', envvar='PINFILE',
+@click.option('-p', '--pinfile', envvar='PINFILE', metavar='PINFILE',
               help='Use a name for the PinFile different from'
                    ' the configuration.')
 @click.option('-d', '--template-data', metavar='TEMPLATE_DATA',
@@ -117,15 +117,15 @@ def _handle_results(ctx, results, return_code):
 @click.option('-o', '--output-pinfile', metavar='OUTPUT_PINFILE',
               help='Template data passed to PinFile template')
 @click.option('-w', '--workspace', type=click.Path(), envvar='WORKSPACE',
-              help='Use the specified workspace if the familiar Jenkins'
-                   ' $WORKSPACE environment variable is not set')
+              help='Use the specified workspace. Also works if the'
+                   ' familiar Jenkins WORKSPACE environment variable is set')
 @click.option('-v', '--verbose', is_flag=True, default=False,
               help='Enable verbose output')
 @click.option('--version', is_flag=True,
               help='Prints the version and exits')
 @click.option('--creds-path', type=click.Path(), envvar='CREDS_PATH',
-              help='Use the specified credentials path if CREDS_PATH'
-                   'environment variable is not set')
+              help='Use the specified credentials path. Also works'
+                   ' if CREDS_PATH environment variable is set')
 @pass_context
 def runcli(ctx, config, pinfile, template_data, output_pinfile,
            workspace, verbose, version, creds_path):
@@ -173,7 +173,6 @@ def init(ctx):
     Initializes a linchpin project, which generates an example PinFile, and
     creates the necessary directory structure for topologies and layouts.
 
-    ctx: Context object defined by the click.make_pass_decorator method
     """
 
     # add a providers option someday
@@ -197,10 +196,10 @@ def up(ctx, targets, run_id):
     """
     Provisions nodes from the given target(s) in the given PinFile.
 
-    pinfile:    Path to pinfile (Default: workspace path)
-
     targets:    Provision ONLY the listed target(s). If omitted, ALL targets in
     the appropriate PinFile will be provisioned.
+
+    run-id:     Use the data from the provided run_id value
     """
 
     try:
@@ -233,11 +232,10 @@ def destroy(ctx, targets, run_id):
     """
     Destroys nodes from the given target(s) in the given PinFile.
 
-    pinfile:    Path to pinfile (Default: workspace path)
-
     targets:    Destroy ONLY the listed target(s). If omitted, ALL targets in
     the appropriate PinFile will be destroyed.
 
+    run-id:     Use the data from the provided run_id value
     """
 
     try:
