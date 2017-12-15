@@ -91,6 +91,7 @@ class LinchpinAPI(object):
                                        default='sha256')
 
         if rundb_conn_type == 'file':
+
             rundb_conn_f = rundb_conn.replace('::mac::', str(get_mac()))
             rundb_conn_f = os.path.realpath(os.path.expanduser(rundb_conn_f))
             rundb_conn_dir = os.path.dirname(rundb_conn_f)
@@ -250,7 +251,7 @@ class LinchpinAPI(object):
 
         :param res_grp_type: Which type to convert (this may not matter)
         """
-
+        
         res_defs = {}
         # with beaker, there will only be one
         # resource_definition upon conversion
@@ -411,7 +412,6 @@ class LinchpinAPI(object):
                                   default='%m/%d/%Y %I:%M:%S %p')
 
         return_code = 99
-
         for target in provision_data.keys():
 
             if not isinstance(provision_data[target], dict):
