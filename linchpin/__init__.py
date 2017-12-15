@@ -4,6 +4,7 @@ import os
 import ast
 import json
 import time
+import errno
 import hashlib
 
 from cerberus import Validator
@@ -251,7 +252,7 @@ class LinchpinAPI(object):
 
         :param res_grp_type: Which type to convert (this may not matter)
         """
-        
+
         res_defs = {}
         # with beaker, there will only be one
         # resource_definition upon conversion
