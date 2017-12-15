@@ -1,0 +1,12 @@
+---
+topology_name: duffy1
+resource_groups:
+  - resource_group_name: duffy1
+    resource_group_type: duffy
+    resource_definitions:
+      - type: duffy_node
+        name: duffy
+        version: 7
+        arch: x86_64
+        count: 1
+    credentials: duffy.key

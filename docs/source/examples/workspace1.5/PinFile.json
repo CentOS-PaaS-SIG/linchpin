@@ -1,0 +1,47 @@
+{
+    "dummy-new": {
+        "topology": {
+            "resource_groups": [
+                {
+                    "resource_definitions": [
+                        {
+                            "count": 3,
+                            "name": "web",
+                            "role": "dummy_node"
+                        },
+                        {
+                            "count": 1,
+                            "name": "test",
+                            "role": "dummy_node"
+                        }
+                    ],
+                    "resource_group_name": "dummy",
+                    "resource_group_type": "dummy"
+                }
+            ],
+            "topology_name": "dummy_cluster"
+        },
+        "layout": {
+            "inventory_layout": {
+                "hosts": {
+                    "example-node": {
+                        "count": 3,
+                        "host_groups": [
+                            "example"
+                        ]
+                    },
+                    "test-node": {
+                        "count": 1,
+                        "host_groups": [
+                            "test"
+                        ]
+                    }
+                },
+                "vars": {
+                    "hostname": "__IP__"
+                }
+            }
+        }
+    }
+}
+

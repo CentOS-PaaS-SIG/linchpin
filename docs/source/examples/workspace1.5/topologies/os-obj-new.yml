@@ -1,0 +1,15 @@
+---
+topology_name: os-object
+resource_groups:
+  - resource_group_name: os-obj
+    resource_group_type: openstack
+    resource_definitions:
+      - name: object
+        role: os_object
+        access: public
+        count: 2
+    credentials:
+      filename: clouds.yaml
+      profile: ci-osp
+
+

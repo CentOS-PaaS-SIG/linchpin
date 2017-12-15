@@ -1,0 +1,10 @@
+---
+topology_name: aws-ec2-key-new
+resource_groups:
+  - resource_group_name: "aws"
+    resource_group_type: "aws"
+    resource_definitions:
+      - name: "ec2_keypair"
+        role: "aws_ec2_key"
+        region: "us-west-2"
+

@@ -1,0 +1,14 @@
+---
+topology_name: gcloud
+resource_groups:
+  - resource_group_name: "gcloud"
+    resource_group_type: "gcloud"
+    resource_definitions:
+      - name: "webserver"
+        flavor: "f1-micro"
+        type: "gcloud_gce"
+        region: "us-central1-a"
+        image: "centos-7"
+        count: 1
+    credentials:
+      filename: LinchPin-GCE.json

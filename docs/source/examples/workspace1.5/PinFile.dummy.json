@@ -1,0 +1,7 @@
+{
+    "dummy": {
+        "topology": "dummy.yml",
+        "layout": "dummy.yml"
+    }
+}
+

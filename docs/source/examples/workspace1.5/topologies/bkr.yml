@@ -1,0 +1,15 @@
+---
+topology_name: "beaker-test"
+resource_groups:
+  - resource_group_name: "beaker-test"
+    resource_group_type: beaker
+    job_group: ci-ops-central
+    whiteboard: Provisioned with linchpin
+    recipesets:
+      - distro: RHEL-7.2
+        arch: x86_64
+        count: 1
+        hostrequires:
+          - tag: pool
+            op: "="
+            value: "ci-ops-central"

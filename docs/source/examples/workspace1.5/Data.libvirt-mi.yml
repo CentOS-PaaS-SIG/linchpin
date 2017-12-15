@@ -1,0 +1,6 @@
+---
+instances:
+  - name: centos71
+    src: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz
+  - name: centos66
+    src: http://cloud.centos.org/centos/6.6/images/CentOS-6-x86_64-GenericCloud-1711.qcow2.xz
