@@ -36,7 +36,7 @@ Inventory Layout
 PinFile
 ~~~~~~~
 
-.. include:: getting_started/pinfile.rst
+.. include:: includes/pinfile.rst
 
 Provisioning (up)
 ------------------

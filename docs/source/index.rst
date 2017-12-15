@@ -13,12 +13,12 @@ This documentation covers the current released version of LinchPin (|version|). 
 .. toctree::
    :maxdepth: 1
 
-   intro
    getting_started
+   intro
+   linchpin_cli
    managing_resources
    providers
    configuration
-   linchpin_cli
    resources_advanced
    developer_info
    faq

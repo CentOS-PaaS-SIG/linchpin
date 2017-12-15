@@ -1,4 +1,7 @@
-Currently, LinchPin can be run from any machine with Python 2.6+ (Python 3.x is currently experimental), and requires Ansible 2.3.1 or newer. There are many other dependencies, depending on the provider. 
+Installation
+============
+
+Currently, LinchPin can be run from any machine with Python 2.6+ (Python 3.x is currently experimental), and requires Ansible 2.3.1 or newer. There are many other dependencies, depending on the provider.
 
 Refer to your specific operating system for directions on the best method to install Python, if it is not already installed. Many modern operating systems will have Python already installed. This is typically the case in all versions of Linux and OS X, but the version present might be older than the version needed for use with Ansible. You can check the version by typing ``python --version``.
 
@@ -7,7 +10,7 @@ If the system installed version of Python is older than 2.6, many systems will p
 .. _minimal_reqs:
 
 Minimal Software Requirements
-``````````````````````````````
+-----------------------------
 
 As LinchPin is heavily dependent on Ansible 2.3.1 or newer, this is a core requirement. Beyond installing Ansible, there are several packages that need to be installed::
 
@@ -35,7 +38,7 @@ For Fedora/CentOS/RHEL the following packages should be installed
 .. _installing_linchpin:
 
 Installing LinchPin
-````````````````````
+-------------------
 
 .. note:: Currently, linchpin is not packaged for any major Operating System. If you'd like to contribute your time to create a package, please contact the `linchpin mailing list <mailto:linchpin@redhat.com>`_.
 
@@ -72,7 +75,7 @@ If testing or docs is desired, additional steps are required
 
 
 Installing on Fedora 26
-```````````````````````
+-----------------------
 
 Install RPM pre-reqs
 
@@ -108,7 +111,7 @@ Make a workspace, and initialize it to prove that linchpin itself works
 .. note:: The default workspace is $PWD, but can be set using the $WORKSPACE variable.
 
 Installing on RHEL 7.4
-``````````````````````
+----------------------
 
 Tested on RHEL 7.4 Server VM which was kickstarted and pre-installed with the following YUM package-groups and RPMs::
 
@@ -180,7 +183,7 @@ Make a workspace, and initialize it to prove that linchpin itself works
     PinFile and file structure created at /home/user/workspace
 
 Source Installation
-```````````````````
+-------------------
 
 As an alternative, LinchPin can be installed via github. This may be done in order to fix a bug, or contribute to the project.
 
@@ -188,7 +191,7 @@ As an alternative, LinchPin can be installed via github. This may be done in ord
 
     $ git clone git://github.com/CentOS-PaaS-SIG/linchpin
     ..snip..
-    $ cd licnhpin
+    $ cd linchpin
     $ mkvirtualenv linchpin
     ..snip..
     (linchpin) $ pip install file://$PWD/linchpin

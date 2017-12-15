@@ -10,6 +10,4 @@ Before investigating the main components of LinchPin -- provisioning, topologies
    intro_whatislinchpin
    installation
    intro_using_linchpin
-   intro_config
-   intro_providers
 
