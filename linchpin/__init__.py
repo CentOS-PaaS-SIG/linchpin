@@ -4,6 +4,7 @@ import os
 import ast
 import json
 import time
+import errno
 import hashlib
 
 from cerberus import Validator
@@ -91,19 +92,27 @@ class LinchpinAPI(object):
                                        default='sha256')
 
         if rundb_conn_type == 'file':
-            rundb_conn_int = rundb_conn.replace('::mac::', str(get_mac()))
-            rundb_conn_int = os.path.expanduser(rundb_conn_int)
-            rundb_conn_dir = os.path.dirname(rundb_conn_int)
+
+            rundb_conn_f = rundb_conn.replace('::mac::', str(get_mac()))
+            rundb_conn_f = os.path.realpath(os.path.expanduser(rundb_conn_f))
+            rundb_conn_dir = os.path.dirname(rundb_conn_f)
 
             if not os.path.exists(rundb_conn_dir):
-                os.mkdir(rundb_conn_dir)
+                try:
+                    os.makedirs(rundb_conn_dir)
+                except OSError as exc:
+                    if (exc.errno == errno.EEXIST and
+                            os.path.isdir(rundb_conn_dir)):
+                        pass
+                    else:
+                        raise
 
 
         self.set_evar('rundb_type', rundb_type)
-        self.set_evar('rundb_conn', rundb_conn_int)
+        self.set_evar('rundb_conn', rundb_conn_f)
         self.set_evar('rundb_hash', self.rundb_hash)
 
-        return BaseDB(DB_DRIVERS[rundb_type], rundb_conn_int)
+        return BaseDB(DB_DRIVERS[rundb_type], rundb_conn_f)
 
 
     def get_cfg(self, section=None, key=None, default=None):
@@ -404,7 +413,6 @@ class LinchpinAPI(object):
                                   default='%m/%d/%Y %I:%M:%S %p')
 
         return_code = 99
-
         for target in provision_data.keys():
 
             if not isinstance(provision_data[target], dict):
