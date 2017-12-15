@@ -1,11 +1,10 @@
 ---
-topology_name: "dummy_cluster" # topology name
+topology_name: "dummy" # topology name
 resource_groups:
   -
     resource_group_name: "dummy"
     resource_group_type: "dummy"
     resource_definitions:
-      -
-        name: "web"
-        type: "dummy_nodes"
+      - name: "web"
+        role: "dummy_nodes"
         count: 3
