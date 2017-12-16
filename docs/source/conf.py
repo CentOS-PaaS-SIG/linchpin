@@ -347,11 +347,11 @@ texinfo_documents = [
 
 extlinks = {
     'examples1.0': (
-    'https://github.com/CentOS-PaaS-SIG/linchpin/tree/release1.0/linchpin/examples/%s', 'example: '),
+    'https://github.com/CentOS-PaaS-SIG/linchpin/tree/release1.0/linchpin/examples/%s', ''),
     'examples1.2': (
-    'https://github.com/CentOS-PaaS-SIG/linchpin/tree/release1.2/linchpin/examples/%s', 'example: '),
+    'https://github.com/CentOS-PaaS-SIG/linchpin/tree/release1.2/linchpin/examples/%s', ''),
     'examples': (
-    'https://github.com/CentOS-PaaS-SIG/linchpin/tree/release1.5/docs/source/examples/%s', 'example: '),
+    'https://github.com/CentOS-PaaS-SIG/linchpin/tree/release1.5/docs/source/examples/%s', ''),
     'docs1.5': (
-    'https://github.com/herlo/linchpin/tree/docs1.5/docs/source/examples/%s', 'example: ')
+    'https://github.com/herlo/linchpin/tree/docs1.5/docs/source/examples/%s', '')
 }
