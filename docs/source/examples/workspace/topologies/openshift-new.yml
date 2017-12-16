@@ -1,3 +1,4 @@
+---
 topology_name: openshift
 resource_groups:
   - resource_group_name: test1

@@ -1,7 +1,10 @@
+These PinFiles represent many combinations of complexity and providers.
+
+PinFiles are processed top to bottom.
+
 YAML
 ````
-These PinFiles represent many combinations of complexity and providers.
-All are written using YAML format:
+PinFiles written using YAML format:
 
   * :docs1.5:`PinFile.dummy.yml <workspace/PinFile.dummy.yml>`
   * :docs1.5:`PinFile.openstack.yml <workspace/PinFile.openstack.yml>`
@@ -16,8 +19,7 @@ JSON
 
 New in version 1.5.0
 
-These PinFiles represent many combinations of complexity and providers.
-All are written using JSON format.
+PinFiles written using JSON format.
 
   * :docs1.5:`PinFile.dummy.json <workspace/PinFile.dummy.json>`
   * :docs1.5:`PinFile.aws.json <workspace/PinFile.aws.json>`
