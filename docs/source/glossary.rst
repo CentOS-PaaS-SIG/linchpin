@@ -66,6 +66,12 @@ The following is a list of terms used throughout the LinchPin documentation.
     inventory_file
         If layout is provided, this will be the location of the resulting ansible inventory
 
+    inventories_folder
+        *(Default: inventories)*
+
+        A configuration entry in :docs1.5:`linchpin.conf` which stores the relative location
+        where inventories are stored.
+
     linchpin_config
         if passed on the command line with ``-c/--config``, should be
         an ini-style config file with linchpin default configurations (see

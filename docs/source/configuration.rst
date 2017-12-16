@@ -1,13 +1,3 @@
-Configuration File
-==================
-
-.. toctree::
-   :maxdepth: 1
-
-.. contents:: Topics
-
-Below is full coverage of each of the sections of the values available in `linchpin.conf <https://raw.githubusercontent.com/CentOS-PaaS-SIG/linchpin/develop/linchpin/linchpin.conf>`_
-
 General Configuration
 ---------------------
 
@@ -16,10 +6,10 @@ Managing LinchPin requires a few configuration files. Beyond
 checked . When running linchpin, four different locations are checked for
 linchpin.conf files. Files are checked in the following order:
 
-1. linchpin/library/path/linchpin.conf
-2. /etc/linchpin.conf
-3. ~/.config/linchpin/linchpin.conf
-4. path/to/workspace/linchpin.conf
+#. :file:`linchpin/library/path/linchpin.conf`
+#. :file:`/etc/linchpin.conf`
+#. :file:`~/.config/linchpin/linchpin.conf`
+#. :file:`path/to/workspace/linchpin.conf`
 
 The linchpin configuration parser supports overriding and extension of
 configurations. Therefore, the existing configuration files are read.
@@ -28,64 +18,121 @@ the header that was parsed more recently will provide the configuration for that
 section. In this way user can override the general configurations. Commonly,
 this is done by placing a `linchpin.conf` in the root of the :term:`workspace`.
 
-Getting the most current configuration
---------------------------------------
-
-If you are installing LinchPin from a package manager (pip or RPM), the latest linchpin.conf is already included in the library.
-
-An `example linchpin.conf is available on Github <https://raw.githubusercontent.com/CentOS-PaaS-SIG/linchpin/develop/linchpin/linchpin.conf>`_
-
-.. FIXME: The above link should point to an example in the docs, even if it's a symlink.
-
-For in-depth details of all the options, see the :doc:`Configuration Reference <configuration>` document.
-
-Environmental Variables
------------------------
-
-LinchPin allows configuration adjustments via environment variables in some cases. If these environment variables are set, they will take precedence over any settings in the configuration file.
-
-A full listing of available environment variables, see the :doc:`Configuration Reference <configuration>` document.
-
-Command Line Options
---------------------
-
-Some configuration options are also present in the command line. Settings passed via the command line will override those passed through the configuration file and the environment.
-
-The full list of options is covered in the :doc:`cli` document.
-
-Values by Section
------------------
-
-The configuration file is broken into sections. Each section controls a specific functionality in LinchPin.
-
-General Defaults
+Adding a Section
 ````````````````
 
-.. include:: conf/defaults.rst
-.. include:: conf/lp.rst
+Adding a section to the configuration is simple. The best approach is to
+create a linchpin.conf in the appropriate location from the locations above.
 
-Extra Vars
-``````````
+Once created, add a section. The section can be a new section, or it can
+overwrite an existing section.
 
-LinchPin sets several :term:`extra_vars` values, which are passed to the provisioning playbooks.
+.. code-block:: cfg
 
-.. include:: conf/evars.rst
+    [lp]
+    rundb_conn = ./rundb.json
 
-..   conf_init
-..   conf_logger
-..   conf_console
-..   conf_hookstates
-..   conf_extensions
-..   conf_ansible
-..   conf_states
-..   conf_repository_control
-..   conf_fetch_types
-..   conf_fetch_aliases
+    module_folder = library
+
+    rundb_type = TinyRunDB
+    rundb_conn_type = file
+    rundb_schema = {"action": "",
+                    "inputs": [],
+                    "outputs": [],
+                    "start": "",
+                    "end": "",
+                    "rc": 0,
+                    "uhash": ""}
+    rundb_hash = sha256
+
+    dateformat = %%m/%%d/%%Y %%I:%%M:%%S %%p
+    default_pinfile = PinFile
+
+A common thing to do is to put the items updated at the top of the new
+section. It may even be a good idea to add a comment stating why it was
+updated.
+
+.. warning:: If overwriting a section, all entries from the entire section
+   must be updated.
+
+.. _config_useful_configs:
+
+Useful Configuration Options
+````````````````````````````
+
+lp.external_providers_path
+    New in version 1.5.0
+
+    Default value: %(default_config_path)s/linchpin-x
+
+    Providers playbooks can be created outside of the core of linchpin,
+    if desired. When using these external providers, linchpin will use
+    the `external_providers_path` to lookup the playbooks and attempt to
+    run them.
+
+    See :doc:`providers` for more information.
+
+lp.rundb_conn
+    New in version 1.2.0
+
+    Default value: ./rundb.json
+
+    The RunDB is a single json file, which records each transaction involving
+    resources. A :term:`run_id` and :term:`uHash` are assigned, along with
+    other useful information. The `lp.rundb_conn` describes the location to
+    store the RunDB so data can be retrieved during execution.
+
+evars._async
+    Updated in version 1.2.0
+
+    Default value: False
+
+    Previous key name: evars.async
+
+    Some providers (eg. openstack, aws, ovirt) support asynchronous
+    provisioning. This means that a topology containing many resources
+    would provision or destroy all at once. LinchPin then waits for responses
+    from these asynchronous tasks, and returns the success or failure.  If the
+    amount of resources is large, asynchronous tasks reduce the wait time
+    immensely.
+
+    Reason for change: Avoiding conflict with existing Ansible variable.
+
+    Starting in Ansible 2.4.x, the `async` variable could not be set internally.
+    The `_async` value is now passed in and sets the Ansible `async` variable
+    to its value.
+
+evars.default_credentials_path
+    Default value: `%(default_config_path)s`
+
+    Storing credentials for multiple providers can be useful. It also may
+    be useful to change the default here to point to a given location.
+
+    .. note:: The ``--creds-path`` option, or ``$CREDS_PATH`` environment
+              variable overrides this option
+
+evars.inventory_file
+    Default value: None
+
+    If the unique-hash feature is turned on, the default inventory_file
+    value is built up by combining the :term:`workspace` path,
+    :term:`inventories_folder` :term:`topology_name`, the :term:`uhash`,
+    and the `extensions.inventory` configuration value. The resulting file
+    might look like this:
+
+    .. code-block::
+
+        /path/to/workspace/inventories/dummy_cluster-049e.inventory
+
+    It may be desired to store the inventory without the uhash, or
+    define a completely different structure altogether.
+
+ansible.console
+    Default value: False
+
+    This configuration option controls whether the output from the Ansible
+    console is printed. In the ``linchpin`` CLI tool, it's the equivalent of
+    the ``-v (--verbose)`` option.
 
 
-.. seealso::
 
-    `User Mailing List <https://www.redhat.com/mailman/listinfo/linchpin>`_
-        Subscribe and participate. A great place for Q&A
-    `irc.freenode.net <http://irc.freenode.net>`_
-        #linchpin IRC chat channel

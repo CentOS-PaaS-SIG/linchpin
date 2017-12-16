@@ -9,4 +9,4 @@ Before investigating the main components of LinchPin -- provisioning, topologies
 
    installation
    getting_started
-
+   intro_config.rst
