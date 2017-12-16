@@ -28,4 +28,4 @@ Verify the `/tmp/dummy.hosts` file to ensure the records have been removed.
 
 .. seealso::
 
-    :doc:`providers`
+    :doc:`../providers`

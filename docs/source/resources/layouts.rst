@@ -1,4 +1,4 @@
-Inventory Layouts (or just :term:`layouts`) describe what an Ansible
+Inventory Layouts (or just :term:`layout`) describe what an Ansible
 inventory might look like after provisioning. A layout is needed
 because information about the resources provisioned are unknown in advance.
 

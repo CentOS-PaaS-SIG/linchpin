@@ -9,7 +9,7 @@ be acted upon.
 
 The purpose of the rewrite was to enable Dynamic inputs, and topology templating.
 Part of which meant having a consistent, standardized topology. The
-`resource_definitions` section was being validated against the new `schema.json`
+:term:`resource_definitions` section was being validated against the new `schema.json`
 found in each provider's ``roles/files``.
 
 The API was rewritten in such a way, that only dictionaries were passed to the

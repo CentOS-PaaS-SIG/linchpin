@@ -31,6 +31,6 @@ Other common options include:
   * ``--config`` (``-c``) to specify an alternate configuration file
   * ``--workspace`` (``-w``) to specify an alternate workspace
 
-For an explanation of all of the available arguments and options, see :doc:`linchpin_cli`
+For an explanation of all of the available arguments and options, see :doc:`../gs/linchpin_cli`
 
 .. FIXME:: Add reference to linchpin_cli

@@ -6,7 +6,6 @@ This document covers the ``linchpin`` Command Line Interface (CLI) in detail. Ea
 .. toctree::
    maxdepth: 1
 
-
    linchpin_init
    linchpin_up
    linchpin_destroy

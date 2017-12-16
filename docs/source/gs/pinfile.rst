@@ -8,7 +8,7 @@ A :term:`PinFile` takes a :term:`topology` and an optional :term:`layout`, among
 
 The :term:`PinFile` collects the given :term:`topology` and :term:`layout` into one place. Many :term:`targets <target>` can be referenced in a single :term:`PinFile`.
 
-More detail about the PinFile can be found in the :ref:`Commands (CLI) <cli_pinfile>` document.
+More detail about the PinFile can be found in the :ref:`res_pinfiles` document.
 
 Additional PinFile examples can be found in :docs1.5:`the source code <workspace>`
 

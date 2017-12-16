@@ -41,8 +41,8 @@ the key was `type`, in v1.5.0+, the key is `role`.
 
 .. note:: Pay attention to the callout in the code blocks above.
 
-For details about the differences in beaker and openshift, 
-see :doc:`incompatible beaker and openshift topologies <beaker_openshift_topologies>`.
+For details about the differences in beaker and openshift,
+see :doc:`../topology_incompatibilities`.
 
 YAML
 ````

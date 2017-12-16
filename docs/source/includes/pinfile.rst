@@ -9,7 +9,7 @@ A :term:`PinFile` takes a :term:`topology` and an optional :term:`layout`, among
 The :term:`PinFile` collects the given :term:`topology` and :term:`layout` into one place. Many :term:`targets <target>` can be referenced in a single :term:`PinFile`.
 
 JSON PinFile
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
 New in version 1.5.0
 
@@ -77,7 +77,7 @@ Jinja2 Templates
 
 A PinFile can also be generated via `Jinja2 <http://jinja.pocoo.org/docs/2.10/>`_ templates. Consider this template named ``PinFile.libvirt-mi.template``.
 
-.. code-block:: yaml
+.. code-block:: none
 
     ---
     libvirt-mi:
