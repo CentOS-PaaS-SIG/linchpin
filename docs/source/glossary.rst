@@ -6,7 +6,7 @@ The following is a list of terms used throughout the LinchPin documentation.
 
 .. glossary::
 
-   _async
+    _async
         *(boolean, default: False)*
 
         Used to enable asynchronous provisioning/teardown. Sets the Ansible `async` magic_var.
@@ -52,6 +52,11 @@ The following is a list of terms used throughout the LinchPin documentation.
 
         default landing location for inventory outputs
 
+    evars
+    extra_vars
+        Variables that can be passed into Ansible playbooks from external sources.
+        Used in linchpin via the linchpin.conf `[evars]` section.
+
     hook
         Certan scripts can be called when a particular :term:`hook` has been
         referenced in the :term:`PinFile`. The currently available hooks are
@@ -59,7 +64,7 @@ The following is a list of terms used throughout the LinchPin documentation.
 
     inventory
     inventory_file
-        If layout / layout_file is provided, this will be the location of the resulting ansible inventory.
+        If layout is provided, this will be the location of the resulting ansible inventory
 
     linchpin_config
         if passed on the command line with ``-c/--config``, should be
@@ -68,8 +73,9 @@ The following is a list of terms used throughout the LinchPin documentation.
 
     layout
     layout_file
-        YAML definition for providing an ansible (currently) static inventory file, based upon the provided
-        topology.
+    inventory_layout
+        Definition for providing an Ansible (currently) static inventory file, based upon the provided
+        topology
 
     layouts_folder
         *(file_path, default: layouts)*
@@ -104,24 +110,47 @@ The following is a list of terms used throughout the LinchPin documentation.
         external Ansible module. `openstack` would be a provider.
 
     provision
+    up
         An action taken when resources are to be made available on a
         particular provider platform. Usually corresponds with the
         ``linchpin up`` command.
+
+    resource_definitions
+        In a topology, a resource_definition describes what the resources
+        look like when provisioned. This example shows two different
+        dummy_node resources, the resource named `web` will get 3 nodes, while
+        and the resource named `test` will get 1 resource.
+
+        .. code-block:: yaml
+
+            resource_definitions:
+              - name: "web"
+                type: "dummy_node"
+                count: 3
+              - name: "test"
+                type: "dummy_node"
+                count: 1
 
     resources
     resources_file
         File with the resource outputs in a JSON formatted file. Useful for
         teardown (destroy,down) actions depending on the provider.
 
+    run_id
+    run-id
+        An integer identifier assigned to each task.
+
+        * The run_id can be passed to ``linchpin up`` for idempotent provisioning
+        * The run_id can be passed to ``linchpin destroy`` to destroy any 
+          previously provisioned resources.
+
+    rundb
+    RunDB
+        A simple json database, used to store the :term:`uhash` and other
+        useful data, including the :term:`run_id` and output data.
+
     schema
         JSON description of the format for the topology.
-
-        *(schema_v3, schema_v4 are still available)*
-
-    schemas_folder
-        *(file_path, default: schemas)*
-
-        relative path to schemas
 
     target
         Specified in the :term:`PinFile`, the :term:`target` references a
@@ -129,6 +158,7 @@ The following is a list of terms used throughout the LinchPin documentation.
         command-line utility, or Python API.
 
     teardown
+    destroy
         An action taken when resources are to be made unavailable on a
         particular provider platform. Usually corresponds with the
         ``linchpin destroy`` command.
@@ -150,6 +180,12 @@ The following is a list of terms used throughout the LinchPin documentation.
         Within a :term:`topology_file`, the `topology_name` provides a way to
         identify the set of resources being acted upon.
 
+    uhash
+    uHash
+        Unique-ish hash associated with resources on a provider basis. Provides
+        unique resource names and data if desired. The uhash must be enabled
+        in linchpin.conf if desired.
+
     workspace
         If provided, the above variables will be adjusted
         and mapped according to this value. Each path will use the following
@@ -170,11 +206,5 @@ The following is a list of terms used throughout the LinchPin documentation.
 
 .. seealso::
 
-    :doc:`config_ansiblevars`
-        Ansible Variables
     `Source Code <https://github.com/CentOS-PaaS-SIG/linchpin>`_
         LinchPin Source Code
-    `User Mailing List <https://www.redhat.com/mailman/listinfo/linchpin>`_
-        Subscribe and participate. A great place for Q&A 
-    `irc.freenode.net <http://irc.freenode.net>`_
-        #linchpin IRC chat channel
