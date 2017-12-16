@@ -40,12 +40,12 @@ The PinFile.dummy.json contains the reference to the `dummy.json` layout.
 
 .. code-block:: yaml
 
-{
-    "dummy": {
-        "topology": "dummy.json",
-        "layout": "dummy.json"
+    {
+        "dummy": {
+            "topology": "dummy.json",
+            "layout": "dummy.json"
+        }
     }
-}
 
 .. seealso:: :docs1.5:`PinFile.dummy.json <workspace/PinFile.dummy.json>`
 

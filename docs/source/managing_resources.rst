@@ -6,6 +6,13 @@ Resources in LinchPin generally consist of Virtual Machines, Containers, Network
 .. toctree::
    :tocdepth: 1
 
+.. _res_pinfiles:
+
+PinFiles
+--------
+
+.. include:: resources/pinfiles.rst
+
 .. _res_topologies:
 
 Topologies
@@ -19,14 +26,6 @@ Layouts
 -------
 
 .. include:: resources/layouts.rst
-
-.. _res_pinfiles:
-
-PinFiles
--------
-
-.. include:: resources/pinfiles.rst
-
 
 .. seealso::
 
