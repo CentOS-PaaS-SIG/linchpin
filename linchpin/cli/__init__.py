@@ -128,7 +128,9 @@ class LinchpinCli(LinchpinAPI):
         """
 
         if not self.pinfile:
-            self.pinfile = self.get_cfg('lp', 'default_pinfile', default='PinFile')
+            self.pinfile = self.get_cfg('lp',
+                                        'default_pinfile',
+                                        default='PinFile')
 
         pf_w_path = os.path.abspath(os.path.expanduser(self.pinfile))
 

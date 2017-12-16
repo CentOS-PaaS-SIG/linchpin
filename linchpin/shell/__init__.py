@@ -25,7 +25,7 @@ class LinchpinAliases(click.Group):
 
     def list_commands(self, ctx):
         """
-        Provide a list of available commands. Anhthing deprecated should
+        Provide a list of available commands. Anything deprecated should
         not be listed
         """
 
@@ -98,13 +98,12 @@ def _handle_results(ctx, results, return_code):
 
             output += '\t{0:>9}\n'.format(return_code)
 
-
     ctx.log_state(output)
     sys.exit(return_code)
 
 
 @click.group(cls=LinchpinAliases,
-             invoke_without_command=True,
+             invoke_without_command=False,
              no_args_is_help=True,
              context_settings=CONTEXT_SETTINGS)
 @click.option('-c', '--config', type=click.Path(), envvar='LP_CONFIG',
