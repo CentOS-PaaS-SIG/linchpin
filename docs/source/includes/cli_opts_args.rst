@@ -1,4 +1,4 @@
-The most common argument available in ``linchpin`` is the TARGET. Generally, the :term:`PinFile` will have many targets available, but only one or two will be requested.
+The most common argument available in ``linchpin`` is the :term:`TARGET <target>`. Generally, the :term:`PinFile` will have many targets available, but only one or two will be requested.
 
 .. code-block:: bash
 

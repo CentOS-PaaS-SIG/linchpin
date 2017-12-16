@@ -1,1 +1,0 @@
-{"dummy": {"topology": {"topology_name": "dummy_cluster", "resource_groups": [{"resource_group_name": "dummy", "resource_definitions": [{"count": 3, "role": "dummy_node", "name": "web"}], "resource_group_type": "dummy"}]}}}

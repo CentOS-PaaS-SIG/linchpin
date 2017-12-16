@@ -9,10 +9,10 @@ bkr-multiarch:
           - role: bkr_server
             whiteboard: Provisioned with linchpin
             job_group: ci-ops-central
-            {% for arch in ('x86_64', 'ppc64le', 's390x') %}
             recipesets:
+            {% for arch in arches %}
               - distro: RHEL-6.5
-                arch: x86_64
+                arch: {{ arch }}
                 hostrequires:
                   - tag: processors
                     op: ">="

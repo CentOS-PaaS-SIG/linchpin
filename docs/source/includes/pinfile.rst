@@ -165,6 +165,7 @@ Would yield output that would be provisionable.
 .. note:: Output data can also be saved, if desired, by adding the ``--output-pinfile /path/to/PinFile.libvirt-mi.generated``.
 
 
-Additional PinFile examples can be found `in the source code <../../source/examples/workspace>`_.
+Additional PinFile examples can be found in :docs1.5:`the source code <workspace>`.
 
 .. FIXME: Update PinFiles. Provide expanded examples in both YAML and JSON.
+

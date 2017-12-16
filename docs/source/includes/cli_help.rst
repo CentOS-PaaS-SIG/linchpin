@@ -33,7 +33,7 @@ or ``linchpin --help`` will yield the command line help page.
       fetch    Fetches a specified linchpin workspace or...
       journal  Display information stored in Run Database...
 
-For subcommands, like ``linchpin up``, passing the ``--help`` or ``-h`` option produces help.
+For subcommands, like ``linchpin up``, passing the ``--help`` or ``-h`` option produces help related to the provided subcommand.
 
 .. code-block:: bash
 
@@ -51,5 +51,5 @@ For subcommands, like ``linchpin up``, passing the ``--help`` or ``-h`` option p
       -r, --run-id run_id  Idempotently provision using `run-id` data
       -h, --help           Show this message and exit.
 
-As can easily be seen, ``linchpin up`` has some values that can be passed.
+As can easily be seen, ``linchpin up`` has additional arguments and options.
 
