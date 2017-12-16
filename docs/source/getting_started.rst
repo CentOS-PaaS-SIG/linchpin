@@ -1,72 +1,61 @@
 Getting Started
 ===============
 
+.. _gs_foreword:
+
+Now that LinchPin is :doc:`installed <installation>`, this guide will walk you through the basics of using LinchPin. LinchPin is a command-line utility, a Python API, and Ansible playbooks. As this guide is intentionally quite brief to get you started, a more complete version can be found in the documentation links found in the :doc:`index <index>`.
+
+.. toctree::
+   maxdepth: 1
+
 .. contents:: Topics
 
-.. _foreword:
-
-This guide will walk you through the basics of using LinchPin. LinchPin is a command-line utility, a Python API, and Ansible playbooks. As this guide is intentionally quite brief to get you started, a more complete version can be found in the documentation links found in the :doc:`index <index>`.
-
-.. _terminology:
-
+.. _gs_running:
 
 Running the ``linchpin`` command
 --------------------------------
 
-.. include:: includes/linchpin_cli.rst
+.. include:: gs/linchpin_cli.rst
 
-Initialization (init)
----------------------
-
-.. include:: includes/initialization.rst
+.. _gs_workspace:
 
 The Workspace
-`````````````
+-------------
 
-.. include:: includes/workspace.rst
+.. include:: gs/workspace.rst
 
+.. _gs_init:
+
+Initialization (init)
+`````````````````````
+.. include:: includes/initialization.rst
+
+.. _gs_resources:
 
 Resources
 ---------
 
-With LinchPin, resources are king. Defining, managing and output are all declarative. Resources are managed via the :term:`PinFile`. The PinFile can hold two additional files, the :term:`topology`, and :term:`layout`. Linchpin also supports :doc:`hooks`.
+.. include:: includes/resources.rst
 
-
-Topology
-````````
-
-.. include:: includes/topologies.rst
-
-Inventory Layout
-````````````````
-
-.. include:: includes/layouts.rst
-
-
-PinFile
-```````
-
-.. include:: includes/pinfile.rst
-
+.. _gs_up:
 
 Provisioning (up)
 ------------------
 
-.. include:: includes/provisioning.rst
+.. include:: gs/provisioning.rst
+
+.. _gs_destroy:
 
 Teardown (destroy)
 ------------------
 
-.. include:: includes/teardown_destroy.rst
+.. include:: gs/teardown_destroy.rst
 
-Multi-Target Actions
---------------------
 
-.. include:: includes/multi_target_actions.rst
 
 .. seealso::
 
-    :doc:`linchpin_cli`
+    :doc:`cli`
         Linchpin Command-Line Interface
     :doc:`managing_resources`
         Managing Resources

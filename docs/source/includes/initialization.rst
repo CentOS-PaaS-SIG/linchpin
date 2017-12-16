@@ -1,4 +1,4 @@
-Running ``linchpin init`` will generate the directory structure needed, along with an example :term:`PinFile`, :term:`topology`, and :term:`layout` files. Performing the following tasks will generate a simple dummy PinFile, topology, and layout structure.
+Running ``linchpin init`` will generate the :term:`workspace` directory structure, along with an example :term:`PinFile`, :term:`topology`, and :term:`layout` files. Performing the following tasks will generate a simple dummy PinFile, topology, and layout structure.
 
 .. code-block:: bash
 

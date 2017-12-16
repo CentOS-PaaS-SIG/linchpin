@@ -3,5 +3,5 @@
 linchpin up
 -----------
 
-.. include:: includes/provision.rst
+.. include:: includes/provisioning.rst
 
