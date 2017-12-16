@@ -8,6 +8,26 @@ Configuration File
 
 Below is full coverage of each of the sections of the values available in `linchpin.conf <https://raw.githubusercontent.com/CentOS-PaaS-SIG/linchpin/develop/linchpin/linchpin.conf>`_
 
+General Configuration
+---------------------
+
+Managing LinchPin requires a few configuration files. Beyond
+:docs1.5:`linchpin.conf`, there are a few other configurations that are
+checked . When running linchpin, four different locations are checked for
+linchpin.conf files. Files are checked in the following order:
+
+1. linchpin/library/path/linchpin.conf
+2. /etc/linchpin.conf
+3. ~/.config/linchpin/linchpin.conf
+4. path/to/workspace/linchpin.conf
+
+The linchpin configuration parser supports overriding and extension of
+configurations. Therefore, the existing configuration files are read.
+If linchpin finds the same configuration section header in more than one file,
+the header that was parsed more recently will provide the configuration for that
+section. In this way user can override the general configurations. Commonly,
+this is done by placing a `linchpin.conf` in the root of the :term:`workspace`.
+
 Getting the most current configuration
 --------------------------------------
 
@@ -31,7 +51,7 @@ Command Line Options
 
 Some configuration options are also present in the command line. Settings passed via the command line will override those passed through the configuration file and the environment.
 
-The full list of options is covered in the :doc:`Command Line Reference <linchpin_cli>` document.
+The full list of options is covered in the :doc:`cli` document.
 
 Values by Section
 -----------------
