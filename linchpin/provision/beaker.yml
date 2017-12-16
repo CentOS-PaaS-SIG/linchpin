@@ -23,7 +23,7 @@
   hosts: localhost
   gather_facts: True
   roles:
-    - role: "{{ default_roles_path }}/inventory_gen"
+    - role: 'inventory_gen'
       when:
         - state == 'present'
         - layout_file is defined or layout is defined

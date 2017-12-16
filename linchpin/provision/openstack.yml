@@ -13,7 +13,7 @@
   roles:
     - { role: 'openstack' }
 
-- name: "Writing contents to file"
+- name: "Gather resources to the RunDB"
   hosts: localhost
   gather_facts: True
   roles:
