@@ -668,8 +668,10 @@ class LinchpinAPI(object):
                                                                action,
                                                                'site.yml'))
         extra_var = self.get_evar()
+        inventory_src = '{0}/localhost'.format(self.workspace)
 
         return ansible_runner(playbook_path,
                               module_path,
                               extra_var,
+                              inventory_src=inventory_src,
                               console=console)
