@@ -1,5 +1,5 @@
 These topologies represent many combinations of complexity and providers.
-Topologies process resource_definitions top to bottom according to the file.
+Topologies process :term:`resource_definitions` top to bottom according to the file.
 
 Topologies have evolved a little and have a slightly different format between
 versions. However, older versions still work on v1.5.0+ (until otherwise noted).
@@ -81,7 +81,7 @@ Jenkins-Slave Template
 
 This topology template would be processed with a dictionary containing one key named `arch`.
 
-  * :docs1.5:`jenkins-slave.yml <workspace/topologies/jenkins-slave.yml>`
+  * :docs1.5:`jenkins-slave.j2 <workspace/topologies/jenkins-slave.j2>`
 
 The PinFile.jenkins.yml contains the reference to the `jenkins-slave` topology.
 
@@ -92,7 +92,7 @@ The PinFile.jenkins.yml contains the reference to the `jenkins-slave` topology.
       layout: jenkins-slave.yml
 
 
-.. seealso:: :docs1.5:`jenkins-slave.yml <workspace/PinFile.jenkins.yml>`
+.. seealso:: :docs1.5:`Pinfile.jenkins.j2 <workspace/PinFile.jenkins.j2>`
 
 .. code-block:: bash
 
