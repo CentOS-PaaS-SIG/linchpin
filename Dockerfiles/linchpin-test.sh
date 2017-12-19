@@ -4,9 +4,9 @@ DRIVER=$1
 
 function clean_up {
     set +e
-    linchpin -v down $DRIVER
+    linchpin -v destroy $DRIVER
 }
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
-pushd /workdir/Dockerfiles/lp_test_workspace
+pushd /workdir/docs/source/examples/workspace
 linchpin -v up $DRIVER
