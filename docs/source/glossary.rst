@@ -69,7 +69,7 @@ The following is a list of terms used throughout the LinchPin documentation.
     inventories_folder
         *(Default: inventories)*
 
-        A configuration entry in :docs1.5:`linchpin.conf` which stores the relative location
+        A configuration entry in :code1.5:`linchpin.conf` which stores the relative location
         where inventories are stored.
 
     linchpin_config
@@ -136,6 +136,10 @@ The following is a list of terms used throughout the LinchPin documentation.
               - name: "test"
                 type: "dummy_node"
                 count: 1
+
+    resource_group_type
+        For each resource group, the type is defined by this value. It's used by
+        the LinchPin API to determine which provider playbook to run.
 
     resources
     resources_file

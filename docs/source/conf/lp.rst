@@ -31,9 +31,14 @@ New in version 1.2.0
 The resource path to the RunDB connection. The TinyRunDB version (default)
 is a file.
 
+Default: ``{{ workspace }}/.rundb/rundb.json``
+
+The configuration file has this option commented out. Uncommenting it could
+enable a system-central rundb, if desired.
+
 .. code-block:: cfg
 
-    rundb_conn = ./.rundb/rundb-::mac::.json
+    #rundb_conn = %(default_config_path)s/rundb/rundb-::mac::.json
 
 rundb_conn_type
 ~~~~~~~~~~~~~~~

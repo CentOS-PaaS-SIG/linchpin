@@ -3,14 +3,14 @@ Configuration File
 
 .. contents:: Topics
 
-Below is full coverage of each of the sections of the values available in :docs1.5:`linchpin.conf <linchpin.conf>`.
+Below is full coverage of each of the sections of the values available in :code1.5:`linchpin.conf`.
 
 Getting the most current configuration
 --------------------------------------
 
 If you are installing LinchPin from a package manager (pip or RPM), the latest linchpin.conf is already included in the library.
 
-An example :docs1.5:`linchpin.conf` is available on Github.
+An example :code1.5:`linchpin.conf` is available on Github.
 
 For in-depth details of all the options, see the :doc:`Configuration Reference <configuration>` document.
 
@@ -35,28 +35,32 @@ The configuration file is broken into sections. Each section controls a specific
 
 General Defaults
 ````````````````
-
 .. include:: conf/defaults.rst
 .. include:: conf/lp.rst
 
 Extra Vars
 ``````````
-
-LinchPin sets several :term:`extra_vars` values, which are passed to the provisioning playbooks.
-
 .. include:: conf/evars.rst
 
-..   conf_init
-..   conf_logger
-..   conf_console
-..   conf_hookstates
-..   conf_extensions
-..   conf_ansible
-..   conf_states
-..   conf_repository_control
-..   conf_fetch_types
-..   conf_fetch_aliases
+Initialization Settings
+```````````````````````
+.. include:: conf/init.rst
 
+Logger Settings
+```````````````
+.. include:: conf/logger.rst
+
+Hooks Settings
+``````````````
+.. include:: conf/hooks.rst
+
+File Extensions
+```````````````
+.. include:: conf/extensions.rst
+
+Playbook Settings
+```````````````
+.. include:: conf/playbooks.rst
 
 .. seealso::
 

@@ -2,7 +2,7 @@ General Configuration
 ---------------------
 
 Managing LinchPin requires a few configuration files. Beyond
-:docs1.5:`linchpin.conf`, there are a few other configurations that are
+:code1.5:`linchpin.conf`, there are a few other configurations that are
 checked . When running linchpin, four different locations are checked for
 linchpin.conf files. Files are checked in the following order:
 
@@ -30,7 +30,8 @@ overwrite an existing section.
 .. code-block:: cfg
 
     [lp]
-    rundb_conn = ./rundb.json
+    # move the rundb_connection to a global scope
+    rundb_conn = %(default_config_path)s/rundb/rundb-::mac::.json
 
     module_folder = library
 
@@ -48,22 +49,34 @@ overwrite an existing section.
     dateformat = %%m/%%d/%%Y %%I:%%M:%%S %%p
     default_pinfile = PinFile
 
-A common thing to do is to put the items updated at the top of the new
-section. It may even be a good idea to add a comment stating why it was
-updated.
+For instance above, the configuration has been updated to use a different path
+to the ``rundb_conn``. This section now uses a system-wide RunDB, which
+can be useful to some.
 
 .. warning:: If overwriting a section, all entries from the entire section
    must be updated.
+
+.. note:: A common thing to do is to put the items updated at the top of the new
+   section. It may even be a good idea to add a comment stating why it was
+   updated.
 
 .. _config_useful_configs:
 
 Useful Configuration Options
 ````````````````````````````
 
+These are some configuration options that may be useful to adjust for your
+needs. Each configuration option listed here is in a format of
+``section.option``.
+
+.. note:: For clarity, this would appear in a configuration file where the
+   section is in brackets (eg. ``[section]``) and the option would have a
+   ``option = value`` set within the section.
+
 lp.external_providers_path
     New in version 1.5.0
 
-    Default value: %(default_config_path)s/linchpin-x
+    Default value: ``%(default_config_path)s/linchpin-x``
 
     Providers playbooks can be created outside of the core of linchpin,
     if desired. When using these external providers, linchpin will use
@@ -75,7 +88,9 @@ lp.external_providers_path
 lp.rundb_conn
     New in version 1.2.0
 
-    Default value: ./rundb.json
+    Default value:
+        * v1.2.0: ``/home/user/.config/linchpin/rundb-<macaddress>.json``
+        * v1.2.1+: ``/path/to/workspace/.rundb/rundb.json``
 
     The RunDB is a single json file, which records each transaction involving
     resources. A :term:`run_id` and :term:`uHash` are assigned, along with
@@ -85,7 +100,7 @@ lp.rundb_conn
 evars._async
     Updated in version 1.2.0
 
-    Default value: False
+    Default value: ``False``
 
     Previous key name: evars.async
 
@@ -103,7 +118,7 @@ evars._async
     to its value.
 
 evars.default_credentials_path
-    Default value: `%(default_config_path)s`
+    Default value: ``%(default_config_path)s``
 
     Storing credentials for multiple providers can be useful. It also may
     be useful to change the default here to point to a given location.
@@ -112,7 +127,7 @@ evars.default_credentials_path
               variable overrides this option
 
 evars.inventory_file
-    Default value: None
+    Default value: ``None``
 
     If the unique-hash feature is turned on, the default inventory_file
     value is built up by combining the :term:`workspace` path,
@@ -128,7 +143,7 @@ evars.inventory_file
     define a completely different structure altogether.
 
 ansible.console
-    Default value: False
+    Default value: ``False``
 
     This configuration option controls whether the output from the Ansible
     console is printed. In the ``linchpin`` CLI tool, it's the equivalent of
