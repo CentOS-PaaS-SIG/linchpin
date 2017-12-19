@@ -126,14 +126,9 @@ rax-new:
 libvirt:
   topology: libvirt.yml
   layout: libvirt.yml
-#  hooks:
-#    postup:
-#      - type: ansible
-#        name: ping
-#        context: True
-#        actions:
-#          - playbook: ping.yaml
-#            extra_vars: {"ansible_ssh_private_key_file": "/home/herlo/.ssh/rh_rsa"}
+
+libvirt-centos6:
+  topology: libvirt-centos6.yml
 #
 #bkr:
 #  topology: bkr.yml
