@@ -76,7 +76,6 @@ class LinchpinAPI(object):
         """
         Configures the run database parameters, sets them into extra_vars
         """
-
         rundb_conn_default = '~/.config/linchpin/rundb-::mac::.json'
         rundb_conn = self.get_cfg(section='lp',
                                   key='rundb_conn',
@@ -329,6 +328,8 @@ class LinchpinAPI(object):
                             res_def['role'] = res_def.pop('type')
                         if 'res_type' in res_def.keys():
                             res_def['role'] = res_def.pop('res_type')
+                        if 'count' in res_def.keys():
+                            res_def['count'] = int(res_def.pop('count'))
                 else:
                     raise TopologyError("'resource_definitions' do not validate"
                                         " in topology ({0})".format(topology))

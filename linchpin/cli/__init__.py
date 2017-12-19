@@ -275,6 +275,17 @@ class LinchpinCli(LinchpinAPI):
                             ' workspace'.format(filename))
 
 
+    def _make_layout_integers(self, data):
+
+        inv_layout = data.get('inventory_layout')
+        if inv_layout:
+            for k,v in inv_layout.get('hosts').iteritems():
+                if 'count' in v.keys():
+                    v['count'] = int(v.pop('count'))
+
+        return data
+
+
     def _build(self, pf, pf_data=None):
         """
         This function constructs the provision_data from the pinfile inputs
@@ -305,6 +316,7 @@ class LinchpinCli(LinchpinAPI):
                     layout_path = self.find_include(pf[target]["layout"],
                                                     ftype='layout')
                     layout_data = self.parser.process(layout_path, pf_data)
+                    layout_data = self._make_layout_integers(layout_data)
                     provision_data[target]['layout'] = layout_data
                 else:
                     layout_data = pf[target]['layout']
