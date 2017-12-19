@@ -2,7 +2,7 @@
     "inventory_layout": {
         "hosts": {
             "example-node": {
-                "count": {{ node_count | default(1) }},
+                "count": "{{ node_count | default(1) }}",
                 "host_groups": [
                     "example"
                 ]

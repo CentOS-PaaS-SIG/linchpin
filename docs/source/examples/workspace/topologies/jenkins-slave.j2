@@ -6,9 +6,9 @@ resource_groups:
   resource_definitions:
   - role: bkr_server
     job_group: multiarch-qe
-    whiteboard: {{ arch }} slave for multiarch testing
+    whiteboard: "{{ arch }} slave for multiarch testing"
     recipesets:
     - distro: RHEL-7.4
-      arch: {{ arch }}
+      arch: "{{ arch }}"
       variant: Server
       count: 1

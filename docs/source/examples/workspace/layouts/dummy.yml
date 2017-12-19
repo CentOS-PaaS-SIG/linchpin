@@ -7,4 +7,8 @@ inventory_layout:
       count: 3
       host_groups:
         - example
+    test-node:
+      count: 1
+      host_groups:
+        - test
 

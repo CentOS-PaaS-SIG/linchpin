@@ -5,7 +5,7 @@
             "resource_group_name": "dummy",
             "resource_definitions": [
                 {
-                    "count": {{ node_count | default(1) }},
+                    "count": "{{ node_count | default(1) }}",
                     "type": "dummy_node",
                     "name": "web"
                 }

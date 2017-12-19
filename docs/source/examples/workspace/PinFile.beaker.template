@@ -12,7 +12,7 @@ bkr-multiarch:
             recipesets:
             {% for arch in arches %}
               - distro: RHEL-6.5
-                arch: {{ arch }}
+                arch: "{{ arch }}"
                 hostrequires:
                   - tag: processors
                     op: ">="

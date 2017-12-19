@@ -12,7 +12,7 @@ libvirt-mi:
             image_src: {{ instance.src }}
             memory: 1024
             vcpus: 1
-            arch: {{ instance.arch | default('x86_64') }}
+            arch: "{{ instance.arch | default('x86_64') }}"
             networks:
               - name: default
         {% endfor %}
