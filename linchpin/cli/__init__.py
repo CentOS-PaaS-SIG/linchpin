@@ -279,7 +279,7 @@ class LinchpinCli(LinchpinAPI):
 
         inv_layout = data.get('inventory_layout')
         if inv_layout:
-            for k,v in inv_layout.get('hosts').iteritems():
+            for k, v in inv_layout.get('hosts').iteritems():
                 if 'count' in v.keys():
                     v['count'] = int(v.pop('count'))
 

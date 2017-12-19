@@ -129,6 +129,7 @@ class DefaultGroup(click.Group):
             return decorator
         warnings.warn('Use default param of DefaultGroup or '
                       'set_default_command() instead', DeprecationWarning)
+
         def _decorator(f):
             cmd = decorator(f)
             self.set_default_command(cmd)
