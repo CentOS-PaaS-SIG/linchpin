@@ -3,6 +3,10 @@
 import os
 import logging
 
+# FIXME: remove this later when not using python2.6
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 try:
     import configparser as ConfigParser
 except ImportError:
