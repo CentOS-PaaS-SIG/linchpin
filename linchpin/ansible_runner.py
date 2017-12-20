@@ -3,11 +3,20 @@ import sys
 import ansible
 from collections import namedtuple
 from contextlib import contextmanager
-from callbacks import PlaybookCallback
-from ansible.parsing.dataloader import DataLoader
-from ansible.executor.playbook_executor import PlaybookExecutor
 
 ansible24 = float(ansible.__version__[0:3]) >= 2.4
+
+# CentOS 6 EPEL provides an alternate Jinja2 package
+# Ansible uses Jinja2 here
+try:
+    from callbacks import PlaybookCallback
+    from ansible.parsing.dataloader import DataLoader
+    from ansible.executor.playbook_executor import PlaybookExecutor
+except ImportError:
+    sys.path.insert(0, '/usr/lib/python2.6/site-packages/Jinja2-2.6-py2.6.egg')
+    from callbacks import PlaybookCallback
+    from ansible.parsing.dataloader import DataLoader
+    from ansible.executor.playbook_executor import PlaybookExecutor
 
 if ansible24:
     from ansible.vars.manager import VariableManager
