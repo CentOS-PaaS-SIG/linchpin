@@ -8,13 +8,14 @@ WORKDIR $HOME
 RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
 
 RUN yum -y install python-pip ansible curl gcc python-devel openssl-devel \
-                   qemu-kvm libxml2-devel libxslt-devel file openssh \
-                   python-jinja2-26 mkisofs libvirt-client libffi-devel
+                   libxml2-devel libxslt-devel file openssh \
+                   python-jinja2-26libffi-devel
 
 # install Libvirt deps
 RUN yum -y install libvirt libvirt-devel libvirt-client libvirt-python \
-                   virt-install net-tools qemu-kvm libvirt-python \
-                   libguestfs-tools policycoreutils-python bridge-utils
+                   qemu-kvm virt-install net-tools qemu-kvm libvirt-python \
+                   mkisofs libvirt-client libguestfs-tools \
+                   policycoreutils-python bridge-utils
 
 RUN echo "options kvm-intel nested=1" > /etc/modprobe.d/kvm-intel.conf
 
