@@ -353,7 +353,7 @@ extlinks = {
     'docs1.5': (
     'https://raw.githubusercontent.com/herlo/linchpin/docs1.5/docs/source/examples/%s', ''),
     'code1.5': (
-    'https://raw.githubusercontent.com/herlo/linchpin/docs1.5/linchpin/%s', ''),
+    'https://raw.githubusercontent.com/herlo/linchpin/docs1.5/%s', ''),
     'dirs1.5': (
     'https://github.com/herlo/linchpin/tree/docs1.5/docs/source/examples/%s', ''),
 }
