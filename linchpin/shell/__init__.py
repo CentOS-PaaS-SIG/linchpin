@@ -265,18 +265,6 @@ def up(ctx, targets, run_id):
         sys.exit(1)
 
 
-#@runcli.command()
-#@click.argument('targets', metavar='TARGET', required=False, nargs=-1)
-#@pass_context
-#def rise(ctx, targets):
-#    """
-#    DEPRECATED. Use 'up'
-#
-#    """
-#
-#    pass
-
-
 @runcli.command()
 @click.argument('targets', metavar='TARGET', required=False,
                 nargs=-1)
@@ -299,27 +287,6 @@ def destroy(ctx, targets, run_id):
     except LinchpinError as e:
         ctx.log_state(e)
         sys.exit(1)
-
-
-#@runcli.command()
-#@click.argument('targets', metavar='TARGET', required=False,
-#                nargs=-1)
-#@pass_context
-#def drop(ctx, targets):
-#    """
-#    DEPRECATED. Use 'destroy'.
-#
-#    There are now two functions, `destroy` and `down` which perform node
-#    teardown. The `destroy` functionality is the default, and if drop is
-#    used, will be called.
-#
-#    The `down` functionality is currently unimplemented, but will shutdown
-#    and preserve instances. This feature will only work on providers that
-#    support this option.
-#
-#    """
-#
-#    pass
 
 
 @runcli.command()

@@ -70,6 +70,7 @@ class LinchpinAPI(object):
         self.set_evar('lp_path', lp_path)
         self.set_evar('pb_path', self.pb_path)
         self.set_evar('from_api', True)
+        self.workspace = self.get_evar('workspace')
 
 
     def setup_rundb(self):
