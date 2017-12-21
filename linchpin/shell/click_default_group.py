@@ -103,6 +103,13 @@ class DefaultGroup(click.Group):
         if not len(ctx.protected_args):
             ctx.protected_args.append(self.default_cmd_name)
 
+    def list_commands(self, ctx):
+        """
+        Provide a list of available commands. Anything deprecated should
+        not be listed
+        """
+
+        return ['init', 'up', 'destroy', 'fetch', 'journal']
 
     def get_command(self, ctx, cmd_name):
 
