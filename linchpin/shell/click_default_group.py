@@ -105,11 +105,20 @@ class DefaultGroup(click.Group):
 
 
     def get_command(self, ctx, cmd_name):
-        if cmd_name not in self.commands:
+
+        lp_aliases = {
+            'rise': 'up',
+            'drop': 'destroy',
+            'down': 'destroy',
+        }
+
+        cmd = lp_aliases.get(cmd_name, cmd_name)
+
+        if cmd not in self.commands:
             # No command name matched.
-            ctx.arg0 = cmd_name
-            cmd_name = self.default_cmd_name
-        return super(DefaultGroup, self).get_command(ctx, cmd_name)
+            ctx.arg0 = cmd
+            cmd = self.default_cmd_name
+        return super(DefaultGroup, self).get_command(ctx, cmd)
 
     def resolve_command(self, ctx, args):
         base = super(DefaultGroup, self)
