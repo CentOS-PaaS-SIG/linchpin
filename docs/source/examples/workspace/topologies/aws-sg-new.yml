@@ -1,0 +1,26 @@
+---
+topology_name: aws-sg-new
+resource_groups:
+  - resource_group_name: "aws"
+    resource_group_type: "aws"
+    resource_definitions:
+      - name: "aws_sg_test"
+        role: "aws_sg"
+        description: "AWS SSH Security Group"
+        region: "us-east-1"
+        rules:
+          - rule_type: "inbound"
+            from_port: "8"
+            to_port: -1
+            proto: "icmp"
+            cidr_ip: "0.0.0.0/0"
+          - rule_type: "inbound"
+            from_port: 22
+            to_port: 22
+            proto: "tcp"
+            cidr_ip: "0.0.0.0/0"
+          - rule_type: "outbound"
+            from_port: all
+            to_port: all
+            proto: "all"
+            cidr_ip: "0.0.0.0/0"

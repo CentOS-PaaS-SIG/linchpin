@@ -48,6 +48,7 @@ class DataParser(object):
         with open(file_w_path, 'r') as stream:
             file_data = stream.read()
 
+            pf_data = '{}'
             if data_w_path:
                 pf_data = data_w_path
                 try:
@@ -56,8 +57,8 @@ class DataParser(object):
                 except Exception:
                     pass
 
-                file_data = self.render(file_data, pf_data)
-                return self.parse_json_yaml(file_data)
+            file_data = self.render(file_data, pf_data)
+            return self.parse_json_yaml(file_data)
 
         return self.load_pinfile(file_w_path)
 

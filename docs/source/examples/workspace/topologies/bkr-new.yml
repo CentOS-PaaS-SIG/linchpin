@@ -1,0 +1,31 @@
+---
+topology_name: "bkr-new"
+resource_groups:
+  - resource_group_name: "bkr-new"
+    resource_group_type: beaker
+    resource_definitions:
+      - role: bkr_server
+        whiteboard: Provisioned with linchpin
+        job_group: ci-ops-central
+        recipesets:
+          - distro: RHEL-6.5
+            arch: x86_64
+            hostrequires:
+              - tag: processors
+                op: ">="
+                value: 4
+              - tag: device
+                op: "="
+                type: "network"
+            count: 1
+      - role: bkr_server
+        whiteboard: Provisioned with linchpin
+        job_group: ci-ops-central
+        recipesets:
+          - distro: RHEL-6.5
+            arch: x86_64
+            hostrequires:
+              - tag: processors
+                op: ">="
+                value: 1
+            count: 1

@@ -1,0 +1,9 @@
+---
+topology_name: aws-s3-new
+resource_groups:
+  - resource_group_name: "aws_s3"
+    resource_group_type: "aws"
+    resource_definitions:
+      - name: "s3_bucket"
+        role: "aws_s3"
+        region: "us-west-2"

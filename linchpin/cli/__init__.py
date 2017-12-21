@@ -84,10 +84,7 @@ class LinchpinCli(LinchpinAPI):
         """
         Initializes a linchpin project. Creates the necessary directory
         structure, includes PinFile, topologies and layouts for the given
-        provider. (Default: Libvirt. Other providers not yet implemented.)
-
-        :param pf_w_path: Path to where the PinFile might exist. Gets created
-        if it doesn't exist.
+        provider. (Default: Dummy. Other providers not yet implemented.)
 
         :param providers: A list of providers for which templates
         (and a target) will be provided into the workspace.
@@ -99,6 +96,7 @@ class LinchpinCli(LinchpinAPI):
 
         pf_w_path = self._get_pinfile_path(exists=False)
 
+        # appending .lp_example so we know which PinFile is which
         src_pf = os.path.realpath('{0}.lp_example'.format(pf_w_path))
 
         try:
@@ -129,16 +127,17 @@ class LinchpinCli(LinchpinAPI):
             Whether the pinfile is supposed to already exist (default: True)
         """
 
-        pinfile = self.get_cfg('lp', 'default_pinfile', default='PinFile')
-        if self.pinfile:
-            pinfile = self.pinfile
+        if not self.pinfile:
+            self.pinfile = self.get_cfg('lp',
+                                        'default_pinfile',
+                                        default='PinFile')
 
-        pf_w_path = os.path.abspath(os.path.expanduser(pinfile))
+        pf_w_path = os.path.abspath(os.path.expanduser(self.pinfile))
 
         if not os.path.exists(pf_w_path) and exists:
-            pf_w_path = '{0}/{1}'.format(self.workspace, pinfile)
+            pf_w_path = '{0}/{1}'.format(self.workspace, self.pinfile)
             self.ctx.log_state('{0} not found in provided workspace: '
-                               '{1}'.format(pinfile, self.workspace))
+                               '{1}'.format(self.pinfile, self.workspace))
 
         return pf_w_path
 
@@ -201,7 +200,7 @@ class LinchpinCli(LinchpinAPI):
                                  run_id=run_id)
 
 
-    def lp_destroy(self, targets=[], run_id=None):
+    def lp_destroy(self, targets=(), run_id=None):
         """
         This function takes a list of targets, and performs a destructive
         teardown, including undefining nodes, according to the target(s).
@@ -229,7 +228,7 @@ class LinchpinCli(LinchpinAPI):
                                  run_id=run_id)
 
 
-    def lp_down(self, pinfile, targets='all'):
+    def lp_down(self, pinfile, targets=(), run_id=None):
         """
         This function takes a list of targets, and performs a shutdown on
         nodes in the target's topology. Only providers which support shutdown
@@ -253,8 +252,12 @@ class LinchpinCli(LinchpinAPI):
         """
         Find the included file to be acted upon.
 
-        :param topology:
-            name of topology from PinFile to be loaded
+        :param filename:
+            name of file from to be loaded
+
+        :param ftype:
+            the file type to locate: topology, layout
+            (default: topology)
 
         """
 
@@ -270,6 +273,17 @@ class LinchpinCli(LinchpinAPI):
 
         raise LinchpinError('{0} not found in'
                             ' workspace'.format(filename))
+
+
+    def _make_layout_integers(self, data):
+
+        inv_layout = data.get('inventory_layout')
+        if inv_layout:
+            for k, v in inv_layout.get('hosts').iteritems():
+                if 'count' in v.keys():
+                    v['count'] = int(v.pop('count'))
+
+        return data
 
 
     def _build(self, pf, pf_data=None):
@@ -302,6 +316,7 @@ class LinchpinCli(LinchpinAPI):
                     layout_path = self.find_include(pf[target]["layout"],
                                                     ftype='layout')
                     layout_data = self.parser.process(layout_path, pf_data)
+                    layout_data = self._make_layout_integers(layout_data)
                     provision_data[target]['layout'] = layout_data
                 else:
                     layout_data = pf[target]['layout']
