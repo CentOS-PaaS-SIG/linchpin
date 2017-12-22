@@ -26,4 +26,4 @@
     - role: 'inventory_gen'
       when:
         - state == 'present'
-        - layout_file is defined or layout is defined
+        - layout_data is defined
