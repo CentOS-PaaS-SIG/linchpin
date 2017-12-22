@@ -3,13 +3,18 @@
 import os
 import logging
 
+from linchpin.exceptions import LinchpinError
+from linchpin.version import __version__
+
+# FIXME: remove this later when not using python2.6
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 try:
     import configparser as ConfigParser
 except ImportError:
     import ConfigParser as ConfigParser
 
-from linchpin.exceptions import LinchpinError
-from linchpin.version import __version__
 
 
 class LinchpinContext(object):

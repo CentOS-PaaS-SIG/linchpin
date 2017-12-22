@@ -69,7 +69,7 @@ The following is a list of terms used throughout the LinchPin documentation.
     inventories_folder
         *(Default: inventories)*
 
-        A configuration entry in :code1.5:`linchpin.conf` which stores the relative location
+        A configuration entry in :code1.5:`linchpin.conf <linchpin/linchpin.conf>` which stores the relative location
         where inventories are stored.
 
     linchpin_config

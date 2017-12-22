@@ -132,12 +132,16 @@ class LinchpinCli(LinchpinAPI):
                                         'default_pinfile',
                                         default='PinFile')
 
-        pf_w_path = os.path.abspath(os.path.expanduser(self.pinfile))
+        pf_w_path = os.path.realpath(os.path.expanduser(self.pinfile))
 
+        # Ensure a PinFile path will exist
         if not os.path.exists(pf_w_path) and exists:
             pf_w_path = '{0}/{1}'.format(self.workspace, self.pinfile)
-            self.ctx.log_state('{0} not found in provided workspace: '
-                               '{1}'.format(self.pinfile, self.workspace))
+
+        # If the PinFile doesn't exist, raise an error
+        if not os.path.exists(pf_w_path) and exists:
+            raise LinchpinError('{0} not found. Please check that it'
+                                ' exists and try again'.format(pf_w_path))
 
         return pf_w_path
 

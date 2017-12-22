@@ -70,6 +70,7 @@ class LinchpinAPI(object):
         self.set_evar('lp_path', lp_path)
         self.set_evar('pb_path', self.pb_path)
         self.set_evar('from_api', True)
+        self.workspace = self.get_evar('workspace')
 
 
     def setup_rundb(self):
@@ -623,10 +624,12 @@ class LinchpinAPI(object):
                 module_paths.append('{0}/{1}/'.format(path, module_folder))
 
             extra_vars = self.get_evar()
+            inventory_src = '{0}/localhost'.format(self.workspace)
 
             return_code, res = ansible_runner(playbook_path,
                                               module_paths,
                                               extra_vars,
+                                              inventory_src=inventory_src,
                                               console=console)
 
             if res:

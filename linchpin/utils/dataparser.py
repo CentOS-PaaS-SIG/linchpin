@@ -4,13 +4,19 @@ import yaml
 import json
 import subprocess
 
-from jinja2 import BaseLoader
-from jinja2 import Environment
+# CentOS 6 EPEL provides an alternate Jinja2 package
+try:
+    from jinja2 import BaseLoader
+    from jinja2 import Environment
+except ImportError:
+    import sys
+    sys.path.insert(0, '/usr/lib/python2.6/site-packages/Jinja2-2.6-py2.6.egg')
+    from jinja2 import BaseLoader
+    from jinja2 import Environment
+
 
 from linchpin.exceptions import LinchpinError
 from linchpin.exceptions import ValidationError
-
-
 
 
 def dict_representer(dumper, data):

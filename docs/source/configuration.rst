@@ -2,7 +2,7 @@ General Configuration
 ---------------------
 
 Managing LinchPin requires a few configuration files. Beyond
-:code1.5:`linchpin.conf`, there are a few other configurations that are
+:code1.5:`linchpin.conf <linchpin/linchpin.conf>`, there are a few other configurations that are
 checked . When running linchpin, four different locations are checked for
 linchpin.conf files. Files are checked in the following order:
 
@@ -11,7 +11,7 @@ linchpin.conf files. Files are checked in the following order:
 #. :file:`~/.config/linchpin/linchpin.conf`
 #. :file:`path/to/workspace/linchpin.conf`
 
-The linchpin configuration parser supports overriding and extension of
+The LinchPin configuration parser supports overriding and extension of
 configurations. Therefore, the existing configuration files are read.
 If linchpin finds the same configuration section header in more than one file,
 the header that was parsed more recently will provide the configuration for that

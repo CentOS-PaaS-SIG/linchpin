@@ -1,7 +1,7 @@
 Installation
 ============
 
-Currently, LinchPin can be run from any machine with Python 2.6+ (Python 3.x is currently experimental), and requires Ansible 2.3.1 or newer. 
+Currently, LinchPin can be run from any machine with Python 2.6+ (Python 3.x is currently experimental), and requires Ansible 2.3.1 or newer.
 
 .. note:: Some providers have additional dependencies. Additional software requirements can be found in the :doc:`providers` documentation.
 
@@ -27,15 +27,23 @@ As LinchPin is heavily dependent on Ansible 2.3.1 or newer, this is a core requi
 * libxml2-python
 * libxslt-python
 
-For Fedora/CentOS/RHEL the following packages should be installed
+For CentOS or RHEL the following packages should be installed:
 
 .. code-block:: bash
 
-    $ sudo yum install python-virtualenv libffi-devel \
+    $ sudo yum install python-pip python-virtualenv libffi-devel \
     openssl-devel libyaml-devel gmp-devel libselinux-python make \
     gcc redhat-rpm-config libxml2-python libxslt-python
 
-.. note:: Fedora will present an output suggesting the use of `dnf` as a replacement for yum.
+.. attention:: CentOS 6 (and likely RHEL 6) require special care during installation. See :doc:`centos6_install` for more detail.
+
+For Fedora 26+ the following packages should be installed:
+
+.. code-block:: bash
+
+    $ sudo dnf install python-virtualenv libffi-devel \
+    openssl-devel libyaml-devel gmp-devel libselinux-python make \
+    gcc redhat-rpm-config libxml2-python libxslt-python
 
 .. _installing_linchpin:
 
