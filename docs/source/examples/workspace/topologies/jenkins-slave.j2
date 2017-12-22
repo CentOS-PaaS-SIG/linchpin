@@ -5,7 +5,7 @@ resource_groups:
   resource_group_type: beaker
   resource_definitions:
   - role: bkr_server
-    job_group: multiarch-qe
+    job_group: "{{ job_group }}"
     whiteboard: "{{ arch }} slave for multiarch testing"
     recipesets:
     - distro: RHEL-7.4
