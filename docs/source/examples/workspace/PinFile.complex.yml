@@ -137,5 +137,6 @@ libvirt-centos6:
 #bkr:
 #  topology: bkr.yml
 #
-#duffy:
-#  topology: duffy.yml
+duffy:
+  topology: duffy.yml
+  layout: duffy.yml
