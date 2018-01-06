@@ -293,7 +293,7 @@
     loop_var: node
   register: extract_mac_address_result
 
-- name: "mac_and_ip | wait for dhcp ip address"
+- name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
     arp -an | grep -F {{ extract_mac_address_result.results[mac].stdout }} | cut -f 2 -d "(" | cut -f 1 -d ")"
   with_items:
@@ -306,7 +306,7 @@
   delay: 10
   when: uri_hostname == 'localhost'
 
-- name: "mac_and_ip | wait for dhcp ip address"
+- name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
     arp -an | grep -F {{ extract_mac_address_result.results[mac].stdout }} | cut -f 2 -d "(" | cut -f 1 -d ")"
   with_items:
