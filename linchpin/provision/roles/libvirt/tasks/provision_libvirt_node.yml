@@ -293,30 +293,30 @@
     loop_var: node
   register: extract_mac_address_result
 
-- name: "mac_and_ip | wait for dhcp ip address"
+- name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
-    until arp -an | grep -q -F {{ extract_mac_address_result.results[mac].stdout }}; do
-      sleep 1
-    done
     arp -an | grep -F {{ extract_mac_address_result.results[mac].stdout }} | cut -f 2 -d "(" | cut -f 1 -d ")"
   with_items:
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: mac
   register: extract_ip_address_result
+  until: extract_ip_address_result.stdout != ""
+  retries: 30 
+  delay: 10
   when: uri_hostname == 'localhost'
 
-- name: "mac_and_ip | wait for dhcp ip address"
+- name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
-    until arp -an | grep -q -F {{ extract_mac_address_result.results[mac].stdout }}; do
-      sleep 1
-    done
     arp -an | grep -F {{ extract_mac_address_result.results[mac].stdout }} | cut -f 2 -d "(" | cut -f 1 -d ")"
   with_items:
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: mac
   register: extract_ip_address_result_remote
+  until: extract_ip_address_result.stdout != ""
+  retries: 30
+  delay: 10
   remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
   delegate_to: "{{ uri_hostname }}"
   when: uri_hostname != 'localhost'
