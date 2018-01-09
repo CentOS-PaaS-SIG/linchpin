@@ -215,7 +215,8 @@ def test_run_playbook():
     failed = False
     if return_code:
         failed = True
-        for res in results[provider]:
+        for res in results[provider]['task_results']:
+            print('res: {}'.format(res))
             name = res._task.get_name()
             if res.is_failed():
                 print('name: {0}'.format(name))
