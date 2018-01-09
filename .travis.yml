@@ -16,4 +16,4 @@ install:
 
 script:
   - flake8 --exclude=\.eggs,tests,docs --ignore=E124,E303 --max-line-length 80 .
-  - nosetests -s linchpin/tests/{cli,api}/*
+  - $(which python) $(which nosetests) -s linchpin/tests/{cli,api}/*
