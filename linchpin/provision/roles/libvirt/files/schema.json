@@ -63,6 +63,7 @@
                         "required": true,
                         "allowed": ["libvirt_network"] },
                     "name": { "type": "string", "required": true },
+                    "uri": { "type": "string", "required": false },
                     "ip": { "type": "string", "required": true },
                     "prefix": { "type": "string", "required": false },
                     "dhcp_start": { "type": "string", "required": false },
@@ -78,6 +79,7 @@
                         "required": true,
                         "allowed": ["libvirt_storage"] },
                     "name": { "type": "string", "required": true },
+                    "uri": { "type": "string", "required": false },
                     "size": { "type": "integer", "required": true },
                     "path": { "type": "integer", "required": true }
                 }
