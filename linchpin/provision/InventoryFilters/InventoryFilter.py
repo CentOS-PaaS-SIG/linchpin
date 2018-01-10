@@ -79,7 +79,9 @@ class InventoryFilter(object):
             else:
                 count = 1
             host_list = []
-            for i in range(0, count):
+            if count > len(inven_hosts):
+                count = len(inven_hosts)
+            for i in range(count, 0, -1):
                 item = inven_hosts.pop()
                 host_list.append(item)
             ip_to_host[host_name] = host_list

@@ -1,0 +1,14 @@
+---
+inventory_layout:
+  vars:
+    hostname: __IP__
+  hosts:
+    example-node:
+      count: 3
+      host_groups:
+        - example
+    test-node:
+      count: 1
+      host_groups:
+        - test
+

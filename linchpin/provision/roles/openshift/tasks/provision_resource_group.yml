@@ -1,0 +1,14 @@
+---
+- name: "Set cred filename"
+  set_fact:
+    openshift_api_endpoint: "{{ res_grp['credentials']['api_endpoint'] | default('') }}"
+    openshift_api_token: "{{ res_grp['credentials']['api_token'] | default('') }}"
+  when: res_grp['credentials'] is defined
+
+- name: "Initiating Provision/Teardown of openshift resource group"
+  include: provision_res_defs.yml res_def={{ res_item }}
+  with_items:
+    - "{{ res_grp['resource_definitions'] }}"
+  loop_control:
+    loop_var: res_item
+

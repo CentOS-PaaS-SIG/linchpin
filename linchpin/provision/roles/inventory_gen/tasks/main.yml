@@ -5,13 +5,13 @@
   set_fact:
     topology_name: "{{ topo_data['topology_name'] }}"
 
-- name: "Parse inventory layout as a ordered dict"
+- name: "Set inventory_layout"
   set_fact:
-    inventory_layout: "{{ layout_file | ordered_yaml }}"
+    inventory_layout: "{{ layout_data | ordered_yaml }}"
 
 - name: "Updating inventory_path with the absolute path"
   set_fact:
-    inventory_path: "{{ inventory_path | default( default_inventories_path+'/'+
+    inventory_path: "{{ inventory_path | default( workspace +'/'+inventories_folder+'/'+
     topology_name.replace(' ', '_').lower() ) + '-' + uhash }}.inventory"
 
 - name: "Generate Generic Inventory"

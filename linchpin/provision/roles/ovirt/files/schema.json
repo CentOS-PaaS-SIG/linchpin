@@ -1,0 +1,61 @@
+{
+    "res_defs": {
+        "type": "list",
+        "schema": {
+            "type": "dict",
+            "schema": {
+                "role": {
+                    "type": "string",
+                    "required": true,
+                    "allowed": ["ovirt_vms"]
+                },
+                "name": { "type": "string", "required": true },
+                "cluster": { "type": "string", "required": true },
+                "template": { "type": "string", "required": false },
+                "memory": { "type": "string", "required": false },
+                "cpu_cores": { "type": "integer", "required": false },
+                "cpu_shares": { "type": "integer", "required": false },
+                "cpu_sockets": { "type": "integer", "required": false },
+                "memory_guaranteed": { "type": "string", "required": false },
+                "high_availability": { "type": "boolean", "required": false },
+                "host": { "type": "string", "required": false },
+                "cd_iso": { "type": "string", "required": false },
+                "operating_system": { "type": "string", "required": false },
+                "nics": {
+                    "type": "list",
+                    "required": false,
+                    "schema": {
+                        "name": {"type": "string", "required": true },
+                        "profile_name": {"type": "string", "required": false },
+                        "interface": {"type": "string", "required": false },
+                        "mac_address": {"type": "string", "required": false }
+                    }
+                },
+                "disks": {
+                    "type": "list",
+                    "required": false,
+                    "schema": {
+                        "name": { "type": "string", "required": true },
+                        "id": { "type": "string", "required": false },
+                        "interface": { "type": "string", "required": false },
+                        "bootable": { "type": "string", "required": false }
+                    }
+                },
+                "cloud_init": {
+                    "type": "list",
+                    "required": false,
+                    "schema": {
+                        "nic_name": { "type": "string", "required": true },
+                        "nic_ip": { "type": "string", "required": false },
+                        "nic_boot_protocol": { "type": "string", "required": false },
+                        "nic_netmask": { "type": "string", "required": false },
+                        "nic_gateway": { "type": "string", "required": false },
+                        "nic_on_boot": { "type": "string", "required": false },
+                        "hostname": { "type": "string", "required": false }
+                    }
+                }
+            }
+        }
+    }
+}
+

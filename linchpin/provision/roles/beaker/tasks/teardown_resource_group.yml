@@ -12,10 +12,6 @@
   set_fact:
     topo_output_resources: "{{ topo_output.output[0]['resources'] }}"
 
-- name: debug topo_output_resources
-  debug:
-    var: topo_output_resources
-
 - name: "init job_ids"
   set_fact:
     job_ids: []
@@ -27,28 +23,20 @@
   loop_control:
     loop_var: fact_item
 
-#- name: job_ids
-#  debug:
-#    var: job_ids
-
 - name: "make ids a dict"
   set_fact:
     just_ids: {"ids": "{{ job_ids }}"}
 
-- name: "combine dicts"
-  set_fact:
-   combined:  "{{ recipeset | combine(just_ids) }}"
+- name: "Create Job structure to send to beaker API"
+  include: get_job_structure.yml res_grp={{ rs }}
   with_items:
-    - "{{ res_grp['recipesets'] }}"
+    - "{{ resources }}"
+  when: state == "absent"
   loop_control:
-    loop_var: recipeset
-
-- name: combined
-  debug:
-    var: combined
+    loop_var: rs
 
 - name: "teardown beaker systems"
   bkr_server:
     recipesets: "[ {{ combined }} ]"
     state: absent
-    job_group: "{{ res_grp['job_group'] | default('') }}"
+    job_group: "{{ resources['job_group'] | default('') }}"

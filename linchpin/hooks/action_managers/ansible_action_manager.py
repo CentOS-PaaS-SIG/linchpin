@@ -4,7 +4,7 @@ import json
 
 from cerberus import Validator
 
-from linchpin.api.ansible_runner import ansible_runner
+from linchpin.ansible_runner import ansible_runner
 from linchpin.exceptions import HookError
 from linchpin.hooks.action_managers.action_manager import ActionManager
 

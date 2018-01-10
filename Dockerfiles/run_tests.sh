@@ -5,13 +5,15 @@ shift
 TARGETS=$*
 DRIVERS="dummy duffy libvirt"
 
-# Pull latest example topolgies
-if [ -d "lp_test_workspace" ]; then
-    pushd lp_test_workspace && git pull
-    popd
-else
-    git clone https://github.com/herlo/lp_test_workspace.git
-fi
+# NOTE: this is replaced by workdir/docs/source/examples/workspace
+# in the linchpin repo
+# Pull latest example topologies
+#if [ -d "lp_test_workspace" ]; then
+#    pushd lp_test_workspace && git pull
+#    popd
+#else
+#    git clone https://github.com/herlo/lp_test_workspace.git
+#fi
 
 # Pull down duffy-ansible-module
 if [ -d "duffy-ansible-module" ]; then

@@ -94,9 +94,11 @@ class LinchpinHooks(object):
         self._rundb = None
         self._rundb_id = None
 
+
     @property
     def rundb(self):
         return (self._rundb, self._rundb_id)
+
 
     @rundb.setter
     def rundb(self, data):
@@ -110,22 +112,23 @@ class LinchpinHooks(object):
         that is being set. these parameters are based topology name.
         """
 
-        # resources are no longer stored in a file
-        # commenting out now and will remove later
-        # when rundb is fully integrated
+        topo_data = self.api.get_evar('topo_data')
 
-        # topology_name = self.api.get_evar("topology_name")
-        # res_file = '{0}{1}'.format(topology_name,
-        #                           self.api.get_cfg('extensions', 'resource'))
-        # res_pthT = self.api.target_data['extra_vars']['default_resources_path'] # noqa
-        # res_file = '{0}/{1}'.format(res_pthT, res_file)
-        # self.api.target_data['extra_vars']['resource_file'] = res_file
+        workspace = self.api.get_evar('workspace')
+        inv_folder = self.api.get_evar('inventories_folder')
+        topo_name = topo_data.get('topology_name')
+        uhash = self.api.get_evar('uhash')
+        ext = self.api.get_cfg('extensions', 'inventory')
 
-        inv_file_tmp = self.api.get_evar("inventory_file")
-        self.api.target_data['extra_vars']['inventory_file'] = inv_file_tmp
+        inv_file = '{0}/{1}/{2}-{3}{4}'.format(workspace,
+                                               inv_folder,
+                                               topo_name,
+                                               uhash,
+                                               ext)
 
-        inv_dir_tmp = self.api.get_evar("inventory_dir")
-        self.api.target_data['extra_vars']['inventory_dir'] = inv_dir_tmp
+        self.api.target_data['extra_vars'] = {}
+        self.api.target_data['extra_vars']['inventory_dir'] = inv_folder
+        self.api.target_data['extra_vars']['inventory_file'] = inv_file
 
 
     def prepare_inv_params(self):
@@ -166,7 +169,9 @@ class LinchpinHooks(object):
         multiple targets)
         """
 
-        hooks_data = self.api.target_data.get('hooks', None)
+        hooks_data = self.api.get_evar('hooks_data', None)
+
+        self.prepare_ctx_params()
 
         # this will replace the above target_data and pull from the rundb
         # run_data = self.prepare_inv_params()
@@ -176,8 +181,6 @@ class LinchpinHooks(object):
 
         if hooks_data and str(state) in hooks_data:
             self.api.ctx.log_debug('running {0} hooks'.format(state))
-
-            self.prepare_ctx_params()
 
             # fetches all the state_data , ie., all the action blocks inside
             # state of the target
@@ -228,7 +231,7 @@ class LinchpinHooks(object):
             # a_b -> abbr for action_block
             for a_b in action_blocks:
                 action_type = a_b['type']
-                ab_ctx = a_b['context'] if 'context' in a_b else True
+                ab_ctx = a_b['context'] if 'context' in a_b else False
                 if 'path' not in a_b:
                     # if the path is not defined it defaults to
                     # workspace/hooks/typeofhook/name

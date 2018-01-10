@@ -1,7 +1,7 @@
 ---
 - name: "Get the resource name"
   set_fact:
-    resource_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+    resource_name: "{{ res_def['name'] }}"
 
 - name: "Assign dummy name using uhash value"
   set_fact:

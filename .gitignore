@@ -23,8 +23,6 @@ MANIFEST
 # local inventory files containing user-specific environment data
 configure/inventory/local/
 
-*workspace*
-
 .coverage
 *coverage*
 nosetests.xml
@@ -37,3 +35,5 @@ nosetests.xml
 Dockerfiles/pip_install.sh
 Dockerfiles/lp_test_workspace
 Dockerfiles/duffy-ansible-module
+
+.rundb
