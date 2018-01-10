@@ -37,7 +37,7 @@ pipeline_dir: "{{ ansible_env.HOME }}/minishift/linchpin"
 pipeline_refspec: '+refs/pull/*:refs/heads/*'
 
 # repo branch or sha
-pipeline_branch: 'openshift'
+pipeline_branch: 'openshift-release1.5'
 
 # cluster username
 username: developer
@@ -64,6 +64,7 @@ pipeline_bc_templates:
   - distros/fedora26
   - distros/fedora27
   - distros/centos7
+  - distros/centos6
 
 fedmsg_bc_templates: ''
 

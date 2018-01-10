@@ -1,9 +1,9 @@
 env.ghprbGhRepository = env.ghprbGhRepository ?: 'p3ck/linchpin'
-env.ghprbActualCommit = env.ghprbActualCommit ?: 'openshift'
+env.ghprbActualCommit = env.ghprbActualCommit ?: 'openshift-release1.5'
 env.ghprbPullAuthorLogin = env.ghprbPullAuthorLogin ?: ''
 env.ghprbPullId = env.ghprbPullId ?: ''
 
-env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'openshift'
+env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'openshift-release1.5'
 
 // Needed for podTemplate()
 env.SLAVE_TAG = env.SLAVE_TAG ?: 'stable'
@@ -70,6 +70,13 @@ podTemplate(name: podName,
                 ttyEnabled: false,
                 args: '${computer.jnlpmac} ${computer.name}',
                 command: '',
+                workingDir: '/workDir'),
+            containerTemplate(name: 'centos6',
+                alwaysPullImage: true,
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/centos6:' + SLAVE_TAG,
+                ttyEnabled: true,
+                command: '',
+                privileged: true,
                 workingDir: '/workDir'),
             containerTemplate(name: 'centos7',
                 alwaysPullImage: true,
@@ -186,6 +193,20 @@ podTemplate(name: podName,
                         dir('linchpin') {
                             env.target = "fedora27"
                             pipelineUtils.executeInContainer(currentStage, "fedora27", "/root/linchpin-tests.sh")
+                        }
+                    }
+                    currentStage = "centos6-install"
+                    stage(currentStage) {
+                        dir('linchpin') {
+                            pipelineUtils.executeInContainer(currentStage, "centos6", "/root/linchpin-install.sh")
+                        }
+                    }
+                    currentStage = "centos6-test"
+                    stage(currentStage) {
+                        dir('linchpin') {
+                            env.target = "centos6"
+                            env.DRIVERS = "dummy duffy libvirt"
+                            pipelineUtils.executeInContainer(currentStage, "centos6", "/root/linchpin-tests.sh")
                         }
                     }
                 } catch (e) {

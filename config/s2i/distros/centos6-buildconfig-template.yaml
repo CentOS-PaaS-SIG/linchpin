@@ -1,30 +1,30 @@
 apiVersion: v1
 kind: Template
 labels:
-  template: fedora27-builder
+  template: centos6-builder
 metadata:
   annotations:
-    description: fedora27 container
-    iconClass: fedora27
+    description: centos6 container
+    iconClass: centos6
     tags: instant-app
-  name: fedora27-builder
+  name: centos6-builder
 objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
     annotations:
     labels:
-    name: fedora27
+    name: centos6
   spec: {}
 - apiVersion: v1
   kind: BuildConfig
   metadata:
-    name: fedora27
+    name: centos6
   spec:
     output:
       to:
         kind: ImageStreamTag
-        name: fedora27:latest
+        name: centos6:latest
     resources: {}
     source:
       contextDir: ${REPO_CONTEXTDIR}
@@ -34,10 +34,10 @@ objects:
       type: Git
     strategy:
       dockerStrategy:
-        dockerfilePath: fedora27/Dockerfile
+        dockerfilePath: centos6/Dockerfile
         env:
           - name: CONTAINER_NAME
-            value: fedora27
+            value: centos6
       type: Docker
     triggers:
     - type: ConfigChange
