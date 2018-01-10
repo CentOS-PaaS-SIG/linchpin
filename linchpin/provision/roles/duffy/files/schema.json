@@ -1,0 +1,20 @@
+{
+    "res_defs": {
+        "type": "list",
+        "schema": {
+            "type": "dict",
+            "schema": {
+               "role": {
+                   "type": "string",
+                   "required": true,
+                   "allowed": ["duffy_node"]
+               },
+               "name": { "type": "string", "required": true },
+               "version": { "type": "number", "required": true },
+               "arch": { "type": "string", "required": true },
+               "count": { "type": "integer", "required": false }
+            }
+        }
+    }
+}
+

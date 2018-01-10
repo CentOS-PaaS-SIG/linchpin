@@ -1,0 +1,35 @@
+---
+dummy-dyn:
+  topology:
+    topology_name: "dummy_cluster" # topology name
+    resource_groups:
+      - resource_group_name: "dummy"
+        resource_group_type: "dummy"
+        resource_definitions:
+          - name: "web"
+            role: "dummy_node"
+            count: 3
+          - name: "test"
+            role: "dummy_node"
+            count: 1
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 3
+          host_groups:
+            - example
+        test-node:
+          count: 1
+          host_groups:
+            - test
+  hooks:
+    postup:
+      - type: shell
+        name: hello
+        actions:
+          - echo hello
+
+

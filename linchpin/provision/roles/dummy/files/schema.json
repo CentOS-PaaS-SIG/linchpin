@@ -1,0 +1,18 @@
+{
+    "res_defs": {
+        "type": "list",
+        "schema": {
+            "type": "dict",
+            "schema": {
+               "role": {
+                   "type": "string",
+                   "required": true,
+                   "allowed": ["dummy_node"]
+               },
+               "name": { "type": "string", "required": true },
+               "count": { "type": "integer", "required": false }
+            }
+        }
+    }
+}
+

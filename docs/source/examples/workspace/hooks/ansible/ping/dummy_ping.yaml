@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+  - name: ping all hosts
+    command: cat /tmp/dummy.hosts
+    register: hosts_data
+
+  - name: print all hosts
+    debug:
+      var: hosts_data.stdout_lines
+

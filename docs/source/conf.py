@@ -33,7 +33,9 @@ from linchpin.version import __version__, __short_version__
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary'
+    'sphinx.ext.autosummary',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.extlinks'
 ]
 autosummary_generate = True
 
@@ -55,8 +57,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'linchpin'
-copyright = u'2017, Red Hat, Inc.'
-author = u'Samvaran Kashyap Rallabandi'
+copyright = u'2018, Red Hat, Inc.'
+author = u'Samvaran Kashyap Rallabandi, Clint Savage'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -342,3 +344,16 @@ texinfo_documents = [
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #
 # texinfo_no_detailmenu = False
+
+extlinks = {
+    'ex-docs': (
+    'https://raw.githubusercontent.com/CentOS-PaaS-SIG/linchpin/release1.5/docs/source/examples/%s', ''),
+    'ex-dirs': (
+    'https://github.com/CentOS-PaaS-SIG/linchpin/tree/release1.5/docs/source/examples/%s', ''),
+    'docs1.5': (
+    'https://raw.githubusercontent.com/herlo/linchpin/docs1.5/docs/source/examples/%s', ''),
+    'code1.5': (
+    'https://raw.githubusercontent.com/herlo/linchpin/docs1.5/%s', ''),
+    'dirs1.5': (
+    'https://github.com/herlo/linchpin/tree/docs1.5/docs/source/examples/%s', ''),
+}

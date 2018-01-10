@@ -1,0 +1,14 @@
+---
+topology_name: aws-ec2
+resource_groups:
+  - resource_group_name: "aws"
+    resource_group_type: "aws"
+    resource_definitions:
+      - name: "webserver"
+        flavor: "t2.micro"
+        type: "aws_ec2"
+        region: "us-west-1"
+        image: "ami-11f8bb71"
+        security_group: "default"
+        count: 1
+        keypair: "herlo_key"

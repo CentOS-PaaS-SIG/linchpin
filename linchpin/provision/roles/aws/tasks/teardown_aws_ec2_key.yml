@@ -6,4 +6,4 @@
     name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     state: "{{ state }}"
     wait: "yes"
-  when: res_def['res_type'] == 'aws_ec2_key'
+  when: res_def['role'] == 'aws_ec2_key'

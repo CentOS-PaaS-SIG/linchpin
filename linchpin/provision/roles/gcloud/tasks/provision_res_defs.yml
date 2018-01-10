@@ -1,7 +1,7 @@
 ---
 - name: "Set gce_res_type value"
   set_fact:
-    gce_res_type: "{{ res_def['type'] | default(res_def['res_type']) }}"
+    gce_res_type: "{{ res_def['role'] }}"
   when: async
 
 - name: "Add resource type to async_types"
@@ -23,5 +23,5 @@
     gce_resource_name: "{{ rsrc_name + '-' + uhash }}"
 
 #- name: "Register resource count"
-- name: "provision resource type : {{ res_def['res_type'] | default(res_def['type']) }}"
-  include: "provision_{{ res_def['res_type'] | default(res_def['type']) }}.yml"
+- name: "provision resource type : {{ res_def['role'] }}"
+  include: "provision_{{ res_def['role'] }}.yml"

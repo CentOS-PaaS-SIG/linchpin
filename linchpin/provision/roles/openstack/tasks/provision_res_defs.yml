@@ -1,7 +1,7 @@
 ---
 - name: "Set os_res_type value"
   set_fact:
-    os_res_type: "{{ res_def['type'] | default(res_def['res_type']) }}"
+    os_res_type: "{{ res_def['role'] }}"
   when: async
 
 - name: "Add resource type to async_types"
@@ -17,6 +17,6 @@
   set_fact:
     os_resource_name: "{{ rsrc_name + '-' + uhash + '-' }}"
 
-- name: "provision/teardown resources of type {{ res_def['res_type'] | default(res_def['type']) }}"
-  include: "provision_{{ res_def['res_type'] | default(res_def['type']) }}.yml"
+- name: "provision/teardown resources }}"
+  include: "provision_{{ res_def['role'] }}.yml"
 

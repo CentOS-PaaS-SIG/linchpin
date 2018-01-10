@@ -1,0 +1,12 @@
+---
+topology_name: aws-cfn
+resource_groups:
+  - resource_group_name: "aws"
+    resource_group_type: "aws"
+    resource_definitions:
+      - type: "aws_cfn"
+        name: "cfn_resource"
+        region: "us-west-1"
+        security_group: "default"
+        count: 1
+        keypair: "sk_key"

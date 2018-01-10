@@ -1,9 +1,9 @@
 ---
-- name: provision resources
-  debug:
-    msg: |
-        api_endpoint: {{ resource_group.api_endpoint }}
-        resource: {{ resource }}
+#- name: provision resources
+#  debug:
+#    msg: |
+#        api_endpoint: {{ resource_group.api_endpoint }}
+#        resource: {{ resource }}
 
 - name: call OpenShift with user arguments
   openshift:

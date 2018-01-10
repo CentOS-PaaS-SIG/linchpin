@@ -1,0 +1,10 @@
+---
+topology_name: aws-cfn-new
+resource_groups:
+  - resource_group_name: "aws"
+    resource_group_type: "aws"
+    resource_definitions:
+      - name: "cloudformation"
+        role: "aws_cfn"
+        region: "us-east-1"
+        template_path: "/tmp/awc_cfn.template"

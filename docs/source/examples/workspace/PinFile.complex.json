@@ -1,0 +1,703 @@
+{
+    "os-vol-new": {
+        "topology": {
+            "topology_name": "os-volume", 
+            "resource_groups": [
+                {
+                    "resource_group_name": "os-vol", 
+                    "resource_definitions": [
+                        {
+                            "count": 1, 
+                            "role": "os_volume", 
+                            "name": "volume", 
+                            "size": 2
+                        }
+                    ], 
+                    "resource_group_type": "openstack", 
+                    "credentials": {
+                        "profile": "ci-osp", 
+                        "filename": "clouds.yaml"
+                    }
+                }
+            ]
+        }
+    }, 
+    "libvirt-new": {
+        "hooks": {
+            "preup": [
+                {
+                    "type": "shell", 
+                    "name": "hello", 
+                    "actions": [
+                        "echo hello"
+                    ]
+                }
+            ], 
+            "postup": [
+                {
+                    "actions": [
+                        {
+                            "extra_vars": {
+                                "ansible_ssh_private_key_file": "/home/herlo/.ssh/rh_rsa"
+                            }, 
+                            "playbook": "ping.yaml"
+                        }
+                    ], 
+                    "type": "ansible", 
+                    "name": "ping", 
+                    "context": true
+                }
+            ], 
+            "postdestroy": [
+                {
+                    "type": "shell", 
+                    "name": "hello", 
+                    "actions": [
+                        "echo hello"
+                    ]
+                }
+            ], 
+            "predestroy": [
+                {
+                    "type": "shell", 
+                    "name": "hello", 
+                    "actions": [
+                        "echo hello"
+                    ]
+                }
+            ]
+        }, 
+        "layout": {
+            "inventory_layout": {
+                "hosts": {
+                    "example-node": {
+                        "count": 1, 
+                        "host_groups": [
+                            "example"
+                        ]
+                    }
+                }, 
+                "vars": {
+                    "hostname": "__IP__"
+                }
+            }
+        }, 
+        "topology": {
+            "topology_name": "libvirt-new", 
+            "resource_groups": [
+                {
+                    "resource_group_name": "libvirt-new", 
+                    "resource_definitions": [
+                        {
+                            "count": 1, 
+                            "cloud_config": {
+                                "users": [
+                                    {
+                                        "name": "herlo", 
+                                        "sudo": "ALL=(ALL) NOPASSWD:ALL", 
+                                        "lock_passwd": true, 
+                                        "gecos": "Clint Savage", 
+                                        "groups": "wheel", 
+                                        "ssh-import-id": "gh:herlo"
+                                    }
+                                ]
+                            }, 
+                            "name": "centos71", 
+                            "uri": "qemu:///system", 
+                            "networks": [
+                                {
+                                    "name": "default"
+                                }
+                            ], 
+                            "vcpus": 1, 
+                            "additional_storage": "10G", 
+                            "role": "libvirt_node", 
+                            "memory": 2048, 
+                            "arch": "x86_64", 
+                            "image_src": "http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz"
+                        }
+                    ], 
+                    "resource_group_type": "libvirt"
+                }
+            ]
+        }
+    }, 
+    "aws-ec2-key-new": {
+        "topology": {
+            "topology_name": "aws-ec2-key-new", 
+            "resource_groups": [
+                {
+                    "resource_group_name": "aws", 
+                    "resource_definitions": [
+                        {
+                            "region": "us-west-2", 
+                            "role": "aws_ec2_key", 
+                            "name": "ec2_keypair"
+                        }
+                    ], 
+                    "resource_group_type": "aws"
+                }
+            ]
+        }
+    }, 
+    "aws-sg-new": {
+        "topology": {
+            "topology_name": "aws-sg-new", 
+            "resource_groups": [
+                {
+                    "resource_group_name": "aws", 
+                    "resource_definitions": [
+                        {
+                            "rules": [
+                                {
+                                    "rule_type": "inbound", 
+                                    "to_port": -1, 
+                                    "from_port": "8", 
+                                    "cidr_ip": "0.0.0.0/0", 
+                                    "proto": "icmp"
+                                }, 
+                                {
+                                    "rule_type": "inbound", 
+                                    "to_port": 22, 
+                                    "from_port": 22, 
+                                    "cidr_ip": "0.0.0.0/0", 
+                                    "proto": "tcp"
+                                }, 
+                                {
+                                    "rule_type": "outbound", 
+                                    "to_port": "all", 
+                                    "from_port": "all", 
+                                    "cidr_ip": "0.0.0.0/0", 
+                                    "proto": "all"
+                                }
+                            ], 
+                            "region": "us-east-1", 
+                            "role": "aws_sg", 
+                            "name": "aws_sg_test", 
+                            "description": "AWS SSH Security Group"
+                        }
+                    ], 
+                    "resource_group_type": "aws"
+                }
+            ]
+        }
+    }, 
+    "os-sg-new": {
+        "topology": {
+            "topology_name": "os-sg-new", 
+            "resource_groups": [
+                {
+                    "resource_group_name": "os-sg-new", 
+                    "resource_definitions": [
+                        {
+                            "rules": [
+                                {
+                                    "rule_type": "inbound", 
+                                    "to_port": 22, 
+                                    "from_port": 22, 
+                                    "cidr_ip": "0.0.0.0/0", 
+                                    "proto": "tcp"
+                                }, 
+                                {
+                                    "rule_type": "outbound", 
+                                    "to_port": 22, 
+                                    "from_port": 22, 
+                                    "cidr_ip": "0.0.0.0/0", 
+                                    "proto": "tcp"
+                                }
+                            ], 
+                            "role": "os_sg", 
+                            "name": "security_group", 
+                            "description": "Openstack Security Group with ssh access"
+                        }
+                    ], 
+                    "resource_group_type": "openstack", 
+                    "credentials": {
+                        "profile": "ci-rhos", 
+                        "filename": "clouds.yaml"
+                    }
+                }
+            ]
+        }
+    }, 
+    "openshift-new": {
+        "topology": {
+            "topology_name": "openshift", 
+            "resource_groups": [
+                {
+                    "resource_group_name": "test1", 
+                    "resource_definitions": [
+                        {
+                            "data": [
+                                {
+                                    "kind": "ReplicationController", 
+                                    "spec": {
+                                        "selector": {
+                                            "name": "jenkins-slave"
+                                        }, 
+                                        "template": {
+                                            "spec": {
+                                                "restartPolicy": "Always", 
+                                                "securityPolicy": {
+                                                    "runAsUser": 1000090000
+                                                }, 
+                                                "containers": [
+                                                    {
+                                                        "image": "redhatqecinch/jenkins_slave:latest", 
+                                                        "name": "jenkins-slave", 
+                                                        "env": [
+                                                            {
+                                                                "name": "JENKINS_MASTER_URL", 
+                                                                "value": "http://10.8.172.6/"
+                                                            }, 
+                                                            {
+                                                                "name": "JSLAVE_NAME", 
+                                                                "value": "mynode"
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }, 
+                                            "metadata": {
+                                                "labels": {
+                                                    "name": "jenkins-slave"
+                                                }
+                                            }
+                                        }, 
+                                        "replicas": 7
+                                    }, 
+                                    "apiVersion": "v1", 
+                                    "metadata": {
+                                        "namespace": "central-ci-test-ghelling", 
+                                        "name": "jenkins-slave"
+                                    }
+                                }
+                            ], 
+                            "role": "openshift_inline", 
+                            "name": "openshift"
+                        }
+                    ], 
+                    "resource_group_type": "openshift", 
+                    "credentials": {
+                        "api_endpoint": "example.com:8443/", 
+                        "api_token": "mytokentextrighthere"
+                    }
+                }
+            ]
+        }
+    }, 
+    "ovirt-new": {
+        "topology": {
+            "topology_name": "ovirt-new", 
+            "resource_groups": [
+                {
+                    "resource_group_name": "ovirt-new", 
+                    "resource_definitions": [
+                        {
+                            "cluster": "golden_env_mixed_1", 
+                            "role": "ovirt_vms", 
+                            "name": "golden", 
+                            "template": "golden_mixed_virtio_template"
+                        }, 
+                        {
+                            "cluster": "golden_env_mixed_1", 
+                            "role": "ovirt_vms", 
+                            "name": "virtio_1_1", 
+                            "template": "golden_mixed_virtio_template"
+                        }
+                    ], 
+                    "resource_group_type": "ovirt", 
+                    "credentials": {
+                        "profile": "ge2", 
+                        "filename": "ex_ovirt_creds.yml"
+                    }
+                }
+            ]
+        }
+    }, 
+    "libvirt": {
+        "layout": {
+            "inventory_layout": {
+                "hosts": {
+                    "example-node": {
+                        "count": 1, 
+                        "host_groups": [
+                            "example"
+                        ]
+                    }
+                }, 
+                "vars": {
+                    "hostname": "__IP__"
+                }
+            }
+        }, 
+        "topology": {
+            "topology_name": "libvirt", 
+            "resource_groups": [
+                {
+                    "resource_group_name": "ex", 
+                    "res_group_type": "libvirt", 
+                    "res_defs": [
+                        {
+                            "count": 1, 
+                            "res_type": "libvirt_node", 
+                            "cloud_config": {
+                                "users": [
+                                    {
+                                        "name": "herlo", 
+                                        "sudo": "ALL=(ALL) NOPASSWD:ALL", 
+                                        "lock_passwd": true, 
+                                        "gecos": "Clint Savage", 
+                                        "groups": "wheel", 
+                                        "ssh-import-id": "gh:herlo"
+                                    }
+                                ]
+                            }, 
+                            "uri": "qemu:///system", 
+                            "networks": [
+                                {
+                                    "name": "default"
+                                }
+                            ], 
+                            "res_name": "centos71", 
+                            "vcpus": 1, 
+                            "additional_storage": "10G", 
+                            "memory": 2048, 
+                            "arch": "x86_64", 
+                            "image_src": "http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz"
+                        }
+                    ]
+                }
+            ]
+        }
+    }, 
+    "gce-new": {
+        "layout": {
+            "inventory_layout": {
+                "hosts": {
+                    "example-node": {
+                        "count": 1, 
+                        "host_groups": [
+                            "example"
+                        ]
+                    }
+                }, 
+                "vars": {
+                    "hostname": "__IP__"
+                }
+            }
+        }, 
+        "topology": {
+            "topology_name": "gce-new", 
+            "resource_groups": [
+                {
+                    "resource_group_name": "gcloud", 
+                    "resource_definitions": [
+                        {
+                            "count": 1, 
+                            "name": "gce-webserver", 
+                            "region": "us-central1-a", 
+                            "role": "gcloud_gce", 
+                            "flavor": "f1-micro", 
+                            "image": "centos-7"
+                        }
+                    ], 
+                    "resource_group_type": "gcloud", 
+                    "credentials": {
+                        "filename": "LinchPin-GCE.json"
+                    }
+                }
+            ]
+        }
+    }, 
+    "os-obj-new": {
+        "topology": {
+            "topology_name": "os-object", 
+            "resource_groups": [
+                {
+                    "resource_group_name": "os-obj", 
+                    "resource_definitions": [
+                        {
+                            "access": "public", 
+                            "count": 2, 
+                            "role": "os_object", 
+                            "name": "object"
+                        }
+                    ], 
+                    "resource_group_type": "openstack", 
+                    "credentials": {
+                        "profile": "ci-osp", 
+                        "filename": "clouds.yaml"
+                    }
+                }
+            ]
+        }
+    }, 
+    "duffy-new": {
+        "topology": {
+            "topology_name": "duffy-new", 
+            "resource_groups": [
+                {
+                    "resource_group_name": "duffy-new", 
+                    "resource_definitions": [
+                        {
+                            "count": 1, 
+                            "arch": "x86_64", 
+                            "version": 7, 
+                            "role": "duffy_node", 
+                            "name": "duffy"
+                        }
+                    ], 
+                    "resource_group_type": "duffy", 
+                    "credentials": "duffy.key"
+                }
+            ]
+        }
+    }, 
+    "bkr-new": {
+        "topology": {
+            "topology_name": "bkr-new", 
+            "resource_groups": [
+                {
+                    "resource_group_name": "bkr-new", 
+                    "resource_definitions": [
+                        {
+                            "job_group": "ci-ops-central", 
+                            "whiteboard": "Provisioned with linchpin", 
+                            "role": "bkr_server", 
+                            "recipesets": [
+                                {
+                                    "count": 1, 
+                                    "hostrequires": [
+                                        {
+                                            "tag": "processors", 
+                                            "value": 4, 
+                                            "op": ">="
+                                        }, 
+                                        {
+                                            "tag": "device", 
+                                            "type": "network", 
+                                            "op": "="
+                                        }
+                                    ], 
+                                    "arch": "x86_64", 
+                                    "distro": "RHEL-6.5"
+                                }
+                            ]
+                        }, 
+                        {
+                            "job_group": "ci-ops-central", 
+                            "whiteboard": "Provisioned with linchpin", 
+                            "role": "bkr_server", 
+                            "recipesets": [
+                                {
+                                    "count": 1, 
+                                    "hostrequires": [
+                                        {
+                                            "tag": "processors", 
+                                            "value": 1, 
+                                            "op": ">="
+                                        }
+                                    ], 
+                                    "arch": "x86_64", 
+                                    "distro": "RHEL-6.5"
+                                }
+                            ]
+                        }
+                    ], 
+                    "resource_group_type": "beaker"
+                }
+            ]
+        }
+    }, 
+    "aws-ec2-new": {
+        "layout": {
+            "inventory_layout": {
+                "hosts": {
+                    "example-node": {
+                        "count": 1, 
+                        "host_groups": [
+                            "example"
+                        ]
+                    }
+                }, 
+                "vars": {
+                    "hostname": "__IP__"
+                }
+            }
+        }, 
+        "topology": {
+            "topology_name": "ec2-new", 
+            "resource_groups": [
+                {
+                    "resource_group_name": "aws", 
+                    "resource_definitions": [
+                        {
+                            "count": 1, 
+                            "name": "webserver", 
+                            "region": "us-west-1", 
+                            "keypair": "herlo_key", 
+                            "role": "aws_ec2", 
+                            "security_group": "default", 
+                            "flavor": "t2.micro", 
+                            "image": "ami-11f8bb71"
+                        }
+                    ], 
+                    "resource_group_type": "aws"
+                }
+            ]
+        }
+    }, 
+    "dummy-new": {
+        "layout": {
+            "inventory_layout": {
+                "hosts": {
+                    "test-node": {
+                        "count": 1, 
+                        "host_groups": [
+                            "test"
+                        ]
+                    }, 
+                    "example-node": {
+                        "count": 3, 
+                        "host_groups": [
+                            "example"
+                        ]
+                    }
+                }, 
+                "vars": {
+                    "hostname": "__IP__"
+                }
+            }
+        }, 
+        "topology": {
+            "topology_name": "dummy_cluster", 
+            "resource_groups": [
+                {
+                    "resource_group_name": "dummy", 
+                    "resource_definitions": [
+                        {
+                            "count": 3, 
+                            "role": "dummy_node", 
+                            "name": "web"
+                        }, 
+                        {
+                            "count": 1, 
+                            "role": "dummy_node", 
+                            "name": "test"
+                        }
+                    ], 
+                    "resource_group_type": "dummy"
+                }
+            ]
+        }
+    }, 
+    "aws-s3-new": {
+        "topology": {
+            "topology_name": "aws-s3-new", 
+            "resource_groups": [
+                {
+                    "resource_group_name": "aws_s3", 
+                    "resource_definitions": [
+                        {
+                            "region": "us-west-2", 
+                            "role": "aws_s3", 
+                            "name": "s3_bucket"
+                        }
+                    ], 
+                    "resource_group_type": "aws"
+                }
+            ]
+        }
+    }, 
+    "os-server-new": {
+        "layout": {
+            "inventory_layout": {
+                "hosts": {
+                    "db-node": {
+                        "count": 1, 
+                        "host_groups": [
+                            "database"
+                        ]
+                    }, 
+                    "frontend-node": {
+                        "count": 1, 
+                        "host_groups": [
+                            "frontend"
+                        ]
+                    }
+                }, 
+                "vars": {
+                    "hostname": "__IP__"
+                }
+            }
+        }, 
+        "topology": {
+            "topology_name": "os-single-new", 
+            "resource_groups": [
+                {
+                    "resource_group_name": "os-server-enw", 
+                    "resource_definitions": [
+                        {
+                            "count": 1, 
+                            "name": "database", 
+                            "image": "CentOS-7-x86_64-GenericCloud-1612", 
+                            "keypair": "ci-factory", 
+                            "role": "os_server", 
+                            "fip_pool": "10.8.240.0", 
+                            "flavor": "m1.small", 
+                            "networks": [
+                                "atomic-e2e-jenkins-test"
+                            ]
+                        }, 
+                        {
+                            "count": 1, 
+                            "name": "frontend", 
+                            "image": "Fedora-Cloud-Base-26-compose-latest", 
+                            "keypair": "ci-factory", 
+                            "role": "os_server", 
+                            "fip_pool": "10.8.240.0", 
+                            "flavor": "m1.small", 
+                            "networks": [
+                                "atomic-e2e-jenkins-test"
+                            ]
+                        }
+                    ], 
+                    "resource_group_type": "openstack", 
+                    "credentials": {
+                        "profile": "ci-rhos", 
+                        "filename": "clouds.yaml"
+                    }
+                }
+            ]
+        }
+    }, 
+    "rax-new": {
+        "topology": {
+            "topology_name": "rax-new", 
+            "resource_groups": [
+                {
+                    "resource_group_name": "testgroup1", 
+                    "resource_definitions": [
+                        {
+                            "count": 1, 
+                            "name": "server", 
+                            "region": "DFW", 
+                            "networks": [
+                                "public", 
+                                "private"
+                            ], 
+                            "role": "rax_server", 
+                            "flavor": 2, 
+                            "image": "b7486124-ea63-4247-9f24-e4c089dd3e97"
+                        }
+                    ], 
+                    "resource_group_type": "rackspace", 
+                    "credentials": {
+                        "filename": "auth.json"
+                    }
+                }
+            ]
+        }
+    }
+}
