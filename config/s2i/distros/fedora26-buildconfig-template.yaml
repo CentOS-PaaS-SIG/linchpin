@@ -53,4 +53,4 @@ parameters:
 - description: The git ref or tag to use for customization.
   displayName: Git Reference
   name: REPO_REF
-  value: openshift
+  value: openshift-release1.5
