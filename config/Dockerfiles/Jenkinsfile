@@ -21,7 +21,7 @@ env.OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
 executionID = UUID.randomUUID().toString()
 
 // Pod name to use
-podName = 'linchpin' + executionID + '-' + TARGET_BRANCH
+podName = 'linchpin' + executionID
 
 library identifier: "ci-pipeline@master",
         retriever: modernSCM([$class: 'GitSCMSource',
