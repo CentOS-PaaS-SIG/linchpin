@@ -1,12 +1,12 @@
-Openstack
+openstack
 =========
 
 The openstack provider manages multiple types of resources.
 
-os-server
+os_server
 ---------
 
-Openstack Instances can be provisioned using this resource.
+Openstack instances can be provisioned using this resource.
 
 * :docs1.5:`Topology Example <workspace/topologies/os-server-new.yml>`
 * `Ansible module <http://docs.ansible.com/ansible/latest/os_server_module.html>`_
@@ -15,15 +15,15 @@ Openstack Instances can be provisioned using this resource.
    the variables used are identical to the Ansible os_server module, except for
    adding a ``count`` option.
 
-os-obj
+os_obj
 ------
 
-Openstack Object Storage resources can be provisioned using this resource.
+Openstack Object Storage can be provisioned using this resource.
 
 * :docs1.5:`Topology Example <workspace/topologies/os-obj-new.yml>`
 * `Ansible module <http://docs.ansible.com/ansible/latest/os_object_module.html>`_
 
-os-vol
+os_vol
 ------
 
 Openstack Cinder Volumes can be provisioned using this resource.
@@ -31,15 +31,14 @@ Openstack Cinder Volumes can be provisioned using this resource.
 * :docs1.5:`Topology Example <workspace/topologies/os-vol-new.yml>`
 * `Ansible module <http://docs.ansible.com/ansible/latest/os_volume_module.html>`_
 
-os-sg
+os_sg
 -----
 
 Openstack Security Groups can be provisioned using this resource.
 
-* :docs1.5:`Topology Example <workspace/topologies/os-obj-new.yml>`
+* :docs1.5:`Topology Example <workspace/topologies/os-sg-new.yml>`
 * `Ansible Security Group module <http://docs.ansible.com/ansible/latest/os_security_group_module.html>`_
 * `Ansible Security Group Rule module <http://docs.ansible.com/ansible/latest/os_security_group_rule_module.html>`_
-
 
 Additional Dependencies
 -----------------------
@@ -49,7 +48,7 @@ No additional dependencies are required for the Openstack Provider.
 Credentials Management
 ----------------------
 
-Openstack provides a several ways to provide credentials. LinchPin supports
+Openstack provides several ways to provide credentials. LinchPin supports
 some of these methods for passing credentials for use with openstack resources.
 
 Environment Variables
@@ -92,7 +91,6 @@ might contain several entries.
           username: herlo-trystack-3855e889
           password: thepasswordissecrte
 
-
 Using this mechanism requires that credentials data be passed into LinchPin.
 
 An openstack topology can have a ``credentials`` section for each
@@ -114,7 +112,7 @@ An openstack topology can have a ``credentials`` section for each
           profile: devstack
 
 Provisioning
-------------
+````````````
 
 Provisioning with credentials uses the ``--creds-path`` option. Assuming
 the ``clouds.yaml`` file was placed in ``~/.config/openstack``, and the

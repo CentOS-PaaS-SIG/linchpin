@@ -10,10 +10,10 @@ LinchPin has many default providers. This choose-your-own-adventure page takes y
    libvirt
    aws
    gcloud
-   openshift
    beaker
-   ovirt
    duffy
+   ovirt
+   openshift
    rackspace
    provider_external
 
