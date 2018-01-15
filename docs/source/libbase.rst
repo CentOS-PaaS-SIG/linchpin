@@ -1,21 +1,23 @@
-linchpin module
-===============
+Linchpin API and Context Modules
+================================
 
-The linchpin module contains calls to implement the Command Line
-Interface within linchpin. It uses the `Click <http://click.pocoo.org>`_
-command line interface composer.
+The linchpin module provides the base API for managing LinchPin, Ansible,
+and other useful aspects for provisioning.
 
 .. automodule:: linchpin
     :members:
     :undoc-members:
-    :exclude-members: main,runcli,LinchpinAliases
 
-.. autofunction:: init
-.. autofunction:: up
-.. autofunction:: rise
-.. autofunction:: destroy
-.. autofunction:: drop
-
-.. automodule:: linchpin.version
+.. automodule:: linchpin.context
     :members:
     :undoc-members:
+
+.. automodule:: linchpin.ansible_runner
+    :members:
+    :undoc-members:
+
+.. automodule:: linchpin.callbacks
+    :members:
+    :undoc-members:
+
+ 

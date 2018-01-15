@@ -1,50 +1,50 @@
-"""
-example Pinfile for reference::
----
-openstack:
-  topology: ex_os_server.yml
-  layout: openshift-3node-cluster.yml
-  hooks:
-    postup:              # sub-state is specified
-        - name: do_something
-          type: shell
-          actions:
-            - samvaran
-        - name: manipulate_inventory
-          type: shell
-          path: /tmp/shellscripts
-          actions:
-            - thisisshell.sh
-        - name: post_up
-          type: ansible
-          actions:
-            - playbook: test_playbook.yaml
-              vars: test_var.yaml
-              extra_vars: { 'testvar': 'world'}
-    preup:              # sub-state is specified
-        - name: do_something
-          type: shell
-          actions:
-            - echo ' this is post up operation Hello hai how r u ?'
-        - name: build_openshift_cluster
-          type: ansible
-          actions:
-            - playbook: test_playbook.yaml
-              vars: test_var.yaml
-              extra_vars: { 'testvar': 'world'}
-    postdestroy:
-        - name: do_something
-          type: shell
-          actions:
-            - echo ' this is post up operation Hello hai how r u ?'
-        - name: postdown_task
-          type: ansible
-          actions:
-            - playbook: test_playbook.yaml
-              vars: test_var.yaml
-              extra_vars: { 'testvar': 'world'}
-
-"""
+# """
+# example Pinfile for reference::
+# ---
+# openstack:
+#   topology: ex_os_server.yml
+#   layout: openshift-3node-cluster.yml
+#   hooks:
+#     postup:              # sub-state is specified
+#         - name: do_something
+#           type: shell
+#           actions:
+#             - samvaran
+#         - name: manipulate_inventory
+#           type: shell
+#           path: /tmp/shellscripts
+#           actions:
+#             - thisisshell.sh
+#         - name: post_up
+#           type: ansible
+#           actions:
+#             - playbook: test_playbook.yaml
+#               vars: test_var.yaml
+#               extra_vars: { 'testvar': 'world'}
+#     preup:              # sub-state is specified
+#         - name: do_something
+#           type: shell
+#           actions:
+#             - echo ' this is post up operation Hello hai how r u ?'
+#         - name: build_openshift_cluster
+#           type: ansible
+#           actions:
+#             - playbook: test_playbook.yaml
+#               vars: test_var.yaml
+#               extra_vars: { 'testvar': 'world'}
+#     postdestroy:
+#         - name: do_something
+#           type: shell
+#           actions:
+#             - echo ' this is post up operation Hello hai how r u ?'
+#         - name: postdown_task
+#           type: ansible
+#           actions:
+#             - playbook: test_playbook.yaml
+#               vars: test_var.yaml
+#               extra_vars: { 'testvar': 'world'}
+#
+# """
 
 import ast
 import sys

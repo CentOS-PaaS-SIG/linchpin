@@ -77,6 +77,7 @@ class LinchpinAPI(object):
         """
         Configures the run database parameters, sets them into extra_vars
         """
+
         rundb_conn_default = '~/.config/linchpin/rundb-::mac::.json'
         rundb_conn = self.get_cfg(section='lp',
                                   key='rundb_conn',
@@ -124,8 +125,6 @@ class LinchpinAPI(object):
         :param key: key to get from config file, within section
 
         :param default: default value to return if nothing is found.
-
-        Does not apply if section is not provided.
         """
 
         return self.ctx.get_cfg(section=section, key=key, default=default)
@@ -135,7 +134,6 @@ class LinchpinAPI(object):
         """
         Set a value in cfgs. Does not persist into a file,
         only during the current execution.
-
 
         :param section: section within ini-style config file
 
@@ -381,12 +379,14 @@ class LinchpinAPI(object):
 
     def do_action(self, provision_data, action='up', run_id=None):
         """
-        This function takes a list of targets, and executes the given
-        action (up, destroy, etc.) for each provided target.
+        This function takes provision_data, and executes the given
+        action for each target within the provision_data disctionary.
 
         :param provision_data: PinFile as a dictionary, with target information
 
-        :param targets: A tuple of targets to run. (Default: [])
+        :param action: Action taken (up, destroy, etc). (Default: up)
+
+        :param run_id: Provided run_id to duplicate/destroy (Default: None)
 
         .. .note:: The `run_id` value differs from the `rundb_id`, in that
                    the `run_id` is an existing value in the database.

@@ -1,13 +1,13 @@
 Developer Information
 =====================
 
-The following information may be useful for software or Ansible developers wishing to extend LinchPin.
+The following information may be useful for those wishing to extend LinchPin.
 
 .. toctree::
-   :tocdepth: 1
+   :maxdepth: 1
 
-* :doc:`libdocs`
-* "doc:`writing_provider`
+   libdocs
+   writing_provider
 
 
 .. seealso::

@@ -1,7 +1,8 @@
-linchpin.cli module
-===================
+LinchPin Command-Line API
+==========================
 
-This page contains the list of project's modules
+The linchpin.cli module provides an API for writing a command-line interface,
+the :doc:`libshell` being the reference implementation.
 
 .. automodule:: linchpin.cli
 
