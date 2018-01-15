@@ -351,9 +351,9 @@ extlinks = {
     'ex-dirs': (
     'https://github.com/CentOS-PaaS-SIG/linchpin/tree/release1.5/docs/source/examples/%s', ''),
     'docs1.5': (
-    'https://raw.githubusercontent.com/herlo/linchpin/docs1.5/docs/source/examples/%s', ''),
+    'https://raw.githubusercontent.com/herlo/CentOS-PaaS-SIG/develop/docs/source/examples/%s', ''),
     'code1.5': (
-    'https://raw.githubusercontent.com/herlo/linchpin/docs1.5/%s', ''),
+    'https://raw.githubusercontent.com/CentOS-PaaS-SIG/linchpin/develop/%s', ''),
     'dirs1.5': (
-    'https://github.com/herlo/linchpin/tree/docs1.5/docs/source/examples/%s', ''),
+    'https://github.com/CentOS-PaaS-SIG/linchpin/tree/develop/docs/source/examples/%s', ''),
 }

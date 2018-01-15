@@ -90,7 +90,7 @@ lp.rundb_conn
 
     Default value:
         * v1.2.0: ``/home/user/.config/linchpin/rundb-<macaddress>.json``
-        * v1.2.1+: ``/path/to/workspace/.rundb/rundb.json``
+        * v1.2.2+: ``/path/to/workspace/.rundb/rundb.json``
 
     The RunDB is a single json file, which records each transaction involving
     resources. A :term:`run_id` and :term:`uHash` are assigned, along with
