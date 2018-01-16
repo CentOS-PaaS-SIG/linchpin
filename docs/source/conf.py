@@ -346,12 +346,8 @@ texinfo_documents = [
 # texinfo_no_detailmenu = False
 
 extlinks = {
-    'ex-docs': (
-    'https://raw.githubusercontent.com/CentOS-PaaS-SIG/linchpin/release1.5/docs/source/examples/%s', ''),
-    'ex-dirs': (
-    'https://github.com/CentOS-PaaS-SIG/linchpin/tree/release1.5/docs/source/examples/%s', ''),
     'docs1.5': (
-    'https://raw.githubusercontent.com/herlo/CentOS-PaaS-SIG/develop/docs/source/examples/%s', ''),
+    'https://raw.githubusercontent.com/CentOS-PaaS-SIG/linchpin/develop/docs/source/examples/%s', ''),
     'code1.5': (
     'https://raw.githubusercontent.com/CentOS-PaaS-SIG/linchpin/develop/%s', ''),
     'dirs1.5': (
