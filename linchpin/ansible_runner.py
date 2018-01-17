@@ -3,10 +3,10 @@ import sys
 import ansible
 from collections import namedtuple
 from contextlib import contextmanager
+from callbacks import PlaybookCallback
 
 ansible24 = float(ansible.__version__[0:3]) >= 2.4
 
-from callbacks import PlaybookCallback
 
 # CentOS 6 EPEL provides an alternate Jinja2 package
 # Ansible uses Jinja2 here
