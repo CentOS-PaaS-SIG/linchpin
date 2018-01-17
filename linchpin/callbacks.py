@@ -5,8 +5,14 @@ class PlaybookCallback(CallbackBase):
 
     """Playbook callback"""
 
-    def __init__(self):
-        super(PlaybookCallback, self).__init__()
+
+    def __init__(self, display=None, options=None):
+        super(PlaybookCallback, self).__init__(display=display,
+                                               options=options)
+
+        self._options = options
+        self._display.verbosity = options.verbosity
+
         # store all results
         self.results = []
 

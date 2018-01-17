@@ -405,7 +405,7 @@ class LinchpinAPI(object):
                                               default='False')))
 
         if not ansible_console:
-            ansible_console = self.ctx.verbose
+            ansible_console = self.ctx.verbosity
 
         results = {}
 
@@ -626,10 +626,12 @@ class LinchpinAPI(object):
             extra_vars = self.get_evar()
             inventory_src = '{0}/localhost'.format(self.workspace)
 
+            verbosity = self.ctx.verbosity
             return_code, res = ansible_runner(playbook_path,
                                               module_paths,
                                               extra_vars,
                                               inventory_src=inventory_src,
+                                              verbosity=verbosity,
                                               console=console)
 
             if res:

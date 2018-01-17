@@ -6,15 +6,16 @@ from contextlib import contextmanager
 
 ansible24 = float(ansible.__version__[0:3]) >= 2.4
 
+from callbacks import PlaybookCallback
+
 # CentOS 6 EPEL provides an alternate Jinja2 package
 # Ansible uses Jinja2 here
+
 try:
-    from callbacks import PlaybookCallback
     from ansible.parsing.dataloader import DataLoader
     from ansible.executor.playbook_executor import PlaybookExecutor
 except ImportError:
     sys.path.insert(0, '/usr/lib/python2.6/site-packages/Jinja2-2.6-py2.6.egg')
-    from callbacks import PlaybookCallback
     from ansible.parsing.dataloader import DataLoader
     from ansible.executor.playbook_executor import PlaybookExecutor
 
@@ -45,8 +46,8 @@ def suppress_stdout():
 
 
 def ansible_runner_2x(playbook_path,
-                      module_path,
                       extra_vars,
+                      options=None,
                       inventory_src='localhost',
                       console=True):
 
@@ -57,59 +58,21 @@ def ansible_runner_2x(playbook_path,
                           variable_manager=variable_manager,
                           host_list=inventory_src)
     passwords = {}
-    Options = namedtuple('Options', ['listtags',
-                                     'listtasks',
-                                     'listhosts',
-                                     'syntax',
-                                     'connection',
-                                     'module_path',
-                                     'forks',
-                                     'remote_user',
-                                     'private_key_file',
-                                     'ssh_common_args',
-                                     'ssh_extra_args',
-                                     'sftp_extra_args',
-                                     'scp_extra_args',
-                                     'become',
-                                     'become_method',
-                                     'become_user',
-                                     'verbosity',
-                                     'check'])
-
-    options = Options(listtags=False,
-                      listtasks=False,
-                      listhosts=False,
-                      syntax=False,
-                      connection='ssh',
-                      module_path=module_path,
-                      forks=100,
-                      remote_user='test',
-                      private_key_file=None,
-                      ssh_common_args=None,
-                      ssh_extra_args=None,
-                      sftp_extra_args=None,
-                      scp_extra_args=None,
-                      become=False,
-                      become_method='sudo',
-                      become_user='root',
-                      verbosity=0,
-                      check=False)
-
-    pbex = PlaybookExecutor(playbooks=[playbook_path],
-                            inventory=inventory,
-                            variable_manager=variable_manager,
-                            loader=loader,
-                            options=options,
-                            passwords=passwords)
+    pbex = PlaybookExecutor([playbook_path],
+                            inventory,
+                            variable_manager,
+                            loader,
+                            options,
+                            passwords)
 
     return pbex
 
 
 
 def ansible_runner_24x(playbook_path,
-                       module_path,
                        extra_vars,
-                       inventory_src,
+                       options=None,
+                       inventory_src='localhost',
                        console=True):
 
     loader = DataLoader()
@@ -118,14 +81,43 @@ def ansible_runner_24x(playbook_path,
     inventory = Inventory(loader=loader, sources=[inventory_src])
     variable_manager.set_inventory(inventory)
     passwords = {}
+
+    pbex = PlaybookExecutor([playbook_path],
+                            inventory,
+                            variable_manager,
+                            loader,
+                            options,
+                            passwords)
+    return pbex
+
+
+def ansible_runner(playbook_path,
+                   module_path,
+                   extra_vars,
+                   inventory_src='localhost',
+                   verbosity=1,
+                   console=True):
+    """
+    Uses the Ansible API code to invoke the specified linchpin playbook
+    :param playbook: Which ansible playbook to run (default: 'up')
+    :param console: Whether to display the ansible console (default: True)
+    """
+
+    # note: It may be advantageous to put the options into the context and pass
+    # that onto this method down the road. The verbosity flag would just live
+    # in options and we could set the defaults.
+
+    connect_type = 'ssh'
+    if 'localhost' in inventory_src:
+        extra_vars["ansible_python_interpreter"] = sys.executable
+        connect_type = 'local'
+
     Options = namedtuple('Options', ['connection',
                                      'module_path',
                                      'forks',
                                      'become',
                                      'become_method',
                                      'become_user',
-                                     'check',
-                                     'diff',
                                      'listhosts',
                                      'listtasks',
                                      'listtags',
@@ -137,72 +129,56 @@ def ansible_runner_24x(playbook_path,
                                      'sftp_extra_args',
                                      'scp_extra_args',
                                      'verbosity',
+                                     'check',
+                                     'diff',
                                      ])
-    options = Options(listtags=False,
-                      listtasks=False,
-                      listhosts=False,
-                      syntax=False,
-                      connection='local',
+
+    options = Options(connection=connect_type,
                       module_path=module_path,
                       forks=100,
-                      remote_user='test',
+                      become=False,
+                      become_method='sudo',
+                      become_user='root',
+                      listhosts=False,
+                      listtasks=False,
+                      listtags=False,
+                      syntax=False,
+                      remote_user=None,
                       private_key_file=None,
                       ssh_common_args=None,
                       ssh_extra_args=None,
                       sftp_extra_args=None,
                       scp_extra_args=None,
-                      become=False,
-                      become_method='sudo',
-                      become_user='root',
-                      verbosity=4,
-                      diff=False,
-                      check=False)
+                      verbosity=verbosity,
+                      check=False,
+                      diff=False
+                      )
 
-    pbex = PlaybookExecutor(playbooks=[playbook_path],
-                            inventory=inventory,
-                            variable_manager=variable_manager,
-                            loader=loader,
-                            options=options,
-                            passwords=passwords)
-    return pbex
+    if ansible24:
+        pbex = ansible_runner_24x(playbook_path,
+                                  extra_vars,
+                                  options,
+                                  inventory_src=inventory_src,
+                                  console=console)
+    else:
+        pbex = ansible_runner_2x(playbook_path,
+                                 extra_vars,
+                                 options,
+                                 inventory_src=inventory_src,
+                                 console=console)
 
+    cb = PlaybookCallback(options=options)
 
-def ansible_runner(playbook_path,
-                   module_path,
-                   extra_vars,
-                   inventory_src='localhost',
-                   console=True):
-        """
-        Uses the Ansible API code to invoke the specified linchpin playbook
-        :param playbook: Which ansible playbook to run (default: 'up')
-        :param console: Whether to display the ansible console (default: True)
-        """
-
-        extra_vars["ansible_python_interpreter"] = sys.executable
-
-        if ansible24:
-            pbex = ansible_runner_24x(playbook_path,
-                                      module_path,
-                                      extra_vars,
-                                      inventory_src,
-                                      console)
-        else:
-            pbex = ansible_runner_2x(playbook_path,
-                                     module_path,
-                                     extra_vars,
-                                     inventory_src,
-                                     console)
-
-        if not console:
-            results = {}
-            return_code = 0
-            cb = PlaybookCallback()
-            with suppress_stdout():
-                pbex._tqm._stdout_callback = cb
-            return_code = pbex.run()
-            results = cb.results
-            return return_code, results
-        else:
-            # the console only returns a return_code
-            return_code = pbex.run()
-            return return_code, None
+    if not console:
+        results = {}
+        return_code = 0
+        with suppress_stdout():
+            pbex._tqm._stdout_callback = cb
+        return_code = pbex.run()
+        results = cb.results
+        return return_code, results
+    else:
+        # the console only returns a return_code
+        pbex._tqm._stdout_callback = None
+        return_code = pbex.run()
+        return return_code, None

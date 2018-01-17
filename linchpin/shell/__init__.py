@@ -15,86 +15,6 @@ pass_context = click.make_pass_decorator(LinchpinCliContext, ensure=True)
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
-# class LinchpinAliases(click.Group):
-#
-#     ignore_unknown_options = True
-#
-#     def __init__(self, *args, **kwargs):
-#
-#         default_command = kwargs.pop('default_command', None)
-#         super(LinchpinAliases, self).__init__(*args, **kwargs)
-#
-#         self.lp_commands = ['init', 'up', 'destroy', 'fetch', 'journal']
-#
-#         self.lp_aliases = {
-#             'rise': 'up',
-#             'drop': 'destroy',
-#             'down': 'destroy',
-#         }
-#
-#         self.default_cmd_name = None
-#         if default_command is not None:
-#             self.set_default_command(default_command)
-#
-#
-#     def set_default_command(self, command):
-#
-#         if isinstance(command, basestring):
-#             cmd_name = command
-#         else:
-#             cmd_name = command.name
-#             self.add_command(command)
-#         self.default_cmd_name = cmd_name
-#
-#
-#     def parse_args(self, ctx, args):
-#
-#         if not args and self.default_cmd_name:
-#             args.insert(0, self.default_cmd_name)
-#
-#
-#         obj = super(LinchpinAliases, self).parse_args(ctx, args)
-#         print('obj: {}'.format(obj))
-#         return obj
-#
-#
-#     def list_commands(self, ctx):
-#         """
-#         Provide a list of available commands. Anything deprecated should
-#         not be listed
-#         """
-#
-#         return self.lp_commands
-#
-#     def get_command(self, ctx, name):
-#
-#         """
-#         Track aliases for specific commands and the commands and return the
-#         correct action.
-#         """
-#
-#         cmd = self.lp_aliases.get(name)
-#
-#         if cmd is None:
-#             cmd = name
-#
-#         if cmd not in self.commands and self.default_cmd_name is not None:
-#             ctx.args0 = cmd
-#             cmd = self.default_cmd_name
-#         return super(LinchpinAliases, self).get_command(ctx, cmd)
-#
-#         rv = click.Group.get_command(self, ctx, cmd)
-#         return rv
-#
-#     def resolve_command(self, ctx, args):
-#         cmd_name, cmd, args = super(LinchpinAliases,
-#                                     self).resolve_command(ctx, args)
-#         args0 = getattr(ctx, 'args0', None)
-#         if args0 is not None:
-#             args.insert(0, args0)
-#         return cmd_name, cmd, args
-
-
 def _handle_results(ctx, results, return_code):
     """
     Handle results from the RunDB output and Ansible API.
@@ -165,7 +85,7 @@ def _handle_results(ctx, results, return_code):
 @click.option('-w', '--workspace', type=click.Path(), envvar='WORKSPACE',
               help='Use the specified workspace. Also works if the'
                    ' familiar Jenkins WORKSPACE environment variable is set')
-@click.option('-v', '--verbose', is_flag=True, default=False,
+@click.option('-v', '--verbose', count=True, default=1,
               help='Enable verbose output')
 @click.option('--version', is_flag=True,
               help='Prints the version and exits')
@@ -182,7 +102,7 @@ def runcli(ctx, config, pinfile, template_data, output_pinfile,
     ctx.load_global_evars()
     ctx.setup_logging()
 
-    ctx.verbose = verbose
+    ctx.verbosity = verbose
 
     # if the pinfile is a template, data will be passed here
     ctx.pf_data = template_data

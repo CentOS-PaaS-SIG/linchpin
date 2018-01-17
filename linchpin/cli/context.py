@@ -22,7 +22,7 @@ class LinchpinCliContext(LinchpinContext):
         # The following values are set in the parent class
         #
         # self.version = __version__
-        # self.verbose = False
+        # self.verbosity = 1
         #
         # self.lib_path = '{0}'.format(os.path.dirname(
         #                              os.path.realpath(__file__)))
@@ -154,7 +154,7 @@ class LinchpinCliContext(LinchpinContext):
         if lvl is None:
             lvl = logging.INFO
 
-        if self.verbose and not msg_type:
+        if self.verbosity > 1 and not msg_type:
             self.console.log(logging.INFO, msg)
 
         state_msg = msg
