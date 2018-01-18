@@ -1,0 +1,10 @@
+---
+- hosts: '{{ hosts | default("all") }}'
+  become: '{{ become | default("no") }}'
+  become_user: '{{ become_user | default("root") }}'
+  remote_user: '{{ remote_user | default("root") }}'
+  gather_facts: '{{ gather_facts | default("yes") }}'
+  roles:
+    - { role: prereqs, when: skip_prereqs|bool == false }
+    - { role: minishift, when: setup_minishift|bool == true }
+    - role: pipeline

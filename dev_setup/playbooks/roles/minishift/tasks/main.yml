@@ -1,0 +1,41 @@
+---
+# setup minishift
+
+# Determine if minishift binary exists
+- name: "Is minishift binary present in {{ minishift_dest_dir }}"
+  stat:
+    path: "{{ minishift_dest_dir }}/minishift"
+  register: minishift_bin
+
+# install minishift
+- include: install_minishift_bin.yml
+  when: (minishift_bin.stat.exists == false or force_minishift_install|bool == true)
+
+# set disk size and memory
+- name: "Set minishift disk-size {{ disk_size }}"
+  shell: minishift config set disk-size {{ disk_size }}
+
+- name: "Set minishift disk-size {{ memory }}"
+  shell: minishift config set memory {{ memory }}
+
+# set base device size
+- name: "Set minishift base device size to {{basedevice_size}}"
+  shell: minishift config set docker-opt "storage-opt=dm.basesize={{basedevice_size}}"
+
+- name: Pull down the minishift iso
+  get_url:
+    url: "{{ minishift_iso }}"
+    dest: "{{ minishift_dest_dir }}/minishift.iso"
+    timeout: 120
+
+# check if the minishift profile exists
+- name: "Check if the minishift profile exists"
+  shell: "minishift status --profile {{ profile }} | head -1 | grep -i 'does not exist'"
+  register: minishift_exist
+  ignore_errors: yes
+
+# initialize minishift
+- include: init_minishift.yml
+  when: minishift_exist.stdout != ""
+
+

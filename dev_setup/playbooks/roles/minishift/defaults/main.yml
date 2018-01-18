@@ -1,0 +1,22 @@
+---
+# defaults file for minishift
+
+# default location for minishift
+minishift_dest_dir: "{{ ansible_env.HOME }}/minishift"
+
+# default minishift profile name
+profile: minishift
+
+# disk and memory size
+disk_size: 40gb
+memory: 6400mb
+
+# base device size
+# for rootfs in pods
+basedevice_size: 20G
+
+# minishift iso location
+minishift_iso: http://artifacts.ci.centos.org/fedora-atomic/minishift/iso/minishift.iso
+
+# force install of minishift
+force_minishift: false

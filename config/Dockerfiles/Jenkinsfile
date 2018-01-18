@@ -1,0 +1,239 @@
+env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/linchpin'
+env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
+env.ghprbPullAuthorLogin = env.ghprbPullAuthorLogin ?: ''
+env.ghprbPullId = env.ghprbPullId ?: ''
+
+env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop'
+
+// Needed for podTemplate()
+env.SLAVE_TAG = env.SLAVE_TAG ?: 'stable'
+env.FEDORA25_TAG = env.FEDORA25_TAG ?: 'stable'
+env.FEDORA26_TAG = env.FEDORA26_TAG ?: 'stable'
+env.FEDORA27_TAG = env.FEDORA27_TAG ?: 'stable'
+env.CENTOS6_TAG = env.CENTOS6_TAG ?: 'stable'
+env.CENTOS7_TAG = env.CENTOS7_TAG ?: 'stable'
+
+env.DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
+env.OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
+env.OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
+
+// Execution ID for this run of the pipeline
+executionID = UUID.randomUUID().toString()
+
+// Pod name to use
+podName = 'linchpin' + executionID
+
+library identifier: "ci-pipeline@master",
+        retriever: modernSCM([$class: 'GitSCMSource',
+                              remote: "https://github.com/CentOS-Paas-SIG/ci-pipeline"])
+
+library identifier: "cico-pipeline-library@master",
+        retriever: modernSCM([$class: 'GitSCMSource',
+                              remote: "https://github.com/CentOS/cico-pipeline-library"])
+
+properties(
+    [
+        buildDiscarder(logRotator(artifactDaysToKeepStr: '30', artifactNumToKeepStr: '15', daysToKeepStr: '90', numToKeepStr: '30')),
+        disableConcurrentBuilds(),
+        parameters(
+            [
+                string(defaultValue: 'master', description: '', name: 'ghprbActualCommit'),
+                string(defaultValue: '', description: '', name: 'sha1'),
+                string(defaultValue: '', description: 'Pull Request Number', name: 'ghprbPullId'),
+                string(defaultValue: '', description: 'Pull Request Author username', name: 'ghprbPullAuthorLogin'),
+                string(defaultValue: 'stable', description: 'Tag for slave image', name: 'SLAVE_TAG'),
+                string(defaultValue: 'stable', description: 'Tag for fedora25 image', name: 'FEDORA25_TAG'),
+                string(defaultValue: 'stable', description: 'Tag for fedora26 image', name: 'FEDORA26_TAG'),
+                string(defaultValue: 'stable', description: 'Tag for fedora27 image', name: 'FEDORA27_TAG'),
+                string(defaultValue: 'stable', description: 'Tag for centos6 image', name: 'CENTOS6_TAG'),
+                string(defaultValue: 'stable', description: 'Tag for centos7 image', name: 'CENTOS7_TAG'),
+                string(defaultValue: '172.30.254.79:5000', description: 'Docker repo url for Openshift instance', name: 'DOCKER_REPO_URL'),
+                string(defaultValue: 'continuous-infra', description: 'Project namespace for Openshift operations', name: 'OPENSHIFT_NAMESPACE'),
+                string(defaultValue: 'jenkins', description: 'Service Account for Openshift operations', name: 'OPENSHIFT_SERVICE_ACCOUNT'),
+            ]
+        ),
+    ]
+)
+
+podTemplate(name: podName,
+            label: podName,
+            cloud: 'openshift',
+            serviceAccount: OPENSHIFT_SERVICE_ACCOUNT,
+            idleMinutes: 0,
+            namespace: OPENSHIFT_NAMESPACE,
+
+        containers: [
+            // This adds the custom slave container to the pod.
+            // Must be first with name 'jnlp'
+            containerTemplate(name: 'jnlp',
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/jenkins-continuous-infra-slave:' + SLAVE_TAG,
+                ttyEnabled: false,
+                args: '${computer.jnlpmac} ${computer.name}',
+                command: '',
+                workingDir: '/workDir'),
+            containerTemplate(name: 'centos6',
+                alwaysPullImage: true,
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/centos6:' + SLAVE_TAG,
+                ttyEnabled: true,
+                command: '',
+                privileged: true,
+                workingDir: '/workDir'),
+            containerTemplate(name: 'centos7',
+                alwaysPullImage: true,
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/centos7:' + SLAVE_TAG,
+                ttyEnabled: true,
+                command: '/usr/sbin/init',
+                privileged: true,
+                workingDir: '/workDir'),
+            containerTemplate(name: 'fedora27',
+                alwaysPullImage: true,
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora27:' + SLAVE_TAG,
+                ttyEnabled: true,
+                command: '/usr/sbin/init',
+                privileged: true,
+                workingDir: '/workDir'),
+            containerTemplate(name: 'fedora26',
+                alwaysPullImage: true,
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora26:' + SLAVE_TAG,
+                ttyEnabled: true,
+                command: '/usr/sbin/init',
+                privileged: true,
+                workingDir: '/workDir')
+        ],
+        volumes: [
+            emptyDirVolume(memory: false, mountPath: '/sys/class/net')
+        ]
+)
+
+// Here is the actual workflow...
+{
+    node(podName) {
+        def currentStage = ""
+
+        ansiColor('xterm') {
+            timestamps {
+                // We need to set env.HOME because the openshift slave image
+                // forces this to /home/jenkins and then ~ expands to that
+                // even though id == "root"
+                // See https://github.com/openshift/jenkins/blob/master/slave-base/Dockerfile#L5
+                //
+                // Even the kubernetes plugin will create a pod with containers
+                // whose $HOME env var will be its workingDir
+                // See https://github.com/jenkinsci/kubernetes-plugin/blob/master/src/main/java/org/csanchez/jenkins/plugins/kubernetes/KubernetesLauncher.java#L311
+                //
+                env.HOME = "/root"
+                env.DRIVERS = "dummy duffy"
+                //
+                try {
+                    // Prepare our environment
+                    currentStage = "prepare-environment"
+                    stage(currentStage) {
+                        deleteDir()
+                        // Set our default env variables. Many of these
+                        // are ci-pipeline specific, but we do need some
+                        pipelineUtils.setDefaultEnvVars()
+                        // Decorate our build
+                        currentBuild.displayName = "Build#: ${env.BUILD_NUMBER} - PR: ${env.ghprbPullId} - Author: ${env.ghprbPullAuthorLogin}"
+                        if (env.ghprbActualCommit != null && env.ghprbActualCommit != "master") {
+                            currentBuild.description = "<a href=\"https://github.com/${env.ghprbGhRepository}/pull/${env.ghprbPullId}\">PR #${env.ghprbPullId} (${env.ghprbPullAuthorLogin})</a>"
+                        }
+                        // Gather some info about the node we are running on for diagnostics
+                        pipelineUtils.verifyPod(OPENSHIFT_NAMESPACE, env.NODE_NAME)
+                        dir('linchpin') {
+                            // Checkout our linchpin repo based on the value of env.ghprbActualCommit
+                            checkout([$class: 'GitSCM',
+                                      branches: [[name: env.ghprbActualCommit]],
+                                      doGenerateSubmoduleConfigurations: false,
+                                      extensions                       : [],
+                                      submoduleCfg                     : [],
+                                      userRemoteConfigs                : [
+                                              [refspec:
+                                                       '+refs/heads/*:refs/remotes/origin/*  +refs/pull/*:refs/remotes/origin/pr/* ',
+                                               url: "https://github.com/${env.ghprbGhRepository}"]
+                                      ]
+                            ])
+                        }
+                        // create audit message file
+                        //pipelineUtils.initializeAuditFile(msgAuditFile)
+                    }
+                    currentStage = "centos7-install"
+                    stage(currentStage) {
+                        dir('linchpin') {
+                            pipelineUtils.executeInContainer(currentStage, "centos7", "/root/linchpin-install.sh")
+                        }
+                    }
+                    currentStage = "centos7-test"
+                    stage(currentStage) {
+                        dir('linchpin') {
+                            env.target = "centos7"
+                            pipelineUtils.executeInContainer(currentStage, "centos7", "/root/linchpin-tests.sh")
+                        }
+                    }
+                    currentStage = "fedora26-install"
+                    stage(currentStage) {
+                        dir('linchpin') {
+                            pipelineUtils.executeInContainer(currentStage, "fedora26", "/root/linchpin-install.sh")
+                        }
+                    }
+                    currentStage = "fedora26-test"
+                    stage(currentStage) {
+                        dir('linchpin') {
+                            env.target = "fedora26"
+                            pipelineUtils.executeInContainer(currentStage, "fedora26", "/root/linchpin-tests.sh")
+                        }
+                    }
+                    currentStage = "fedora27-install"
+                    stage(currentStage) {
+                        dir('linchpin') {
+                            pipelineUtils.executeInContainer(currentStage, "fedora27", "/root/linchpin-install.sh")
+                        }
+                    }
+                    currentStage = "fedora27-test"
+                    stage(currentStage) {
+                        dir('linchpin') {
+                            env.target = "fedora27"
+                            pipelineUtils.executeInContainer(currentStage, "fedora27", "/root/linchpin-tests.sh")
+                        }
+                    }
+                    currentStage = "centos6-install"
+                    stage(currentStage) {
+                        dir('linchpin') {
+                            pipelineUtils.executeInContainer(currentStage, "centos6", "/root/linchpin-install.sh")
+                        }
+                    }
+                    currentStage = "centos6-test"
+                    stage(currentStage) {
+                        dir('linchpin') {
+                            env.target = "centos6"
+                            env.DRIVERS = "dummy duffy libvirt"
+                            pipelineUtils.executeInContainer(currentStage, "centos6", "/root/linchpin-tests.sh")
+                        }
+                    }
+                } catch (e) {
+                    // Set build result
+                    currentBuild.result = 'FAILURE'
+
+                    // Report the exception
+                    echo "Error: Exception from " + currentStage + ":"
+                    echo e.getMessage()
+
+                    // Throw the error
+                    throw e
+
+                } finally {
+                    pipelineUtils.getContainerLogsFromPod(OPENSHIFT_NAMESPACE, env.NODE_NAME)
+
+                    // Archive our artifacts
+                    step([$class: 'ArtifactArchiver', allowEmptyArchive: true, artifacts: '**/logs/**,*.txt,*.groovy,**/job.*,**/*.groovy,**/inventory.*', excludes: '**/job.props,**/job.props.groovy,**/*.example', fingerprint: true])
+
+                    // Set our message topic, properties, and content
+                    //messageFields = pipelineUtils.setMessageFields("complete")
+
+                    // Send message org.foo.bar.complete on fedmsg
+                    //pipelineUtils.sendMessageWithAudit(messageFields['properties'], messageFields['content'], msgAuditFile, fedmsgRetryCount)
+
+                }
+            }
+        }
+    }
+}

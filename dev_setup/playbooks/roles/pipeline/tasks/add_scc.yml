@@ -1,0 +1,25 @@
+---
+# add security context constraints
+
+# login to the cluster as admin
+- name: "Login to the Openshift cluster as an admin"
+  shell: "oc login {{ cluster_ip.stdout }} --username={{ admin_username }}:{{ admin_password }} --insecure-skip-tls-verify=true"
+
+- name: "Check pipeline scc name from the yaml file"
+  shell: cat {{ pipeline_dir }}/dev_setup/playbooks/roles/pipeline/files/pipeline-scc.yaml | grep name | awk '{print $NF}'
+  register: scc_file
+
+- name: "Check {{ scc_file.stdout }} name exists from querying the cluster"
+  shell: oc get scc | grep '{{ scc_file.stdout }}' | awk '{print $1}'
+  register: scc_name_file
+
+- name: "Create the {{ scc_name_file.stdout }} security context constraints"
+  shell: oc create -f "{{ pipeline_dir }}/dev_setup/playbooks/roles/pipeline/files/pipeline-scc.yaml"
+  when: scc_name_file.stdout == ""
+
+- name: "Update the {{ scc_name_file.stdout }} security context constraints"
+  shell: oc replace -f "{{ pipeline_dir }}/dev_setup/playbooks/roles/pipeline/files/pipeline-scc.yaml"
+  when: scc_name_file.stdout != ""
+
+# login to the cluster for the profile in use as a regular user
+- include: login_to_cluster.yml

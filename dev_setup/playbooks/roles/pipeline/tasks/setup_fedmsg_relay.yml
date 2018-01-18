@@ -1,0 +1,9 @@
+# create/update fedmsg relay
+
+- name: "Set the container_config_name to Fedmsg relay"
+  set_fact:
+    container_config_name: "Fedmsg relay"
+
+- include: query_setup_cluster.yml template_name={{ item }}
+  with_items: "{{ fedmsg_bc_templates }}"
+  when: fedmsg_bc_templates != ""

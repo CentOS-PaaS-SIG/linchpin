@@ -1,0 +1,130 @@
+---
+# query for facts and setup the cluster for Jenkins infra, containers, etc.
+
+# In the future everthing in the create-containers.sh will move into this role
+# hopefully using the oc module in Ansible 2.4
+
+# templates
+- name: "{{ container_config_name }} :: Get template name from the yaml file"
+  shell: oc process -f {{ pipeline_dir }}/config/s2i/{{ template_name }}-buildconfig-template.yaml | jq '.items[1].metadata.labels.template' | sed 's/"//g'
+  args:
+    chdir: "{{ pipeline_dir }}/config/s2i/"
+  register: "template_name_file"
+
+- debug:
+    msg: "{{ container_config_name }} :: Template Name in file: {{ template_name_file.stdout }}"
+
+- name: "{{ container_config_name }} :: Get template name from querying the cluster"
+  shell: oc get templates | awk '{print $1}' | egrep '^{{ template_name_file.stdout }}$'
+  register: "template_name_check"
+  ignore_errors: yes
+
+- debug:
+    msg: "{{ container_config_name }} :: Template Name from querying the cluster: {{ template_name_check.stdout }}"
+
+- name: "{{ container_config_name }} :: Updating buildconfig {{ template_name }}"
+  shell: oc replace -f {{ pipeline_dir }}/config/s2i/{{ template_name }}-buildconfig-template.yaml
+  args:
+    chdir: "{{ pipeline_dir }}/config/s2i/"
+  when: template_name_check.stdout != ""
+
+- name: "{{ container_config_name }} :: Creating buildconfig {{ template_name }}"
+  shell: oc create -f {{ pipeline_dir }}/config/s2i/{{ template_name }}-buildconfig-template.yaml
+  args:
+    chdir: "{{ pipeline_dir }}/config/s2i/"
+  when: template_name_check.stdout == ""
+
+# imagestreams
+- name: "{{ container_config_name }} :: Get imagestream name from the yaml file"
+  shell: oc process -f {{ pipeline_dir }}/config/s2i/{{ template_name }}-buildconfig-template.yaml | jq '.items[0].metadata.name' | sed 's/"//g'
+  args:
+    chdir: "{{ pipeline_dir }}/config/s2i/"
+  register: "image_stream_name_file"
+
+- name: "{{ container_config_name }} :: Get imagestream from querying the cluster"
+  shell: oc get imagestream | awk '{print $1}' | egrep '^{{ image_stream_name_file.stdout }}$'
+  ignore_errors: yes
+  register: "image_stream_name_check"
+
+- debug:
+    msg: "{{ container_config_name }} :: Imagestream Name from querying the cluster: {{ image_stream_name_check.stdout }}"
+
+- debug:
+    msg: "{{ container_config_name }} :: Imagestream {{ image_stream_name_check.stdout }} already exists"
+  when: image_stream_name_check.stdout != ""
+
+# buildconfigs
+- name: "{{ container_config_name }} :: Get buildconfig name from the yaml file"
+  shell: oc process -f {{ pipeline_dir }}/config/s2i/{{ template_name }}-buildconfig-template.yaml | jq '.items[1].metadata.name' | sed 's/"//g'
+  args:
+    chdir: "{{ pipeline_dir }}/config/s2i/"
+  register: "build_config_name_file"
+
+- name: "{{ container_config_name }} :: Get buildconfig from querying the cluster"
+  shell: oc get buildconfig | awk '{print $1}' | egrep '^{{ build_config_name_file.stdout }}$'
+  ignore_errors: yes
+  register: "build_config_name_check"
+
+- debug:
+    msg: "{{ container_config_name }} :: Buildconfig Name from querying the cluster: {{ build_config_name_check.stdout }}"
+
+- debug:
+    msg: "{{ container_config_name }} :: Buildconfig {{ build_config_name_check.stdout }} already exists"
+  when: build_config_name_check.stdout != ""
+
+- name: "{{ container_config_name }} :: Imagestream and buildconfig do not exist and REPO_URL is set.  Creating..."
+  shell: oc new-app {{ template_name_file.stdout }} ${REPO_URL_PARAM} ${REPO_REF_PARAM}
+  args:
+    chdir: "{{ pipeline_dir }}/config/s2i/"
+  environment:
+    REPO_URL_PARAM: "-p REPO_URL={{ lookup('env','REPO_URL') }}"
+    REPO_REF_PARAM: ""
+  when: ((image_stream_name_check.stdout == "" and build_config_name_check.stdout == "") and
+         (lookup('env','REPO_URL') != "" and lookup('env','REPO_REF') == ""))
+
+- name: "{{ container_config_name }} :: Imagestream and buildconfig do not exist and REPO_REF is set.  Creating..."
+  shell: oc new-app {{ template_name_file.stdout }} ${REPO_URL_PARAM} ${REPO_REF_PARAM}
+  args:
+    chdir: "{{ pipeline_dir }}/config/s2i/"
+  environment:
+    REPO_URL_PARAM: ""
+    REPO_REF_PARAM: "-p REPO_REF={{ lookup('env','REPO_REF') }}"
+  when: ((image_stream_name_check.stdout == "" and build_config_name_check.stdout == "") and
+         (lookup('env','REPO_URL') == "" and lookup('env','REPO_REF') != ""))
+
+- name: "{{ container_config_name }} :: Imagestream and buildconfig do not exist and REPO_URL and REPO_REF are set.  Creating..."
+  shell: oc new-app {{ template_name_file.stdout }} ${REPO_URL_PARAM} ${REPO_REF_PARAM}
+  args:
+    chdir: "{{ pipeline_dir }}/config/s2i/"
+  environment:
+    REPO_URL_PARAM: "-p REPO_URL={{ lookup('env','REPO_URL') }}"
+    REPO_REF_PARAM: "-p REPO_REF={{ lookup('env','REPO_REF') }}"
+  when: ((image_stream_name_check.stdout == "" and build_config_name_check.stdout == "") and
+         (lookup('env','REPO_URL') != "" and lookup('env','REPO_REF') != ""))
+
+- name: "{{ container_config_name }} :: Imagestream and buildconfig do not exist and REPO_URL and REPO_REF are NOT set.  Creating..."
+  shell: oc new-app {{ template_name_file.stdout }} ${REPO_URL_PARAM} ${REPO_REF_PARAM}
+  args:
+    chdir: "{{ pipeline_dir }}/config"
+  environment:
+    REPO_URL_PARAM: ""
+    REPO_REF_PARAM: ""
+  when: ((image_stream_name_check.stdout == "" and build_config_name_check.stdout == "") and
+         (lookup('env','REPO_URL') == "" and lookup('env','REPO_REF') == ""))
+
+# Wait container in the pipeline to be finished building
+- name: "{{ container_config_name }} :: Wait for {{  build_config_name_file.stdout }} to be queued"
+  shell: "oc get builds | grep '{{  build_config_name_file.stdout }}'"
+  register: oc_build_result
+  until: oc_build_result.stdout.find(" Pending ") == -1
+  retries: 6
+  delay: 10
+
+# Wait container in the pipeline to be finished building
+- name: "{{ container_config_name }} :: Wait for {{  build_config_name_file.stdout }} to be built and marked with latest tag"
+  shell: "oc get builds | grep '{{  build_config_name_file.stdout }}'"
+  register: oc_build_result
+  until: oc_build_result.stdout.find(" Running ") == -1
+  retries: 300
+  delay: 10
+  failed_when: oc_build_result.stdout.find(" Failed ") != -1

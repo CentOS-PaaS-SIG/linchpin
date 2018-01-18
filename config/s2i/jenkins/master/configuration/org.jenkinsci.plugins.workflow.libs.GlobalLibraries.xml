@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<org.jenkinsci.plugins.workflow.libs.GlobalLibraries plugin="workflow-cps-global-lib@2.9">
+    <libraries>
+        <org.jenkinsci.plugins.workflow.libs.LibraryConfiguration>
+            <name>cico-pipeline-library</name>
+            <retriever class="org.jenkinsci.plugins.workflow.libs.SCMSourceRetriever">
+                <scm class="jenkins.plugins.git.GitSCMSource" plugin="git@3.6.3">
+                    <id>93b8ae50-54d8-4215-a1b6-4f3b30d9ff04</id>
+                    <remote>https://github.com/CentOS/cico-pipeline-library</remote>
+                    <credentialsId></credentialsId>
+                    <traits>
+                        <jenkins.plugins.git.traits.BranchDiscoveryTrait/>
+                    </traits>
+                </scm>
+            </retriever>
+            <defaultVersion>master</defaultVersion>
+            <implicit>true</implicit>
+            <allowVersionOverride>true</allowVersionOverride>
+            <includeInChangesets>true</includeInChangesets>
+        </org.jenkinsci.plugins.workflow.libs.LibraryConfiguration>
+    </libraries>
+</org.jenkinsci.plugins.workflow.libs.GlobalLibraries>
