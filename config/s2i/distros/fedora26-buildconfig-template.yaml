@@ -45,7 +45,7 @@ parameters:
 - description: Git repository with Dockerfile and slave entrypoint.
   displayName: Repository URL
   name: REPO_URL
-  value: https://github.com/p3ck/linchpin.git
+  value: https://github.com/CentOS-PaaS-SIG/linchpin.git
 - description: The sub-directory inside the repository.
   displayName: Context Directory
   name: REPO_CONTEXTDIR
@@ -53,4 +53,4 @@ parameters:
 - description: The git ref or tag to use for customization.
   displayName: Git Reference
   name: REPO_REF
-  value: openshift-release1.5
+  value: develop
