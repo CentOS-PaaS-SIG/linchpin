@@ -27,8 +27,7 @@ basedevice_size: 20G
 minishift_iso: http://artifacts.ci.centos.org/fedora-atomic/minishift/iso/minishift.iso
 
 # repo to clone
-#pipeline_repo: https://github.com/CentOS-PaaS-SIG/linchpin
-pipeline_repo: https://github.com/p3ck/linchpin.git
+pipeline_repo: https://github.com/CentOS-PaaS-SIG/linchpin
 
 # repo directory
 pipeline_dir: "{{ ansible_env.HOME }}/minishift/linchpin"
@@ -37,7 +36,7 @@ pipeline_dir: "{{ ansible_env.HOME }}/minishift/linchpin"
 pipeline_refspec: '+refs/pull/*:refs/heads/*'
 
 # repo branch or sha
-pipeline_branch: 'openshift-release1.5'
+pipeline_branch: 'develop'
 
 # cluster username
 username: developer
