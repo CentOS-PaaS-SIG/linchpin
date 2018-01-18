@@ -8,8 +8,7 @@ ansible24 = float(ansible.__version__[0:3]) >= 2.4
 
 
 # CentOS 6 EPEL provides an alternate Jinja2 package
-# whichi is used by the imports below
-# Ansible uses Jinja2 here
+# used by the imports below - Ansible uses Jinja2 here
 
 try:
     from callbacks import PlaybookCallback
