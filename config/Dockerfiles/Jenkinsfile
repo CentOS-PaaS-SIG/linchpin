@@ -1,9 +1,9 @@
-env.ghprbGhRepository = env.ghprbGhRepository ?: 'p3ck/linchpin'
-env.ghprbActualCommit = env.ghprbActualCommit ?: 'openshift-release1.5'
+env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/linchpin'
+env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
 env.ghprbPullAuthorLogin = env.ghprbPullAuthorLogin ?: ''
 env.ghprbPullId = env.ghprbPullId ?: ''
 
-env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'openshift-release1.5'
+env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop'
 
 // Needed for podTemplate()
 env.SLAVE_TAG = env.SLAVE_TAG ?: 'stable'
