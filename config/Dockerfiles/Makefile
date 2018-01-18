@@ -1,7 +1,6 @@
-PARENT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))/../)
+PARENT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))/../../)
 
-TARGETS := fedora27 centos7 fedora26 fedora25
-#TARGETS := fedora27 centos7 fedora26 fedora25 centos6
+TARGETS := fedora27 centos7 fedora26 centos6
 
 .PHONY: all
 all: pip_install.sh

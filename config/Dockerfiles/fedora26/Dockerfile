@@ -31,10 +31,8 @@ COPY linchpin-install.sh $HOME/
 COPY linchpin-test.sh $HOME/
 COPY linchpin-tests.sh $HOME/
 COPY pip_install.sh $HOME/
-COPY fedora26/default.xml /etc/libvirt/qemu/networks/
 
 RUN $HOME/pip_install.sh
-RUN mkdir -p $HOME/.config
 
 # /wordir should include the source code of linchpin
 VOLUME [ "/workdir" , "/sys/fs/cgroup"]
