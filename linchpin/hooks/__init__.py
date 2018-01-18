@@ -83,6 +83,7 @@ class ActionBlockRouter(object):
 
 class LinchpinHooks(object):
 
+
     def __init__(self, api):
         """
         LinchpinHooks class constructor
@@ -93,6 +94,7 @@ class LinchpinHooks(object):
         self.api.bind_to_hook_state(self.run_hooks)
         self._rundb = None
         self._rundb_id = None
+        self.verbosity = self.api.ctx.verbosity
 
 
     @property
@@ -269,17 +271,23 @@ class LinchpinHooks(object):
                     # get the class
                     class_ = getattr(module, class_name)
                     # a_b_obj is action_block_object
-                    a_b_obj = class_(action_type, a_b, tgt_data, context=ab_ctx)
+                    a_b_obj = class_(action_type,
+                                     a_b,
+                                     tgt_data,
+                                     context=ab_ctx,
+                                     verbosity=self.verbosity)
                 else:
                     a_b_obj = ActionBlockRouter(action_type,
                                                 a_b,
                                                 tgt_data,
-                                                context=ab_ctx)
+                                                context=ab_ctx,
+                                                verbosity=self.verbosity)
                 try:
                     self.api.ctx.log_state('-------\n'
                                            'start hook'
                                            ' {0}:{1}'.format(a_b['type'],
                                                              a_b['name']))
+
 
                     # validates the class object
                     a_b_obj.validate()

@@ -72,7 +72,7 @@ class AnsibleActionManager(ActionManager):
         status = v.validate(self.action_data)
 
         if not status:
-            raise HookError("Invalid syntax: {0}".format(+str((v.errors))))
+            raise HookError("Invalid syntax: {0}".format((v.errors)))
         else:
             return status
 
@@ -97,6 +97,7 @@ class AnsibleActionManager(ActionManager):
             self.target_data.get("inventory_file", None))
 
         return ctx_params
+
 
     def execute(self):
 
@@ -130,9 +131,12 @@ class AnsibleActionManager(ActionManager):
             if self.context:
                 extra_vars.update(self.get_ctx_params())
             if 'inventory_file' in self.target_data and self.context:
+                inv_file = self.target_data["inventory_file"]
+                verbosity = self.kwargs.get('verbosity', 1)
                 return ansible_runner(playbook,
                                       "",
                                       extra_vars,
-                                      self.target_data["inventory_file"])
+                                      inventory_src=inv_file,
+                                      verbosity=verbosity)
             else:
                 return ansible_runner(playbook, "", extra_vars)

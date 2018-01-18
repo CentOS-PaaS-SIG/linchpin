@@ -31,7 +31,7 @@ class LinchpinContext(object):
         """
 
         self.version = __version__
-        self.verbose = False
+        self.verbosity = 1
 
         self.lib_path = '{0}'.format(os.path.dirname(
                                      os.path.realpath(__file__)))
