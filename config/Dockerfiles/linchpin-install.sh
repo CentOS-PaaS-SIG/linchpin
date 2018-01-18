@@ -1,7 +1,5 @@
 #!/bin/bash -x
 
-ls
-
 WORKDIR=$(pwd)
 
 pip install .
