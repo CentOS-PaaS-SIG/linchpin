@@ -25,12 +25,16 @@ else
     git clone https://github.com/CentOS-PaaS-SIG/duffy-ansible-module.git
 fi
 
-mkdir -p logs
 for target in $TARGETS; do
     container="lp_$target"
     docker run --privileged -d -v $LINCHPINDIR:/workdir/ \
         -v /sys/fs/cgroup:/sys/fs/cgroup:ro --name $container $container
-    docker exec -it $container /root/linchpin-install.sh
+done
+
+mkdir -p logs
+for target in $TARGETS; do
+    container="lp_$target"
+    docker exec -it $container bash -c 'pushd /workdir && /root/linchpin-install.sh'
     for i in $DRIVERS; do
         testname="$target/$i"
         if [ "$i" = "duffy" -a ! -e "duffy.key" ]; then
@@ -38,7 +42,7 @@ for target in $TARGETS; do
             summary="${summary}\n${test_summary}"
             continue
         fi
-        docker exec -it $container /root/linchpin-test.sh $i 2>&1 |tee logs/${target}_${i}.log
+        docker exec -it $container bash -c "pushd /workdir && /root/linchpin-test.sh $i" 2>&1 |tee logs/${target}_${i}.log
         if [ $? -eq 0 ]; then
             test_summary="$(tput setaf 2)SUCCESS$(tput sgr0)\t${testname}"
         else
@@ -47,6 +51,10 @@ for target in $TARGETS; do
         fi
         summary="${summary}\n${test_summary}"
     done
+done
+
+for target in $TARGETS; do
+    container="lp_$target"
     docker kill $container
     docker rm $container
 done

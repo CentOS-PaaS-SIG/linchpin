@@ -41,10 +41,8 @@ COPY linchpin-test.sh $HOME/
 COPY linchpin-tests.sh $HOME/
 COPY pip_install.sh $HOME/
 COPY centos6/start_libvirtd.sh $HOME/
-COPY centos6/default.xml /etc/libvirt/qemu/networks/
 
 RUN $HOME/pip_install.sh
-#RUN mkdir -p $HOME/.config
 
 
 # /wordir should include the source code of linchpin
