@@ -78,7 +78,7 @@ class LinchpinAPI(object):
         Configures the run database parameters, sets them into extra_vars
         """
 
-        rundb_conn_default = '~/.config/linchpin/rundb-::mac::.json'
+        rundb_conn_default = '{0}/.rundb/rundb-::mac::.json'.format(self.workspace)
         rundb_conn = self.get_cfg(section='lp',
                                   key='rundb_conn',
                                   default=rundb_conn_default)
