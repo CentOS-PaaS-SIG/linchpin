@@ -31,6 +31,7 @@
                     "boot_from_volume": { "type": "boolean", "required": false },
                     "volume_size": { "type": "string", "required": false },
                     "boot_volume": { "type": "string", "required": false },
+                    "remote_user": { "type": "string", "required": false },
                     "cloud_config": { "required": false },
                     "networks": {
                         "type": "list",
