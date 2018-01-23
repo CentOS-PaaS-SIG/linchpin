@@ -120,7 +120,7 @@ class LinchpinHooks(object):
         inv_folder = self.api.get_evar('inventories_folder')
         topo_name = topo_data.get('topology_name')
         uhash = self.api.get_evar('uhash')
-        uhash_enabled = self.api.get_evar('enable_uhash')
+        uhash_enabled = self.api.get_evar('enable_uhash', False)
         ext = self.api.get_cfg('extensions', 'inventory')
 
         inv_file = '{0}/{1}/{2}{3}'.format(workspace,
