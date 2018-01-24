@@ -70,6 +70,7 @@ class LinchpinAPI(object):
         self.set_evar('lp_path', lp_path)
         self.set_evar('pb_path', self.pb_path)
         self.set_evar('from_api', True)
+        self.set_evar('enable_uhash', self.get_evar('enable_uhash', False))
         self.workspace = self.get_evar('workspace')
 
 
@@ -78,10 +79,10 @@ class LinchpinAPI(object):
         Configures the run database parameters, sets them into extra_vars
         """
 
-        rundb_conn_default = '~/.config/linchpin/rundb-::mac::.json'
+        rundb_conn_def = '{0}/.rundb/rundb-::mac::.json'.format(self.workspace)
         rundb_conn = self.get_cfg(section='lp',
                                   key='rundb_conn',
-                                  default=rundb_conn_default)
+                                  default=rundb_conn_def)
         rundb_type = self.get_cfg(section='lp',
                                   key='rundb_type',
                                   default='TinyRunDB')

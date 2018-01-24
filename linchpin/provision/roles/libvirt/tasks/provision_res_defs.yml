@@ -17,11 +17,12 @@
 
 - name: "Set the resource node name"
   set_fact:
-    rsrc_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+    libvirt_resource_name: "{{ res_def['name'] }}"
 
 - name: "Create name using uhash value"
   set_fact:
-    libvirt_resource_name: "{{ rsrc_name + '-' + uhash }}"
+    libvirt_resource_name: "{{ libvirt_resource_name + '-' + uhash }}"
+  when: enable_uhash == True
 
 - name: "provision libvirt node"
   include: provision_libvirt_node.yml

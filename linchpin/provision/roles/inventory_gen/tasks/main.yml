@@ -13,6 +13,13 @@
   set_fact:
     inventory_path: "{{ inventory_path | default( workspace +'/'+inventories_folder+'/'+
     topology_name.replace(' ', '_').lower() ) + '-' + uhash }}.inventory"
+  when: enable_uhash == True
+
+- name: "Updating inventory_path with the absolute path"
+  set_fact:
+    inventory_path: "{{ inventory_path | default( workspace +'/'+inventories_folder+'/'+
+    topology_name.replace(' ', '_').lower() ) }}.inventory"
+  when: enable_uhash == False
 
 - name: "Generate Generic Inventory"
   template:
