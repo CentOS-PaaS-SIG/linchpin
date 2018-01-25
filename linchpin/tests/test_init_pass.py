@@ -39,8 +39,8 @@ def setup_load_config():
     provider = 'dummy'
 
     cd = ContextData()
-    cd.load_new_config(provider)
-    cd.parse_config()
+    cd.load_config_data()
+    cd.create_config()
     config_path = cd.get_temp_filename()
     config_data = cd.cfg_data
     cd.write_config_file(config_path)
@@ -72,6 +72,9 @@ def setup_lp_api():
     base_path = '{0}'.format(os.path.dirname(
         os.path.realpath(__file__))).rstrip('/')
     mock_path = '{0}/{1}/{2}'.format(base_path, 'mockdata', provider)
+
+    if not lpa.workspace:
+        lpa.workspace = mock_path
 
     lpa.set_evar('workspace', mock_path)
 
@@ -242,6 +245,7 @@ def test_invoke_playbooks():
     rundb = lpa.setup_rundb()  # noqa F841
     lpa.set_evar('rundb_id', 1)
 
+    lpa.set_evar('topo_data', topo)
     lpa.set_evar('target', provider)
     lpa.set_evar('resources', resources)
     lpa.set_evar('uhash', 'test')

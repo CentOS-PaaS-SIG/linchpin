@@ -32,8 +32,8 @@ def setup_load_config():
 
     cd = ContextData()
     # cd.load_config_data(provider)
-    cd.load_new_config(provider)
-    cd.parse_config()
+    cd.load_config_data()
+    cd.create_config()
     config_path = cd.get_temp_filename()
     config_data = cd.cfg_data
     cd.write_config_file(config_path)
