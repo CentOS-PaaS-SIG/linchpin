@@ -11,6 +11,7 @@ os-server-new:
   topology: os-server-new.yml
   layout: os-server.yml
 
+# the libvirt module generates a key named for the topology
 libvirt-new:
   topology: libvirt-new.yml
   layout: libvirt.yml
@@ -21,7 +22,7 @@ libvirt-new:
         context: True
         actions:
           - playbook: ping.yaml
-            extra_vars: {"ansible_ssh_private_key_file": "/home/herlo/.ssh/rh_rsa"}
+            extra_vars: { "ansible_ssh_private_key_file": "~/.ssh/libvirt-new" }
     preup:
       - type: shell
         name: hello

@@ -1,25 +1,34 @@
 General Configuration
 ---------------------
 
-Managing LinchPin requires a few configuration files. Beyond
-:code1.5:`linchpin.conf <linchpin/linchpin.conf>`, there are a few other configurations that are
-checked . When running linchpin, four different locations are checked for
-linchpin.conf files. Files are checked in the following order:
+Managing LinchPin requires a few configuration files. Most configurations are
+stored in the :code1.5:`linchpin configuration <linchpin/linchpin.constants>` file.
 
-#. :file:`linchpin/library/path/linchpin.conf`
+.. note:: in versions before 1.5.1, the file was called linchpin.conf. This
+   changed in 1.5.1 due to backward compatibility requirements, and the need
+   to load configuration defaults. The linchpin.conf continues to work as
+   expected.
+
+The settings in this file are loaded automatically as defaults.
+
+However, it's possible to override any setting in linchpin. For the
+command line shell, three different locations are checked for linchpin.conf
+files. Files are checked in the following order:
+
 #. :file:`/etc/linchpin.conf`
 #. :file:`~/.config/linchpin/linchpin.conf`
-#. :file:`path/to/workspace/linchpin.conf`
+#. :file:`/path/to/workspace/linchpin.conf`
 
-The LinchPin configuration parser supports overriding and extension of
-configurations. Therefore, the existing configuration files are read.
-If linchpin finds the same configuration section header in more than one file,
-the header that was parsed more recently will provide the configuration for that
-section. In this way user can override the general configurations. Commonly,
+The LinchPin configuration parser supports overriding and extending
+configurations. If linchpin finds the same section and setting in more than
+one file, the header that was parsed more recently will provide the
+configuration. In this way user can override default configurations. Commonly,
 this is done by placing a `linchpin.conf` in the root of the :term:`workspace`.
 
-Adding a Section
-````````````````
+Adding/Overriding a Section
+```````````````````````````
+
+New in version 1.2.0
 
 Adding a section to the configuration is simple. The best approach is to
 create a linchpin.conf in the appropriate location from the locations above.
@@ -27,13 +36,14 @@ create a linchpin.conf in the appropriate location from the locations above.
 Once created, add a section. The section can be a new section, or it can
 overwrite an existing section.
 
-.. code-block:: cfg
+ .. code-block:: cfg
 
     [lp]
     # move the rundb_connection to a global scope
     rundb_conn = %(default_config_path)s/rundb/rundb-::mac::.json
 
     module_folder = library
+    rundb_conn = ~/.config/linchpin/rundb-::mac::.json
 
     rundb_type = TinyRunDB
     rundb_conn_type = file
@@ -49,16 +59,28 @@ overwrite an existing section.
     dateformat = %%m/%%d/%%Y %%I:%%M:%%S %%p
     default_pinfile = PinFile
 
-For instance above, the configuration has been updated to use a different path
-to the ``rundb_conn``. This section now uses a system-wide RunDB, which
-can be useful to some.
+.. warning:: For version 1.5.0 and earlier, if overwriting a section, all
+   entries from the entire section must be updated.
 
-.. warning:: If overwriting a section, all entries from the entire section
-   must be updated.
 
-.. note:: A common thing to do is to put the items updated at the top of the new
-   section. It may even be a good idea to add a comment stating why it was
-   updated.
+Overriding a configuration item
+```````````````````````````````
+
+New in version 1.5.1
+
+Each item within a section can be a new setting,
+or override a default setting, as shown.
+
+.. code-block:: cfg
+
+    [lp]
+    # move the rundb_connection to a global scope
+    rundb_conn = ~/.config/linchpin/rundb-::mac::.json
+
+
+As can be plainly seen, the configuration has been updated to use a different
+path to the ``rundb_conn``. This section now uses a user-based RunDB, which
+can be useful in some scenarios.
 
 .. _config_useful_configs:
 
