@@ -139,8 +139,10 @@ class LinchpinCliContext(LinchpinContext):
             self.logger.setLevel(eval(self.cfgs['logger'].get('level',
                                                               'logging.DEBUG')))
 
-            fh = logging.FileHandler(self.cfgs['logger'].get('file',
-                                                             'linchpin.log'))
+            logfile = os.path.realpath(os.path.expanduser(
+                self.cfgs['logger'].get('file', 'linchpin.log')))
+
+            fh = logging.FileHandler(logfile)
             fh.setLevel(eval(self.cfgs['logger'].get('level',
                                                      'logging.DEBUG')))
             formatter = logging.Formatter(

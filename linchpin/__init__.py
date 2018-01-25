@@ -405,7 +405,7 @@ class LinchpinAPI(object):
                                               default='False')))
 
         if not ansible_console:
-            ansible_console = self.ctx.verbosity
+            ansible_console = bool(self.ctx.verbosity > 1)
 
         results = {}
 
