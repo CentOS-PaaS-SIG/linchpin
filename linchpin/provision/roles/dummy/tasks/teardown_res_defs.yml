@@ -6,7 +6,7 @@
 - name: "Assign dummy name using uhash value"
   set_fact:
     dummy_name: "{{ dummy_name + '-' + uhash }}"
-  when: enable_uhash == True
+  when: enable_uhash
 
 - name: "Teardown dummy resources by looping on count"
   dummy:

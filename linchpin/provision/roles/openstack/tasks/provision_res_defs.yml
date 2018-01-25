@@ -16,7 +16,7 @@
 - name: "Create name using uhash value"
   set_fact:
     os_resource_name: "{{ os_resource_name + '-' + uhash + '-' }}"
-  when: enable_uhash == True
+  when: enable_uhash
 
 - name: "provision/teardown resources }}"
   include: "provision_{{ res_def['role'] }}.yml"

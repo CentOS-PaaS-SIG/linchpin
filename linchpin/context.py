@@ -99,7 +99,7 @@ class LinchpinContext(object):
 
         except ConfigParser.InterpolationSyntaxError as e:
             raise LinchpinError('Unable to parse configuration file properly:'
-                                    ' {0}'.format(e))
+                                ' {0}'.format(e))
 
 
     def load_global_evars(self):
