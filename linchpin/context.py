@@ -77,25 +77,19 @@ class LinchpinContext(object):
                     self.cfgs[section] = {}
 
                 for k in config.options(section):
-                    try:
-                        self.cfgs[section][k] = config.get(section, k)
-                    except ConfigParser.InterpolationMissingOptionError:
-                        if section == 'evars':
-                            try:
-                                self.cfgs[section][k] = (
-                                    config.getboolean(section, k)
-                                )
-                            except ValueError:
-                                self.cfgs[section][k] = config.get(section, k)
-                        else:
-                            try:
-                                value = config.get(section, k, raw=True)
-                                self.cfgs[section][k] = value.replace('%%', '%')
-                            except Exception as e:
-                                raise LinchpinError('Unable to parse'
-                                                    ' configuration file'
-                                                    ' properly:'
-                                                    ' {0}'.format(e))
+                    if section == 'evars':
+                        try:
+                            self.cfgs[section][k] = (
+                                config.getboolean(section, k)
+                            )
+                        except ValueError:
+                            self.cfgs[section][k] = config.get(section, k)
+                    else:
+                        try:
+                            self.cfgs[section][k] = config.get(section, k)
+                        except ConfigParser.InterpolationMissingOptionError:
+                            value = config.get(section, k, raw=True)
+                            self.cfgs[section][k] = value.replace('%%', '%')
 
         except ConfigParser.InterpolationSyntaxError as e:
             raise LinchpinError('Unable to parse configuration file properly:'

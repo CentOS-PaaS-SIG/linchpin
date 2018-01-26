@@ -83,7 +83,7 @@ class ContextData(object):
 
     def _parse_config(self, path):
         """
-        Parse configs into the self.cfgs dict from provided path.
+        Parse configs into the self.cfg_data dict from provided path.
 
         :param path: A path to a config to parse
         """
@@ -99,28 +99,23 @@ class ContextData(object):
                     self.cfg_data[section] = {}
 
                 for k in config.options(section):
-                    try:
-                        self.cfg_data[section][k] = config.get(section, k)
-                    except ConfigParser.InterpolationMissingOptionError:
-                        if section == 'evars':
-                            try:
-                                self.cfg_data[section][k] = (
-                                    config.getboolean(section, k)
-                                )
-                            except ValueError:
-                                self.cfg_data[section][k] = config.get(section, k)
-                        else:
-                            try:
-                                value = config.get(section, k, raw=True)
-                                self.cfg_data[section][k] = value.replace('%%', '%')
-                            except Exception as e:
-                                raise LinchpinError('Unable to parse'
-                                                    ' configuration file'
-                                                    ' properly:'
-                                                    ' {0}'.format(e))
+                    if section == 'evars':
+                        try:
+                            self.cfg_data[section][k] = (
+                                config.getboolean(section, k)
+                            )
+                        except ValueError:
+                            self.cfg_data[section][k] = config.get(section, k)
+                    else:
+                        try:
+                            self.cfg_data[section][k] = config.get(section, k)
+                        except ConfigParser.InterpolationMissingOptionError:
+                            value = config.get(section, k, raw=True)
+                            self.cfg_data[section][k] = value.replace('%%', '%')
+
         except ConfigParser.InterpolationSyntaxError as e:
             raise LinchpinError('Unable to parse configuration file properly:'
-                                    ' {0}'.format(e))
+                                ' {0}'.format(e))
 
 
     def get_temp_filename(self):

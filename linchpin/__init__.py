@@ -70,7 +70,6 @@ class LinchpinAPI(object):
         self.set_evar('lp_path', lp_path)
         self.set_evar('pb_path', self.pb_path)
         self.set_evar('from_api', True)
-        self.set_evar('enable_uhash', self.get_evar('enable_uhash', False))
         self.workspace = self.get_evar('workspace')
 
 
