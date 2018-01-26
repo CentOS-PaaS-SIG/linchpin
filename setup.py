@@ -41,6 +41,11 @@ setup(
     zip_safe=False,
     packages=find_packages(),
     include_package_data=True,
+    package_data={
+        '': [
+            'linchpin.constants',
+        ],
+    },
     scripts=[
         'scripts/install_libvirt_deps.sh',
         'scripts/install_selinux_venv.sh'
