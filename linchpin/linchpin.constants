@@ -63,7 +63,7 @@ pinfile = PinFile
 
 [logger]
 enable = True
-file = %(default_config_path)s/linchpin.log
+file = linchpin.log
 format = %%(levelname)s %%(asctime)s %%(message)s
 dateformat = %%m/%%d/%%Y %%I:%%M:%%S %%p
 level = logging.DEBUG

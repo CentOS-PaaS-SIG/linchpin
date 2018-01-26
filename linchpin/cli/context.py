@@ -2,6 +2,7 @@
 
 import os
 import ast
+import errno
 import logging
 
 from linchpin.context import LinchpinContext
@@ -141,6 +142,19 @@ class LinchpinCliContext(LinchpinContext):
 
             logfile = os.path.realpath(os.path.expanduser(
                 self.cfgs['logger'].get('file', 'linchpin.log')))
+
+            logdir = os.path.dirname(logfile)
+
+            if not os.path.exists(logdir):
+                try:
+                    os.makedirs(logdir)
+                except OSError as exc:
+                    if (exc.errno == errno.EEXIST and
+                            os.path.isdir(logdir)):
+                        pass
+                    else:
+                        raise
+
 
             fh = logging.FileHandler(logfile)
             fh.setLevel(eval(self.cfgs['logger'].get('level',
