@@ -62,17 +62,9 @@ class ContextData(object):
             expanded_path = (
                 "{0}".format(os.path.realpath(os.path.expanduser(path))))
 
-            # implement first found
             if os.path.exists(expanded_path):
-                config_found = True
-                break
+                self._parse_config(expanded_path)
 
-            for path in existing_paths:
-                self._parse_config(path)
-
-        if not config_found:
-            raise LinchpinError('Configuration file not found in'
-                                ' path: {0}'.format(CONFIG_PATH))
 
         # override logger file
         self.cfg_data['logger'] = dict()
