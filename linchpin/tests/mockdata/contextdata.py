@@ -19,8 +19,27 @@ class ContextData(object):
         self.lib_path = '{0}'.format(os.path.dirname(
             os.path.realpath(__file__))).rstrip('/')
 
+        current_path = os.path.dirname(os.path.realpath(__file__))
+        constants_path = '{0}/../../'.format(current_path)
+
+        self.constants_path = '{0}'.format(os.path.dirname(
+            constants_path)).rstrip('/')
+
         self.logfile = tempfile.mktemp(suffix='.log', prefix='linchpin')
         self.parser = parser()
+
+        self.cfg_data = {}
+        self._load_constants()
+
+
+    def _load_constants(self):
+        """
+        Create self.cfgs with defaults from the linchpin constants file.
+        """
+
+        constants_file = '{0}/linchpin.constants'.format(self.constants_path)
+        constants_file = os.path.realpath(os.path.expanduser(constants_file))
+        self._parse_config(constants_file)
 
 
     def load_config_data(self, provider='dummy'):
@@ -30,7 +49,6 @@ class ContextData(object):
 
         """
 
-        self.cfg_data = {}
 
         expanded_path = None
         config_found = False
@@ -44,94 +62,52 @@ class ContextData(object):
             expanded_path = (
                 "{0}".format(os.path.realpath(os.path.expanduser(path))))
 
-            # implement first found
             if os.path.exists(expanded_path):
-                config_found = True
-                break
+                self._parse_config(expanded_path)
 
-        if not config_found:
-            raise LinchpinError('Configuration file not found in'
-                                ' path: {0}'.format(CONFIG_PATH))
 
-        config = ConfigParser.SafeConfigParser()
+        # override logger file
+        self.cfg_data['logger'] = dict()
+        self.cfg_data['logger']['file'] = self.logfile
+
+        self.evars = self.cfg_data.get('evars', {})
+
+
+    def _parse_config(self, path):
+        """
+        Parse configs into the self.cfg_data dict from provided path.
+
+        :param path: A path to a config to parse
+        """
+
         try:
+            config = ConfigParser.SafeConfigParser()
             f = open(path)
             config.readfp(f)
             f.close()
+
+            for section in config.sections():
+                if not self.cfg_data.get(section):
+                    self.cfg_data[section] = {}
+
+                for k in config.options(section):
+                    if section == 'evars':
+                        try:
+                            self.cfg_data[section][k] = (
+                                config.getboolean(section, k)
+                            )
+                        except ValueError:
+                            self.cfg_data[section][k] = config.get(section, k)
+                    else:
+                        try:
+                            self.cfg_data[section][k] = config.get(section, k)
+                        except ConfigParser.InterpolationMissingOptionError:
+                            value = config.get(section, k, raw=True)
+                            self.cfg_data[section][k] = value.replace('%%', '%')
+
         except ConfigParser.InterpolationSyntaxError as e:
             raise LinchpinError('Unable to parse configuration file properly:'
                                 ' {0}'.format(e))
-
-        for section in config.sections():
-            if section not in self.cfg_data:
-                self.cfg_data[section] = {}
-
-            # add evars to the ansible extra_vars when running a playbook.
-            for k, v in config.items(section):
-                if section != 'evars':
-                    self.cfg_data[section][k] = v
-                else:
-                    try:
-                        self.cfg_data[section][k] = config.getboolean(section,
-                                                                      k)
-                    except ValueError as e:
-                        self.cfg_data[section][k] = v
-
-        # override logger file
-        self.cfg_data['logger']['file'] = self.logfile
-
-        self.evars = self.cfg_data.get('evars', {})
-
-
-    def load_new_config(self, provider='dummy'):
-
-        self.cfg_data = {}
-
-        expanded_path = None
-
-        CONFIG_PATH = [
-            '{0}/{1}/conf/linchpin.conf'.format(self.lib_path, provider),
-            '{0}/{1}/conf/other_configs/linchpin.conf'.format(self.lib_path,
-                                                              provider)
-        ]
-
-        existing_paths = []
-        for path in CONFIG_PATH:
-            expanded_path = (
-                "{0}".format(os.path.realpath(os.path.expanduser(path))))
-
-            if os.path.exists(expanded_path):
-                existing_paths.append(expanded_path)
-
-        if len(existing_paths) == 0:
-            raise LinchpinError('Configuration file not foud in'
-                                ' path: {0}'.format(CONFIG_PATH))
-        try:
-            for path in existing_paths:
-                config = ConfigParser.SafeConfigParser()
-                f = open(path)
-                config.readfp(f)
-                f.close()
-
-                for section in config.sections():
-                    self.cfg_data[section] = {}
-                    for k, v in config.items(section):
-                        if section != 'evars':
-                            self.cfg_data[section][k] = v
-                        else:
-                            try:
-                                val = config.getboolean(section, k)
-                                self.cfg_data[section][k] = val
-                            except ValueError as e:
-                                self.cfg_data[section][k] = v
-        except ConfigParser.InterpolationSyntaxError as e:
-            raise LinchpinError('Unable to parse configuration file properly:'
-                                '{0}'.format(e))
-
-        # override logger file
-        self.cfg_data['logger']['file'] = self.logfile
-
-        self.evars = self.cfg_data.get('evars', {})
 
 
     def get_temp_filename(self):
@@ -150,7 +126,7 @@ class ContextData(object):
                                 ' {0}'.format(e))
 
 
-    def parse_config(self, config_data=None):
+    def create_config(self, config_data=None):
 
         """
         Creates a config object using ConfigParser from the config_data object
@@ -161,9 +137,12 @@ class ContextData(object):
             config_data = self.cfg_data
 
         # we know that data is a dict, containing dicts
-        for k, v in config_data.iteritems():
-            self.parser.add_section(k)
-            for kv, vv in v.iteritems():
-                if type(vv) is not str:
-                    vv = str(vv)
-                self.parser.set(k, kv, vv)
+        try:
+            for k, v in config_data.iteritems():
+                self.parser.add_section(k)
+                for kv, vv in v.iteritems():
+                    if type(vv) is not str:
+                        vv = str(vv)
+                    self.parser.set(k, kv, vv)
+        except ValueError:
+            pass

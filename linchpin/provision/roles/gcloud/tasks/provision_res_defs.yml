@@ -21,7 +21,7 @@
 - name: "Create name using uhash value"
   set_fact:
     gce_resource_name: "{{ gce_resource_name + '-' + uhash }}"
-  when: enable_uhash == True
+  when: enable_uhash
 
 - name: "provision resource type : {{ res_def['role'] }}"
   include: "provision_{{ res_def['role'] }}.yml"

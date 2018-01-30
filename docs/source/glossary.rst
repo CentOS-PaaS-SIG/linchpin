@@ -54,25 +54,27 @@ The following is a list of terms used throughout the LinchPin documentation.
 
     evars
     extra_vars
-        Variables that can be passed into Ansible playbooks from external sources.
-        Used in linchpin via the linchpin.conf `[evars]` section.
+        Variables that can be passed into Ansible playbooks from external
+        sources. Used in linchpin via the linchpin.conf `[evars]` section.
 
     hook
-        Certan scripts can be called when a particular :term:`hook` has been
+        Certain scripts can be called when a particular :term:`hook` has been
         referenced in the :term:`PinFile`. The currently available hooks are
         `preup`, `postup`, `predestroy`, and `postdestroy`.
 
     inventory
     inventory_file
-        If layout is provided, this will be the location of the resulting ansible inventory
+        If layout is provided, this will be the location of the resulting ansible
+        inventory
 
     inventories_folder
         *(Default: inventories)*
 
-        A configuration entry in :code1.5:`linchpin.conf <linchpin/linchpin.conf>` which stores the relative location
-        where inventories are stored.
+        A configuration entry in :code1.5:`linchpin.conf <config/linchpin.conf>`
+        which stores the relative location where inventories are stored.
 
     linchpin_config
+    lpconfig
         if passed on the command line with ``-c/--config``, should be
         an ini-style config file with linchpin default configurations (see
         BUILT-INS below for more information)
@@ -90,9 +92,6 @@ The following is a list of terms used throughout the LinchPin documentation.
 
     lp_path
         base path for linchpin playbooks and python api
-
-    lpconfig
-        ``<lp_path>/linchpin.conf``, unless overridden by :term:`linchpin_config`
 
     output
         *(boolean, default: True, previous: no_output)*

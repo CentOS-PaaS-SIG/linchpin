@@ -37,7 +37,7 @@ def setup_context_data():
 
     cd = ContextData()
     cd.load_config_data()
-    cd.parse_config()
+    cd.create_config()
     evars_data = cd.evars
     config_path = cd.get_temp_filename()
     config_data = cd.cfg_data
@@ -58,17 +58,18 @@ def test_load_config():
         lpc.cfgs.pop(cfg)
         cfg_data.pop(cfg)
 
-    assert_dict_equal(cfg_data, lpc.cfgs)
+    assert_dict_equal(cfg_data['console'],
+                      lpc.cfgs['console'])
 
 
 @with_setup(setup_context_data)
 def test_get_cfg():
 
     lpc = LinchpinCliContext()
-    lpc.load_config(config_path)
-    cfg_value = lpc.get_cfg('hookstates', 'up')
+    lpc.load_config()
+    cfg_value = lpc.get_cfg(section='lp', key='pkg')
 
-    assert_equal(cfg_value, config_data['hookstates']['up'])
+    assert_equal(cfg_value, config_data['lp']['pkg'])
 
 
 @with_setup(setup_context_data)
@@ -126,6 +127,9 @@ def test_logging_setup():
 
     lpc = LinchpinCliContext()
     lpc.load_config(lpconfig=config_path)
+    lpc.set_cfg('logger',
+                'file',
+                config_data['logger']['file'])
     lpc.setup_logging()
 
     assert os.path.isfile(logfile)
@@ -143,6 +147,9 @@ def test_log_msg():
 
     lpc = LinchpinCliContext()
     lpc.load_config(lpconfig=config_path)
+    lpc.set_cfg('logger',
+                'file',
+                config_data['logger']['file'])
     lpc.setup_logging()
     lpc.log(msg, level=lvl)
 
@@ -160,6 +167,9 @@ def test_log_state():
 
     lpc = LinchpinCliContext()
     lpc.load_config(lpconfig=config_path)
+    lpc.set_cfg('logger',
+                'file',
+                config_data['logger']['file'])
     lpc.setup_logging()
     lpc.log_state(msg)
 
@@ -177,6 +187,9 @@ def test_log_info():
 
     lpc = LinchpinCliContext()
     lpc.load_config(lpconfig=config_path)
+    lpc.set_cfg('logger',
+                'file',
+                config_data['logger']['file'])
     lpc.setup_logging()
     lpc.log_info(msg)
 
@@ -194,9 +207,11 @@ def test_log_debug():
 
     lpc = LinchpinCliContext()
     lpc.load_config(lpconfig=config_path)
+    lpc.set_cfg('logger',
+                'file',
+                config_data['logger']['file'])
     lpc.setup_logging()
     lpc.log_debug(msg)
-
 
     with open(logfile) as f:
         line = f.readline()

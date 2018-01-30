@@ -22,7 +22,7 @@
 - name: "Create name using uhash value"
   set_fact:
     libvirt_resource_name: "{{ libvirt_resource_name + '-' + uhash }}"
-  when: enable_uhash == True
+  when: enable_uhash
 
 - name: "provision libvirt node"
   include: provision_libvirt_node.yml

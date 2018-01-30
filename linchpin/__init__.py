@@ -70,7 +70,6 @@ class LinchpinAPI(object):
         self.set_evar('lp_path', lp_path)
         self.set_evar('pb_path', self.pb_path)
         self.set_evar('from_api', True)
-        self.set_evar('enable_uhash', self.get_evar('enable_uhash', False))
         self.workspace = self.get_evar('workspace')
 
 
@@ -79,10 +78,8 @@ class LinchpinAPI(object):
         Configures the run database parameters, sets them into extra_vars
         """
 
-        rundb_conn_def = '{0}/.rundb/rundb-::mac::.json'.format(self.workspace)
         rundb_conn = self.get_cfg(section='lp',
-                                  key='rundb_conn',
-                                  default=rundb_conn_def)
+                                  key='rundb_conn')
         rundb_type = self.get_cfg(section='lp',
                                   key='rundb_type',
                                   default='TinyRunDB')
@@ -96,6 +93,8 @@ class LinchpinAPI(object):
         if rundb_conn_type == 'file':
 
             rundb_conn_f = rundb_conn.replace('::mac::', str(get_mac()))
+            rundb_conn_f = rundb_conn_f.replace('{{ workspace }}',
+                                                self.workspace)
             rundb_conn_f = os.path.realpath(os.path.expanduser(rundb_conn_f))
             rundb_conn_dir = os.path.dirname(rundb_conn_f)
 
@@ -108,7 +107,6 @@ class LinchpinAPI(object):
                         pass
                     else:
                         raise
-
 
         self.set_evar('rundb_type', rundb_type)
         self.set_evar('rundb_conn', rundb_conn_f)
@@ -406,7 +404,7 @@ class LinchpinAPI(object):
                                               default='False')))
 
         if not ansible_console:
-            ansible_console = self.ctx.verbosity
+            ansible_console = bool(self.ctx.verbosity)
 
         results = {}
 
@@ -430,6 +428,7 @@ class LinchpinAPI(object):
                                     ' "end": "", "rc": 0, "uhash": ""}')
 
             rundb = self.setup_rundb()
+
             rundb_schema = json.loads(self.get_cfg(section='lp',
                                       key='rundb_schema',
                                       default=rundb_schema_default))

@@ -3,8 +3,8 @@
 import os
 import logging
 
-from linchpin.exceptions import LinchpinError
 from linchpin.version import __version__
+from linchpin.exceptions import LinchpinError
 
 # FIXME: remove this later when not using python2.6
 import warnings
@@ -14,7 +14,6 @@ try:
     import configparser as ConfigParser
 except ImportError:
     import ConfigParser as ConfigParser
-
 
 
 class LinchpinContext(object):
@@ -37,71 +36,61 @@ class LinchpinContext(object):
                                      os.path.realpath(__file__)))
 
         self.cfgs = {}
+        self._load_constants()
+
+
+    def _load_constants(self):
+        """
+        Create self.cfgs with defaults from the linchpin constants file.
+        """
+
+        constants_file = '{0}/linchpin.constants'.format(self.lib_path)
+        constants_file = os.path.realpath(os.path.expanduser(constants_file))
+        self._parse_config(constants_file)
 
 
     def load_config(self, search_path=None):
         """
-        Create self.cfgs from the linchpin configuration file.
+        Update self.cfgs from the linchpin configuration file (linchpin.conf).
 
-        The following paths are used to find the config file.
-        The search path defaults to the first-found order::
-
-          * ~/.config/linchpin/linchpin.conf
-          * /etc/linchpin.conf
-          * /linchpin/library/path/linchpin.conf
-
-        An alternate search_path can be passed.
-
-        :param search_path: A list of paths to search a linchpin config
-        (default: None)
-
+        NOTE: Must be implemented by a subclass
         """
 
-        expanded_path = None
+        pass
 
-        if search_path:
-            CONFIG_PATH = search_path
-        else:
-            CONFIG_PATH = [
-                '{0}/linchpin.conf'.format(self.lib_path),
-                '/etc/linchpin.conf',
-                '~/.config/linchpin/linchpin.conf'
-            ]
 
-        existing_paths = []
-        for path in CONFIG_PATH:
-            expanded_path = (
-                "{0}".format(os.path.realpath(os.path.expanduser(path))))
+    def _parse_config(self, path):
+        """
+        Parse configs into the self.cfgs dict from provided path.
 
-            # implement first found
-            if os.path.exists(expanded_path):
-                # logging before the config file is setup doesn't work
-                # if messages are needed before this, use print.
-                existing_paths.append(expanded_path)
-        if len(existing_paths) == 0:
-            raise LinchpinError('Configuration file not found in'
-                                ' path: {0}'.format(CONFIG_PATH))
+        :param path: A path to a config to parse
+        """
+
         try:
-            for path in existing_paths:
-                config = ConfigParser.SafeConfigParser()
-                f = open(path)
-                config.readfp(f)
-                f.close()
+            config = ConfigParser.SafeConfigParser()
+            f = open(path)
+            config.readfp(f)
+            f.close()
 
+            for section in config.sections():
+                if not self.cfgs.get(section):
+                    self.cfgs[section] = {}
 
-                for section in config.sections():
-                    if not self.cfgs.get(section):
-                        self.cfgs[section] = {}
-                    for k, v in config.items(section):
-                        if section != 'evars':
-                            self.cfgs[section][k] = v
-                        else:
-                            try:
-                                self.cfgs[section][k] = (
-                                    config.getboolean(section, k)
-                                )
-                            except ValueError as e:
-                                self.cfgs[section][k] = v
+                for k in config.options(section):
+                    if section == 'evars':
+                        try:
+                            self.cfgs[section][k] = (
+                                config.getboolean(section, k)
+                            )
+                        except ValueError:
+                            self.cfgs[section][k] = config.get(section, k)
+                    else:
+                        try:
+                            self.cfgs[section][k] = config.get(section, k)
+                        except ConfigParser.InterpolationMissingOptionError:
+                            value = config.get(section, k, raw=True)
+                            self.cfgs[section][k] = value.replace('%%', '%')
+
         except ConfigParser.InterpolationSyntaxError as e:
             raise LinchpinError('Unable to parse configuration file properly:'
                                 ' {0}'.format(e))
