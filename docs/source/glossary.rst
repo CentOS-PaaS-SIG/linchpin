@@ -58,7 +58,7 @@ The following is a list of terms used throughout the LinchPin documentation.
         sources. Used in linchpin via the linchpin.conf `[evars]` section.
 
     hook
-        Certan scripts can be called when a particular :term:`hook` has been
+        Certain scripts can be called when a particular :term:`hook` has been
         referenced in the :term:`PinFile`. The currently available hooks are
         `preup`, `postup`, `predestroy`, and `postdestroy`.
 
