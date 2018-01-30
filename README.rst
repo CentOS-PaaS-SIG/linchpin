@@ -28,21 +28,6 @@ QuickStart
 
 The `Getting Started Guide <http://linchpin.readthedocs.io/en/develop/getting_started.html>`_ is a quick guide for LinchPin from the Command-Line.
 
-General Configuration
-+++++++++++++++++++++
-
-`General Configuration documentation <http://linchpin.readthedocs.io/en/latest/config_general.html>`_
-
-Example Topologies
-+++++++++++++++++++++
-
-`Example Topologies <http://linchpin.readthedocs.io/en/latest/topologies.html>`_
-
-Example Inventory Layout (openshift 3 node cluster)
-+++++++++++++++++++++++++++++++++++++++++++++++++++
-
-`Example Layouts <http://linchpin.readthedocs.io/en/latest/config_layout.html>`_
-
 Using LinchPin
 +++++++++++++++
 
