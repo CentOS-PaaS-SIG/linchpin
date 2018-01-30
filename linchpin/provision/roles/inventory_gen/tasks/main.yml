@@ -9,7 +9,7 @@
   set_fact:
     inventory_layout: "{{ layout_data | ordered_yaml }}"
 
-- name: "Updating inventory_path with the absolute path"
+- name: "Updating uhash-based inventory_path with the absolute path"
   set_fact:
     inventory_path: "{{ inventory_path | default( workspace +'/'+inventories_folder+'/'+
     topology_name.replace(' ', '_').lower() ) + '-' + uhash }}.inventory"
