@@ -169,7 +169,7 @@ Used to locate default schemas, usually `schema_v4` or
 
     default_schemas_path = {{ lp_path }}/defaults/%(schemas_folder)s
 
-.. _conf_def_topo_path
+.. _conf_def_topo_path:
 
 default_topologies_path
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -183,7 +183,7 @@ Default location for topologies in cases where :term:`topology` or
 
     default_topologies_path = {{ lp_path }}/defaults/%(topologies_folder)s
 
-.. _conf_def_layout_path
+.. _conf_def_layout_path:
 
 default_layouts_path
 ~~~~~~~~~~~~~~~~~~~~
@@ -196,7 +196,7 @@ When inventories are processed, layouts are looked up here if :term:`layout_file
 
     default_layouts_path = {{ lp_path }}/defaults/%(layouts_folder)s
 
-.. _conf_def_inv_path
+.. _conf_def_inv_path:
 
 default_inventories_path
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -220,7 +220,7 @@ When writing out resources files, this path is used if :term:`inventory_file` is
 
     default_inventories_path = {{ lp_path }}/defaults/%(inventories_folder)s
 
-.. _conf_def_roles_path
+.. _conf_def_roles_path:
 
 default_roles_path
 ~~~~~~~~~~~~~~~~~~
@@ -234,7 +234,7 @@ roles needed in the provider's playbook.
 
 default_roles_path = {{ lp_path }}/%(playbooks_folder)s/%(roles_folder)s
 
-.. _conf_schema_v3
+.. _conf_schema_v3:
 
 schema_v3
 ~~~~~~~~~
@@ -250,7 +250,7 @@ used to perform validation of the topology.
 
 schema_v3 = %(default_schemas_path)s/schema_v3.json
 
-.. _conf_schema_v4
+.. _conf_schema_v4:
 
 schema_v4
 ~~~~~~~~~

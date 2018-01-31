@@ -4,7 +4,7 @@ Advanced Resources Management
 Provisioning in LinchPin is a fairly simple process.
 
 .. toctree::
-   :tocdepth: 1
+   :maxdepth: 1
 
 Managing Credentials
 --------------------

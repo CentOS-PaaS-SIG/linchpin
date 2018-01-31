@@ -6,10 +6,10 @@ The Amazon Web Services (AWS) provider manages multiple types of resources.
 aws_ec2
 -------
 
-Openstack Instances can be provisioned using this resource.
+AWS Instances can be provisioned using this resource.
 
 * :docs1.5:`Topology Example <workspace/topologies/os-server-new.yml>`
-* `Ansible module <http://docs.ansible.com/ansible/latest/os_server_module.html>`_
+* `aws_ec2 module <http://docs.ansible.com/ansible/latest/os_server_module.html>`_
 
 aws_ec2_key
 -----------
@@ -17,7 +17,7 @@ aws_ec2_key
 AWS SSH keys can be added using this resource.
 
 * :docs1.5:`Topology Example <workspace/topologies/aws-ec2-key-new.yml>`
-* `Ansible module <http://docs.ansible.com/ansible/latest/ec2_key_module.html>`_
+* `ec2_key module <http://docs.ansible.com/ansible/latest/ec2_key_module.html>`_
 
 .. note:: This resource will not be torn down during a :term:`destroy`
    action. This is because other resources may depend on the now existing
@@ -29,7 +29,7 @@ aws_s3
 AWS Simple Storage Service buckets can be provisioned using this resource.
 
 * :docs1.5:`Topology Example <workspace/topologies/aws-s3-new.yml>`
-* `Ansible module <http://docs.ansible.com/ansible/latest/aws_s3_module.html>`_
+* `aws_s3 module <http://docs.ansible.com/ansible/latest/aws_s3_module.html>`_
 
 .. note:: This resource will not be torn down during a :term:`destroy`
    action. This is because other resources may depend on the now existing

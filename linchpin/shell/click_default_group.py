@@ -1,67 +1,69 @@
 # -*- coding: utf-8 -*-
-"""
-   click_default_group
-   ~~~~~~~~~~~~~~~~~~~
-   Define a default subcommand by `default=True`:
-   .. sourcecode:: python
-      import click
-      from click_default_group import DefaultGroup
-      @click.group(cls=DefaultGroup, default_if_no_args=True)
-      def cli():
-          pass
-      @cli.command(default=True)
-      def foo():
-          click.echo('foo')
-      @cli.command()
-      def bar():
-          click.echo('bar')
-   Then you can invoke that without explicit subcommand name:
-   .. sourcecode:: console
-      $ cli.py --help
-      Usage: cli.py [OPTIONS] COMMAND [ARGS]...
-      Options:
-        --help    Show this message and exit.
-      Command:
-        foo*
-        bar
-      $ cli.py
-      foo
-      $ cli.py foo
-      foo
-      $ cli.py bar
-      bar
 
-Credit: Heungsub Lee <https://github.com/sublee>
+#"""
+#   click_default_group
+#   ~~~~~~~~~~~~~~~~~~~
+#   Define a default subcommand by `default=True`:
+#   .. sourcecode:: python
+#      import click
+#      from click_default_group import DefaultGroup
+#      @click.group(cls=DefaultGroup, default_if_no_args=True)
+#      def cli():
+#          pass
+#      @cli.command(default=True)
+#      def foo():
+#          click.echo('foo')
+#      @cli.command()
+#      def bar():
+#          click.echo('bar')
+#   Then you can invoke that without explicit subcommand name:
+#   .. sourcecode:: console
+#      $ cli.py --help
+#      Usage: cli.py [OPTIONS] COMMAND [ARGS]...
+#      Options:
+#        --help    Show this message and exit.
+#      Command:
+#        foo*
+#        bar
+#      $ cli.py
+#      foo
+#      $ cli.py foo
+#      foo
+#      $ cli.py bar
+#      bar
+#
+#Credit: Heungsub Lee <https://github.com/sublee>
+#
+#Copyright (c) 2015-2016, Heungsub Lee
+#All rights reserved.
+#
+#Redistribution and use in source and binary forms, with or without modification,
+#are permitted provided that the following conditions are met:
+#
+#  Redistributions of source code must retain the above copyright notice, this
+#  list of conditions and the following disclaimer.
+#
+#  Redistributions in binary form must reproduce the above copyright notice, this
+#  list of conditions and the following disclaimer in the documentation and/or
+#  other materials provided with the distribution.
+#
+#  Neither the name of the copyright holder nor the names of its
+#  contributors may be used to endorse or promote products derived from
+#  this software without specific prior written permission.
+#
+#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+#ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+#WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+#DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+#ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+#(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+#LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+#ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+#(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+#SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+#"""
 
-Copyright (c) 2015-2016, Heungsub Lee
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without modification,
-are permitted provided that the following conditions are met:
-
-  Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
-
-  Redistributions in binary form must reproduce the above copyright notice, this
-  list of conditions and the following disclaimer in the documentation and/or
-  other materials provided with the distribution.
-
-  Neither the name of the copyright holder nor the names of its
-  contributors may be used to endorse or promote products derived from
-  this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
-ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-"""
 import warnings
 import click
 
@@ -71,10 +73,11 @@ __version__ = '1.2'
 
 
 class DefaultGroup(click.Group):
-    """Invokes a subcommand marked with `default=True` if any subcommand not
+    """
+    Invokes a subcommand marked with `default=True` if any subcommand not
     chosen.
-    :param default_if_no_args: resolves to the default command if no arguments
-                               passed.
+
+    :param default_if_no_args: resolves to the default command if no arguments passed.
     """
 
     def __init__(self, *args, **kwargs):
@@ -127,6 +130,7 @@ class DefaultGroup(click.Group):
             cmd = self.default_cmd_name
         return super(DefaultGroup, self).get_command(ctx, cmd)
 
+
     def resolve_command(self, ctx, args):
         base = super(DefaultGroup, self)
         cmd_name, cmd, args = base.resolve_command(ctx, args)
@@ -134,9 +138,11 @@ class DefaultGroup(click.Group):
             args.insert(0, ctx.arg0)
         return cmd_name, cmd, args
 
+
     def format_commands(self, ctx, formatter):
         formatter = DefaultCommandFormatter(self, formatter, mark='*')
         return super(DefaultGroup, self).format_commands(ctx, formatter)
+
 
     def command(self, *args, **kwargs):
         default = kwargs.pop('default', False)
@@ -145,6 +151,7 @@ class DefaultGroup(click.Group):
             return decorator
         warnings.warn('Use default param of DefaultGroup or '
                       'set_default_command() instead', DeprecationWarning)
+
 
         def _decorator(f):
             cmd = decorator(f)
@@ -156,13 +163,16 @@ class DefaultGroup(click.Group):
 class DefaultCommandFormatter(object):
     """Wraps a formatter to mark a default command."""
 
+
     def __init__(self, group, formatter, mark='*'):
         self.group = group
         self.formatter = formatter
         self.mark = mark
 
+
     def __getattr__(self, attr):
         return getattr(self.formatter, attr)
+
 
     def write_dl(self, rows, *args, **kwargs):
         rows_ = []

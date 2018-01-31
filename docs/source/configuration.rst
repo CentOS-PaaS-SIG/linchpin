@@ -157,7 +157,7 @@ evars.inventory_file
     and the `extensions.inventory` configuration value. The resulting file
     might look like this:
 
-    .. code-block::
+    .. code-block:: bash
 
         /path/to/workspace/inventories/dummy_cluster-049e.inventory
 
