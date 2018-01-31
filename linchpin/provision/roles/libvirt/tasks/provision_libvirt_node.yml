@@ -99,7 +99,7 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: definition
-  become: yes
+  become: "{{ libvirt_become }}"
   when: res_def['additional_storage'] is defined and node_exists['failed'] is defined and uri_hostname == 'localhost'
 
 - name: "Add additional storage"
@@ -112,7 +112,7 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: definition
-  become: yes
+  become: "{{ libvirt_become }}"
   remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
   delegate_to: "{{ uri_hostname }}"
   when: res_def['additional_storage'] is defined and node_exists['failed'] is defined and uri_hostname != 'localhost'
@@ -224,7 +224,7 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: definition
-  become: yes
+  become: "{{ libvirt_become }}"
   ignore_errors: yes
   when: node_exists['failed'] is defined and res_def['cloud_config'] is defined
 

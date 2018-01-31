@@ -49,5 +49,5 @@
   with_items: "{{ vm_xml_dump | get_libvirt_files }}"
   loop_control:
     loop_var: inst
-  become: yes
   ignore_errors: yes
+  become: "{{ libvirt_become }}"

@@ -17,7 +17,7 @@
 
 - name: "Register local_image_src absolute path"
   set_fact:
-    local_image_src: "{{ local_image_path }}{{ image_src_basename }}"
+    local_image_src: "{{ local_image_path }}/{{ image_src_basename }}"
 
 - name: "does a local copy of image_src exist?"
   # find the image_src, copy it to /var/lib/libvirt/linchpin/<res_name>
