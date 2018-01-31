@@ -61,7 +61,18 @@ Create a virtualenv to install the package using the following sequence of comma
     (linchpin) $ pip install linchpin
     ..snip..
 
+Using mkvirtualenv with Python 3 (now default on some Linux systems) will attempt to link to the `python3` binary. LinchPin isn't fully compatible with Python 3 yet. However, mkvirtualenv provides the ``-p`` option for specifying the `python2` binary.
+
+.. code-block:: bash
+
+    $ mkvirtualenv linchpin -p $(which python2)
+    ..snip..
+    (linchpin) $ pip install linchpin
+    ..snip..
+
 .. note:: mkvirtualenv is optional dependency you can install from `here <http://virtualenvwrapper.readthedocs.io/en/latest/install.html>`_. An alternative, virtualenv, also exists. Please refer to the `Virtualenv documentation <https://virtualenv.pypa.io/en/stable/>`_ for more details.
+
+
 To deactivate the virtualenv
 
 .. code-block:: bash
@@ -83,6 +94,23 @@ If testing or docs is desired, additional steps are required
     (linchpin) $ pip install linchpin[docs]
     (linchpin) $ pip install linchpin[tests]
 
+Virtual Environments and SELinux
+````````````````````````````````
+
+When using a virtualenv with SELinux enabled, LinchPin may fail due to an error related to with the libselinux-python libraries. This is because the libselinux-python binary needs to be enabled in the Virtual Environment. Because this library affects the filesystem, it isn't provided as a standard python module via pip. The RPM must be installed, then a symlink must occur.
+
+.. code-block:: bash
+
+    (linchpin) $ sudo dnf install libselinux-python
+    .. snip ..
+    (linchpin) $ echo ${VIRTUAL_ENV}
+    /path/to/virtualenvs/linchpin
+    (linchpin) $ export VENV_LIB_PATH=lib/python2.7/site-packages
+    (linchpin) $ export LIBSELINUX_PATH=/usr/lib64/python2.7/site-packages # make sure to verify this location
+    (linchpin) $ ln -s ${LIBSELINUX_PATH}/selinux ${VIRTUAL_ENV}/${VENV_LIB_PATH}
+    (linchpin) $ ln -s ${LIBSELINUX_PATH}/_selinux.so ${VIRTUAL_ENV}/${VENV_LIB_PATH}
+
+.. note:: A script is provided to do this work at :code1.5:`<scripts/install_selinux_venv.sh>`
 
 Installing on Fedora 26
 -----------------------
