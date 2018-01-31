@@ -3,14 +3,14 @@ Configuration File
 
 .. contents:: Topics
 
-Below is full coverage of each of the sections of the values available in :code1.5:`linchpin.conf <config/linchpin.conf>`.
+Below is full coverage of each of the sections of the values available in :docs1.5:`linchpin.conf <workspace/linchpin.conf>`.
 
 Getting the most current configuration
 --------------------------------------
 
 If you are installing LinchPin from a package manager (pip or RPM), the latest linchpin.conf is already included in the library.
 
-An example :code1.5:`linchpin.conf <config/linchpin.conf>` is available on Github.
+An example :docs1.5:`linchpin.conf <workspace/linchpin.conf>` is available on Github.
 
 For in-depth details of all the options, see the :doc:`Configuration Reference <configuration>` document.
 
