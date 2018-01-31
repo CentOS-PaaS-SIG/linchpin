@@ -41,3 +41,21 @@
   with_dict: "{{ topology_outputs }}"
   when: (item.value | length > 0)
 
+- name: "Create resources directory (v1.0.x compatibility)"
+  file:
+    state: directory
+    path: "{{ default_resources_path + '/' }}"
+  when: generate_resources
+  ignore_errors: yes
+
+- name: "set topology_name"
+  set_fact:
+    topology_name: "{{ topo_data['topology_name'] }}"
+
+- name: "Generate resources file (v1.0.x compatibility)"
+  template:
+    src: "../templates/output_formatter.j2"
+    dest: "{{ default_resources_path + '/' +
+    topology_name.replace(' ', '_').lower() + '.output' }}"
+  when: generate_resources and state == "present"
+
