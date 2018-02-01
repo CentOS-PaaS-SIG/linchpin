@@ -1,4 +1,4 @@
-The ``linchpin`` CLI is used to perform tasks related to managing :term:`resources`. We'll cover the basics of how to use ``linchpin``. For greater detail, see :doc:`../cli`.
+The ``linchpin`` CLI is used to perform tasks related to managing :term:`resources`. For detail about a specific command, see :doc:`../cli`.
 
 Getting Help
 ````````````
@@ -12,7 +12,7 @@ Basic Usage
 
 .. include:: includes/cli_basic_usage.rst
 
-.. _options:
+.. _opts_args:
 
 Options and Arguments
 `````````````````````
@@ -21,5 +21,15 @@ Options and Arguments
 
 .. _combining_options:
 
+Combining Options
+`````````````````
 
+.. include:: includes/cli_combine_opts.rst
+
+.. _common_usage:
+
+Common Usage
+````````````
+
+.. include:: includes/cli_common_usage.rst
 

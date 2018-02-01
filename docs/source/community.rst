@@ -1,5 +1,5 @@
 Community
-=====================
+=========
 
 LinchPin has a small, but vibrant community. Come help us while you learn a skill.
 
@@ -17,3 +17,5 @@ LinchPin has a small, but vibrant community. Come help us while you learn a skil
         Subscribe and participate. A great place for Q&A
     `irc.freenode.net <http://irc.freenode.net>`_
         #linchpin IRC chat channel
+    `LinchPin on Github <https://github.com/CentOS-PaaS-SIG/linchpin>`_
+        Code Contributions and Latest Software

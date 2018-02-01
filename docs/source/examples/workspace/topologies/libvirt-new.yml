@@ -12,6 +12,7 @@ resource_groups:
         memory: 2048
         vcpus: 1
         arch: x86_64
+        ssh_key: libvirt
         networks:
           - name: default
         additional_storage: 10G

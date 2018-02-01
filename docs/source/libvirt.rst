@@ -66,6 +66,31 @@ a virtualenv of ``~/venv``, symlink the libraries.
   $ ln -s ${LIBSELINUX_PATH}/selinux ~/venv/lib/python2.7/site-packages
   $ ln -s ${LIBSELINUX_PATH}/_selinux.so ~/venv/lib/python2.7/site-packages
 
+Copying Images
+--------------
+
+New in version 1.5.1
+
+By default, LinchPin manages the libvirt images in a directory that is accessible
+only by the root user. However, adjustments can be made to allow an unprivileged
+user to manage Libvirt via LinchPin. These settings can be modified in the
+:docs1.5:`linchpin.conf <workspace/linchpin.conf>`
+
+This configuration adjustment of `linchpin.conf` may work for the unprivileged
+user `herlo`.
+
+.. code-block:: cfg
+
+    [evars]
+    libvirt_image_path = ~/libvirt/images/
+    libvirt_user = herlo
+    libvirt_become = no
+
+The directory will be created automatically by LinchPin. However, the user may
+need additional rights, like group membership to access Libvirt. Please see
+https://libvirt.org for any additional configurations.
+
+
 Credentials Management
 ----------------------
 

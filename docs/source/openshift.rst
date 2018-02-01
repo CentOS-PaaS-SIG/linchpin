@@ -13,7 +13,7 @@ detail inline.
 
 The ansible module for openshift is written and bundled as part of LinchPin.
 
-* :code1.5:`openshift.py <linchpin/provisoin/library/openshift.py>`
+* :code1.5:`openshift.py <linchpin/provision/library/openshift.py>`
 
 .. note:: The `oc <https://docs.ansible.com/ansible/2.4/oc_module.html`_ module
    was included into ansible after the above openshift module was created and

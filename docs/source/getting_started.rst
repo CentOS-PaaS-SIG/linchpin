@@ -3,10 +3,10 @@ Getting Started
 
 .. _gs_foreword:
 
-Now that LinchPin is :doc:`installed <installation>`, this guide will walk you through the basics of using LinchPin. LinchPin is a command-line utility, a Python API, and Ansible playbooks. As this guide is intentionally quite brief to get you started, a more complete version can be found in the documentation links found in the :doc:`index <index>`.
+Now that LinchPin is :doc:`installed <installation>`, this guide will walk you through the basics of using LinchPin. LinchPin is a command-line utility, a Python API, and Ansible playbooks. As this guide is intentionally brief to get you started, a more complete version can be found in the documentation links found to the left in the :doc:`index <index>`.
 
 .. toctree::
-   maxdepth: 1
+   :maxdepth: 1
 
 .. contents:: Topics
 
@@ -50,7 +50,6 @@ Teardown (destroy)
 ------------------
 
 .. include:: gs/teardown_destroy.rst
-
 
 
 .. seealso::
