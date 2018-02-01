@@ -25,6 +25,7 @@
                     "count": { "type": "integer", "required": false },
                     "network_bridge": { "type": "string", "required": false },
                     "keypair": { "type": "string", "required": false },
+                    "ssh_key": { "type": "string", "required": false },
                     "security_groups": { "type": "string", "required": false },
                     "fip_pool": { "type": "string", "required": false },
                     "userdata": { "type": "string", "required": false },
