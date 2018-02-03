@@ -1,5 +1,5 @@
 ---
-- name: "Get topology output data"
+- name: "Get topology output data from RunDB"
   rundb:
     conn_str: "{{ rundb_conn }}"
     operation: get
@@ -7,10 +7,24 @@
     key: "outputs"
     run_id: "{{ orig_run_id }}"
   register: topo_output
+  when: not generate_resources
 
 - name: "set topo_output_resources fact"
   set_fact:
     topo_output_resources: "{{ topo_output.output[0]['resources'] }}"
+  when: not generate_resources
+
+- name: "Get topology output data resources file"
+  output_parser:
+    output_file: "{{ default_resources_path + '/' +
+                 topo_data['topology_name'].replace(' ', '_').lower() + '.output' }}"
+  register: topo_output
+  when: generate_resources
+
+- name: "set topo_output_resources fact"
+  set_fact:
+    topo_output_resources: "{{ topo_output.output['content']['beaker_res'] }}"
+  when: generate_resources
 
 - name: "init job_ids"
   set_fact:
