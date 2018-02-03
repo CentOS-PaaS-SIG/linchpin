@@ -455,7 +455,6 @@ class LinchpinAPI(object):
                                                      run_id=run_id)
 
                 if data:
-                    self.set_evar('orig_run_id', orig_run_id)
                     uhash = data.get('uhash')
                     self.ctx.log_debug("using data from"
                                        " run_id: {0}".format(run_id))
@@ -500,6 +499,7 @@ class LinchpinAPI(object):
             rundb.update_record(target, rundb_id, 'start', start)
             rundb.update_record(target, rundb_id, 'action', action)
 
+            self.set_evar('orig_run_id', orig_run_id)
             self.set_evar('rundb_id', rundb_id)
             self.set_evar('uhash', uhash)
 
