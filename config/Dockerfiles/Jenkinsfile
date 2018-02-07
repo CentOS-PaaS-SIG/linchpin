@@ -7,15 +7,14 @@ env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop'
 
 // Needed for podTemplate()
 env.SLAVE_TAG = env.SLAVE_TAG ?: 'stable'
-env.FEDORA25_TAG = env.FEDORA25_TAG ?: 'stable'
 env.FEDORA26_TAG = env.FEDORA26_TAG ?: 'stable'
 env.FEDORA27_TAG = env.FEDORA27_TAG ?: 'stable'
 env.CENTOS6_TAG = env.CENTOS6_TAG ?: 'stable'
 env.CENTOS7_TAG = env.CENTOS7_TAG ?: 'stable'
 
-env.DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
-env.OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
-env.OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
+DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
+OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
+OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
 
 // Execution ID for this run of the pipeline
 executionID = UUID.randomUUID().toString()
@@ -42,14 +41,10 @@ properties(
                 string(defaultValue: '', description: 'Pull Request Number', name: 'ghprbPullId'),
                 string(defaultValue: '', description: 'Pull Request Author username', name: 'ghprbPullAuthorLogin'),
                 string(defaultValue: 'stable', description: 'Tag for slave image', name: 'SLAVE_TAG'),
-                string(defaultValue: 'stable', description: 'Tag for fedora25 image', name: 'FEDORA25_TAG'),
                 string(defaultValue: 'stable', description: 'Tag for fedora26 image', name: 'FEDORA26_TAG'),
                 string(defaultValue: 'stable', description: 'Tag for fedora27 image', name: 'FEDORA27_TAG'),
                 string(defaultValue: 'stable', description: 'Tag for centos6 image', name: 'CENTOS6_TAG'),
-                string(defaultValue: 'stable', description: 'Tag for centos7 image', name: 'CENTOS7_TAG'),
-                string(defaultValue: '172.30.254.79:5000', description: 'Docker repo url for Openshift instance', name: 'DOCKER_REPO_URL'),
-                string(defaultValue: 'continuous-infra', description: 'Project namespace for Openshift operations', name: 'OPENSHIFT_NAMESPACE'),
-                string(defaultValue: 'jenkins', description: 'Service Account for Openshift operations', name: 'OPENSHIFT_SERVICE_ACCOUNT'),
+                string(defaultValue: 'stable', description: 'Tag for centos7 image', name: 'CENTOS7_TAG')
             ]
         ),
     ]
@@ -73,28 +68,28 @@ podTemplate(name: podName,
                 workingDir: '/workDir'),
             containerTemplate(name: 'centos6',
                 alwaysPullImage: true,
-                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/centos6:' + SLAVE_TAG,
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/centos6:' + CENTOS6_TAG,
                 ttyEnabled: true,
                 command: '',
                 privileged: true,
                 workingDir: '/workDir'),
             containerTemplate(name: 'centos7',
                 alwaysPullImage: true,
-                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/centos7:' + SLAVE_TAG,
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/centos7:' + CENTOS7_TAG,
                 ttyEnabled: true,
                 command: '/usr/sbin/init',
                 privileged: true,
                 workingDir: '/workDir'),
             containerTemplate(name: 'fedora27',
                 alwaysPullImage: true,
-                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora27:' + SLAVE_TAG,
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora27:' + FEDORA27_TAG,
                 ttyEnabled: true,
                 command: '/usr/sbin/init',
                 privileged: true,
                 workingDir: '/workDir'),
             containerTemplate(name: 'fedora26',
                 alwaysPullImage: true,
-                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora26:' + SLAVE_TAG,
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora26:' + FEDORA26_TAG,
                 ttyEnabled: true,
                 command: '/usr/sbin/init',
                 privileged: true,
