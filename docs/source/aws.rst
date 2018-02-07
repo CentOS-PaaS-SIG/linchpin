@@ -41,7 +41,7 @@ aws_sg
 AWS Security Groups can be provisioned using this resource.
 
 * :docs1.5:`Topology Example <workspace/topologies/aws-sg-new.yml>`
-* `Ansible EC2 Security Group module <http://docs.ansible.com/ansible/latest/ec2_group_module.html>`_
+* `ec2_group module <http://docs.ansible.com/ansible/latest/ec2_group_module.html>`_
 
 .. note:: This resource will not be torn down during a :term:`destroy`
    action. This is because other resources may depend on the now existing
