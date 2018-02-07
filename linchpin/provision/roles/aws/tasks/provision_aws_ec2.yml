@@ -10,7 +10,7 @@
   ec2:
     aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
     aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
-    key_name: "{{ res_def['keypair'] }}"
+    key_name: "{{ res_def['keypair'] | default(omit) }}"
     instance_type: "{{ res_def['flavor'] }}"
     image: "{{ res_def['image'] }}"
     region: "{{ res_def['region'] }}"
@@ -32,7 +32,7 @@
   ec2:
     aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
     aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
-    key_name: "{{ res_def['keypair'] }}"
+    key_name: "{{ res_def['keypair'] | default(omit) }}"
     instance_type: "{{ res_def['flavor'] }}"
     image: "{{ res_def['image'] }}"
     region: "{{ res_def['region'] }}"
