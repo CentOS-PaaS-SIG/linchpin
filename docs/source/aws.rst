@@ -8,8 +8,8 @@ aws_ec2
 
 AWS Instances can be provisioned using this resource.
 
-* :docs1.5:`Topology Example <workspace/topologies/os-server-new.yml>`
-* `aws_ec2 module <http://docs.ansible.com/ansible/latest/os_server_module.html>`_
+* :docs1.5:`Topology Example <workspace/topologies/aws-ec2-new.yml>`
+* `aws_ec2 module <http://docs.ansible.com/ansible/latest/ec2_module.html>`_
 
 aws_ec2_key
 -----------

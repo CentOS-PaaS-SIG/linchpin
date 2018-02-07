@@ -441,54 +441,55 @@ class LinchpinAPI(object):
             # generate a new rundb_id
             # (don't confuse it with an already existing run_id)
             rundb_id = rundb.init_table(target)
+            orig_run_id = rundb_id
 
-            if action == 'up' and not run_id:
+            if not run_id:
                 uh = hashlib.new(self.rundb_hash,
                                  ':'.join([target, str(rundb_id), start]))
                 uhash = uh.hexdigest()[-4:]
-            elif action == 'destroy' or run_id:
+
+            if action == 'destroy' or run_id:
                 # look for the action='up' records to destroy
                 data, orig_run_id = rundb.get_record(target,
                                                      action='up',
                                                      run_id=run_id)
 
                 if data:
-                    self.set_evar('orig_run_id', orig_run_id)
                     uhash = data.get('uhash')
                     self.ctx.log_debug("using data from"
                                        " run_id: {0}".format(run_id))
-                else:
-                    # add data to the current record so it doesn't cause
-                    # inconsistent results
-                    rundb.update_record(target,
-                                        rundb_id,
-                                        'action',
-                                        action)
-                    rundb.update_record(target,
-                                        rundb_id,
-                                        'rc',
-                                        8)
-                    if not uhash:
-                        uh = hashlib.new(self.rundb_hash,
-                                         ':'.join([target,
-                                                   str(rundb_id),
-                                                   start]))
-                        uhash = uh.hexdigest()[-4:]
-                        rundb.update_record(target,
-                                            rundb_id,
-                                            'uhash',
-                                            uhash)
-
-
-                    raise LinchpinError("Attempting to perform '{0}' action on"
-                                        " target: '{1}' failed. No records"
-                                        " available.".format(action, target))
-            else:
+#                else:
+#                    # add data to the current record so it doesn't cause
+#                    # inconsistent results
+#                    rundb.update_record(target,
+#                                        rundb_id,
+#                                        'action',
+#                                        action)
+#                    rundb.update_record(target,
+#                                        rundb_id,
+#                                        'rc',
+#                                        8)
+#                    if not uhash:
+#                        uh = hashlib.new(self.rundb_hash,
+#                                         ':'.join([target,
+#                                                   str(rundb_id),
+#                                                   start]))
+#                        uhash = uh.hexdigest()[-4:]
+#                        rundb.update_record(target,
+#                                            rundb_id,
+#                                            'uhash',
+#                                            uhash)
+#
+#
+#                    raise LinchpinError("Attempting to perform '{0}' action on"
+#                                        " target: '{1}' failed. No records"
+#                                        " available.".format(action, target))
+            elif action not in ['up', 'destroy']:
                 # it doesn't appear this code will will execute,
                 # but if it does...
                 raise LinchpinError("Attempting '{0}' action on"
-                                    " target: '{1}' failed. No records"
-                                    " available.".format(action, target))
+                                    " target: '{1}' failed. Not an"
+                                    " action.".format(action, target))
 
 
             self.ctx.log_debug('rundb_id: {0}'.format(rundb_id))
@@ -498,6 +499,7 @@ class LinchpinAPI(object):
             rundb.update_record(target, rundb_id, 'start', start)
             rundb.update_record(target, rundb_id, 'action', action)
 
+            self.set_evar('orig_run_id', orig_run_id)
             self.set_evar('rundb_id', rundb_id)
             self.set_evar('uhash', uhash)
 
@@ -578,7 +580,7 @@ class LinchpinAPI(object):
             rundb.update_record(target, rundb_id, 'end', end)
             rundb.update_record(target, rundb_id, 'rc', return_code)
 
-            if action == 'destroy':
+            if action == 'destroy' and orig_run_id:
                 run_data = rundb.get_record(target,
                                             action=action,
                                             run_id=orig_run_id)

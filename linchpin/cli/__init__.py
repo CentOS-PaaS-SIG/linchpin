@@ -183,7 +183,7 @@ class LinchpinCli(LinchpinAPI):
             A tuple of targets to provision
 
         :param run_id:
-            An optional run_id if the task is idempotent or a destroy action
+            An optional run_id if the task is idempotent
         """
 
         pf_w_path = self._get_pinfile_path()
