@@ -5,7 +5,6 @@ resource_groups:
     resource_group_type: beaker
     resource_definitions:
       - role: bkr_server
-        whiteboard: Provisioned with linchpin
         job_group: ci-ops-central
         recipesets:
           - distro: RHEL-6.5
@@ -17,10 +16,21 @@ resource_groups:
               - tag: device
                 op: "="
                 type: "network"
+              - tag: hostname
+                op: "like"
+                value: "%.subdomain.example.tld"
             count: 1
       - role: bkr_server
-        whiteboard: Provisioned with linchpin
         job_group: ci-ops-central
+        # option to set job whiteboard message
+        whiteboard: Provisioned with linchpin
+        # options to configure amount of time spent polling beaker:
+        # 60 attempts with 30 seconds wait time between them,
+        # provisioning timeout is roughly 1800 seconds
+        max_attempts: 60
+        attempt_wait_time: 30
+        # option to set cancellation message if linchpin cancels provisioning
+        cancel_message: Job cancelled on account of rain
         recipesets:
           - distro: RHEL-6.5
             arch: x86_64

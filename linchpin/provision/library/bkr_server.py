@@ -5,7 +5,6 @@ import logging
 import xml.dom.minidom
 import xml.etree.ElementTree as eT
 
-from bkr.client.task_watcher import watch_tasks
 from bkr.client import BeakerCommand, BeakerWorkflow, BeakerJob
 from bkr.client import BeakerRecipeSet, BeakerRecipe
 from bkr.common.hub import HubProxy
@@ -17,7 +16,6 @@ from ansible.module_utils.basic import AnsibleModule
 # We want JSON input from Ansible. Please give it to us
 
 LOG = logging.getLogger(__name__)
-LOG.setLevel(logging.DEBUG)
 BEAKER_CONF = \
     (os.environ.get('BEAKER_CONF', '/etc/beaker/client.conf'))
 
@@ -47,10 +45,9 @@ class BkrFactory(BkrConn):
         """
             provision resources in Beaker
         """
-        # Break down kwargs for debug, dryrun, wait, recipesets, and whiteboard
+        # Break down kwargs for debug, dryrun, recipesets, and whiteboard
         debug = kwargs.get("debug", False)
         dryrun = kwargs.get("dryrun", False)
-        wait = kwargs.get("wait", False)
         recipesets = kwargs.get("recipesets", [])
 
         # Create Job
@@ -128,7 +125,7 @@ class BkrFactory(BkrConn):
                     # own combination of element name and valid attrs. So,
                     # the best we can do is generate XML based on the input,
                     # and only the "tag" key is required.
-                    tag_name = requirement.pop('tag')
+                    tag_name = requirement['tag']
                     requirement_node = self.doc.createElement(tag_name)
                     for attr, value in requirement.items():
                         # Force all values to str, which the XML writer expects.
@@ -175,21 +172,11 @@ class BkrFactory(BkrConn):
             LOG.debug(jobxml)
 
         self.submitted_jobs = []
-        is_failed = False
 
         if not dryrun:
-            try:
-                self.submitted_jobs.append(self.hub.jobs.upload(jobxml))
-                LOG.info("Submitted: %s" % self.submitted_jobs)
-                return self.submitted_jobs
-            except (KeyboardInterrupt, SystemExit):
-                raise
-            except Exception, ex:
-                is_failed = True
-                sys.stderr.write('Exception: %s\n' % ex)
-            if wait:
-                is_failed |= watch_tasks(self.hub, self.submitted_jobs)
-        return is_failed
+            self.submitted_jobs.append(self.hub.jobs.upload(jobxml))
+            LOG.info("Submitted: %s" % self.submitted_jobs)
+        return self.submitted_jobs
 
     def create_recipesets(self, recipeset, **kwargs):
         kwargs = {}
@@ -211,9 +198,7 @@ class BkrFactory(BkrConn):
             LOG.debug(xml.dom.minidom.parseString(myxml)
                          .toprettyxml(encoding='utf8'))
             root = eT.fromstring(myxml)
-            # TODO: Using getiterator() since its backward compatible
-            # with Python 2.6
-            # This is deprectated in 2.7 and we should be using iter()
+            # Using getiterator() since its backward compatible with Python 2.6
             for job in root.getiterator('job'):
                 results.update({'job_id': job.get('id'),
                                 'results': job.get('result')})
@@ -236,6 +221,20 @@ class BkrFactory(BkrConn):
             self.hub.taskactions.stop(task, 'cancel', msg)
             LOG.info("Cancel job %s in Beaker" % task)
 
+    def get_url(self, bkr_id):
+        """
+        Constructs the Beaker URL for the job related to the provided Beaker
+        ID. That ID should be all numeric, unless the structure of Beaker
+        changes in the future. If that's the case, then the ID should be
+        appropriately URL encoded to be appended to the end of a URL properly.
+        """
+        base = self.conf.get('HUB_URL', '')
+        if base == '':
+            raise Exception("Unable to construct URL")
+        if base[-1] != '/':
+            base += '/'
+        return base + 'jobs/' + bkr_id
+
 
 def main():
     module = AnsibleModule(argument_spec={
@@ -243,33 +242,42 @@ def main():
         'recipesets': {'required': True, 'type': 'list'},
         'job_group': {'default': '', 'type': 'str'},
         'state': {'default': 'present', 'choices': ['present', 'absent']},
-        'cancel_message': {'default': 'Job canceled by Ansible'}
+        'cancel_message': {'default': 'Job canceled by LinchPin'},
+        'max_attempts': {'default': 60, 'type': 'int'},
+        'attempt_wait_time': {'default': 60, 'type': 'int'},
     })
     params = type('Args', (object,), module.params)
     factory = BkrFactory()
-    # logs = []
-    job_ids = []
+    recipesets = []
     for recipeset in params.recipesets:
-        for x in range(0, recipeset['count']):
-            if params.state == 'present':
-                extra_params = {}
-                if params.job_group:
-                    extra_params['job_group'] = params.job_group
-                # Make provision
-                job_id = factory.provision(debug=True, wait=True,
-                                           recipesets=[recipeset],
-                                           whiteboard=params.whiteboard,
-                                           **extra_params)
-                job_ids.extend(job_id)
-            else:
-                factory.cancel_jobs(recipeset['ids'], params.cancel_message)
+        for x in range(0, recipeset.get('count', 1)):
+            recipesets.append(recipeset)
+    parsed_ids = {}
     if params.state == 'present':
-        parsed_ids = []
-        for id_string in job_ids:
-            parsed_ids.append(id_string[2:])
-        module.exit_json(success=False, ids=parsed_ids, changed=True)
-    else:
-        module.exit_json(success=True, changed=True)
+        extra_params = {}
+        if params.job_group:
+            extra_params['job_group'] = params.job_group
+        # Make provision
+        try:
+            job_ids = factory.provision(debug=True,
+                                        recipesets=recipesets,
+                                        whiteboard=params.whiteboard,
+                                        **extra_params)
+        except Exception as ex:
+            module.fail_json(msg=str(ex))
+
+        for job_id in job_ids:
+            parsed_id = job_id[2:]
+            parsed_ids[parsed_id] = factory.get_url(parsed_id)
+        # pass out the provisioned job ids (or empty dict, if none) and
+        # provisioning params to be used in the bkr_info task later
+        module.exit_json(changed=True, ids=parsed_ids,
+                         provision_params=module.params)
+    else:  # state == absent, cancel provisioned jobs
+        for recipeset in params.recipesets:
+            # recipeset 'ids" value is set in the teardown playbook for use here
+            factory.cancel_jobs(recipeset['ids'], params.cancel_message)
+        module.exit_json(changed=True)
 
 
 main()
