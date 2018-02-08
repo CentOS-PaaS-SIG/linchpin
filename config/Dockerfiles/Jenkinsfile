@@ -76,22 +76,22 @@ podTemplate(name: podName,
             containerTemplate(name: 'centos7',
                 alwaysPullImage: true,
                 image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/centos7:' + CENTOS7_TAG,
-                ttyEnabled: true,
+                ttyEnabled: false,
                 command: '/usr/sbin/init',
                 privileged: true,
                 workingDir: '/workDir'),
             containerTemplate(name: 'fedora27',
                 alwaysPullImage: true,
                 image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora27:' + FEDORA27_TAG,
-                ttyEnabled: true,
-                command: '/usr/sbin/init',
+                ttyEnabled: false,
+                command: '/root/init_libvirt.sh',
                 privileged: true,
                 workingDir: '/workDir'),
             containerTemplate(name: 'fedora26',
                 alwaysPullImage: true,
                 image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora26:' + FEDORA26_TAG,
-                ttyEnabled: true,
-                command: '/usr/sbin/init',
+                ttyEnabled: false,
+                command: '/root/init_libvirt.sh',
                 privileged: true,
                 workingDir: '/workDir')
         ],
@@ -117,7 +117,6 @@ podTemplate(name: podName,
                 // See https://github.com/jenkinsci/kubernetes-plugin/blob/master/src/main/java/org/csanchez/jenkins/plugins/kubernetes/KubernetesLauncher.java#L311
                 //
                 env.HOME = "/root"
-                env.DRIVERS = "dummy duffy"
                 //
                 try {
                     // Prepare our environment
@@ -161,6 +160,7 @@ podTemplate(name: podName,
                     stage(currentStage) {
                         dir('linchpin') {
                             env.target = "centos7"
+                            env.DRIVERS = "dummy duffy libvirt"
                             pipelineUtils.executeInContainer(currentStage, "centos7", "/root/linchpin-tests.sh")
                         }
                     }
@@ -174,6 +174,7 @@ podTemplate(name: podName,
                     stage(currentStage) {
                         dir('linchpin') {
                             env.target = "fedora26"
+                            env.DRIVERS = "dummy duffy libvirt"
                             pipelineUtils.executeInContainer(currentStage, "fedora26", "/root/linchpin-tests.sh")
                         }
                     }
@@ -187,6 +188,7 @@ podTemplate(name: podName,
                     stage(currentStage) {
                         dir('linchpin') {
                             env.target = "fedora27"
+                            env.DRIVERS = "dummy duffy libvirt"
                             pipelineUtils.executeInContainer(currentStage, "fedora27", "/root/linchpin-tests.sh")
                         }
                     }
