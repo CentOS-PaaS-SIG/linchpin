@@ -36,10 +36,7 @@
       provision_params: "{{ bkr.results[0].provision_params }}"
     register: _topology_outputs_beaker_server
 
-  - name: "append beaker outputs"
+  - name: "extract beaker outputs"
     set_fact:
-      topology_outputs_beaker_server: "{{ topology_outputs_beaker_server + bkr_item.hosts }}"
-    with_items: "{{ _topology_outputs_beaker_server.results }}"
-    loop_control:
-      loop_var: bkr_item
+      topology_outputs_beaker_server: "{{ _topology_outputs_beaker_server.hosts }}"
   when: state == 'present'

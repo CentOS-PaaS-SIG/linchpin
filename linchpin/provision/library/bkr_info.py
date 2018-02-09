@@ -43,7 +43,7 @@ class BeakerTargets(object):
         while attempts < self.max_attempts:
             job_results, all_count = self._check_jobs()
             pass_count = 0
-            for resource in job_results['resources']:
+            for resource in job_results:
                 result = resource['result']
                 status = resource['status']
                 print >> stderr, "status: %s, result: %s" % (status, result)
@@ -59,7 +59,7 @@ class BeakerTargets(object):
                     raise Exception("System canceled")
             attempts += 1
             if pass_count == all_count:
-                return job_results['resources']
+                return job_results
             sleep(self.wait_time)
 
         # max attempts exceeded, cancel jobs and fail
@@ -71,15 +71,14 @@ class BeakerTargets(object):
         # cancels jobs
         msg = ("{0} system(s) never completed in {1} polling attempts, jobs "
                "have been cancelled: {2}".format(
-                   all_count - pass_count, attempts, ','.join(self.ids)))
-        raise Exception(msg, job_results['resources'])
+                   all_count - pass_count, attempts, ', '.join(self.ids)))
+        raise Exception(msg, job_results)
 
     def _check_jobs(self):
         """
             Get state of a job in Beaker
         """
         jobs = _jprefix(self.ids)
-        results = {}
         resources = []
         bkrcmd = BeakerCommand('BeakerCommand')
         bkrcmd.check_taskspec_args(jobs)
@@ -88,9 +87,6 @@ class BeakerTargets(object):
             myxml = myxml.encode('utf8')
             root = eT.fromstring(myxml)
             # Using getiterator() since its backward compatible with py26
-            for job in root.getiterator('job'):
-                results.update({'job_id': job.get('id'),
-                                'results': job.get('result')})
             for recipe in root.getiterator('recipe'):
                 resources.append({'family': recipe.get('family'),
                                   'distro': recipe.get('distro'),
@@ -100,8 +96,7 @@ class BeakerTargets(object):
                                   'status': recipe.get('status'),
                                   'result': recipe.get('result'),
                                   'id': recipe.get('job_id')})
-                results.update({'resources': resources})
-        return results, len(resources)
+        return resources, len(resources)
 
 
 def main():
