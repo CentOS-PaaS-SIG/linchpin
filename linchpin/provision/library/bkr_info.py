@@ -112,10 +112,12 @@ def main():
     beaker = BeakerTargets(mod.params)
     try:
         if len(beaker.ids) > 1:
-            mod.warn('Using multiple resource_definition for beaker resources'
-                     ' in topology is unsupported. Only the provisioning'
-                     ' parameters from the first resource_definition will be'
-                     ' used.')
+            mod.warn('When using multiple resource_definitions for beaker '
+                     'resources, only the provisioning parameters '
+                     '(max_attempts, attempt_wait_time) from the first '
+                     'resource_definition will be used. Consider using a '
+                     'single resource_definition with multiple recipes or '
+                     'recipesets instead.')
         results = beaker.get_system_statuses()
         mod.exit_json(hosts=results, changed=True)
     except Exception as ex:
