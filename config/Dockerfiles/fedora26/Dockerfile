@@ -23,17 +23,19 @@ RUN dnf -y install python-pip ansible curl gcc python-devel python2-shade \
     systemctl enable libvirtd; \
     systemctl enable virtlockd
 
-RUN pip install -U pip
-RUN pip install -U setuptools
-RUN sed -i "/Service/a ExecStartPost=\/bin\/chmod 666 /dev/kvm" /usr/lib/systemd/system/libvirtd.service
+COPY linchpin-install.sh \
+     linchpin-test.sh \
+     linchpin-tests.sh \
+     pip_install.sh \
+     init_libvirt.sh \
+     $HOME/
 
-COPY linchpin-install.sh $HOME/
-COPY linchpin-test.sh $HOME/
-COPY linchpin-tests.sh $HOME/
-COPY pip_install.sh $HOME/
-
-RUN $HOME/pip_install.sh
+RUN pip install -U pip; \
+    pip install -U setuptools; \
+    sed -i "/Service/a ExecStartPost=\/bin\/chmod 666 /dev/kvm" \
+      /usr/lib/systemd/system/libvirtd.service; \
+    $HOME/pip_install.sh
 
 # /wordir should include the source code of linchpin
 VOLUME [ "/workdir" , "/sys/fs/cgroup"]
-CMD ["/usr/sbin/init"]
+CMD ["/root/init_libvirt.sh"]
