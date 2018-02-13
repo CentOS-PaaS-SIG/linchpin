@@ -91,7 +91,7 @@ any resources used.
 config/Dockerfiles/JenkinsfileStageTrigger
 ++++++++++++++++++++++++++++++++++++++++++
 
-This is a declaritive pipeline script that watches linchpin's github repo for
+This is a declarative pipeline script that watches linchpin's github repo for
 any PR's that need testing.  If the changeset includes changes to a target's 
 Dockerfile it will rebuild the container and use that version of the container
 for testing.  If you add a new target you will also need to update the tagmap
@@ -104,7 +104,7 @@ replace <TARGET> with the actual target name.
 config/Dockerfiles/JenkinsfileStageMerge
 ++++++++++++++++++++++++++++++++++++++++
 
-This is a declaritive pipeline script that watches linchpin's github repo for
+This is a declarative pipeline script that watches linchpin's github repo for
 any PR's that have the comment '[merge]'.  If found it will look for any 
 containers that have a tag from this PR and promote them to stable.  Finally it will
 merge the PR.  No need to modify this file when a new target is added.
