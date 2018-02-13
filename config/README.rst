@@ -2,8 +2,7 @@ Automated Testing of Linchpin
 -----------------------------
 
 Linchpin has automated testing from PR's (Pull Requests) in GitHub.  Whenever a PR is updated or
-the trigger phrase '[test]' is included in the comment a set of tests will be kicked off.  These tests are
-orchestrated via jenkins in our openshift environment.
+the trigger phrase '[test]' is included in the comment a set of tests will be kicked off.  These tests are orchestrated via jenkins in the `Centos CI openshift environment <https://jenkins-continuous-infra.apps.ci.centos.org/>`_.
 
 The point of these tests is to verify that linchpin works correctly in a variety of different environments.
 We currently exercise current releases of both Centos and Fedora.  On those targets only the dummy and
@@ -63,8 +62,8 @@ config/s2i
 ++++++++++
 
 s2i stands for Source to Image.  But we are actually using Dockerfiles for the
-distros.  When adding a new target a build template yaml file will be needed
-which describes how to build that target.  The create-containers.sh script
+distros.  When adding a new target, a build template yaml file will be needed.
+This describes how to build that target.  The create-containers.sh script
 will also need to be updated to reference this template.
 
 config/Dockerfiles/linchpin-install.sh
