@@ -1,48 +1,42 @@
 ---
 - name: "provision beaker systems"
   bkr_server:
-    whiteboard: "{{ res.whiteboard | default('Provisioned with linchpin') }}"
     recipesets: "{{ res.recipesets }}"
     state: present
-    job_group: "{{ res.job_group | default('') }}"
+    # these values have defaults set in the bkr_server module
+    # if omitted, or they are not required
+    whiteboard: "{{ res.whiteboard | default(omit) }}"
+    job_group: "{{ res.job_group | default(omit) }}"
+    cancel_message: "{{ res.cancel_message | default(omit) }}"
+    max_attempts: "{{ res.max_attempts | default(omit) }}"
+    attempt_wait_time: "{{ attempt_wait_time | default(omit) }}"
   with_items: "{{ res_defs['resource_definitions'] }}"
+  # loop over res_defs even though there should be only one for beaker
   loop_control:
     loop_var: res
   register: bkr
 
-- name: set blank bkr_id_values list
-  set_fact:
-    bkr_id_values: []
+- block:
+  # stash job ids and urls for printing
+  - name: set bkr_id_values
+    set_fact:
+      bkr_id_values: "{{ bkr_id_values | default({}) | combine(result['ids']) }}"
+    with_items: "{{ bkr.results }}"
+    loop_control:
+      loop_var: result
+
+  - name: print beaker job ids and URLs
+    debug:
+      var: bkr_id_values
+
+  - name: "fetch beaker details"
+    bkr_info:
+      ids: "{{ bkr_id_values }}"
+      # pull provision params from the first (should be only) result
+      provision_params: "{{ bkr.results[0].provision_params }}"
+    register: _topology_outputs_beaker_server
+
+  - name: "extract beaker outputs"
+    set_fact:
+      topology_outputs_beaker_server: "{{ _topology_outputs_beaker_server.hosts }}"
   when: state == 'present'
-
-# per PR #180, print out beaker job ids
-- name: set bkr_id_values
-  set_fact:
-    bkr_id_values: "{{ bkr_id_values + result['ids'] }}"
-  with_items: "{{ bkr.results }}"
-  loop_control:
-    loop_var: result
-  when: state == 'present'
-
-# per PR #180, print out beaker job ids
-- name: print bkr_id_values
-  debug:
-    var: bkr_id_values
-
-- name: "fetch beaker details"
-  bkr_info:
-    ids: "{{ result['ids'] }}"
-  with_items: "{{ bkr.results }}"
-  loop_control:
-    loop_var: result
-  when: state == 'present'
-  register: _topology_outputs_beaker_server
-
-- name: "append beaker outputs"
-  set_fact:
-    topology_outputs_beaker_server: "{{ topology_outputs_beaker_server + bkr_item.hosts }}"
-  with_items: "{{ _topology_outputs_beaker_server.results }}"
-  loop_control:
-    loop_var: bkr_item
-  when: state == 'present'
-

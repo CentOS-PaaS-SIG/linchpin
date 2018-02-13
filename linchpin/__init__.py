@@ -259,6 +259,11 @@ class LinchpinAPI(object):
                                                  'Provisioned with LinchPin')
             res_defs['job_group'] = res_grp.pop('job_group')
             res_defs['recipesets'] = res_grp.pop('recipesets')
+            res_defs['cancel_message'] = res_grp.pop('cancel_message',
+                                                     'Canceled by LinchPin')
+            res_defs['max_attempts'] = res_grp.pop('max_attempts', 60)
+            res_defs['attempt_wait_time'] = res_grp.pop('attempt_wait_time',
+                                                        60)
             res_grp['resource_definitions'] = [res_defs]
 
             return res_grp
