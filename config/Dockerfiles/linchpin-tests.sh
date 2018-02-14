@@ -14,7 +14,7 @@ for i in $DRIVERS; do
         summary="${summary}\n${test_summary}"
         continue
     fi
-    /root/linchpin-test.sh $i 2>&1 |tee logs/${target}_${i}.log
+    ./config/Dockerfiles/linchpin-test.sh $i 2>&1 |tee logs/${target}_${i}.log
     if [ $? -eq 0 ]; then
         test_summary="$(tput setaf 2)SUCCESS$(tput sgr0)\t${testname}"
     else

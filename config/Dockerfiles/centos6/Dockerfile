@@ -28,15 +28,11 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.n
     pip install six requests urllib3 PyOpenSSL --force --upgrade; \
     yum clean all
 
-COPY linchpin-install.sh \
-     linchpin-test.sh \
-     linchpin-tests.sh \
-     pip_install.sh \
+COPY pip_install.sh \
      centos6/start_libvirtd.sh $HOME/
 
 RUN $HOME/pip_install.sh
 
-
-# /wordir should include the source code of linchpin
+# /workdir should include the source code of linchpin
 VOLUME [ "/workdir" ]
 CMD ["/root/start_libvirtd.sh"]
