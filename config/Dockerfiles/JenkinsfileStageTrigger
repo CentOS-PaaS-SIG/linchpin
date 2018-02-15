@@ -135,8 +135,8 @@ pipeline {
                                 string(name: 'ghprbPullId', value: "${env.ghprbPullId}"),
                                 string(name: 'FEDORA26_TAG', value: tagMap['fedora26']),
                                 string(name: 'FEDORA27_TAG', value: tagMap['fedora27']),
-                                string(name: 'CENTOS6', value: tagMap['centos6']),
-                                string(name: 'CENTOS7', value: tagMap['centos7'])
+                                string(name: 'CENTOS6_TAG', value: tagMap['centos6']),
+                                string(name: 'CENTOS7_TAG', value: tagMap['centos7'])
                         ],
                         wait: true
             }
