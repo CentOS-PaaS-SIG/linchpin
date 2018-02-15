@@ -23,10 +23,7 @@ RUN dnf -y install python-pip ansible curl gcc python-devel python2-shade \
     systemctl enable libvirtd; \
     systemctl enable virtlockd
 
-COPY linchpin-install.sh \
-     linchpin-test.sh \
-     linchpin-tests.sh \
-     pip_install.sh \
+COPY pip_install.sh \
      init_libvirt.sh \
      $HOME/
 

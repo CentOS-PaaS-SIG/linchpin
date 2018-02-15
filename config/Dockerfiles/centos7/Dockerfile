@@ -27,9 +27,6 @@ RUN pip install -U pip
 RUN pip install -U setuptools
 RUN sed -i "/Service/a ExecStartPost=\/bin\/chmod 666 /dev/kvm" /usr/lib/systemd/system/libvirtd.service
 
-COPY linchpin-install.sh $HOME/
-COPY linchpin-test.sh $HOME/
-COPY linchpin-tests.sh $HOME/
 COPY pip_install.sh $HOME/
 COPY centos7/default.xml /etc/libvirt/qemu/networks/
 
