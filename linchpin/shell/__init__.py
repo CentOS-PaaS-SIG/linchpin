@@ -236,7 +236,8 @@ def fetch(ctx, fetch_type, remote, root):
 
 
 @runcli.command()
-@click.argument('targets', metavar='TARGETS', required=False, default=None, nargs=-1)
+@click.argument('targets', metavar='TARGETS', required=False, default=None,
+                nargs=-1)
 @click.option('-c', '--count', metavar='COUNT', default=3, required=False,
               help='(up to) number of records to return (default: 3)')
 @click.option('-f', '--fields', metavar='FIELDS', required=False,
