@@ -5,6 +5,10 @@
   set_fact:
     topology_name: "{{ topo_data['topology_name'] }}"
 
+- name: set inv_path if provided in inventory layout
+  set_fact:
+    inv_path: "{{ layout_data['inventory_layout']['inventory_file'] | default(omit) }}"
+
 - name: "Set inventory_layout"
   set_fact:
     inventory_layout: "{{ layout_data | ordered_yaml }}"
@@ -13,13 +17,17 @@
   set_fact:
     inventory_path: "{{ inventory_path | default( workspace +'/'+inventories_folder+'/'+
     topology_name.replace(' ', '_').lower() ) + '-' + uhash }}.inventory"
-  when: enable_uhash
+  when: enable_uhash and not inv_path
 
 - name: "Updating inventory_path with the absolute path"
   set_fact:
     inventory_path: "{{ inventory_path | default( workspace +'/'+inventories_folder+'/'+
     topology_name.replace(' ', '_').lower() ) }}.inventory"
-  when: not enable_uhash
+  when: not enable_uhash and not inv_path
+
+- name: set inv_path if provided in inventory layout
+  set_fact:
+    inventory_path: "{{ inv_path }}"
 
 - name: "Generate Generic Inventory"
   template:
