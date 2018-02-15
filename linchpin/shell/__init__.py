@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 import os
 import sys
 import json
@@ -85,7 +87,7 @@ def _handle_results(ctx, results, return_code):
 @click.option('-w', '--workspace', type=click.Path(), envvar='WORKSPACE',
               help='Use the specified workspace. Also works if the'
                    ' familiar Jenkins WORKSPACE environment variable is set')
-@click.option('-v', '--verbose', count=True, default=1,
+@click.option('-v', '--verbose', count=True, default=0,
               help='Enable verbose output')
 @click.option('--version', is_flag=True,
               help='Prints the version and exits')
@@ -234,7 +236,8 @@ def fetch(ctx, fetch_type, remote, root):
 
 
 @runcli.command()
-@click.argument('targets', metavar='TARGETS', required=True, nargs=-1)
+@click.argument('targets', metavar='TARGETS', required=False, default=None,
+                nargs=-1)
 @click.option('-c', '--count', metavar='COUNT', default=3, required=False,
               help='(up to) number of records to return (default: 3)')
 @click.option('-f', '--fields', metavar='FIELDS', required=False,
@@ -281,32 +284,37 @@ def journal(ctx, targets, fields, count):
     try:
         journal = lpcli.lp_journal(targets=targets, fields=fields, count=count)
 
-        for target, values in journal.iteritems():
+        if len(journal):
+            for target, values in journal.iteritems():
 
-            keys = values.keys()
-            if len(keys):
-                print('\nTarget: {0}'.format(target))
-                print(output)
-                keys.sort(reverse=True)
-                for run_id in keys:
-                    if int(run_id) > 0:
-                        out = '{0:<7}\t'.format(run_id)
-                        for f in fields:
-                            out += '{0:>9}\t'.format(values[run_id][f])
+                keys = values.keys()
+                if len(keys):
+                    print('\nTarget: {0}'.format(target), file=sys.stderr)
+                    print(output, file=sys.stderr)
+                    keys.sort(reverse=True)
+                    for run_id in keys:
+                        if int(run_id) > 0:
+                            out = '{0:<7}\t'.format(run_id)
+                            for f in fields:
+                                out += '{0:>9}\t'.format(values[run_id][f])
 
-                        print(out)
-            else:
-                no_records.append(target)
+                            print(out, file=sys.stderr)
+                else:
+                    no_records.append(target)
 
-        if no_records:
-            no_out = '\nNo records for targets:'
+            if no_records:
+                no_out = '\nNo records for targets:'
 
-            for rec in no_records:
-                no_out += ' {0}'.format(rec)
+                for rec in no_records:
+                    no_out += ' {0}'.format(rec)
 
-            no_out += '\n'
+                no_out += '\n'
 
-            print(no_out)
+                print(no_out, file=sys.stderr)
+        else:
+            print('No targets available for journal.'
+                  ' Please provision something. :)\n', file=sys.stderr)
+
 
     except LinchpinError as e:
         ctx.log_state(e)

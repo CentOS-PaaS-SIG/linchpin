@@ -218,7 +218,6 @@ class LinchpinAPI(object):
         if not len(targets):
             targets = rundb.get_tables()
 
-
         for target in targets:
             journal[target] = rundb.get_records(table=target, count=count)
 
