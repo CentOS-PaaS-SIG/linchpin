@@ -18,7 +18,7 @@ This documentation covers the current released version of LinchPin (|version|). 
    managing_resources
    providers
    configuration
-   resources_advanced
+   advanced_topics
    developer_info
    faq
    community

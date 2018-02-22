@@ -53,4 +53,4 @@ The PinFile.dummy.json contains the reference to the `dummy.json` layout.
 
     $ linchpin -p PinFile.dummy.json --template-data '{ "node_count": 2 }' up
 
-
+Advanced layout examples can be found by reading :ref:`ra_inventory_layouts`.
