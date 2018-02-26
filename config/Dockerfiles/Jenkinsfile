@@ -160,61 +160,37 @@ podTemplate(name: podName,
                         // create audit message file
                         //pipelineUtils.initializeAuditFile(msgAuditFile)
                     }
-                    currentStage = "centos7-install"
-                    stage(currentStage) {
+                    stage('Validations') {
+                      parallel centos7: {
                         dir('linchpin') {
                             pipelineUtils.executeInContainer(currentStage, "centos7", "./config/Dockerfiles/linchpin-install.sh")
-                        }
-                    }
-                    currentStage = "centos7-test"
-                    stage(currentStage) {
-                        dir('linchpin') {
                             env.target = "centos7"
                             env.DRIVERS = "dummy duffy libvirt"
                             pipelineUtils.executeInContainer(currentStage, "centos7", "./config/Dockerfiles/linchpin-tests.sh")
                         }
-                    }
-                    currentStage = "fedora26-install"
-                    stage(currentStage) {
+                      }, fedora26: {
                         dir('linchpin') {
                             pipelineUtils.executeInContainer(currentStage, "fedora26", "./config/Dockerfiles/linchpin-install.sh")
-                        }
-                    }
-                    currentStage = "fedora26-test"
-                    stage(currentStage) {
-                        dir('linchpin') {
                             env.target = "fedora26"
                             env.DRIVERS = "dummy duffy libvirt"
                             pipelineUtils.executeInContainer(currentStage, "fedora26", "./config/Dockerfiles/linchpin-tests.sh")
                         }
-                    }
-                    currentStage = "fedora27-install"
-                    stage(currentStage) {
+                      }, fedora27: {
                         dir('linchpin') {
                             pipelineUtils.executeInContainer(currentStage, "fedora27", "./config/Dockerfiles/linchpin-install.sh")
-                        }
-                    }
-                    currentStage = "fedora27-test"
-                    stage(currentStage) {
-                        dir('linchpin') {
                             env.target = "fedora27"
                             env.DRIVERS = "dummy duffy libvirt"
                             pipelineUtils.executeInContainer(currentStage, "fedora27", "./config/Dockerfiles/linchpin-tests.sh")
                         }
-                    }
-                    currentStage = "centos6-install"
-                    stage(currentStage) {
+                      }, centos6: {
                         dir('linchpin') {
                             pipelineUtils.executeInContainer(currentStage, "centos6", "./config/Dockerfiles/linchpin-install.sh")
-                        }
-                    }
-                    currentStage = "centos6-test"
-                    stage(currentStage) {
-                        dir('linchpin') {
                             env.target = "centos6"
                             env.DRIVERS = "dummy libvirt"
                             pipelineUtils.executeInContainer(currentStage, "centos6", "./config/Dockerfiles/linchpin-tests.sh")
                         }
+                      },
+                      failFast: true
                     }
                 } catch (e) {
                     // Set build result
