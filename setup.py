@@ -21,7 +21,7 @@ ignore_dir = ['.git']
 setup(
     name='linchpin',
     version=ver,
-    description='Ansible based multi cloud orchestrator',
+    description='Ansible based multi cloud provisioner',
     author='samvaran kashyap rallabandi',
     author_email='linchpin@redhat.com',
     url='http://linchpin.readthedocs.io/',

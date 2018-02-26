@@ -25,6 +25,7 @@ The above YAML allows for interpolation of the ip address, or hostname as a comp
 
 .. note:: A keen observer might notice the filename and hostname are appended with ``-0446``. This value is called the :term:`uhash` or unique-ish hash. Most providers allow for unique identifiers to be assigned automatically to each hostname as well as the inventory name. This provides a flexible way to repeat the process, but manage multiple resource sets at the same time.
 
-Additional layout examples can be found in :dirs1.5:`the source code <workspace/layouts>`.
+Advanced layout examples can be found by reading :ref:`ra_inventory_layouts`.
 
-.. FIXME: Update/Remove layouts. One per provider.
+.. note:: Additional layout examples can be found in :dirs1.5:`the source code <workspace/layouts>`.
+
