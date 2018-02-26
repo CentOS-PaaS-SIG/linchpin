@@ -12,3 +12,5 @@ cerberus
 tinydb
 requests>=2.14.2
 jsonschema
+ipaddress>=1.0.17
+PyYAML>=3.12

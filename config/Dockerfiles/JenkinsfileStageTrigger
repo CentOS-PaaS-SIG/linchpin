@@ -36,6 +36,33 @@ library identifier: "cico-pipeline-library@master",
         retriever: modernSCM([$class: 'GitSCMSource',
                               remote: "https://github.com/CentOS/cico-pipeline-library"])
 
+properties([
+  buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '20')),
+  [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/CentOS-PaaS-SIG/linchpin/'],
+  [$class: 'org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty', triggers:[
+    [
+      $class: 'org.jenkinsci.plugins.ghprb.GhprbTrigger',
+      orgslist: 'CentOS-PaaS-SIG',
+      cron: 'H/5 * * * *',
+      triggerPhrase: '.*\\[test\\].*',
+      onlyTriggerPhrase: false,
+      useGitHubHooks: true,
+      permitAll: true,
+      autoCloseFailedPullRequests: false,
+      displayBuildErrorsOnDownstreamBuilds: true,
+      extensions: [
+        [
+          $class: 'org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus',
+          commitStatusContext: 'Docker Build',
+          showMatrixStatus: false,
+          triggeredStatus: 'Starting job...',
+          startedStatus: 'Building...',
+        ]
+      ]
+    ]
+  ]]
+])
+
 pipeline {
     agent {
         kubernetes {

@@ -5,7 +5,9 @@ set -o pipefail
 LINCHPINDIR=$1
 shift
 TARGETS=$*
-DRIVERS="dummy duffy libvirt"
+DRIVERS="dummy"
+
+export WORKSPACE="/tmp"
 
 # NOTE: this is replaced by workdir/docs/source/examples/workspace
 # in the linchpin repo
@@ -34,7 +36,7 @@ done
 mkdir -p logs
 for target in $TARGETS; do
     container="lp_$target"
-    docker exec -it $container bash -c 'pushd /workdir && /root/linchpin-install.sh'
+    docker exec -it $container bash -c 'pushd /workdir && ./config/Dockerfiles/linchpin-install.sh'
     for i in $DRIVERS; do
         testname="$target/$i"
         if [ "$i" = "duffy" -a ! -e "duffy.key" ]; then
@@ -42,7 +44,7 @@ for target in $TARGETS; do
             summary="${summary}\n${test_summary}"
             continue
         fi
-        docker exec -it $container bash -c "pushd /workdir && /root/linchpin-test.sh $i" 2>&1 |tee logs/${target}_${i}.log
+        docker exec -it $container bash -c "pushd /workdir && ./config/Dockerfiles/linchpin-test.sh $i" 2>&1 |tee logs/${target}_${i}.log
         if [ $? -eq 0 ]; then
             test_summary="$(tput setaf 2)SUCCESS$(tput sgr0)\t${testname}"
         else
