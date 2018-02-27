@@ -50,13 +50,18 @@ AWS Security Groups can be provisioned using this resource.
 Additional Dependencies
 -----------------------
 
-No additional dependencies are required for the Openstack Provider.
+No additional dependencies are required for the AWS Provider.
 
 Credentials Management
 ----------------------
 
 AWS provides several ways to provide credentials. LinchPin supports
-some of these methods for passing credentials for use with openstack resources.
+some of these methods for passing credentials for use with AWS resources.
+
+One method to provide AWS credentials that can be loaded by LinchPin is to use
+the INI format that the `AWS CLI tool
+<https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html>`_
+uses.
 
 Environment Variables
 `````````````````````

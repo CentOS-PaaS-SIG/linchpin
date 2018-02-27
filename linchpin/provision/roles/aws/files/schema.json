@@ -16,7 +16,8 @@
                     "image": { "type": "string", "required": false },
                     "count": { "type": "integer", "required": false },
                     "keypair": { "type": "string", "required": false },
-                    "security_group": { "type": "string", "required": false }
+                    "security_group": { "type": "string", "required": false },
+                    "vpc_subnet_id": { "type": "string", "required": false }
                 }
             },
             {
