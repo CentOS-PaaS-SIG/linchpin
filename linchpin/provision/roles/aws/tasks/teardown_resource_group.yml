@@ -58,7 +58,7 @@
   when: res_item.0['role'] == "aws_ec2"
   with_nested:
     - "{{ resource_definitions }}"
-    - "{{ topo_output_resources['aws_ec2'] }}"
+    - "{{ topo_output_resources['aws_ec2_res'] }}"
     - ["{{ res_grp['resource_group_name']  }}"]
   loop_control:
     loop_var: res_item
