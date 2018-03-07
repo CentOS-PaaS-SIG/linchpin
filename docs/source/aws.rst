@@ -9,7 +9,23 @@ aws_ec2
 AWS Instances can be provisioned using this resource.
 
 * :docs1.5:`Topology Example <workspace/topologies/aws-ec2-new.yml>`
+* :docs1.5:`Topology Example w/ VPC <workspace/topologies/aws-ec2-vpc.yml>`
 * `aws_ec2 module <http://docs.ansible.com/ansible/latest/ec2_module.html>`_
+
+EC2 Inventory Generation
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+If an instance has a public IP attached, its hostname in public DNS, if
+available, will be provided in the generated Ansible inventory file, and if not
+the public IP address will be provided.
+
+For instances which have a private IP address for VPC usage, the private IP
+address will be provided since private EC2 DNS hostnames (e.g.
+**ip-10-0-0-1.ec2.internal**) will not typically be resolvable outside of AWS.
+
+For instances with both a public and private IP address, the public address is
+always provided instead of the private address, so as to avoid duplicate runs
+of Ansible on the same host via the generated inventory file.
 
 aws_ec2_key
 -----------
@@ -64,12 +80,12 @@ the INI format that the `AWS CLI tool
 uses.
 
 Environment Variables
-`````````````````````
+~~~~~~~~~~~~~~~~~~~~~
 
 LinchPin honors the AWS environment variables
 
 Provisioning
-````````````
+~~~~~~~~~~~~
 
 Provisioning with credentials uses the ``--creds-path`` option.
 
