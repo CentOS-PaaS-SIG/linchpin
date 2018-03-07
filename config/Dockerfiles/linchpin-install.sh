@@ -2,6 +2,11 @@
 
 WORKDIR=$(pwd)
 
+pushd config/Dockerfiles
+make pip_install.sh
+./pip_install.sh
+popd
+
 pip install .
 pip install .[tests]
 pip install .[libvirt]

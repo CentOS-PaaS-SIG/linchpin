@@ -4,9 +4,9 @@ DRIVER=$1
 
 function clean_up {
     set +e
-    linchpin -v destroy $DRIVER
+    linchpin -w . -v destroy $DRIVER
 }
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
 pushd docs/source/examples/workspace
-linchpin -v up $DRIVER
+linchpin -w . -v up $DRIVER

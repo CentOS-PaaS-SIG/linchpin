@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<scriptApproval plugin="script-security@1.15">
+  <approvedScriptHashes>
+  </approvedScriptHashes>
+  <approvedSignatures>
+    <string>method org.jenkinsci.plugins.workflow.support.actions.EnvironmentAction getEnvironment</string>
+    <string>staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods last java.lang.Iterable</string>
+  </approvedSignatures>
+  <aclApprovedSignatures>
+  </aclApprovedSignatures>
+  <approvedClasspathEntries/>
+  <pendingScripts/>
+  <pendingSignatures/>
+  <pendingClasspathEntries/>
+</scriptApproval>

@@ -33,10 +33,11 @@ library identifier: "cico-pipeline-library@master",
 properties(
     [
         buildDiscarder(logRotator(artifactDaysToKeepStr: '30', artifactNumToKeepStr: '15', daysToKeepStr: '90', numToKeepStr: '30')),
+        [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/CentOS-PaaS-SIG/linchpin/'],
         disableConcurrentBuilds(),
         parameters(
             [
-                string(defaultValue: 'master', description: '', name: 'ghprbActualCommit'),
+                string(defaultValue: 'develop', description: '', name: 'ghprbActualCommit'),
                 string(defaultValue: '', description: '', name: 'sha1'),
                 string(defaultValue: '', description: 'Pull Request Number', name: 'ghprbPullId'),
                 string(defaultValue: '', description: 'Pull Request Author username', name: 'ghprbPullAuthorLogin'),
@@ -150,8 +151,10 @@ podTemplate(name: podName,
                             withCredentials([file(credentialsId: 'duffy-key', variable: 'DUFFY_KEY')]) {
                                 sh '''
                                     #!/bin/bash
-                                    cp ${DUFFY_KEY} ./duffy.key
-                                    chmod 0600 ./duffy.key
+                                    if [ 0$(stat -c ${DUFFY_KEY}) -gt 0 ]; then
+                                        cp ${DUFFY_KEY} ./duffy.key
+                                        chmod 0600 ./duffy.key
+                                    fi
 
                                     git clone https://github.com/CentOS-PaaS-SIG/duffy-ansible-module.git
                                 '''
