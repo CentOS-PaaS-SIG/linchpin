@@ -18,12 +18,23 @@
 
 - block:
   # stash job ids and urls for printing
-  - name: set bkr_id_values
+  - name: set bkr_id_values, set initial topology outputs for teardown with rundb
     set_fact:
       bkr_id_values: "{{ bkr_id_values | default({}) | combine(result['ids']) }}"
+      topology_outputs_beaker_server: "{{ topology_outputs_beaker_server }} + {{ result['hosts'] }}"
     with_items: "{{ bkr.results }}"
     loop_control:
       loop_var: result
+
+  - name: "Add beaker job info to the rundb"
+    rundb:
+      conn_str: "{{ rundb_conn }}"
+      operation: update
+      table: "{{ target }}"
+      key: "outputs"
+      value: "[{{ {'resources': topology_outputs_beaker_server} }}]"
+      run_id: "{{ rundb_id }}"
+    when: not generate_resources
 
   - name: print beaker job ids and URLs
     debug:
