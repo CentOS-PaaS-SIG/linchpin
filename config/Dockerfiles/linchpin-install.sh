@@ -12,9 +12,9 @@ pip install .[tests]
 pip install .[libvirt]
 
 # If duffy.key is available then install duffy ansible module.
-if [ -e "duffy.key" ]; then
+if [ -e "keys/duffy" ]; then
     # duffy key needs to be in home dir by default
-    cp duffy.key ~
+    #cp duffy ~/duffy,key
 
     # Link duffy module linchpin library
     pushd ~

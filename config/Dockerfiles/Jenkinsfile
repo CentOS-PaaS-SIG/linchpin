@@ -151,9 +151,12 @@ podTemplate(name: podName,
                             withCredentials([file(credentialsId: 'duffy-key', variable: 'DUFFY_KEY')]) {
                                 sh '''
                                     #!/bin/bash
-                                    if [ 0$(stat -c ${DUFFY_KEY}) -gt 0 ]; then
-                                        cp ${DUFFY_KEY} ./duffy.key
-                                        chmod 0600 ./duffy.key
+                                    # Putting the duffy key in keys/duffy
+                                    # will enable the testing of that driver
+                                    if [ 0$(stat -c %s ${DUFFY_KEY}) -gt 0 ]; then
+                                        mkdir keys/duffy
+                                        cp ${DUFFY_KEY} keys/duffy/duffy.key
+                                        chmod 0600 keys/duffy/duffy.key
                                     fi
 
                                     git clone https://github.com/CentOS-PaaS-SIG/duffy-ansible-module.git

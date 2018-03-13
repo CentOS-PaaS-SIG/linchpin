@@ -5,7 +5,7 @@ set -o pipefail
 LINCHPINDIR=$1
 shift
 TARGETS=$*
-DRIVERS="dummy"
+DRIVERS="aws-ec2-new duffy dummy"
 
 export WORKSPACE="/tmp"
 
@@ -37,22 +37,7 @@ mkdir -p logs
 for target in $TARGETS; do
     container="lp_$target"
     docker exec -it $container bash -c 'pushd /workdir && ./config/Dockerfiles/linchpin-install.sh'
-    for i in $DRIVERS; do
-        testname="$target/$i"
-        if [ "$i" = "duffy" -a ! -e "duffy.key" ]; then
-            test_summary="$(tput setaf 4)SKIPPED$(tput sgr0)\t${testname}"
-            summary="${summary}\n${test_summary}"
-            continue
-        fi
-        docker exec -it $container bash -c "pushd /workdir && ./config/Dockerfiles/linchpin-test.sh $i" 2>&1 |tee logs/${target}_${i}.log
-        if [ $? -eq 0 ]; then
-            test_summary="$(tput setaf 2)SUCCESS$(tput sgr0)\t${testname}"
-        else
-            test_summary="$(tput setaf 1)FAILURE$(tput sgr0)\t${testname}\tlog: ./logs/${target}_${i}.log"
-            result=1
-        fi
-        summary="${summary}\n${test_summary}"
-    done
+    docker exec -it $container bash -c "export target=$target; export DRIVERS=\"$DRIVERS\"; pushd /workdir && ./config/Dockerfiles/linchpin-tests.sh"
 done
 
 for target in $TARGETS; do
@@ -60,5 +45,3 @@ for target in $TARGETS; do
     docker kill $container
     docker rm $container
 done
-
-printf "\n==== TEST summary ====${summary}\n"
