@@ -19,6 +19,11 @@
                         "required": false,
                         "schema": { "type": "string", "required": true }
                     },
+		    "volumes": {
+                        "type": "list",
+                        "required": false,
+                        "schema": { "type": "string", "required": true }
+                    },
                     "keypair": { "type": "string", "required": true },
                     "security_groups": { "type": "string", "required": false },
                     "fip_pool": { "type": "string", "required": false },

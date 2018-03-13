@@ -21,6 +21,7 @@
     terminate_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
     volume_size: "{{ res_def['volume_size'] | default(omit) }}"
     boot_volume: "{{ res_def['boot_volume'] | default(omit) }}"
+    volumes: "{{ res_def['volumes'] | default(omit) }}"
   register: res_def_output
   when: not async and auth_var is defined
 
@@ -46,6 +47,7 @@
     terminate_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
     volume_size: "{{ res_def['volume_size'] | default(omit) }}"
     boot_volume: "{{ res_def['boot_volume'] | default(omit) }}"
+    volumes: "{{ res_def['volumes'] | default(omit) }}"
   register: res_def_output
   when: not async and auth_var is not defined
 
@@ -72,6 +74,7 @@
     terminate_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
     volume_size: "{{ res_def['volume_size'] | default(omit) }}"
     boot_volume: "{{ res_def['boot_volume'] | default(omit) }}"
+    volumes: "{{ res_def['volumes'] | default(omit) }}"
   async: "{{ async_timeout | default(1000) }}"
   poll: 0
   register: res_def_output
@@ -99,6 +102,7 @@
     terminate_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
     volume_size: "{{ res_def['volume_size'] | default(omit) }}"
     boot_volume: "{{ res_def['boot_volume'] | default(omit) }}"
+    volumes: "{{ res_def['volumes'] | default(omit) }}"
   async: "{{ async_timeout | default(1000) }}"
   poll: 0
   register: res_def_output
