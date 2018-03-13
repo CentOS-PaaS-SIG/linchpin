@@ -185,23 +185,20 @@ class BkrFactory(BkrConn):
         return kwargs
 
     def check_jobs(self, jobs):
-        """
-            Get state of a job in Beaker
-        """
-        results = {}
+        # slightly modified copy of the same method in bkr_info, used here to
+        # let bkr_server return beaker job info in the same structure as
+        # bkr_info so we can stash provisioning details in rundb before the
+        # bkr_info task blocks on waiting for the beaker job(s) to finish.
+        # Importing code from bkr_info is not an option due to ansible's
+        # sandboxing; bkr_info is not guaranteed to be importable at runtime.
         resources = []
         bkrcmd = BeakerCommand('BeakerCommand')
         bkrcmd.check_taskspec_args(jobs)
         for task in jobs:
             myxml = self.hub.taskactions.to_xml(task)
             myxml = myxml.encode('utf8')
-            LOG.debug(xml.dom.minidom.parseString(myxml)
-                         .toprettyxml(encoding='utf8'))
             root = eT.fromstring(myxml)
-            # Using getiterator() since its backward compatible with Python 2.6
-            for job in root.getiterator('job'):
-                results.update({'job_id': job.get('id'),
-                                'results': job.get('result')})
+            # Using getiterator() since its backward compatible with py26
             for recipe in root.getiterator('recipe'):
                 resources.append({'family': recipe.get('family'),
                                   'distro': recipe.get('distro'),
@@ -209,9 +206,9 @@ class BkrFactory(BkrConn):
                                   'variant': recipe.get('variant'),
                                   'system': recipe.get('system'),
                                   'status': recipe.get('status'),
-                                  'result': recipe.get('result')})
-                results.update({'resources': resources})
-        return results
+                                  'result': recipe.get('result'),
+                                  'id': recipe.get('job_id')})
+        return resources
 
     def cancel_jobs(self, jobs, msg):
         """
@@ -269,9 +266,10 @@ def main():
         for job_id in job_ids:
             parsed_id = job_id[2:]
             parsed_ids[parsed_id] = factory.get_url(parsed_id)
+        hosts = factory.check_jobs(job_ids)
         # pass out the provisioned job ids (or empty dict, if none) and
         # provisioning params to be used in the bkr_info task later
-        module.exit_json(changed=True, ids=parsed_ids,
+        module.exit_json(changed=True, ids=parsed_ids, hosts=hosts,
                          provision_params=module.params)
     else:  # state == absent, cancel provisioned jobs
         for recipeset in params.recipesets:
