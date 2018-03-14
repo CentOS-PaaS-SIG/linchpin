@@ -9,7 +9,8 @@ mkdir -p ${base_dir}/logs
 result=0
 for i in $DRIVERS; do
     testname="$target/$i"
-    if [ "$i" = "duffy" -a ! -e "duffy.key" ]; then
+    export CREDS_PATH="$base_dir/keys/$i"
+    if [ ! -e "$CREDS_PATH" ]; then
         test_summary="$(tput setaf 4)SKIPPED$(tput sgr0)\t${testname}"
         summary="${summary}\n${test_summary}"
         continue

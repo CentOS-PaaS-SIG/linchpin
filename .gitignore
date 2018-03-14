@@ -37,3 +37,7 @@ Dockerfiles/lp_test_workspace
 Dockerfiles/duffy-ansible-module
 
 .rundb
+
+# Credential files for testing drivers
+keys/aws-ec2-new
+keys/duffy
