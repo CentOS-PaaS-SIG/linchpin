@@ -15,6 +15,47 @@ Openstack instances can be provisioned using this resource.
    the variables used are identical to the Ansible os_server module, except for
    adding a ``count`` option.
 
+Topology Schema
+~~~~~~~~~~~~~~
+
+Within Linchpin, the :term:`os_server` :term:`resource_definition` has more options
+than what are shown in the examples above. For each :term:`os_server` definition, the
+following options are available.
+
++------------------+------------+----------+------------------- +----------------+
+| Parameter        | required   | type     | ansible value     | comments       |
++==================+============+==========+===================+================+
+| name             | true       | string   | name              |                |
++------------------+------------+----------+-------------------+----------------+
+| flavor           | true       | string   | flavor            |                |
++------------------+------------+----------+-------------------+----------------+
+| image            | true       | string   | image             |                |
++------------------+------------+----------+-------------------+----------------+
+| region           | false      | string   | region            |                |
++------------------+------------+----------+-------------------+----------------+
+| count            | false      | integer  | count             |                |
++------------------+------------+----------+-------------------+----------------+
+| keypair          | false      | string   | key_name          |                |
++------------------+------------+----------+-------------------+----------------+
+| security_groups  | false      | string   | security_groups   |                |
++------------------+------------+----------+-------------------+----------------+
+| fip_pool         | false      | string   | floating_ip_pools |                |
++------------------+------------+----------+-------------------+----------------+
+| nics             | false      | string   | networks          |                |
++------------------+------------+----------+-------------------+----------------+
+| userdata         | false      | string   | userdata          |                |
++------------------+------------+----------+-------------------+----------------+
+| volumes          | false      | list     | volumes           |                |
++------------------+------------+----------+-------------------+----------------+
+| boot_from_volume | false      | string   | boot_from_volume  |                |
++------------------+------------+----------+-------------------+----------------+
+| terminate_volume | false      | string   | terminate_volume  |                |
++------------------+------------+----------+-------------------+----------------+
+| volume_size      | false      | string   | volume_size       |                |
++------------------+------------+----------+-------------------+----------------+
+| boot_volume      | false      | string   | boot_volume       |                |
++------------------+------------+----------+-------------------+----------------+
+
 os_obj
 ------
 
