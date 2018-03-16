@@ -22,7 +22,7 @@ Within Linchpin, the :term:`os_server` :term:`resource_definition` has more opti
 than what are shown in the examples above. For each :term:`os_server` definition, the
 following options are available.
 
-+------------------+------------+----------+------------------- +----------------+
++------------------+------------+----------+-------------------+----------------+
 | Parameter        | required   | type     | ansible value     | comments       |
 +==================+============+==========+===================+================+
 | name             | true       | string   | name              |                |
