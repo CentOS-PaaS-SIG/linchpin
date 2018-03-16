@@ -209,7 +209,7 @@ class LinchpinAPI(object):
         self._hook_observers.append(callback)
 
 
-    def lp_journal(self, targets=[], fields=None, count=1):
+    def lp_journal(self, view, targets=[], fields=None, count=1):
 
         rundb = self.setup_rundb()
 
@@ -218,8 +218,11 @@ class LinchpinAPI(object):
         if not len(targets):
             targets = rundb.get_tables()
 
-        for target in targets:
-            journal[target] = rundb.get_records(table=target, count=count)
+        if view == 'target':
+            for target in targets:
+                journal[target] = rundb.get_records(table=target, count=count)
+        if view == 'tx':
+            journal = rundb.get_records('linchpin', count=count)
 
         return journal
 

@@ -7,6 +7,8 @@ import sys
 import json
 import click
 
+from collections import OrderedDict
+
 from linchpin.cli import LinchpinCli
 from linchpin.exceptions import LinchpinError
 from linchpin.cli.context import LinchpinCliContext
@@ -261,14 +263,27 @@ def fetch(ctx, fetch_type, remote, root):
 @runcli.command()
 @click.argument('targets', metavar='TARGETS', required=False, default=None,
                 nargs=-1)
+@click.option('--view', metavar='VIEW', default='target', required=False,
+        help='Type of view display (default: target)')
 @click.option('-c', '--count', metavar='COUNT', default=3, required=False,
               help='(up to) number of records to return (default: 3)')
 @click.option('-f', '--fields', metavar='FIELDS', required=False,
               help='List the fields to display')
 @pass_context
-def journal(ctx, targets, fields, count):
+def journal(ctx, targets, fields, count, view):
     """
     Display information stored in Run Database
+
+    view:       What type of view will be displayed
+
+                'target': show results of transactions on listed targets
+                (or all if omitted)
+                'tx': show results of each transaction, with results of
+                associated targets used
+
+    (Default: target)
+
+    count:      Number of records to show per target
 
     targets:    Display data for the listed target(s). If omitted, the latest
                 records for any/all targets in the RunDB will be displayed.
@@ -280,37 +295,42 @@ def journal(ctx, targets, fields, count):
 
     """
 
-    all_fields = json.loads(lpcli.get_cfg('lp', 'rundb_schema')).keys()
+    if view == 'target':
 
-    if not fields:
-        fields = ['action', 'uhash', 'rc']
-    else:
-        fields = fields.split(',')
+        try:
+            journal = lpcli.lp_journal(view, targets=targets, fields=fields, count=count)
+        except LinchpinError as e:
+            ctx.log_state(e)
+            sys.exit(1)
 
-    invalid_fields = [field for field in fields if field not in all_fields]
+        all_fields = json.loads(lpcli.get_cfg('lp', 'rundb_schema')).keys()
 
-    if invalid_fields:
-        ctx.log_state('The following fields passed in are not valid: {0}'
-                      ' \nValid fields are {1}'.format(fields, all_fields))
-        sys.exit(89)
+        if not fields:
+            fields = ['action', 'uhash', 'rc']
+        else:
+            fields = fields.split(',')
 
-    no_records = []
-    output = 'run_id\t'
+        invalid_fields = [field for field in fields if field not in all_fields]
 
-    for f in fields:
-        output += '{0:>10}\t'.format(f)
+        if invalid_fields:
+            ctx.log_state('The following fields passed in are not valid: {0}'
+                          ' \nValid fields are {1}'.format(fields, all_fields))
+            sys.exit(89)
 
-    output += '\n'
-    output += '--------------------------------------------------'
+        no_records = []
+        output = 'run_id\t'
 
+        for f in fields:
+            output += '{0:>10}\t'.format(f)
 
-    try:
-        journal = lpcli.lp_journal(targets=targets, fields=fields, count=count)
+        output += '\n'
+        output += '--------------------------------------------------'
+
 
         if len(journal):
             for target, values in journal.iteritems():
-
                 keys = values.keys()
+
                 if len(keys):
                     print('\nTarget: {0}'.format(target), file=sys.stderr)
                     print(output, file=sys.stderr)
@@ -325,23 +345,55 @@ def journal(ctx, targets, fields, count):
                 else:
                     no_records.append(target)
 
+
             if no_records:
                 no_out = '\nNo records for targets:'
 
                 for rec in no_records:
                     no_out += ' {0}'.format(rec)
 
-                no_out += '\n'
-
                 print(no_out, file=sys.stderr)
+
         else:
             print('No targets available for journal.'
-                  ' Please provision something. :)\n', file=sys.stderr)
+                  ' Please provision something. :)', file=sys.stderr)
 
+        print('\n')
 
-    except LinchpinError as e:
-        ctx.log_state(e)
-        sys.exit(1)
+    elif view == 'tx':
+
+        try:
+            j = lpcli.lp_journal(view, count=count)
+            journal = OrderedDict(reversed(sorted(j.items())))
+        except LinchpinError as e:
+            ctx.log_state(e)
+            sys.exit(1)
+
+        output = ''
+
+        if len(journal):
+            for lp_id, v in journal.iteritems():
+
+                output += '\nID: {0}\t\t\t'.format(lp_id)
+                output += 'Action: {0}\n'.format(v['action'])
+                output += '\n{0:<20}\t{1:>6}\t{2:<5}\t{3:<10}\n'.format('Target',
+                                                                        'Run ID',
+                                                                        'uHash',
+                                                                        'Exit Code')
+                output += '-------------------------------------------------\n'
+
+                for targets in v['targets']:
+                    for target, values in targets.iteritems():
+                        for rundb_id, data in values.iteritems():
+                            output += '{0:<20}\t{1:>6}\t{2:>5}'.format(target,
+                                                                       rundb_id,
+                                                                       data['uhash'])
+                            output += '\t{0:>9}\n'.format(data['rc'])
+
+                output += '\n=================================================\n'
+
+        # PRINT OUTPUT RESULTS HERE
+        ctx.log_state(output)
 
 
 def main():
