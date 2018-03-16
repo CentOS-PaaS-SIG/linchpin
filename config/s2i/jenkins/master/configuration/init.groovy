@@ -22,7 +22,7 @@ jenkins.CLI.get().setEnabled(false);
 logger.info("Enable Slave -> Master Access Control")
 Jenkins.instance.injector.getInstance(AdminWhitelistRule.class).setMasterKillSwitch(false);
 // Set global and job read permissions
-def strategy = new GlobalMatrixAuthorizationStrategy()
+def strategy = Jenkins.instance.getAuthorizationStrategy()
 strategy.add(hudson.model.Hudson.READ,'anonymous')
 strategy.add(hudson.model.Item.READ,'anonymous')
 Jenkins.instance.setAuthorizationStrategy(strategy)
