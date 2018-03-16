@@ -32,43 +32,66 @@ def _handle_results(ctx, results, return_code):
         The dictionary of results for each target.
     """
 
-    output = '\n{0:<20}\t{1:<6}\t{2:<5}\t{3:<10}\n'.format('Target',
-                                                           'Run ID',
-                                                           'uHash',
-                                                           'Exit Code')
-    output += '-------------------------------------------------\n'
+    output = ''
+    rcs = []
 
-    for target, data in results.iteritems():
-        rundb_data = data['rundb_data']
-        task_results = data['task_results']
+    for k, v in results.iteritems():
 
-        if task_results and isinstance(task_results[0], list):
-            task_results = task_results[0]
+        output = '\nID: {0}\n'.format(k)
+        output += 'Action: {0}\n'.format(v['action'])
+        output += '\n{0:<20}\t{1:>6}\t{2:<5}\t{3:<10}\n'.format('Target',
+                                                                'Run ID',
+                                                                'uHash',
+                                                                'Exit Code')
+        output += '-------------------------------------------------\n'
 
-        if not isinstance(task_results, int):
-            trs = task_results
+        for target, run_data in v['summary_data'].iteritems():
+            for rundb_id, data in run_data.iteritems():
 
-            if trs is not None:
-                trs.reverse()
-                tr = trs[0]
-                if tr.is_failed():
-                    msg = tr._check_key('msg')
-                    ctx.log_state("Target '{0}': {1} failed with"
-                                  " error '{2}'".format(target, tr._task, msg))
-        else:
-            if task_results:
-                return_code = task_results
+                output += '{0:<20}\t{1:>6}\t{2:>5}'.format(target,
+                                                           rundb_id,
+                                                           data['uhash'])
+                output += '\t{0:>9}\n'.format(data['rc'])
 
-        # PRINT OUTPUT RESULTS HERE
-        for rundb_id, data in rundb_data.iteritems():
+                # add all return codes to a little dictionary for use with
+                # a future flag that allows to record failures, but continue
+                # on anyway.
+                rcs.append(data['rc'])
 
-            output += '{0:<20}\t{1:>6}\t{2:>5}'.format(target,
-                                                       rundb_id,
-                                                       data['uhash'])
+        task_results = v.get('results_data')
+        if task_results:
+            for target, results in task_results.iteritems():
+                if results['task_results']:
+                    tasks = results['task_results'][0].get('failed')
 
-            output += '\t{0:>9}\n'.format(return_code)
+                    if not isinstance(tasks, int) and len(tasks):
+                        trs = tasks
 
+                        if trs is not None:
+                            trs.reverse()
+                            tr = trs[0]
+                            msg = tr._check_key('msg')
+                            ctx.log_state("\n------------------------------------")
+                            ctx.log_state("Task '{0}' failed with"
+                                          " error '{1}' for Target:"
+                                          " {2}".format(tr.task_name,
+                                                        msg,
+                                                        target))
+                            ctx.log_state("\n\nAdd -vvvv to the linchpin command"
+                                          " to see the stack trace")
+                            ctx.log_state("------------------------------------\n")
+
+                # FIXME make sure the return_code is valid here
+
+    # PRINT OUTPUT RESULTS HERE
     ctx.log_state(output)
+
+#   FIXME: have use_actual_rcs be a flag
+    use_actual_rcs = True
+    return_code = 0
+    if use_actual_rcs:
+        return_code = sum(rc for rc in rcs)
+
     sys.exit(return_code)
 
 
