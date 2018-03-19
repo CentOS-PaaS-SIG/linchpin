@@ -14,7 +14,7 @@ class PlaybookCallback(CallbackBase):
         self._display.verbosity = options.verbosity
 
         # store all results
-        self.results = { 'failed': [], 'ok': [] }
+        self.results = {'failed': [], 'ok': []}
 
 
     def v2_runner_on_ok(self, result):
@@ -31,4 +31,3 @@ class PlaybookCallback(CallbackBase):
 
         if not ignore_errors:
             self.results['failed'].append(result)
-

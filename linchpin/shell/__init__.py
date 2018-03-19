@@ -73,15 +73,17 @@ def _handle_results(ctx, results, return_code):
                             trs.reverse()
                             tr = trs[0]
                             msg = tr._check_key('msg')
-                            ctx.log_state("\n------------------------------------")
+                            ctx.log_state("\n--------------------------------"
+                                          "----")
                             ctx.log_state("Task '{0}' failed with"
                                           " error '{1}' for Target:"
                                           " {2}".format(tr.task_name,
                                                         msg,
                                                         target))
-                            ctx.log_state("\n\nAdd -vvvv to the linchpin command"
-                                          " to see the stack trace")
-                            ctx.log_state("------------------------------------\n")
+                            ctx.log_state("\n\nAdd -vvvv to the linchpin"
+                                          " command to see the stack trace")
+                            ctx.log_state("----------------------------------"
+                                          "--\n")
 
                 # FIXME make sure the return_code is valid here
 
@@ -261,10 +263,10 @@ def fetch(ctx, fetch_type, remote, root):
 
 
 @runcli.command()
-@click.argument('targets', metavar='TARGETS', required=False, default=None,
-                nargs=-1)
+@click.argument('targets', metavar='TARGETS',
+                required=False, default=None, nargs=-1)
 @click.option('--view', metavar='VIEW', default='target', required=False,
-        help='Type of view display (default: target)')
+              help='Type of view display (default: target)')
 @click.option('-c', '--count', metavar='COUNT', default=3, required=False,
               help='(up to) number of records to return (default: 3)')
 @click.option('-f', '--fields', metavar='FIELDS', required=False,
@@ -299,7 +301,8 @@ def journal(ctx, targets, fields, count, view):
     if view == 'target':
 
         try:
-            journal = lpcli.lp_journal(view, targets=targets, fields=fields, count=count)
+            journal = lpcli.lp_journal(view=view, targets=targets,
+                                       fields=fields, count=count)
         except LinchpinError as e:
             ctx.log_state(e)
             sys.exit(1)
@@ -364,7 +367,7 @@ def journal(ctx, targets, fields, count, view):
     elif view == 'tx':
 
         try:
-            j = lpcli.lp_journal(view, count=count)
+            j = lpcli.lp_journal(view=view, count=count)
             journal = OrderedDict(reversed(sorted(j.items())))
         except LinchpinError as e:
             ctx.log_state(e)
@@ -377,21 +380,20 @@ def journal(ctx, targets, fields, count, view):
 
                 output += '\nID: {0}\t\t\t'.format(lp_id)
                 output += 'Action: {0}\n'.format(v['action'])
-                output += '\n{0:<20}\t{1:>6}\t{2:<5}\t{3:<10}\n'.format('Target',
-                                                                        'Run ID',
-                                                                        'uHash',
-                                                                        'Exit Code')
+                output += '\n{0:<20}\t{1:>6}\t{2:<5}\t{3:<10}'
+                output += '\n'.format('Target', 'Run ID', 'uHash', 'Exit Code')
                 output += '-------------------------------------------------\n'
 
                 for targets in v['targets']:
                     for target, values in targets.iteritems():
                         for rundb_id, data in values.iteritems():
-                            output += '{0:<20}\t{1:>6}\t{2:>5}'.format(target,
-                                                                       rundb_id,
-                                                                       data['uhash'])
+                            output += '{0:<20}\t{1:>6}\t'
+                            output += '{2:>5}'.format(target,
+                                                      rundb_id,
+                                                      data['uhash'])
                             output += '\t{0:>9}\n'.format(data['rc'])
 
-                output += '\n=================================================\n'
+                output += '\n================================================\n'
 
         # PRINT OUTPUT RESULTS HERE
         ctx.log_state(output)

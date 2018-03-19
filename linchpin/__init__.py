@@ -209,7 +209,7 @@ class LinchpinAPI(object):
         self._hook_observers.append(callback)
 
 
-    def lp_journal(self, view, targets=[], fields=None, count=1):
+    def lp_journal(self, view='target', targets=[], fields=None, count=1):
 
         rundb = self.setup_rundb()
 
@@ -586,11 +586,11 @@ class LinchpinAPI(object):
         for target, data in results.iteritems():
             for k, v in data['rundb_data'].iteritems():
 
-                summary[target] = {k: { 'rc': v['rc'], 'uhash': v['uhash'] }}
+                summary[target] = {k: {'rc': v['rc'], 'uhash': v['uhash']}}
 
 
         rundb.update_record('linchpin', lp_id, 'action', action)
-        rundb.update_record('linchpin', lp_id, 'targets', [ summary ])
+        rundb.update_record('linchpin', lp_id, 'targets', [summary])
 
         lp_data = {lp_id: {'action': action,
                            'summary_data': summary,
