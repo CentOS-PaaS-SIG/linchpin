@@ -5,8 +5,7 @@ Linchpin has automated testing from PR's (Pull Requests) in GitHub.  Whenever a 
 the trigger phrase '[test]' is included in the comment a set of tests will be kicked off.  These tests are orchestrated via jenkins in the `Centos CI openshift environment <https://jenkins-continuous-infra.apps.ci.centos.org/>`_.
 
 The point of these tests is to verify that linchpin works correctly in a variety of different environments.
-We currently exercise current releases of both Centos and Fedora.  On those targets only the dummy and
-libvirt driver are currently tested but there are plans to expand this.
+We currently exercise current releases of both Centos and Fedora.  On those targets we test the following drivers: dummy, duffy and libvirt.  We are continuing to expand this.
 
 These targets are provided as containers which are deployed inside the openshift environment.
 
@@ -56,7 +55,7 @@ you will need the following (replace <TARGET> with the actual container name):
 * string parameter <TARGET>_tag which defaults to 'stable'
 * containerTemplate describing how to bring up <TARGET>
 * Install stage which executes the linchpin-install.sh script
-* Test stage which defines env.DRIVERS stating which drivers should be tested for this <TARGET> and execute the linchpin-tests.sh script.
+* Test stage which defines env.DRIVERS stating which drivers should be tested for this <TARGET> and execute the linchpin-tests.sh script.  The list of drivers to test can be overridden by setting a global environment variable in jenkins called LINCHPIN_DRIVERS.  Any Drivers that require authentication can be handled by creating a credential file in jenkins.  The id of the key should be named <DRIVER>-key.  For example duffy-key.  In this example a duffy.key will be copied to keys/duffy/duffy.key.  When the driver is executed CREDS_PATH will be exported to this path.
 
 config/s2i
 ++++++++++

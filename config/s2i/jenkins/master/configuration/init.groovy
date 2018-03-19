@@ -6,15 +6,6 @@ import com.redhat.jenkins.plugins.ci.messaging.*
 import hudson.markup.RawHtmlMarkupFormatter
 import hudson.model.*
 import hudson.security.*
-import com.cloudbees.plugins.credentials.*
-import com.cloudbees.plugins.credentials.common.*
-import com.cloudbees.plugins.credentials.domains.*
-import com.cloudbees.plugins.credentials.impl.*
-import org.jenkinsci.plugins.plaincredentials.*
-import org.jenkinsci.plugins.plaincredentials.impl.*
-import org.apache.commons.fileupload.* 
-import org.apache.commons.fileupload.disk.*
-import java.nio.file.Files
 
 def logger = Logger.getLogger("")
 logger.info("Disabling CLI over remoting")
@@ -66,21 +57,3 @@ if ( envVarsNodePropertyList == null || envVarsNodePropertyList.size() == 0 ) {
 // for other environments.
 envVars.put("DOCKER_REPO_URL", "172.30.1.1:5000")
 instance.save()
-
-domain = Domain.global()
-store = Jenkins.instance.getExtensionList('com.cloudbees.plugins.credentials.SystemCredentialsProvider')[0].getStore()
-
-factory = new DiskFileItemFactory()
-dfi = factory.createItem("", "application/octet-stream", false, "filename")
-out = dfi.getOutputStream()
-file = new File("/dev/null")
-Files.copy(file.toPath(), out)
-// FileCredentailsImpl can take a file from a do
-secretFile = new FileCredentialsImpl(
-CredentialsScope.GLOBAL,
-"duffy-key",
-"Empty Duffy Key",
-dfi, // Don't use FileItem
-"",
-"")
-store.addCredentials(domain, secretFile)
