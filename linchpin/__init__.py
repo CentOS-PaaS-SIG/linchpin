@@ -388,7 +388,8 @@ class LinchpinAPI(object):
         This function takes provision_data, and executes the given
         action for each target within the provision_data disctionary.
 
-        :param provision_data: PinFile as a dictionary, with target information
+        :param provision_data: PinFile data as a dictionary, with
+        target information
 
         :param action: Action taken (up, destroy, etc). (Default: up)
 
@@ -421,11 +422,16 @@ class LinchpinAPI(object):
                                   default='%m/%d/%Y %I:%M:%S %p')
 
         return_code = 99
+
         for target in provision_data.keys():
 
             if not isinstance(provision_data[target], dict):
-                raise LinchpinError("Cannot process target '{0}',"
-                                    " data unavailable.".format(target))
+                raise LinchpinError("Target '{0}' does not"
+                                    " exist.".format(target))
+
+        for target in provision_data.keys():
+
+            self.ctx.log_debug("Processing target: {0}".format(target))
 
             results[target] = {}
             self.set_evar('target', target)

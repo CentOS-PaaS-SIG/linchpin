@@ -13,6 +13,7 @@ from linchpin.cli import LinchpinCli
 from linchpin.exceptions import LinchpinError
 from linchpin.cli.context import LinchpinCliContext
 from linchpin.shell.click_default_group import DefaultGroup
+from linchpin.shell.mutually_exclusive import MutuallyExclusiveOption
 
 
 pass_context = click.make_pass_decorator(LinchpinCliContext, ensure=True)
@@ -218,24 +219,46 @@ def up(ctx, targets, run_id):
 @click.argument('targets', metavar='TARGET', required=False,
                 nargs=-1)
 @click.option('-r', '--run-id', metavar='run_id',
-              help='Destroy resources using `run-id` data')
+              help='Destroy resources using a target-based ID (run-id)',
+              cls=MutuallyExclusiveOption,
+              mutually_exclusive=["tx_id"])
+@click.option('-t', '--tx-id', metavar='tx_id',
+              help='Destroy resources using the transaction ID (tx-id)',
+              cls=MutuallyExclusiveOption,
+              mutually_exclusive=["run_id"])
 @pass_context
-def destroy(ctx, targets, run_id):
+def destroy(ctx, targets, run_id, tx_id):
     """
-    Destroys nodes from the given target(s) in the given PinFile.
+    Destroys resources using either the run_id or tx_id (mutually exclusive).
+
+    The run_id requires an associated target, where the tx_id will look up
+    the targets from the specified transaction.
+
+    The data from the targets is obtained from the PinFile (default)
+    or from the RunDB (by setting `destroy_by_rundb = True` in linchpin.conf).
 
     targets:    Destroy ONLY the listed target(s). If omitted, ALL targets in
     the appropriate PinFile will be destroyed.
-
-    run-id:     Use the data from the provided run_id value
     """
 
-    try:
-        return_code, results = lpcli.lp_destroy(targets=targets, run_id=run_id)
-        _handle_results(ctx, results, return_code)
-    except LinchpinError as e:
-        ctx.log_state(e)
-        sys.exit(1)
+    if tx_id:
+        try:
+            return_code, results = lpcli.lp_destroy(targets=targets, run_id=tx_id)
+            _handle_results(ctx, results, return_code)
+        except LinchpinError as e:
+            ctx.log_state(e)
+            sys.exit(1)
+    else: # if tx_id is not passed, use run_id as a baseline
+        if (not targets or len(targets) > 1) and run_id:
+             raise click.UsageError("A single target is required when calling destroy"
+                                    " with `--run_id` option")
+        try:
+            return_code, results = lpcli.lp_destroy(targets=targets, run_id=run_id)
+            _handle_results(ctx, results, return_code)
+        except LinchpinError as e:
+            ctx.log_state(e)
+            sys.exit(1)
+
 
 
 @runcli.command()
@@ -380,20 +403,20 @@ def journal(ctx, targets, fields, count, view):
 
                 output += '\nID: {0}\t\t\t'.format(lp_id)
                 output += 'Action: {0}\n'.format(v['action'])
-                output += '\n{0:<20}\t{1:>6}\t{2:<5}\t{3:<10}'
-                output += '\n'.format('Target', 'Run ID', 'uHash', 'Exit Code')
+                output += '\n{0:<20}\t{1:>6}'.format('Target', 'Run ID')
+                output += '\t{0:<5}\t{1:<10}\n'.format('uHash', 'Exit Code')
                 output += '-------------------------------------------------\n'
 
                 for targets in v['targets']:
                     for target, values in targets.iteritems():
                         for rundb_id, data in values.iteritems():
-                            output += '{0:<20}\t{1:>6}\t'
-                            output += '{2:>5}'.format(target,
-                                                      rundb_id,
-                                                      data['uhash'])
+                            output += '{0:<20}\t{1:>6}\t'.format(target,
+                                                                 rundb_id)
+                            output += '{0:>5}'.format(data['uhash'])
                             output += '\t{0:>9}\n'.format(data['rc'])
 
-                output += '\n================================================\n'
+                output += '\n======================================='
+                output += '==========\n'
 
         # PRINT OUTPUT RESULTS HERE
         ctx.log_state(output)

@@ -299,7 +299,7 @@ class LinchpinCli(LinchpinAPI):
 
         """
 
-        provision_data = {}
+        provision_data = OrderedDict()
 
         for target in pf.keys():
 
