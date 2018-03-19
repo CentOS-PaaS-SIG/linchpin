@@ -299,7 +299,7 @@ class LinchpinCli(LinchpinAPI):
 
         """
 
-        provision_data = OrderedDict()
+        provision_data = {}
 
         for target in pf.keys():
 
@@ -351,7 +351,7 @@ class LinchpinCli(LinchpinAPI):
             An optional run_id if the task is idempotent or a destroy action
         """
 
-        prov_data = {}
+        prov_data = OrderedDict()
 
         if len(targets):
             for target in targets:
