@@ -274,12 +274,13 @@ def journal(ctx, targets, fields, count, view):
     """
     Display information stored in Run Database
 
-    view:       What type of view will be displayed
+    view:       How the journal is displayed
 
                 'target': show results of transactions on listed targets
                 (or all if omitted)
-                'tx': show results of each transaction, with results of
-                associated targets used
+
+                'tx': show results of each transaction, with results
+                of associated targets used
 
     (Default: target)
 

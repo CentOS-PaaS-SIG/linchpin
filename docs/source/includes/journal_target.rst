@@ -1,8 +1,8 @@
-Upon completion of any provision (up) or teardown (destroy) task, there's a record that is created ans stored in the :term:`RunDB`. The ``linchpin journal`` command provides data from the tasks, based upon the target. The data displayed to the screen shows the last three (3) tasks, along with some useful information.
+The default view, 'target', is displayed using the target. The data displayed to the screen shows the last three (3) tasks per target, along with some useful information.
 
 .. code-block:: bash
 
-    $ linchpin journal dummy-new
+    $ linchpin journal --view=target dummy-new
 
     Target: dummy-new
     run_id       action       uhash         rc
@@ -11,7 +11,9 @@ Upon completion of any provision (up) or teardown (destroy) task, there's a reco
     4         destroy         cf22          0
     3              up         cf22          0
 
-The ``linchpin journal`` can show more data as well. Fields (``-f, --fields``) and
+.. note:: The 'target' view is the default, making the --view optional.
+
+The target view can show more data as well. Fields (``-f, --fields``) and
 count (``-c, --count``) are useful options.
 
 .. code-block:: bash
