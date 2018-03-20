@@ -108,9 +108,9 @@ def _handle_results(ctx, results, return_code):
               help='Use a name for the PinFile different from'
                    ' the configuration.')
 @click.option('-d', '--template-data', metavar='TEMPLATE_DATA',
-              help='Write out PinFile to provided location')
-@click.option('-o', '--output-pinfile', metavar='OUTPUT_PINFILE',
               help='Template data passed to PinFile template')
+@click.option('-o', '--output-pinfile', metavar='OUTPUT_PINFILE',
+              help='Write out PinFile to provided location')
 @click.option('-w', '--workspace', type=click.Path(), envvar='WORKSPACE',
               help='Use the specified workspace. Also works if the'
                    ' familiar Jenkins WORKSPACE environment variable is set')

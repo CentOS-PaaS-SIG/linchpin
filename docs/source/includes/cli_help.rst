@@ -13,9 +13,9 @@ or ``linchpin --help`` will yield the command line help page.
       -p, --pinfile PINFILE           Use a name for the PinFile different from
                                       the configuration.
       -d, --template-data TEMPLATE_DATA
-                                      Write out PinFile to provided location
-      -o, --output-pinfile OUTPUT_PINFILE
                                       Template data passed to PinFile template
+      -o, --output-pinfile OUTPUT_PINFILE
+                                      Write out PinFile to provided location
       -w, --workspace PATH            Use the specified workspace. Also works if
                                       the familiar Jenkins WORKSPACE environment
                                       variable is set
