@@ -1,3 +1,5 @@
+import com.cloudbees.plugins.credentials.Credentials
+
 env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/linchpin'
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
 env.ghprbPullAuthorLogin = env.ghprbPullAuthorLogin ?: ''
@@ -13,6 +15,14 @@ env.CENTOS6_TAG = env.CENTOS6_TAG ?: 'stable'
 env.CENTOS7_TAG = env.CENTOS7_TAG ?: 'stable'
 
 DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
+// if LINCHPIN_DRIVERS is defined in jenkins global
+// environment this will limit the possible drivers tested.
+// if it's not defined you will get all the possible drivers
+// listed here.
+LDRIVERS = env.LINCHPIN_DRIVERS ?: 'dummy duffy libvirt'
+PDRIVERS = LDRIVERS.tokenize()
+TDRIVERS = ["dummy", "duffy", "libvirt"]
+env.DRIVERS = TDRIVERS.intersect( PDRIVERS ).join(" ")
 OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
 
@@ -147,20 +157,25 @@ podTemplate(name: podName,
                                                url: "https://github.com/${env.ghprbGhRepository}"]
                                       ]
                             ])
-                        // Make duffy key and module available
-                            withCredentials([file(credentialsId: 'duffy-key', variable: 'DUFFY_KEY')]) {
-                                sh '''
-                                    #!/bin/bash
-                                    # Putting the duffy key in keys/duffy
-                                    # will enable the testing of that driver
-                                    if [ 0$(stat -c %s ${DUFFY_KEY}) -gt 0 ]; then
-                                        mkdir keys/duffy
-                                        cp ${DUFFY_KEY} keys/duffy/duffy.key
-                                        chmod 0600 keys/duffy/duffy.key
-                                    fi
-
-                                    git clone https://github.com/CentOS-PaaS-SIG/duffy-ansible-module.git
-                                '''
+                            sh """
+                              git clone https://github.com/CentOS-PaaS-SIG/duffy-ansible-module.git
+                            """
+                            def creds = com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredentials(
+                              com.cloudbees.plugins.credentials.Credentials.class
+                            );
+                            for (driver in PDRIVERS) {
+                              def cf = creds.findResult { it.id == driver + '-key' ? it : null }
+                              if ( cf ) {
+                                println "found credential ${cf.id} filename:${cf.fileName}"
+                                withCredentials([file(credentialsId: driver + '-key', variable: 'FILEKEY')]) {
+                                sh """
+                                    #!/bin/bash -x
+                                    mkdir keys/${driver}
+                                    cp ${FILEKEY} keys/${driver}/${cf.fileName}
+                                    chmod 0600 keys/${driver}/${cf.fileName}
+                                """
+                                }
+                              }
                             }
                         }
                         // create audit message file
@@ -178,7 +193,6 @@ podTemplate(name: podName,
                         stage(currentStage) {
                           dir('linchpin') {
                             env.target = "centos7"
-                            env.DRIVERS = "dummy duffy libvirt"
                             pipelineUtils.executeInContainer(currentStage, "centos7", "./config/Dockerfiles/linchpin-tests.sh")
                           }
                         }
@@ -193,7 +207,6 @@ podTemplate(name: podName,
                         stage(currentStage) {
                           dir('linchpin') {
                             env.target = "fedora26"
-                            env.DRIVERS = "dummy duffy libvirt"
                             pipelineUtils.executeInContainer(currentStage, "fedora26", "./config/Dockerfiles/linchpin-tests.sh")
                           }
                         }
@@ -208,7 +221,6 @@ podTemplate(name: podName,
                         stage(currentStage) {
                           dir('linchpin') {
                             env.target = "fedora27"
-                            env.DRIVERS = "dummy duffy libvirt"
                             pipelineUtils.executeInContainer(currentStage, "fedora27", "./config/Dockerfiles/linchpin-tests.sh")
                           }
                         }
@@ -223,7 +235,10 @@ podTemplate(name: podName,
                         stage(currentStage) {
                           dir('linchpin') {
                             env.target = "centos6"
-                            env.DRIVERS = "dummy libvirt"
+                            // CentOS 6 can't run duffy yet. 
+                            // See Issue: https://github.com/CentOS-PaaS-SIG/duffy-ansible-module/issues/3
+                            TDRIVERS = ["dummy", "libvirt"]
+                            env.DRIVERS = TDRIVERS.intersect( PDRIVERS ).join(" ")
                             pipelineUtils.executeInContainer(currentStage, "centos6", "./config/Dockerfiles/linchpin-tests.sh")
                           }
                         }

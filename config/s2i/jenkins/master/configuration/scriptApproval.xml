@@ -5,6 +5,10 @@
   <approvedSignatures>
     <string>method org.jenkinsci.plugins.workflow.support.actions.EnvironmentAction getEnvironment</string>
     <string>staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods last java.lang.Iterable</string>
+    <string>method com.cloudbees.plugins.credentials.common.IdCredentials getId</string>
+    <string>method org.jenkinsci.plugins.plaincredentials.FileCredentials getFileName</string>
+    <string>staticMethod com.cloudbees.plugins.credentials.CredentialsProvider lookupCredentials java.lang.Class</string>
+    <string>staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods intersect java.util.List java.lang.Iterable</string>
   </approvedSignatures>
   <aclApprovedSignatures>
   </aclApprovedSignatures>
