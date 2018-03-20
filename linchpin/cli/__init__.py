@@ -10,6 +10,7 @@ from collections import OrderedDict
 
 from linchpin import LinchpinAPI
 from linchpin.fetch import FETCH_CLASS
+from linchpin.exceptions import ActionError
 from linchpin.exceptions import LinchpinError
 from linchpin.utils.dataparser import DataParser
 
@@ -204,7 +205,7 @@ class LinchpinCli(LinchpinAPI):
                                  run_id=run_id)
 
 
-    def lp_destroy(self, targets=(), run_id=None):
+    def lp_destroy(self, targets=(), run_id=None, tx_id=None):
         """
         This function takes a list of targets, and performs a destructive
         teardown, including undefining nodes, according to the target(s).
@@ -218,10 +219,40 @@ class LinchpinCli(LinchpinAPI):
             A tuple of targets to destroy.
         """
 
-        pf_w_path = self._get_pinfile_path()
-        pf_data = self._get_data_path()
+        use_pinfile = True
+        pf = None
+        pf_data = None
 
-        pf = self.parser.process(pf_w_path, pf_data)
+        use_rundb_for_actions = self.get_cfg('lp', 'use_rundb_for_actions')
+
+
+        # The UI should catch this, but just in case.
+        if run_id and tx_id:
+            raise ActionError("'run_id' and 'tx_id' are mutually exclusive")
+
+        if bool(use_rundb_for_actions):
+            if run_id and not tx_id:
+                if not len(targets) or len(targets) > 1:
+                    raise ActionError("'use_rundb_for_actions' is enabled."
+                                      " A single target required when"
+                                      " passing --run_id.")
+                run_id = int(run_id)
+            elif not run_id and tx_id:
+                use_pinfile = False
+
+        if use_pinfile:
+
+            pf_w_path = self._get_pinfile_path()
+            pf_data = self._get_data_path()
+
+            pf = self.parser.process(pf_w_path, pf_data)
+
+
+        else:
+            # get the pinfile data from the run_id or the tx_id
+            pf = self.get_pf_data_from_rundb(targets,
+                                             run_id=run_id,
+                                             tx_id=tx_id)
 
         if pf:
             provision_data = self._build(pf, pf_data)

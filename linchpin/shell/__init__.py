@@ -194,12 +194,24 @@ def init(ctx):
 @runcli.command()
 @click.argument('targets', metavar='TARGETS', required=False,
                 nargs=-1)
-@click.option('-r', '--run-id', metavar='run_id',
-              help='Idempotently provision using `run-id` data')
+@click.option('-r', '--run-id', metavar='run_id', type=int,
+              help='Idempotently provision using `run-id` data',
+              cls=MutuallyExclusiveOption, mutually_exclusive=["tx_id"])
+@click.option('-t', '--tx-id', metavar='tx_id', type=int,
+              help='Provision resources using the Transaction ID (tx-id)',
+              cls=MutuallyExclusiveOption, mutually_exclusive=["run_id"])
 @pass_context
-def up(ctx, targets, run_id):
+def up(ctx, targets, run_id, tx_id):
     """
     Provisions nodes from the given target(s) in the given PinFile.
+
+    The `run_id` requires an associated target, where the `tx_id` will look up
+    the targets from the specified transaction.
+
+    The data from the targets is obtained from the PinFile (default).
+    By setting `use_rundb_for_actions = True` in linchpin.conf, any
+    up transaction which use the `-r/--run_id` or `-t/--tx_id` option will
+    obtain target data from the RunDB.
 
     targets:    Provision ONLY the listed target(s). If omitted, ALL targets in
     the appropriate PinFile will be provisioned.
@@ -218,14 +230,12 @@ def up(ctx, targets, run_id):
 @runcli.command()
 @click.argument('targets', metavar='TARGET', required=False,
                 nargs=-1)
-@click.option('-r', '--run-id', metavar='run_id',
+@click.option('-r', '--run-id', metavar='run_id', type=int,
               help='Destroy resources using a target-based ID (run-id)',
-              cls=MutuallyExclusiveOption,
-              mutually_exclusive=["tx_id"])
-@click.option('-t', '--tx-id', metavar='tx_id',
+              cls=MutuallyExclusiveOption, mutually_exclusive=["tx_id"])
+@click.option('-t', '--tx-id', metavar='tx_id', type=int,
               help='Destroy resources using the transaction ID (tx-id)',
-              cls=MutuallyExclusiveOption,
-              mutually_exclusive=["run_id"])
+              cls=MutuallyExclusiveOption, mutually_exclusive=["run_id"])
 @pass_context
 def destroy(ctx, targets, run_id, tx_id):
     """
@@ -234,26 +244,27 @@ def destroy(ctx, targets, run_id, tx_id):
     The run_id requires an associated target, where the tx_id will look up
     the targets from the specified transaction.
 
-    The data from the targets is obtained from the PinFile (default)
-    or from the RunDB (by setting `destroy_by_rundb = True` in linchpin.conf).
+    The data from the targets is obtained from the PinFile (default) or from
+    the RunDB (by setting `use_rundb_for_actions = True` in linchpin.conf).
 
     targets:    Destroy ONLY the listed target(s). If omitted, ALL targets in
     the appropriate PinFile will be destroyed.
+
     """
 
     if tx_id:
         try:
-            return_code, results = lpcli.lp_destroy(targets=targets, run_id=tx_id)
+            return_code, results = lpcli.lp_destroy(targets=targets, tx_id=tx_id)
             _handle_results(ctx, results, return_code)
         except LinchpinError as e:
             ctx.log_state(e)
             sys.exit(1)
     else: # if tx_id is not passed, use run_id as a baseline
-        if (not targets or len(targets) > 1) and run_id:
+        if (not len(targets) or len(targets) > 1) and run_id:
              raise click.UsageError("A single target is required when calling destroy"
                                     " with `--run_id` option")
         try:
-            return_code, results = lpcli.lp_destroy(targets=targets, run_id=run_id)
+            return_code, results = lpcli.lp_destroy(targets=targets, run_id=run_id, tx_id=tx_id)
             _handle_results(ctx, results, return_code)
         except LinchpinError as e:
             ctx.log_state(e)
@@ -294,8 +305,12 @@ def fetch(ctx, fetch_type, remote, root):
               help='(up to) number of records to return (default: 3)')
 @click.option('-f', '--fields', metavar='FIELDS', required=False,
               help='List the fields to display')
+@click.option('-t', '--tx-id', multiple=True, type=int,
+              metavar='TX_ID', required=False,
+              help="Display a specific transaction by ID (tx_id)."
+                   " Only works with '--view=tx'")
 @pass_context
-def journal(ctx, targets, fields, count, view):
+def journal(ctx, targets, fields, count, view, tx_id):
     """
     Display information stored in Run Database
 
@@ -314,11 +329,9 @@ def journal(ctx, targets, fields, count, view):
     targets:    Display data for the listed target(s). If omitted, the latest
                 records for any/all targets in the RunDB will be displayed.
 
-    fields:     Comma separated list of fields to show in the display.
-    (Default: action, uhash, rc)
-
-    (available fields are: uhash, rc, start, end, action)
-
+    fields:     Comma separated list of fields to show in the display. Used
+    only with `--view=target`.
+    (Default: action, uhash, rc. Additional fields: start, end)
     """
 
     if view == 'target':
@@ -384,14 +397,16 @@ def journal(ctx, targets, fields, count, view):
         else:
             print('No targets available for journal.'
                   ' Please provision something. :)', file=sys.stderr)
-
         print('\n')
 
     elif view == 'tx':
 
         try:
-            j = lpcli.lp_journal(view=view, count=count)
-            journal = OrderedDict(reversed(sorted(j.items())))
+            j = lpcli.lp_journal(view=view, count=count, tx_ids=tx_id)
+            if not len(tx_id):
+                journal = OrderedDict(reversed(sorted(j.items())))
+            else:
+                journal = OrderedDict(j.items())
         except LinchpinError as e:
             ctx.log_state(e)
             sys.exit(1)

@@ -9,6 +9,7 @@ import hashlib
 
 from cerberus import Validator
 from uuid import getnode as get_mac
+from collections import OrderedDict
 
 from linchpin.ansible_runner import ansible_runner
 
@@ -209,7 +210,7 @@ class LinchpinAPI(object):
         self._hook_observers.append(callback)
 
 
-    def lp_journal(self, view='target', targets=[], fields=None, count=1):
+    def lp_journal(self, view='target', targets=[], fields=None, count=1, tx_ids=None):
 
         rundb = self.setup_rundb()
 
@@ -222,7 +223,10 @@ class LinchpinAPI(object):
             for target in targets:
                 journal[target] = rundb.get_records(table=target, count=count)
         if view == 'tx':
-            journal = rundb.get_records('linchpin', count=count)
+            if len(tx_ids):
+               journal = rundb.get_tx_records(tx_ids)
+            else:
+                journal = rundb.get_records('linchpin', count=count)
 
         return journal
 
@@ -381,6 +385,60 @@ class LinchpinAPI(object):
             resources.append(group)
 
         return resources
+
+
+    def get_pf_data_from_rundb(self, targets, run_id=None, tx_id=None):
+        """
+        This function takes the action and provision_data, returns the
+        pinfile data
+
+        :param targets: A list of targets for which to get the data
+
+        :param action: Action taken (up, destroy, etc). (Default: up)
+
+        :param run_id: Provided run_id to duplicate/destroy (Default: None)
+
+
+        """
+
+        rundb = self.setup_rundb()
+
+        if run_id and tx_id:
+            raise ActionError("'run_id' and 'tx_id' are mutually exclusive")
+
+        pf_data = OrderedDict()
+        pinfile = OrderedDict()
+
+        if run_id:
+            for target in targets:
+                pf_data[target] = rundb.get_record(table,
+                                                   action='up',
+                                                   run_id=run_id)
+
+        if tx_id:
+            record = rundb.get_tx_record(tx_id)
+            for tgts in record['targets']:
+                for tgt, data in tgts.iteritems():
+                    if len(targets) and tgt in targets:
+                        pf_data[tgt] = (rundb.get_record(tgt,
+                                action=record['action'], run_id=run_id))
+                    else:
+                        pf_data[tgt] = (rundb.get_record(tgt,
+                                action=record['action'], run_id=run_id))
+
+        for t, data in pf_data.iteritems():
+            topo_data = data[0]['inputs'][0].get('topology_data')
+            layout_data = data[0]['inputs'][0].get('layout_data')
+            hooks_data = data[0]['inputs'][0].get('hooks_data')
+
+            pinfile[t] = {}
+            pinfile[t]['topology'] = topo_data
+            if layout_data:
+                pinfile[t]['layout'] = layout_data
+            if hooks_data:
+                pinfile[t]['hooks'] = hooks_data
+
+        return pinfile
 
 
     def do_action(self, provision_data, action='up', run_id=None):
