@@ -209,7 +209,7 @@ class LinchpinAPI(object):
         self._hook_observers.append(callback)
 
 
-    def lp_journal(self, targets=[], fields=None, count=1):
+    def lp_journal(self, view='target', targets=[], fields=None, count=1):
 
         rundb = self.setup_rundb()
 
@@ -218,8 +218,11 @@ class LinchpinAPI(object):
         if not len(targets):
             targets = rundb.get_tables()
 
-        for target in targets:
-            journal[target] = rundb.get_records(table=target, count=count)
+        if view == 'target':
+            for target in targets:
+                journal[target] = rundb.get_records(table=target, count=count)
+        if view == 'tx':
+            journal = rundb.get_records('linchpin', count=count)
 
         return journal
 
@@ -462,32 +465,7 @@ class LinchpinAPI(object):
                     uhash = data.get('uhash')
                     self.ctx.log_debug("using data from"
                                        " run_id: {0}".format(run_id))
-#                else:
-#                    # add data to the current record so it doesn't cause
-#                    # inconsistent results
-#                    rundb.update_record(target,
-#                                        rundb_id,
-#                                        'action',
-#                                        action)
-#                    rundb.update_record(target,
-#                                        rundb_id,
-#                                        'rc',
-#                                        8)
-#                    if not uhash:
-#                        uh = hashlib.new(self.rundb_hash,
-#                                         ':'.join([target,
-#                                                   str(rundb_id),
-#                                                   start]))
-#                        uhash = uh.hexdigest()[-4:]
-#                        rundb.update_record(target,
-#                                            rundb_id,
-#                                            'uhash',
-#                                            uhash)
-#
-#
-#                    raise LinchpinError("Attempting to perform '{0}' action on"
-#                                        " target: '{1}' failed. No records"
-#                                        " available.".format(action, target))
+
             elif action not in ['up', 'destroy']:
                 # it doesn't appear this code will will execute,
                 # but if it does...
@@ -595,7 +573,31 @@ class LinchpinAPI(object):
 
             results[target]['rundb_data'] = {rundb_id: run_data[0]}
 
-        return (return_code, results)
+
+        # generate the linchpin_id and structure
+        lp_schema = ('{"action": "", "targets": []}')
+
+        rundb = self.setup_rundb()
+        rundb.schema = json.loads(lp_schema)
+        lp_id = rundb.init_table('linchpin')
+
+        summary = {}
+
+        for target, data in results.iteritems():
+            for k, v in data['rundb_data'].iteritems():
+
+                summary[target] = {k: {'rc': v['rc'], 'uhash': v['uhash']}}
+
+
+        rundb.update_record('linchpin', lp_id, 'action', action)
+        rundb.update_record('linchpin', lp_id, 'targets', [summary])
+
+        lp_data = {lp_id: {'action': action,
+                           'summary_data': summary,
+                           'results_data': results}}
+
+
+        return (return_code, lp_data)
 
 
     def _invoke_playbooks(self, resources, action='up', console=True):
