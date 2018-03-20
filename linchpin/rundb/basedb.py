@@ -26,6 +26,9 @@ class BaseDB(RunDB):
     def update_record(self, table, run_id, key, value):
         return self.driver.update_record(table, run_id, key, value)
 
+    def get_tx_record(self, tx_id):
+        return self.driver.get_tx_record(tx_id)
+
     def get_record(self, table, action='up', run_id=None):
         return self.driver.get_record(table, run_id=run_id)
 

@@ -1,7 +1,6 @@
 [DEFAULT]
 pkg = linchpin
 default_config_path = ~/.config/linchpin
-external_providers_path = %(default_config_path)s/linchpin-x
 
 [lp]
 module_folder = library
@@ -21,6 +20,8 @@ rundb_hash = sha256
 dateformat = %%m/%%d/%%Y %%I:%%M:%%S %%p
 default_pinfile = PinFile
 
+external_providers_path = %(default_config_path)s/linchpin-x
+use_rundb_for_actions = False
 
 [evars]
 _check_mode = False
@@ -55,7 +56,7 @@ enable_uhash = False
 generate_resources = True
 default_resources_path = {{ workspace }}/%(resources_folder)s
 
-#inventory_file = {{ workspace }}/{{inventories_folder}}/happy.inventory
+#inventory_path = {{ workspace }}/{{inventories_folder}}/happy.inventory
 
 [init]
 source = templates/

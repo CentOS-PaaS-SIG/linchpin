@@ -58,6 +58,12 @@ class TinyRunDB(BaseDB):
         t = self.db.table(name=table)
         return t.update(add(key, value), eids=[run_id])
 
+    @usedb
+    def get_tx_record(self, tx_id):
+
+        t = self.db.table(name='linchpin')
+        return t.get(eid=tx_id)
+
 
     @usedb
     def get_record(self, table, action='up', run_id=None):
