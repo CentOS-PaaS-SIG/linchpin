@@ -406,25 +406,34 @@ class LinchpinAPI(object):
         if run_id and tx_id:
             raise ActionError("'run_id' and 'tx_id' are mutually exclusive")
 
-        pf_data = OrderedDict()
+        pf_data = {}
         pinfile = OrderedDict()
 
         if run_id:
             for target in targets:
-                pf_data[target] = rundb.get_record(table,
+                pf_data[target] = rundb.get_record(target,
                                                    action='up',
                                                    run_id=run_id)
 
         if tx_id:
             record = rundb.get_tx_record(tx_id)
-            for tgts in record['targets']:
-                for tgt, data in tgts.iteritems():
-                    if len(targets) and tgt in targets:
-                        pf_data[tgt] = (rundb.get_record(tgt,
-                                action=record['action'], run_id=run_id))
-                    else:
-                        pf_data[tgt] = (rundb.get_record(tgt,
-                                action=record['action'], run_id=run_id))
+
+            if len(targets):
+                for tgts in record['targets']:
+                        for tgt, data in tgts.iteritems():
+                            run_id = int(data.keys()[0])
+                            if tgt in targets:
+                                tgt_data = (rundb.get_record(tgt,
+                                    action=record['action'], run_id=run_id))
+                                pf_data[tgt] = tgt_data
+            else:
+                for tgts in record['targets']:
+                    for tgt, data in tgts.iteritems():
+                        run_id = int(data.keys()[0])
+                        tgt_data = (rundb.get_record(tgt,
+                            action=record['action'], run_id=run_id))
+                        pf_data[tgt] = tgt_data
+
 
         for t, data in pf_data.iteritems():
             topo_data = data[0]['inputs'][0].get('topology_data')
@@ -433,6 +442,7 @@ class LinchpinAPI(object):
 
             pinfile[t] = {}
             pinfile[t]['topology'] = topo_data
+            pinfile[t]['run_id'] = data[1]
             if layout_data:
                 pinfile[t]['layout'] = layout_data
             if hooks_data:
@@ -441,7 +451,7 @@ class LinchpinAPI(object):
         return pinfile
 
 
-    def do_action(self, provision_data, action='up', run_id=None):
+    def do_action(self, provision_data, action='up', run_id=None, tx_id=None):
         """
         This function takes provision_data, and executes the given
         action for each target within the provision_data disctionary.
@@ -452,6 +462,8 @@ class LinchpinAPI(object):
         :param action: Action taken (up, destroy, etc). (Default: up)
 
         :param run_id: Provided run_id to duplicate/destroy (Default: None)
+
+        :param tx_id: Provided tx_id to duplicate/destroy (Default: None)
 
         .. .note:: The `run_id` value differs from the `rundb_id`, in that
                    the `run_id` is an existing value in the database.
@@ -482,7 +494,6 @@ class LinchpinAPI(object):
         return_code = 99
 
         for target in provision_data.keys():
-
             if not isinstance(provision_data[target], dict):
                 raise LinchpinError("Target '{0}' does not"
                                     " exist.".format(target))
@@ -494,11 +505,16 @@ class LinchpinAPI(object):
             results[target] = {}
             self.set_evar('target', target)
 
+            rundb = self.setup_rundb()
+
+            if tx_id:
+                record = rundb.get_tx_record(tx_id)
+                run_id = (record['targets'][0][target].keys()[0])
+
             rundb_schema_default = ('{"action": "", "inputs": [],'
                                     ' "outputs": [], "start": "",'
                                     ' "end": "", "rc": 0, "uhash": ""}')
 
-            rundb = self.setup_rundb()
 
             rundb_schema = json.loads(self.get_cfg(section='lp',
                                       key='rundb_schema',
@@ -659,7 +675,6 @@ class LinchpinAPI(object):
         lp_data = {lp_id: {'action': action,
                            'summary_data': summary,
                            'results_data': results}}
-
 
         return (return_code, lp_data)
 

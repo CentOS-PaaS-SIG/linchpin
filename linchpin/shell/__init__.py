@@ -219,12 +219,30 @@ def up(ctx, targets, run_id, tx_id):
     run-id:     Use the data from the provided run_id value
     """
 
-    try:
-        return_code, results = lpcli.lp_up(targets=targets, run_id=run_id)
-        _handle_results(ctx, results, return_code)
-    except LinchpinError as e:
-        ctx.log_state(e)
-        sys.exit(1)
+    if tx_id:
+        try:
+            return_code, results = lpcli.lp_up(targets=targets, tx_id=tx_id)
+            _handle_results(ctx, results, return_code)
+        except LinchpinError as e:
+            ctx.log_state(e)
+            sys.exit(1)
+    else: # if tx_id is not passed, use run_id as a baseline
+        if (not len(targets) or len(targets) > 1) and run_id:
+             raise click.UsageError("A single target is required when calling destroy"
+                                    " with `--run_id` option")
+        try:
+            return_code, results = lpcli.lp_up(targets=targets, run_id=run_id, tx_id=tx_id)
+            _handle_results(ctx, results, return_code)
+        except LinchpinError as e:
+            ctx.log_state(e)
+            sys.exit(1)
+
+#    try:
+#        return_code, results = lpcli.lp_up(targets=targets, run_id=run_id)
+#        _handle_results(ctx, results, return_code)
+#    except LinchpinError as e:
+#        ctx.log_state(e)
+#        sys.exit(1)
 
 
 @runcli.command()

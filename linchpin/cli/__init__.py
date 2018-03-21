@@ -2,6 +2,7 @@
 
 import os
 import re
+import ast
 import sys
 import click
 
@@ -172,97 +173,6 @@ class LinchpinCli(LinchpinAPI):
         return data_w_path
 
 
-    def lp_up(self, targets=(), run_id=None):
-        """
-        This function takes a list of targets, and provisions them according
-        to their topology.
-
-        :param pinfile:
-            Provided PinFile, with available targets
-
-        :param targets:
-            A tuple of targets to provision
-
-        :param run_id:
-            An optional run_id if the task is idempotent
-        """
-
-        pf_w_path = self._get_pinfile_path()
-        pf_data = self._get_data_path()
-
-        pf = self.parser.process(pf_w_path, pf_data)
-
-        if pf:
-            provision_data = self._build(pf, pf_data)
-
-            pf_outfile = self.get_cfg('tmp', 'output_pinfile')
-            if pf_outfile:
-                self.parser.write_json(provision_data, pf_outfile)
-
-            return self._execute(provision_data,
-                                 targets=targets,
-                                 action='up',
-                                 run_id=run_id)
-
-
-    def lp_destroy(self, targets=(), run_id=None, tx_id=None):
-        """
-        This function takes a list of targets, and performs a destructive
-        teardown, including undefining nodes, according to the target(s).
-
-        .. seealso:: lp_down - currently unimplemented
-
-        :param pinfile:
-            Provided PinFile, with available targets,
-
-        :param targets:
-            A tuple of targets to destroy.
-        """
-
-        use_pinfile = True
-        pf = None
-        pf_data = None
-
-        use_rundb_for_actions = self.get_cfg('lp', 'use_rundb_for_actions')
-
-
-        # The UI should catch this, but just in case.
-        if run_id and tx_id:
-            raise ActionError("'run_id' and 'tx_id' are mutually exclusive")
-
-        if bool(use_rundb_for_actions):
-            if run_id and not tx_id:
-                if not len(targets) or len(targets) > 1:
-                    raise ActionError("'use_rundb_for_actions' is enabled."
-                                      " A single target required when"
-                                      " passing --run_id.")
-                run_id = int(run_id)
-            elif not run_id and tx_id:
-                use_pinfile = False
-
-        if use_pinfile:
-
-            pf_w_path = self._get_pinfile_path()
-            pf_data = self._get_data_path()
-
-            pf = self.parser.process(pf_w_path, pf_data)
-
-
-        else:
-            # get the pinfile data from the run_id or the tx_id
-            pf = self.get_pf_data_from_rundb(targets,
-                                             run_id=run_id,
-                                             tx_id=tx_id)
-
-        if pf:
-            provision_data = self._build(pf, pf_data)
-
-            return self._execute(provision_data,
-                                 targets=targets,
-                                 action="destroy",
-                                 run_id=run_id)
-
-
     def lp_down(self, pinfile, targets=(), run_id=None):
         """
         This function takes a list of targets, and performs a shutdown on
@@ -281,6 +191,124 @@ class LinchpinCli(LinchpinAPI):
         """
 
         pass
+
+
+    def lp_up(self, targets=(), run_id=None, tx_id=None):
+        """
+        This function takes a list of targets, and provisions them according
+        to their topology.
+
+        :param targets:
+            A tuple of targets to provision
+
+        :param run_id:
+            An optional run_id if the task is idempotent
+
+        :param tx_id:
+            An optional tx_id if the task is idempotent
+        """
+
+        return self._execute_action('up',
+                                    targets,
+                                    run_id=run_id,
+                                    tx_id=tx_id)
+
+
+    def lp_destroy(self, targets=(), run_id=None, tx_id=None):
+
+        """
+        This function takes a list of targets, and performs a destructive
+        teardown, including undefining nodes, according to the target(s).
+
+        .. seealso:: lp_down - currently unimplemented
+
+        :param targets:
+            A tuple of targets to destroy.
+
+        :param run_id:
+            An optional run_id to use
+
+        :param tx_id:
+            An optional tx_id to use
+        """
+
+        return self._execute_action('destroy',
+                                    targets,
+                                    run_id=run_id,
+                                    tx_id=tx_id)
+
+
+    def _execute_action(self, action, targets=(), run_id=None, tx_id=None):
+        """
+        This function takes a list of targets, and performs a destructive
+        teardown, including undefining nodes, according to the target(s).
+
+        .. seealso:: lp_down - currently unimplemented
+
+        :param targets:
+            A tuple of targets to perform action upon.
+
+        :param run_id:
+            An optional run_id to use
+
+        :param tx_id:
+            An optional tx_id to use
+        """
+
+        use_pinfile = True
+        pf = None
+        pf_data = None
+
+        return_data = OrderedDict()
+        return_code = 0
+
+        urfa = self.get_cfg('lp', 'use_rundb_for_actions')
+        use_rundb_for_actions = ast.literal_eval(urfa.title())
+
+        # The UI should catch this, but just in case.
+        if run_id and tx_id:
+            raise ActionError("'run_id' and 'tx_id' are mutually exclusive")
+
+        if use_rundb_for_actions:
+            if run_id and not tx_id:
+                if not len(targets) == 1:
+                    raise ActionError("'use_rundb_for_actions' is enabled."
+                                      " A single target required when"
+                                      " passing --run_id.")
+                run_id = int(run_id)
+                use_pinfile = False
+            elif not run_id and tx_id:
+                use_pinfile = False
+
+        if use_pinfile:
+
+            pf_w_path = self._get_pinfile_path()
+            pf_data = self._get_data_path()
+
+            pf = self.parser.process(pf_w_path, pf_data)
+
+            if pf:
+                provision_data = self._build(pf, pf_data)
+
+            return_code, return_data = self._execute(provision_data,
+                                                     targets,
+                                                     action=action,
+                                                     run_id=run_id)
+
+        else:
+
+            # get the pinfile data from the run_id or the tx_id
+            provision_data = self.get_pf_data_from_rundb(targets,
+                                                         run_id=run_id,
+                                                         tx_id=tx_id)
+
+            return_code, return_data = self._execute(provision_data,
+                                                     targets,
+                                                     action=action,
+                                                     run_id=run_id,
+                                                     tx_id=tx_id)
+
+        return (return_code, return_data)
 
 
     def find_include(self, filename, ftype='topology'):
@@ -363,8 +391,8 @@ class LinchpinCli(LinchpinAPI):
         return provision_data
 
 
-    def _execute(self, provision_data, targets=[],
-                 action='up', run_id=None):
+    def _execute(self, provision_data, targets,
+                 action='up', run_id=None, tx_id=None):
         """
         This function takes a list of targets, constructs a dictionary of tasks
         and passes it to the LinchpinAPI.do_action method for processing.
@@ -390,7 +418,10 @@ class LinchpinCli(LinchpinAPI):
         else:
             prov_data = provision_data
 
-        return self.do_action(prov_data, action=action, run_id=run_id)
+        return self.do_action(prov_data,
+                              action=action,
+                              run_id=run_id,
+                              tx_id=tx_id)
 
 
     def lp_fetch(self, src, root=None, fetch_type='workspace'):
