@@ -1,4 +1,4 @@
-from click import command, option, Option, UsageError
+from click import Option, UsageError
 
 
 class MutuallyExclusiveOption(Option):

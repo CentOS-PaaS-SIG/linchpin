@@ -19,8 +19,9 @@ from linchpin.hooks import LinchpinHooks
 from linchpin.rundb.basedb import BaseDB
 from linchpin.rundb.drivers import DB_DRIVERS
 
-from linchpin.exceptions import SchemaError
+from linchpin.exceptions import ActionError
 from linchpin.exceptions import LinchpinError
+from linchpin.exceptions import SchemaError
 from linchpin.exceptions import TopologyError
 from linchpin.exceptions import ValidationError
 
@@ -210,7 +211,8 @@ class LinchpinAPI(object):
         self._hook_observers.append(callback)
 
 
-    def lp_journal(self, view='target', targets=[], fields=None, count=1, tx_ids=None):
+    def lp_journal(self, view='target', targets=[],
+                   fields=None, count=1, tx_ids=None):
 
         rundb = self.setup_rundb()
 
@@ -224,7 +226,7 @@ class LinchpinAPI(object):
                 journal[target] = rundb.get_records(table=target, count=count)
         if view == 'tx':
             if len(tx_ids):
-               journal = rundb.get_tx_records(tx_ids)
+                journal = rundb.get_tx_records(tx_ids)
             else:
                 journal = rundb.get_records('linchpin', count=count)
 
@@ -340,13 +342,14 @@ class LinchpinAPI(object):
                             if 'count' in res_def.keys():
                                 res_def['count'] = int(res_def.pop('count'))
                     else:
-                        raise TopologyError("'resource_definitions' do not validate"
-                                            " in topology ({0})".format(topology))
+                        raise TopologyError("'resource_definitions' do not"
+                                            " validate in topology"
+                                            " ({0})".format(topology))
             else:
                 raise TopologyError("'resource_groups' do not validate"
                                     " in topology ({0})".format(topology))
 
-        except Exception as e:
+        except Exception:
             raise LinchpinError("Unknown error converting schema. Check"
                                 " template data")
 
@@ -428,14 +431,16 @@ class LinchpinAPI(object):
                             run_id = int(data.keys()[0])
                             if tgt in targets:
                                 tgt_data = (rundb.get_record(tgt,
-                                    action=record['action'], run_id=run_id))
+                                            action=record['action'],
+                                            run_id=run_id))
                                 pf_data[tgt] = tgt_data
             else:
                 for tgts in record['targets']:
                     for tgt, data in tgts.iteritems():
                         run_id = int(data.keys()[0])
                         tgt_data = (rundb.get_record(tgt,
-                            action=record['action'], run_id=run_id))
+                                    action=record['action'],
+                                    run_id=run_id))
                         pf_data[tgt] = tgt_data
 
 
