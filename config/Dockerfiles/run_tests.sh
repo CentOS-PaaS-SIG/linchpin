@@ -5,7 +5,7 @@ set -o pipefail
 LINCHPINDIR=$1
 shift
 TARGETS=$*
-DRIVERS="aws-ec2-new duffy dummy"
+DRIVERS="dummy"
 
 export WORKSPACE="/tmp"
 

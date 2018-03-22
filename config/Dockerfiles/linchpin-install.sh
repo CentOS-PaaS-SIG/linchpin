@@ -10,6 +10,7 @@ popd
 pip install .
 pip install .[tests]
 pip install .[libvirt]
+pip install .[beaker]
 
 # If duffy.key is available then install duffy ansible module.
 if [ -e "keys/duffy" ]; then

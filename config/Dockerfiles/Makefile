@@ -3,7 +3,7 @@ PARENT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))/../../)
 TARGETS := fedora27 centos7 fedora26 centos6
 
 .PHONY: all
-all: pip_install.sh
+all:
 	set -e; for i in $(TARGETS); do \
 		docker build -f $$i/Dockerfile -t lp_$$i .; \
 	done
