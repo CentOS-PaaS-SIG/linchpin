@@ -33,7 +33,6 @@ for target in $TARGETS; do
         -v /sys/fs/cgroup:/sys/fs/cgroup:ro --name $container $container
 done
 
-mkdir -p logs
 for target in $TARGETS; do
     container="lp_$target"
     docker exec -it $container bash -c 'pushd /workdir && ./config/Dockerfiles/linchpin-install.sh'

@@ -19,9 +19,9 @@ DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 // environment this will limit the possible drivers tested.
 // if it's not defined you will get all the possible drivers
 // listed here.
-LDRIVERS = env.LINCHPIN_DRIVERS ?: 'dummy duffy libvirt'
+LDRIVERS = env.LINCHPIN_DRIVERS ?: 'dummy duffy libvirt aws-ec2-new'
 PDRIVERS = LDRIVERS.tokenize()
-TDRIVERS = ["dummy", "duffy", "libvirt"]
+TDRIVERS = ["dummy", "duffy", "libvirt", "aws-ec2-new"]
 env.DRIVERS = TDRIVERS.intersect( PDRIVERS ).join(" ")
 OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
@@ -114,8 +114,6 @@ podTemplate(name: podName,
 // Here is the actual workflow...
 {
     node(podName) {
-        def currentStage = ""
-
         ansiColor('xterm') {
             timestamps {
                 // We need to set env.HOME because the openshift slave image
@@ -131,8 +129,7 @@ podTemplate(name: podName,
                 //
                 try {
                     // Prepare our environment
-                    currentStage = "prepare-environment"
-                    stage(currentStage) {
+                    stage("prepare-environment") {
                         deleteDir()
                         // Set our default env variables. Many of these
                         // are ci-pipeline specific, but we do need some
@@ -170,7 +167,7 @@ podTemplate(name: podName,
                                 withCredentials([file(credentialsId: driver + '-key', variable: 'FILEKEY')]) {
                                 sh """
                                     #!/bin/bash -x
-                                    mkdir keys/${driver}
+                                    mkdir -p keys/${driver}
                                     cp ${FILEKEY} keys/${driver}/${cf.fileName}
                                     chmod 0600 keys/${driver}/${cf.fileName}
                                 """
@@ -183,7 +180,7 @@ podTemplate(name: podName,
                     }
                     stage('Validations') {
                       parallel centos7: {
-                        currentStage = "centos7-install"
+                        def currentStage = "centos7-install"
                         stage(currentStage) {
                           dir('linchpin') {
                             pipelineUtils.executeInContainer(currentStage, "centos7", "./config/Dockerfiles/linchpin-install.sh")
@@ -197,7 +194,7 @@ podTemplate(name: podName,
                           }
                         }
                       }, fedora26: {
-                        currentStage = "fedora26-install"
+                        def currentStage = "fedora26-install"
                         stage(currentStage) {
                           dir('linchpin') {
                             pipelineUtils.executeInContainer(currentStage, "fedora26", "./config/Dockerfiles/linchpin-install.sh")
@@ -211,7 +208,7 @@ podTemplate(name: podName,
                           }
                         }
                       }, fedora27: {
-                        currentStage = "fedora27-install"
+                        def currentStage = "fedora27-install"
                         stage(currentStage) {
                           dir('linchpin') {
                             pipelineUtils.executeInContainer(currentStage, "fedora27", "./config/Dockerfiles/linchpin-install.sh")
@@ -225,7 +222,7 @@ podTemplate(name: podName,
                           }
                         }
                       }, centos6: {
-                        currentStage = "centos6-install"
+                        def currentStage = "centos6-install"
                         stage(currentStage) {
                           dir('linchpin') {
                             pipelineUtils.executeInContainer(currentStage, "centos6", "./config/Dockerfiles/linchpin-install.sh")
@@ -235,10 +232,6 @@ podTemplate(name: podName,
                         stage(currentStage) {
                           dir('linchpin') {
                             env.target = "centos6"
-                            // CentOS 6 can't run duffy yet. 
-                            // See Issue: https://github.com/CentOS-PaaS-SIG/duffy-ansible-module/issues/3
-                            TDRIVERS = ["dummy", "libvirt"]
-                            env.DRIVERS = TDRIVERS.intersect( PDRIVERS ).join(" ")
                             pipelineUtils.executeInContainer(currentStage, "centos6", "./config/Dockerfiles/linchpin-tests.sh")
                           }
                         }
@@ -250,7 +243,6 @@ podTemplate(name: podName,
                     currentBuild.result = 'FAILURE'
 
                     // Report the exception
-                    echo "Error: Exception from " + currentStage + ":"
                     echo e.getMessage()
 
                     // Throw the error
@@ -260,7 +252,7 @@ podTemplate(name: podName,
                     pipelineUtils.getContainerLogsFromPod(OPENSHIFT_NAMESPACE, env.NODE_NAME)
 
                     // Archive our artifacts
-                    step([$class: 'ArtifactArchiver', allowEmptyArchive: true, artifacts: '**/logs/**,*.txt,*.groovy,**/job.*,**/*.groovy,**/inventory.*', excludes: '**/job.props,**/job.props.groovy,**/*.example', fingerprint: true])
+                    step([$class: 'ArtifactArchiver', allowEmptyArchive: true, artifacts: '**/*_logs/**,*.txt,*.groovy,**/job.*,**/*.groovy,**/inventory.*', excludes: '**/job.props,**/job.props.groovy,**/*.example', fingerprint: true])
 
                     // Set our message topic, properties, and content
                     //messageFields = pipelineUtils.setMessageFields("complete")
