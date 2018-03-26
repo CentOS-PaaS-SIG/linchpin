@@ -455,6 +455,10 @@ def journal(ctx, targets, fields, count, view, tx_id):
 
                 output += '\n======================================='
                 output += '==========\n'
+        else:
+                output += '\n==================NO TRANSACTIONS======'
+                output += '==========\n'
+
 
         # PRINT OUTPUT RESULTS HERE
         ctx.log_state(output)
