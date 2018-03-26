@@ -10,6 +10,7 @@ RUN dnf -y install python-pip ansible curl gcc python-devel python2-shade \
                    libvirt-daemon-kvm qemu-kvm libvirt-daemon-config-network \
                    libvirt-python libvirt-devel redhat-rpm-config file \
                    openssh mkisofs libvirt-client virt-install net-tools \
+                   python-krbV \
     && yum clean all; \
     (cd /lib/systemd/system/sysinit.target.wants/; for i in *; \
      do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
@@ -23,15 +24,17 @@ RUN dnf -y install python-pip ansible curl gcc python-devel python2-shade \
     systemctl enable libvirtd; \
     systemctl enable virtlockd
 
-COPY pip_install.sh \
-     init_libvirt.sh \
-     $HOME/
+RUN curl -o /etc/yum.repos.d/beaker-client.repo \
+            https://beaker-project.org/yum/beaker-client-Fedora.repo; \
+    yum install beaker-client; \
+    yum clean all
+
+COPY init_libvirt.sh $HOME/
 
 RUN pip install -U pip; \
     pip install -U setuptools; \
     sed -i "/Service/a ExecStartPost=\/bin\/chmod 666 /dev/kvm" \
-      /usr/lib/systemd/system/libvirtd.service; \
-    $HOME/pip_install.sh
+      /usr/lib/systemd/system/libvirtd.service
 
 # /wordir should include the source code of linchpin
 VOLUME [ "/workdir" , "/sys/fs/cgroup"]
