@@ -421,9 +421,11 @@ class LinchpinAPI(object):
                 pf_data[target] = rundb.get_record(target,
                                                    action='up',
                                                    run_id=run_id)
-
         if tx_id:
             record = rundb.get_tx_record(tx_id)
+
+            if not record or not len(record):
+                return None
 
             if len(targets):
                 for tgts in record['targets']:

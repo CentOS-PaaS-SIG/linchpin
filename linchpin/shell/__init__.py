@@ -35,8 +35,8 @@ def _handle_results(ctx, results, return_code):
         The dictionary of results for each target.
     """
 
-    output = ''
-    rcs = []
+    output = 'Nothing to do. Check input and try again.'
+    rcs = [return_code]
 
     for k, v in results.iteritems():
 
@@ -49,6 +49,7 @@ def _handle_results(ctx, results, return_code):
         output += '-------------------------------------------------\n'
 
         for target, run_data in v['summary_data'].iteritems():
+            rcs = []
             for rundb_id, data in run_data.iteritems():
 
                 output += '{0:<20}\t{1:>6}\t{2:>5}'.format(target,
@@ -93,7 +94,6 @@ def _handle_results(ctx, results, return_code):
 
 #   FIXME: have use_actual_rcs be a flag
     use_actual_rcs = True
-    return_code = 0
     if use_actual_rcs:
         return_code = sum(rc for rc in rcs)
 
@@ -439,22 +439,25 @@ def journal(ctx, targets, fields, count, view, tx_id):
         if len(journal):
             for lp_id, v in journal.iteritems():
 
-                output += '\nID: {0}\t\t\t'.format(lp_id)
-                output += 'Action: {0}\n'.format(v['action'])
-                output += '\n{0:<20}\t{1:>6}'.format('Target', 'Run ID')
-                output += '\t{0:<5}\t{1:<10}\n'.format('uHash', 'Exit Code')
-                output += '-------------------------------------------------\n'
+                if v:
+                    output += '\nID: {0}\t\t\t'.format(lp_id)
+                    output += 'Action: {0}\n'.format(v['action'])
+                    output += '\n{0:<20}\t{1:>6}'.format('Target', 'Run ID')
+                    output += '\t{0:<5}\t{1:<10}\n'.format('uHash', 'Exit Code')
+                    output += '----------------------------------------------'
+                    output += '---\n'
 
-                for targets in v['targets']:
-                    for target, values in targets.iteritems():
-                        for rundb_id, data in values.iteritems():
-                            output += '{0:<20}\t{1:>6}\t'.format(target,
-                                                                 rundb_id)
-                            output += '{0:>5}'.format(data['uhash'])
-                            output += '\t{0:>9}\n'.format(data['rc'])
+                    for targets in v['targets']:
+                        for target, values in targets.iteritems():
+                            for rundb_id, data in values.iteritems():
+                                output += '{0:<20}\t{1:>6}\t'.format(target,
+                                                                     rundb_id)
+                                output += '{0:>5}'.format(data['uhash'])
+                                output += '\t{0:>9}\n'.format(data['rc'])
 
-                output += '\n======================================='
-                output += '==========\n'
+                    output += '\n======================================='
+                    output += '==========\n'
+
         else:
                 output += '\n==================NO TRANSACTIONS======'
                 output += '==========\n'

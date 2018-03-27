@@ -302,11 +302,15 @@ class LinchpinCli(LinchpinAPI):
                                                          run_id=run_id,
                                                          tx_id=tx_id)
 
-            return_code, return_data = self._execute(provision_data,
-                                                     targets,
-                                                     action=action,
-                                                     run_id=run_id,
-                                                     tx_id=tx_id)
+            if provision_data:
+                return_code, return_data = self._execute(provision_data,
+                                                         targets,
+                                                         action=action,
+                                                         run_id=run_id,
+                                                         tx_id=tx_id)
+
+            else:
+                return (99, {})
 
         return (return_code, return_data)
 
