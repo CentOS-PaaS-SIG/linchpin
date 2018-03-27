@@ -1,3 +1,6 @@
+Inventory Layouts
+-----------------
+
 When generating an inventory, LinchPin provides some very flexible options. From the simple :ref:`res_layouts` to much more complex options, detailed here.
 
 inventory_file

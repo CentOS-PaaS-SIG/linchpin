@@ -294,9 +294,7 @@ class LinchpinCli(LinchpinAPI):
                                                      targets,
                                                      action=action,
                                                      run_id=run_id)
-
         else:
-
             # get the pinfile data from the run_id or the tx_id
             provision_data = self.get_pf_data_from_rundb(targets,
                                                          run_id=run_id,

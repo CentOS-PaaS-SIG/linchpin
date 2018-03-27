@@ -509,6 +509,10 @@ class LinchpinAPI(object):
                 raise LinchpinError("Target '{0}' does not"
                                     " exist.".format(target))
 
+        targets = [x.lower() for x in provision_data.keys()]
+        if 'linchpin' in targets:
+            raise LinchpinError("Target 'linchpin' is not allowed.")
+
         for target in provision_data.keys():
 
             self.ctx.log_debug("Processing target: {0}".format(target))

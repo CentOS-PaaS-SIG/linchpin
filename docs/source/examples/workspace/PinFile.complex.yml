@@ -6,6 +6,14 @@ dummy:
 dummy-new:
   topology: dummy-new.yml
   layout: dummy-new.yml
+  vars:
+    'x': 'y'
+  hooks:
+    postup:
+      - type: shell
+        name: hello
+        actions:
+          - echo hello
 
 os-server-new:
   topology: os-server-new.yml
