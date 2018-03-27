@@ -401,11 +401,11 @@ class LinchpinAPI(object):
 
         :param targets: A list of targets for which to get the data
 
-        :param action: Action taken (up, destroy, etc). (Default: up)
+        :param targets: Tuple of target(s) for which to gather data.
 
-        :param run_id: Provided run_id to duplicate/destroy (Default: None)
+        :param run_id: run_id associated with target (Default: None)
 
-
+        :param tx_id: tx_id for which to gather data (Default: None)
         """
 
         rundb = self.setup_rundb()
