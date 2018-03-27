@@ -522,14 +522,9 @@ class LinchpinAPI(object):
                 record = rundb.get_tx_record(tx_id)
                 run_id = (record['targets'][0][target].keys()[0])
 
-            rundb_schema_default = ('{"action": "", "inputs": [],'
-                                    ' "outputs": [], "start": "",'
-                                    ' "end": "", "rc": 0, "uhash": ""}')
-
 
             rundb_schema = json.loads(self.get_cfg(section='lp',
-                                      key='rundb_schema',
-                                      default=rundb_schema_default))
+                                      key='rundb_schema'))
             rundb.schema = rundb_schema
             self.set_evar('rundb_schema', rundb_schema)
 
@@ -617,6 +612,24 @@ class LinchpinAPI(object):
             if provision_data[target].get('hooks', None):
                 hooks_data = provision_data[target].get('hooks')
                 self.set_evar('hooks_data', hooks_data)
+                rundb.update_record(target,
+                                    rundb_id,
+                                    'inputs',
+                                    [
+                                        {'hooks_data':
+                                         provision_data[target]['hooks']}
+                                    ])
+
+            if provision_data[target].get('vars', None):
+                vars_data = provision_data[target].get('vars')
+                self.set_evar('vars_data', vars_data)
+                rundb.update_record(target,
+                                    rundb_id,
+                                    'vars',
+                                    [
+                                        {'user':
+                                        provision_data[target]['vars']}
+                                    ])
 
             # note : changing the state triggers the hooks
             self.hooks.rundb = (rundb, rundb_id)
