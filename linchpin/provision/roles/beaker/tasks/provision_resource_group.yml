@@ -5,7 +5,7 @@
     state: present
     # these values have defaults set in the bkr_server module
     # if omitted, or they are not required
-    whiteboard: "{{ res.whiteboard | default(omit) }}"
+    whiteboard: "{{ res.whiteboard | default('Provisioned by LinchPin') }}"
     job_group: "{{ res.job_group | default(omit) }}"
     cancel_message: "{{ res.cancel_message | default(omit) }}"
     max_attempts: "{{ res.max_attempts | default(omit) }}"
