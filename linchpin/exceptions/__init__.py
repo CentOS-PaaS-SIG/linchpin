@@ -39,3 +39,9 @@ class TopologyError(LinchpinError):
 
     def __init__(self, *args, **kwargs):
         LinchpinError.__init__(self, *args, **kwargs)
+
+
+class ActionError(LinchpinError):
+
+    def __init__(self, *args, **kwargs):
+        LinchpinError.__init__(self, *args, **kwargs)

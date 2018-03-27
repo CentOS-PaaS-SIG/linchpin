@@ -9,6 +9,7 @@ import hashlib
 
 from cerberus import Validator
 from uuid import getnode as get_mac
+from collections import OrderedDict
 
 from linchpin.ansible_runner import ansible_runner
 
@@ -18,8 +19,9 @@ from linchpin.hooks import LinchpinHooks
 from linchpin.rundb.basedb import BaseDB
 from linchpin.rundb.drivers import DB_DRIVERS
 
-from linchpin.exceptions import SchemaError
+from linchpin.exceptions import ActionError
 from linchpin.exceptions import LinchpinError
+from linchpin.exceptions import SchemaError
 from linchpin.exceptions import TopologyError
 from linchpin.exceptions import ValidationError
 
@@ -209,7 +211,8 @@ class LinchpinAPI(object):
         self._hook_observers.append(callback)
 
 
-    def lp_journal(self, view='target', targets=[], fields=None, count=1):
+    def lp_journal(self, view='target', targets=[],
+                   fields=None, count=1, tx_ids=None):
 
         rundb = self.setup_rundb()
 
@@ -222,7 +225,10 @@ class LinchpinAPI(object):
             for target in targets:
                 journal[target] = rundb.get_records(table=target, count=count)
         if view == 'tx':
-            journal = rundb.get_records('linchpin', count=count)
+            if len(tx_ids):
+                journal = rundb.get_tx_records(tx_ids)
+            else:
+                journal = rundb.get_records('linchpin', count=count)
 
         return journal
 
@@ -303,44 +309,49 @@ class LinchpinAPI(object):
 
         ;param topology: topology dictionary
         """
+        try:
+            res_grps = topology.get('resource_groups')
+            if res_grps:
+                for res_grp in res_grps:
+                    if 'res_group_type' in res_grp.keys():
+                        res_grp['resource_group_type'] = (
+                            res_grp.pop('res_group_type'))
 
-        res_grps = topology.get('resource_groups')
-        if res_grps:
-            for res_grp in res_grps:
-                if 'res_group_type' in res_grp.keys():
-                    res_grp['resource_group_type'] = (
-                        res_grp.pop('res_group_type'))
+                    if 'res_defs' in res_grp.keys():
+                        res_grp['resource_definitions'] = (
+                            res_grp.pop('res_defs'))
 
-                if 'res_defs' in res_grp.keys():
-                    res_grp['resource_definitions'] = (
-                        res_grp.pop('res_defs'))
+                    res_defs = res_grp.get('resource_definitions')
+                    if not res_defs:
+                        # this means it's either a beaker or openshift topology
+                        res_grp_type = res_grp.get('resource_group_type')
 
-                res_defs = res_grp.get('resource_definitions')
-                if not res_defs:
-                    # this means it's either a beaker or openshift topology
-                    res_grp_type = res_grp.get('resource_group_type')
+                        res_group = self._fix_broken_topologies(res_grp,
+                                                                res_grp_type)
+                        res_defs = res_group.get('resource_definitions')
+                        res_grp['resource_definitions'] = res_defs
 
-                    res_group = self._fix_broken_topologies(res_grp,
-                                                            res_grp_type)
-                    res_defs = res_group.get('resource_definitions')
-                    res_grp['resource_definitions'] = res_defs
+                    if res_defs:
+                        for res_def in res_defs:
+                            if 'res_name' in res_def.keys():
+                                res_def['name'] = res_def.pop('res_name')
+                            if 'type' in res_def.keys():
+                                res_def['role'] = res_def.pop('type')
+                            if 'res_type' in res_def.keys():
+                                res_def['role'] = res_def.pop('res_type')
+                            if 'count' in res_def.keys():
+                                res_def['count'] = int(res_def.pop('count'))
+                    else:
+                        raise TopologyError("'resource_definitions' do not"
+                                            " validate in topology"
+                                            " ({0})".format(topology))
+            else:
+                raise TopologyError("'resource_groups' do not validate"
+                                    " in topology ({0})".format(topology))
 
-                if res_defs:
-                    for res_def in res_defs:
-                        if 'res_name' in res_def.keys():
-                            res_def['name'] = res_def.pop('res_name')
-                        if 'type' in res_def.keys():
-                            res_def['role'] = res_def.pop('type')
-                        if 'res_type' in res_def.keys():
-                            res_def['role'] = res_def.pop('res_type')
-                        if 'count' in res_def.keys():
-                            res_def['count'] = int(res_def.pop('count'))
-                else:
-                    raise TopologyError("'resource_definitions' do not validate"
-                                        " in topology ({0})".format(topology))
-        else:
-            raise TopologyError("'resource_groups' do not validate"
-                                " in topology ({0})".format(topology))
+        except Exception:
+            raise LinchpinError("Unknown error converting schema. Check"
+                                " template data")
 
 
     def _validate_topology(self, topology):
@@ -383,16 +394,87 @@ class LinchpinAPI(object):
         return resources
 
 
-    def do_action(self, provision_data, action='up', run_id=None):
+    def get_pf_data_from_rundb(self, targets, run_id=None, tx_id=None):
+        """
+        This function takes the action and provision_data, returns the
+        pinfile data
+
+        :param targets: A list of targets for which to get the data
+
+        :param targets: Tuple of target(s) for which to gather data.
+
+        :param run_id: run_id associated with target (Default: None)
+
+        :param tx_id: tx_id for which to gather data (Default: None)
+        """
+
+        rundb = self.setup_rundb()
+
+        if run_id and tx_id:
+            raise ActionError("'run_id' and 'tx_id' are mutually exclusive")
+
+        pf_data = {}
+        pinfile = OrderedDict()
+
+        if run_id:
+            for target in targets:
+                pf_data[target] = rundb.get_record(target,
+                                                   action='up',
+                                                   run_id=run_id)
+        if tx_id:
+            record = rundb.get_tx_record(tx_id)
+
+            if not record or not len(record):
+                return None
+
+            if len(targets):
+                for tgts in record['targets']:
+                        for tgt, data in tgts.iteritems():
+                            run_id = int(data.keys()[0])
+                            if tgt in targets:
+                                tgt_data = (rundb.get_record(tgt,
+                                            action=record['action'],
+                                            run_id=run_id))
+                                pf_data[tgt] = tgt_data
+            else:
+                for tgts in record['targets']:
+                    for tgt, data in tgts.iteritems():
+                        run_id = int(data.keys()[0])
+                        tgt_data = (rundb.get_record(tgt,
+                                    action=record['action'],
+                                    run_id=run_id))
+                        pf_data[tgt] = tgt_data
+
+
+        for t, data in pf_data.iteritems():
+            topo_data = data[0]['inputs'][0].get('topology_data')
+            layout_data = data[0]['inputs'][0].get('layout_data')
+            hooks_data = data[0]['inputs'][0].get('hooks_data')
+
+            pinfile[t] = {}
+            pinfile[t]['topology'] = topo_data
+            pinfile[t]['run_id'] = data[1]
+            if layout_data:
+                pinfile[t]['layout'] = layout_data
+            if hooks_data:
+                pinfile[t]['hooks'] = hooks_data
+
+        return pinfile
+
+
+    def do_action(self, provision_data, action='up', run_id=None, tx_id=None):
         """
         This function takes provision_data, and executes the given
         action for each target within the provision_data disctionary.
 
-        :param provision_data: PinFile as a dictionary, with target information
+        :param provision_data: PinFile data as a dictionary, with
+        target information
 
         :param action: Action taken (up, destroy, etc). (Default: up)
 
         :param run_id: Provided run_id to duplicate/destroy (Default: None)
+
+        :param tx_id: Provided tx_id to duplicate/destroy (Default: None)
 
         .. .note:: The `run_id` value differs from the `rundb_id`, in that
                    the `run_id` is an existing value in the database.
@@ -421,20 +503,29 @@ class LinchpinAPI(object):
                                   default='%m/%d/%Y %I:%M:%S %p')
 
         return_code = 99
+
+        for target in provision_data.keys():
+            if not isinstance(provision_data[target], dict):
+                raise LinchpinError("Target '{0}' does not"
+                                    " exist.".format(target))
+
         for target in provision_data.keys():
 
-            if not isinstance(provision_data[target], dict):
-                raise LinchpinError("Cannot process target '{0}',"
-                                    " data unavailable.".format(target))
+            self.ctx.log_debug("Processing target: {0}".format(target))
 
             results[target] = {}
             self.set_evar('target', target)
+
+            rundb = self.setup_rundb()
+
+            if tx_id:
+                record = rundb.get_tx_record(tx_id)
+                run_id = (record['targets'][0][target].keys()[0])
 
             rundb_schema_default = ('{"action": "", "inputs": [],'
                                     ' "outputs": [], "start": "",'
                                     ' "end": "", "rc": 0, "uhash": ""}')
 
-            rundb = self.setup_rundb()
 
             rundb_schema = json.loads(self.get_cfg(section='lp',
                                       key='rundb_schema',
@@ -595,7 +686,6 @@ class LinchpinAPI(object):
         lp_data = {lp_id: {'action': action,
                            'summary_data': summary,
                            'results_data': results}}
-
 
         return (return_code, lp_data)
 

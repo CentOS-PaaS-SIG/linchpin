@@ -60,6 +60,24 @@ class TinyRunDB(BaseDB):
 
 
     @usedb
+    def get_tx_record(self, tx_id):
+
+        t = self.db.table(name='linchpin')
+        return t.get(eid=tx_id)
+
+
+    @usedb
+    def get_tx_records(self, tx_ids):
+
+        txs = {}
+        t = self.db.table(name='linchpin')
+        for tx_id in tx_ids:
+            txs[tx_id] = t.get(eid=tx_id)
+
+        return txs
+
+
+    @usedb
     def get_record(self, table, action='up', run_id=None):
 
         t = self.db.table(name=table)
@@ -87,11 +105,12 @@ class TinyRunDB(BaseDB):
         records = {}
         if table in self.db.tables():
             t = self.db.table(name=table)
-            start = len(t)
-            end = start - count
+            if len(t.all()):
+                start = len(t)
+                end = start - count
 
-            for i in xrange(start, end, -1):
-                records[i] = t.get(doc_id=i)
+                for i in xrange(start, end, -1):
+                    records[i] = t.get(doc_id=i)
 
         return records
 
