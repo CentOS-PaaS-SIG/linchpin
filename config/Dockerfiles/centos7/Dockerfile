@@ -10,7 +10,7 @@ RUN yum -y install python-pip ansible curl gcc python-devel openssl-devel \
                    libvirt-daemon-driver-* libvirt-daemon libvirt-daemon-kvm \
                    qemu-kvm libvirt-daemon-config-network libvirt-python \
                    libvirt-devel file openssh mkisofs libvirt-client \ 
-                   virt-install net-tools git \
+                   virt-install net-tools git python-krbV \
     && yum clean all; \
     (cd /lib/systemd/system/sysinit.target.wants/; for i in *; \
      do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
@@ -27,10 +27,13 @@ RUN pip install -U pip
 RUN pip install -U setuptools
 RUN sed -i "/Service/a ExecStartPost=\/bin\/chmod 666 /dev/kvm" /usr/lib/systemd/system/libvirtd.service
 
-COPY pip_install.sh $HOME/
+RUN curl -o /etc/yum.repos.d/beaker-client.repo \
+            https://beaker-project.org/yum/beaker-client-CentOS.repo; \
+    yum install beaker-client; \
+    yum clean all
+
 COPY centos7/default.xml /etc/libvirt/qemu/networks/
 
-RUN $HOME/pip_install.sh
 RUN mkdir -p $HOME/.config
 
 # /wordir should include the source code of linchpin

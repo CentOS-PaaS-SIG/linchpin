@@ -16,7 +16,7 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.n
                    libvirt libvirt-devel libvirt-client libvirt-python \
                    qemu-kvm virt-install net-tools qemu-kvm libvirt-python \
                    mkisofs libvirt-client libguestfs-tools \
-                   policycoreutils-python bridge-utils; \
+                   policycoreutils-python bridge-utils python-krbV; \
     echo "options kvm-intel nested=1" > /etc/modprobe.d/kvm-intel.conf; \
     pip install -U pip; \
     pip install -U setuptools; \
@@ -28,10 +28,12 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.n
     pip install six requests urllib3 PyOpenSSL --force --upgrade; \
     yum clean all
 
-COPY pip_install.sh \
-     centos6/start_libvirtd.sh $HOME/
+RUN curl -o /etc/yum.repos.d/beaker-client.repo \
+            https://beaker-project.org/yum/beaker-client-CentOS.repo; \
+    yum install beaker-client; \
+    yum clean all
 
-RUN $HOME/pip_install.sh
+COPY centos6/start_libvirtd.sh $HOME/
 
 # /workdir should include the source code of linchpin
 VOLUME [ "/workdir" ]
