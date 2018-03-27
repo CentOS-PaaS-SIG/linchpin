@@ -11,6 +11,7 @@ rundb_conn_type = file
 rundb_schema = {"action": "",
                 "inputs": [],
                 "outputs": [],
+                "vars": [],
                 "start": "",
                 "end": "",
                 "rc": 0,

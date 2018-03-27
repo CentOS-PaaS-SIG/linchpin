@@ -391,6 +391,9 @@ class LinchpinCli(LinchpinAPI):
 
             if 'hooks' in pf[target]:
                 provision_data[target]['hooks'] = pf[target]['hooks']
+            # grab target specific vars
+            if 'vars' in pf[target]:
+                provision_data[target]['vars'] = pf[target]['vars']
 
         return provision_data
 
