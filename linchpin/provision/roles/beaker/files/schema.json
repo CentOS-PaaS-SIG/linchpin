@@ -9,7 +9,7 @@
                     "required": true,
                     "allowed": ["bkr_server"]
                 },
-                "whiteboard": { "type": "string", "required": true },
+                "whiteboard": { "type": "string", "required": false },
                 "job_group": { "type": "string", "required": false },
                 "cancel_message": { "type": "string", "required": false },
                 "max_attempts": { "type": "integer", "required": false },
