@@ -10,7 +10,8 @@ RUN yum -y install python-pip ansible curl gcc python-devel openssl-devel \
                    libvirt-daemon-driver-* libvirt-daemon libvirt-daemon-kvm \
                    qemu-kvm libvirt-daemon-config-network libvirt-python \
                    libvirt-devel file openssh mkisofs libvirt-client \ 
-                   virt-install net-tools git python-krbV \
+                   virt-install net-tools git python-krbV make \
+                   libxslt-python krb5-workstation \
     && yum clean all; \
     (cd /lib/systemd/system/sysinit.target.wants/; for i in *; \
      do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \

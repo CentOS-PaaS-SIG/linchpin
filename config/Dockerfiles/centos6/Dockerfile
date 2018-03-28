@@ -15,8 +15,9 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.n
                    python-jinja2-26 libffi-devel \
                    libvirt libvirt-devel libvirt-client libvirt-python \
                    qemu-kvm virt-install net-tools qemu-kvm libvirt-python \
-                   mkisofs libvirt-client libguestfs-tools \
-                   policycoreutils-python bridge-utils python-krbV; \
+                   mkisofs libvirt-client libguestfs-tools make \
+                   policycoreutils-python bridge-utils python-krbV \
+                   libxslt-python krb5-workstation; \
     echo "options kvm-intel nested=1" > /etc/modprobe.d/kvm-intel.conf; \
     pip install -U pip; \
     pip install -U setuptools; \

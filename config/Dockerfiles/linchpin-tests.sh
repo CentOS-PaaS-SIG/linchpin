@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 base_dir="$( pwd )"
 
@@ -10,6 +10,13 @@ result=0
 for i in $DRIVERS; do
     testname="$target/$i"
     export CREDS_PATH="$base_dir/keys/$i"
+    # If CREDS_PATH provides a tarball extract it and
+    # run it's install script
+    if [ -e "$CREDS_PATH/${i}.tgz" ]; then
+        tmpdir=$(mktemp -d)
+        tar xvf $CREDS_PATH/${i}.tgz -C $tmpdir
+        $tmpdir/install.sh
+    fi
     # Horrible hacks until CentOS support is fixed..
     # See Issue: https://github.com/CentOS-PaaS-SIG/duffy-ansible-module/issues/3
     if [ "$target" = "centos6" -o "$target" = "centos7" ] && \
