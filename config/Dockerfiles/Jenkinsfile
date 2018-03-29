@@ -21,7 +21,7 @@ DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 // listed here.
 LDRIVERS = env.LINCHPIN_DRIVERS ?: 'dummy duffy libvirt aws-ec2-new'
 PDRIVERS = LDRIVERS.tokenize()
-TDRIVERS = ["dummy", "duffy", "libvirt", "aws-ec2-new"]
+TDRIVERS = ["dummy", "duffy", "libvirt", "aws-ec2-new", "bkr-new"]
 env.DRIVERS = TDRIVERS.intersect( PDRIVERS ).join(" ")
 OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
