@@ -23,6 +23,7 @@ default_pinfile = PinFile
 
 external_providers_path = %(default_config_path)s/linchpin-x
 use_rundb_for_actions = False
+distill_data = False
 
 [evars]
 _check_mode = False
