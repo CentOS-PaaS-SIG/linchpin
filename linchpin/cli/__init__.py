@@ -208,10 +208,35 @@ class LinchpinCli(LinchpinAPI):
             An optional tx_id if the task is idempotent
         """
 
-        return self._execute_action('up',
-                                    targets,
-                                    run_id=run_id,
-                                    tx_id=tx_id)
+        # Prep input data
+
+        # Execute prepped data
+        return_code, return_data = self._execute_action('up',
+                                                        targets,
+                                                        run_id=run_id,
+                                                        tx_id=tx_id)
+
+        # Distill data
+        new_tx_id = return_data.keys()[0]
+
+#        run_data = self.get_run_data(new_tx_id, ('outputs', 'inputs',
+#                                                 'action', 'cfgs', 'start',
+#                                                 'end', 'rc', 'uhash'))
+
+        run_data = self.get_run_data(new_tx_id, ('outputs',))
+
+        # Export distilled data in useful ways
+        ### Write out run_data to a file for now
+        gen_resources = self.get_evar('generate_resources')
+        distill_data = self.get_cfg('lp', 'distill_data')
+
+#        if (ast.literal_eval(distill_data) and
+#                not ast.literal_eval(gen_resources.title())):
+#            self.write_out_context(run_data)
+
+        # Show success and errors, with data
+        return (return_code, return_data)
+
 
 
     def lp_destroy(self, targets=(), run_id=None, tx_id=None):
@@ -231,6 +256,9 @@ class LinchpinCli(LinchpinAPI):
         :param tx_id:
             An optional tx_id to use
         """
+
+        # prep inputs
+        # 
 
         return self._execute_action('destroy',
                                     targets,
