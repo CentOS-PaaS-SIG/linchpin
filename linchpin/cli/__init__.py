@@ -294,9 +294,7 @@ class LinchpinCli(LinchpinAPI):
                                                      targets,
                                                      action=action,
                                                      run_id=run_id)
-
         else:
-
             # get the pinfile data from the run_id or the tx_id
             provision_data = self.get_pf_data_from_rundb(targets,
                                                          run_id=run_id,
@@ -391,6 +389,9 @@ class LinchpinCli(LinchpinAPI):
 
             if 'hooks' in pf[target]:
                 provision_data[target]['hooks'] = pf[target]['hooks']
+            # grab target specific vars
+            if 'cfgs' in pf[target]:
+                provision_data[target]['cfgs'] = pf[target]['cfgs']
 
         return provision_data
 

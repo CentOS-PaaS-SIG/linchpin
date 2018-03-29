@@ -12,8 +12,8 @@ Beaker instances are provisioned using this resource.
 
 The ansible modules for beaker are written and bundled as part of LinchPin.
 
-* :code1.5:`bkr_server.py <linchpin/provisoin/library/bkr_server.py>`
-* :code1.5:`bkr_info.py <linchpin/provisoin/library/bkr_info.py>`
+* :code1.5:`bkr_server.py <linchpin/provision/library/bkr_server.py>`
+* :code1.5:`bkr_info.py <linchpin/provision/library/bkr_info.py>`
 
 Additional Dependencies
 -----------------------
