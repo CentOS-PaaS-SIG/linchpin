@@ -11,5 +11,5 @@ resource_groups:
         image: ami-a042f4d8
         count: 1
     credentials:
-      filename: aws.credentials
+      filename: aws.key
       profile: default
