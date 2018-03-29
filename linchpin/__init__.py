@@ -629,10 +629,10 @@ class LinchpinAPI(object):
                 self.set_evar('vars_data', vars_data)
                 rundb.update_record(target,
                                     rundb_id,
-                                    'vars',
+                                    'cfgs',
                                     [
                                         {'user':
-                                        provision_data[target]['vars']}
+                                         provision_data[target]['cfgs']}
                                     ])
 
             # note : changing the state triggers the hooks
