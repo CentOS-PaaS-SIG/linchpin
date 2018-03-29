@@ -5,10 +5,10 @@ resource_groups:
     resource_group_type: "aws"
     resource_definitions:
       - name: demo-day
-        flavor: t2.micro
+        flavor: m1.small
         role: aws_ec2
-        region: us-west-2
-        image: ami-a042f4d8
+        region: us-east-1
+        image: ami-984189e2
         count: 1
     credentials:
       filename: aws.key
