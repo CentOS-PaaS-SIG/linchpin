@@ -742,19 +742,6 @@ class LinchpinAPI(object):
         for target, run_id in tgt_run_ids.iteritems():
             record = rundb.get_record(target, run_id=run_id, action='up')
             field_data = {}
-
-# {"action": "",
-# "inputs": [],
-# "outputs": [],
-# "cfgs": [],
-# "start": "",
-# "end": "",
-# "rc": 0,
-# "uhash": ""}
-
-
-            import pdb
-            pdb.set_trace()
             single_value_fields = ('action', 'start', 'end', 'rc', 'uhash')
 
             for field in fields:
@@ -766,8 +753,10 @@ class LinchpinAPI(object):
                         data_array = {}
                         for k, v in f[0].iteritems():
                             if field == 'outputs':
-                                value = v[0]
-                                data_array[k] = v[0]
+                                values = []
+                                for value in v:
+                                    values.append(value)
+                                data_array[k] = values
                             else:
                                 data_array[k] = v
 

@@ -4,6 +4,7 @@ import os
 import re
 import ast
 import sys
+import json
 import click
 
 from distutils import dir_util
@@ -173,6 +174,72 @@ class LinchpinCli(LinchpinAPI):
         return data_w_path
 
 
+    def _write_distilled_context(self, run_data):
+        """
+        This method takes all of the provided run_data, loops through the
+        distiller section of the linchpin.constants and writes out the
+        linchpin.context (name TBD) to the 'resources' directory.
+
+        """
+
+        dist_roles = self.get_cfg('distiller')
+
+        resources_path = self.get_evar('resources_folder')
+        context_file = '{0}/{1}/{2}'.format(self.workspace,
+                                            resources_path,
+                                            'linchpin.distilled')
+
+        roles = []
+        dist_data = {}
+
+
+        # get roles used
+        for target, data in run_data.iteritems():
+            inputs = data.get('inputs')
+            topo = inputs.get('topology_data')
+            res_grps = topo.get('resource_groups')
+
+            for group in res_grps:
+                res_defs = group.get('resource_definitions')
+                for rd in res_defs:
+                    roles.append(rd.get('role'))
+
+            fields = {}
+            outputs = data.get('outputs')
+            resources = outputs.get('resources')
+
+            for dist_role, flds in dist_roles.iteritems():
+                if dist_role in roles:
+                    for f in flds.split(','):
+                        if '.' not in f:
+                            fld = fields.get('single', [])
+                            fields[f] = None
+                        else:
+                            k, v = f.split('.')
+                            fld = fields.get(k, [])
+                            fld.append(v)
+                            fields[k] = fld
+
+
+
+            for res in resources:
+                for k, v in fields.iteritems():
+                    res_data = {}
+                    if not v:
+                        res_data[k] = res.get(k)
+                    else:
+                        r = res.get(k)[0]
+                        for value in v:
+                            res_data[value] = r.get(value)
+
+                    if target not in dist_data.keys():
+                        dist_data[target] = []
+                    dist_data[target].append(res_data)
+
+        with open(context_file, 'w+') as f:
+            f.write(json.dumps(dist_data))
+
+
     def lp_down(self, pinfile, targets=(), run_id=None):
         """
         This function takes a list of targets, and performs a shutdown on
@@ -219,20 +286,21 @@ class LinchpinCli(LinchpinAPI):
         # Distill data
         new_tx_id = return_data.keys()[0]
 
-#        run_data = self.get_run_data(new_tx_id, ('outputs', 'inputs',
-#                                                 'action', 'cfgs', 'start',
-#                                                 'end', 'rc', 'uhash'))
+        # Thsi is what the API allows.
+        # run_data = self.get_run_data(new_tx_id, ('outputs', 'inputs',
+        #                                          'action', 'cfgs', 'start',
+        #                                          'end', 'rc', 'uhash'))
 
-        run_data = self.get_run_data(new_tx_id, ('outputs',))
+        run_data = self.get_run_data(new_tx_id, ('inputs', 'outputs'))
 
         # Export distilled data in useful ways
         ### Write out run_data to a file for now
-        gen_resources = self.get_evar('generate_resources')
         distill_data = self.get_cfg('lp', 'distill_data')
+        gen_resources = self.get_evar('generate_resources')
 
-#        if (ast.literal_eval(distill_data) and
-#                not ast.literal_eval(gen_resources.title())):
-#            self.write_out_context(run_data)
+        if (not return_code and ast.literal_eval(distill_data) and
+                not gen_resources):
+            self._write_distilled_context(run_data)
 
         # Show success and errors, with data
         return (return_code, return_data)
