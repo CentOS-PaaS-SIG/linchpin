@@ -217,24 +217,45 @@ class LinchpinCli(LinchpinAPI):
                         else:
                             k, v = f.split('.')
                             fld = fields.get(k, [])
-                            fld.append(v)
-                            fields[k] = fld
-
-
+                            if ':' in v:
+                                subfields = {}
+                                k2, val = v.split(':')
+                                subfld = subfields.get(k2, [])
+                                subfld.append(val)
+                                subfields[k2] = subfld
+                                fld.append(subfields)
+                                fields[k] = fld
+                            else:
+                                fld.append(v)
+                                fields[k] = fld
 
             for res in resources:
                 for k, v in fields.iteritems():
                     res_data = {}
                     if not v:
-                        res_data[k] = res.get(k)
+                        dd = dist_data.get(target, {})
+                        if len(dd):
+                            for items in dd:
+                                if k in items.keys():
+                                    items[k].extend(res.pop(k))
+                        else:
+                            res_data[k] = res.get(k)
                     else:
-                        r = res.get(k)[0]
+                        rsrc = res.get(k)[0]
                         for value in v:
-                            res_data[value] = r.get(value)
+                            if isinstance(value, dict):
+                                for key, vals in value.iteritems():
+                                    sk = rsrc.get(key)
+                                    for val in vals:
+                                        res_data[val] = sk.get(val)
+                            else:
+                                res_data[value] = rsrc.get(value)
 
                     if target not in dist_data.keys():
                         dist_data[target] = []
-                    dist_data[target].append(res_data)
+
+                    if len(res_data) and res_data not in dist_data[target]:
+                        dist_data[target].append(res_data)
 
         with open(context_file, 'w+') as f:
             f.write(json.dumps(dist_data))
