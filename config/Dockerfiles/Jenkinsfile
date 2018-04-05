@@ -47,15 +47,36 @@ properties(
         disableConcurrentBuilds(),
         parameters(
             [
-                string(defaultValue: 'develop', description: '', name: 'ghprbActualCommit'),
-                string(defaultValue: '', description: '', name: 'sha1'),
-                string(defaultValue: '', description: 'Pull Request Number', name: 'ghprbPullId'),
-                string(defaultValue: '', description: 'Pull Request Author username', name: 'ghprbPullAuthorLogin'),
-                string(defaultValue: 'stable', description: 'Tag for slave image', name: 'SLAVE_TAG'),
-                string(defaultValue: 'stable', description: 'Tag for fedora26 image', name: 'FEDORA26_TAG'),
-                string(defaultValue: 'stable', description: 'Tag for fedora27 image', name: 'FEDORA27_TAG'),
-                string(defaultValue: 'stable', description: 'Tag for centos6 image', name: 'CENTOS6_TAG'),
-                string(defaultValue: 'stable', description: 'Tag for centos7 image', name: 'CENTOS7_TAG')
+                string(defaultValue: 'develop',
+                       description: '',
+                       name: 'ghprbActualCommit'),
+                string(defaultValue: '',
+                       description: '',
+                       name: 'sha1'),
+                string(defaultValue: '',
+                       description: 'Pull Request Number',
+                       name: 'ghprbPullId'),
+                string(defaultValue: '',
+                       description: 'Pull Request Author username',
+                       name: 'ghprbPullAuthorLogin'),
+                string(defaultValue: '',
+                       description: 'Git Hub Repository',
+                       name: 'ghprbGhRepository'),
+                string(defaultValue: 'stable',
+                       description: 'Tag for slave image',
+                       name: 'SLAVE_TAG'),
+                string(defaultValue: 'stable',
+                       description: 'Tag for fedora26 image',
+                       name: 'FEDORA26_TAG'),
+                string(defaultValue: 'stable',
+                       description: 'Tag for fedora27 image',
+                       name: 'FEDORA27_TAG'),
+                string(defaultValue: 'stable',
+                       description: 'Tag for centos6 image',
+                       name: 'CENTOS6_TAG'),
+                string(defaultValue: 'stable',
+                       description: 'Tag for centos7 image',
+                       name: 'CENTOS7_TAG')
             ]
         ),
     ]
@@ -136,7 +157,7 @@ podTemplate(name: podName,
                         pipelineUtils.setDefaultEnvVars()
                         // Decorate our build
                         currentBuild.displayName = "Build#: ${env.BUILD_NUMBER} - PR: ${env.ghprbPullId} - Author: ${env.ghprbPullAuthorLogin}"
-                        if (env.ghprbActualCommit != null && env.ghprbActualCommit != "master") {
+                        if (env.ghprbActualCommit != null && env.ghprbActualCommit != "develop") {
                             currentBuild.description = "<a href=\"https://github.com/${env.ghprbGhRepository}/pull/${env.ghprbPullId}\">PR #${env.ghprbPullId} (${env.ghprbPullAuthorLogin})</a>"
                         }
                         // Gather some info about the node we are running on for diagnostics
