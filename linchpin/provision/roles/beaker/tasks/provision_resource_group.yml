@@ -17,14 +17,36 @@
   register: bkr
 
 - block:
-  # stash job ids and urls for printing
-  - name: set bkr_id_values, set initial topology outputs for teardown with rundb
+  - name: set bkr ids from results
     set_fact:
-      bkr_id_values: "{{ bkr_id_values | default({}) | combine(result['ids']) }}"
-      topology_outputs_beaker_server: "{{ topology_outputs_beaker_server }} + {{ result['hosts'] }}"
+      bkr_ids: "{{ bkr_ids | default({}) | combine(result['ids']) }}"
     with_items: "{{ bkr.results }}"
     loop_control:
       loop_var: result
+
+  - name: set bkr hosts from results
+    set_fact:
+      bkr_hosts: "{{ bkr_hosts | default([]) }} + {{ result['hosts'] }}"
+    with_items: "{{ bkr.results }}"
+    loop_control:
+      loop_var: result
+
+  - name: "split id and url into separate components"
+    set_fact:
+      bkr_id_values: "{{ bkr_id_values | default([]) + [{ 'id': result.key, 'url': result.value }] }}"
+    with_dict: "{{ bkr_ids }}"
+    loop_control:
+      loop_var: result
+
+  - name: combine bkr_id_values with bkr_hosts
+    set_fact:
+      tmp_hosts: "{{ item | combine(bkr_hosts | selectattr('id', 'equalto', item.id) | first) }}"
+    with_items: "{{ bkr_id_values }}"
+    register: tmp_info
+
+  - name: "Set topology_outputs_beaker_server to the current job(s) data"
+    set_fact:
+      topology_outputs_beaker_server: "{{ tmp_info.results | map(attribute='ansible_facts.tmp_hosts') | list }}"
 
   - name: "Add beaker job info to the rundb"
     rundb:
@@ -32,22 +54,25 @@
       operation: update
       table: "{{ target }}"
       key: "outputs"
-      value: "[{{ {'resources': topology_outputs_beaker_server} }}]"
+      value: "[{{ {'resources': bkr_id_values} }}]"
       run_id: "{{ rundb_id }}"
     when: not generate_resources
 
-  - name: print beaker job ids and URLs
-    debug:
-      var: bkr_id_values
-
   - name: "fetch beaker details"
     bkr_info:
-      ids: "{{ bkr_id_values }}"
+      ids: "{{ bkr_ids }}"
       # pull provision params from the first (should be only) result
       provision_params: "{{ bkr.results[0].provision_params }}"
-    register: _topology_outputs_beaker_server
+    register: _topo_out_bkr_server
 
-  - name: "extract beaker outputs"
+  - name: "set topology_outputs_beaker_server"
     set_fact:
-      topology_outputs_beaker_server: "{{ _topology_outputs_beaker_server.hosts }}"
-  when: state == 'present'
+      tmp_topo_bkr_srvc: "{{ item | combine(_topo_out_bkr_server['hosts'] | selectattr('id', 'equalto', item.id) | first) }}"
+    when: state == 'present'
+    with_items: "{{ topology_outputs_beaker_server }}"
+    register: tmp_bkr
+
+  - name: "Set topology_outputs_beaker_server to the current job(s) data"
+    set_fact:
+      topology_outputs_beaker_server: "{{ tmp_bkr.results | map(attribute='ansible_facts.tmp_topo_bkr_srvc') | list }}"
+
