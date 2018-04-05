@@ -5,7 +5,6 @@ resource_groups:
     resource_group_type: beaker
     resource_definitions:
       - role: bkr_server
-        job_group: ci-ops-central
         # option to set job whiteboard message
         whiteboard: Provisioned with linchpin
         # options to configure amount of time spent polling beaker:
@@ -19,20 +18,7 @@ resource_groups:
           - distro: RHEL-6.5
             arch: x86_64
             hostrequires:
-              - tag: processors
-                op: ">="
-                value: 4
-              - tag: device
+              - tag: hypervisor
                 op: "="
-                type: "network"
-            count: 1
-      - role: bkr_server
-        job_group: ci-ops-central
-        recipesets:
-          - distro: RHEL-6.5
-            arch: x86_64
-            hostrequires:
-              - tag: processors
-                op: ">="
-                value: 1
+                value: KVM
             count: 1
