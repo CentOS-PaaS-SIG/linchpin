@@ -229,33 +229,38 @@ class LinchpinCli(LinchpinAPI):
                                 fld.append(v)
                                 fields[k] = fld
 
-            for res in resources:
-                for k, v in fields.iteritems():
-                    res_data = {}
-                    if not v:
-                        dd = dist_data.get(target, {})
-                        if len(dd):
-                            for items in dd:
-                                if k in items.keys():
-                                    items[k].extend(res.pop(k))
-                        else:
-                            res_data[k] = res.get(k)
-                    else:
-                        rsrc = res.get(k)[0]
-                        for value in v:
-                            if isinstance(value, dict):
-                                for key, vals in value.iteritems():
-                                    sk = rsrc.get(key)
-                                    for val in vals:
-                                        res_data[val] = sk.get(val)
+            try:
+                for res in resources:
+                    for k, v in fields.iteritems():
+                        res_data = {}
+                        if not v:
+                            dd = dist_data.get(target, {})
+                            if len(dd):
+                                for items in dd:
+                                    if k in items.keys():
+                                        items[k].extend(res.get(k))
+                                    else:
+                                        items[k] = res.get(k)
                             else:
-                                res_data[value] = rsrc.get(value)
+                                res_data[k] = res.get(k)
+                        else:
+                            rsrc = res.get(k)[0]
+                            for value in v:
+                                if isinstance(value, dict):
+                                    for key, vals in value.iteritems():
+                                        sk = rsrc.get(key)
+                                        for val in vals:
+                                            res_data[val] = sk.get(val)
+                                else:
+                                    res_data[value] = rsrc.get(value)
 
-                    if target not in dist_data.keys():
-                        dist_data[target] = []
+                        if target not in dist_data.keys():
+                            dist_data[target] = []
 
-                    if len(res_data) and res_data not in dist_data[target]:
-                        dist_data[target].append(res_data)
+                        if len(res_data) and res_data not in dist_data[target]:
+                            dist_data[target].append(res_data)
+            except Exception:
+                pass
 
         with open(context_file, 'w+') as f:
             f.write(json.dumps(dist_data))

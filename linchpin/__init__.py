@@ -751,16 +751,17 @@ class LinchpinAPI(object):
                         field_data[field] = f
                     else:
                         data_array = {}
-                        for k, v in f[0].iteritems():
-                            if field == 'outputs':
-                                values = []
-                                for value in v:
-                                    values.append(value)
-                                data_array[k] = values
-                            else:
-                                data_array[k] = v
+                        for fld in f:
+                            for k, v in fld.iteritems():
+                                if field == 'outputs':
+                                    values = []
+                                    for value in v:
+                                        values.append(value)
+                                    data_array[k] = values
+                                else:
+                                    data_array[k] = v
 
-                        field_data[field] = data_array
+                            field_data[field] = data_array
 
             target_data[target] = field_data
 
