@@ -320,7 +320,7 @@ class LinchpinCli(LinchpinAPI):
         run_data = self.get_run_data(new_tx_id, ('inputs', 'outputs'))
 
         # Export distilled data in useful ways
-        ### Write out run_data to a file for now
+        # # Write out run_data to a file for now
         distill_data = self.get_cfg('lp', 'distill_data')
         gen_resources = self.get_evar('generate_resources')
 
@@ -352,7 +352,7 @@ class LinchpinCli(LinchpinAPI):
         """
 
         # prep inputs
-        # 
+
 
         return self._execute_action('destroy',
                                     targets,
