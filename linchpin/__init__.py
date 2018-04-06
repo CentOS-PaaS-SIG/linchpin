@@ -624,9 +624,9 @@ class LinchpinAPI(object):
                                          provision_data[target]['hooks']}
                                     ])
 
-            if provision_data[target].get('vars', None):
-                vars_data = provision_data[target].get('vars')
-                self.set_evar('vars_data', vars_data)
+            if provision_data[target].get('cfgs', None):
+                vars_data = provision_data[target].get('cfgs')
+                self.set_evar('cfgs_data', vars_data)
                 rundb.update_record(target,
                                     rundb_id,
                                     'cfgs',
@@ -693,9 +693,7 @@ class LinchpinAPI(object):
 
         for target, data in results.iteritems():
             for k, v in data['rundb_data'].iteritems():
-
                 summary[target] = {k: {'rc': v['rc'], 'uhash': v['uhash']}}
-
 
         rundb.update_record('linchpin', lp_id, 'action', action)
         rundb.update_record('linchpin', lp_id, 'targets', [summary])
@@ -705,6 +703,69 @@ class LinchpinAPI(object):
                            'results_data': results}}
 
         return (return_code, lp_data)
+
+
+    def get_run_data(self, tx_id, fields, targets=()):
+        """
+        Returns the RunDB for data from a specified field given either a run_id
+        or tx_id. The fields consist of the major sections in the RunDB (target
+        view only). Those fields are action, start, end, inputs, outputs,
+        uhash, and rc.
+
+        :param tx_id: tx_id to search
+        :param fields: Tuple of fields to retrieve for each record requested.
+        :param targets: Tuple of targets to search from within the tx_ids
+        """
+
+        rundb = self.setup_rundb()
+
+        tgt_run_ids = {}
+        target_data = {}
+
+        record = rundb.get_tx_record(tx_id)
+
+        if not record or not len(record):
+            return None
+
+
+        # get run_ids to query
+        if len(targets):
+            for tgts in record['targets']:
+                    for tgt, data in tgts.iteritems():
+                        if tgt in targets:
+                            tgt_run_ids[tgt] = int(data.keys()[0])
+        else:
+            for tgts in record['targets']:
+                for tgt, data in tgts.iteritems():
+                    tgt_run_ids[tgt] = int(data.keys()[0])
+
+        for target, run_id in tgt_run_ids.iteritems():
+            record = rundb.get_record(target, run_id=run_id, action='up')
+            field_data = {}
+            single_value_fields = ('action', 'start', 'end', 'rc', 'uhash')
+
+            for field in fields:
+                f = record[0].get(field)
+                if f:
+                    if field in single_value_fields:
+                        field_data[field] = f
+                    else:
+                        data_array = {}
+                        for fld in f:
+                            for k, v in fld.iteritems():
+                                if field == 'outputs':
+                                    values = []
+                                    for value in v:
+                                        values.append(value)
+                                    data_array[k] = values
+                                else:
+                                    data_array[k] = v
+
+                            field_data[field] = data_array
+
+            target_data[target] = field_data
+
+        return target_data
 
 
     def _invoke_playbooks(self, resources, action='up', console=True):
