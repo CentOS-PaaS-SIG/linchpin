@@ -707,8 +707,8 @@ class LinchpinAPI(object):
 
     def get_run_data(self, tx_id, fields, targets=()):
         """
-        Returns the RunDB for data from a specified field given either a run_id
-        or tx_id. The fields consist of the major sections in the RunDB (target
+        Returns the RunDB for data from a specified field given a tx_id.
+        The fields consist of the major sections in the RunDB (target
         view only). Those fields are action, start, end, inputs, outputs,
         uhash, and rc.
 
