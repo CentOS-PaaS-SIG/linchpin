@@ -1,8 +1,4 @@
 ---
-#- name: auth_var
-#  debug:
-#    var: auth_var
-
 - name: "provision/teardown os_server resources with provided auth"
   os_server2:
     state: "{{ state }}"
@@ -11,6 +7,7 @@
     image: "{{ res_def['image'] | default(omit) }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
+    timeout: 1200
     flavor: "{{ res_def['flavor'] }}"
     nics:  "{{ res_def['networks'] | default(omit) | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
@@ -37,6 +34,7 @@
     image: "{{ res_def['image'] | default(omit) }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
+    timeout: 1200
     flavor: "{{ res_def['flavor'] }}"
     nics:  "{{ res_def['networks'] | default(omit) | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
@@ -64,6 +62,7 @@
     image: "{{ res_def['image'] | default(omit) }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
+    timeout: 1200
     flavor: "{{ res_def['flavor'] }}"
     nics:  "{{ res_def['networks'] | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
@@ -92,6 +91,7 @@
     image: "{{ res_def['image'] | default(omit) }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
+    timeout: 1200
     flavor: "{{ res_def['flavor'] }}"
     nics:  "{{ res_def['networks'] | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
