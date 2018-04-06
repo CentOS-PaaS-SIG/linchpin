@@ -15,9 +15,10 @@
   loop_control:
     loop_var: res
   register: bkr
+  ignore_errors: true
 
 - block:
-  - name: set bkr ids from results
+  - name: "set bkr ids from results"
     set_fact:
       bkr_ids: "{{ bkr_ids | default({}) | combine(result['ids']) }}"
     with_items: "{{ bkr.results }}"
@@ -54,7 +55,7 @@
       operation: update
       table: "{{ target }}"
       key: "outputs"
-      value: "[{{ {'resources': bkr_id_values} }}]"
+      value: "[{{ {'bkr_id_values': bkr_id_values} }}]"
       run_id: "{{ rundb_id }}"
     when: not generate_resources
 
