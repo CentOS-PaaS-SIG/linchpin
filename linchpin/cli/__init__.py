@@ -185,9 +185,10 @@ class LinchpinCli(LinchpinAPI):
         dist_roles = self.get_cfg('distiller')
 
         resources_path = self.get_evar('resources_folder')
-        context_file = '{0}/{1}/{2}'.format(self.workspace,
-                                            resources_path,
-                                            'linchpin.distilled')
+        context_path = '{0}/{1}'.format(self.workspace, resources_path)
+        if not os.path.exists(context_path):
+            os.makedirs(context_path)
+        context_file = '{0}/{1}'.format(context_path, 'linchpin.distilled')
 
         roles = []
         dist_data = {}
