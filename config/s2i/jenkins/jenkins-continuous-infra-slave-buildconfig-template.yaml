@@ -43,7 +43,7 @@ parameters:
 - description: Git repository with Dockerfile and slave entrypoint.
   displayName: Repository URL
   name: REPO_URL
-  value: https://github.com/CentOS-PaaS-SIG/ci-pipeline.git
+  value: https://github.com/CentOS-PaaS-SIG/linchpin.git
 - description: The sub-directory inside the repository.
   displayName: Context Directory
   name: CONTEXTDIR

@@ -19,34 +19,32 @@ library identifier: "ci-pipeline@master",
 properties([
   buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '20')),
   [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/CentOS-PaaS-SIG/linchpin/'],
-  [$class: 'org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty', triggers:[
+  parameters(
     [
-      $class: 'org.jenkinsci.plugins.ghprb.GhprbTrigger',
-      orgslist: 'CentOS-PaaS-SIG',
-      cron: 'H/5 * * * *',
-      triggerPhrase: '.*\\[merge\\].*',
-      onlyTriggerPhrase: true,
-      useGitHubHooks: true,
-      permitAll: true,
-      autoCloseFailedPullRequests: false,
-      displayBuildErrorsOnDownstreamBuilds: true,
-      extensions: [
-        [
-          $class: 'org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus',
-          commitStatusContext: 'Docker Build',
-          showMatrixStatus: false,
-          triggeredStatus: 'Starting job...',
-          startedStatus: 'Building...',
-        ]
-      ]
+      string(defaultValue: 'develop',
+             description: '',
+             name: 'ghprbActualCommit'),
+      string(defaultValue: '',
+             description: '',
+             name: 'sha1'),
+      string(defaultValue: '',
+             description: 'Pull Request Number',
+             name: 'ghprbPullId'),
+      string(defaultValue: '',
+             description: 'Pull Request Author username',
+             name: 'ghprbPullAuthorLogin'),
+      string(defaultValue: '',
+             description: 'Git Hub Repository',
+             name: 'ghprbGhRepository'),
     ]
-  ]]
+  ),
 ])
 
 pipeline {
     agent {
         kubernetes {
             cloud 'openshift'
+            serviceAccount 'jenkins'
             label 'merge-trigger-' + env.ghprbActualCommit
             containerTemplate {
                 name 'jnlp'
@@ -83,26 +81,15 @@ pipeline {
         }
         stage("Merge PR and Rebuild Images") {
             steps {
-                // lock to make sure only one is allowed at anytime
-                lock('merge-and-image-rebuild-lock') {
-                    script {
-                        // need this for ghprb plugin since it is really
-                        // a post build step and it assumes the build is complete.
-                        currentBuild.result = 'SUCCESS'
-                    }
-
-                    step([$class: 'GhprbPullRequestMerge', allowMergeWithoutTriggerPhrase: false, deleteOnMerge: false, disallowOwnCode: false, failOnNonMerge: false, mergeComment: ' ', onlyAdminsMerge: false])
-
-                    script {
-                        openshift.withCluster() {
-                            openshift.withProject(openshiftProject) {
-                                imageOperations.each {
-                                    pipelineUtils.buildStableImage(openshiftProject, it)
-                                }
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject(openshiftProject) {
+                            imageOperations.each {
+                                pipelineUtils.buildStableImage(openshiftProject, it)
                             }
                         }
-                        pipelineUtils.sendPRCommentforTags(imageOperations)
                     }
+                    pipelineUtils.sendPRCommentforTags(imageOperations)
                 }
             }
         }

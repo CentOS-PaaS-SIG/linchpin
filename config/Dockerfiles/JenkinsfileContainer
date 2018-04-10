@@ -39,34 +39,32 @@ library identifier: "cico-pipeline-library@master",
 properties([
   buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '20')),
   [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/CentOS-PaaS-SIG/linchpin/'],
-  [$class: 'org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty', triggers:[
+  parameters(
     [
-      $class: 'org.jenkinsci.plugins.ghprb.GhprbTrigger',
-      orgslist: 'CentOS-PaaS-SIG',
-      cron: 'H/5 * * * *',
-      triggerPhrase: '.*\\[test\\].*',
-      onlyTriggerPhrase: false,
-      useGitHubHooks: true,
-      permitAll: true,
-      autoCloseFailedPullRequests: false,
-      displayBuildErrorsOnDownstreamBuilds: true,
-      extensions: [
-        [
-          $class: 'org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus',
-          commitStatusContext: 'Docker Build',
-          showMatrixStatus: false,
-          triggeredStatus: 'Starting job...',
-          startedStatus: 'Building...',
-        ]
-      ]
+      string(defaultValue: 'develop',
+             description: '',
+             name: 'ghprbActualCommit'),
+      string(defaultValue: '',
+             description: '',
+             name: 'sha1'),
+      string(defaultValue: '',
+             description: 'Pull Request Number',
+             name: 'ghprbPullId'),
+      string(defaultValue: '',
+             description: 'Pull Request Author username',
+             name: 'ghprbPullAuthorLogin'),
+      string(defaultValue: '',
+             description: 'Git Hub Repository',
+             name: 'ghprbGhRepository'),
     ]
-  ]]
+  ),
 ])
 
 pipeline {
     agent {
         kubernetes {
             cloud 'openshift'
+            serviceAccount 'jenkins'
             label 'stage-trigger-' + env.ghprbActualCommit
             containerTemplate {
                 name 'jnlp'
@@ -94,6 +92,9 @@ pipeline {
         stage("Setup Container Templates") {
             steps {
                 script {
+                    sh """
+                       oc whoami
+                    """
                     pipelineUtils.setupContainerTemplates(openshiftProject)
                 }
             }
@@ -153,17 +154,28 @@ pipeline {
         }
         stage("Run Stage Job") {
             steps {
-                build job: 'ci-pipeline-linchpin',
+                build job: 'ci-linchpin',
                         parameters: [
-                                string(name: 'ghprbActualCommit', value: "${env.ghprbActualCommit}"),
-                                string(name: 'ghprbGhRepository', value: "${env.ghprbGhRepository}"),
-                                string(name: 'ghprbPullAuthorLogin', value: "${env.ghprbPullAuthorLogin}"),
-                                string(name: 'sha1', value: "${env.sha1}"),
-                                string(name: 'ghprbPullId', value: "${env.ghprbPullId}"),
-                                string(name: 'FEDORA26_TAG', value: tagMap['fedora26']),
-                                string(name: 'FEDORA27_TAG', value: tagMap['fedora27']),
-                                string(name: 'CENTOS6_TAG', value: tagMap['centos6']),
-                                string(name: 'CENTOS7_TAG', value: tagMap['centos7'])
+                                string(name: 'ghprbActualCommit',
+                                       value: "${env.ghprbActualCommit}"),
+                                string(name: 'ghprbGhRepository',
+                                       value: "${env.ghprbGhRepository}"),
+                                string(name: 'ghprbPullAuthorLogin',
+                                       value: "${env.ghprbPullAuthorLogin}"),
+                                string(name: 'sha1',
+                                       value: "${env.sha1}"),
+                                string(name: 'ghprbPullId',
+                                       value: "${env.ghprbPullId}"),
+                                string(name: 'ghprbGhRepository',
+                                       value: "${env.ghprbGhRepository}"),
+                                string(name: 'FEDORA26_TAG',
+                                       value: tagMap['fedora26']),
+                                string(name: 'FEDORA27_TAG',
+                                       value: tagMap['fedora27']),
+                                string(name: 'CENTOS6_TAG',
+                                       value: tagMap['centos6']),
+                                string(name: 'CENTOS7_TAG',
+                                       value: tagMap['centos7'])
                         ],
                         wait: true
             }
