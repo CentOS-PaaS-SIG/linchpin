@@ -1,5 +1,5 @@
-aws
-===
+Amazon Web Services
+===================
 
 The Amazon Web Services (AWS) provider manages multiple types of resources.
 
@@ -78,6 +78,8 @@ One method to provide AWS credentials that can be loaded by LinchPin is to use
 the INI format that the `AWS CLI tool
 <https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html>`_
 uses.
+
+.. include:: includes/aws_creds.rst
 
 Environment Variables
 ~~~~~~~~~~~~~~~~~~~~~

@@ -51,6 +51,11 @@ Teardown (destroy)
 
 .. include:: gs/teardown_destroy.rst
 
+Authentication
+--------------
+
+.. include:: gs/credentials.rst
+
 
 .. seealso::
 
@@ -59,4 +64,4 @@ Teardown (destroy)
     :doc:`managing_resources`
         Managing Resources
     :doc:`providers`
-        Available Providers
+        Providers in Detail
