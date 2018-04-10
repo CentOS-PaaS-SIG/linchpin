@@ -13,3 +13,4 @@ features are covered here.
    advanced/credentials
    advanced/rundb
    advanced/journal
+   advanced/context_distiller
