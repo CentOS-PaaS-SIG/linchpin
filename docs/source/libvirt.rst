@@ -1,4 +1,4 @@
-libvirt
+Libvirt
 =======
 
 The libvirt provider manages two types of resources.
@@ -13,19 +13,67 @@ Libvirt Domains (or nodes) can be provisioned using this resource.
 * :docs1.5:`Topology Example <workspace/topologies/libvirt-new.yml>`
 * `Ansible module <http://docs.ansible.com/ansible/latest/virt_module.html>`_
 
-.. _libvirt_network:
+Topology Schema
+~~~~~~~~~~~~~~~
+
+Within Linchpin, the :term:`libvirt_node` :term:`resource_definition` has more
+options than what are shown in the examples above. For each :term:`libvirt_node`
+definition, the following options are available.
+
++--------------------+-------+----------+---------------+---------------------+------------+
+| Parameter          | req'd | type     | where used    | default             | comments   |
++====================+=======+==========+===============+=====================+============+
+| role               | true  | string   | role          |                     |            |
++--------------------+-------+----------+---------------+---------------------+------------+
+| name               | true  | string   | module: name  |                     |            |
++--------------------+-------+----------+---------------+---------------------+------------+
+| vcpus              | true  | string   | xml: vcpus    |                     |            |
++--------------------+-------+----------+---------------+---------------------+            +
+| memory             | true  | string   | xml: memory   | 1024                |            |
++--------------------+-------+----------+---------------+---------------------+            +
+| driver             | false | string   | xml: driver   | kvm                 |            |
+|                    |       |          | (kvm, qemu)   |                     |            |
++--------------------+-------+----------+---------------+---------------------+            +
+| arch               | false | string   | xml: arch     | x86_64              |            |
++--------------------+-------+----------+---------------+---------------------+            +
+| boot_dev           | false | string   | xml: boot_dev | hd                  |            |
++--------------------+-------+----------+---------------+---------------------+------------+
+| networks           | false | list     | xml: networks | Assigns the domain to a network  |
+|                    |       |          |               | by name. Each device is named    |
+|                    |       |          | * name (req)  | with an incremented value (eth0) |
+|                    |       |          | * ip          |                                  |
+|                    |       |          | * mac         | .. note:: Network must exist     |
+|                    |       |          |               |                                  |
++--------------------+-------+----------+---------------+---------------------+------------+
+| image_src          | false | string   | virt-install  |                     |            |
++--------------------+-------+----------+---------------+---------------------+------------+
+| network_bridge     | false | string   | virt-install  | virbr0              |            |
++--------------------+-------+----------+---------------+---------------------+------------+
+| ssh_key            | false | string   | role          | resource_group_name |            |
++--------------------+-------+----------+---------------+---------------------+------------+
+| remote_user        | false | string   | role          | ansible_user_id     |            |
++--------------------+-------+----------+---------------+---------------------+------------+
+| cloud_config       | false | list     | role          | http://cloudinit.readthedocs.io  |
+|                    |       |          |               | is used here                     |
++--------------------+-------+----------+---------------+---------------------+------------+
+| additional_storage | false | string   | role          | 1G                  |            |
++--------------------+-------+----------+---------------+---------------------+------------+
+| uri                | false | string   | module: uri   | qemu:///system      |            |
++--------------------+-------+----------+---------------+---------------------+------------+
+| count              | false | string   | N/A           |                     |            |
++--------------------+-------+----------+---------------+---------------------+------------+
 
 libvirt_network
 ---------------
 
-Libvirt networks can be provisioned. If a :ref:`libvirt_network` is to be used with a :ref:`libvirt_node`, it must precede it.
+Libvirt networks can be provisioned. If a :ref:`libvirt_network` is to be used
+with a :ref:`libvirt_node`, it must precede it.
 
 * :docs1.5:`Topology Example <workspace/topologies/libvirt-el7net.yml>`
 * `Ansible module <http://docs.ansible.com/ansible/latest/virt_net_module.html>`_
 
-.. note:: This resource will not be torn down during a :term:`destroy`
-   action. This is because other resources may depend on the now existing
-   resource.
+.. note:: This resource will not be torn down during a :term:`destroy` action.
+   This is because other resources may depend on the now existing resource.
 
 Additional Dependencies
 -----------------------
