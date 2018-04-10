@@ -40,11 +40,7 @@ or
 
     $ linchpin -v --creds-path /credentials/path up openstack
 
-.. note:: The value provided to the ~~--creds-path~~ option is a directory,
+.. note:: The value provided to the ``--creds-path`` option is a directory,
           NOT a file. This is generally due to the topology containing the
           filename where the credentials are stored.
-
-.. seealso::
-
-    FIXME: put link to credentials section here.
 
