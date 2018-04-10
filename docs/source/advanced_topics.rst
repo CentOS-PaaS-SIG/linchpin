@@ -10,7 +10,6 @@ features are covered here.
    :maxdepth: 1
 
    advanced/layouts
-   advanced/credentials
    advanced/rundb
    advanced/journal
    advanced/context_distiller
