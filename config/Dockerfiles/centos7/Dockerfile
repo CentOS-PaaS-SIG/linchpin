@@ -10,8 +10,8 @@ RUN yum -y install python-pip ansible curl gcc python-devel openssl-devel \
                    libvirt-daemon-driver-* libvirt-daemon libvirt-daemon-kvm \
                    qemu-kvm libvirt-daemon-config-network libvirt-python \
                    libvirt-devel file openssh mkisofs libvirt-client \ 
-                   virt-install net-tools git python-krbV make \
-                   libxslt-python krb5-workstation \
+                   net-tools git python-krbV make intltool libosinfo \
+                   libxslt-python krb5-workstation gtk-update-icon-cache \
     && yum clean all; \
     (cd /lib/systemd/system/sysinit.target.wants/; for i in *; \
      do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
@@ -24,8 +24,25 @@ RUN yum -y install python-pip ansible curl gcc python-devel openssl-devel \
     rm -f /lib/systemd/system/anaconda.target.wants/*; \
     systemctl enable libvirtd; \
     systemctl enable virtlockd
-RUN pip install -U pip
-RUN pip install -U setuptools
+
+RUN yum -y remove PyYAML python-requests python-ipaddress && yum -y clean all
+
+RUN pip install -U pip; \
+    pip install -U setuptools; \
+    pip install 'requests>=2.14.2'; \
+    pip install 'ipaddress>=1.0.17'; \
+    pip install 'PyYAML>=3.12'; \
+    pip install ipaddr
+
+RUN curl -Lo /root/virt-manager-1.5.0.tar.gz \
+    https://github.com/virt-manager/virt-manager/archive/v1.5.0.tar.gz; \
+    tar xvf /root/virt-manager-1.5.0.tar.gz; \
+    pushd virt-manager-1.5.0; \
+    ./setup.py install; \
+    popd
+
+#RUN yum -y install virt-install
+
 RUN sed -i "/Service/a ExecStartPost=\/bin\/chmod 666 /dev/kvm" /usr/lib/systemd/system/libvirtd.service
 
 RUN curl -o /etc/yum.repos.d/beaker-client.repo \

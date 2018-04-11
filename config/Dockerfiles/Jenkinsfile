@@ -34,13 +34,16 @@ executionID = UUID.randomUUID().toString()
 // Pod name to use
 podName = 'linchpin' + executionID
 
-library identifier: "ci-pipeline@master",
-        retriever: modernSCM([$class: 'GitSCMSource',
-                              remote: "https://github.com/CentOS-Paas-SIG/ci-pipeline"])
+def libraries = ['cico-pipeline': ['master',
+                                   'https://github.com/CentOS/cico-pipeline-library.git'],
+                 'ci-pipeline'  : ['master',
+                                   'https://github.com/CentOS-PaaS-SIG/ci-pipeline.git']]
 
-library identifier: "cico-pipeline-library@master",
-        retriever: modernSCM([$class: 'GitSCMSource',
-                              remote: "https://github.com/CentOS/cico-pipeline-library"])
+libraries.each { name, repo ->
+    library identifier: "${name}@${repo[0]}",
+            retriever: modernSCM([$class: 'GitSCMSource',
+                                  remote: repo[1]])
+}
 
 properties(
     [

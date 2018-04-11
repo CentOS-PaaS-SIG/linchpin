@@ -1,6 +1,7 @@
 PARENT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))/../../)
 
-TARGETS := fedora27 centos7 fedora26
+#TARGETS := fedora27 centos7 fedora26
+TARGETS := centos7
 
 .PHONY: all
 all:

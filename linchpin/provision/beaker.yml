@@ -1,5 +1,6 @@
 ---
 # This playbook provisions the beaker topology.
+# Force beaker provisioner to run..
 
 - name:  "schema check and Pre Provisioning Activities on topology_file"
   hosts: localhost

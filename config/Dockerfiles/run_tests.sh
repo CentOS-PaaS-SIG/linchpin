@@ -5,7 +5,8 @@ set -o pipefail
 LINCHPINDIR=$1
 shift
 DISTROS=$*
-TARGETS="dummy os-server-new os-sg-new os-vol-new"
+#TARGETS="dummy bkr-new libvirt"
+TARGETS="libvirt"
 
 export WORKSPACE="/tmp"
 
