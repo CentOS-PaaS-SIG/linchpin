@@ -21,7 +21,6 @@ tagMap = [:]
 // Initialize
 tagMap['fedora26'] = STABLE_LABEL
 tagMap['fedora27'] = STABLE_LABEL
-tagMap['centos6'] = STABLE_LABEL
 tagMap['centos7'] = STABLE_LABEL
 
 // IRC properties
@@ -121,17 +120,6 @@ pipeline {
                 }
             }
         }
-        stage("centos6 image build") {
-            when {
-                // Only build if we have related files in changeset
-                changeset "config/Dockerfiles/centos6/**"
-            }
-            steps {
-                script {
-                    tagMap['centos6'] = pipelineUtils.buildImage(openshiftProject, "centos6")
-                }
-            }
-        }
         stage("centos7 image build") {
             when {
                 // Only build if we have related files in changeset
@@ -172,8 +160,6 @@ pipeline {
                                        value: tagMap['fedora26']),
                                 string(name: 'FEDORA27_TAG',
                                        value: tagMap['fedora27']),
-                                string(name: 'CENTOS6_TAG',
-                                       value: tagMap['centos6']),
                                 string(name: 'CENTOS7_TAG',
                                        value: tagMap['centos7'])
                         ],

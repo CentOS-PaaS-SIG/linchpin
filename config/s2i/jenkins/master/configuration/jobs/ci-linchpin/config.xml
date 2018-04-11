@@ -90,12 +90,6 @@
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>CENTOS6_TAG</name>
-          <description>Tag for centos6 image</description>
-          <defaultValue>stable</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
           <name>CENTOS7_TAG</name>
           <description>Tag for centos7 image</description>
           <defaultValue>stable</defaultValue>

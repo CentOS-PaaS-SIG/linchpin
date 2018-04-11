@@ -8,7 +8,7 @@ env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/ci-pipeline'
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
 
 // Add new images here
-imageList = ["fedora26", "fedora27", "centos6", "centos7"]
+imageList = ["fedora26", "fedora27", "centos7"]
 imageOperations = []
 
 library identifier: "ci-pipeline@master",
