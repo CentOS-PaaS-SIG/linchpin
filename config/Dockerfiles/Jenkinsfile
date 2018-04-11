@@ -11,7 +11,6 @@ env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop'
 env.SLAVE_TAG = env.SLAVE_TAG ?: 'stable'
 env.FEDORA26_TAG = env.FEDORA26_TAG ?: 'stable'
 env.FEDORA27_TAG = env.FEDORA27_TAG ?: 'stable'
-env.CENTOS6_TAG = env.CENTOS6_TAG ?: 'stable'
 env.CENTOS7_TAG = env.CENTOS7_TAG ?: 'stable'
 
 DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
@@ -72,9 +71,6 @@ properties(
                        description: 'Tag for fedora27 image',
                        name: 'FEDORA27_TAG'),
                 string(defaultValue: 'stable',
-                       description: 'Tag for centos6 image',
-                       name: 'CENTOS6_TAG'),
-                string(defaultValue: 'stable',
                        description: 'Tag for centos7 image',
                        name: 'CENTOS7_TAG')
             ]
@@ -97,13 +93,6 @@ podTemplate(name: podName,
                 ttyEnabled: false,
                 args: '${computer.jnlpmac} ${computer.name}',
                 command: '',
-                workingDir: '/workDir'),
-            containerTemplate(name: 'centos6',
-                alwaysPullImage: true,
-                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/centos6:' + CENTOS6_TAG,
-                ttyEnabled: true,
-                command: '',
-                privileged: true,
                 workingDir: '/workDir'),
             containerTemplate(name: 'centos7',
                 alwaysPullImage: true,
@@ -240,20 +229,6 @@ podTemplate(name: podName,
                           dir('linchpin') {
                             env.target = "fedora27"
                             pipelineUtils.executeInContainer(currentStage, "fedora27", "./config/Dockerfiles/linchpin-tests.sh")
-                          }
-                        }
-                      }, centos6: {
-                        def currentStage = "centos6-install"
-                        stage(currentStage) {
-                          dir('linchpin') {
-                            pipelineUtils.executeInContainer(currentStage, "centos6", "./config/Dockerfiles/linchpin-install.sh")
-                          }
-                        }
-                        currentStage = "centos6-test"
-                        stage(currentStage) {
-                          dir('linchpin') {
-                            env.target = "centos6"
-                            pipelineUtils.executeInContainer(currentStage, "centos6", "./config/Dockerfiles/linchpin-tests.sh")
                           }
                         }
                       },

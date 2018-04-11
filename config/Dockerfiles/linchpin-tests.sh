@@ -19,13 +19,8 @@ for i in $DRIVERS; do
     fi
     # Horrible hacks until CentOS support is fixed..
     # See Issue: https://github.com/CentOS-PaaS-SIG/duffy-ansible-module/issues/3
-    if [ "$target" = "centos6" -o "$target" = "centos7" ] && \
+    if [ "$target" = "centos7" ] && \
        [ "$i" = "aws-ec2-new" ]; then
-        test_summary="$(tput setaf 4)SKIPPED$(tput sgr0)\t${testname}"
-        summary="${summary}\n${test_summary}"
-        continue
-    fi
-    if [ "$target" = "centos6" -a "$i" = "duffy" ]; then
         test_summary="$(tput setaf 4)SKIPPED$(tput sgr0)\t${testname}"
         summary="${summary}\n${test_summary}"
         continue
