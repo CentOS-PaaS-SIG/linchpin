@@ -1,17 +1,7 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.1' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.17">
   <actions>
-    <io.jenkins.blueocean.service.embedded.BlueOceanUrlAction plugin="blueocean-rest-impl@1.4.2">
-      <blueOceanUrlObject class="io.jenkins.blueocean.service.embedded.BlueOceanUrlObjectImpl">
-        <mappedUrl>blue/organizations/jenkins/ci-pipeline-linchpin-trigger</mappedUrl>
-      </blueOceanUrlObject>
-    </io.jenkins.blueocean.service.embedded.BlueOceanUrlAction>
     <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobAction plugin="pipeline-model-definition@1.2.7"/>
-    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction plugin="pipeline-model-definition@1.2.7">
-      <jobProperties/>
-      <triggers/>
-      <parameters/>
-    </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
     <org.jenkinsci.plugins.workflow.multibranch.JobPropertyTrackerAction plugin="workflow-multibranch@2.17">
       <jobPropertyDescriptors>
         <string>org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty</string>
@@ -19,46 +9,21 @@
         <string>jenkins.model.BuildDiscarderProperty</string>
       </jobPropertyDescriptors>
     </org.jenkinsci.plugins.workflow.multibranch.JobPropertyTrackerAction>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction plugin="pipeline-model-definition@1.2.7">
+      <jobProperties/>
+      <triggers/>
+      <parameters/>
+    </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
   </actions>
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
-      <triggers>
-        <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@1.40.0">
-          <spec>H/5 * * * *</spec>
-          <configVersion>3</configVersion>
-          <orgslist>CentOS-PaaS-SIG</orgslist>
-          <cron>H/5 * * * *</cron>
-          <onlyTriggerPhrase>false</onlyTriggerPhrase>
-          <useGitHubHooks>false</useGitHubHooks>
-          <permitAll>true</permitAll>
-          <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
-          <displayBuildErrorsOnDownstreamBuilds>true</displayBuildErrorsOnDownstreamBuilds>
-          <gitHubAuthId>751ca49e-f1ff-45ce-ac48-52fe2c3850b4</gitHubAuthId>
-          <triggerPhrase>.*\[test\].*</triggerPhrase>
-          <extensions>
-            <org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
-              <commitStatusContext>Docker Build</commitStatusContext>
-              <showMatrixStatus>false</showMatrixStatus>
-              <triggeredStatus>Starting job...</triggeredStatus>
-              <startedStatus>Building...</startedStatus>
-            </org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
-          </extensions>
-        </org.jenkinsci.plugins.ghprb.GhprbTrigger>
-      </triggers>
-    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
     <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@1.0.7">
       <uid></uid>
       <namespace></namespace>
       <name></name>
       <resourceVersion></resourceVersion>
     </io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty>
-    <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
-    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
-      <autoRebuild>false</autoRebuild>
-      <rebuildDisabled>false</rebuildDisabled>
-    </com.sonyericsson.rebuild.RebuildSettings>
     <jenkins.model.BuildDiscarderProperty>
       <strategy class="hudson.tasks.LogRotator">
         <daysToKeep>-1</daysToKeep>
@@ -67,10 +32,61 @@
         <artifactNumToKeep>20</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
     <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.0">
       <projectUrl>https://github.com/CentOS-PaaS-SIG/linchpin/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers>
+        <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@1.40.0">
+          <spec>H/5 * * * *</spec>
+          <configVersion>3</configVersion>
+          <adminlist></adminlist>
+          <allowMembersOfWhitelistedOrgsAsAdmin>false</allowMembersOfWhitelistedOrgsAsAdmin>
+          <orgslist>CentOS-PaaS-SIG</orgslist>
+          <cron>H/5 * * * *</cron>
+          <buildDescTemplate></buildDescTemplate>
+          <onlyTriggerPhrase>true</onlyTriggerPhrase>
+          <useGitHubHooks>true</useGitHubHooks>
+          <permitAll>true</permitAll>
+          <whitelist></whitelist>
+          <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
+          <displayBuildErrorsOnDownstreamBuilds>true</displayBuildErrorsOnDownstreamBuilds>
+          <whiteListTargetBranches>
+            <org.jenkinsci.plugins.ghprb.GhprbBranch>
+              <branch></branch>
+            </org.jenkinsci.plugins.ghprb.GhprbBranch>
+          </whiteListTargetBranches>
+          <blackListTargetBranches>
+            <org.jenkinsci.plugins.ghprb.GhprbBranch>
+              <branch></branch>
+            </org.jenkinsci.plugins.ghprb.GhprbBranch>
+          </blackListTargetBranches>
+          <gitHubAuthId>751ca49e-f1ff-45ce-ac48-52fe2c3850b4</gitHubAuthId>
+          <triggerPhrase>.*\[merge\].*</triggerPhrase>
+          <skipBuildPhrase>.*\[skip\W+ci\].*</skipBuildPhrase>
+          <blackListCommitAuthor></blackListCommitAuthor>
+          <blackListLabels></blackListLabels>
+          <whiteListLabels></whiteListLabels>
+          <includedRegions></includedRegions>
+          <excludedRegions></excludedRegions>
+          <extensions>
+            <org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
+              <commitStatusContext>Merge PR</commitStatusContext>
+              <triggeredStatus>Starting job...</triggeredStatus>
+              <startedStatus>merging...</startedStatus>
+              <statusUrl></statusUrl>
+              <addTestResults>false</addTestResults>
+            </org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
+          </extensions>
+        </org.jenkinsci.plugins.ghprb.GhprbTrigger>
+      </triggers>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.45">
     <scm class="hudson.plugins.git.GitSCM" plugin="git@3.8.0">
@@ -97,10 +113,9 @@
         </hudson.plugins.git.extensions.impl.ChangelogToBranch>
       </extensions>
     </scm>
-    <scriptPath>config/Dockerfiles/JenkinsfileStageTrigger</scriptPath>
+    <scriptPath>config/Dockerfiles/JenkinsfileGHPRMerge</scriptPath>
     <lightweight>false</lightweight>
   </definition>
   <triggers/>
   <disabled>false</disabled>
 </flow-definition>
-    
