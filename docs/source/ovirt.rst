@@ -1,4 +1,4 @@
-ovirt
+oVirt
 =====
 
 The ovirt provider manages a single resource, ``ovirt_vms``.

@@ -15,7 +15,7 @@ Now that LinchPin is :doc:`installed <installation>`, this guide will walk you t
 Running the ``linchpin`` command
 --------------------------------
 
-.. include:: gs/linchpin_cli.rst
+.. include:: linchpin_cli.rst
 
 .. _gs_workspace:
 
@@ -35,7 +35,7 @@ Initialization (init)
 Resources
 ---------
 
-.. include:: includes/resources.rst
+.. include:: resources.rst
 
 .. _gs_up:
 
@@ -51,6 +51,11 @@ Teardown (destroy)
 
 .. include:: gs/teardown_destroy.rst
 
+Authentication
+--------------
+
+.. include:: credentials.rst
+
 
 .. seealso::
 
@@ -59,4 +64,4 @@ Teardown (destroy)
     :doc:`managing_resources`
         Managing Resources
     :doc:`providers`
-        Available Providers
+        Providers in Detail

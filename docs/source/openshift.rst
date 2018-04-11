@@ -1,4 +1,4 @@
-openshift
+Openshift
 =========
 
 The openshift provider manages two resources, ``openshift_inline``, and ``openshift_external``.
