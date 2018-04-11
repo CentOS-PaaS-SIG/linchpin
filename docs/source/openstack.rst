@@ -1,4 +1,4 @@
-openstack
+Openstack
 =========
 
 The openstack provider manages multiple types of resources.
@@ -16,7 +16,7 @@ Openstack instances can be provisioned using this resource.
    adding a ``count`` option.
 
 Topology Schema
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 Within Linchpin, the :term:`os_server` :term:`resource_definition` has more options
 than what are shown in the examples above. For each :term:`os_server` definition, the
@@ -107,8 +107,8 @@ for details.
    up by the openstack Ansible modules, and passed to openstack for
    authentication.
 
-Configuration Files
-```````````````````
+Using Openstack Credentials
+```````````````````````````
 
 Openstack provides a simple file structure using a file called
 `clouds.yaml <https://docs.openstack.org/os-client-config/latest/user/configuration.html>`_,

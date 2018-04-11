@@ -1,5 +1,5 @@
-gcloud
-======
+Google Cloud Platform
+=====================
 
 The Google Cloud Platform (gcloud) provider manages one resource, ``gcloud_gce``.
 
@@ -14,7 +14,7 @@ Google Compute Engine (gce) instances are provisioned using this resource.
 Additional Dependencies
 -----------------------
 
-No additional dependencies are required for the Openstack Provider.
+No additional dependencies are required for the Google Cloud (gcloud) Provider.
 
 Credentials Management
 ----------------------

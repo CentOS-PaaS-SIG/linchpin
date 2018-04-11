@@ -1,4 +1,4 @@
-duffy
+Duffy
 =====
 
 Duffy is a tool for managing pre-provisioned systems in CentOS' CI environment.
