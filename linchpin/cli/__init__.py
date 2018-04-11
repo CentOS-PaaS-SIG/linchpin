@@ -193,7 +193,6 @@ class LinchpinCli(LinchpinAPI):
         roles = []
         dist_data = {}
 
-
         # get roles used
         for target, data in run_data.iteritems():
             inputs = data.get('inputs')

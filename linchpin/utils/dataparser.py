@@ -63,8 +63,15 @@ class DataParser(object):
                 except Exception:
                     pass
 
-            file_data = self.render(file_data, pf_data)
-            return self.parse_json_yaml(file_data)
+            try:
+                file_data = self.render(file_data, pf_data)
+                return self.parse_json_yaml(file_data)
+            except Exception as e:
+                error_txt = "Error attempting to parse PinFile data."
+                error_txt += "\nPerhaps the PinFile or template-data are"
+                error_txt += " missing ?."
+#                error_txt += "\n\nError is: ({0})".format(e)
+                raise ValidationError(error_txt)
 
         return self.load_pinfile(file_w_path)
 
