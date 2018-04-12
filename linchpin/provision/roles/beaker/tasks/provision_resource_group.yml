@@ -41,7 +41,7 @@
 
   - name: combine bkr_id_values with bkr_hosts
     set_fact:
-      tmp_hosts: "{{ item | combine(bkr_hosts | selectattr('id', 'equalto', item.id) | first) }}"
+      tmp_hosts: "{{ item | combine(bkr_hosts | selectattr('id', 'match', '^' + item.id + '$') | first) }}"
     with_items: "{{ bkr_id_values }}"
     register: tmp_info
 
@@ -68,7 +68,7 @@
 
   - name: "set topology_outputs_beaker_server"
     set_fact:
-      tmp_topo_bkr_srvc: "{{ item | combine(_topo_out_bkr_server['hosts'] | selectattr('id', 'equalto', item.id) | first) }}"
+      tmp_topo_bkr_srvc: "{{ item | combine(_topo_out_bkr_server['hosts'] | selectattr('id', 'match', '^' + item.id + '$') | first) }}"
     when: state == 'present'
     with_items: "{{ topology_outputs_beaker_server }}"
     register: tmp_bkr

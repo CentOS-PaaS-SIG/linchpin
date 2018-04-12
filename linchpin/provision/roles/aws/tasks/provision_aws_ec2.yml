@@ -18,7 +18,7 @@
     count: "{{ res_def['count'] }}"
     vpc_subnet_id: "{{ res_def['vpc_subnet_id']| default(omit) }}"
     assign_public_ip: "{{ res_def['assign_public_ip']| default(omit) }}"
-    instance_tags: "{{ res_grp_vars | selectattr('resource_group_name', 'equalto', res_grp_name ) | first }}"
+    instance_tags: "{{ res_grp_vars | selectattr('resource_group_name', 'match', '^' + res_grp_name + '$') | first }}"
   register: res_def_output
   when: not async
 
@@ -40,7 +40,7 @@
     count: "{{ res_def['count'] }}"
     vpc_subnet_id: "{{ res_def['vpc_subnet_id']| default(omit) }}"
     assign_public_ip: "{{ res_def['assign_public_ip'] | default(omit) }}"
-    instance_tags: "{{ res_grp_vars | selectattr('resource_group_name', 'equalto', res_grp_name ) | first }}"
+    instance_tags: "{{ res_grp_vars | selectattr('resource_group_name', 'match', '^' + res_grp_name + '$') | first }}"
   async: "{{ async_timeout }}"
   poll: 0
   register: res_def_output

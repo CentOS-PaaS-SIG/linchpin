@@ -17,14 +17,6 @@ for i in $DRIVERS; do
         tar xvf $CREDS_PATH/${i}.tgz -C $tmpdir
         $tmpdir/install.sh
     fi
-    # Horrible hacks until CentOS support is fixed..
-    # See Issue: https://github.com/CentOS-PaaS-SIG/duffy-ansible-module/issues/3
-    if [ "$target" = "centos7" ] && \
-       [ "$i" = "aws-ec2-new" ]; then
-        test_summary="$(tput setaf 4)SKIPPED$(tput sgr0)\t${testname}"
-        summary="${summary}\n${test_summary}"
-        continue
-    fi
     ./config/Dockerfiles/linchpin-test.sh $i 2>&1 |tee ${target}_logs/${i}.log
     if [ $? -eq 0 ]; then
         test_summary="$(tput setaf 2)SUCCESS$(tput sgr0)\t${testname}"
