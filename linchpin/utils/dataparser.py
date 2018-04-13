@@ -36,7 +36,7 @@ class DataParser(object):
         self._mapping_tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
 
 
-    def process(self, file_w_path, data=None, data_w_path=None):
+    def process(self, file_w_path, data='{}', data_w_path=None):
         """ Processes the PinFile and any data (if a template)
         using Jinja2. Returns json of PinFile, topology, layout,
         and hooks.
@@ -66,8 +66,8 @@ class DataParser(object):
                 error_txt = "Error attempting to parse PinFile data file."
                 error_txt += "\nTemplate-data files require a prepended '@'"
                 error_txt += " (eg. '@/path/to/template-data.yml')"
-                error_txt += "\nPerhaps the path to the PinFile or template-data"
-                error_txt += "are missing or the incorrect path?."
+                error_txt += "\nPerhaps the path to the PinFile or"
+                error_txt += "template-data are missing or the incorrect path?."
                 raise ValidationError(error_txt)
 
         return self.load_pinfile(file_w_path)

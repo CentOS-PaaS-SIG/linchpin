@@ -162,8 +162,6 @@ class LinchpinCli(LinchpinAPI):
             template data.
         """
 
-        pf_data = None
-
         if not self.pf_data or not self.pf_data.startswith('@'):
             return None
         else:
@@ -173,8 +171,8 @@ class LinchpinCli(LinchpinAPI):
             if not os.path.exists(data_w_path):
                 data_w_path = '{0}/{1}'.format(self.workspace, pf_data_path)
                 if not os.path.exists(data_w_path):
-                    error_txt = "Template-data (-d) file was not found. Check the"
-                    error_txt += " template path and try again."
+                    error_txt = "Template-data (-d) file was not found. Check"
+                    error_txt += " the template path and try again."
                     raise TopologyError(error_txt)
 
             return data_w_path
@@ -497,7 +495,7 @@ class LinchpinCli(LinchpinAPI):
 
             if not isinstance(pf[target]['topology'], dict):
                 topology_path = self.find_include(pf[target]["topology"])
-                topology_data = self.parser.process(topology_path, pf_data)
+                topology_data = self.parser.process(topology_path, data=pf_data)
             else:
                 topology_data = pf[target]['topology']
 
@@ -509,7 +507,7 @@ class LinchpinCli(LinchpinAPI):
                 if not isinstance(pf[target]['layout'], dict):
                     layout_path = self.find_include(pf[target]["layout"],
                                                     ftype='layout')
-                    layout_data = self.parser.process(layout_path, pf_data)
+                    layout_data = self.parser.process(layout_path, data=pf_data)
                     layout_data = self._make_layout_integers(layout_data)
                     provision_data[target]['layout'] = layout_data
                 else:
