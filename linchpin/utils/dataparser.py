@@ -52,6 +52,9 @@ class DataParser(object):
             An optional run_id if the task is idempotent or a destroy action
         """
 
+        if not data:
+            data = '{}'
+
         with open(file_w_path, 'r') as stream:
             file_data = stream.read()
 
