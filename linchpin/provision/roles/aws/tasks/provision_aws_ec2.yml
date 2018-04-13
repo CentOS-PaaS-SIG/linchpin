@@ -5,6 +5,10 @@
       - name: "{{ res_def['res_name'] | default(res_def['name']) }}"
         resource_group_name: "{{ res_grp_name  }}"
 
+- name: Update Instance Tags
+  set_fact:
+    instance_tags: "{{ res_grp_vars | selectattr('resource_group_name', 'match', '^' + res_grp_name + '$') | first | combine( res_def['instance_tags'] ) }}"
+
 - name: "Provisioning AWS_EC2 Resource when not async"
   ec2:
     aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
@@ -18,7 +22,7 @@
     count: "{{ res_def['count'] }}"
     vpc_subnet_id: "{{ res_def['vpc_subnet_id']| default(omit) }}"
     assign_public_ip: "{{ res_def['assign_public_ip']| default(omit) }}"
-    instance_tags: "{{ res_grp_vars | selectattr('resource_group_name', 'match', '^' + res_grp_name + '$') | first }}"
+    instance_tags: "{{ instance_tags }}"
   register: res_def_output
   when: not async
 

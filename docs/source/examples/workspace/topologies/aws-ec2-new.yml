@@ -10,6 +10,9 @@ resource_groups:
         region: us-east-1
         image: ami-984189e2
         count: 1
+        instance_tags:
+            color: blue
+            shape: oval
     credentials:
       filename: aws.key
       profile: default
