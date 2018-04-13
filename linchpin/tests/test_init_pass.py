@@ -82,7 +82,7 @@ def setup_lp_api():
 
     parser = DataParser()
     pf_d = None
-    pf_data = parser.process(pf_w_path, pf_d)
+    pf_data = parser.process(pf_w_path)
 
     topo_folder = lpc.get_evar('topologies_folder')
     topo_file = pf_data[provider]["topology"]

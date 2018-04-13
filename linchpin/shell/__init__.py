@@ -109,7 +109,10 @@ def _handle_results(ctx, results, return_code):
               help='Use a name for the PinFile different from'
                    ' the configuration.')
 @click.option('-d', '--template-data', metavar='TEMPLATE_DATA',
-              help='Template data passed to PinFile template')
+              help="Template data passed to PinFile template.\n\n"
+                   "If template data is from a file, it must be"
+                   " prepended with an '@' character."
+              )
 @click.option('-o', '--output-pinfile', metavar='OUTPUT_PINFILE',
               help='Write out PinFile to provided location')
 @click.option('-w', '--workspace', type=click.Path(), envvar='WORKSPACE',

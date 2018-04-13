@@ -36,7 +36,7 @@ class DataParser(object):
         self._mapping_tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
 
 
-    def process(self, file_w_path, data_w_path=None):
+    def process(self, file_w_path, data=None, data_w_path=None):
         """ Processes the PinFile and any data (if a template)
         using Jinja2. Returns json of PinFile, topology, layout,
         and hooks.
@@ -44,27 +44,34 @@ class DataParser(object):
         :param file_w_path:
             Full path to the provided file to process
 
-        :param targets:
-            A tuple of targets to provision
+        :param data:
+            A JSON representation of data mapped to a Jinja2 template in
+            file_w_path
 
-        :param run_id:
-            An optional run_id if the task is idempotent or a destroy action
+        :param data_w_path:
+            If data is passed as a file, this is used
         """
+
+        if not data:
+            data = '{}'
 
         with open(file_w_path, 'r') as stream:
             file_data = stream.read()
 
-            pf_data = '{}'
             if data_w_path:
-                pf_data = data_w_path
-                try:
-                    with open(data_w_path, 'r') as strm:
-                        pf_data = strm.read()
-                except Exception:
-                    pass
+                with open(data_w_path, 'r') as strm:
+                    data = strm.read()
 
-            file_data = self.render(file_data, pf_data)
-            return self.parse_json_yaml(file_data)
+            try:
+                file_data = self.render(file_data, data)
+                return self.parse_json_yaml(file_data)
+            except TypeError:
+                error_txt = "Error attempting to parse PinFile data file."
+                error_txt += "\nTemplate-data files require a prepended '@'"
+                error_txt += " (eg. '@/path/to/template-data.yml')"
+                error_txt += "\nPerhaps the path to the PinFile or"
+                error_txt += "template-data are missing or the incorrect path?."
+                raise ValidationError(error_txt)
 
         return self.load_pinfile(file_w_path)
 
