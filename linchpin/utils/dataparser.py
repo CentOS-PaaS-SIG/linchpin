@@ -36,7 +36,7 @@ class DataParser(object):
         self._mapping_tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
 
 
-    def process(self, file_w_path, data='{}', data_w_path=None):
+    def process(self, file_w_path, data=None, data_w_path=None):
         """ Processes the PinFile and any data (if a template)
         using Jinja2. Returns json of PinFile, topology, layout,
         and hooks.
@@ -44,12 +44,12 @@ class DataParser(object):
         :param file_w_path:
             Full path to the provided file to process
 
-        :param pf_data:
+        :param data:
             A JSON representation of data mapped to a Jinja2 template in
             file_w_path
 
         :param data_w_path:
-            An optional run_id if the task is idempotent or a destroy action
+            If data is passed as a file, this is used
         """
 
         if not data:
