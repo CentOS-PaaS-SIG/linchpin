@@ -14,6 +14,7 @@ from linchpin import LinchpinAPI
 from linchpin.fetch import FETCH_CLASS
 from linchpin.exceptions import ActionError
 from linchpin.exceptions import LinchpinError
+from linchpin.exceptions import TopologyError
 from linchpin.utils.dataparser import DataParser
 
 
@@ -161,17 +162,22 @@ class LinchpinCli(LinchpinAPI):
             template data.
         """
 
-        if not self.pf_data:
+        pf_data = None
+
+        if not self.pf_data or not self.pf_data.startswith('@'):
             return None
+        else:
+            pf_data_path = self.pf_data[1:]
+            data_w_path = os.path.abspath(os.path.expanduser(pf_data_path))
 
-        data_w_path = os.path.abspath(os.path.expanduser(self.pf_data))
-
-        if not os.path.exists(data_w_path):
-            data_w_path = '{0}/{1}'.format(self.workspace, self.pf_data)
             if not os.path.exists(data_w_path):
-                return self.pf_data
+                data_w_path = '{0}/{1}'.format(self.workspace, pf_data_path)
+                if not os.path.exists(data_w_path):
+                    error_txt = "Template-data (-d) file was not found. Check the"
+                    error_txt += " template path and try again."
+                    raise TopologyError(error_txt)
 
-        return data_w_path
+            return data_w_path
 
 
     def _write_distilled_context(self, run_data):
@@ -403,11 +409,12 @@ class LinchpinCli(LinchpinAPI):
                 use_pinfile = False
 
         if use_pinfile:
-
             pf_w_path = self._get_pinfile_path()
-            pf_data = self._get_data_path()
-
-            pf = self.parser.process(pf_w_path, pf_data)
+            pf_data_path = self._get_data_path()
+            if not pf_data_path:
+                pf = self.parser.process(pf_w_path, data=self.pf_data)
+            else:
+                pf = self.parser.process(pf_w_path, data_w_path=pf_data_path)
 
             if pf:
                 provision_data = self._build(pf, pf_data)
