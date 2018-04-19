@@ -16,6 +16,9 @@ reqs_file = 'requirements.txt'.format(dir_path)
 with open(reqs_file) as f:
     required = f.read().splitlines()
 
+setup_required = list(required)
+setup_required.append('pytest-runner')
+
 ignore_dir = ['.git']
 
 setup(
@@ -25,12 +28,13 @@ setup(
     author='samvaran kashyap rallabandi',
     author_email='linchpin@redhat.com',
     url='http://linchpin.readthedocs.io/',
-    setup_requires=required,
+    setup_requires=setup_required,
     install_requires=required,
     entry_points='''
         [console_scripts]
         linchpin=linchpin.shell:runcli
     ''',
+    tests_require=["pytest","nose", "mock", "coverage", "flake8"],
     extras_require={
         'krbV': ["python-krbV"],
         'beaker': ['beaker-client>=23.3', 'python-krbV'],
