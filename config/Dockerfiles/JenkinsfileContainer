@@ -23,6 +23,26 @@ tagMap['fedora26'] = STABLE_LABEL
 tagMap['fedora27'] = STABLE_LABEL
 tagMap['centos7'] = STABLE_LABEL
 
+// Target: [ PATH/IN/REPO to match, ]
+p_targets = ['dummy':
+              ["^linchpin/provision/roles/dummy/.*",
+               "^linchpin/provision/dummy.yml"],
+             'duffy':
+              ["^linchpin/provision/roles/duffy/.*",
+               "^linchpin/provision/duffy.yml"],
+             'libvirt':
+              ["^linchpin/provision/roles/libvirt/.*",
+               "^linchpin/provision/libvirt.yml"],
+             'aws-ec2-new':
+              ["^linchpin/provision/roles/aws/.*",
+               "^linchpin/provision/aws.yml"],
+             'bkr-new':
+              ["^linchpin/provision/roles/beaker/.*",
+               "^linchpin/provision/beaker.yml"],
+            ]
+
+test_targets = ""
+
 // IRC properties
 IRC_NICK = "contra-bot"
 IRC_CHANNEL = "#contra-ci-cd"
@@ -34,6 +54,15 @@ library identifier: "ci-pipeline@master",
 library identifier: "cico-pipeline-library@master",
         retriever: modernSCM([$class: 'GitSCMSource',
                               remote: "https://github.com/CentOS/cico-pipeline-library"])
+
+// Check out PR's version of library
+library identifier: "linchpin-pipeline@${env.ghprbActualCommit}",
+        retriever: modernSCM([$class: 'GitSCMSource',
+                              remote: "https://github.com/${env.ghprbGhRepository}",
+                              traits: [[$class: 'jenkins.plugins.git.traits.BranchDiscoveryTrait'],
+                                       [$class: 'RefSpecsSCMSourceTrait',
+                                        templates: [[value: '+refs/heads/*:refs/remotes/@{remote}/*'],
+[value: '+refs/pull/*:refs/remotes/origin/pr/*']]]]])
 
 properties([
   buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '20')),
@@ -85,6 +114,16 @@ pipeline {
                     }
                     writeFile file: 'changelog.txt', text: env.changeLogStr
                     archiveArtifacts allowEmptyArchive: true, artifacts: 'changelog.txt'
+                }
+            }
+        }
+        stage("Determine which targets to test") {
+            steps {
+                node('master') {
+                    script {
+                      def targets = linchpinPipelineUtils.getTargetsToTest(p_targets)
+                      test_targets = targets.join(" ")
+                    }
                 }
             }
         }
@@ -161,7 +200,9 @@ pipeline {
                                 string(name: 'FEDORA27_TAG',
                                        value: tagMap['fedora27']),
                                 string(name: 'CENTOS7_TAG',
-                                       value: tagMap['centos7'])
+                                       value: tagMap['centos7']),
+                                string(name: 'TEST_TARGETS',
+                                       value: test_targets)
                         ],
                         wait: true
             }

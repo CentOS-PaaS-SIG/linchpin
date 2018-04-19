@@ -14,14 +14,17 @@ env.FEDORA27_TAG = env.FEDORA27_TAG ?: 'stable'
 env.CENTOS7_TAG = env.CENTOS7_TAG ?: 'stable'
 
 DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
-// if LINCHPIN_DRIVERS is defined in jenkins global
-// environment this will limit the possible drivers tested.
-// if it's not defined you will get all the possible drivers
+// if LINCHPIN_TARGETS is defined in jenkins global
+// environment this will limit the possible targets tested.
+// if it's not defined you will get all the possible targets
 // listed here.
-LDRIVERS = env.LINCHPIN_DRIVERS ?: 'dummy duffy libvirt aws-ec2-new'
-PDRIVERS = LDRIVERS.tokenize()
-TDRIVERS = ["dummy", "duffy", "libvirt", "aws-ec2-new", "bkr-new"]
-env.DRIVERS = TDRIVERS.intersect( PDRIVERS ).join(" ")
+LTARGETS = env.LINCHPIN_TARGETS ?: 'dummy duffy libvirt aws-ec2-new'
+PTARGETS = LTARGETS.tokenize()
+
+TEST_TARGETS = env.TEST_TARGETS ?: 'dummy duffy libvirt aws-ec2-new bkr-new'
+TTARGETS = TEST_TARGETS.tokenize()
+
+env.TARGETS = TTARGETS.intersect( PTARGETS ).join(" ")
 OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
 
@@ -170,16 +173,16 @@ podTemplate(name: podName,
                             def creds = com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredentials(
                               com.cloudbees.plugins.credentials.Credentials.class
                             );
-                            for (driver in PDRIVERS) {
-                              def cf = creds.findResult { it.id == driver + '-key' ? it : null }
+                            for (target in PTARGETS) {
+                              def cf = creds.findResult { it.id == target + '-key' ? it : null }
                               if ( cf ) {
                                 println "found credential ${cf.id} filename:${cf.fileName}"
-                                withCredentials([file(credentialsId: driver + '-key', variable: 'FILEKEY')]) {
+                                withCredentials([file(credentialsId: target + '-key', variable: 'FILEKEY')]) {
                                 sh """
                                     #!/bin/bash -x
-                                    mkdir -p keys/${driver}
-                                    cp ${FILEKEY} keys/${driver}/${cf.fileName}
-                                    chmod 0600 keys/${driver}/${cf.fileName}
+                                    mkdir -p keys/${target}
+                                    cp ${FILEKEY} keys/${target}/${cf.fileName}
+                                    chmod 0600 keys/${target}/${cf.fileName}
                                 """
                                 }
                               }
@@ -199,7 +202,7 @@ podTemplate(name: podName,
                         currentStage = "centos7-test"
                         stage(currentStage) {
                           dir('linchpin') {
-                            env.target = "centos7"
+                            env.distro = "centos7"
                             pipelineUtils.executeInContainer(currentStage, "centos7", "./config/Dockerfiles/linchpin-tests.sh")
                           }
                         }
@@ -213,7 +216,7 @@ podTemplate(name: podName,
                         currentStage = "fedora26-test"
                         stage(currentStage) {
                           dir('linchpin') {
-                            env.target = "fedora26"
+                            env.distro = "fedora26"
                             pipelineUtils.executeInContainer(currentStage, "fedora26", "./config/Dockerfiles/linchpin-tests.sh")
                           }
                         }
@@ -227,7 +230,7 @@ podTemplate(name: podName,
                         currentStage = "fedora27-test"
                         stage(currentStage) {
                           dir('linchpin') {
-                            env.target = "fedora27"
+                            env.distro = "fedora27"
                             pipelineUtils.executeInContainer(currentStage, "fedora27", "./config/Dockerfiles/linchpin-tests.sh")
                           }
                         }

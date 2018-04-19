@@ -1,12 +1,12 @@
 #!/bin/bash -xe
 
-DRIVER=$1
+TARGET=$1
 
 function clean_up {
     set +e
-    linchpin -w . -v destroy $DRIVER
+    linchpin -w . -v destroy $TARGET
 }
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
 pushd docs/source/examples/workspace
-linchpin -w . -v up $DRIVER
+linchpin -w . -v up $TARGET
