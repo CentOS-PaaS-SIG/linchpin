@@ -6,8 +6,8 @@ click
 camel
 yamlordereddictloader
 ansible>=2.3.1,<2.5.0
-#shade>=1.22.2 # F27 has 1.18.1
-shade>=1.8.0,!=1.21.0
+six>=1.10.0
+shade>=1.18.0,!=1.21.0
 naked
 Cerberus<=1.1
 tinydb
