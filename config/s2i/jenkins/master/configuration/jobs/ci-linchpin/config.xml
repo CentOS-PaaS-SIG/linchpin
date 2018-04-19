@@ -1,4 +1,4 @@
-<?xml version='1.1' encoding='UTF-8'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.17">
   <actions>
     <org.jenkinsci.plugins.workflow.multibranch.JobPropertyTrackerAction plugin="workflow-multibranch@2.17">
