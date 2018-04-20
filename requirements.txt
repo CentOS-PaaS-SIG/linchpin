@@ -6,11 +6,11 @@ click
 camel
 yamlordereddictloader
 ansible>=2.3.1,<2.5.0
-shade>=1.22.2
+six>=1.10.0
+shade>=1.18.0,!=1.21.0
 naked
 Cerberus<=1.1
 tinydb
 requests>=2.14.2
-jsonschema
 ipaddress>=1.0.17
 PyYAML>=3.12
