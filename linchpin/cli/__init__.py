@@ -235,34 +235,26 @@ class LinchpinCli(LinchpinAPI):
 
             try:
                 for res in resources:
+                    res_data = {}
                     for k, v in fields.iteritems():
-                        res_data = {}
                         if not v:
-                            dd = dist_data.get(target, {})
-                            if len(dd):
-                                for items in dd:
-                                    if k in items.keys():
-                                        items[k].extend(res.get(k))
-                                    else:
-                                        items[k] = res.get(k)
-                            else:
-                                res_data[k] = res.get(k)
+                            res_data[k] = res.get(k)
                         else:
                             rsrc = res.get(k)[0]
                             for value in v:
                                 if isinstance(value, dict):
                                     for key, vals in value.iteritems():
-                                        sk = rsrc.get(key)
+                                        subrsc = rsrc.get(key)
                                         for val in vals:
-                                            res_data[val] = sk.get(val)
+                                            res_data[val] = subrsc.get(val)
                                 else:
                                     res_data[value] = rsrc.get(value)
 
-                        if target not in dist_data.keys():
-                            dist_data[target] = []
+                    if target not in dist_data.keys():
+                        dist_data[target] = []
 
-                        if len(res_data) and res_data not in dist_data[target]:
-                            dist_data[target].append(res_data)
+                    if len(res_data) and res_data not in dist_data[target]:
+                        dist_data[target].append(res_data)
             except Exception:
                 pass
 
@@ -328,9 +320,15 @@ class LinchpinCli(LinchpinAPI):
         distill_data = self.get_cfg('lp', 'distill_data')
         gen_resources = self.get_evar('generate_resources')
 
-        if (not return_code and ast.literal_eval(distill_data) and
-                not gen_resources):
-            self._write_distilled_context(run_data)
+        if ast.literal_eval(distill_data.title()) and not gen_resources:
+            if return_code:
+                distill_on_error = self.get_cfg('lp',
+                                                'distill_on_error',
+                                                default='False')
+                if ast.literal_eval(distill_on_error.title()):
+                    self._write_distilled_context(run_data)
+            else:
+                    self._write_distilled_context(run_data)
 
         # Show success and errors, with data
         return (return_code, return_data)
@@ -578,7 +576,7 @@ class LinchpinCli(LinchpinAPI):
         cache_path = os.path.abspath(os.path.join(os.path.expanduser('~'),
                                                   '.cache/linchpin'))
         if not os.path.exists(cache_path):
-            os.mkdir(cache_path)
+            os.makedirs(cache_path)
 
         protocol_regex = OrderedDict([
             ('((git|ssh|http(s)?)|(git@[\w\.]+))'
