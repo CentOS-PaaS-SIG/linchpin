@@ -19,7 +19,3 @@ resource_groups:
             arch: x86_64
             count: 1
             name: rhel65
-          - distro: RHEL-7.4
-            arch: x86_64
-            count: 1
-            name: rhel74
