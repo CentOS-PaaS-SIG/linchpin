@@ -51,4 +51,4 @@ parameters:
 - description: The git ref or tag to use for customization.
   displayName: Git Reference
   name: REPO_REF
-  value: master
+  value: develop

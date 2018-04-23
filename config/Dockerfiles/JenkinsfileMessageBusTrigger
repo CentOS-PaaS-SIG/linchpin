@@ -29,11 +29,12 @@ node('master') {
                 def ghprbPullId = msg_content['ghprbPullId']
                 def ghprbPullAuthorLogin = msg_content['ghprbPullAuthorLogin']
                 def ghprbActualCommit = msg_content['ghprbActualCommit']
+                def ghprbGhRepository = msg_content['ghprbGhRepository']
                 def sha1 = msg_content['sha1']
 
                 currentBuild.displayName = "Build#: ${env.BUILD_NUMBER} - PR: ${ghprbPullId} - Author: ${ghprbPullAuthorLogin}"
                 if (ghprbActualCommit != null && ghprbActualCommit != "develop") {
-                  currentBuild.description = "<a href=\"https://github.com/${msg_content.ghprbGhRepository}/pull/${ghprbPullId}\">PR #${ghprbPullId} (${ghprbPullAuthorLogin})</a>"
+                  currentBuild.description = "<a href=\"https://github.com/${ghprbGhRepository}/pull/${ghprbPullId}\">PR #${ghprbPullId} (${ghprbPullAuthorLogin})</a>"
                 }
 
                 build job: "ci-linchpin-container",
@@ -43,7 +44,7 @@ node('master') {
                     string(name: 'ghprbPullId',
                            value: "${ghprbPullId}"),
                     string(name: 'ghprbGhRepository', 
-                           value: "${env.ghprbGhRepository}"),
+                           value: "${ghprbGhRepository}"),
                     string(name: 'ghprbPullAuthorLogin',
                            value: "${ghprbPullAuthorLogin}"),
                     string(name: 'sha1',
