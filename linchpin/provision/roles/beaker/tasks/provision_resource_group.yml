@@ -17,6 +17,21 @@
   register: bkr
   ignore_errors: true
 
+
+- name: "set bkr_rsets"
+  set_fact:
+      bkr_rsets: "{{ bkr_rsets | default([]) }} + {{ rd.recipesets }}"
+  with_items: "{{ res_defs['resource_definitions'] }}"
+  loop_control:
+    loop_var: rd
+
+- name: "set bkr_names"
+  set_fact:
+      bkr_names: "{{ bkr_names | default([]) }} + {{ [{'name': brs['name']}] }}"
+  with_items: "{{ bkr_rsets }}"
+  loop_control:
+    loop_var: brs
+
 - block:
   - name: "set bkr ids from results"
     set_fact:
@@ -25,29 +40,92 @@
     loop_control:
       loop_var: result
 
-  - name: set bkr hosts from results
+  - name: "count bkr_ids"
     set_fact:
-      bkr_hosts: "{{ bkr_hosts | default([]) }} + {{ result['hosts'] }}"
+        bkr_id_count: "{{ (bkr_ids | length, 'count', 'id') }}"
+
+#  - debug:
+#      var: bkr_id_count
+
+  - name: "set bkr_hosts from results"
+    set_fact:
+      bkr_hosts: "{{ bkr_hosts | default([]) }} + {{ bh['hosts'] }}"
     with_items: "{{ bkr.results }}"
     loop_control:
-      loop_var: result
+      loop_var: bh
+
+  - name: "count bkr_hosts"
+    set_fact:
+      bkr_host_count: "{{ (bkr_hosts | length, 'count', 'distro') }}"
+
+#  - debug:
+#      var: bkr_host_count
+
+  - name: "set unique value based upon count"
+    set_fact:
+      combine_keys: "{{ combine_keys | default([]) }} + [{{ cks }}]"
+    with_items:
+      - "{{ bkr_id_count }}"
+      - "{{ bkr_host_count }}"
+    loop_control:
+      loop_var: cks
+
+  # take the first item sorted, get the last value out of the triple tuple
+  - name: "set unique value based upon count"
+    set_fact:
+      combine_key: "{{ combine_keys | sort(reverse=True) | first | last }}"
+
+#  - name: debug bkr_hosts
+#    debug:
+#      var: bkr_hosts
+
+#  - name: debug bkr_names
+#    debug:
+#      var: bkr_names
+
+  - name: "set bkr_host_values to an empty list"
+    set_fact:
+      bkr_host_values: []
+
+  - name: "combine bkr_hosts and bkr_names"
+    set_fact:
+      bkr_host_values: "{{ bkr_host_values }} + [{{ bhv.0 | combine(bhv.1) }}]"
+    with_together:
+        - "{{ bkr_hosts }}"
+        - "{{ bkr_names }}"
+    loop_control:
+      loop_var: bhv
 
   - name: "split id and url into separate components"
     set_fact:
-      bkr_id_values: "{{ bkr_id_values | default([]) + [{ 'id': result.key, 'url': result.value }] }}"
+      bkr_id_values: "{{ bkr_id_values | default([]) + [{ 'id': bids.key, 'url': bids.value }] }}"
     with_dict: "{{ bkr_ids }}"
     loop_control:
-      loop_var: result
+      loop_var: bids
 
-  - name: combine bkr_id_values with bkr_hosts
+  - name: "combine bkr_id_values with bkr_hosts"
     set_fact:
-      tmp_hosts: "{{ item | combine(bkr_hosts | selectattr('id', 'match', '^' + item.id + '$') | first) }}"
-    with_items: "{{ bkr_id_values }}"
+      tmp_hosts: "{{ bhv | combine(bkr_id_values | selectattr('id', 'match', '^' + bhv.id + '$') | first) }}"
+    with_items: "{{ bkr_host_values }}"
     register: tmp_info
+    loop_control:
+      loop_var: bhv
+
+#  - name: debug tmp_hosts
+#    debug:
+#      var: tmp_hosts
+#
+#  - name: debug tmp_info
+#    debug:
+#      var: tmp_info.results
 
   - name: "Set topology_outputs_beaker_server to the current job(s) data"
     set_fact:
       topology_outputs_beaker_server: "{{ tmp_info.results | map(attribute='ansible_facts.tmp_hosts') | list }}"
+
+#  - name: debug topology_outputs_beaker_server
+#    debug:
+#      var: topology_outputs_beaker_server
 
   - name: "Add beaker job info to the rundb"
     rundb:
@@ -66,14 +144,37 @@
       provision_params: "{{ bkr.results[0].provision_params }}"
     register: _topo_out_bkr_server
 
-  - name: "set topology_outputs_beaker_server"
+#  - name: debug _topo_out_bkr_server
+#    debug:
+#      var: _topo_out_bkr_server
+
+
+  - name: "set topology_outputs_beaker_server using id"
     set_fact:
-      tmp_topo_bkr_srvc: "{{ item | combine(_topo_out_bkr_server['hosts'] | selectattr('id', 'match', '^' + item.id + '$') | first) }}"
-    when: state == 'present'
+      tmp_topo_bkr_srvc: "{{ ttbs | combine(_topo_out_bkr_server['hosts'] | selectattr('id', 'match', '^' + ttbs.id + '$') | first) }}"
+    with_items: "{{ topology_outputs_beaker_server }}"
+    when:
+      - state == 'present'
+      - combine_key == 'id'
+    register: tmp_bkr
+    loop_control:
+      loop_var: ttbs
+
+  - name: "set topology_outputs_beaker_server using distro"
+    set_fact:
+      tmp_topo_bkr_srvc: "{{ ttbs | combine(_topo_out_bkr_server['hosts'] | selectattr('distro', 'match', '^' + ttbs.distro + '$') | first) }}"
+    when:
+      - state == 'present'
+      - combine_key == 'distro'
     with_items: "{{ topology_outputs_beaker_server }}"
     register: tmp_bkr
+    loop_control:
+      loop_var: ttbs
 
   - name: "Set topology_outputs_beaker_server to the current job(s) data"
     set_fact:
       topology_outputs_beaker_server: "{{ tmp_bkr.results | map(attribute='ansible_facts.tmp_topo_bkr_srvc') | list }}"
 
+#  - name: debug topology_outputs_beaker_server
+#    debug:
+#      var: topology_outputs_beaker_server
