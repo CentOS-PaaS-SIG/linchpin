@@ -3,7 +3,7 @@
 
 def format_networks(networks):
     # "net-name=atomic-e2e-jenkins-test,net-name=atomic-e2e-jenkins-test2"
-    nics=[]
+    nics = []
     if networks is not None and isinstance(networks, list):
         nics = ["net-name={0}".format(net) for net in networks]
         nics = ",".join(nics)
