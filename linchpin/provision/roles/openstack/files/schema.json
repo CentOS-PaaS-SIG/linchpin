@@ -19,13 +19,14 @@
                         "required": false,
                         "schema": { "type": "string", "required": true }
                     },
-		    "volumes": {
+                    "volumes": {
                         "type": "list",
                         "required": false,
                         "schema": { "type": "string", "required": true }
                     },
                     "keypair": { "type": "string", "required": true },
                     "security_groups": { "type": "string", "required": false },
+                    "auto_ip": { "type": "boolean", "required": false },
                     "fip_pool": { "type": "string", "required": false },
                     "userdata": { "type": "string", "required": false },
                     "boot_from_volume": { "type": "boolean", "required": false },
