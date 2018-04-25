@@ -32,9 +32,9 @@ def getTargetsToTest(targetsMap) {
                 def file = files[k]
                 for (e in targetsMap) {
                     if (matchPath(file.path, e.value)) {
+                        println "${e.key} matched ${file.path}"
                         this_match = true
                         targets[e.key] = 1
-                        break
                     }
                 }
                 if (!this_match) {
