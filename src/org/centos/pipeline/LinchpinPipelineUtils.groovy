@@ -46,5 +46,5 @@ def getTargetsToTest(targetsMap) {
             }
         }
     }
-    return keysToList(t_targets)
+    return keysToList(targets)
 }
