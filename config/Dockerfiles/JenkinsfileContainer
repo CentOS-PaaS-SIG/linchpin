@@ -25,8 +25,7 @@ tagMap['centos7'] = STABLE_LABEL
 
 // Target: [ PATH/IN/REPO to match, ]
 p_targets = ['dummy':
-              ["^linchpin/provision/roles/dummy/.*",
-               "^linchpin/provision/dummy.yml"],
+              ["^(?!linchpin/version.py).*"],
              'duffy':
               ["^linchpin/provision/roles/duffy/.*",
                "^linchpin/provision/duffy.yml"],
