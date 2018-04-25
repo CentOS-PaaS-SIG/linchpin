@@ -8,9 +8,9 @@
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
     timeout: 1200
+    auto_ip: "{{ res_def['auto_ip'] | default('yes') }}"
     flavor: "{{ res_def['flavor'] }}"
     nics:  "{{ res_def['networks'] | default(None) | os_net }}"
-    floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
     userdata: "{{ res_def['userdata'] | default(omit) }}"
     count: "{{ res_def['count'] }}"
@@ -35,9 +35,9 @@
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
     timeout: 1200
+    auto_ip: "{{ res_def['auto_ip'] | default(omit) }}"
     flavor: "{{ res_def['flavor'] }}"
     nics:  "{{ res_def['networks'] | default(None) | os_net }}"
-    floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
     userdata: "{{ res_def['userdata'] | default(omit) }}"
     count: "{{ res_def['count'] }}"
@@ -63,9 +63,9 @@
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
     timeout: 1200
+    auto_ip: "{{ res_def['auto_ip'] | default(omit) }}"
     flavor: "{{ res_def['flavor'] }}"
     nics:  "{{ res_def['networks'] | default(None) | os_net }}"
-    floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
     userdata: "{{ res_def['userdata'] | default(omit) }}"
     count: "{{ res_def['count'] }}"
@@ -92,9 +92,9 @@
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
     timeout: 1200
+    auto_ip: "{{ res_def['auto_ip'] | default(omit) }}"
     flavor: "{{ res_def['flavor'] }}"
     nics:  "{{ res_def['networks'] | default(None) | os_net }}"
-    floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
     userdata: "{{ res_def['userdata'] | default(omit) }}"
     count: "{{ res_def['count'] }}"
