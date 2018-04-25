@@ -7,7 +7,7 @@
 
 - name: Update Instance Tags
   set_fact:
-    instance_tags: "{{ res_grp_vars | selectattr('resource_group_name', 'match', '^' + res_grp_name + '$') | first | combine( res_def['instance_tags'] ) }}"
+    instance_tags: "{{ res_grp_vars | selectattr('resource_group_name', 'match', '^' + res_grp_name + '$') | first | combine( res_def['instance_tags'] | default({}) ) }}"
 
 - name: "Provisioning AWS_EC2 Resource when not async"
   ec2:

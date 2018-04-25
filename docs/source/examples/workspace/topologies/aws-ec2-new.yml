@@ -11,8 +11,11 @@ resource_groups:
         image: ami-984189e2
         count: 1
         instance_tags:
-            color: blue
-            shape: oval
+          color: blue
+          shape: oval
+        security_group:
+          - default
+          - public
     credentials:
       filename: aws.key
       profile: default
