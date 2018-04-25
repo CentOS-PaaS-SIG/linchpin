@@ -75,7 +75,9 @@ properties(
                        name: 'FEDORA27_TAG'),
                 string(defaultValue: 'stable',
                        description: 'Tag for centos7 image',
-                       name: 'CENTOS7_TAG')
+                       name: 'CENTOS7_TAG'),
+                string(description: 'Targets to be tested',
+                       name: 'TEST_TARGETS')
             ]
         ),
     ]
