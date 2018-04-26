@@ -7,44 +7,39 @@ else
 fi
 
 if [ $# -lt 1 ]; then
-  echo "Usage $0 <lp-path> [<pypi-site>]"
+  echo "Usage $0 <tag> [<pypi-site>]"
   echo
-  echo lp-path: path to linchpin source
-  echo 'pypi-site: path to linchpin source (default: pypitest)'
+  echo "tag: version tag (eg. v1.5.3)"
+  echo "pypi-site: path to linchpin source (default: pypitest)"
   exit 1
 fi
 
+GIT_TAG=${1}
 PROMPT=1
-LP_PATH=${1}
 
 PKG_TYPES="sdist bdist_wheel"
 SETUP_CMD="python setup.py"
 CLEAN_CMD="clean"
 REG_CMD="register"
 UPLOAD_CMD="${PKG_TYPES} upload"
+GIT=$(which git)
+LP_GIT_URL=git://github.com/CentOS-PaaS-SIG/linchpin
+#LP_GIT_URL=git://github.com/herlo/linchpin
 
-# find extraneous files and remove them
-CRUFTIES=('coverage.xml' 'linchpin.log' '*.pyc', '*.retry', '*.sw*')
-CRUFTY_DIRS=('linchpin.egg-info' 'build' 'dist' 'docs/build' 'provision/outputs' 'provision/inventories')
-
-echo "REMOVING CRUFTY FILES"
-
-for CRUFT in "${CRUFTIES[@]}"; do
-    #echo find ${LP_PATH} -name "${CRUFT}" -delete
-    find ${LP_PATH} -name "${CRUFT}" -delete
-done
-
-echo
-echo "REMOVING CRUFTY DIRS"
-
-for CRUFT_DIR in "${CRUFTY_DIRS[@]}"; do
-    #echo rm -rf ${LP_PATH}/${CRUFT_DIR}
-    rm -rf ${LP_PATH}/${CRUFT_DIR}
-done
+TMP_DIR=$(mktemp -d)
 
 CLEAN="${SETUP_CMD} ${CLEAN_CMD}"
-REG="${SETUP_CMD} ${REG_CMD} -r ${PYPI}"
 UPLOAD="${SETUP_CMD} ${UPLOAD_CMD} -r ${PYPI}"
+
+${GIT} clone ${LP_GIT_URL} ${TMP_DIR}
+pushd ${TMP_DIR}
+${GIT} fetch --all --tags --prune
+${GIT} checkout tags/${GIT_TAG} -b lp_${GIT_TAG}
+
+if [ "$?" != "0" ]; then
+    echo "Tag could not be checked out, verify tag is in git and try again"
+    exit 2
+fi
 
 for ACTION in "${CLEAN}" "${UPLOAD}"; do
     if [ ${PROMPT} -eq 1 ]; then
@@ -60,6 +55,8 @@ for ACTION in "${CLEAN}" "${UPLOAD}"; do
         ${ACTION}
     fi
 done
+
+popd
 
 
 #echo ${REG_CMD}
