@@ -23,8 +23,8 @@ CLEAN_CMD="clean"
 REG_CMD="register"
 UPLOAD_CMD="${PKG_TYPES} upload"
 GIT=$(which git)
-#LP_GIT_URL=git://github.com/CentOS-PaaS-SIG/linchpin
-LP_GIT_URL=git://github.com/herlo/linchpin
+LP_GIT_URL=git://github.com/CentOS-PaaS-SIG/linchpin
+#LP_GIT_URL=git://github.com/herlo/linchpin
 
 TMP_DIR=$(mktemp -d)
 
@@ -37,7 +37,7 @@ ${GIT} fetch --all --tags --prune
 ${GIT} checkout tags/${GIT_TAG} -b lp_${GIT_TAG}
 
 if [ "$?" != "0" ]; then
-    echo "Tag could not be checked out, verify tag is correct and try again"
+    echo "Tag could not be checked out, verify tag is in git and try again"
     exit 2
 fi
 

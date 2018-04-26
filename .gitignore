@@ -3,6 +3,8 @@
 ansible.cfg
 *.swp
 .fuse*
+.cache
+.pytest_cache
 
 # generated files
 docs/build/
