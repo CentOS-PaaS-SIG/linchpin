@@ -18,10 +18,10 @@ DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 // environment this will limit the possible targets tested.
 // if it's not defined you will get all the possible targets
 // listed here.
-LTARGETS = env.LINCHPIN_TARGETS ?: 'dummy duffy libvirt aws-ec2-new'
+LTARGETS = env.LINCHPIN_TARGETS ?: 'dummy duffy libvirt aws-ec2-new os-server-new os-sg-new os-vol-new'
 PTARGETS = LTARGETS.tokenize()
 
-TEST_TARGETS = env.TEST_TARGETS ?: 'dummy duffy libvirt aws-ec2-new bkr-new'
+TEST_TARGETS = env.TEST_TARGETS ?: 'dummy duffy libvirt aws-ec2-new bkr-new os-server-new os-sg-new os-vol-new'
 TTARGETS = TEST_TARGETS.tokenize()
 
 env.TARGETS = TTARGETS.intersect( PTARGETS ).join(" ")
