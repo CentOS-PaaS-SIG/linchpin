@@ -48,3 +48,15 @@ def getTargetsToTest(targetsMap) {
     }
     return keysToList(targets)
 }
+
+def sendPRComment(ghprbGhRepository, ghprbPullId, msg) {
+    if (msg == null) {
+        return
+    }
+    println "Prepare GHI tool"
+    withCredentials([string(credentialsId: 'paas-bot', variable: 'TOKEN')]) {
+        sh "git config --global ghi.token ${TOKEN}"
+        sh 'curl -sL https://raw.githubusercontent.com/stephencelis/ghi/master/ghi > ghi && chmod 755 ghi'
+        sh './ghi comment ' + ghprbPullId + ' -m "' + msg + '" -- ' + ghprbGhRepository
+    }
+}

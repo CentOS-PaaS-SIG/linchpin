@@ -12,4 +12,8 @@ class linchpinPipelineUtils implements Serializable {
     def getTargetsToTest(targetsMap) {
         return linchpinPipelineUtils.getTargetsToTest(targetsMap)
     }
+
+    def sendPRComment(ghprbGhRepository, ghprbPullId, message) {
+        return linchpinPipelineUtils.sendPRComment(ghprbGhRepository, ghprbPullId, message)
+    }
 }
