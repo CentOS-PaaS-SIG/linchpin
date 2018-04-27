@@ -222,8 +222,29 @@ class LinchpinAPI(object):
             targets = rundb.get_tables()
 
         if view == 'target':
+            # initialize rundb table
+            dateformat = self.get_cfg('logger',
+                                      'dateformat',
+                                      default='%m/%d/%Y %I:%M:%S %p')
             for target in targets:
-                journal[target] = rundb.get_records(table=target, count=count)
+                tgt_records = rundb.get_records(table=target, count=count)
+
+                if fields and 'start' in fields:
+                    for run_id, record in tgt_records.iteritems():
+                        st = record.get('start')
+                        strt = float(st) if len(st) else float(1000000000.0)
+                        start = time.localtime(strt)
+                        record['start'] = time.strftime(dateformat, start)
+
+                if fields and 'end' in fields:
+                    for run_id, record in tgt_records.iteritems():
+                        en = record.get('end')
+                        endt = float(st) if len(en) else float(1000000000.0)
+                        end = time.localtime(endt)
+                        record['end'] = time.strftime(dateformat, end)
+
+
+                journal[target] = tgt_records
         if view == 'tx':
             if len(tx_ids):
                 journal = rundb.get_tx_records(tx_ids)
@@ -497,10 +518,6 @@ class LinchpinAPI(object):
 
         results = {}
 
-        # initialize rundb table
-        dateformat = self.get_cfg('logger',
-                                  'dateformat',
-                                  default='%m/%d/%Y %I:%M:%S %p')
 
         return_code = 99
 
@@ -532,7 +549,8 @@ class LinchpinAPI(object):
             rundb.schema = rundb_schema
             self.set_evar('rundb_schema', rundb_schema)
 
-            start = time.strftime(dateformat)
+            start = time.time()
+            st_uhash = int(start * 1000)
             uhash = None
 
             # generate a new rundb_id
@@ -540,10 +558,13 @@ class LinchpinAPI(object):
             rundb_id = rundb.init_table(target)
             orig_run_id = rundb_id
 
+            uhash_length = self.get_cfg('lp', 'rundb_uhash_length')
+            uhash_len = int(uhash_length)
             if not run_id:
                 uh = hashlib.new(self.rundb_hash,
-                                 ':'.join([target, str(rundb_id), start]))
-                uhash = uh.hexdigest()[-4:]
+                                 ':'.join([target, str(tx_id),
+                                          str(rundb_id), str(st_uhash)]))
+                uhash = uh.hexdigest()[:uhash_len]
 
             if action == 'destroy' or run_id:
                 # look for the action='up' records to destroy
@@ -568,7 +589,7 @@ class LinchpinAPI(object):
             self.ctx.log_debug('uhash: {0}'.format(uhash))
 
             rundb.update_record(target, rundb_id, 'uhash', uhash)
-            rundb.update_record(target, rundb_id, 'start', start)
+            rundb.update_record(target, rundb_id, 'start', str(start))
             rundb.update_record(target, rundb_id, 'action', action)
 
             self.set_evar('orig_run_id', orig_run_id)
@@ -666,8 +687,9 @@ class LinchpinAPI(object):
             if 'post' in self.pb_hooks:
                 self.hook_state = '{0}{1}'.format('post', action)
 
-            end = time.strftime(dateformat)
-            rundb.update_record(target, rundb_id, 'end', end)
+            end = time.time()
+
+            rundb.update_record(target, rundb_id, 'end', str(end))
             rundb.update_record(target, rundb_id, 'rc', return_code)
 
             if action == 'destroy' and orig_run_id:
