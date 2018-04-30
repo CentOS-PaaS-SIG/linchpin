@@ -14,7 +14,12 @@ else
     dnf install libguestfs-tools python-libguestfs -yq
 fi
 
-pip install ${LP_PATH}\[libvirt\]
+if [ -e "${LP_PATH}" ]; then
+    pip install -e ${LP_PATH}\[libvirt\]
+else
+    pip install ${LP_PATH}\[libvirt\]
+fi
+
 
 if [ -n "${VIRTUAL_ENV}" ]; then
    ${PWD}/scripts/install_selinux_venv.sh
