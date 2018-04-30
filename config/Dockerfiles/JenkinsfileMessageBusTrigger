@@ -6,9 +6,9 @@ OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
 
 // Check out PR's version of library
-library identifier: "linchpin-pipeline@report_downstream",
+library identifier: "linchpin-pipeline@develop",
         retriever: modernSCM([$class: 'GitSCMSource',
-                              remote: "https://github.com/p3ck/linchpin",
+                              remote: "https://github.com/CentOS-PaaS-SIG/linchpin",
                               traits: [[$class: 'jenkins.plugins.git.traits.BranchDiscoveryTrait'],
                                        [$class: 'RefSpecsSCMSourceTrait',
                                         templates: [[value: '+refs/heads/*:refs/remotes/@{remote}/*'],
