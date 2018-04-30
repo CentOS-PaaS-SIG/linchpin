@@ -12,7 +12,7 @@ resource_groups:
         keypair: ci-factory
         fip_pool: 10.8.240.0
         networks:
-          - atomic-e2e-jenkins-test
+          - e2e-openstack
       - name: frontend
         role: os_server
         flavor: m1.small
@@ -21,7 +21,7 @@ resource_groups:
         keypair: ci-factory
         auto_ip: no
         networks:
-          - atomic-e2e-jenkins-test
+          - e2e-openstack
     credentials:
       filename: clouds.yaml
       profile: ci-rhos

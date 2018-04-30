@@ -5,7 +5,7 @@ set -o pipefail
 LINCHPINDIR=$1
 shift
 DISTROS=$*
-TARGETS="dummy"
+TARGETS="dummy os-server-new os-sg-new os-vol-new"
 
 export WORKSPACE="/tmp"
 

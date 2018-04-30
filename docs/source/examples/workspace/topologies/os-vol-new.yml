@@ -10,6 +10,6 @@ resource_groups:
         count: 1
     credentials:
       filename: clouds.yaml
-      profile: ci-osp
+      profile: ci-rhos
 
 
