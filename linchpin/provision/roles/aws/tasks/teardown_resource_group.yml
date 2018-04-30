@@ -13,6 +13,7 @@
   register: auth_var
   ignore_errors: true
   when: res_grp['credentials'] is defined
+  no_log: true
 
 - name: "Set auth_var"
   set_fact:
