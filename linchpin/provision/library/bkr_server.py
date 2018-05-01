@@ -59,11 +59,25 @@ class BkrFactory(BkrConn):
             family = kwargs.get("family", None)
             distro = kwargs.get("distro", None)
             task_params = kwargs.get("taskparam", [])
-            arch = kwargs.get("arch", None)
+            # tasks are list of dictionaries which follows format
+            # for beaker in a box
+            # tasks = [ {arches:[], 'name': '/distribution/utils/dummy'}]
+            # for beaker production
+            # tasks = [ {arches:[], 'name': '/distribution/dummy'}]
+            tasks = kwargs.get("tasks", [{'arches': [], 'name': '/distribution/dummy'}]) 
+            arch = kwargs.get("arch", "x86_64")
             ks_meta = kwargs.get("ks_meta", "")
             method = kwargs.get("method", "nfs")
             priority = kwargs.get("priority", "Normal")
             hostrequires = kwargs.get("hostrequires", [])
+
+            requested_tasks = []
+
+            # adding arches=[] to every task definition
+            for task in tasks:
+                if not('arches' in task.keys()):
+                    task['arches'] = []
+                requested_tasks.append(tasks)
 
             # Tasks and harnesses
             if 'harness' in ks_meta:
@@ -74,9 +88,8 @@ class BkrFactory(BkrConn):
                 # Reserve the system after its installed
                 kwargs.update({"reserve": True})
                 # We don't need to run a task but beaker needs one.
-                requested_tasks = \
-                    [{'arches': [], 'name': '/distribution/dummy'}]
-
+                # therefore its defaulted to [{arches:[], 'name': '/distribution/dummy'}]
+                
                 # if no repos are defined but with no value use default repo
                 # This default will not work for Fedora
                 repos = kwargs.get(
@@ -86,9 +99,7 @@ class BkrFactory(BkrConn):
                 )
                 kwargs.update({'repo': repos})
             else:
-                requested_tasks = \
-                    [{'arches': [], 'name': '/distribution/dummy'},
-                     {'arches': [], 'name': '/distribution/reservesys'}]
+                requested_tasks.append({'arches': [], 'name': '/distribution/reservesys'})
 
             # Update defaults
             kwargs.update({"suppress_install_task": True})
