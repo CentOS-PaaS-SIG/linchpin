@@ -70,7 +70,7 @@ class DataParser(object):
                 error_txt += "\nTemplate-data files require a prepended '@'"
                 error_txt += " (eg. '@/path/to/template-data.yml')"
                 error_txt += "\nPerhaps the path to the PinFile or"
-                error_txt += "template-data are missing or the incorrect path?."
+                error_txt += " template-data is missing or the incorrect path?."
                 raise ValidationError(error_txt)
 
         return self.load_pinfile(file_w_path)

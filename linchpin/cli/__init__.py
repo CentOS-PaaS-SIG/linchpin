@@ -27,7 +27,6 @@ class LinchpinCli(LinchpinAPI):
 
         LinchpinAPI.__init__(self, ctx)
         self.parser = DataParser()
-        self.distilled_data = None
 
 
     @property
@@ -256,11 +255,9 @@ class LinchpinCli(LinchpinAPI):
 
                     if len(res_data) and res_data not in dist_data[target]:
                         dist_data[target].append(res_data)
-            except Exception:
+            except Exception as e:
                 self.log_info('Error recording distilled context'
                               ' ({0})'.format(e))
-
-        self.distilled_data = dist_data
 
         with open(context_file, 'w+') as f:
             f.write(json.dumps(dist_data))
@@ -291,8 +288,6 @@ class LinchpinCli(LinchpinAPI):
                 self._write_distilled_context(run_data)
         else:
                 self._write_distilled_context(run_data)
-
-        self.distilled_data = True
 
 
     def lp_up(self, targets=(), run_id=None, tx_id=None):
