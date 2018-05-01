@@ -33,6 +33,9 @@
     loop_var: brs
 
 - block:
+  - name: debug bkr ids
+    debug:
+      msg: "{{ bkr.results }}"
   - name: "set bkr ids from results"
     set_fact:
       bkr_ids: "{{ bkr_ids | default({}) | combine(result['ids']) }}"
@@ -75,12 +78,7 @@
 
   - name: "combine bkr_hosts and bkr_names"
     set_fact:
-      bkr_host_values: "{{ bkr_host_values }} + [{{ bhv.0 | combine(bhv.1) }}]"
-    with_together:
-        - "{{ bkr_hosts }}"
-        - "{{ bkr_names }}"
-    loop_control:
-      loop_var: bhv
+      bkr_host_values: "{{ bkr_hosts | combine_hosts_names(bkr_names) }}"
 
   - name: "split id and url into separate components"
     set_fact:

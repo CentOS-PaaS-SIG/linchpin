@@ -77,7 +77,7 @@ class BkrFactory(BkrConn):
             for task in tasks:
                 if not('arches' in task.keys()):
                     task['arches'] = []
-                requested_tasks.append(tasks)
+                requested_tasks.append(task)
 
             # Tasks and harnesses
             if 'harness' in ks_meta:
