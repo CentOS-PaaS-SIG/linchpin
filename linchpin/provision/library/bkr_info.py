@@ -116,9 +116,9 @@ def main():
         results = beaker.get_system_statuses()
         mod.exit_json(hosts=results, changed=True)
     except Exception as ex:
-        msg, results = ex.args
-        mod.warn(msg)
-        mod.fail_json(msg=msg, hosts=results, changed=True)
+        msg = ": For more details please check jobs on beaker"
+        msg = str(ex) + msg 
+        mod.fail_json(msg=msg, changed=True)
 
 
 # import module snippets
