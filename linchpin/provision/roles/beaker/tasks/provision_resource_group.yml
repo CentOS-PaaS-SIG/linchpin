@@ -44,9 +44,6 @@
     set_fact:
         bkr_id_count: "{{ (bkr_ids | length, 'count', 'id') }}"
 
-#  - debug:
-#      var: bkr_id_count
-
   - name: "set bkr_hosts from results"
     set_fact:
       bkr_hosts: "{{ bkr_hosts | default([]) }} + {{ bh['hosts'] }}"
@@ -57,9 +54,6 @@
   - name: "count bkr_hosts"
     set_fact:
       bkr_host_count: "{{ (bkr_hosts | length, 'count', 'distro') }}"
-
-#  - debug:
-#      var: bkr_host_count
 
   - name: "set unique value based upon count"
     set_fact:
@@ -74,14 +68,6 @@
   - name: "set unique value based upon count"
     set_fact:
       combine_key: "{{ combine_keys | sort(reverse=True) | first | last }}"
-
-#  - name: debug bkr_hosts
-#    debug:
-#      var: bkr_hosts
-
-#  - name: debug bkr_names
-#    debug:
-#      var: bkr_names
 
   - name: "set bkr_host_values to an empty list"
     set_fact:
@@ -111,21 +97,9 @@
     loop_control:
       loop_var: bhv
 
-#  - name: debug tmp_hosts
-#    debug:
-#      var: tmp_hosts
-#
-#  - name: debug tmp_info
-#    debug:
-#      var: tmp_info.results
-
   - name: "Set topology_outputs_beaker_server to the current job(s) data"
     set_fact:
       topology_outputs_beaker_server: "{{ tmp_info.results | map(attribute='ansible_facts.tmp_hosts') | list }}"
-
-#  - name: debug topology_outputs_beaker_server
-#    debug:
-#      var: topology_outputs_beaker_server
 
   - name: "Add beaker job info to the rundb"
     rundb:
@@ -144,11 +118,6 @@
       provision_params: "{{ bkr.results[0].provision_params }}"
     register: _topo_out_bkr_server
 
-#  - name: debug _topo_out_bkr_server
-#    debug:
-#      var: _topo_out_bkr_server
-
-
   - name: "set topology_outputs_beaker_server using id"
     set_fact:
       tmp_topo_bkr_srvc: "{{ ttbs | combine(_topo_out_bkr_server['hosts'] | selectattr('id', 'match', '^' + ttbs.id + '$') | first) }}"
@@ -159,6 +128,13 @@
     register: tmp_bkr
     loop_control:
       loop_var: ttbs
+
+  - name: "Set topology_outputs_beaker_server to the current job(s) data"
+    set_fact:
+      topology_outputs_beaker_server: "{{ tmp_bkr.results | map_results('ansible_facts', 'tmp_topo_bkr_srvc') }}"
+    when:
+      - state == 'present'
+      - combine_key == 'id'
 
   - name: "set topology_outputs_beaker_server using distro"
     set_fact:
@@ -173,8 +149,7 @@
 
   - name: "Set topology_outputs_beaker_server to the current job(s) data"
     set_fact:
-      topology_outputs_beaker_server: "{{ tmp_bkr.results | map(attribute='ansible_facts.tmp_topo_bkr_srvc') | list }}"
-
-#  - name: debug topology_outputs_beaker_server
-#    debug:
-#      var: topology_outputs_beaker_server
+      topology_outputs_beaker_server: "{{ tmp_bkr.results | map_results('ansible_facts', 'tmp_topo_bkr_srvc') }}"
+    when:
+      - state == 'present'
+      - combine_key == 'distro'

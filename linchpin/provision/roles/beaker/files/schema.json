@@ -33,7 +33,7 @@
 				    "type": "list",
 				    "required": false,
 				    "schema": {
-					    "type": "dict", 
+					    "type": "dict",
 					    "arches": {"type": "list", "required": false},
 					    "name": {"type": "string", "required": true}
 				    }
