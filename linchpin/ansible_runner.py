@@ -5,6 +5,7 @@ from collections import namedtuple
 from contextlib import contextmanager
 
 ansible24 = float(ansible.__version__[0:3]) >= 2.4
+ansible_version = float(ansible.__version__[0:3])
 
 
 # CentOS 6 EPEL provides an alternate Jinja2 package
@@ -108,6 +109,10 @@ def ansible_runner(playbook_path,
     # that onto this method down the road. The verbosity flag would just live
     # in options and we could set the defaults.
 
+    # module path cannot accept list in ansible 2.3.x versions
+    if ansible_version <= 2.3:
+        module_path = ":".join(module_path)
+
     connect_type = 'ssh'
     if 'localhost' in inventory_src:
         extra_vars["ansible_python_interpreter"] = sys.executable
@@ -167,8 +172,10 @@ def ansible_runner(playbook_path,
                                  options,
                                  inventory_src=inventory_src,
                                  console=console)
-
-    cb = PlaybookCallback(options=options)
+    if ansible_version >= 2.5:
+        cb = PlaybookCallback(options=options, ansible_version=ansible_version)
+    else:
+        cb = PlaybookCallback(options=options)
 
     if not console:
         results = {}
