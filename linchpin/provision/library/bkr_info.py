@@ -117,7 +117,7 @@ def main():
         mod.exit_json(hosts=results, changed=True)
     except Exception as ex:
         msg = ": For more details please check jobs on beaker"
-        msg = str(ex) + msg 
+        msg = str(ex) + msg
         mod.fail_json(msg=msg, changed=True)
 
 
