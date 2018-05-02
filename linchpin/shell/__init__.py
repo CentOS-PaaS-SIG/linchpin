@@ -47,9 +47,7 @@ def _handle_results(ctx, results, return_code):
                                                                 'uHash',
                                                                 'Exit Code')
         output += '-------------------------------------------------\n'
-
         for target, run_data in v['summary_data'].iteritems():
-            rcs = []
             for rundb_id, data in run_data.iteritems():
 
                 output += '{0:<20}\t{1:>6}\t{2:>5}'.format(target,
@@ -91,11 +89,16 @@ def _handle_results(ctx, results, return_code):
 
     # PRINT OUTPUT RESULTS HERE
     ctx.log_state(output)
+    distill_on_error = json.loads(lpcli.get_cfg('lp',
+                                                'distill_on_error').lower())
 
-#   FIXME: have use_actual_rcs be a flag
+    #   FIXME: have use_actual_rcs be a flag
     use_actual_rcs = True
-    if use_actual_rcs:
+    if use_actual_rcs and not(distill_on_error):
         return_code = sum(rc for rc in rcs)
+
+    elif use_actual_rcs and distill_on_error:
+        return_code = min(rcs)
 
     sys.exit(return_code)
 
