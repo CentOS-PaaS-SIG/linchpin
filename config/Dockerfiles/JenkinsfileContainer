@@ -38,6 +38,15 @@ p_targets = ['dummy':
              'bkr-new':
               ["^linchpin/provision/roles/beaker/.*",
                "^linchpin/provision/beaker.yml"],
+              'os-server-new':
+              ["^linchpin/provision/roles/openstack/.*",
+               "^linchpin/provision/openstack.yml"],
+              'os-sg-new':
+              ["^linchpin/provision/roles/openstack/.*",
+               "^linchpin/provision/openstack.yml"],
+              'os-vol-new':
+              ["^linchpin/provision/roles/openstack/.*",
+               "^linchpin/provision/openstack.yml"],
             ]
 
 test_targets = ""

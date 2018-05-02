@@ -1,7 +1,7 @@
 ---
 # This playbook provisions the openstack topology.
 
-- name:  "schema check and Pre Provisioning Activities on topology_file"
+- name:  "schema check and Pre-Provisioning Activities on topology_file"
   hosts: localhost
   gather_facts: True
   roles:
