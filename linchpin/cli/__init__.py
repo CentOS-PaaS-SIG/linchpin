@@ -209,8 +209,8 @@ class LinchpinCli(LinchpinAPI):
                     roles.append(rd.get('role'))
 
             fields = {}
-            outputs = data.get('outputs')
-            resources = outputs.get('resources')
+            outputs = data.get('outputs', {})
+            resources = outputs.get('resources', [])
 
             for dist_role, flds in dist_roles.iteritems():
                 if dist_role in roles:
@@ -257,7 +257,6 @@ class LinchpinCli(LinchpinAPI):
                         dist_data[target].append(res_data)
             except Exception:
                 pass
-
         with open(context_file, 'w+') as f:
             f.write(json.dumps(dist_data))
 
