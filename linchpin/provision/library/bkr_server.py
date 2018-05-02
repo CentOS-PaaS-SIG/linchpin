@@ -64,7 +64,8 @@ class BkrFactory(BkrConn):
             # tasks = [ {arches:[], 'name': '/distribution/utils/dummy'}]
             # for beaker production
             # tasks = [ {arches:[], 'name': '/distribution/dummy'}]
-            tasks = kwargs.get("tasks", [{'arches': [], 'name': '/distribution/dummy'}]) 
+            tasks = kwargs.get("tasks",
+                               [{'arches': [], 'name': '/distribution/dummy'}])
             arch = kwargs.get("arch", "x86_64")
             ks_meta = kwargs.get("ks_meta", "")
             method = kwargs.get("method", "nfs")
@@ -88,8 +89,8 @@ class BkrFactory(BkrConn):
                 # Reserve the system after its installed
                 kwargs.update({"reserve": True})
                 # We don't need to run a task but beaker needs one.
-                # therefore its defaulted to [{arches:[], 'name': '/distribution/dummy'}]
-                
+                # therefore its defaulted to
+                # [{arches:[], 'name': '/distribution/dummy'}]
                 # if no repos are defined but with no value use default repo
                 # This default will not work for Fedora
                 repos = kwargs.get(
@@ -99,7 +100,8 @@ class BkrFactory(BkrConn):
                 )
                 kwargs.update({'repo': repos})
             else:
-                requested_tasks.append({'arches': [], 'name': '/distribution/reservesys'})
+                requested_tasks.append({'arches': [],
+                                        'name': '/distribution/reservesys'})
 
             # Update defaults
             kwargs.update({"suppress_install_task": True})
