@@ -16,6 +16,7 @@ resource_groups:
         cancel_message: Job cancelled on account of rain
         recipesets:
           - distro: RHEL-6.5
+            name: rheltest
             arch: x86_64
             count: 1
             name: rhel65

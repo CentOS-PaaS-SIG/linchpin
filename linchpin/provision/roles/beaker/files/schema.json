@@ -21,7 +21,7 @@
                              "type": "dict",
                              "schema": {
                                 "distro": { "type": "string", "required": true },
-                                "name": { "type": "string", "required": true },
+                                "name": { "type": "string", "required": false },
                                 "method": { "type": "string", "required": false },
                                 "arch": { "type": "string", "required": false },
                                 "variant": { "type": "string", "required": false },
