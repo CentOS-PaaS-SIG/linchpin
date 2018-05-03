@@ -72,7 +72,6 @@ class InventoryFilter(object):
     def add_ips_to_groups(self, inven_hosts, layout):
         # create a ip to host mapping based on count
         ip_to_host = {}
-        inven_hosts.reverse()
         for host_name in layout['hosts']:
             if 'count' in layout['hosts'][host_name]:
                 count = layout['hosts'][host_name]['count']
