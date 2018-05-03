@@ -89,16 +89,13 @@ def _handle_results(ctx, results, return_code):
 
     # PRINT OUTPUT RESULTS HERE
     ctx.log_state(output)
-    distill_on_error = json.loads(lpcli.get_cfg('lp',
-                                                'distill_on_error').lower())
+    use_actual_rcs = json.loads(lpcli.get_cfg('lp',
+                                              'use_actual_rcs').lower())
 
-    #   FIXME: have use_actual_rcs be a flag
-    use_actual_rcs = True
-    if use_actual_rcs and not(distill_on_error):
-        return_code = sum(rc for rc in rcs)
-
-    elif use_actual_rcs and distill_on_error:
+    if use_actual_rcs:
         return_code = min(rcs)
+    else:
+        return_code = sum(rc for rc in rcs)
 
     sys.exit(return_code)
 
