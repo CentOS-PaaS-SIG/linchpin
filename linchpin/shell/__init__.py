@@ -4,6 +4,7 @@ from __future__ import print_function
 
 import os
 import sys
+import ast
 import json
 import click
 
@@ -47,9 +48,7 @@ def _handle_results(ctx, results, return_code):
                                                                 'uHash',
                                                                 'Exit Code')
         output += '-------------------------------------------------\n'
-
         for target, run_data in v['summary_data'].iteritems():
-            rcs = []
             for rundb_id, data in run_data.iteritems():
 
                 output += '{0:<20}\t{1:>6}\t{2:>5}'.format(target,
@@ -91,10 +90,12 @@ def _handle_results(ctx, results, return_code):
 
     # PRINT OUTPUT RESULTS HERE
     ctx.log_state(output)
+    uar = lpcli.get_cfg('lp', 'use_actual_rcs')
+    use_actual_rcs = ast.literal_eval(uar.title())
 
-#   FIXME: have use_actual_rcs be a flag
-    use_actual_rcs = True
     if use_actual_rcs:
+        return_code = min(rcs)
+    else:
         return_code = sum(rc for rc in rcs)
 
     sys.exit(return_code)
