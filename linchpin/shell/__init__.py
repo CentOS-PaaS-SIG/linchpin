@@ -4,6 +4,7 @@ from __future__ import print_function
 
 import os
 import sys
+import ast
 import json
 import click
 
@@ -89,8 +90,8 @@ def _handle_results(ctx, results, return_code):
 
     # PRINT OUTPUT RESULTS HERE
     ctx.log_state(output)
-    use_actual_rcs = json.loads(lpcli.get_cfg('lp',
-                                              'use_actual_rcs').lower())
+    uar = lpcli.get_cfg('lp', 'use_actual_rcs')
+    use_actual_rcs = ast.literal_eval(uar.title())
 
     if use_actual_rcs:
         return_code = min(rcs)
