@@ -255,30 +255,39 @@ class LinchpinCli(LinchpinAPI):
 
                     if len(res_data) and res_data not in dist_data[target]:
                         dist_data[target].append(res_data)
-            except Exception:
-                pass
+            except Exception as e:
+                self.log_info('Error recording distilled context'
+                              ' ({0})'.format(e))
+
         with open(context_file, 'w+') as f:
             f.write(json.dumps(dist_data))
 
 
-    def lp_down(self, pinfile, targets=(), run_id=None):
+    def distill_data(self, return_code, run_data):
         """
-        This function takes a list of targets, and performs a shutdown on
-        nodes in the target's topology. Only providers which support shutdown
-        from their API (Ansible) will support this option.
+        Distill data to the file <workspace>/resources/linchpin.distilled
+        from RunDB using the get_run_data method
 
-        CURRENTLY UNIMPLEMENTED
+        :param return_code:
+            Return code from the transaction
 
-        .. seealso:: lp_destroy
+        :param run_data:
+            return data, in a compressed format, which is used to
+            obtain all of the run_data on a per target basis
 
-        :param pinfile:
-            Provided PinFile, with available targets,
 
-        :param targets:
-            A tuple of targets to provision.
         """
 
-        pass
+        # Export distilled data in useful ways
+        # # Write out run_data to a file for now
+        if return_code:
+            distill_on_error = self.get_cfg('lp',
+                                            'distill_on_error',
+                                            default='False')
+            if ast.literal_eval(distill_on_error.title()):
+                self._write_distilled_context(run_data)
+        else:
+                self._write_distilled_context(run_data)
 
 
     def lp_up(self, targets=(), run_id=None, tx_id=None):
@@ -296,7 +305,7 @@ class LinchpinCli(LinchpinAPI):
             An optional tx_id if the task is idempotent
         """
 
-        # Prep input data
+        # INPUTS
 
         # Execute prepped data
         return_code, return_data = self._execute_action('up',
@@ -304,34 +313,24 @@ class LinchpinCli(LinchpinAPI):
                                                         run_id=run_id,
                                                         tx_id=tx_id)
 
-        # Distill data
         new_tx_id = return_data.keys()[0]
 
-        # Thsi is what the API allows.
+        # This is what the API allows.
         # run_data = self.get_run_data(new_tx_id, ('outputs', 'inputs',
         #                                          'action', 'cfgs', 'start',
         #                                          'end', 'rc', 'uhash'))
-
         run_data = self.get_run_data(new_tx_id, ('inputs', 'outputs'))
 
-        # Export distilled data in useful ways
-        # # Write out run_data to a file for now
+        # OUTPUTS
+        # Distill data
         distill_data = self.get_cfg('lp', 'distill_data')
         gen_resources = self.get_evar('generate_resources')
 
         if ast.literal_eval(distill_data.title()) and not gen_resources:
-            if return_code:
-                distill_on_error = self.get_cfg('lp',
-                                                'distill_on_error',
-                                                default='False')
-                if ast.literal_eval(distill_on_error.title()):
-                    self._write_distilled_context(run_data)
-            else:
-                    self._write_distilled_context(run_data)
+            self.distill_data(return_code, run_data)
 
         # Show success and errors, with data
         return (return_code, return_data)
-
 
 
     def lp_destroy(self, targets=(), run_id=None, tx_id=None):
@@ -359,6 +358,26 @@ class LinchpinCli(LinchpinAPI):
                                     targets,
                                     run_id=run_id,
                                     tx_id=tx_id)
+
+
+    def lp_down(self, pinfile, targets=(), run_id=None):
+        """
+        This function takes a list of targets, and performs a shutdown on
+        nodes in the target's topology. Only providers which support shutdown
+        from their API (Ansible) will support this option.
+
+        CURRENTLY UNIMPLEMENTED
+
+        .. seealso:: lp_destroy
+
+        :param pinfile:
+            Provided PinFile, with available targets,
+
+        :param targets:
+            A tuple of targets to provision.
+        """
+
+        pass
 
 
     def _execute_action(self, action, targets=(), run_id=None, tx_id=None):

@@ -692,14 +692,9 @@ class LinchpinAPI(object):
             rundb.update_record(target, rundb_id, 'end', str(end))
             rundb.update_record(target, rundb_id, 'rc', return_code)
 
-            if action == 'destroy' and orig_run_id:
-                run_data = rundb.get_record(target,
-                                            action=action,
-                                            run_id=orig_run_id)
-            else:
-                run_data = rundb.get_record(target,
-                                            action=action,
-                                            run_id=rundb_id)
+            run_data = rundb.get_record(target,
+                                        action=action,
+                                        run_id=rundb_id)
 
             results[target]['rundb_data'] = {rundb_id: run_data[0]}
 
