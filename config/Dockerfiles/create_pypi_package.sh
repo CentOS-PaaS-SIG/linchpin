@@ -20,26 +20,25 @@ PROMPT=1
 PKG_TYPES="sdist bdist_wheel"
 SETUP_CMD="python setup.py"
 CLEAN_CMD="clean"
-REG_CMD="register"
 UPLOAD_CMD="${PKG_TYPES} upload"
 GIT=$(which git)
-LP_GIT_URL=git://github.com/CentOS-PaaS-SIG/linchpin
-#LP_GIT_URL=git://github.com/herlo/linchpin
 
-TMP_DIR=$(mktemp -d)
+#TMP_DIR=$(mktemp -d)
 
 CLEAN="${SETUP_CMD} ${CLEAN_CMD}"
 UPLOAD="${SETUP_CMD} ${UPLOAD_CMD} -r ${PYPI}"
 
-${GIT} clone ${LP_GIT_URL} ${TMP_DIR}
-pushd ${TMP_DIR}
-${GIT} fetch --all --tags --prune
-${GIT} checkout tags/${GIT_TAG} -b lp_${GIT_TAG}
+#${GIT} clone ${LP_GIT_URL} ${TMP_DIR}
+#pushd ${TMP_DIR}
+#${GIT} fetch --all --tags --prune
+#${GIT} checkout tags/${GIT_TAG} -b lp_${GIT_TAG}
 
-if [ "$?" != "0" ]; then
-    echo "Tag could not be checked out, verify tag is in git and try again"
-    exit 2
-fi
+#if [ "$?" != "0" ]; then
+#    echo "Tag could not be checked out, verify tag is in git and try again"
+#    exit 2
+#fi
+
+pip install -U setuptools
 
 for ACTION in "${CLEAN}" "${UPLOAD}"; do
     if [ ${PROMPT} -eq 1 ]; then
@@ -52,13 +51,9 @@ for ACTION in "${CLEAN}" "${UPLOAD}"; do
         esac
     else
         echo "RUNNING ${ACTION}"
-        ${ACTION}
+        echo ${ACTION}
     fi
 done
 
-popd
+#popd
 
-
-#echo ${REG_CMD}
-#
-#echo ${UPLOAD_CMD}
