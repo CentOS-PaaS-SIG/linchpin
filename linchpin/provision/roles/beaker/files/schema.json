@@ -21,6 +21,8 @@
                              "type": "dict",
                              "schema": {
                                 "distro": { "type": "string", "required": true },
+                                "name": { "type": "string", "required": false },
+                                "method": { "type": "string", "required": false },
                                 "arch": { "type": "string", "required": false },
                                 "variant": { "type": "string", "required": false },
                                 "taskparam": {
@@ -28,6 +30,21 @@
                                     "required": false,
                                     "schema": { "type": "string", "required": true }
                                 },
+				"tasks": {
+				    "type": "list",
+				    "required": false,
+				    "schema": {
+                                        "anyof": [{
+                                            "type": "dict",
+                                            "schema": {
+                                                "arches": { "type": "list", "required": false },
+                                                "name": { "type": "string", "required": true }
+                                            }
+                                        }
+                                       ]
+                                    }
+
+				},
                                 "keyvalue": {
                                     "type": "list",
                                     "required": false,
