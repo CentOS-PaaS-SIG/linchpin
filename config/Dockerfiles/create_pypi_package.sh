@@ -38,21 +38,19 @@ UPLOAD="${SETUP_CMD} ${UPLOAD_CMD} -r ${PYPI}"
 #    exit 2
 #fi
 
-pip install -U setuptools
-
 for ACTION in "${CLEAN}" "${UPLOAD}"; do
-    if [ ${PROMPT} -eq 1 ]; then
-        echo
-        read -p "Run ${ACTION} ([Y]/n)? " yn
-        case $yn in
-            [Yy]* ) echo "RUNNING ${ACTION}"; ${ACTION};;
-            [Nn]* ) echo "EXITING"; exit;;
-            * ) echo "RUNNING ${ACTION}"; ${ACTION};;
-        esac
-    else
-        echo "RUNNING ${ACTION}"
-        echo ${ACTION}
-    fi
+#    if [ ${PROMPT} -eq 1 ]; then
+#        echo
+#        read -p "Run ${ACTION} ([Y]/n)? " yn
+#        case $yn in
+#            [Yy]* ) echo "RUNNING ${ACTION}"; ${ACTION};;
+#            [Nn]* ) echo "EXITING"; exit;;
+#            * ) echo "RUNNING ${ACTION}"; ${ACTION};;
+#        esac
+#    else
+    echo "RUNNING ${ACTION}"
+    echo ${ACTION}
+#    fi
 done
 
 #popd
