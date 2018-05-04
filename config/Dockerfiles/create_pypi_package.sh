@@ -49,7 +49,7 @@ for ACTION in "${CLEAN}" "${UPLOAD}"; do
 #        esac
 #    else
     echo "RUNNING ${ACTION}"
-    echo ${ACTION}
+    ${ACTION}
 #    fi
 done
 
