@@ -399,7 +399,6 @@ class LinchpinCli(LinchpinAPI):
 
         use_pinfile = True
         pf = None
-        pf_data = None
 
         return_data = OrderedDict()
         return_code = 0
