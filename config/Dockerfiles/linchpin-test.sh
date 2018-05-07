@@ -1,12 +1,14 @@
 #!/bin/bash -xe
 
-TARGET=$1
+TARGET=${1}
+DISTRO=${2}
 
 function clean_up {
     set +e
-    linchpin -w . -v destroy $TARGET
+    linchpin -w . -v --template-data "{\"distro\": \"${DISTRO}-\"}" destroy ${TARGET}
 }
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
 pushd docs/source/examples/workspace
-linchpin -w . -v up $TARGET
+echo "DISTRO: ${DISTRO}"
+linchpin -w . -v --template-data "{\"distro\": \"${DISTRO}-\"}" up ${TARGET}

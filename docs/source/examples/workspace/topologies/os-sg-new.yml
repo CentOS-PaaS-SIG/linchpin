@@ -4,7 +4,7 @@ resource_groups:
   - resource_group_name: os-sg-new
     resource_group_type: openstack
     resource_definitions:
-      - name: security_group
+      - name: "{{ distro | default('') }}security_group"
         role: os_sg
         description: "Openstack Security Group with ssh access"
         rules:
