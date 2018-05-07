@@ -431,7 +431,7 @@ class LinchpinCli(LinchpinAPI):
                 pf = self.parser.process(pf_w_path, data_w_path=pf_data_path)
 
             if pf:
-                provision_data = self._build(pf, pf_data)
+                provision_data = self._build(pf, pf_data=self.pf_data)
 
             return_code, return_data = self._execute(provision_data,
                                                      targets,
