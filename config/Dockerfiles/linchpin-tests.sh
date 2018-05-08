@@ -17,7 +17,7 @@ for i in $TARGETS; do
         tar xvf $CREDS_PATH/${i}.tgz -C $tmpdir
         $tmpdir/install.sh
     fi
-    ./config/Dockerfiles/linchpin-test.sh $i 2>&1 |tee ${distro}_logs/${i}.log
+    ./config/Dockerfiles/linchpin-test.sh $i ${distro} 2>&1 |tee ${distro}_logs/${i}.log
     if [ $? -eq 0 ]; then
         test_summary="$(tput setaf 2)SUCCESS$(tput sgr0)\t${testname}"
     else

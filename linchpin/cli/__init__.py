@@ -399,7 +399,6 @@ class LinchpinCli(LinchpinAPI):
 
         use_pinfile = True
         pf = None
-        pf_data = None
 
         return_data = OrderedDict()
         return_code = 0
@@ -431,7 +430,7 @@ class LinchpinCli(LinchpinAPI):
                 pf = self.parser.process(pf_w_path, data_w_path=pf_data_path)
 
             if pf:
-                provision_data = self._build(pf, pf_data)
+                provision_data = self._build(pf, pf_data=self.pf_data)
 
                 pf_outfile = self.get_cfg('tmp', 'output_pinfile')
                 if pf_outfile:
