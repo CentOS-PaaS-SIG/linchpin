@@ -1,0 +1,182 @@
+/**
+ * CD LinchPin Release
+ *
+ * This job pulls down the git repository when a new version has been
+ * provided, tags the release version and pushes a new release to pypi.org
+ */
+
+import com.cloudbees.plugins.credentials.Credentials
+
+// Execution ID for this run of the pipeline
+executionID = UUID.randomUUID().toString()
+// Use repoName everywhere for dirs and repo values
+repoName = 'jenkins-test'
+
+
+env.ghprbGhRepository = env.ghprbGhRepository ?: 'herlo/' + repoName
+env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
+env.ghprbPullAuthorLogin = env.ghprbPullAuthorLogin ?: ''
+env.ghprbPullId = env.ghprbPullId ?: ''
+
+env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop'
+
+OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
+OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
+
+
+// Pod name to use
+podName = repoName + executionID
+
+library identifier: "ci-pipeline@master",
+        retriever: modernSCM([$class: 'GitSCMSource',
+                              remote: "https://github.com/CentOS-Paas-SIG/ci-pipeline"])
+
+library identifier: "cico-pipeline-library@master",
+        retriever: modernSCM([$class: 'GitSCMSource',
+                              remote: "https://github.com/CentOS/cico-pipeline-library"])
+
+
+properties([
+  buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '20')),
+  [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/herlo/' + repoName],
+  parameters(
+    [
+      string(defaultValue: 'develop',
+             description: '',
+             name: 'ghprbActualCommit'),
+      string(defaultValue: '',
+             description: '',
+             name: 'sha1'),
+      string(defaultValue: '',
+             description: 'Pull Request Number',
+             name: 'ghprbPullId'),
+      string(defaultValue: '',
+             description: 'Pull Request Author username',
+             name: 'ghprbPullAuthorLogin'),
+      string(defaultValue: '',
+             description: 'Git Hub Repository',
+             name: 'ghprbGhRepository'),
+      string(defaultValue: 'stable',
+             description: 'Tag for slave image',
+             name: 'SLAVE_TAG'),
+
+    ]
+  ),
+])
+
+podTemplate(name: podName,
+            label: podName,
+            cloud: 'openshift',
+            serviceAccount: OPENSHIFT_SERVICE_ACCOUNT,
+            idleMinutes: 0,
+            namespace: OPENSHIFT_NAMESPACE,
+
+        containers: [
+            // This adds the custom slave container to the pod.
+            // Must be first with name 'jnlp'
+            containerTemplate(name: 'jnlp',
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/jenkins-continuous-infra-slave:stable',
+                ttyEnabled: false,
+                alwaysPullImage: true,
+                args: '${computer.jnlpmac} ${computer.name}',
+                command: '',
+                workingDir: '/workDir')
+        ]
+)
+
+{
+    node(podName) {
+        ansiColor('xterm') {
+            timestamps {
+                // We need to set env.HOME because the openshift slave image
+                // forces this to /home/jenkins and then ~ expands to that
+                // even though id == "root"
+                // See https://github.com/openshift/jenkins/blob/master/slave-base/Dockerfile#L5
+                //
+                // Even the kubernetes plugin will create a pod with containers
+                // whose $HOME env var will be its workingDir
+                // See https://github.com/jenkinsci/kubernetes-plugin/blob/master/src/main/java/org/csanchez/jenkins/plugins/kubernetes/KubernetesLauncher.java#L311
+                //
+                env.HOME = "/root"
+                //
+                try {
+                    stage('checkout-linchpin') {
+                        deleteDir()
+                        pipelineUtils.setDefaultEnvVars()
+                        pipelineUtils.verifyPod(OPENSHIFT_NAMESPACE, env.NODE_NAME)
+                        dir(repoName) {
+
+                            withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'paas-bot', usernameVariable: 'GH_USER', passwordVariable: 'GH_TOKEN']]) {
+                                checkout([$class: 'GitSCM',
+                                    branches: [[name: env.ghprbActualCommit]],
+                                    doGenerateSubmoduleConfigurations: false,
+                                    extensions                       : [],
+                                    submoduleCfg                     : [],
+                                    userRemoteConfigs                : [
+                                        [refspec:
+                                            '+refs/heads/*:refs/remotes/origin/*  +refs/tags/*:refs/tags/*',
+                                            url: "https://" + GH_USER + ":" + GH_TOKEN + "@github.com/${env.ghprbGhRepository}"]
+                                        ]
+                                ])
+                            }
+
+                        }
+                    }
+                    stage('release-version') {
+                        dir(repoName) {
+
+                            string version = sh (
+                                script: "cat linchpin/version.py | grep __version__ | cut -d' ' -f3 | cut -d\"'\" -f2",
+                                returnStdout: true
+                                ).trim()
+                            currentBuild.displayName = "Build#: ${env.BUILD_NUMBER} - Release: " + version
+                            if (env.ghprbActualCommit != null && env.ghprbActualCommit != "develop") {
+                                currentBuild.description = "<a href=\"https://github.com/${env.ghprbGhRepository}/pull/${env.ghprbPullId}\">Release: (" + version + ")</a>"
+                            }
+
+                            sh "git checkout " + env.ghprbActualCommit
+                            withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'linchpin-releaser', usernameVariable: 'TWINE_USERNAME', passwordVariable: 'TWINE_PASSWORD']]) {
+                                sh (
+                                """
+cat << EOF > /tmp/pypirc
+[distutils]
+index-servers =
+  pypi
+  pypitest
+
+[pypi]
+repository = https://upload.pypi.org/legacy/
+username = ${TWINE_USERNAME}
+password = ${TWINE_PASSWORD}
+
+[pypitest]
+repository:https://test.pypi.org/legacy/
+username = ${TWINE_USERNAME}
+password = ${TWINE_PASSWORD}
+EOF
+                                """
+                                )
+                            }
+                            sh "python setup.py sdist bdist_wheel"
+                            sh 'twine upload --config-file /tmp/pypirc --repository pypitest dist/*'
+                            sh "git tag v" + version
+                            sh "git push --tags origin develop"
+                        }
+                    }
+                }
+                catch (e) {
+
+                        // Set build result
+                        currentBuild.result = 'FAILURE'
+
+                        // Report the exception
+                        echo e.getMessage()
+
+                        // Throw the error
+                        throw e
+
+                }
+            }
+        }
+    }
+}
