@@ -16,7 +16,6 @@ repoName = 'jenkins-test'
 env.ghprbGhRepository = env.ghprbGhRepository ?: 'herlo/' + repoName
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
 env.ghprbPullAuthorLogin = env.ghprbPullAuthorLogin ?: ''
-env.ghprbPullId = env.ghprbPullId ?: ''
 
 env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop'
 
@@ -38,7 +37,7 @@ library identifier: "cico-pipeline-library@master",
 
 properties([
   buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '20')),
-  [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/herlo/' + repoName],
+  [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/' + env.ghprbGhRepository],
   parameters(
     [
       string(defaultValue: 'develop',
@@ -48,18 +47,8 @@ properties([
              description: '',
              name: 'sha1'),
       string(defaultValue: '',
-             description: 'Pull Request Number',
-             name: 'ghprbPullId'),
-      string(defaultValue: '',
-             description: 'Pull Request Author username',
-             name: 'ghprbPullAuthorLogin'),
-      string(defaultValue: '',
              description: 'Git Hub Repository',
-             name: 'ghprbGhRepository'),
-      string(defaultValue: 'stable',
-             description: 'Tag for slave image',
-             name: 'SLAVE_TAG'),
-
+             name: 'ghprbGhRepository')
     ]
   ),
 ])
@@ -125,16 +114,16 @@ podTemplate(name: podName,
                     stage('release-version') {
                         dir(repoName) {
 
+                            sh "git checkout " + env.ghprbActualCommit
+                            sh "python setup.py sdist bdist_wheel"
                             string version = sh (
-                                script: "cat linchpin/version.py | grep __version__ | cut -d' ' -f3 | cut -d\"'\" -f2",
+                                script: "python setup.py --version",
                                 returnStdout: true
                                 ).trim()
                             currentBuild.displayName = "Build#: ${env.BUILD_NUMBER} - Release: " + version
                             if (env.ghprbActualCommit != null && env.ghprbActualCommit != "develop") {
                                 currentBuild.description = "<a href=\"https://github.com/${env.ghprbGhRepository}/pull/${env.ghprbPullId}\">Release: (" + version + ")</a>"
                             }
-
-                            sh "git checkout " + env.ghprbActualCommit
                             withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'linchpin-releaser', usernameVariable: 'TWINE_USERNAME', passwordVariable: 'TWINE_PASSWORD']]) {
                                 sh (
                                 """
@@ -154,11 +143,11 @@ repository:https://test.pypi.org/legacy/
 username = ${TWINE_USERNAME}
 password = ${TWINE_PASSWORD}
 EOF
+
+twine upload --config-file /tmp/pypirc --repository pypitest dist/*
                                 """
                                 )
                             }
-                            sh "python setup.py sdist bdist_wheel"
-                            sh 'twine upload --config-file /tmp/pypirc --repository pypitest dist/*'
                             sh "git tag v" + version
                             sh "git push --tags origin develop"
                         }
