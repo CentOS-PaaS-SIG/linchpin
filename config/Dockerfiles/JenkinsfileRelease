@@ -10,10 +10,10 @@ import com.cloudbees.plugins.credentials.Credentials
 // Execution ID for this run of the pipeline
 executionID = UUID.randomUUID().toString()
 // Use repoName everywhere for dirs and repo values
-repoName = 'jenkins-test'
+repoName = 'linchpin'
 
 
-env.ghprbGhRepository = env.ghprbGhRepository ?: 'herlo/' + repoName
+env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/' + repoName
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
 env.ghprbPullAuthorLogin = env.ghprbPullAuthorLogin ?: ''
 
