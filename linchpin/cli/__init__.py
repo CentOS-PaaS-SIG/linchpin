@@ -183,7 +183,6 @@ class LinchpinCli(LinchpinAPI):
         This method takes all of the provided run_data, loops through the
         distiller section of the linchpin.constants and writes out the
         linchpin.context (name TBD) to the 'resources' directory.
-    
         """
 
         dist_roles = self.get_cfg('distiller')
@@ -235,7 +234,6 @@ class LinchpinCli(LinchpinAPI):
             try:
                 for res in resources:
                     res_data = []
-                    
                     for k, v in fields.iteritems():
                         if not v:
                             res_dict = {}
@@ -312,7 +310,7 @@ class LinchpinCli(LinchpinAPI):
         # Distill data
         new_tx_id = return_data.keys()[0]
 
-        # Thsi is what the API allows.
+        # This is what the API allows.
         # run_data = self.get_run_data(new_tx_id, ('outputs', 'inputs',
         #                                          'action', 'cfgs', 'start',
         #                                          'end', 'rc', 'uhash'))
