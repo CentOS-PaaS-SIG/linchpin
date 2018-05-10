@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import StringIO
-from camel import Camel
 
 from InventoryFilter import InventoryFilter
 from InventoryProviders import get_all_drivers
@@ -40,7 +39,6 @@ class GenericInventory(InventoryFilter):
         return all_hosts[:count]
 
     def get_inventory(self, topo, layout):
-        layout = Camel().load(layout)
         # get all the topology host_ips
         host_ip_dict = self.get_host_ips(topo)
         # get the count of all layout hosts needed
