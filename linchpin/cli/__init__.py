@@ -6,7 +6,6 @@ import ast
 import sys
 import json
 import click
-
 from distutils import dir_util
 from collections import OrderedDict
 
@@ -118,7 +117,6 @@ class LinchpinCli(LinchpinAPI):
         except Exception as e:
             self.ctx.log_state('Error: {0}'.format(e))
             sys.exit(1)
-
 
     def _get_pinfile_path(self, exists=True):
         """
@@ -489,10 +487,14 @@ class LinchpinCli(LinchpinAPI):
     def _make_layout_integers(self, data):
 
         inv_layout = data.get('inventory_layout')
+
         if inv_layout:
-            for k, v in inv_layout.get('hosts').iteritems():
-                if 'count' in v.keys():
-                    v['count'] = int(v.pop('count'))
+            hosts = inv_layout.get('hosts')
+            for k in hosts:
+                count = int(hosts[k].get("count"))
+                hosts[k]["count"] = count
+            inv_layout["hosts"] = hosts
+            data["inventory_layout"] = inv_layout
 
         return data
 
