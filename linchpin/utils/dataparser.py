@@ -48,8 +48,6 @@ class DataParser(object):
             A JSON representation of data mapped to a Jinja2 template in
             file_w_path
 
-        :param data_w_path:
-            If data is passed as a file, this is used
         """
 
         if not data:
