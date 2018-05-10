@@ -36,7 +36,7 @@ class DataParser(object):
         self._mapping_tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
 
 
-    def process(self, file_w_path, data=None, data_w_path=None):
+    def process(self, file_w_path, data=None):
         """ Processes the PinFile and any data (if a template)
         using Jinja2. Returns json of PinFile, topology, layout,
         and hooks.
@@ -58,8 +58,8 @@ class DataParser(object):
         with open(file_w_path, 'r') as stream:
             file_data = stream.read()
 
-            if data_w_path:
-                with open(data_w_path, 'r') as strm:
+            if data.startswith('@'):
+                with open(data[1:], 'r') as strm:
                     data = strm.read()
 
             try:
