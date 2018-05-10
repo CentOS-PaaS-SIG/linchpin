@@ -3,6 +3,7 @@
 import yaml
 import json
 import subprocess
+import yamlordereddictloader
 
 # CentOS 6 EPEL provides an alternate Jinja2 package
 try:
@@ -17,15 +18,6 @@ except ImportError:
 
 from linchpin.exceptions import LinchpinError
 from linchpin.exceptions import ValidationError
-
-
-def dict_representer(dumper, data):
-    _mapping_tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
-    return dumper.represent_mapping(_mapping_tag, data.iteritems())
-
-
-def dict_constructor(loader, node):
-    return dict(loader.construct_pairs(node))
 
 
 class DataParser(object):
@@ -92,20 +84,14 @@ class DataParser(object):
         t = Environment(loader=BaseLoader).from_string(template)
         return t.render(c)
 
-
     def parse_json_yaml(self, data):
 
         """ parses yaml file into json object """
 
         d = None
 
-        # Setup support for ordered dicts so we do not lose ordering
-        # when importing from YAML
-        yaml.add_representer(dict, dict_representer)
-        yaml.add_constructor(self._mapping_tag, dict_constructor)
-
         try:
-            data = yaml.load(data)
+            data = yaml.load(data, Loader=yamlordereddictloader.Loader)
         except Exception as e:
             raise LinchpinError('YAML parsing error: {}'.format(e))
 
@@ -129,7 +115,7 @@ class DataParser(object):
 
         if sp.returncode != 0:
             raise ValidationError("Script {0} had execution error"
-                                  " ({1})".format(script, e))
+                                  " ({1})".format(script))
 
         return stdout
 
