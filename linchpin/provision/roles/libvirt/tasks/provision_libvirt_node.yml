@@ -105,7 +105,7 @@
   command: "qemu-img resize {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} +{{ definition[3] }}"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
-    - ["{{ libvirt_image_path }}"]
+    - ["{{ libvirt_image_path | expanduser }}"]
     - ["{{ img_src_ext }}"]
     - ["{{ res_def['additional_storage'] | default('1G') }}"]
     - "{{ res_count.stdout }}"
@@ -118,7 +118,7 @@
   command: "qemu-img resize {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} +{{ definition[3] }}"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
-    - ["{{ libvirt_image_path }}"]
+    - ["{{ libvirt_image_path | expanduser }}"]
     - ["{{ img_src_ext }}"]
     - ["{{ res_def['additional_storage'] | default('1G') }}"]
     - "{{ res_count.stdout }}"
@@ -151,7 +151,7 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: definition
-  when: node_exists['failed'] is defined and uri_hostname == 'localhost' and res_def['cloud_config'] is defined 
+  when: node_exists['failed'] is defined and uri_hostname == 'localhost' and res_def['cloud_config'] is defined
 
 - name: "Prepare cloud-config/user-data-local"
   template:
@@ -227,7 +227,7 @@
   command: "virt-install --connect {{ definition[6] }} --import --name {{ definition[0] }}_{{ definition[7] }} --autostart --network bridge={{ definition[3] }},model=virtio --ram {{ definition[4] }} --disk path={{ definition[1] }}/{{ definition[0] }}_{{ definition[7] }}.{{ definition[2] }},format={{ definition[5] }},bus=virtio,cache=none --disk path=/tmp/vm-{{ definition[0] }}_{{ definition[7] }}.iso,device=cdrom --wait 10 --os-type=linux --nographics"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
-    - ["{{ libvirt_image_path }}"]
+    - ["{{ libvirt_image_path | expanduser }}"]
     - ["{{ img_src_ext }}"]
     - ["{{ res_def['network_bridge'] | default('virbr0')  }}"]
     - ["{{ res_def['memory'] | default(1024)  }}"]
