@@ -377,7 +377,7 @@ class LinchpinAPI(object):
     def _convert_layout(self, layout_data):
         """
         Convert the layout to retain order of the layout hosts
-        ;param layout_data: layout_data 
+        ;param layout_data: layout_data
         """
         layout_json = layout_data
         layout_hosts = []

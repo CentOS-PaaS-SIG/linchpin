@@ -114,8 +114,8 @@ class DataParser(object):
         (stdout, stderr) = sp.communicate()
 
         if sp.returncode != 0:
-            raise ValidationError("Script {0} had execution error"
-                                  " ({1})".format(script))
+            raise ValidationError("Script {0}"
+                                  " had execution error".format(script))
 
         return stdout
 
