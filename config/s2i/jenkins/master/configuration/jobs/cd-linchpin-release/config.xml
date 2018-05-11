@@ -1,0 +1,226 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.17">
+  <actions>
+    <org.jenkinsci.plugins.workflow.multibranch.JobPropertyTrackerAction plugin="workflow-multibranch@2.17">
+      <jobPropertyDescriptors>
+        <string>hudson.model.ParametersDefinitionProperty</string>
+        <string>com.coravy.hudson.plugins.github.GithubProjectProperty</string>
+        <string>jenkins.model.BuildDiscarderProperty</string>
+      </jobPropertyDescriptors>
+    </org.jenkinsci.plugins.workflow.multibranch.JobPropertyTrackerAction>
+  </actions>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@1.0.7">
+      <uid></uid>
+      <namespace></namespace>
+      <name></name>
+      <resourceVersion></resourceVersion>
+    </io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>20</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>20</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.0">
+      <projectUrl>https://github.com/herlo/jenkins-test/</projectUrl>
+      <displayName></displayName>
+    </com.coravy.hudson.plugins.github.GithubProjectProperty>
+    <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.3">
+      <gitLabConnection></gitLabConnection>
+    </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers>
+        <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.29.0">
+          <spec></spec>
+        </com.cloudbees.jenkins.GitHubPushTrigger>
+      </triggers>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.45">
+    <script>/**
+ * CD LinchPin Release
+ *
+ * This job pulls down the git repository when a new version has been
+ * provided, tags the release version and pushes a new release to pypi.org
+ */
+
+import com.cloudbees.plugins.credentials.Credentials
+
+// Execution ID for this run of the pipeline
+executionID = UUID.randomUUID().toString()
+// Use repoName everywhere for dirs and repo values
+repoName = &apos;linchpin&apos;
+
+
+env.ghprbGhRepository = env.ghprbGhRepository ?: &apos;CentOS-PaaS-SIG/&apos; + repoName
+env.ghprbActualCommit = env.ghprbActualCommit ?: &apos;develop&apos;
+env.ghprbPullAuthorLogin = env.ghprbPullAuthorLogin ?: &apos;&apos;
+
+env.TARGET_BRANCH = env.TARGET_BRANCH ?: &apos;develop&apos;
+
+OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: &apos;continuous-infra&apos;
+OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: &apos;jenkins&apos;
+
+
+// Pod name to use
+podName = repoName + executionID
+
+library identifier: &quot;ci-pipeline@master&quot;,
+        retriever: modernSCM([$class: &apos;GitSCMSource&apos;,
+                              remote: &quot;https://github.com/CentOS-Paas-SIG/ci-pipeline&quot;])
+
+library identifier: &quot;cico-pipeline-library@master&quot;,
+        retriever: modernSCM([$class: &apos;GitSCMSource&apos;,
+                              remote: &quot;https://github.com/CentOS/cico-pipeline-library&quot;])
+
+
+properties([
+  buildDiscarder(logRotator(artifactNumToKeepStr: &apos;20&apos;, numToKeepStr: &apos;20&apos;)),
+  [$class: &apos;GithubProjectProperty&apos;, displayName: &apos;&apos;, projectUrlStr: &apos;https://github.com/&apos; + env.ghprbGhRepository],
+  parameters(
+    [
+      string(defaultValue: &apos;develop&apos;,
+             description: &apos;&apos;,
+             name: &apos;ghprbActualCommit&apos;),
+      string(defaultValue: &apos;&apos;,
+             description: &apos;&apos;,
+             name: &apos;sha1&apos;),
+      string(defaultValue: &apos;&apos;,
+             description: &apos;Git Hub Repository&apos;,
+             name: &apos;ghprbGhRepository&apos;)
+    ]
+  ),
+])
+
+podTemplate(name: podName,
+            label: podName,
+            cloud: &apos;openshift&apos;,
+            serviceAccount: OPENSHIFT_SERVICE_ACCOUNT,
+            idleMinutes: 0,
+            namespace: OPENSHIFT_NAMESPACE,
+
+        containers: [
+            // This adds the custom slave container to the pod.
+            // Must be first with name &apos;jnlp&apos;
+            containerTemplate(name: &apos;jnlp&apos;,
+                image: DOCKER_REPO_URL + &apos;/&apos; + OPENSHIFT_NAMESPACE + &apos;/jenkins-continuous-infra-slave:stable&apos;,
+                ttyEnabled: false,
+                alwaysPullImage: true,
+                args: &apos;${computer.jnlpmac} ${computer.name}&apos;,
+                command: &apos;&apos;,
+                workingDir: &apos;/workDir&apos;)
+        ]
+)
+
+{
+    node(podName) {
+        ansiColor(&apos;xterm&apos;) {
+            timestamps {
+                // We need to set env.HOME because the openshift slave image
+                // forces this to /home/jenkins and then ~ expands to that
+                // even though id == &quot;root&quot;
+                // See https://github.com/openshift/jenkins/blob/master/slave-base/Dockerfile#L5
+                //
+                // Even the kubernetes plugin will create a pod with containers
+                // whose $HOME env var will be its workingDir
+                // See https://github.com/jenkinsci/kubernetes-plugin/blob/master/src/main/java/org/csanchez/jenkins/plugins/kubernetes/KubernetesLauncher.java#L311
+                //
+                env.HOME = &quot;/root&quot;
+                //
+                try {
+                    stage(&apos;checkout-linchpin&apos;) {
+                        deleteDir()
+                        sh &quot;sleep 20000&quot;
+                        pipelineUtils.setDefaultEnvVars()
+                        pipelineUtils.verifyPod(OPENSHIFT_NAMESPACE, env.NODE_NAME)
+                        dir(repoName) {
+
+                            withCredentials([[$class: &apos;UsernamePasswordMultiBinding&apos;, credentialsId: &apos;paas-bot&apos;, usernameVariable: &apos;GH_USER&apos;, passwordVariable: &apos;GH_TOKEN&apos;]]) {
+                                checkout([$class: &apos;GitSCM&apos;,
+                                    branches: [[name: env.ghprbActualCommit]],
+                                    doGenerateSubmoduleConfigurations: false,
+                                    extensions                       : [],
+                                    submoduleCfg                     : [],
+                                    userRemoteConfigs                : [
+                                        [refspec:
+                                            &apos;+refs/heads/*:refs/remotes/origin/*  +refs/tags/*:refs/tags/*&apos;,
+                                            url: &quot;https://&quot; + GH_USER + &quot;:&quot; + GH_TOKEN + &quot;@github.com/${env.ghprbGhRepository}&quot;]
+                                        ]
+                                ])
+                            }
+
+                        }
+                    }
+                    stage(&apos;release-version&apos;) {
+                        dir(repoName) {
+
+                            sh &quot;git checkout &quot; + env.ghprbActualCommit
+                            sh &quot;python setup.py sdist bdist_wheel&quot;
+                            string version = sh (
+                                script: &quot;python setup.py --version&quot;,
+                                returnStdout: true
+                                ).trim()
+                            currentBuild.displayName = &quot;Build#: ${env.BUILD_NUMBER} - Release: &quot; + version
+                            if (env.ghprbActualCommit != null &amp;&amp; env.ghprbActualCommit != &quot;develop&quot;) {
+                                currentBuild.description = &quot;&lt;a href=\&quot;https://github.com/${env.ghprbGhRepository}/pull/${env.ghprbPullId}\&quot;&gt;Release: (&quot; + version + &quot;)&lt;/a&gt;&quot;
+                            }
+                            withCredentials([[$class: &apos;UsernamePasswordMultiBinding&apos;, credentialsId: &apos;linchpin-releaser&apos;, usernameVariable: &apos;TWINE_USERNAME&apos;, passwordVariable: &apos;TWINE_PASSWORD&apos;]]) {
+                                sh (
+                                &quot;&quot;&quot;
+cat &lt;&lt; EOF &gt; /tmp/pypirc
+[distutils]
+index-servers =
+  pypi
+  pypitest
+
+[pypi]
+repository = https://upload.pypi.org/legacy/
+username = ${TWINE_USERNAME}
+password = ${TWINE_PASSWORD}
+
+[pypitest]
+repository:https://test.pypi.org/legacy/
+username = ${TWINE_USERNAME}
+password = ${TWINE_PASSWORD}
+EOF
+
+twine upload --config-file /tmp/pypirc --repository pypitest dist/*
+                                &quot;&quot;&quot;
+                                )
+                            }
+                            sh &quot;git tag v&quot; + version
+                            sh &quot;git push --tags origin develop&quot;
+                        }
+                    }
+                }
+                catch (e) {
+
+                        // Set build result
+                        currentBuild.result = &apos;FAILURE&apos;
+
+                        // Report the exception
+                        echo e.getMessage()
+
+                        // Throw the error
+                        throw e
+
+                }
+            }
+        }
+    }
+}
+</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
