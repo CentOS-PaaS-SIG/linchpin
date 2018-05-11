@@ -13,8 +13,9 @@
   loop_control:
     loop_var: instance
   register: res_def_output
-  when: not async
   ignore_errors: yes
+  delegate_to: "{{ uri_hostname }}"
+  when: not async
 
 - name: "get XML definition of vm"
   command: "virsh -c {{ instance[1]  }} dumpxml {{ instance[0] }}_{{ instance[2] }}"
@@ -51,3 +52,4 @@
     loop_var: inst
   ignore_errors: yes
   become: "{{ libvirt_become }}"
+  delegate_to: "{{ uri_hostname }}"
