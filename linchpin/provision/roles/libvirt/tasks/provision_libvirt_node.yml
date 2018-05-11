@@ -307,7 +307,7 @@
 
 - name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
-    arp -an | grep -F {{ extract_mac_address_result.results[mac].stdout }} | cut -f 2 -d "(" | cut -f 1 -d ")"
+    /usr/sbin/arp -an | grep -F {{ extract_mac_address_result.results[mac].stdout }} | cut -f 2 -d "(" | cut -f 1 -d ")"
   with_items:
     - "{{ res_count.stdout }}"
   loop_control:
@@ -320,13 +320,13 @@
 
 - name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
-    arp -an | grep -F {{ extract_mac_address_result.results[mac].stdout }} | cut -f 2 -d "(" | cut -f 1 -d ")"
+    /usr/sbin/arp -an | grep -F {{ extract_mac_address_result.results[mac].stdout }} | cut -f 2 -d "(" | cut -f 1 -d ")"
   with_items:
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: mac
   register: extract_ip_address_result_remote
-  until: extract_ip_address_result.stdout != ""
+  until: extract_ip_address_result_remote.stdout != ""
   retries: 30
   delay: 10
   remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
