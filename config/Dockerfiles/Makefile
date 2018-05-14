@@ -1,10 +1,10 @@
 PARENT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))/../../)
 
-TARGETS := fedora27 centos7 fedora26
+DISTROS := fedora27 centos7 fedora26
 
 .PHONY: all
 all:
-	set -e; for i in $(TARGETS); do \
+	set -e; for i in $(DISTROS); do \
 		docker build -f $$i/Dockerfile -t lp_$$i .; \
 	done
 
