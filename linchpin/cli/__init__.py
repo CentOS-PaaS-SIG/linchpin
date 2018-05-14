@@ -427,7 +427,8 @@ class LinchpinCli(LinchpinAPI):
             if not pf_data_path:
                 pf = self.parser.process(pf_w_path, data=self.pf_data)
             else:
-                pf = self.parser.process(pf_w_path, data_w_path=pf_data_path)
+                pf = self.parser.process(pf_w_path,
+                                         data='@{0}'.format(pf_data_path))
 
             if pf:
                 provision_data = self._build(pf, pf_data=self.pf_data)
@@ -526,6 +527,7 @@ class LinchpinCli(LinchpinAPI):
                 if not isinstance(pf[target]['layout'], dict):
                     layout_path = self.find_include(pf[target]["layout"],
                                                     ftype='layout')
+
                     layout_data = self.parser.process(layout_path, data=pf_data)
                     layout_data = self._make_layout_integers(layout_data)
                     provision_data[target]['layout'] = layout_data
