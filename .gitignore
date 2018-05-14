@@ -41,3 +41,4 @@ config/Dockerfiles/duffy-ansible-module
 
 # Credential files for testing drivers
 keys/
+duffy-ansible-module

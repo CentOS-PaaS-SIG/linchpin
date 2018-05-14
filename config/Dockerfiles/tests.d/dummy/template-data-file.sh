@@ -12,8 +12,10 @@ trap clean_up EXIT SIGHUP SIGINT SIGTERM
 pushd docs/source/examples/workspace
 cat << EOF > dummy-data.yml
 ---
-distro: ${DISTRO}
+distro: "${DISTRO}-"
 EOF
+
+cat dummy-data.yml
 
 if [ -e /tmp/dummy.hosts ]; then
     rm /tmp/dummy.hosts
