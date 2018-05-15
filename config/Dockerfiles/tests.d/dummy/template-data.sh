@@ -13,9 +13,9 @@ if [ -e /tmp/dummy.hosts ]; then
     rm /tmp/dummy.hosts
 fi
 
-echo "DISTRO: ${DISTRO}"
 pushd docs/source/examples/workspace
+
 linchpin -w . -p PinFile.dummy.yml --template-data "{\"distro\": \"${DISTRO}-\"}" -v up dummy-new
 
-cat /tmp/dummy.hosts | grep "${DISTRO}"
+grep "${DISTRO}" /tmp/dummy.hosts
 

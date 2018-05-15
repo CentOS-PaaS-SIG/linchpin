@@ -23,5 +23,5 @@ fi
 
 linchpin -w . -p PinFile.${PROVIDER}.yml --template-data @dummy-data.yml -v up dummy-new
 
-cat /tmp/dummy.hosts | grep "${DISTRO}"
+grep "${DISTRO}" /tmp/dummy.hosts
 
