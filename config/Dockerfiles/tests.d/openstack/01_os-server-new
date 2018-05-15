@@ -1,0 +1,18 @@
+#!/bin/bash -xe
+
+# Verify os-server provisioning
+
+DISTRO=${1}
+PROVIDER=${2}
+
+PINFILE="PinFile.${PROVIDER}.yml"
+TARGET="os-server-new"
+
+function clean_up {
+    set +e
+    linchpin -w . -p "${PINFILE}" -v destroy "${TARGET}"
+}
+trap clean_up EXIT SIGHUP SIGINT SIGTERM
+
+pushd docs/source/examples/workspace
+linchpin -w . -p "${PINFILE}" -v up "${TARGET}"
