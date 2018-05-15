@@ -9,7 +9,7 @@ all:
 	done
 
 test: all
-	./run_tests.sh $(PARENT_DIR) $(TARGETS)
+	./run_tests.sh $(PARENT_DIR) "$(DISTROS)"
 
 pip_install.sh: ../../requirements.txt
 	./gen_pip_install.sh
