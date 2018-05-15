@@ -1,0 +1,33 @@
+#!/bin/bash -xe
+
+# Verify dummy provisioning using file-based template data
+
+DISTRO=${1}
+PROVIDER=${2}
+
+PINFILE="PinFile.${PROVIDER}.yml"
+TARGET="dummy-new"
+TEMPLATE_FILE="@./dummy-data.yml"
+
+function clean_up {
+    set +e
+    linchpin -w . -p "${PINFILE}" --template-data "${TEMPLATE_FILE}" -v destroy "${TARGET}"
+}
+trap clean_up EXIT SIGHUP SIGINT SIGTERM
+
+pushd docs/source/examples/workspace
+cat << EOF > "${TEMPLATE_FILE}"
+---
+distro: "${DISTRO}-"
+EOF
+
+cat "${TEMPLATE_FILE}"
+
+if [ -e /tmp/dummy.hosts ]; then
+    rm /tmp/dummy.hosts
+fi
+
+linchpin -w . -p "${PINFILE}" --template-data "${TEMPLATE_FILE}" -v up "${TARGET}"
+
+grep "${DISTRO}" /tmp/dummy.hosts
+
