@@ -64,13 +64,13 @@ def getProvidersToTest(providersMap) {
                     if (matchPath(file.path, e.value)) {
                         println "${e.key} matched ${file.path}"
                         this_match = true
-                        targets[e.key] = 1
+                        providers[e.key] = 1
                     }
                 }
                 if (!this_match) {
                     // If we get here then we have a non-target specific change
-                    // and all targets should be tested.
-                    println "Non-target file matched, will test all targets"
+                    // and all providers should be tested.
+                    println "Non-provider file matched, will test all providers"
                     return keysToList(providersMap)
                 }
             }
