@@ -232,7 +232,7 @@ pipeline {
                                 string(name: 'CENTOS7_TAG',
                                        value: tagMap['centos7']),
                                 string(name: 'TEST_TARGETS',
-                                       value: test_targets)
+                                       value: test_targets),
                                 string(name: 'TEST_PROVIDERS',
                                        value: test_providers)
                         ],
