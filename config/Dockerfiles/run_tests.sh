@@ -4,13 +4,10 @@ set -o pipefail
 
 LINCHPINDIR=$1
 shift
-DISTROS=$2
+DISTROS=$*
 #TARGETS="dummy os-server-new os-sg-new os-vol-new"
 
 PROVIDERS="dummy openstack"
-if [ ! -z "${3}" ]; then
-    PROVIDERS=${3}
-fi
 
 export WORKSPACE="/tmp"
 
