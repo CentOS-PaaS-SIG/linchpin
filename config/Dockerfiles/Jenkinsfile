@@ -18,20 +18,14 @@ DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 // environment this will limit the possible targets tested.
 // if it's not defined you will get all the possible targets
 // listed here.
-LTARGETS = env.LINCHPIN_TARGETS ?: 'dummy duffy libvirt aws-ec2-new'
-PTARGETS = LTARGETS.tokenize()
+// LTARGETS = env.LINCHPIN_TARGETS ?: 'dummy duffy libvirt aws-ec2-new'
 
-LPROVIDERS = env.LINCHPIN_PROVIDERS ?: 'dummy duffy libvirt aws openstack'
+// LPROVIDERS = env.LINCHPIN_PROVIDERS ?: 'dummy duffy libvirt aws openstack'
+LPROVIDERS = env.LINCHPIN_PROVIDERS ?: 'dummy libvirt'
 PPROVIDERS = LPROVIDERS.tokenize()
-
-TEST_TARGETS = env.TEST_TARGETS ?: 'dummy duffy libvirt aws-ec2-new bkr-new os-server-new os-sg-new os-vol-new'
-TTARGETS = TEST_TARGETS.tokenize()
 
 TEST_PROVIDERS = env.TEST_PROVIDERS ?: 'dummy duffy libvirt aws beaker openstack'
 TPROVIDERS = TEST_PROVIDERS.tokenize()
-
-env.TARGETS = TTARGETS.intersect( PTARGETS ).join(" ")
-env.PROVIDERS = TPROVIDERS.intersect( PPROVIDERS ).join(" ")
 
 OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
@@ -183,16 +177,16 @@ podTemplate(name: podName,
                             def creds = com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredentials(
                               com.cloudbees.plugins.credentials.Credentials.class
                             );
-                            for (target in PTARGETS) {
-                              def cf = creds.findResult { it.id == target + '-key' ? it : null }
+                            for (provider in PPROVIDERS) {
+                              def cf = creds.findResult { it.id == provider + '-key' ? it : null }
                               if ( cf ) {
                                 println "found credential ${cf.id} filename:${cf.fileName}"
-                                withCredentials([file(credentialsId: target + '-key', variable: 'FILEKEY')]) {
+                                withCredentials([file(credentialsId: provider + '-key', variable: 'FILEKEY')]) {
                                 sh """
                                     #!/bin/bash -x
-                                    mkdir -p keys/${target}
-                                    cp ${FILEKEY} keys/${target}/${cf.fileName}
-                                    chmod 0600 keys/${target}/${cf.fileName}
+                                    mkdir -p keys/${provider}
+                                    cp ${FILEKEY} keys/${provider}/${cf.fileName}
+                                    chmod 0600 keys/${provider}/${cf.fileName}
                                 """
                                 }
                               }

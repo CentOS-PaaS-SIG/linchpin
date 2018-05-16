@@ -38,13 +38,13 @@ p_targets = ['dummy':
              'bkr-new':
               ["^linchpin/provision/roles/beaker/.*",
                "^linchpin/provision/beaker.yml"],
-              'os-server-new':
+             'os-server-new':
               ["^linchpin/provision/roles/openstack/.*",
                "^linchpin/provision/openstack.yml"],
-              'os-sg-new':
+             'os-sg-new':
               ["^linchpin/provision/roles/openstack/.*",
                "^linchpin/provision/openstack.yml"],
-              'os-vol-new':
+             'os-vol-new':
               ["^linchpin/provision/roles/openstack/.*",
                "^linchpin/provision/openstack.yml"],
             ]
@@ -53,23 +53,23 @@ test_targets = ""
 
 // Provider: [ PATH/IN/REPO to match, ]
 p_providers = ['dummy':
-              ["^(?!linchpin/version.py).*"],
-             'duffy':
-              ["^linchpin/provision/roles/duffy/.*",
-               "^linchpin/provision/duffy.yml"],
-             'libvirt':
-              ["^linchpin/provision/roles/libvirt/.*",
-               "^linchpin/provision/libvirt.yml"],
-             'aws':
-              ["^linchpin/provision/roles/aws/.*",
-               "^linchpin/provision/aws.yml"],
-             'beaker':
-              ["^linchpin/provision/roles/beaker/.*",
-               "^linchpin/provision/beaker.yml"],
-              'openstack':
-              ["^linchpin/provision/roles/openstack/.*",
-               "^linchpin/provision/openstack.yml"],
-            ]
+                ["^(?!linchpin/version.py).*"],
+               'duffy':
+                ["^linchpin/provision/roles/duffy/.*",
+                 "^linchpin/provision/duffy.yml"],
+               'libvirt':
+                ["^linchpin/provision/roles/libvirt/.*",
+                 "^linchpin/provision/libvirt.yml"],
+               'aws':
+                ["^linchpin/provision/roles/aws/.*",
+                 "^linchpin/provision/aws.yml"],
+               'beaker':
+                ["^linchpin/provision/roles/beaker/.*",
+                 "^linchpin/provision/beaker.yml"],
+               'openstack':
+                ["^linchpin/provision/roles/openstack/.*",
+                 "^linchpin/provision/openstack.yml"],
+              ]
 
 test_providers = ""
 
