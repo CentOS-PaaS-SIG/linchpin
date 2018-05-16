@@ -8,6 +8,12 @@ mkdir -p ${base_dir}/${distro}_logs
 
 TEST_DIR="./config/Dockerfiles/tests.d"
 
+if [ -z "${PROVIDERS}" ]; then
+    PROVIDERS="dummy openstack"
+fi
+
+echo "Testing providers: ${PROVIDERS}"
+
 result=0
 for provider in $PROVIDERS; do
     export CREDS_PATH="$base_dir/keys/${provider}"
