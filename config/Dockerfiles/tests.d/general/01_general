@@ -1,0 +1,17 @@
+#!/bin/bash -xe
+
+DISTRO=${1}
+PROVIDER=${2}
+
+echo "Test ${PROVIDER} provider with a simple up/destroy"
+
+function clean_up {
+    set +e
+    linchpin -w . -p PinFile.${PROVIDER}.yml -v destroy ${PROVIDER}-new
+}
+trap clean_up EXIT SIGHUP SIGINT SIGTERM
+
+pushd docs/source/examples/workspace
+
+linchpin -w . -p PinFile.${PROVIDER}.yml -v up ${PROVIDER}-new
+
