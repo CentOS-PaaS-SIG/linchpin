@@ -257,8 +257,8 @@ class LinchpinCli(LinchpinAPI):
                     if len(res_data) and res_data not in dist_data[target]:
                         dist_data[target].extend(res_data)
             except Exception as e:
-                self.log_info('Error recording distilled context'
-                              ' ({0})'.format(e))
+                self.ctx.log_info('Error recording distilled context'
+                                  ' ({0})'.format(e))
         with open(context_file, 'w+') as f:
             f.write(json.dumps(dist_data))
 
