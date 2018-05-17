@@ -7,7 +7,7 @@
 
 - name: "Set inventory_layout"
   set_fact:
-    inventory_layout: "{{ layout_data | ordered_yaml }}"
+    inventory_layout: "{{ layout_data['inventory_layout'] }}"
 
 - name: "Updating uhash-based inventory_path with the absolute path"
   set_fact:

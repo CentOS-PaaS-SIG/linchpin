@@ -119,7 +119,6 @@ class LinchpinCli(LinchpinAPI):
             self.ctx.log_state('Error: {0}'.format(e))
             sys.exit(1)
 
-
     def _get_pinfile_path(self, exists=True):
         """
         This function finds the self.pinfile. If the file is a full path,
@@ -471,10 +470,14 @@ class LinchpinCli(LinchpinAPI):
     def _make_layout_integers(self, data):
 
         inv_layout = data.get('inventory_layout')
+
         if inv_layout:
-            for k, v in inv_layout.get('hosts').iteritems():
-                if 'count' in v.keys():
-                    v['count'] = int(v.pop('count'))
+            hosts = inv_layout.get('hosts')
+            for k in hosts:
+                count = int(hosts[k].get("count"))
+                hosts[k]["count"] = count
+            inv_layout["hosts"] = hosts
+            data["inventory_layout"] = inv_layout
 
         return data
 
