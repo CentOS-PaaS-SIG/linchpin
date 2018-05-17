@@ -33,7 +33,7 @@ for provider in $PROVIDERS; do
 
     for testfile in ${TEST_DIR}/general/*; do
         filename=$(basename -- "$testfile")
-        test="general/${filename%.*}"
+        test="${provider}/${filename%.*}"
         testname=${distro}/${test}
 
         ignore=''
