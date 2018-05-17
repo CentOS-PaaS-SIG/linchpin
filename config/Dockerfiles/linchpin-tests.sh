@@ -33,12 +33,13 @@ for provider in $PROVIDERS; do
 
     for testfile in ${TEST_DIR}/general/*; do
         filename=$(basename -- "$testfile")
-        test="${provider}/${filename%.*}"
+        tname="${filename%.*}"
+        test="${provider}/${tname}"
         testname=${distro}/${test}
 
         ignore=''
         if [ -e "${TEST_DIR}/${distro}-${provider}.ignore" ]; then
-            ignore=$(grep ${test} ${TEST_DIR}/${distro}-${provider}.ignore | grep -v '^#')
+            ignore=$(grep ${tname} ${TEST_DIR}/${distro}-${provider}.ignore | grep -v '^#')
         fi
 
         if [ -z "${ignore}" ]; then
