@@ -239,7 +239,7 @@ class LinchpinCli(LinchpinAPI):
                             res_dict[k] = res.get(k)
                             res_data.append(res_dict)
                         else:
-                            for rsrc in res.get(k):
+                            for rsrc in res.get(k, []):
                                 res_dict = {}
                                 for value in v:
                                     if isinstance(value, dict):
