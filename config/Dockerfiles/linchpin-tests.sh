@@ -100,12 +100,8 @@ for testdir in *; do
                     $tmpdir/install.sh
                 fi
 
-                #echo "${distro}_logs/${provider}.log"
-
                 tname="${provider}/${tname}"
                 testname=${distro}/${tname}
-
-
                 echo >> ${base_dir}/${distro}_logs/${provider}.log
                 echo "==== TEST: ${testdir}/${test} ====" | tee -a ${base_dir}/${distro}_logs/${provider}.log
                 pushd "${base_dir}" &> /dev/null
@@ -116,10 +112,10 @@ for testdir in *; do
             done
         fi
     done
+    echo "========= FINISHED ${testdir} TESTS ==========="
     popd &> /dev/null
 done
 popd &> /dev/null
-exit 1
 
 
 #            if [ $? -eq 0 ]; then
