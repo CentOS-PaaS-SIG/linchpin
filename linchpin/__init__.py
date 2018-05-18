@@ -374,6 +374,23 @@ class LinchpinAPI(object):
             raise LinchpinError("Unknown error converting schema. Check"
                                 " template data")
 
+    def _convert_layout(self, layout_data):
+        """
+        Convert the layout to retain order of the layout hosts
+        ;param layout_data: layout_data
+        """
+        layout_json = layout_data
+        layout_hosts = []
+        ihosts = layout_data["inventory_layout"]["hosts"]
+        for k in ihosts:
+            layout_host = {}
+            layout_host["name"] = k
+            for key in ihosts[k]:
+                layout_host[key] = ihosts[k][key]
+            layout_hosts.append(layout_host)
+        layout_json["inventory_layout"]["hosts"] = layout_hosts
+        return layout_json
+
 
     def _validate_topology(self, topology):
         """
@@ -621,9 +638,9 @@ class LinchpinAPI(object):
                                      provision_data[target]['topology']}
                                 ])
 
-
-
             if provision_data[target].get('layout', None):
+                l_data = provision_data[target]['layout']
+                provision_data[target]['layout'] = self._convert_layout(l_data)
                 self.set_evar('layout_data', provision_data[target]['layout'])
 
                 rundb.update_record(target,

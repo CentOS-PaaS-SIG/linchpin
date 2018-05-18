@@ -119,7 +119,6 @@ class LinchpinCli(LinchpinAPI):
             self.ctx.log_state('Error: {0}'.format(e))
             sys.exit(1)
 
-
     def _get_pinfile_path(self, exists=True):
         """
         This function finds the self.pinfile. If the file is a full path,
@@ -183,7 +182,6 @@ class LinchpinCli(LinchpinAPI):
         This method takes all of the provided run_data, loops through the
         distiller section of the linchpin.constants and writes out the
         linchpin.context (name TBD) to the 'resources' directory.
-
         """
 
         dist_roles = self.get_cfg('distiller')
@@ -196,7 +194,6 @@ class LinchpinCli(LinchpinAPI):
 
         roles = []
         dist_data = {}
-
         # get roles used
         for target, data in run_data.iteritems():
             inputs = data.get('inputs')
@@ -235,59 +232,55 @@ class LinchpinCli(LinchpinAPI):
 
             try:
                 for res in resources:
-                    res_data = {}
+                    res_data = []
                     for k, v in fields.iteritems():
                         if not v:
-                            res_data[k] = res.get(k)
+                            res_dict = {}
+                            res_dict[k] = res.get(k)
+                            res_data.append(res_dict)
                         else:
-                            rsrc = res.get(k)[0]
-                            for value in v:
-                                if isinstance(value, dict):
-                                    for key, vals in value.iteritems():
-                                        subrsc = rsrc.get(key)
-                                        for val in vals:
-                                            res_data[val] = subrsc.get(val)
-                                else:
-                                    res_data[value] = rsrc.get(value)
+                            for rsrc in res.get(k, []):
+                                res_dict = {}
+                                for value in v:
+                                    if isinstance(value, dict):
+                                        for key, vals in value.iteritems():
+                                            subrsc = rsrc.get(key)
+                                            for val in vals:
+                                                res_dict[val] = subrsc.get(val)
+                                    else:
+                                        res_dict[value] = rsrc.get(value)
+                                res_data.append(res_dict)
 
                     if target not in dist_data.keys():
                         dist_data[target] = []
 
                     if len(res_data) and res_data not in dist_data[target]:
-                        dist_data[target].append(res_data)
+                        dist_data[target].extend(res_data)
             except Exception as e:
-                self.log_info('Error recording distilled context'
-                              ' ({0})'.format(e))
-
+                self.ctx.log_info('Error recording distilled context'
+                                  ' ({0})'.format(e))
         with open(context_file, 'w+') as f:
             f.write(json.dumps(dist_data))
 
 
-    def distill_data(self, return_code, run_data):
+    def lp_down(self, pinfile, targets=(), run_id=None):
         """
-        Distill data to the file <workspace>/resources/linchpin.distilled
-        from RunDB using the get_run_data method
+        This function takes a list of targets, and performs a shutdown on
+        nodes in the target's topology. Only providers which support shutdown
+        from their API (Ansible) will support this option.
 
-        :param return_code:
-            Return code from the transaction
+        CURRENTLY UNIMPLEMENTED
 
-        :param run_data:
-            return data, in a compressed format, which is used to
-            obtain all of the run_data on a per target basis
+        .. seealso:: lp_destroy
 
+        :param pinfile:
+            Provided PinFile, with available targets,
 
+        :param targets:
+            A tuple of targets to provision.
         """
 
-        # Export distilled data in useful ways
-        # # Write out run_data to a file for now
-        if return_code:
-            distill_on_error = self.get_cfg('lp',
-                                            'distill_on_error',
-                                            default='False')
-            if ast.literal_eval(distill_on_error.title()):
-                self._write_distilled_context(run_data)
-        else:
-                self._write_distilled_context(run_data)
+        pass
 
 
     def lp_up(self, targets=(), run_id=None, tx_id=None):
@@ -305,7 +298,7 @@ class LinchpinCli(LinchpinAPI):
             An optional tx_id if the task is idempotent
         """
 
-        # INPUTS
+        # Prep input data
 
         # Execute prepped data
         return_code, return_data = self._execute_action('up',
@@ -313,24 +306,34 @@ class LinchpinCli(LinchpinAPI):
                                                         run_id=run_id,
                                                         tx_id=tx_id)
 
+        # Distill data
         new_tx_id = return_data.keys()[0]
 
         # This is what the API allows.
         # run_data = self.get_run_data(new_tx_id, ('outputs', 'inputs',
         #                                          'action', 'cfgs', 'start',
         #                                          'end', 'rc', 'uhash'))
+
         run_data = self.get_run_data(new_tx_id, ('inputs', 'outputs'))
 
-        # OUTPUTS
-        # Distill data
+        # Export distilled data in useful ways
+        # # Write out run_data to a file for now
         distill_data = self.get_cfg('lp', 'distill_data')
         gen_resources = self.get_evar('generate_resources')
 
         if ast.literal_eval(distill_data.title()) and not gen_resources:
-            self.distill_data(return_code, run_data)
+            if return_code:
+                distill_on_error = self.get_cfg('lp',
+                                                'distill_on_error',
+                                                default='False')
+                if ast.literal_eval(distill_on_error.title()):
+                    self._write_distilled_context(run_data)
+            else:
+                    self._write_distilled_context(run_data)
 
         # Show success and errors, with data
         return (return_code, return_data)
+
 
 
     def lp_destroy(self, targets=(), run_id=None, tx_id=None):
@@ -360,26 +363,6 @@ class LinchpinCli(LinchpinAPI):
                                     tx_id=tx_id)
 
 
-    def lp_down(self, pinfile, targets=(), run_id=None):
-        """
-        This function takes a list of targets, and performs a shutdown on
-        nodes in the target's topology. Only providers which support shutdown
-        from their API (Ansible) will support this option.
-
-        CURRENTLY UNIMPLEMENTED
-
-        .. seealso:: lp_destroy
-
-        :param pinfile:
-            Provided PinFile, with available targets,
-
-        :param targets:
-            A tuple of targets to provision.
-        """
-
-        pass
-
-
     def _execute_action(self, action, targets=(), run_id=None, tx_id=None):
         """
         This function takes a list of targets, and performs a destructive
@@ -399,6 +382,7 @@ class LinchpinCli(LinchpinAPI):
 
         use_pinfile = True
         pf = None
+        pf_data = None
 
         return_data = OrderedDict()
         return_code = 0
@@ -431,11 +415,7 @@ class LinchpinCli(LinchpinAPI):
                                          data='@{0}'.format(pf_data_path))
 
             if pf:
-                provision_data = self._build(pf, pf_data=self.pf_data)
-
-                pf_outfile = self.get_cfg('tmp', 'output_pinfile')
-                if pf_outfile:
-                    self.parser.write_json(provision_data, pf_outfile)
+                provision_data = self._build(pf, pf_data)
 
             return_code, return_data = self._execute(provision_data,
                                                      targets,
@@ -490,10 +470,14 @@ class LinchpinCli(LinchpinAPI):
     def _make_layout_integers(self, data):
 
         inv_layout = data.get('inventory_layout')
+
         if inv_layout:
-            for k, v in inv_layout.get('hosts').iteritems():
-                if 'count' in v.keys():
-                    v['count'] = int(v.pop('count'))
+            hosts = inv_layout.get('hosts')
+            for k in hosts:
+                count = int(hosts[k].get("count"))
+                hosts[k]["count"] = count
+            inv_layout["hosts"] = hosts
+            data["inventory_layout"] = inv_layout
 
         return data
 
@@ -515,7 +499,8 @@ class LinchpinCli(LinchpinAPI):
 
             if not isinstance(pf[target]['topology'], dict):
                 topology_path = self.find_include(pf[target]["topology"])
-                topology_data = self.parser.process(topology_path, data=pf_data)
+                topology_data = self.parser.process(topology_path,
+                                                    data=self.pf_data)
             else:
                 topology_data = pf[target]['topology']
 
@@ -528,7 +513,8 @@ class LinchpinCli(LinchpinAPI):
                     layout_path = self.find_include(pf[target]["layout"],
                                                     ftype='layout')
 
-                    layout_data = self.parser.process(layout_path, data=pf_data)
+                    layout_data = self.parser.process(layout_path,
+                                                      data=self.pf_data)
                     layout_data = self._make_layout_integers(layout_data)
                     provision_data[target]['layout'] = layout_data
                 else:
