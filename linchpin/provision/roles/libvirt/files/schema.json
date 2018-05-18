@@ -63,7 +63,8 @@
                     "prefix": { "type": "string", "required": false },
                     "dhcp_start": { "type": "string", "required": false },
                     "dhcp_end": { "type": "string", "required": false },
-                    "bridge": { "type": "string", "required": false }
+                    "bridge": { "type": "string", "required": false },
+                    "domain": { "type": "string", "required": false }
                 }
             },
             {
