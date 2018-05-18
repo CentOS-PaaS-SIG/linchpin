@@ -15,17 +15,18 @@ env.CENTOS7_TAG = env.CENTOS7_TAG ?: 'stable'
 
 DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 // if LINCHPIN_PROVIDERS is defined in jenkins global
-// environment this will limit the possible targets tested.
-// if it's not defined you will get all the possible targets
+// environment this will limit the possible providers tested.
+// if it's not defined you will get all the possible providers
 // listed here.
-// LTARGETS = env.LINCHPIN_TARGETS ?: 'dummy duffy libvirt aws-ec2-new'
+// LPROVIDERS = env.LINCHPIN_PROVIDERS ?: 'dummy duffy libvirt aws'
 
-// LPROVIDERS = env.LINCHPIN_PROVIDERS ?: 'dummy duffy libvirt aws openstack'
-LPROVIDERS = env.LINCHPIN_PROVIDERS ?: 'dummy libvirt aws openstack'
+LPROVIDERS = env.LINCHPIN_PROVIDERS ?: 'dummy duffy libvirt aws'
 PPROVIDERS = LPROVIDERS.tokenize()
 
 TEST_PROVIDERS = env.TEST_PROVIDERS ?: 'dummy duffy libvirt aws beaker openstack'
 TPROVIDERS = TEST_PROVIDERS.tokenize()
+
+env.PROVIDERS = TPROVIDERS.intersect( PPROVIDERS ).join(" ")
 
 OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
