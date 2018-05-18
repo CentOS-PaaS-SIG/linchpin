@@ -801,6 +801,29 @@ class LinchpinAPI(object):
 
         return target_data
 
+    def _get_latest_run_data(self):
+
+        rundb = self.setup_rundb()
+        latest_run_data = rundb.get_records('linchpin', count=1)
+        run_data = self.get_run_data(latest_run_data.keys()[0],
+                                     ('inputs', 'outputs'))
+        for k in latest_run_data:
+            v = latest_run_data[k]
+            target_group = v.get("targets", [])
+            # Note:
+            # target_group always returns a dict inside a list due to
+            # rundb implemenatation. This code works for one PinFile run
+            # might be subjected to change in future releases
+            if len(target_group) == 0:
+                continue
+            else:
+                target_group = target_group[0]
+            for key in target_group.keys():
+                target_group[key].update(run_data.get(key, {}))
+            latest_run_data[k]["targets"] = [target_group]
+        return latest_run_data
+
+
 
     def _invoke_playbooks(self, resources, action='up', console=True):
         """
