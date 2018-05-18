@@ -53,22 +53,29 @@ test_targets = ""
 
 // Provider: [ PATH/IN/REPO to match, ]
 p_providers = ['dummy':
-                ["^(?!linchpin/version.py).*"],
+                ["^(?!linchpin/version.py).*",
+                 "^config/Dockerfiles/tests.d/dummy/.*",
+                 "^config/Dockerfiles/tests.d/general/.*"],
                'duffy':
                 ["^linchpin/provision/roles/duffy/.*",
-                 "^linchpin/provision/duffy.yml"],
+                 "^linchpin/provision/duffy.yml",
+                 "^config/Dockerfiles/tests.d/general/.*"],
                'libvirt':
                 ["^linchpin/provision/roles/libvirt/.*",
-                 "^linchpin/provision/libvirt.yml"],
+                 "^linchpin/provision/libvirt.yml",
+                 "^config/Dockerfiles/test.d/libvirt/.*"],
                'aws':
                 ["^linchpin/provision/roles/aws/.*",
-                 "^linchpin/provision/aws.yml"],
+                 "^linchpin/provision/aws.yml",
+                 "^config/Dockerfiles/test.d/aws/.*"],
                'beaker':
                 ["^linchpin/provision/roles/beaker/.*",
-                 "^linchpin/provision/beaker.yml"],
+                 "^linchpin/provision/beaker.yml",
+                 "^config/Dockerfiles/test.d/beaker/.*"],
                'openstack':
                 ["^linchpin/provision/roles/openstack/.*",
-                 "^linchpin/provision/openstack.yml"],
+                 "^linchpin/provision/openstack.yml",
+                 "^config/Dockerfiles/test.d/openstack/.*"],
               ]
 
 test_providers = ""

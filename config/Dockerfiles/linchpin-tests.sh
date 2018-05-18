@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 base_dir="${PWD}"
 
@@ -85,35 +85,36 @@ result=0
 
 pushd "${TESTS_DIR}" &> /dev/null
 for testdir in *; do
-    pushd "${testdir}" &> /dev/null
-    for test in *; do
-        echo
-        if [ ! $(check_distro_exclude "${test}") ]; then
-            set_providers "${test}"
-            for provider in ${providers}; do
-                export CREDS_PATH="$base_dir/keys/${provider}"
-                # If CREDS_PATH provides a tarball extract it and
-                # run it's install script
-                if [ -e "$CREDS_PATH/${provider}.tgz" ]; then
-                    tmpdir=$(mktemp -d)
-                    tar xvf $CREDS_PATH/${provider}.tgz -C $tmpdir
-                    $tmpdir/install.sh
-                fi
+    if [ -n "$(ls ${testdir})" ]; then
+        pushd "${testdir}" &> /dev/null
+        for test in *; do
+            echo
+            if [ ! $(check_distro_exclude "${test}") ]; then
+                set_providers "${test}"
+                for provider in ${providers}; do
+                    export CREDS_PATH="$base_dir/keys/${provider}"
+                    # If CREDS_PATH provides a tarball extract it and
+                    # run it's install script
+                    if [ -e "$CREDS_PATH/${provider}.tgz" ]; then
+                        tmpdir=$(mktemp -d)
+                        tar xvf $CREDS_PATH/${provider}.tgz -C $tmpdir
+                        $tmpdir/install.sh
+                    fi
 
-                tname="${provider}/${tname}"
-                testname=${distro}/${tname}
-                echo >> ${base_dir}/${distro}_logs/${provider}.log
-                echo "==== TEST: ${testdir}/${test} ====" | tee -a ${base_dir}/${distro}_logs/${provider}.log
-                pushd "${base_dir}" &> /dev/null
-                ${TESTS_DIR}/${testdir}/${test} ${distro} ${provider} 2>&1 | tee -a ${base_dir}/${distro}_logs/${provider}.log
-                echo >> ${base_dir}/${distro}_logs/${provider}.log
-                popd &> /dev/null
+                    tname="${provider}/${tname}"
+                    testname=${distro}/${tname}
+                    echo >> ${base_dir}/${distro}_logs/${provider}.log
+                    echo "==== TEST: ${testdir}/${test} ====" | tee -a ${base_dir}/${distro}_logs/${provider}.log
+                    pushd "${base_dir}" &> /dev/null
+                    ${TESTS_DIR}/${testdir}/${test} ${distro} ${provider} 2>&1 | tee -a ${base_dir}/${distro}_logs/${provider}.log
+                    echo >> ${base_dir}/${distro}_logs/${provider}.log
+                    popd &> /dev/null
 
-            done
-        fi
-    done
-    echo "========= FINISHED ${testdir} TESTS ==========="
-    popd &> /dev/null
+                done
+            fi
+        done
+        popd &> /dev/null
+    fi
 done
 popd &> /dev/null
 
