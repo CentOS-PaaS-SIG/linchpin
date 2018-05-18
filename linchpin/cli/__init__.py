@@ -270,6 +270,17 @@ class LinchpinCli(LinchpinAPI):
         with open(context_file, 'w+') as f:
             f.write(json.dumps(dist_data))
 
+    def _write_latest_run(self):
+
+        latest_run_data = self._get_latest_run_data()
+        resources_path = self.get_evar('resources_folder')
+        context_path = '{0}/{1}'.format(self.workspace, resources_path)
+        if not os.path.exists(context_path):
+            os.makedirs(context_path)
+        context_file = '{0}/{1}'.format(context_path, 'linchpin.latest')
+        with open(context_file, 'w+') as f:
+            f.write(json.dumps(latest_run_data))
+
 
     def lp_down(self, pinfile, targets=(), run_id=None):
         """
@@ -338,6 +349,7 @@ class LinchpinCli(LinchpinAPI):
                     self._write_distilled_context(run_data)
             else:
                     self._write_distilled_context(run_data)
+        self._write_latest_run()
 
         # Show success and errors, with data
         return (return_code, return_data)
