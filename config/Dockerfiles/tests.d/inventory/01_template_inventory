@@ -1,14 +1,12 @@
 #!/bin/bash -xe
 
-# Verify basic provisioning for all supplied providers
-# distros.exclude: none
-# providers.include: none
+# Verify inventory generation with template data
+# distros.exclude: centos7 fedora26
+# providers.include: dummy libvirt
 # providers.exclude: none
 
 DISTRO=${1}
 PROVIDER=${2}
-
-echo "Test ${PROVIDER} provider with a simple up/destroy"
 
 function clean_up {
     set +e

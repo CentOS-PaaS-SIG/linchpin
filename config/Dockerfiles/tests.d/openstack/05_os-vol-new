@@ -1,5 +1,10 @@
 #!/bin/bash -xe
 
+# Verify the openstack volume provisioning with template data
+# distros.exclude: none
+# providers.include: openstack
+# providers.exclude: none
+
 DISTRO=${1}
 PROVIDER=${2}
 

@@ -1,7 +1,0 @@
-# excluded openstack tests here.
-
-#01_os-server-new
-#02_os-server-template
-#03_os-server-template-file
-#04_os-sg-new
-#05_os-vol-new

@@ -1,6 +1,9 @@
 #!/bin/bash -xe
 
 # Verify dummy provisioning using inline template data
+# distros.exclude: none
+# providers.include: dummy
+# providers.exclude: none
 
 DISTRO=${1}
 PROVIDER=${2}
