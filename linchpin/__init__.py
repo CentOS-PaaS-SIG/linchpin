@@ -775,7 +775,12 @@ class LinchpinAPI(object):
         for target, run_id in tgt_run_ids.iteritems():
             record = rundb.get_record(target, run_id=run_id, action='up')
             field_data = {}
-            single_value_fields = ('action', 'start', 'end', 'rc', 'uhash')
+            single_value_fields = ('action',
+                                   'start',
+                                   'end',
+                                   'rc',
+                                   'uhash',
+                                   'inventory_path')
 
             for field in fields:
                 f = record[0].get(field)
@@ -786,7 +791,8 @@ class LinchpinAPI(object):
                         data_array = {}
                         for fld in f:
                             for k, v in fld.iteritems():
-                                if field == 'outputs':
+                                if field == 'outputs' or \
+                                   field == 'topology_outputs':
                                     values = []
                                     for value in v:
                                         values.append(value)
@@ -801,11 +807,13 @@ class LinchpinAPI(object):
         return target_data
 
     def _get_latest_run_data(self):
-
         rundb = self.setup_rundb()
         latest_run_data = rundb.get_records('linchpin', count=1)
         run_data = self.get_run_data(latest_run_data.keys()[0],
-                                     ('inputs', 'outputs'))
+                                     ('outputs',
+                                      'inputs',
+                                      'topology_outputs',
+                                      'inventory_path'))
         for k in latest_run_data:
             v = latest_run_data[k]
             target_group = v.get("targets", [])
