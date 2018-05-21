@@ -119,7 +119,6 @@ class LinchpinCli(LinchpinAPI):
             self.ctx.log_state('Error: {0}'.format(e))
             sys.exit(1)
 
-
     def _get_pinfile_path(self, exists=True):
         """
         This function finds the self.pinfile. If the file is a full path,
@@ -240,7 +239,7 @@ class LinchpinCli(LinchpinAPI):
                             res_dict[k] = res.get(k)
                             res_data.append(res_dict)
                         else:
-                            for rsrc in res.get(k):
+                            for rsrc in res.get(k, []):
                                 res_dict = {}
                                 for value in v:
                                     if isinstance(value, dict):
@@ -258,8 +257,8 @@ class LinchpinCli(LinchpinAPI):
                     if len(res_data) and res_data not in dist_data[target]:
                         dist_data[target].extend(res_data)
             except Exception as e:
-                self.log_info('Error recording distilled context'
-                              ' ({0})'.format(e))
+                self.ctx.log_info('Error recording distilled context'
+                                  ' ({0})'.format(e))
         with open(context_file, 'w+') as f:
             f.write(json.dumps(dist_data))
 
@@ -471,10 +470,14 @@ class LinchpinCli(LinchpinAPI):
     def _make_layout_integers(self, data):
 
         inv_layout = data.get('inventory_layout')
+
         if inv_layout:
-            for k, v in inv_layout.get('hosts').iteritems():
-                if 'count' in v.keys():
-                    v['count'] = int(v.pop('count'))
+            hosts = inv_layout.get('hosts')
+            for k in hosts:
+                count = int(hosts[k].get("count"))
+                hosts[k]["count"] = count
+            inv_layout["hosts"] = hosts
+            data["inventory_layout"] = inv_layout
 
         return data
 
@@ -496,7 +499,8 @@ class LinchpinCli(LinchpinAPI):
 
             if not isinstance(pf[target]['topology'], dict):
                 topology_path = self.find_include(pf[target]["topology"])
-                topology_data = self.parser.process(topology_path, data=pf_data)
+                topology_data = self.parser.process(topology_path,
+                                                    data=self.pf_data)
             else:
                 topology_data = pf[target]['topology']
 
@@ -509,7 +513,8 @@ class LinchpinCli(LinchpinAPI):
                     layout_path = self.find_include(pf[target]["layout"],
                                                     ftype='layout')
 
-                    layout_data = self.parser.process(layout_path, data=pf_data)
+                    layout_data = self.parser.process(layout_path,
+                                                      data=self.pf_data)
                     layout_data = self._make_layout_integers(layout_data)
                     provision_data[target]['layout'] = layout_data
                 else:
