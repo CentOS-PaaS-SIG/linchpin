@@ -1,7 +1,7 @@
 ---
 - name: "set local_image_path"
   set_fact:
-    local_image_path: "{{ libvirt_image_path }}"
+    local_image_path: "{{ libvirt_image_path | expanduser }}"
 
 - name: "delegate_to localhost :ensure local_image_path directory exists"
   file:
