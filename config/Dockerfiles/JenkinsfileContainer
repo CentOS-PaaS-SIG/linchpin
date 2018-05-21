@@ -54,28 +54,41 @@ test_targets = ""
 // Provider: [ PATH/IN/REPO to match, ]
 p_providers = ['dummy':
                 ["^(?!linchpin/version.py).*",
-                 "^config/Dockerfiles/tests.d/dummy/.*",
-                 "^config/Dockerfiles/tests.d/general/.*"],
+                 "^linchpin/provision/roles/dummy/.*",
+                 "^linchpin/provision/dummy.yml",
+                 "^docs/source/examples/workspace/PinFile.dummy.yml",
+                 "^config/Dockerfiles/tests.d/(general|inventory)/.*",
+                 "^config/Dockerfiles/tests.d/dummy/.*"],
                'duffy':
                 ["^linchpin/provision/roles/duffy/.*",
                  "^linchpin/provision/duffy.yml",
-                 "^config/Dockerfiles/tests.d/general/.*"],
+                 "^docs/source/examples/workspace/PinFile.duffy.yml",
+                 "^config/Dockerfiles/tests.d/general/.*",
+                 "^config/Dockerfiles/tests.d/duffy/.*"],
                'libvirt':
                 ["^linchpin/provision/roles/libvirt/.*",
                  "^linchpin/provision/libvirt.yml",
-                 "^config/Dockerfiles/test.d/libvirt/.*"],
+                 "^docs/source/examples/workspace/PinFile.libvirt.yml",
+                 "^config/Dockerfiles/tests.d/(general|inventory)/.*",
+                 "^config/Dockerfiles/tests.d/libvirt/.*"],
                'aws':
                 ["^linchpin/provision/roles/aws/.*",
                  "^linchpin/provision/aws.yml",
-                 "^config/Dockerfiles/test.d/aws/.*"],
+                 "^docs/source/examples/workspace/PinFile.aws.yml",
+                 "^config/Dockerfiles/tests.d/(general|inventory)/.*",
+                 "^config/Dockerfiles/tests.d/aws/.*"],
                'beaker':
                 ["^linchpin/provision/roles/beaker/.*",
                  "^linchpin/provision/beaker.yml",
-                 "^config/Dockerfiles/test.d/beaker/.*"],
+                 "^docs/source/examples/workspace/PinFile.beaker.yml",
+                 "^config/Dockerfiles/tests.d/general/.*",
+                 "^config/Dockerfiles/tests.d/beaker/.*"],
                'openstack':
                 ["^linchpin/provision/roles/openstack/.*",
                  "^linchpin/provision/openstack.yml",
-                 "^config/Dockerfiles/test.d/openstack/.*"],
+                 "^docs/source/examples/workspace/PinFile.openstack.yml",
+                 "^config/Dockerfiles/tests.d/general/.*",
+                 "^config/Dockerfiles/tests.d/openstack/.*"],
               ]
 
 test_providers = ""
