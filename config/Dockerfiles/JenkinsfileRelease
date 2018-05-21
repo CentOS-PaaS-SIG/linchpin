@@ -28,7 +28,7 @@ podName = repoName + executionID
 
 library identifier: "ci-pipeline@master",
         retriever: modernSCM([$class: 'GitSCMSource',
-                              remote: "https://github.com/CentOS-Paas-SIG/ci-pipeline"])
+                              remote: "https://github.com/CentOS-PaaS-SIG/ci-pipeline"])
 
 library identifier: "cico-pipeline-library@master",
         retriever: modernSCM([$class: 'GitSCMSource',
@@ -95,7 +95,7 @@ podTemplate(name: podName,
                         pipelineUtils.verifyPod(OPENSHIFT_NAMESPACE, env.NODE_NAME)
                         dir(repoName) {
 
-                            withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'paas-bot', usernameVariable: 'GH_USER', passwordVariable: 'GH_TOKEN']]) {
+                            withCredentials([string(credentialsId: 'paas-bot', variable: 'GH_TOKEN')]) {
                                 checkout([$class: 'GitSCM',
                                     branches: [[name: env.ghprbActualCommit]],
                                     doGenerateSubmoduleConfigurations: false,
@@ -104,7 +104,7 @@ podTemplate(name: podName,
                                     userRemoteConfigs                : [
                                         [refspec:
                                             '+refs/heads/*:refs/remotes/origin/*  +refs/tags/*:refs/tags/*',
-                                            url: "https://" + GH_USER + ":" + GH_TOKEN + "@github.com/${env.ghprbGhRepository}"]
+                                            url: "https://paas-bot:" + GH_TOKEN + "@github.com/${env.ghprbGhRepository}"]
                                         ]
                                 ])
                             }
