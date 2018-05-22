@@ -1,5 +1,6 @@
 ---
 # This playbook provisions the libvirt topology.
+# again.. make sure we didn't break libvirt on centos7
 
 - name:  "schema check and Pre Provisioning Activities on topology_file"
   hosts: localhost

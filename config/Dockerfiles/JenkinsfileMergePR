@@ -11,10 +11,16 @@ env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
 imageList = ["fedora26", "fedora27", "centos7"]
 imageOperations = []
 
-library identifier: "ci-pipeline@master",
-        retriever: modernSCM([$class: 'GitSCMSource',
-                              remote: "https://github.com/CentOS-Paas-SIG/ci-pipeline"
-])
+def libraries = ['cico-pipeline': ['master',
+                                   'https://github.com/CentOS/cico-pipeline-library.git'],
+                 'ci-pipeline'  : ['master',
+                                   'https://github.com/CentOS-PaaS-SIG/ci-pipeline.git']]
+
+libraries.each { name, repo ->
+    library identifier: "${name}@${repo[0]}",
+            retriever: modernSCM([$class: 'GitSCMSource',
+                                  remote: repo[1]])
+}
 
 properties([
   buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '20')),
