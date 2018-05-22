@@ -11,7 +11,7 @@ PROVIDER=${2}
 PINFILE="PinFile.${PROVIDER}.yml"
 TARGET="os-server-new"
 TEMPLATE_FILE="./os-server-data.yml"
-TMP_PF="/tmp/PinFile.${TARGET}.out"
+TMP_FILE=$(mktemp)
 
 function clean_up {
     set +e
@@ -28,6 +28,6 @@ EOF
 
 cat "${TEMPLATE_FILE}"
 
-linchpin -w . -p "${PINFILE}" --template-data "@${TEMPLATE_FILE}" --output-pinfile "${TMP_PF}" -v up "${TARGET}"
+linchpin -w . -p "${PINFILE}" --template-data "@${TEMPLATE_FILE}" --output-pinfile "${TMP_FILE}" -v up "${TARGET}"
 
-grep "${DISTRO}" "${TMP_PF}"
+grep "${DISTRO}" "${TMP_FILE}"
