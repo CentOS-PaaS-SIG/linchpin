@@ -8,15 +8,37 @@
 DISTRO=${1}
 PROVIDER=${2}
 
-echo "Test ${PROVIDER} provider with a simple up/destroy"
+TARGETS="${PROVIDER}-new"
+TEST_NAME="${DISTRO}/${PROVIDER}/01_general"
+DESCRIPTION="Test ${PROVIDER} provider with a simple up/destroy"
 
-function clean_up {
-    set +e
-    linchpin -w . -p PinFile.${PROVIDER}.yml -v destroy ${PROVIDER}-new
-}
-trap clean_up EXIT SIGHUP SIGINT SIGTERM
+echo "Test Name: ${TEST_NAME}"
+echo "${DESCRIPTION}"
+
+
+if [ "${PROVIDER}" == "libvirt" ]; then
+    TARGETS="libvirt-new libvirt-network"
+fi
+
+if [ "${PROVIDER}" == "openstack" ]; then
+    TARGETS="os-server-new os-vol-new os-sg-new"
+fi
+
+if [ "${PROVIDER}" == "aws" ]; then
+    TARGETS="aws-ec2-new" #aws-sg-new aws-s3-new aws-ec2-key-new
+fi
 
 pushd docs/source/examples/workspace
 
-linchpin -w . -p PinFile.${PROVIDER}.yml -v up ${PROVIDER}-new
+function clean_up {
+    for target in ${TARGETS}; do
+        set +e
+        linchpin -w . -p PinFile.${PROVIDER}.yml -v destroy ${target}
+    done
+}
+trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
+for target in ${TARGETS}; do
+    echo "Target Name: ${target}"
+    linchpin -w . -p PinFile.${PROVIDER}.yml -v up ${target}
+done
