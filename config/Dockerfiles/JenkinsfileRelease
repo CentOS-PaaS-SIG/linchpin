@@ -43,9 +43,9 @@ properties([
       string(defaultValue: 'develop',
              description: '',
              name: 'ghprbActualCommit'),
-      string(defaultValue: '',
+      string(defaultValue: 'testpypi',
              description: '',
-             name: 'sha1'),
+             name: 'pypiRepo'),
       string(defaultValue: '',
              description: 'Git Hub Repository',
              name: 'ghprbGhRepository')
@@ -116,14 +116,13 @@ podTemplate(name: podName,
 
                             sh "git checkout " + env.ghprbActualCommit
                             sh "python setup.py sdist bdist_wheel"
+
                             string version = sh (
                                 script: "python setup.py --version",
                                 returnStdout: true
                                 ).trim()
-                            currentBuild.displayName = "Build#: ${env.BUILD_NUMBER} - Release: " + version
-                            if (env.ghprbActualCommit != null && env.ghprbActualCommit != "develop") {
-                                currentBuild.description = "<a href=\"https://github.com/${env.ghprbGhRepository}/pull/${env.ghprbPullId}\">Release: (" + version + ")</a>"
-                            }
+                            currentBuild.displayName = "Build#: ${env.BUILD_NUMBER} - Release: " + version + " to " + pypiRepo
+
                             withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'linchpin-releaser', usernameVariable: 'TWINE_USERNAME', passwordVariable: 'TWINE_PASSWORD']]) {
                                 sh (
                                 """
@@ -144,12 +143,19 @@ username = ${TWINE_USERNAME}
 password = ${TWINE_PASSWORD}
 EOF
 
-twine upload --config-file /tmp/pypirc --repository pypitest dist/*
                                 """
                                 )
                             }
-                            sh "git tag v" + version
-                            sh "git push --tags origin develop"
+                            sh "twine upload --config-file /tmp/pypirc -r " + pypiRepo + " dist/*"
+                            sh "git pull --tags origin develop"
+                            string tag = sh (
+                                script: "git tag -l | grep v" + version,
+                                returnStdout: true
+                                ).trim()
+                            if (tag != "v" + version) {
+                                sh "git tag v" + version
+                                sh "git push --tags origin develop"
+                            }
                         }
                     }
                 }
