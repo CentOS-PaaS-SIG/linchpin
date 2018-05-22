@@ -10,6 +10,7 @@ ansible.cfg
 docs/build/
 _autosummary
 docs/source/generated/
+docs/source/examples/workspace/resources
 
 # packaging files
 build
