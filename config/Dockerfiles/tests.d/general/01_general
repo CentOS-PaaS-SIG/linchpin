@@ -18,14 +18,12 @@ echo "${DESCRIPTION}"
 
 if [ "${PROVIDER}" == "libvirt" ]; then
     TARGETS="libvirt-new libvirt-network"
-fi
-
-if [ "${PROVIDER}" == "openstack" ]; then
+elif [ "${PROVIDER}" == "openstack" ]; then
     TARGETS="os-server-new os-vol-new os-sg-new"
-fi
-
-if [ "${PROVIDER}" == "aws" ]; then
+elif [ "${PROVIDER}" == "aws" ]; then
     TARGETS="aws-ec2-new" #aws-sg-new aws-s3-new aws-ec2-key-new
+else
+    TARGETS="dummy-new"
 fi
 
 pushd docs/source/examples/workspace
@@ -41,4 +39,7 @@ trap clean_up EXIT SIGHUP SIGINT SIGTERM
 for target in ${TARGETS}; do
     echo "Target Name: ${target}"
     linchpin -w . -p PinFile.${PROVIDER}.yml -v up ${target}
+    if [ ${?} -ne 0 ]; then
+        exit 1
+    fi
 done
