@@ -57,7 +57,7 @@ p_providers = ['dummy':
                  "^linchpin/provision/roles/dummy/.*",
                  "^linchpin/provision/dummy.yml",
                  "^docs/source/examples/workspace/PinFile.dummy.yml",
-                 "^config/Dockerfiles/tests.d/(general|inventory)/.*",
+                 "^config/Dockerfiles/tests.d/general/.*",
                  "^config/Dockerfiles/tests.d/dummy/.*"],
                'duffy':
                 ["^linchpin/provision/roles/duffy/.*",
