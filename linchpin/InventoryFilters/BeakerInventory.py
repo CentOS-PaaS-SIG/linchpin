@@ -9,7 +9,7 @@ class BeakerInventory(InventoryFilter):
         hostnames = []
         if not ('beaker_res' in topology):
             return hostnames
-        for group in topology['beaker_res']:
+        for group in topology.get('beaker_res', []):
             hostnames.append(group['system'])
         return hostnames
 
