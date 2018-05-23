@@ -16,6 +16,7 @@ echo "Test Name: ${TEST_NAME}"
 echo "${DESCRIPTION}"
 
 
+
 if [ "${PROVIDER}" == "libvirt" ]; then
     TARGETS="libvirt-new" #libvirt-network"
 elif [ "${PROVIDER}" == "openstack" ]; then
@@ -32,9 +33,14 @@ pushd docs/source/examples/workspace
 
 function clean_up {
     set +e
+    D_RC=0
     for target in ${TARGETS}; do
         linchpin -w . -p PinFile.${PROVIDER}.yml -v destroy ${target}
+        D_RC=(${?} -o ${D_RC})
     done
+    if [ ${D_RC} -ne 0 ]; then
+        exit ${D_RC}
+    fi
 }
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
