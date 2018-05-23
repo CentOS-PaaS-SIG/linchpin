@@ -20,9 +20,11 @@ echo "${DESCRIPTION}"
 if [ "${PROVIDER}" == "libvirt" ]; then
     TARGETS="libvirt-new" #libvirt-network"
 elif [ "${PROVIDER}" == "openstack" ]; then
-    TARGETS="os-server-new os-vol-new os-sg-new"
+    TARGETS="os-server-new os-sg-new" #os-vol-new 
 elif [ "${PROVIDER}" == "aws" ]; then
     TARGETS="aws-ec2-new" #aws-sg-new aws-s3-new aws-ec2-key-new
+elif [ "${PROVIDER}" == "beaker" ]; then
+    TARGETS="beaker-new"
 elif [ "${PROVIDER}" == "duffy" ]; then
     TARGETS="duffy-new"
 else
