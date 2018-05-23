@@ -15,10 +15,8 @@ LAYOUT_FILE="./layouts/template-inventory.yml"
 TEMPLATE_FILE="./template-data/template-inventory.yml"
 TMP_FILE=$(mktemp)
 
-TEST_NAME="${DISTRO}/${PROVIDER}/01_template_inventory"
 DESCRIPTION="${PROVIDER} provisioning using complex template data file"
 
-echo "Test Name: ${TEST_NAME}"
 echo "${DESCRIPTION}"
 
 function clean_up {

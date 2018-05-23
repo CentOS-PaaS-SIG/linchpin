@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 base_dir="${PWD}"
 
@@ -66,7 +66,7 @@ function set_providers () {
         if [ ! -z "${prov_exc}" ]; then
             for p in ${prov_exc}; do
                 p="${p##+([[:space:]])}"
-                providers="${providers// ${p}/}"
+                providers="${providers//${p}/}"
             done
         fi
     fi

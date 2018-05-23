@@ -23,7 +23,7 @@ elif [ "${PROVIDER}" == "openstack" ]; then
 elif [ "${PROVIDER}" == "aws" ]; then
     TARGETS="aws-ec2-new" #aws-sg-new aws-s3-new aws-ec2-key-new
 elif [ "${PROVIDER}" == "duffy" ]; then
-    TARGETS="duffy-new" #aws-sg-new aws-s3-new aws-ec2-key-new
+    TARGETS="duffy-new"
 else
     TARGETS="dummy-new"
 fi
@@ -38,7 +38,7 @@ function clean_up {
 }
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
+echo "CREDS_PATH: ${CREDS_PATH}"
 for target in ${TARGETS}; do
-    echo "Target Name: ${target}"
     linchpin -w . -p PinFile.${PROVIDER}.yml -v up ${target}
 done
