@@ -24,7 +24,9 @@ echo "${DESCRIPTION}"
 function clean_up {
     set +e
     linchpin -w . -p "${PINFILE}" --template-data "@${TEMPLATE_FILE}" -v destroy "${TARGET}"
-#    rm ${TMP_FILE}
+    echo "RC: ${?}"
+    rm ${TMP_FILE}
+    echo "RC: ${?}"
 }
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
@@ -45,14 +47,18 @@ shopt -u extglob
 
 linchpin -w . -p "${PINFILE}" --template-data "@${TEMPLATE_FILE}" -v up "${TARGET}" 2>&1 | tee -a ${TMP_FILE}
 
+RC0=${?}
+
 sed -i '$ d' ${TMP_FILE}
 uhash=$(tail -n 1 ${TMP_FILE} | awk '{ print $3 }' )
-
 echo ${uhash}
 
 INVENTORY_FILE="./inventories/${TARGET}-${uhash}.inventory"
 ls -l ${INVENTORY_FILE}
-
 grep ${VAL2CHECK} ${INVENTORY_FILE} | grep ${VALUE}
-echo
 
+if [ ${RC0} -eq 0 ]; then
+    exit 0
+else
+    exit 1
+fi
