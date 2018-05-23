@@ -25,6 +25,9 @@ from linchpin.exceptions import SchemaError
 from linchpin.exceptions import TopologyError
 from linchpin.exceptions import ValidationError
 
+from linchpin import InventoryFilters
+from linchpin.InventoryFilters import GenericInventory
+
 
 class LinchpinAPI(object):
 
@@ -411,7 +414,6 @@ class LinchpinAPI(object):
             try:
                 sp = "{0}/roles/{1}/files/schema.json".format(pb_path,
                                                               res_grp_type)
-
                 schema = json.load(open(sp))
             except Exception as e:
                 raise LinchpinError("Error with schema: '{0}'"
@@ -431,6 +433,10 @@ class LinchpinAPI(object):
 
         return resources
 
+    def generate_inventory(self, topology_data, layout, inv_format="cfg"):
+        inv = GenericInventory.GenericInventory(inv_format=inv_format)
+        inventory = inv.get_inventory(topology_data, layout)
+        return inventory
 
     def get_pf_data_from_rundb(self, targets, run_id=None, tx_id=None):
         """
