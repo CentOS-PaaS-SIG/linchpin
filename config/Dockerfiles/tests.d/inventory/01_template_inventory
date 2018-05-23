@@ -1,9 +1,9 @@
 #!/bin/bash -xe
 
 # Verify template-based provisioning using complex template data file
-# distros.exclude: none
-# providers.include: libvirt
-# providers.exclude: dummy openstack beaker duffy
+# distros.exclude: fedora26 fedora27
+# providers.include: none
+# providers.exclude: dummy openstack beaker duffy aws
 
 DISTRO=${1}
 PROVIDER=${2}
@@ -24,9 +24,7 @@ echo "${DESCRIPTION}"
 function clean_up {
     set +e
     linchpin -w . -p "${PINFILE}" --template-data "@${TEMPLATE_FILE}" -v destroy "${TARGET}"
-    echo "RC: ${?}"
     rm ${TMP_FILE}
-    echo "RC: ${?}"
 }
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 

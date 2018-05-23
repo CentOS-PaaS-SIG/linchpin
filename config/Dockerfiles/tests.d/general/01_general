@@ -17,11 +17,13 @@ echo "${DESCRIPTION}"
 
 
 if [ "${PROVIDER}" == "libvirt" ]; then
-    TARGETS="libvirt-new libvirt-network"
+    TARGETS="libvirt-new" #libvirt-network"
 elif [ "${PROVIDER}" == "openstack" ]; then
     TARGETS="os-server-new os-vol-new os-sg-new"
 elif [ "${PROVIDER}" == "aws" ]; then
     TARGETS="aws-ec2-new" #aws-sg-new aws-s3-new aws-ec2-key-new
+elif [ "${PROVIDER}" == "duffy" ]; then
+    TARGETS="duffy-new" #aws-sg-new aws-s3-new aws-ec2-key-new
 else
     TARGETS="dummy-new"
 fi
@@ -29,8 +31,8 @@ fi
 pushd docs/source/examples/workspace
 
 function clean_up {
+    set +e
     for target in ${TARGETS}; do
-        set +e
         linchpin -w . -p PinFile.${PROVIDER}.yml -v destroy ${target}
     done
 }
@@ -39,7 +41,4 @@ trap clean_up EXIT SIGHUP SIGINT SIGTERM
 for target in ${TARGETS}; do
     echo "Target Name: ${target}"
     linchpin -w . -p PinFile.${PROVIDER}.yml -v up ${target}
-    if [ ${?} -ne 0 ]; then
-        exit 1
-    fi
 done
