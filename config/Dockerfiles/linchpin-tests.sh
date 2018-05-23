@@ -22,7 +22,7 @@ fi
 function check_distro_exclude () {
     shopt -s extglob
     test=${1}
-    dist_exc=$(grep 'distros.exclude' ${test} | grep -v 'none' | awk -F':' '{ print $2 }')
+    dist_exc=$(grep '^#.*distros.exclude' ${test} | grep -v 'none' | awk -F':' '{ print $2 }')
 
     # if distros.exclude matches the ${distro} env var, return true
     if [ ! -z "${dist_exc}" ]; then
@@ -45,7 +45,7 @@ function set_providers () {
     shopt -s extglob
     test=${1}
 
-    prov_inc=$(grep 'providers.include' ${test} | grep -v 'none' | awk -F':' '{ print $2 }')
+    prov_inc=$(grep '^#.*providers.include' ${test} | grep -v 'none' | awk -F':' '{ print $2 }')
     if [ ! -z "${prov_inc}" ]; then
         providers=''
         for p in ${prov_inc}; do
@@ -62,7 +62,7 @@ function set_providers () {
     prov_exc=''
     if [ -z "${prov_inc}" ]; then
         providers=${PROVIDERS}
-        prov_exc=$(grep 'providers.exclude' ${test} | grep -v 'none' | awk -F':' '{ print $2 }' | tr -d '[:space:]')
+        prov_exc=$(grep '^#.*providers.exclude' ${test} | grep -v 'none' | awk -F':' '{ print $2 }' | tr -d '[:space:]')
         if [ ! -z "${prov_exc}" ]; then
             for p in "${prov_exc}"; do
                 providers="${providers//$p/}"
