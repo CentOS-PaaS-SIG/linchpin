@@ -9,7 +9,7 @@ class OpenstackInventory(InventoryFilter):
 
     def get_host_ips(self, topo):
         host_public_ips = []
-        for group in topo['os_server_res']:
+        for group in topo.get('os_server_res', []):
             grp = group.get('openstack', [])
             if isinstance(grp, list):
                 for server in grp:

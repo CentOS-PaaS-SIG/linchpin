@@ -8,7 +8,7 @@ class OvirtInventory(InventoryFilter):
 
     def get_host_ips(self, topo):
         host_public_ips = []
-        for vm in topo['ovirt_vms_res']:
+        for vm in topo.get('ovirt_vms_res', []):
             if vm['vm']['reported_devices']:
                 for dev in vm['vm']['reported_devices']:
                     for ip in dev.get('ips', []):

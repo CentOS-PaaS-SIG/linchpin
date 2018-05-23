@@ -9,7 +9,7 @@ class GCloudInventory(InventoryFilter):
 
     def get_host_ips(self, topo):
         host_public_ips = []
-        for group in topo['gcloud_gce_res']:
+        for group in topo.get('gcloud_gce_res', []):
             for instance in group['instance_data']:
                 host_public_ips.append(instance['public_ip'])
         return host_public_ips

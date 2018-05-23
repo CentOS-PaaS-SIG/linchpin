@@ -9,7 +9,7 @@ class DuffyInventory(InventoryFilter):
 
     def get_hostnames(self, topo):
         hostnames = []
-        for group in topo['duffy_res']:
+        for group in topo.get('duffy_res', []):
             for host in group['hosts']:
                 hostnames.append(host)
         return hostnames
