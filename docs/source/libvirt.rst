@@ -72,6 +72,38 @@ with a :ref:`libvirt_node`, it must precede it.
 * :docs1.5:`Topology Example <workspace/topologies/libvirt-el7net.yml>`
 * `Ansible module <http://docs.ansible.com/ansible/latest/virt_net_module.html>`_
 
+Topology Schema
+~~~~~~~~~~~~~~~
+
+Within Linchpin, the :term:`libvirt_network` :term:`resource_definition` has more
+options than what are shown in the examples above. For each :term:`libvirt_network`
+definition, the following options are available.
+
++--------------------+-------+----------+-----------------+---------------------+--------------------------+
+| Parameter          | req'd | type     | where used      | default             | comments                 |
++====================+=======+==========+=================+=====================+==========================+
+| role               | true  | string   | role            |                     |                          |
++--------------------+-------+----------+-----------------+---------------------+--------------------------+
+| name               | true  | string   | module: name    |                     |                          |
++--------------------+-------+----------+-----------------+---------------------+--------------------------+
+| uri                | false | string   | module: name    |  qemu:///system     |                          |
++--------------------+-------+----------+-----------------+---------------------+--------------------------+
+| ip                 | true  | string   | xml: ip         |                     |                          |
++--------------------+-------+----------+-----------------+---------------------+--------------------------+
+| dhcp_start         | false | string   | xml: dhcp_start |                     |                          |
++--------------------+-------+----------+-----------------+---------------------+--------------------------+
+| dhcp_end           | false | string   | xml: dhcp_end   |                     |                          |
++--------------------+-------+----------+-----------------+---------------------+--------------------------+
+| domain             | false | string   | xml: domain     |                     | Automated DNS for guests |
++--------------------+-------+----------+-----------------+---------------------+--------------------------+
+| forward_mode       | false | string   | xml: forward    | nat                 |                          |
++--------------------+-------+----------+-----------------+---------------------+--------------------------+
+| forward_dev        | false | string   | xml: forward    |                     |                          |
++--------------------+-------+----------+-----------------+---------------------+--------------------------+
+| bridge             | false | string   | xml: bridge     |                     |                          |
++--------------------+-------+----------+-----------------+---------------------+--------------------------+
+
+
 .. note:: This resource will not be torn down during a :term:`destroy` action.
    This is because other resources may depend on the now existing resource.
 
