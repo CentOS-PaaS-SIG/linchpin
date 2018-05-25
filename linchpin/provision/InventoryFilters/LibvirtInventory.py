@@ -12,7 +12,7 @@ class LibvirtInventory(InventoryFilter):
         if not ('libvirt_res' in topo):
             return ips
         for val in topo['libvirt_res']:
-            ips.append(val)
+            ips.append(val.get('ip'))
         return ips
 
 

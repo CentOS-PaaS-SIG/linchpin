@@ -347,20 +347,31 @@
   when: not async
   register: node_data
 
-- name: "Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
+- name: "Set Output name"
   set_fact:
-    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [extract_ip_address_result.results[xml_item].stdout] }}"
-  with_items:
+      output_name: "{{ data[0] }}_{{ data[1] }}"
+  with_nested:
+    - "{{ libvirt_resource_name }}"
     - "{{ res_count.stdout }}"
   loop_control:
-    loop_var: xml_item
+    loop_var: data
+
+- name: "Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
+  set_fact:
+    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0], 'ip': extract_ip_address_result.results[data[1]].stdout }] }}"
+  with_nested:
+    - "{{ output_name }}"
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: data
   when: not async and uri_hostname == 'localhost'
 
 - name: "Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
   set_fact:
-    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [extract_ip_address_result_remote.results[xml_item].stdout] }}"
-  with_items:
+    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0], 'ip': extract_ip_address_result.results[data[1]].stdout }] }}"
+  with_nested:
+    - "{{ output_name }}"
     - "{{ res_count.stdout }}"
   loop_control:
-    loop_var: xml_item
+    loop_var: data
   when: not async and uri_hostname != 'localhost'
