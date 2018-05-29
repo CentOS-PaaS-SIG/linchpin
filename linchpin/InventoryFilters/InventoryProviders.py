@@ -13,6 +13,8 @@ from OpenstackInventory import OpenstackInventory
 from OvirtInventory import OvirtInventory
 
 from CFGInventoryFormatter import  CFGInventoryFormatter
+from JSONInventoryFormatter import  JSONInventoryFormatter
+
 filter_classes = {
     "aws_inv": AWSInventory,
     "beaker_inv": BeakerInventory,
@@ -26,7 +28,8 @@ filter_classes = {
 
 formatter_classes = {
     "cfg": CFGInventoryFormatter,
-    "ini": CFGInventoryFormatter
+    "ini": CFGInventoryFormatter,
+    "json": JSONInventoryFormatter
 }
 
 
