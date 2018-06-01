@@ -1,13 +1,36 @@
 include requirements.txt
 include README.rst
+include CONTRIBUTING.rst
 include LICENSE
 
 include linchpin/linchpin.constants
 
-recursive-include docs *
-recursive-include linchpin/examples *
-recursive-include linchpin/templates *
-recursive-include linchpin/defaults *
+graft linchpin/templates
+graft linchpin/defaults
+
+graft linchpin/tests
+recursive-exclude linchpin/tests *.pyc
+prune linchpin/tests/**/__pycache__
+
 recursive-include linchpin/provision *
-recursive-include linchpin/schemas *
+recursive-exclude linchpin/provision *.pyc
+
+prune config
+prune vars
+prune dev_setup
+prune src
+prune *_logs
+prune keys
+prune rpms
+prune presentations
+prune docs/source/examples/workspace/.rundb
+
+recursive-include docs *
+global-exclude *.output
+global-exclude *.inventory
+global-exclude *.latest
+global-exclude *.distilled
+
+global-exclude .*sw*
+global-exclude *.retry
 
