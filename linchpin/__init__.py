@@ -812,14 +812,26 @@ class LinchpinAPI(object):
 
         return target_data
 
-    def _get_latest_run_data(self):
+    def _get_run_data_by_txid(self, tx_id=None):
         rundb = self.setup_rundb()
-        latest_run_data = rundb.get_records('linchpin', count=1)
-        run_data = self.get_run_data(latest_run_data.keys()[0],
-                                     ('outputs',
-                                      'inputs',
-                                      'topology_outputs',
-                                      'inventory_path'))
+        latest_run_data = {}
+        run_data = {}
+        if tx_id == None:
+            latest_run_data = rundb.get_records('linchpin', count=1)
+            run_data = self.get_run_data(latest_run_data.keys()[0],
+                                         ('outputs',
+                                          'inputs',
+                                          'topology_outputs',
+                                          'inventory_path'))
+        else:
+            latest_run_data = rundb.get_records('linchpin',
+                                                count='all')
+            latest_run_data = {tx_id: latest_run_data.get(tx_id)}
+            run_data = self.get_run_data(tx_id,
+                                         ('outputs',
+                                          'inputs',
+                                          'topology_outputs',
+                                          'inventory_path'))
         for k in latest_run_data:
             v = latest_run_data[k]
             target_group = v.get("targets", [])

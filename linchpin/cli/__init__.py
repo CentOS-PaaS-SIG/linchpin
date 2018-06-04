@@ -119,6 +119,43 @@ class LinchpinCli(LinchpinAPI):
             self.ctx.log_state('Error: {0}'.format(e))
             sys.exit(1)
 
+    def _write_to_inventory(self, inv_path=None, inv_format="cfg"):
+        latest_run_data = self._get_run_data_by_txid()
+        try:
+            for t_id in latest_run_data:
+                targets = latest_run_data[t_id]["targets"][0]
+                # if there are multiple targets mentioned in pinfile
+                # the multiple inventory files are being generated
+                inv_file_count = 0 if len(targets)>1 else False
+                for name in targets:
+                    layout = targets[name]["inputs"]["layout_data"]\
+                                                    ["inventory_layout"]
+                    inventory_path = targets[name]["inventory_path"]
+                    if inv_path and inv_file_count !=False:
+                        inventory_path = inv_path+str(inv_file_count)
+                    topology_outputs = targets[name]["topology_outputs"]
+                    inventory = self.generate_inventory(topology_outputs,
+                                                        layout,
+                                                        inv_format=inv_format)
+                    # if inv_path is explicitly mentioned it is used
+                    if inv_path:
+                        inventory_path = inv_path
+                    # if there are multiple targets based on number of targets
+                    # multiple files are generated with suffixes
+                    if inv_path and isinstance(inv_file_count, int):
+                        inventory_path = inv_path+"."+str(inv_file_count)
+                        with open(inventory_path, 'w') as the_file:
+                            the_file.write(inventory)
+                        inv_file_count += 1
+                    else:
+                        with open(inventory_path, 'w') as the_file:
+                            the_file.write(inventory)
+        except Exception as e:
+            self.ctx.log_state('Error: {0}'.format(e))
+            sys.exit(1)
+        return True
+
+
     def _get_pinfile_path(self, exists=True):
         """
         This function finds the self.pinfile. If the file is a full path,
@@ -272,7 +309,7 @@ class LinchpinCli(LinchpinAPI):
 
     def _write_latest_run(self):
 
-        latest_run_data = self._get_latest_run_data()
+        latest_run_data = self._get_run_data_by_txid()
         resources_path = self.get_evar('resources_folder')
         context_path = '{0}/{1}'.format(self.workspace, resources_path)
         if not os.path.exists(context_path):
@@ -302,7 +339,7 @@ class LinchpinCli(LinchpinAPI):
         pass
 
 
-    def lp_up(self, targets=(), run_id=None, tx_id=None):
+    def lp_up(self, targets=(), run_id=None, tx_id=None, inv_f="cfg"):
         """
         This function takes a list of targets, and provisions them according
         to their topology.
@@ -350,6 +387,7 @@ class LinchpinCli(LinchpinAPI):
             else:
                     self._write_distilled_context(run_data)
         self._write_latest_run()
+        self._write_to_inventory(inv_format=inv_f)
 
         # Show success and errors, with data
         return (return_code, return_data)
