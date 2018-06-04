@@ -126,13 +126,13 @@ class LinchpinCli(LinchpinAPI):
                 targets = latest_run_data[t_id]["targets"][0]
                 # if there are multiple targets mentioned in pinfile
                 # the multiple inventory files are being generated
-                inv_file_count = 0 if len(targets)>1 else False
+                inv_file_count = 0 if len(targets) > 1 else False
                 for name in targets:
-                    layout = targets[name]["inputs"]["layout_data"]\
-                                                    ["inventory_layout"]
+                    lt_data = targets[name]["inputs"]["layout_data"]
+                    layout = lt_data["inventory_layout"]
                     inventory_path = targets[name]["inventory_path"]
-                    if inv_path and inv_file_count !=False:
-                        inventory_path = inv_path+str(inv_file_count)
+                    if inv_path and inv_file_count is not False:
+                        inventory_path = inv_path + str(inv_file_count)
                     topology_outputs = targets[name]["topology_outputs"]
                     inventory = self.generate_inventory(topology_outputs,
                                                         layout,
@@ -143,7 +143,7 @@ class LinchpinCli(LinchpinAPI):
                     # if there are multiple targets based on number of targets
                     # multiple files are generated with suffixes
                     if inv_path and isinstance(inv_file_count, int):
-                        inventory_path = inv_path+"."+str(inv_file_count)
+                        inventory_path = inv_path + "." + str(inv_file_count)
                         with open(inventory_path, 'w') as the_file:
                             the_file.write(inventory)
                         inv_file_count += 1

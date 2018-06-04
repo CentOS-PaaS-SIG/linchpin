@@ -1,15 +1,9 @@
 #!/usr/bin/env python
 
-import StringIO
-
 from InventoryFilter import InventoryFilter
 from InventoryProviders import get_all_drivers
 from InventoryProviders import get_inv_formatter
 
-try:
-    from configparser import ConfigParser
-except ImportError:
-    from ConfigParser import ConfigParser
 
 class GenericInventory(InventoryFilter):
 

@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 
 import abc
-import StringIO
-
-from InventoryFilter import InventoryFilter
 
 
 class InventoryFormatter:

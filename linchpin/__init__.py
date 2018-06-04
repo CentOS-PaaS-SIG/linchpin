@@ -25,7 +25,6 @@ from linchpin.exceptions import SchemaError
 from linchpin.exceptions import TopologyError
 from linchpin.exceptions import ValidationError
 
-from linchpin import InventoryFilters
 from linchpin.InventoryFilters import GenericInventory
 
 
@@ -816,7 +815,7 @@ class LinchpinAPI(object):
         rundb = self.setup_rundb()
         latest_run_data = {}
         run_data = {}
-        if tx_id == None:
+        if tx_id is None:
             latest_run_data = rundb.get_records('linchpin', count=1)
             run_data = self.get_run_data(latest_run_data.keys()[0],
                                          ('outputs',
