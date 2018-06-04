@@ -204,8 +204,10 @@ def init(ctx):
 @click.option('-t', '--tx-id', metavar='tx_id', type=int,
               help='Provision resources using the Transaction ID (tx-id)',
               cls=MutuallyExclusiveOption, mutually_exclusive=["run_id"])
+@click.option('-invf', '--inventory-format', default="cfg",
+              help="Inventory format can be cfg or json")
 @pass_context
-def up(ctx, targets, run_id, tx_id):
+def up(ctx, targets, run_id, tx_id, inventory_format):
     """
     Provisions nodes from the given target(s) in the given PinFile.
 
@@ -225,7 +227,7 @@ def up(ctx, targets, run_id, tx_id):
 
     if tx_id:
         try:
-            return_code, results = lpcli.lp_up(targets=targets, tx_id=tx_id)
+            return_code, results = lpcli.lp_up(targets=targets, tx_id=tx_id, inv_f=inventory_format)
             _handle_results(ctx, results, return_code)
         except LinchpinError as e:
             ctx.log_state(e)
@@ -237,7 +239,8 @@ def up(ctx, targets, run_id, tx_id):
         try:
             return_code, results = lpcli.lp_up(targets=targets,
                                                run_id=run_id,
-                                               tx_id=tx_id)
+                                               tx_id=tx_id,
+                                               inv_f=inventory_format)
             _handle_results(ctx, results, return_code)
         except LinchpinError as e:
             ctx.log_state(e)
@@ -321,6 +324,31 @@ def fetch(ctx, fetch_type, remote, root):
     except LinchpinError as e:
         ctx.log_state(e)
         sys.exit(1)
+
+
+@runcli.command()
+@click.option('-o', '--outputfile', metavar='outputfile', default=None, type=click.Path(),
+              help='Output file path to be written if not mentioned will be redirected to stdout')
+@click.option('-f', '--format', metavar='format', default="cfg",
+              help='Inventory output format')
+@click.option('-t', '--tx-id', metavar='tx_id', type=int, default=None,
+              help='Transaction ID to be used to generate inventory')
+@click.option('-inventory', '--inventory', metavar='format', is_flag=True,required=False,
+              help='Type of resource to be generated currently supports inventory only')
+@pass_context
+def generate(ctx, inventory, tx_id, format, outputfile):
+    print("This is generate group command")
+    click.echo("Generates linchpin inventory")
+    if (not os.path.exists(outputfile)) and outputfile:
+        # create file
+        ret_bool = lpcli._write_to_inventory(inv_path=outputfile)
+        return ret_bool
+    elif (os.path.exists(outputfile)) and outputfile:
+        # warn and create file
+        click.confirm('Inventory file already exists \
+                       Do you want to continue?', abort=True)
+        ret_bool = lpcli._write_to_inventory(inv_path=outputfile)
+        return ret_bool
 
 
 @runcli.command()
