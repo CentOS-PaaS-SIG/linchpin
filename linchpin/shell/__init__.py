@@ -204,7 +204,7 @@ def init(ctx):
 @click.option('-t', '--tx-id', metavar='tx_id', type=int,
               help='Provision resources using the Transaction ID (tx-id)',
               cls=MutuallyExclusiveOption, mutually_exclusive=["run_id"])
-@click.option('-invf', '--inventory-format', default="cfg",
+@click.option('-if', '--inventory-format', default="cfg",
               help="Inventory format can be cfg or json")
 @pass_context
 def up(ctx, targets, run_id, tx_id, inventory_format):
@@ -227,7 +227,9 @@ def up(ctx, targets, run_id, tx_id, inventory_format):
 
     if tx_id:
         try:
-            return_code, results = lpcli.lp_up(targets=targets, tx_id=tx_id, inv_f=inventory_format)
+            return_code, results = lpcli.lp_up(targets=targets,
+                                               tx_id=tx_id,
+                                               inv_f=inventory_format)
             _handle_results(ctx, results, return_code)
         except LinchpinError as e:
             ctx.log_state(e)
@@ -327,14 +329,17 @@ def fetch(ctx, fetch_type, remote, root):
 
 
 @runcli.command()
-@click.option('-o', '--outputfile', metavar='outputfile', default=None, type=click.Path(),
-              help='Output file path to be written if not mentioned will be redirected to stdout')
+@click.option('-o', '--outputfile', metavar='outputfile',
+              default=None, type=click.Path(),
+              help='Output file path to be written \
+                    if not mentioned will be redirected to stdout')
 @click.option('-f', '--format', metavar='format', default="cfg",
               help='Inventory output format')
 @click.option('-t', '--tx-id', metavar='tx_id', type=int, default=None,
               help='Transaction ID to be used to generate inventory')
-@click.option('-inventory', '--inventory', metavar='format', is_flag=True,required=False,
-              help='Type of resource to be generated currently supports inventory only')
+@click.option('-inventory', '--inventory', metavar='format',
+              is_flag=True, required=False,
+              help='Type of resource to be generated supports inventory only')
 @pass_context
 def generate(ctx, inventory, tx_id, format, outputfile):
     print("This is generate group command")

@@ -136,8 +136,8 @@ def main():
                     # get the record first
                     runid = int(run_id)
                     out = rundb.get_record(table,
-                                              action=action,
-                                              run_id=runid)
+                                           action=action,
+                                           run_id=runid)
                     existing_val = out[0].get(key, "")
                     if existing_val == value:
                         is_changed = False
@@ -190,7 +190,5 @@ def main():
 #            module.exit_json(output=output, changed=output)
 #        except Exception as e:
 #            module.fail_json(msg=str(e))
-
-
 # ---- Import Ansible Utilities (Ansible Framework) -------------------#
 main()

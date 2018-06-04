@@ -2,13 +2,13 @@
 
 import StringIO
 
-from InventoryFilter import InventoryFilter
 from InventoryFormatter import InventoryFormatter
 
 try:
     from configparser import ConfigParser
 except ImportError:
     from ConfigParser import ConfigParser
+
 
 class CFGInventoryFormatter(InventoryFormatter):
 
