@@ -6,6 +6,9 @@
   <forward mode="{{ res_def['forward_mode'] | default('nat') }}"
 {% if res_def['forward_dev'] is defined %}
      dev="{{ res_def['forward_dev'] }}"{% endif %}/>
+{% if res_def['domain'] is defined %}
+  <domain name="{{ res_def['domain'] }}" localOnly="yes"/>
+{% endif %}
   <ip address="{{ res_def['ip'] }}">
 {% if res_def['dhcp_start'] is defined %}
     <dhcp>

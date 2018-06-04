@@ -10,3 +10,4 @@ resource_groups:
         ip: 192.168.74.100
         dhcp_start: 192.168.74.101
         dhcp_end: 192.168.74.112
+        domain: linchpin.net
