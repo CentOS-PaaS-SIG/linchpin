@@ -5,7 +5,7 @@ LinchPin has automated testing from PR's (Pull Requests) in GitHub.  Whenever a 
 the trigger phrase '[test]' is included in the comment a set of tests will be kicked off.  These tests are orchestrated via jenkins in the `Centos CI openshift environment <https://jenkins-continuous-infra.apps.ci.centos.org/>`_.
 
 The point of these tests is to verify that LinchPin works correctly in a variety of different environments.
-We currently exercise current releases of both Centos and Fedora.  On those distros we test the following targets: dummy, duffy, aws and libvirt.  We are continuing to expand this.
+We currently exercise current releases of both Centos and Fedora.  On those distros we test the following providers: dummy, duffy, aws, libvirt, openstack, and beaker.  We are continuing to expand this.
 
 These distros are provided as containers which are deployed inside the openshift environment.
 
