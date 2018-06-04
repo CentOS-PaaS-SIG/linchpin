@@ -18,7 +18,6 @@ DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 // environment this will limit the possible providers tested.
 // if it's not defined you will get all the possible providers
 // listed here.
-// LPROVIDERS = env.LINCHPIN_PROVIDERS ?: 'dummy duffy libvirt aws'
 
 LPROVIDERS = env.LINCHPIN_PROVIDERS ?: 'dummy duffy libvirt aws'
 PPROVIDERS = LPROVIDERS.tokenize()

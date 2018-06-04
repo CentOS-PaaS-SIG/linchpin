@@ -23,34 +23,6 @@ tagMap['fedora26'] = STABLE_LABEL
 tagMap['fedora27'] = STABLE_LABEL
 tagMap['centos7'] = STABLE_LABEL
 
-// Target: [ PATH/IN/REPO to match, ]
-p_targets = ['dummy':
-              ["^(?!linchpin/version.py).*"],
-             'duffy':
-              ["^linchpin/provision/roles/duffy/.*",
-               "^linchpin/provision/duffy.yml"],
-             'libvirt':
-              ["^linchpin/provision/roles/libvirt/.*",
-               "^linchpin/provision/libvirt.yml"],
-             'aws-ec2-new':
-              ["^linchpin/provision/roles/aws/.*",
-               "^linchpin/provision/aws.yml"],
-             'bkr-new':
-              ["^linchpin/provision/roles/beaker/.*",
-               "^linchpin/provision/beaker.yml"],
-             'os-server-new':
-              ["^linchpin/provision/roles/openstack/.*",
-               "^linchpin/provision/openstack.yml"],
-             'os-sg-new':
-              ["^linchpin/provision/roles/openstack/.*",
-               "^linchpin/provision/openstack.yml"],
-             'os-vol-new':
-              ["^linchpin/provision/roles/openstack/.*",
-               "^linchpin/provision/openstack.yml"],
-            ]
-
-test_targets = ""
-
 // Provider: [ PATH/IN/REPO to match, ]
 p_providers = ['dummy':
                 ["^(?!linchpin/version.py).*",
@@ -251,8 +223,6 @@ pipeline {
                                        value: tagMap['fedora27']),
                                 string(name: 'CENTOS7_TAG',
                                        value: tagMap['centos7']),
-                                string(name: 'TEST_TARGETS',
-                                       value: test_targets),
                                 string(name: 'TEST_PROVIDERS',
                                        value: test_providers)
                         ],
