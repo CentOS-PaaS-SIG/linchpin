@@ -11,12 +11,10 @@ rundb_conn_type = file
 rundb_schema = {"action": "",
                 "inputs": [],
                 "outputs": [],
-                "topology_outputs": [],
                 "cfgs": [],
                 "start": "",
                 "end": "",
                 "rc": 0,
-                "inventory_path": "",
                 "uhash": ""}
 rundb_hash = sha256
 rundb_uhash_length = 6
