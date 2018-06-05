@@ -7,7 +7,6 @@
   file:
     path: "{{ local_image_path }}"
     state: directory
-    mode: 0770
   remote_user: "{{ remote_user | default('root') }}"
   delegate_to: "{{ uri_hostname }}"
 
