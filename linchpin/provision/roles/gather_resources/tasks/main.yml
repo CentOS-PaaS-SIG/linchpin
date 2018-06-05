@@ -41,17 +41,6 @@
   with_dict: "{{ topology_outputs }}"
   when: (item.value | length > 0)
 
-- name: "For Inventory: Add outputs to the rundb"
-  rundb:
-    conn_str: "{{ rundb_conn }}"
-    operation: update
-    table: "{{ target }}"
-    key: "topology_outputs"
-    value: "[{{ { item.key: item.value} }}]"
-    run_id: "{{ rundb_id }}"
-  with_dict: "{{ topology_outputs }}"
-  when: (item.value | length > 0)
-
 - name: "Create resources directory (v1.0.x compatibility)"
   file:
     state: directory
@@ -92,15 +81,20 @@
   set_fact:
     inv_path: "{{ layout_data['inventory_layout']['inventory_file'] | default(omit) }}"
 
-- name: "Debug for inventory_path"
-  debug:
-    msg: "{{ inventory_path }}"
-
-- name: "Add inventory_path to the rundb"
+- name: "For inventory: Add topology_outputs to the rundb"
   rundb:
     conn_str: "{{ rundb_conn }}"
     operation: update
     table: "{{ target }}"
-    key: "inventory_path"
-    value: "{{ inventory_path }}"
+    key: "outputs"
+    value: "[{{ {'topology_outputs': topology_outputs } }}]"
+    run_id: "{{ rundb_id }}"
+
+- name: "Add inventory_path to outputs"
+  rundb:
+    conn_str: "{{ rundb_conn }}"
+    operation: update
+    table: "{{ target }}"
+    key: "outputs"
+    value: "[{{ {'inventory_path': [inventory_path]} }}]"
     run_id: "{{ rundb_id }}"

@@ -785,8 +785,7 @@ class LinchpinAPI(object):
                                    'start',
                                    'end',
                                    'rc',
-                                   'uhash',
-                                   'inventory_path')
+                                   'uhash')
 
             for field in fields:
                 f = record[0].get(field)
@@ -797,11 +796,13 @@ class LinchpinAPI(object):
                         data_array = {}
                         for fld in f:
                             for k, v in fld.iteritems():
-                                if field == 'outputs' or \
-                                   field == 'topology_outputs':
-                                    values = []
-                                    for value in v:
-                                        values.append(value)
+                                if field == 'outputs':
+                                    if isinstance(v, dict):
+                                        values = v
+                                    else:
+                                        values = []
+                                        for value in v:
+                                            values.append(value)
                                     data_array[k] = values
                                 else:
                                     data_array[k] = v
@@ -820,18 +821,14 @@ class LinchpinAPI(object):
             latest_run_data = rundb.get_records('linchpin', count=1)
             run_data = self.get_run_data(latest_run_data.keys()[0],
                                          ('outputs',
-                                          'inputs',
-                                          'topology_outputs',
-                                          'inventory_path'))
+                                          'inputs'))
         else:
             latest_run_data = rundb.get_records('linchpin',
                                                 count='all')
             latest_run_data = {tx_id: latest_run_data.get(tx_id)}
             run_data = self.get_run_data(tx_id,
                                          ('outputs',
-                                          'inputs',
-                                          'topology_outputs',
-                                          'inventory_path'))
+                                          'inputs'))
         for k in latest_run_data:
             v = latest_run_data[k]
             target_group = v.get("targets", [])

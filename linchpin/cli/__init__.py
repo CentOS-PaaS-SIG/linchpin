@@ -130,25 +130,26 @@ class LinchpinCli(LinchpinAPI):
                 for name in targets:
                     lt_data = targets[name]["inputs"]["layout_data"]
                     layout = lt_data["inventory_layout"]
-                    inventory_path = targets[name]["inventory_path"]
+                    inven_path = targets[name]["outputs"]["inventory_path"][0]
                     if inv_path and inv_file_count is not False:
-                        inventory_path = inv_path + str(inv_file_count)
-                    topology_outputs = targets[name]["topology_outputs"]
-                    inventory = self.generate_inventory(topology_outputs,
+                        inven_path = inv_path + str(inv_file_count)
+                    # t_o -> topology_outputs
+                    t_o = targets[name]["outputs"]["topology_outputs"]
+                    inventory = self.generate_inventory(t_o,
                                                         layout,
                                                         inv_format=inv_format)
                     # if inv_path is explicitly mentioned it is used
                     if inv_path:
-                        inventory_path = inv_path
+                        inven_path = inv_path
                     # if there are multiple targets based on number of targets
                     # multiple files are generated with suffixes
                     if inv_path and isinstance(inv_file_count, int):
-                        inventory_path = inv_path + "." + str(inv_file_count)
-                        with open(inventory_path, 'w') as the_file:
+                        inven_path = inv_path + "." + str(inv_file_count)
+                        with open(inven_path, 'w') as the_file:
                             the_file.write(inventory)
                         inv_file_count += 1
                     else:
-                        with open(inventory_path, 'w') as the_file:
+                        with open(inven_path, 'w') as the_file:
                             the_file.write(inventory)
         except Exception as e:
             self.ctx.log_state('Error: {0}'.format(e))
