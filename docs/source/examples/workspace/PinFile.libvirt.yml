@@ -1,0 +1,8 @@
+---
+libvirt-new:
+  topology: libvirt-new.yml
+  layout: libvirt.yml
+
+libvirt-network:
+  topology: libvirt-network.yml
+

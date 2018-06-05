@@ -49,6 +49,36 @@ def getTargetsToTest(targetsMap) {
     return keysToList(targets)
 }
 
+def getProvidersToTest(providersMap) {
+    def providers = [:]
+    def changeLogSets = currentBuild.changeSets
+    for (int i = 0; i < changeLogSets.size(); i++) {
+        def entries = changeLogSets[i].items
+        for (int j = 0; j < entries.length; j++) {
+            def entry = entries[j]
+            def files = new ArrayList(entry.affectedFiles)
+            for (int k = 0; k <files.size(); k++) {
+                def this_match = false
+                def file = files[k]
+                for (e in providersMap) {
+                    if (matchPath(file.path, e.value)) {
+                        println "${e.key} matched ${file.path}"
+                        this_match = true
+                        providers[e.key] = 1
+                    }
+                }
+                if (!this_match) {
+                    // If we get here then we have a non-target specific change
+                    // and all providers should be tested.
+                    println "Non-provider file matched, will test all providers"
+                    return keysToList(providersMap)
+                }
+            }
+        }
+    }
+    return keysToList(providers)
+}
+
 def sendPRComment(ghprbGhRepository, ghprbPullId, msg) {
     if (msg == null) {
         return

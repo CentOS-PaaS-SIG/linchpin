@@ -22,7 +22,7 @@
   when: state == "present"
 
 - name: "Initiating Teardown of duffy resource group"
-  include: teardown_resource_group.yml res_grp={{ item.0 }}
-  with_nested:
+  include: teardown_resource_group.yml res_grp={{ item }}
+  with_items:
     - "{{ resources }}"
   when: state == "absent"

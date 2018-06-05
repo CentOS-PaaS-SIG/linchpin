@@ -1,9 +1,4 @@
 ---
-- name: "Set cred filename"
-  set_fact:
-    credentials: "{{ res_grp['credentials'] | default('') }}"
-  when: res_grp['credentials'] is defined
-
 - name: "Get topology output data"
   rundb:
     conn_str: "{{ rundb_conn }}"
@@ -16,6 +11,15 @@
 - name: "set topo_output_resources fact"
   set_fact:
     topo_output_resources: "{{ topo_output.output[0]['resources'] }}"
+
+- name: "debug res_grp"
+  debug:
+    var: res_grp
+
+- name: "Set cred filename"
+  set_fact:
+    credentials: "{{ res_grp['credentials'] | default('') }}"
+  when: res_grp['credentials'] is defined
 
 - name: debug topo_output"
   debug:

@@ -1,0 +1,13 @@
+---
+aws-ec2-new:
+  topology: aws-ec2-new.yml
+
+aws-ec2-key-new:
+  topology: aws-ec2-key-new.yml
+
+aws-sg-new:
+  topology: aws-sg-new.yml
+
+aws-s3-new:
+  topology: aws-s3-new.yml
+
