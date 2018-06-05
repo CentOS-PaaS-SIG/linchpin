@@ -119,8 +119,11 @@ class LinchpinCli(LinchpinAPI):
             self.ctx.log_state('Error: {0}'.format(e))
             sys.exit(1)
 
-    def _write_to_inventory(self, inv_path=None, inv_format="cfg"):
+    def _write_to_inventory(self, tx_id=None, inv_path=None, inv_format="cfg"):
         latest_run_data = self._get_run_data_by_txid()
+        if tx_id:
+            latest_run_data = self._get_run_data_by_txid(tx_id)
+        all_inventories = []
         try:
             for t_id in latest_run_data:
                 targets = latest_run_data[t_id]["targets"][0]
@@ -151,6 +154,9 @@ class LinchpinCli(LinchpinAPI):
                     else:
                         with open(inven_path, 'w') as the_file:
                             the_file.write(inventory)
+                    all_inventories.append(inventory)
+            return all_inventories
+
         except Exception as e:
             self.ctx.log_state('Error: {0}'.format(e))
             sys.exit(1)
