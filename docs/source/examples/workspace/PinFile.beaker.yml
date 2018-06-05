@@ -1,0 +1,4 @@
+---
+beaker-new:
+  topology: bkr-new.yml
+

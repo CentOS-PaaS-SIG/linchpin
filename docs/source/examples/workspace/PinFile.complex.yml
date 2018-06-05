@@ -143,8 +143,8 @@ libvirt:
 libvirt-centos6:
   topology: libvirt-centos6.yml
 
-libvirt-el7net:
-  topology: libvirt-el7net.yml
+libvirt-network:
+  topology: libvirt-network.yml
 
 #
 #bkr:

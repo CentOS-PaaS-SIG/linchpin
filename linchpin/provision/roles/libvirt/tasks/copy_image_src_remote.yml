@@ -1,7 +1,7 @@
 ---
 - name: "set local_image_path"
   set_fact:
-    local_image_path: "{{ libvirt_image_path }}"
+    local_image_path: "{{ libvirt_image_path | expanduser }}"
 
 - name: "ensure local_image_path directory exists"
   file:
@@ -33,7 +33,7 @@
     dest: "{{ local_image_src }}"
   remote_user: "{{ remote_user | default('root') }}"
   delegate_to: "{{ uri_hostname }}"
-  when: lis_remote.stat.exists == false 
+  when: lis_remote.stat.exists == false
   ignore_errors: yes
 
 - name: "determine image_src mimetype"

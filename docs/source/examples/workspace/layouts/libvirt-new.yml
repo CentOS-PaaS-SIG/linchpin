@@ -1,0 +1,11 @@
+---
+inventory_layout:
+  inventory_file: "{% raw -%}{{ workspace }}/inventories/libvirt-new-{{ uhash }}.inventory{%- endraw %}"
+  vars:
+    hostname: __IP__
+  hosts:
+    example-node:
+      count: 1
+      host_groups:
+        - example
+

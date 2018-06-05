@@ -1,0 +1,60 @@
+#!/bin/bash -xe
+
+# Verify template-based provisioning using complex template data file
+# distros.exclude: fedora26 fedora27
+# providers.include: none
+# providers.exclude: dummy openstack beaker duffy aws
+
+DISTRO=${1}
+PROVIDER=${2}
+
+PINFILE="PinFile.template-inventory.yml"
+TARGET="${PROVIDER}-template-inventory"
+TOPOLOGY_FILE="./topologies/${PROVIDER}-template-inventory.yml"
+LAYOUT_FILE="./layouts/template-inventory.yml"
+TEMPLATE_FILE="./template-data/template-inventory.yml"
+TMP_FILE=$(mktemp)
+
+DESCRIPTION="${PROVIDER} provisioning using complex template data file"
+
+echo "${DESCRIPTION}"
+
+function clean_up {
+    set +e
+    linchpin -w . -p "${PINFILE}" --template-data "@${TEMPLATE_FILE}" -v destroy "${TARGET}"
+    rm ${TMP_FILE}
+}
+trap clean_up EXIT SIGHUP SIGINT SIGTERM
+
+pushd docs/source/examples/workspace
+
+tail -n +2 ${TEMPLATE_FILE} > ${TMP_FILE}
+KEY=$(cat "${TMP_FILE}" | awk -F':' '{ print $1 }')
+V=$(cat "${TMP_FILE}" | awk -F':' '{ print $2 }')
+
+shopt -s extglob
+VALUE="${V##+([[:space:]])}"
+shopt -u extglob
+
+CHECK_VAL=$(grep ${KEY} ${LAYOUT_FILE} | head -n 1 | awk -F':' '{ print $1 }' )
+shopt -s extglob
+VAL2CHECK="${CHECK_VAL##+([[:space:]])}"
+shopt -u extglob
+
+linchpin -w . -p "${PINFILE}" --template-data "@${TEMPLATE_FILE}" -v up "${TARGET}" 2>&1 | tee -a ${TMP_FILE}
+
+RC0=${?}
+
+sed -i '$ d' ${TMP_FILE}
+uhash=$(tail -n 1 ${TMP_FILE} | awk '{ print $3 }' )
+echo ${uhash}
+
+INVENTORY_FILE="./inventories/${TARGET}-${uhash}.inventory"
+ls -l ${INVENTORY_FILE}
+grep ${VAL2CHECK} ${INVENTORY_FILE} | grep ${VALUE}
+
+if [ ${RC0} -eq 0 ]; then
+    exit 0
+else
+    exit 1
+fi

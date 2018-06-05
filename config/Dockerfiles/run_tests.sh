@@ -5,7 +5,9 @@ set -o pipefail
 LINCHPINDIR=$1
 shift
 DISTROS=$*
-TARGETS="dummy os-server-new os-sg-new os-vol-new"
+#TARGETS="dummy os-server-new os-sg-new os-vol-new"
+
+PROVIDERS="dummy openstack"
 
 export WORKSPACE="/tmp"
 
@@ -26,7 +28,7 @@ done
 for distro in $DISTROS; do
     container="lp_$distro"
     docker exec -it $container bash -c 'pushd /workdir && ./config/Dockerfiles/linchpin-install.sh'
-    docker exec -it $container bash -c "export distro=$distro; export TARGETS=\"$TARGETS\"; pushd /workdir && ./config/Dockerfiles/linchpin-tests.sh"
+    docker exec -it $container bash -c "export distro=$distro; export PROVIDERS=\"$PROVIDERS\"; pushd /workdir && ./config/Dockerfiles/linchpin-tests.sh"
 done
 
 for distro in $DISTROS; do

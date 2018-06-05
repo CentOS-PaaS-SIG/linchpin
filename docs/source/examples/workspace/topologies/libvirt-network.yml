@@ -10,12 +10,4 @@ resource_groups:
         ip: 192.168.74.100
         dhcp_start: 192.168.74.101
         dhcp_end: 192.168.74.112
-      - name: centos74
-        role: libvirt_node
-        uri: qemu:///system
-        image_src: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz
-        count: 1
-        memory: 512
-        vcpus: 1
-        networks:
-          - name: linchpin-centos74
+        domain: linchpin.net
