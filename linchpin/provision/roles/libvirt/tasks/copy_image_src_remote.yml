@@ -7,7 +7,6 @@
   file:
     path: "{{ local_image_path }}"
     state: directory
-    mode: 0755
   remote_user: "{{ remote_user | default('root') }}"
   delegate_to: "{{ uri_hostname }}"
 
@@ -36,7 +35,7 @@
   when: lis_remote.stat.exists == false
   ignore_errors: yes
 
-- name: "determine image_src mime_type"
+- name: "determine image_src mimetype"
   # identify file type
   stat:
     path: "{{ local_image_src }}"
@@ -48,27 +47,27 @@
 - name: "set image_src for uncompressed files"
   set_fact:
     img_src: "{{ local_image_src }}"
-  when: lismt_remote.stat.mime_type == "application/octet-stream"
+  when: lismt_remote.stat.mimetype == "application/octet-stream"
 
 - name: "set image_src basename to remove .xz extension"
   set_fact:
     img_src_basename: "{{ res_def['image_src'].split('.xz')[0] | basename }}"
-  when: lismt_remote.stat.mime_type == "application/x-xz"
+  when: lismt_remote.stat.mimetype == "application/x-xz"
 
 - name: "set img_src for xz compressed files"
   set_fact:
     img_src: "{{ local_image_path }}{{ img_src_basename }}"
-  when: lismt_remote.stat.mime_type == "application/x-xz"
+  when: lismt_remote.stat.mimetype == "application/x-xz"
 
 - name: "get img_src_basename extension"
   set_fact:
     img_src_ext: "{{ image_src_basename.split('.')[-1] }}"
-  when: lismt_remote.stat.mime_type != "application/x-xz"
+  when: lismt_remote.stat.mimetype != "application/x-xz"
 
 - name: "get img_src_basename extension"
   set_fact:
     img_src_ext: "{{ image_src_basename.split('.')[-2] }}"
-  when: lismt_remote.stat.mime_type == "application/x-xz"
+  when: lismt_remote.stat.mimetype == "application/x-xz"
 
 - name: "does img_src exist at local_image_path?"
   stat:
@@ -76,13 +75,13 @@
   register: ismt_remote
   remote_user: "{{ res_def['remote_user'] | default('root') }}"
   delegate_to: "{{ uri_hostname }}"
-  when: lismt_remote.stat.mime_type == "application/x-xz"
+  when: lismt_remote.stat.mimetype == "application/x-xz"
 
 - name: "uncompress xz local_image_src"
   command: "xz -d --keep --force {{ local_image_src }}"
   remote_user: "{{ res_def['remote_user'] | default('root') }}"
   delegate_to: "{{ uri_hostname }}"
-  when: lismt_remote.stat.mime_type == "application/x-xz" and ismt_remote.stat.exists == false
+  when: lismt_remote.stat.mimetype == "application/x-xz" and ismt_remote.stat.exists == false
 
 - name: "cp img_src to match node name"
   copy:
