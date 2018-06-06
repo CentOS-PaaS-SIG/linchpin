@@ -34,11 +34,4 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-.. seealso::
-
-    `User Mailing List <https://www.redhat.com/mailman/listinfo/linchpin>`_
-        Subscribe and participate. A great place for Q&A
-    `irc.freenode.net <http://irc.freenode.net>`_
-        #linchpin IRC chat channel
-    `LinchPin on Github <https://github.com/CentOS-PaaS-SIG/linchpin>`_
-        Code Contributions and Latest Software
+.. include:: includes/footer.rst
