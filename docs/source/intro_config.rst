@@ -62,9 +62,4 @@ Playbook Settings
 ```````````````
 .. include:: conf/playbooks.rst
 
-.. seealso::
-
-    `User Mailing List <https://www.redhat.com/mailman/listinfo/linchpin>`_
-        Subscribe and participate. A great place for Q&A
-    `irc.freenode.net <http://irc.freenode.net>`_
-        #linchpin IRC chat channel
+.. include:: includes/footer.rst

@@ -91,7 +91,12 @@ language = None
 #exclude_patterns = []
 exclude_patterns = [
         '_build', '_templates',
-        '_autosummary', 'LICENSE']
+        '_autosummary', 'LICENSE'
+        'includes/*.rst',
+        'gs/*.rst',
+        'resources/*.rst',
+        'examples/*',
+]
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
