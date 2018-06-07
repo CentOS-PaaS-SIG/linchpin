@@ -131,30 +131,34 @@ class LinchpinCli(LinchpinAPI):
                 # the multiple inventory files are being generated
                 inv_file_count = 0 if len(targets) > 1 else False
                 for name in targets:
-                    lt_data = targets[name]["inputs"]["layout_data"]
-                    layout = lt_data["inventory_layout"]
-                    inven_path = targets[name]["outputs"]["inventory_path"][0]
-                    if inv_path and inv_file_count is not False:
-                        inven_path = inv_path + str(inv_file_count)
-                    # t_o -> topology_outputs
-                    t_o = targets[name]["outputs"]["topology_outputs"]
-                    inventory = self.generate_inventory(t_o,
-                                                        layout,
-                                                        inv_format=inv_format)
-                    # if inv_path is explicitly mentioned it is used
-                    if inv_path:
-                        inven_path = inv_path
-                    # if there are multiple targets based on number of targets
-                    # multiple files are generated with suffixes
-                    if inv_path and isinstance(inv_file_count, int):
-                        inven_path = inv_path + "." + str(inv_file_count)
-                        with open(inven_path, 'w') as the_file:
-                            the_file.write(inventory)
-                        inv_file_count += 1
-                    else:
-                        with open(inven_path, 'w') as the_file:
-                            the_file.write(inventory)
-                    all_inventories.append(inventory)
+                    try:
+                        lt_data = targets[name]["inputs"]["layout_data"]
+                        layout = lt_data["inventory_layout"]
+                        i_path = targets[name]["outputs"]["inventory_path"][0]
+                        if inv_path and inv_file_count is not False:
+                            i_path = inv_path + str(inv_file_count)
+                        # t_o -> topology_outputs
+                        t_o = targets[name]["outputs"]["topology_outputs"]
+                        inv = self.generate_inventory(t_o,
+                                                      layout,
+                                                      inv_format=inv_format)
+                        # if inv_path is explicitly mentioned it is used
+                        if inv_path:
+                            i_path = inv_path
+                        # if there are multiple targets based on
+                        # number of targets multiple files are
+                        # generated with suffixes
+                        if inv_path and isinstance(inv_file_count, int):
+                            i_path = inv_path + "." + str(inv_file_count)
+                            with open(i_path, 'w') as the_file:
+                                the_file.write(inv)
+                            inv_file_count += 1
+                        else:
+                            with open(i_path, 'w') as the_file:
+                                the_file.write(inv)
+                        all_inventories.append(inv)
+                    except KeyError as e:
+                        self.ctx.log_state('Error: {0} :Not found'.format(e))
             return all_inventories
 
         except Exception as e:
