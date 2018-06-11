@@ -19,7 +19,7 @@
         conn_str: "{{ rundb_path }}"
         operation: init
         table: "{{ rundb_table }}"
-        value: {'inputs': [], 'outputs': [], 'start': '', 'end': '', 'rc': 0, 'action': ''}
+        value: {'inputs': [], 'outputs': [], 'topology_ouputs': [], 'start': '', 'end': '', 'rc': 0, 'action': '', 'inventory_path': ''}
       register: run_id
 
     - name: "assign rundb_id"
@@ -43,7 +43,6 @@
         key: "action"
         value: "up"
         run_id: "{{ rundb_id }}"
-
 
     - name: "record start time"
       rundb:

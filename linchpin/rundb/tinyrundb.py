@@ -101,17 +101,17 @@ class TinyRunDB(BaseDB):
 
     @usedb
     def get_records(self, table, count=10):
-
         records = {}
         if table in self.db.tables():
             t = self.db.table(name=table)
             if len(t.all()):
                 start = len(t)
-                end = start - count
-
+                if count == 'all':
+                    end = 0
+                else:
+                    end = start - count
                 for i in xrange(start, end, -1):
                     records[i] = t.get(doc_id=i)
-
         return records
 
 

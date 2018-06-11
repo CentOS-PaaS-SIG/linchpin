@@ -11,8 +11,8 @@ class LibvirtInventory(InventoryFilter):
         ips = []
         if not ('libvirt_res' in topo):
             return ips
-        for val in topo['libvirt_res']:
-            ips.append(val.get('ip'))
+        for val in topo.get('libvirt_res', []):
+            ips.append(val.get('ip', 'NA'))
         return ips
 
 

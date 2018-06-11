@@ -204,8 +204,10 @@ def init(ctx):
 @click.option('-t', '--tx-id', metavar='tx_id', type=int,
               help='Provision resources using the Transaction ID (tx-id)',
               cls=MutuallyExclusiveOption, mutually_exclusive=["run_id"])
+@click.option('-if', '--inventory-format', default="cfg",
+              help="Inventory format can be cfg or json")
 @pass_context
-def up(ctx, targets, run_id, tx_id):
+def up(ctx, targets, run_id, tx_id, inventory_format):
     """
     Provisions nodes from the given target(s) in the given PinFile.
 
@@ -225,7 +227,9 @@ def up(ctx, targets, run_id, tx_id):
 
     if tx_id:
         try:
-            return_code, results = lpcli.lp_up(targets=targets, tx_id=tx_id)
+            return_code, results = lpcli.lp_up(targets=targets,
+                                               tx_id=tx_id,
+                                               inv_f=inventory_format)
             _handle_results(ctx, results, return_code)
         except LinchpinError as e:
             ctx.log_state(e)
@@ -237,7 +241,8 @@ def up(ctx, targets, run_id, tx_id):
         try:
             return_code, results = lpcli.lp_up(targets=targets,
                                                run_id=run_id,
-                                               tx_id=tx_id)
+                                               tx_id=tx_id,
+                                               inv_f=inventory_format)
             _handle_results(ctx, results, return_code)
         except LinchpinError as e:
             ctx.log_state(e)
@@ -321,6 +326,38 @@ def fetch(ctx, fetch_type, remote, root):
     except LinchpinError as e:
         ctx.log_state(e)
         sys.exit(1)
+
+
+@runcli.command()
+@click.option('-o', '--outputfile', metavar='outputfile',
+              default=None, type=click.Path(),
+              help='Output file path to be written \
+                    if not mentioned will be redirected to stdout')
+@click.option('-f', '--format', metavar='format', default="cfg",
+              help='Inventory output format')
+@click.option('-t', '--tx-id', metavar='tx_id', type=int, default=None,
+              help='Transaction ID to be used to generate inventory')
+@click.option('-ot', '--output-type', metavar='output_type',
+              default='inventory', required=False,
+              help='Type of output to be generated,\
+                    currently supports inventory only')
+@click.option('-p', '--pos', metavar='pos', default="-1",
+              help='If multiple inventories mention which inventory\
+                    to be display. By default latest inventory is\
+                    displayed')
+@pass_context
+def generate(ctx, outputfile, format, tx_id, output_type, pos):
+    ret_bool = lpcli._write_to_inventory(inv_path=outputfile, inv_format=format)
+    if pos == "all":
+        for inventory in ret_bool:
+            click.echo(inventory)
+    else:
+        try:
+            click.echo(ret_bool[int(pos)])
+        except IndexError as e:
+            click.echo("Invalid index of inventory generated")
+            click.echo(e.message)
+    return ret_bool
 
 
 @runcli.command()

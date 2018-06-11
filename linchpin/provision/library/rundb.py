@@ -131,9 +131,18 @@ def main():
 
         elif op in ['update', 'get']:
             if op == "update":
+                # idempotent update
                 if run_id and key and val:
+                    # get the record first
                     runid = int(run_id)
-                    output = rundb.update_record(table, runid, key, val)[0]
+                    out = rundb.get_record(table,
+                                           action=action,
+                                           run_id=runid)
+                    existing_val = out[0].get(key, "")
+                    if existing_val == value:
+                        is_changed = False
+                    else:
+                        output = rundb.update_record(table, runid, key, val)[0]
                 else:
                     msg = ("'table', 'run_id, 'key', and 'value' required"
                            " for update operation")
@@ -181,7 +190,5 @@ def main():
 #            module.exit_json(output=output, changed=output)
 #        except Exception as e:
 #            module.fail_json(msg=str(e))
-
-
 # ---- Import Ansible Utilities (Ansible Framework) -------------------#
 main()

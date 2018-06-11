@@ -12,6 +12,9 @@ from LibvirtInventory import LibvirtInventory
 from OpenstackInventory import OpenstackInventory
 from OvirtInventory import OvirtInventory
 
+from CFGInventoryFormatter import CFGInventoryFormatter
+from JSONInventoryFormatter import JSONInventoryFormatter
+
 filter_classes = {
     "aws_inv": AWSInventory,
     "beaker_inv": BeakerInventory,
@@ -23,15 +26,32 @@ filter_classes = {
     "ovirt_inv": OvirtInventory,
 }
 
+formatter_classes = {
+    "cfg": CFGInventoryFormatter,
+    "ini": CFGInventoryFormatter,
+    "json": JSONInventoryFormatter
+}
+
 
 def get_driver(provider):
 
     if provider not in filter_classes:
             raise LinchpinError("Key {0} not found in"
-                                " dictionary".format(provider))
+                                " inventory provider dict".format(provider))
 
     return filter_classes[provider]
 
 
 def get_all_drivers():
     return filter_classes
+
+
+def get_inv_formatter(inv_type):
+    if inv_type not in formatter_classes:
+            raise LinchpinError("Key {0} not found in"
+                                " formatters".format(inv_type))
+    return formatter_classes[inv_type]
+
+
+def get_all_inv_formatters():
+    return formatter_classes

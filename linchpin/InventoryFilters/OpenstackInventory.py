@@ -5,19 +5,23 @@ import StringIO
 from InventoryFilter import InventoryFilter
 
 
-class GCloudInventory(InventoryFilter):
+class OpenstackInventory(InventoryFilter):
 
     def get_host_ips(self, topo):
         host_public_ips = []
-        for group in topo['gcloud_gce_res']:
-            for instance in group['instance_data']:
-                host_public_ips.append(instance['public_ip'])
+        for group in topo.get('os_server_res', []):
+            grp = group.get('openstack', [])
+            if isinstance(grp, list):
+                for server in grp:
+                    host_public_ips.append(str(server['accessIPv4']))
+            if isinstance(grp, dict):
+                host_public_ips.append(str(grp['accessIPv4']))
         return host_public_ips
 
     def get_inventory(self, topo, layout):
-        if len(topo['gcloud_gce_res']) == 0:
+
+        if len(topo['os_server_res']) == 0:
             return ""
-        # get inventory hosts
         inven_hosts = self.get_host_ips(topo)
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)

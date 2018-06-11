@@ -1,30 +1,28 @@
+#!/usr/bin/env python
+
 import StringIO
 
 from InventoryFilter import InventoryFilter
 
 
-class BeakerInventory(InventoryFilter):
+class DuffyInventory(InventoryFilter):
 
-    def get_hostnames(self, topology):
+    def get_hostnames(self, topo):
         hostnames = []
-        if not ('beaker_res' in topology):
-            return hostnames
-        for group in topology['beaker_res']:
-            hostnames.append(group['system'])
+        for group in topo.get('duffy_res', []):
+            for host in group['hosts']:
+                hostnames.append(host)
         return hostnames
 
     def get_host_ips(self, topo):
         return self.get_hostnames(topo)
 
-    def add_hosts_to_groups(self, config, inven_hosts, layout):
-        pass
 
     def get_inventory(self, topo, layout):
-        if not ('beaker_res' in topo):
-            return ''
-        if len(topo['beaker_res']) == 0:
-            return ''
-        inven_hosts = self.get_host_ips(topo)
+        if len(topo['duffy_res']) == 0:
+            return ""
+        inven_hosts = self.get_hostnames(topo)
+        # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)
         self.add_sections(host_groups)
         # set children for each host group
