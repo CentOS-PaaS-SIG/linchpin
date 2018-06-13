@@ -26,4 +26,5 @@
     var: topo_output_resources
 
 - name: "Teardown resource definitions of current group"
-  include: teardown_res_defs.yml ssid="{{ topo_output_resources[0]['ssid'] }}"
+  include: teardown_res_defs.yml ssid="{{ item['ssid'] }}"
+  with_items: "{{ topo_output_resources['duffy_res'] }}"
