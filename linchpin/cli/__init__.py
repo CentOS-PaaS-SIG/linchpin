@@ -138,7 +138,7 @@ class LinchpinCli(LinchpinAPI):
                         if inv_path and inv_file_count is not False:
                             i_path = inv_path + str(inv_file_count)
                         # t_o -> topology_outputs
-                        t_o = targets[name]["outputs"]["topology_outputs"]
+                        t_o = targets[name]["outputs"]["resources"]
                         inv = self.generate_inventory(t_o,
                                                       layout,
                                                       inv_format=inv_format)
@@ -264,7 +264,10 @@ class LinchpinCli(LinchpinAPI):
             fields = {}
             outputs = data.get('outputs', {})
             resources = outputs.get('resources', [])
-
+            format_resources = []
+            for provider in resources:
+                format_resources.extend(resources[provider])
+            resources = format_resources
             for dist_role, flds in dist_roles.iteritems():
                 if dist_role in roles:
                     for f in flds.split(','):
@@ -319,7 +322,6 @@ class LinchpinCli(LinchpinAPI):
             f.write(json.dumps(dist_data))
 
     def _write_latest_run(self):
-
         latest_run_data = self._get_run_data_by_txid()
         resources_path = self.get_evar('resources_folder')
         context_path = '{0}/{1}'.format(self.workspace, resources_path)

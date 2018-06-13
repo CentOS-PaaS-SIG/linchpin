@@ -303,7 +303,6 @@ def destroy(ctx, targets, run_id, tx_id):
             sys.exit(1)
 
 
-
 @runcli.command()
 @click.argument('fetch_type', default=None, required=False, nargs=-1)
 @click.argument('remote', default=None, required=True, nargs=1)
@@ -329,38 +328,6 @@ def fetch(ctx, fetch_type, remote, root):
 
 
 @runcli.command()
-@click.option('-o', '--outputfile', metavar='outputfile',
-              default=None, type=click.Path(),
-              help='Output file path to be written \
-                    if not mentioned will be redirected to stdout')
-@click.option('-f', '--format', metavar='format', default="cfg",
-              help='Inventory output format')
-@click.option('-t', '--tx-id', metavar='tx_id', type=int, default=None,
-              help='Transaction ID to be used to generate inventory')
-@click.option('-ot', '--output-type', metavar='output_type',
-              default='inventory', required=False,
-              help='Type of output to be generated,\
-                    currently supports inventory only')
-@click.option('-p', '--pos', metavar='pos', default="-1",
-              help='If multiple inventories mention which inventory\
-                    to be display. By default latest inventory is\
-                    displayed')
-@pass_context
-def generate(ctx, outputfile, format, tx_id, output_type, pos):
-    ret_bool = lpcli._write_to_inventory(inv_path=outputfile, inv_format=format)
-    if pos == "all":
-        for inventory in ret_bool:
-            click.echo(inventory)
-    else:
-        try:
-            click.echo(ret_bool[int(pos)])
-        except IndexError as e:
-            click.echo("Invalid index of inventory generated")
-            click.echo(e.message)
-    return ret_bool
-
-
-@runcli.command()
 @click.argument('targets', metavar='TARGETS',
                 required=False, default=None, nargs=-1)
 @click.option('--view', metavar='VIEW', default='target', required=False,
@@ -373,8 +340,19 @@ def generate(ctx, outputfile, format, tx_id, output_type, pos):
               metavar='TX_ID', required=False,
               help="Display a specific transaction by ID (tx_id)."
                    " Only works with '--view=tx'")
+@click.option('-of', '--output-format', type=str, default="cfg",
+              metavar='output_format', required=False,
+              help="Inventory output format")
+@click.option('-outputfile', '--output-file', type=str,
+              metavar='output_file', required=False,
+              help="Inventory output format")
+@click.option('-p', '--pos', metavar='pos', default="-1",
+              help='If multiple inventories mention which inventory\
+                    to be display. By default latest inventory is\
+                    displayed')
 @pass_context
-def journal(ctx, targets, fields, count, view, tx_id):
+def journal(ctx, targets, fields, count, view,
+            tx_id, output_format, output_file, pos):
     """
     Display information stored in Run Database
 
@@ -462,6 +440,7 @@ def journal(ctx, targets, fields, count, view, tx_id):
             print('No targets available for journal.'
                   ' Please provision something. :)', file=sys.stderr)
         print('\n')
+        ctx.log_state(output)
 
     elif view == 'tx':
 
@@ -503,9 +482,21 @@ def journal(ctx, targets, fields, count, view, tx_id):
                 output += '\n==================NO TRANSACTIONS======'
                 output += '==========\n'
 
-
-        # PRINT OUTPUT RESULTS HERE
         ctx.log_state(output)
+
+    if view == "inventory":
+        ret_bool = lpcli._write_to_inventory(inv_path=output_file,
+                                             inv_format=output_format)
+        if pos == "all":
+            for inventory in ret_bool:
+                click.echo(inventory)
+        else:
+            try:
+                click.echo(ret_bool[int(pos)])
+            except IndexError as e:
+                click.echo("Invalid index of inventory generated")
+                click.echo(e.message)
+        return ret_bool
 
 
 def main():

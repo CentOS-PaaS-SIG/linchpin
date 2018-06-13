@@ -30,16 +30,14 @@
 # No more will the outputter record a record for every
 # possible provider. This is done with the with_dict/when item.value test
 
-- name: "For distiller: Add outputs to the rundb"
+- name: "Add topology_outputs to the rundb"
   rundb:
     conn_str: "{{ rundb_conn }}"
     operation: update
     table: "{{ target }}"
     key: "outputs"
-    value: "[{{ {'resources': item.value} }}]"
+    value: "[{{ {'resources': topology_outputs } }}]"
     run_id: "{{ rundb_id }}"
-  with_dict: "{{ topology_outputs }}"
-  when: (item.value | length > 0)
 
 - name: "Create resources directory (v1.0.x compatibility)"
   file:
@@ -73,15 +71,6 @@
     inventory_path: "{{ inventory_path | default( workspace +'/'+inventories_folder+'/'+
     topology_name.replace(' ', '_').lower() ) }}.inventory"
   when: not enable_uhash
-
-- name: "For inventory: Add topology_outputs to the rundb"
-  rundb:
-    conn_str: "{{ rundb_conn }}"
-    operation: update
-    table: "{{ target }}"
-    key: "outputs"
-    value: "[{{ {'topology_outputs': topology_outputs } }}]"
-    run_id: "{{ rundb_id }}"
 
 - name: "Add inventory_path to outputs"
   rundb:
