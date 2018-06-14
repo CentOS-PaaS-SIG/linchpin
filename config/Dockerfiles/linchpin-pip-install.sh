@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # This script installs linchpin from test.pypi.org
 # used by cd-linchpin-release (JenkinsfileRelease)
