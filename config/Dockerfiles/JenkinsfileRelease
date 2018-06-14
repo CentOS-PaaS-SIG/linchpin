@@ -21,18 +21,19 @@ env.ghprbActualCommit = env.ghprbActualCommit ?: 'test_pypi_install'
 
 env.ghprbPullAuthorLogin = env.ghprbPullAuthorLogin ?: ''
 
-env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop'
+//env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop'
+env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop-testing'
 
-env.FEDORA27_TAG = env.FEDORA27_TAG ?: 'stable'
+env.TEST_PYPI_REPO = env.TEST_PYPI_REPO ?: 'pypitest'
+env.PROD_PYPI_REPO = env.PROD_PYPI_REPO ?: 'pypi'
+
 
 OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
-
+env.FEDORA27_TAG = env.FEDORA27_TAG ?: 'stable'
 
 // Pod name to use
-jslave-podName = 'jslave-' + repoName + executionID
-
-//release-podName = 'release' + repoName + executionID
+jslave_podName = 'jslave-' + repoName + '_' + executionID
 
 library identifier: "ci-pipeline@master",
         retriever: modernSCM([$class: 'GitSCMSource',
@@ -51,9 +52,6 @@ properties([
       string(defaultValue: 'develop',
              description: '',
              name: 'ghprbActualCommit'),
-      string(defaultValue: 'testpypi',
-             description: '',
-             name: 'pypiRepo'),
       string(defaultValue: '',
              description: 'Git Hub Repository',
              name: 'ghprbGhRepository')
@@ -61,8 +59,8 @@ properties([
   ),
 ])
 
-podTemplate(name: jslave-podName,
-            label: jslave-podName,
+podTemplate(name: jslave_podName,
+            label: jslave_podName,
             cloud: 'openshift',
             serviceAccount: OPENSHIFT_SERVICE_ACCOUNT,
             idleMinutes: 0,
@@ -77,19 +75,18 @@ podTemplate(name: jslave-podName,
                 args: '${computer.jnlpmac} ${computer.name}',
                 command: '',
                 workingDir: '/workDir'),
-        containers: [
             containerTemplate(name: 'fedora27',
                 alwaysPullImage: true,
                 image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora27:' + FEDORA27_TAG,
                 ttyEnabled: false,
                 command: '',
                 privileged: true,
-                workingDir: '/workDir'),
+                workingDir: '/workDir')
         ]
 )
 
 {
-    node(jslave-podName) {
+    node(jslave_podName) {
         ansiColor('xterm') {
             timestamps {
                 // We need to set env.HOME because the openshift slave image
@@ -130,13 +127,15 @@ podTemplate(name: jslave-podName,
                         dir(repoName) {
 
                             sh "git checkout " + env.ghprbActualCommit
+                            sh "git config user.name 'LinchPin Releaser'"
+                            sh "git config user.email 'linchpin@redhat.com'"
                             sh "python setup.py sdist bdist_wheel"
 
                             string version = sh (
                                 script: "python setup.py --version",
                                 returnStdout: true
                                 ).trim()
-                            currentBuild.displayName = "Build#: ${env.BUILD_NUMBER} - Release: " + version + " to " + pypiRepo
+                            currentBuild.displayName = "Build#: ${env.BUILD_NUMBER} - Release: " + version
 
                             withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'linchpin-releaser', usernameVariable: 'TWINE_USERNAME', passwordVariable: 'TWINE_PASSWORD']]) {
                                 sh (
@@ -161,22 +160,37 @@ EOF
                                 """
                                 )
                             }
-                            sh "twine upload --config-file /tmp/pypirc -r " + pypiRepo + " dist/*"
-                            sh "git pull --tags origin develop"
+                            sh "twine upload --config-file /tmp/pypirc -r " + env.TEST_PYPI_REPO + " dist/*"
+                            sh "git fetch origin " + TARGET_BRANCH
+                            sh "git pull --tags origin " + TARGET_BRANCH
                             string tag = sh (
-                                script: "git tag -l | grep v" + version,
+                                script: "git tag -l | grep v" + version + " || echo 'noversion'",
                                 returnStdout: true
                                 ).trim()
                             if (tag != "v" + version) {
                                 sh "git tag v" + version
-                                sh "git push --tags origin develop"
+                                sh "git push --tags origin " + env.ghprbActualCommit + ":" + TARGET_BRANCH
                             }
                         }
                     }
-                    stage('test-pypi-verify') {
+                    currentStage = 'test-pypi-install'
+                    stage(currentStage) {
                       dir(repoName) {
                         pipelineUtils.executeInContainer(currentStage, "fedora27", "./config/Dockerfiles/linchpin-pip-install.sh " + version)
                       }
+                    }
+                    currentStage = "test-pypi-verify"
+                    stage(currentStage) {
+                      dir('linchpin') {
+                        env.distro = "fedora27"
+                        env.PROVIDERS = "dummy"
+                        pipelineUtils.executeInContainer(currentStage, "fedora27", "./config/Dockerfiles/linchpin-tests.sh")
+                      }
+                    }
+                    stage('release-prod-version') {
+                        dir(repoName) {
+                            sh "twine upload --config-file /tmp/pypirc -r " + env.PROD_PYPI_REPO + " dist/*"
+                        }
                     }
                 }
                 catch (e) {
@@ -193,4 +207,5 @@ EOF
                 }
             }
         }
+    }
 }
