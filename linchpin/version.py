@@ -1,2 +1,2 @@
 __short_version__ = '1.5.5'
-__version__ = '1.5.5a4'
+__version__ = '1.5.5a5'
