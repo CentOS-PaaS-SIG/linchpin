@@ -13,18 +13,26 @@ executionID = UUID.randomUUID().toString()
 repoName = 'linchpin'
 DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 
-env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/' + repoName
-env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
+//env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/' + repoName
+env.ghprbGhRepository = env.ghprbGhRepository ?: 'herlo/' + repoName
+
+//env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
+env.ghprbActualCommit = env.ghprbActualCommit ?: 'test_pypi_install'
+
 env.ghprbPullAuthorLogin = env.ghprbPullAuthorLogin ?: ''
 
 env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop'
+
+env.FEDORA27_TAG = env.FEDORA27_TAG ?: 'stable'
 
 OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
 
 
 // Pod name to use
-podName = repoName + executionID
+jslave-podName = 'jslave-' + repoName + executionID
+
+//release-podName = 'release' + repoName + executionID
 
 library identifier: "ci-pipeline@master",
         retriever: modernSCM([$class: 'GitSCMSource',
@@ -53,13 +61,12 @@ properties([
   ),
 ])
 
-podTemplate(name: podName,
-            label: podName,
+podTemplate(name: jslave-podName,
+            label: jslave-podName,
             cloud: 'openshift',
             serviceAccount: OPENSHIFT_SERVICE_ACCOUNT,
             idleMinutes: 0,
             namespace: OPENSHIFT_NAMESPACE,
-
         containers: [
             // This adds the custom slave container to the pod.
             // Must be first with name 'jnlp'
@@ -69,12 +76,20 @@ podTemplate(name: podName,
                 alwaysPullImage: true,
                 args: '${computer.jnlpmac} ${computer.name}',
                 command: '',
-                workingDir: '/workDir')
+                workingDir: '/workDir'),
+        containers: [
+            containerTemplate(name: 'fedora27',
+                alwaysPullImage: true,
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora27:' + FEDORA27_TAG,
+                ttyEnabled: false,
+                command: '',
+                privileged: true,
+                workingDir: '/workDir'),
         ]
 )
 
 {
-    node(podName) {
+    node(jslave-podName) {
         ansiColor('xterm') {
             timestamps {
                 // We need to set env.HOME because the openshift slave image
@@ -111,7 +126,7 @@ podTemplate(name: podName,
 
                         }
                     }
-                    stage('release-version') {
+                    stage('release-test-version') {
                         dir(repoName) {
 
                             sh "git checkout " + env.ghprbActualCommit
@@ -158,6 +173,11 @@ EOF
                             }
                         }
                     }
+                    stage('test-pypi-verify') {
+                      dir(repoName) {
+                        pipelineUtils.executeInContainer(currentStage, "fedora27", "./config/Dockerfiles/linchpin-pip-install.sh " + version)
+                      }
+                    }
                 }
                 catch (e) {
 
@@ -173,5 +193,4 @@ EOF
                 }
             }
         }
-    }
 }
