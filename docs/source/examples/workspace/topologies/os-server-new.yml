@@ -16,7 +16,7 @@ resource_groups:
       - name: "{{ distro | default('') }}frontend"
         role: os_server
         flavor: m1.small
-        image: Fedora-Cloud-Base-26-compose-latest
+        image: CentOS-7-x86_64-GenericCloud-1612
         count: 1
         keypair: ci-factory
         auto_ip: no
