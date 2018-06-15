@@ -23,6 +23,8 @@ env.ghprbPullAuthorLogin = env.ghprbPullAuthorLogin ?: ''
 
 //env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop'
 env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop-testing'
+//env.MASTER_BRANCH = env.MASTER_BRANCH ?: 'master'
+env.MASTER_BRANCH = env.MASTER_BRANCH ?: 'master-testing'
 
 env.TEST_PYPI_REPO = env.TEST_PYPI_REPO ?: 'pypitest'
 env.PROD_PYPI_REPO = env.PROD_PYPI_REPO ?: 'pypi'
@@ -135,7 +137,7 @@ podTemplate(name: jslave_podName,
                                 script: "python setup.py --version",
                                 returnStdout: true
                                 ).trim()
-                            currentBuild.displayName = "Build#: ${env.BUILD_NUMBER} - Release: " + version
+                            currentBuild.displayName = "Build#: ${env.BUILD_NUMBER} - LinchPin Release: " + version
 
                             withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'linchpin-releaser', usernameVariable: 'TWINE_USERNAME', passwordVariable: 'TWINE_PASSWORD']]) {
                                 sh (
@@ -160,7 +162,7 @@ EOF
                                 """
                                 )
                             }
-                            sh "twine upload --config-file /tmp/pypirc -r " + env.TEST_PYPI_REPO + " dist/*"
+                            sh "twine upload --config-file /tmp/pypirc -r " + env.TEST_PYPI_REPO + " dist/* || echo 'Version already uploaded'"
                             sh "git fetch origin " + TARGET_BRANCH
                             sh "git pull --tags origin " + TARGET_BRANCH
                             string tag = sh (
@@ -190,6 +192,11 @@ EOF
                     stage('release-prod-version') {
                         dir(repoName) {
                             sh "twine upload --config-file /tmp/pypirc -r " + env.PROD_PYPI_REPO + " dist/*"
+                        }
+                    }
+                    stage('push-to-master') {
+                        dir(repoName) {
+                            sh "git push --tags origin " + env.ghprbActualCommit + ":" + MASTER_BRANCH
                         }
                     }
                 }
