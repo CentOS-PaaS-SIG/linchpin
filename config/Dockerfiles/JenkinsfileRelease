@@ -13,18 +13,18 @@ executionID = UUID.randomUUID().toString()
 repoName = 'linchpin'
 DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 
-//env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/' + repoName
-env.ghprbGhRepository = env.ghprbGhRepository ?: 'herlo/' + repoName
+env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/' + repoName
+//env.ghprbGhRepository = env.ghprbGhRepository ?: 'herlo/' + repoName
 
-//env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
-env.ghprbActualCommit = env.ghprbActualCommit ?: 'test_pypi_install'
+env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
+//env.ghprbActualCommit = env.ghprbActualCommit ?: 'test_pypi_install'
 
 env.ghprbPullAuthorLogin = env.ghprbPullAuthorLogin ?: ''
 
-//env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop'
-env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop-testing'
-//env.MASTER_BRANCH = env.MASTER_BRANCH ?: 'master'
-env.MASTER_BRANCH = env.MASTER_BRANCH ?: 'master-testing'
+env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop'
+//env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop-testing'
+env.MASTER_BRANCH = env.MASTER_BRANCH ?: 'master'
+//env.MASTER_BRANCH = env.MASTER_BRANCH ?: 'master-testing'
 
 env.TEST_PYPI_REPO = env.TEST_PYPI_REPO ?: 'pypitest'
 env.PROD_PYPI_REPO = env.PROD_PYPI_REPO ?: 'pypi'
