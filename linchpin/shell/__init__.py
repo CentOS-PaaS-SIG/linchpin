@@ -340,19 +340,23 @@ def fetch(ctx, fetch_type, remote, root):
               metavar='TX_ID', required=False,
               help="Display a specific transaction by ID (tx_id)."
                    " Only works with '--view=tx'")
-@click.option('-of', '--output-format', type=str, default="cfg",
+@click.option('--output-format', type=str, default="cfg",
               metavar='output_format', required=False,
               help="Inventory output format")
-@click.option('-outputfile', '--output-file', type=str,
-              metavar='output_file', required=False,
-              help="Inventory output format")
-@click.option('-p', '--pos', metavar='pos', default="-1",
-              help='If multiple inventories mention which inventory\
-                    to be display. By default latest inventory is\
+@click.option('-o', '--output-file', type=str,
+              metavar='OUTPUT_FILE', required=False,
+              help="Write output-file to provided location")
+@click.option('--output-type', type=str,
+              metavar='output_type', required=False,
+              help="inventory output file path")
+@click.option('--target', metavar='target', default="all",
+              help='If multiple targets are mentioned \
+                    takes parameter for target to be used.\
+                    By default all are displayed\
                     displayed')
 @pass_context
 def journal(ctx, targets, fields, count, view,
-            tx_id, output_format, output_file, pos):
+            tx_id, output_format, output_file, output_type, target):
     """
     Display information stored in Run Database
 
@@ -375,6 +379,22 @@ def journal(ctx, targets, fields, count, view,
     only with `--view=target`.
     (Default: action, uhash, rc. Additional fields: start, end)
     """
+
+    if output_type == "inventory":
+        inventories = lpcli._write_to_inventory(inv_path=output_file,
+                                                inv_format=output_format)
+        if target == "all":
+            click.echo("By default all targets inventories are displayed to stdout\
+                        For specific target please use --target option")
+            for target in inventories:
+                click.echo(inventories[target])
+        else:
+            try:
+                click.echo(inventories[target])
+            except IndexError as e:
+                click.echo("Invalid target")
+                click.echo(e.message)
+        return inventories
 
     if view == 'target':
 
@@ -483,20 +503,6 @@ def journal(ctx, targets, fields, count, view,
                 output += '==========\n'
 
         ctx.log_state(output)
-
-    if view == "inventory":
-        ret_bool = lpcli._write_to_inventory(inv_path=output_file,
-                                             inv_format=output_format)
-        if pos == "all":
-            for inventory in ret_bool:
-                click.echo(inventory)
-        else:
-            try:
-                click.echo(ret_bool[int(pos)])
-            except IndexError as e:
-                click.echo("Invalid index of inventory generated")
-                click.echo(e.message)
-        return ret_bool
 
 
 def main():

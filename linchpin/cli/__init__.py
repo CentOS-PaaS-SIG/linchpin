@@ -123,7 +123,7 @@ class LinchpinCli(LinchpinAPI):
         latest_run_data = self._get_run_data_by_txid()
         if tx_id:
             latest_run_data = self._get_run_data_by_txid(tx_id)
-        all_inventories = []
+        all_inventories = {}
         try:
             for t_id in latest_run_data:
                 targets = latest_run_data[t_id]["targets"][0]
@@ -137,9 +137,9 @@ class LinchpinCli(LinchpinAPI):
                         i_path = targets[name]["outputs"]["inventory_path"][0]
                         if inv_path and inv_file_count is not False:
                             i_path = inv_path + str(inv_file_count)
-                        # t_o -> topology_outputs
-                        t_o = targets[name]["outputs"]["resources"]
-                        inv = self.generate_inventory(t_o,
+                        # r_o -> resources_outputs
+                        r_o = targets[name]["outputs"]["resources"]
+                        inv = self.generate_inventory(r_o,
                                                       layout,
                                                       inv_format=inv_format)
                         # if inv_path is explicitly mentioned it is used
@@ -149,14 +149,14 @@ class LinchpinCli(LinchpinAPI):
                         # number of targets multiple files are
                         # generated with suffixes
                         if inv_path and isinstance(inv_file_count, int):
-                            i_path = inv_path + "." + str(inv_file_count)
+                            i_path = inv_path + "." + str(name)
                             with open(i_path, 'w') as the_file:
                                 the_file.write(inv)
                             inv_file_count += 1
                         else:
                             with open(i_path, 'w') as the_file:
                                 the_file.write(inv)
-                        all_inventories.append(inv)
+                        all_inventories[name] = inv
                     except KeyError as e:
                         self.ctx.log_state('Error: {0} :Not found'.format(e))
             return all_inventories
