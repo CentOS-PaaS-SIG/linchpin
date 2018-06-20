@@ -31,10 +31,10 @@
                                     "required": false,
                                     "schema": { "type": "string", "required": true }
                                 },
-				"tasks": {
-				    "type": "list",
-				    "required": false,
-				    "schema": {
+                                "tasks": {
+                                    "type": "list",
+                                    "required": false,
+                                    "schema": {
                                         "anyof": [{
                                             "type": "dict",
                                             "schema": {
@@ -44,8 +44,7 @@
                                         }
                                        ]
                                     }
-
-				},
+                                },
                                 "keyvalue": {
                                     "type": "list",
                                     "required": false,
