@@ -1,0 +1,48 @@
+#!/bin/bash -xe
+
+# Provision both beaker and openstack with one PinFile
+# distros.exclude: none
+# providers.include: beaker
+# providers.exclude: none
+#
+# NOTE: The providers.include only sets beaker in an effort to run only the
+# test once. Running against openstack would just duplicate the same test.
+
+DISTRO=${1}
+PROVIDER=${2}
+
+PINFILE="PinFile.beaker-openstack.yml"
+TARGET="beaker-openstack"
+TMP_FILE=$(mktemp)
+
+DESCRIPTION="Provision both beaker and openstack with one PinFile"
+
+echo "${DESCRIPTION}"
+
+function clean_up {
+    set +e
+    linchpin -w . -p "${PINFILE}" -v destroy "${TARGET}"
+    rm ${TMP_FILE}
+}
+trap clean_up EXIT SIGHUP SIGINT SIGTERM
+
+pushd docs/source/examples/workspace
+
+linchpin -w . -p "${PINFILE}" -v up "${TARGET}" 2>&1 | tee -a ${TMP_FILE}
+
+RC0=${?}
+
+sed -i '$ d' ${TMP_FILE}
+uhash=$(tail -n 1 ${TMP_FILE} | awk '{ print $3 }' )
+echo ${uhash}
+
+INVENTORY_FILE="./inventories/${TARGET}-${uhash}.inventory"
+ls -l ${INVENTORY_FILE}
+
+RC1=${?}
+
+if [ ${RC0} -eq 0 ] && [ ${RC1} -eq 0 ]; then
+    exit 0
+else
+    exit 1
+fi
