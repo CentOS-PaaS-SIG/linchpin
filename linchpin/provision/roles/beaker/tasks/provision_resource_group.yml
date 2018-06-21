@@ -36,6 +36,7 @@
   - name: debug bkr ids
     debug:
       msg: "{{ bkr.results }}"
+
   - name: "set bkr ids from results"
     set_fact:
       bkr_ids: "{{ bkr_ids | default({}) | combine(result['ids']) }}"

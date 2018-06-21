@@ -628,7 +628,6 @@ class LinchpinAPI(object):
                                           " validate".format(topology_data))
 
             self.set_evar('topo_data', topology_data)
-            self.set_evar('resources', resources)
 
             rundb.update_record(target,
                                 rundb_id,
@@ -821,6 +820,7 @@ class LinchpinAPI(object):
             self.set_evar('state', 'absent')
 
         for resource in resources:
+            self.set_evar('resources', resource)
             playbook = resource.get('resource_group_type')
             pb_path = self._find_playbook_path(playbook)
             playbook_path = '{0}/{1}{2}'.format(pb_path, playbook, self.pb_ext)
