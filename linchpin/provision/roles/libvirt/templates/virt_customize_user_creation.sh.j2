@@ -1,0 +1,9 @@
+#!/bin/sh
+{% if 'users' in cloud_config %}
+{% for user in cloud_config['users'] %}
+useradd -m -p '{{ user['password'] | default("") }}' -c '{{ user['gecos'] | default(user['name']) }}' {{ user['name'] }}; 
+{% if 'groups' in user %}
+usermod -aG {{ user['groups'] }} {{ user['name'] }};
+{% endif %}
+{% endfor %}
+{% endif %}
