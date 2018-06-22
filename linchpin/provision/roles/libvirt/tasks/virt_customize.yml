@@ -1,0 +1,155 @@
+- name: set fact for image path
+  set_fact:
+    cloud_config: "{{ res_def['cloud_config'] }}"
+
+- name: Jinja template test
+  template:
+    src: virt_customize_user_creation.sh.j2
+    dest: /tmp/user_creation.sh
+
+- name: set_fact for cloud_config
+  set_fact:
+    cloud_config: "{{ res_def['cloud_config'] }}"
+
+- name: "virt-customize: Run first_boot_commands"
+  shell: "virt-customize -v -x -a {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} --firstboot-command \'{{ definition[3] }}\' --selinux-relabel"
+  environment:
+    LIBGUESTFS_BACKEND: direct
+    # FIXME(ykarel) LIBGUESTFS_BACKEND_SETTINGS can be removed once
+    # https://bugs.launchpad.net/tripleo/+bug/1743749 is completely fixed.
+    LIBGUESTFS_BACKEND_SETTINGS: force_tcg
+  with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ libvirt_image_path | expanduser }}"]
+    - ["{{ img_src_ext }}"]
+    - ["{{ cloud_config['first_boot_commands'] | join(';')}}"]
+    - "{{ res_count.stdout }}"
+  when: cloud_config['first_boot_commands'] is defined
+  loop_control:
+    loop_var: definition
+  ignore_errors: true
+
+- name: "virt-customize: Run commands"
+  shell: "virt-customize -v -x -a {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} --firstboot-command \'{{ definition[3] }}\' --selinux-relabel"
+  environment:
+    LIBGUESTFS_BACKEND: direct
+    # FIXME(ykarel) LIBGUESTFS_BACKEND_SETTINGS can be removed once
+    # https://bugs.launchpad.net/tripleo/+bug/1743749 is completely fixed.
+    LIBGUESTFS_BACKEND_SETTINGS: force_tcg
+  with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ libvirt_image_path | expanduser }}"]
+    - ["{{ img_src_ext }}"]
+    - ["{{ cloud_config['run_commands'] | join(';')}}"]
+    - "{{ res_count.stdout }}"
+  when: cloud_config['run_commands'] is defined
+  loop_control:
+    loop_var: definition
+  ignore_errors: true
+
+- name: "virt-customize: Run script"
+  shell: "virt-customize -v -x -a {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} --run '{{ definition[3] }}' --selinux-relabel"
+  environment:
+    LIBGUESTFS_BACKEND: direct
+    # FIXME(ykarel) LIBGUESTFS_BACKEND_SETTINGS can be removed once
+    # https://bugs.launchpad.net/tripleo/+bug/1743749 is completely fixed.
+    LIBGUESTFS_BACKEND_SETTINGS: force_tcg
+  with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ libvirt_image_path | expanduser }}"]
+    - ["{{ img_src_ext }}"]
+    - ["{{ cloud_config['run_script'] }}"]
+    - "{{ res_count.stdout }}"
+  when: cloud_config['run_script'] is defined
+  loop_control:
+    loop_var: definition
+  ignore_errors: true
+
+- name: "Set root password if provided"
+  shell: "virt-customize -v -x -a {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} --root-password password:{{ definition[3] }} --selinux-relabel"
+  environment:
+    LIBGUESTFS_BACKEND: direct
+    # FIXME(ykarel) LIBGUESTFS_BACKEND_SETTINGS can be removed once
+    # https://bugs.launchpad.net/tripleo/+bug/1743749 is completely fixed.
+    LIBGUESTFS_BACKEND_SETTINGS: force_tcg
+  with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ libvirt_image_path | expanduser }}"]
+    - ["{{ img_src_ext }}"]
+    - ["{{ cloud_config['root_password'] }}"]
+    - "{{ res_count.stdout }}"
+  when: cloud_config['root_password'] is defined
+  loop_control:
+    loop_var: definition
+
+- name: "Run virt-customize for user creation"
+  shell: "virt-customize  --run /tmp/user_creation.sh -a {{ definition[1] }}/{{ definition[0] }}_{{ definition[3] }}.{{ definition[2] }} --selinux-relabel"
+  environment:
+    LIBGUESTFS_BACKEND: direct
+    # FIXME(ykarel) LIBGUESTFS_BACKEND_SETTINGS can be removed once
+    # https://bugs.launchpad.net/tripleo/+bug/1743749 is completely fixed.
+    LIBGUESTFS_BACKEND_SETTINGS: force_tcg
+  with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ libvirt_image_path | expanduser }}"]
+    - ["{{ img_src_ext }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: definition
+  when: cloud_config['users'] is defined
+
+- name: "set_fact for users with inject_ssh_keys"
+  set_fact:
+    ssh_key_users: "{{ cloud_config.users | selectattr('inject_ssh_keys', 'defined') | selectattr('inject_ssh_keys', 'equalto', true) |  map(attribute='name') | list }}"
+  when: cloud_config['users'] is defined
+
+- name: "Inject ssh_keys for root_user"
+  shell: "virt-customize --ssh-inject root:string:'{{ pubkey_local.stdout }}' -a {{ definition[1] }}/{{ definition[0] }}_{{ definition[3] }}.{{ definition[2] }}"
+  environment:
+    LIBGUESTFS_BACKEND: direct
+    # FIXME(ykarel) LIBGUESTFS_BACKEND_SETTINGS can be removed once
+    # https://bugs.launchpad.net/tripleo/+bug/1743749 is completely fixed.
+    LIBGUESTFS_BACKEND_SETTINGS: force_tcg
+  with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ libvirt_image_path | expanduser }}"]
+    - ["{{ img_src_ext }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: definition
+  when: cloud_config['users'] is defined and (ssh_key_users | length>0)
+
+- name: "Inject ssh_keys for users defined"
+  shell: "virt-customize --ssh-inject {{ definition[3] }}:string:'{{ pubkey_local.stdout }}' -a {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} --selinux-relabel"
+  environment:
+    LIBGUESTFS_BACKEND: direct
+    # FIXME(ykarel) LIBGUESTFS_BACKEND_SETTINGS can be removed once
+    # https://bugs.launchpad.net/tripleo/+bug/1743749 is completely fixed.
+    LIBGUESTFS_BACKEND_SETTINGS: force_tcg
+  with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ libvirt_image_path | expanduser }}"]
+    - ["{{ img_src_ext }}"]
+    - "{{ ssh_key_users  }}"
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: definition
+  when: cloud_config['users'] is defined and (ssh_key_users | length>0)
+
+- name: "Install packages if any"
+  shell: "virt-customize -v -x -a {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} --update --install {{ definition[3] }} --selinux-relabel"
+  environment:
+    LIBGUESTFS_BACKEND: direct
+    # FIXME(ykarel) LIBGUESTFS_BACKEND_SETTINGS can be removed once
+    # https://bugs.launchpad.net/tripleo/+bug/1743749 is completely fixed.
+    LIBGUESTFS_BACKEND_SETTINGS: force_tcg
+  with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ libvirt_image_path | expanduser }}"]
+    - ["{{ img_src_ext }}"]
+    - ["{{ cloud_config['packages'] | join(',')  }}"]
+    - "{{ res_count.stdout }}"
+  when: cloud_config['packages'] is defined
+  loop_control:
+    loop_var: definition
+  ignore_errors: true
