@@ -129,6 +129,17 @@
   delegate_to: "{{ uri_hostname }}"
   when: res_def['additional_storage'] is defined and node_exists['failed'] is defined and uri_hostname != 'localhost'
 
+- name: set cloud config default
+  set_fact:
+    cloud_config: "{{ res_def['cloud_config'] | default({})  }}"
+
+- name: set cloud_config virt_type
+  set_fact:
+    virt_type: "{{ cloud_config['virt_type'] | default('cloud-init') }}"
+
+- include_tasks: virt_customize.yml
+  when: res_def['cloud_config']['virt_type'] == "virt-customize"
+
 - name: "Create directories"
   file:
     path: "/tmp/vm-{{ definition[0] }}_{{ definition[1] }}"
@@ -140,7 +151,7 @@
     loop_var: definition
   remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
   delegate_to: "{{ uri_hostname }}"
-  when: node_exists['failed'] is defined and uri_hostname != 'localhost' and res_def['cloud_config'] is defined
+  when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init"
 
 - name: "Create directories"
   file:
@@ -151,7 +162,7 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: definition
-  when: node_exists['failed'] is defined and uri_hostname == 'localhost' and res_def['cloud_config'] is defined
+  when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init"
 
 - name: "Prepare cloud-config/user-data-local"
   template:
@@ -164,8 +175,8 @@
     loop_var: definition
   vars:
     cloudconfig_users: "{{ res_def['cloud_config']['users'] | default([]) }}"
-  when: res_def['cloud_config'] is defined and node_exists['failed'] is defined and uri_hostname == 'localhost'
-
+  when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init"
+  
 - name: "Prepare cloud-config/user-data-remote"
   template:
     src: "templates/cloud-config/user-data-remote"
@@ -177,7 +188,7 @@
     loop_var: definition
   remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
   delegate_to: "{{ uri_hostname }}"
-  when: res_def['cloud_config'] is defined and node_exists['failed'] is defined and uri_hostname != 'localhost'
+  when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init"
 
 - name: "Prepare cloud-config/meta-data"
   template:
@@ -188,7 +199,7 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: definition
-  when: node_exists['failed'] is defined and uri_hostname == 'localhost' and res_def['cloud_config'] is defined
+  when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init"
 
 - name: "Prepare cloud-config/meta-data remote"
   template:
@@ -201,7 +212,7 @@
     loop_var: definition
   remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
   delegate_to: "{{ uri_hostname }}"
-  when: node_exists['failed'] is defined and uri_hostname != 'localhost' and res_def['cloud_config'] is defined
+  when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init"
 
 - name: "localhost: Generate ci data cd image for cloud-init when cloud config is defined"
   command: mkisofs -o /tmp/vm-{{ definition[0] }}_{{ definition[1] }}.iso -V cidata -r -J --quiet /tmp/vm-{{ definition[0] }}_{{ definition[1] }}/user-data /tmp/vm-{{ definition[0] }}_{{ definition[1] }}/meta-data
@@ -210,7 +221,7 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: definition
-  when: res_def['cloud_config'] is defined and node_exists['failed'] is defined and uri_hostname == 'localhost'
+  when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init"
 
 - name: "remote_host: Generate ci data cd image for cloud-init when cloud config is defined"
   command: mkisofs -o /tmp/vm-{{ definition[0] }}_{{ definition[1] }}.iso -V cidata -r -J --quiet /tmp/vm-{{ definition[0] }}_{{ definition[1] }}/user-data /tmp/vm-{{ definition[0] }}_{{ definition[1] }}/meta-data
@@ -221,7 +232,7 @@
     loop_var: definition
   remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
   delegate_to: "{{ uri_hostname }}"
-  when: res_def['cloud_config'] is defined and node_exists['failed'] is defined and uri_hostname != 'localhost'
+  when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init"
 
 - name: "Install VM when network_bridge is defined"
   command: "virt-install --connect {{ definition[6] }} --import --name {{ definition[0] }}_{{ definition[7] }} --autostart --network bridge={{ definition[3] }},model=virtio --ram {{ definition[4] }} --disk path={{ definition[1] }}/{{ definition[0] }}_{{ definition[7] }}.{{ definition[2] }},format={{ definition[5] }},bus=virtio,cache=none --disk path=/tmp/vm-{{ definition[0] }}_{{ definition[7] }}.iso,device=cdrom --wait 10 --os-type=linux --nographics"
@@ -238,7 +249,7 @@
     loop_var: definition
   become: "{{ libvirt_become }}"
   ignore_errors: yes
-  when: node_exists['failed'] is defined and res_def['cloud_config'] is defined and res_def['network_bridge'] is defined
+  when: node_exists['failed'] is defined and res_def['network_bridge'] is defined and virt_type == "cloud-init"
 
 - name: "Install VM when networks are defined"
   command: "virt-install --connect {{ definition[6] }} --import --name {{ definition[0] }}_{{ definition[7] }} --autostart {{ definition[3] }},model=virtio --ram {{ definition[4] }} --disk path={{ definition[1] }}/{{ definition[0] }}_{{ definition[7] }}.{{ definition[2] }},format={{ definition[5] }},bus=virtio,cache=none --disk path=/tmp/vm-{{ definition[0] }}_{{ definition[7] }}.iso,device=cdrom --wait 10 --os-type=linux --nographics"
@@ -255,7 +266,7 @@
     loop_var: definition
   become: "{{ libvirt_become }}"
   ignore_errors: yes
-  when: node_exists['failed'] is defined and res_def['cloud_config'] is defined and res_def['networks'] is defined
+  when: node_exists['failed'] is defined and res_def['networks'] is defined and virt_type == "cloud-init"
 
 - name: "Remove cloud-init cdrom"
   command: virsh -c {{ definition[1] }} change-media {{ definition[0] }}_{{ definition[2] }} hda --eject --config
@@ -266,7 +277,7 @@
   loop_control:
     loop_var: definition
   ignore_errors: yes
-  when: node_exists['failed'] is defined and res_def['cloud_config'] is defined
+  when: node_exists['failed'] is defined and virt_type == "cloud-init"
 
 - name: "define node when the cloud_config not defined"
   virt:
@@ -282,7 +293,7 @@
     - ["{{ img_src_ext }}"]
   loop_control:
     loop_var: definition
-  when:  node_exists['failed'] is defined and res_def['cloud_config'] is not defined
+  when:  node_exists['failed'] is defined and (res_def['cloud_config'] is not defined or virt_type == 'virt-customize')
 
 - name: "Start VM"
   virt:
