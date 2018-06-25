@@ -174,7 +174,7 @@
   loop_control:
     loop_var: definition
   vars:
-    cloudconfig_users: "{{ res_def['cloud_config']['users'] | default([]) }}"
+    cloudconfig_users: "{{ cloud_config['users'] | default([]) }}"
   when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init"
   
 - name: "Prepare cloud-config/user-data-remote"
