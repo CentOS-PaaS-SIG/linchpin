@@ -4,7 +4,7 @@
 def format_libvirt_networks(networks,):
     output = ""
     for network in networks:
-        output += " --network "+ network.get('name', 'default')
+        output += " --network " + network.get('name', 'default')
     return output
 
 
