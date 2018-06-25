@@ -114,7 +114,8 @@ def _handle_results(ctx, results, return_code):
                    "If template data is from a file, it must be"
                    " prepended with an '@' character."
               )
-@click.option('-o', '--output-pinfile', metavar='OUTPUT_PINFILE',
+@click.option('-o', '--output-file', '--output-pinfile', 'outfile',
+              metavar='OUTPUT_FILE',
               help='Write out PinFile to provided location')
 @click.option('-w', '--workspace', type=click.Path(), envvar='WORKSPACE',
               help='Use the specified workspace. Also works if the'
@@ -127,7 +128,7 @@ def _handle_results(ctx, results, return_code):
               help='Use the specified credentials path. Also works'
                    ' if CREDS_PATH environment variable is set')
 @pass_context
-def runcli(ctx, config, pinfile, template_data, output_pinfile,
+def runcli(ctx, config, pinfile, template_data, outfile,
            workspace, verbose, version, creds_path):
     """linchpin: hybrid cloud orchestration"""
 
@@ -140,9 +141,10 @@ def runcli(ctx, config, pinfile, template_data, output_pinfile,
 
     # if the pinfile is a template, data will be passed here
     ctx.pf_data = template_data
-
-    if output_pinfile:
-        ctx.set_cfg('tmp', 'output_pinfile', output_pinfile)
+    ctx.outfile = None
+    if outfile:
+        ctx.outfile = outfile
+        ctx.set_cfg('tmp', 'outfile', outfile)
 
     ctx.pinfile = None
     if pinfile:
@@ -343,12 +345,9 @@ def fetch(ctx, fetch_type, remote, root):
 @click.option('--output-format', type=str, default="cfg",
               metavar='output_format', required=False,
               help="Inventory output format")
-@click.option('-o', '--output-file', type=str,
-              metavar='OUTPUT_FILE', required=False,
-              help="Write output-file to provided location")
 @click.option('--output-type', type=str,
               metavar='output_type', required=False,
-              help="inventory output file path")
+              help="default inventory")
 @click.option('--target', metavar='target', default="all",
               help='If multiple targets are mentioned \
                     takes parameter for target to be used.\
@@ -356,7 +355,7 @@ def fetch(ctx, fetch_type, remote, root):
                     displayed')
 @pass_context
 def journal(ctx, targets, fields, count, view,
-            tx_id, output_format, output_file, output_type, target):
+            tx_id, output_format, output_type, target):
     """
     Display information stored in Run Database
 
@@ -381,7 +380,7 @@ def journal(ctx, targets, fields, count, view,
     """
 
     if output_type == "inventory":
-        inventories = lpcli._write_to_inventory(inv_path=output_file,
+        inventories = lpcli._write_to_inventory(inv_path=ctx.outfile,
                                                 inv_format=output_format)
         if target == "all":
             click.echo("By default all targets inventories are displayed to stdout\
