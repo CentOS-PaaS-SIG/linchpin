@@ -6,6 +6,7 @@ ssh_authorized_keys:
   - "{{ pubkey_local['stdout'] }}"
 
 # Add users to the system. Users are added after groups are added.
+{% if 'cloud_config' in res_def %}
 users:
 {% for item in res_def['cloud_config']['users'] %}
   - name: {{ item['name'] | default('admin') }}
@@ -17,6 +18,7 @@ users:
     ssh-authorized-keys:
       - {{ pubkey_local['stdout'] }}
 {% endfor %}
+{% endif %}
 
 timezone: UTC
 
