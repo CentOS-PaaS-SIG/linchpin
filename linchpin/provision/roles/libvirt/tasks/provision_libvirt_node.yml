@@ -138,7 +138,7 @@
     virt_type: "{{ cloud_config['virt_type'] | default('cloud-init') }}"
 
 - include_tasks: virt_customize.yml
-  when: res_def['cloud_config']['virt_type'] == "virt-customize"
+  when: virt_type == "virt-customize"
 
 - name: "Create directories"
   file:
