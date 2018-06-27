@@ -9,7 +9,7 @@ FROM openshift/jenkins-slave-base-centos7:v3.6
 ##
 
 RUN yum install -y epel-release; \
-yum install -y gcc python-devel libyaml-devel docker docker-compose \
-python-pip python-setuptools python-wheel python-twine ansible jq ruby \
-&& yum clean all && rm -rf /var/cache/yum; \
+yum install -y gcc python-devel libyaml-devel buildah \
+python-pip python-setuptools python-wheel python-twine \
+ansible jq ruby && yum clean all && rm -rf /var/cache/yum; \
 pip install -U pip setuptools wheel twine
