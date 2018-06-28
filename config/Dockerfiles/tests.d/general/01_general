@@ -48,5 +48,5 @@ trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
 echo "CREDS_PATH: ${CREDS_PATH}"
 for target in ${TARGETS}; do
-    linchpin -w . -p PinFile.${PROVIDER}.yml -v up ${target}
+    linchpin -w . -p PinFile.${PROVIDER}.yml -vvvv up ${target}
 done
