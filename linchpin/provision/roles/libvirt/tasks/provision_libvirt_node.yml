@@ -249,9 +249,26 @@
     loop_var: definition
   become: "{{ libvirt_become }}"
   ignore_errors: yes
-  when: node_exists['failed'] is defined and res_def['network_bridge'] is defined and virt_type == "cloud-init" and cloud_config != {}
+  when: node_exists['failed'] is defined and virt_type == "cloud-init" and cloud_config != {}
 
-- name: "Install VM when networks are defined"
+- name: "Install VM when network_bridge is defined"
+  command: "virt-install --connect {{ definition[6] }} --import --name {{ definition[0] }}_{{ definition[7] }} --autostart --network bridge={{ definition[3] }},model=virtio --ram {{ definition[4] }} --disk path={{ definition[1] }}/{{ definition[0] }}_{{ definition[7] }}.{{ definition[2] }},format={{ definition[5] }},bus=virtio,cache=none --disk path=/tmp/vm-{{ definition[0] }}_{{ definition[7] }}.iso,device=cdrom --wait 10 --os-type=linux --nographics"
+  with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ libvirt_image_path | expanduser }}"]
+    - ["{{ img_src_ext }}"]
+    - ["{{ res_def['network_bridge'] | default('virbr0')  }}"]
+    - ["{{ res_def['memory'] | default(1024)  }}"]
+    - ["{{ res_def['format'] | default('qcow2')  }}"]
+    - ["{{ res_def['uri'] }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: definition
+  become: "{{ libvirt_become }}"
+  ignore_errors: yes
+  when: node_exists['failed'] is defined and virt_type == "cloud-init" and cloud_config == {} and res_def['networks'] | length <= 1
+
+- name: "Install VM when multiple networks are defined"
   command: "virt-install --connect {{ definition[6] }} --import --name {{ definition[0] }}_{{ definition[7] }} --autostart {{ definition[3] }},model=virtio --ram {{ definition[4] }} --disk path={{ definition[1] }}/{{ definition[0] }}_{{ definition[7] }}.{{ definition[2] }},format={{ definition[5] }},bus=virtio,cache=none --disk path=/tmp/vm-{{ definition[0] }}_{{ definition[7] }}.iso,device=cdrom --wait 10 --os-type=linux --nographics"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
@@ -266,7 +283,7 @@
     loop_var: definition
   become: "{{ libvirt_become }}"
   ignore_errors: yes
-  when: node_exists['failed'] is defined and res_def['networks'] is defined and virt_type == "cloud-init" 
+  when: node_exists['failed'] is defined and res_def['networks'] is defined and virt_type == "cloud-init" and res_def['networks'] | length > 1 
 
 - name: "Remove cloud-init cdrom"
   command: virsh -c {{ definition[1] }} change-media {{ definition[0] }}_{{ definition[2] }} hda --eject --config
@@ -307,18 +324,6 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: definition
-  ignore_errors: yes
-
-- name: "Start relevant networks"
-  virt_net:
-    state: active
-    name: "{{ net_item[0]['name'] }}"
-    uri: "{{ net_item[1] }}"
-  with_nested:
-    - ["{{ res_def['networks'] }}"]
-    - ["{{ res_def['uri'] | default('qemu:///system') }}"]
-  loop_control:
-    loop_var: net_item
   ignore_errors: yes
 
 - name: "mac_and_ip | extract mac address"
