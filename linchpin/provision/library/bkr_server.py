@@ -71,6 +71,9 @@ class BkrFactory(BkrConn):
             method = kwargs.get("method", "nfs")
             priority = kwargs.get("priority", "Normal")
             hostrequires = kwargs.get("hostrequires", [])
+            reserve_duration = kwargs.get("reserve_duration", None)
+            if reserve_duration:
+                kwargs.update({"reserve_duration": "%s" % reserve_duration})
 
             requested_tasks = []
 

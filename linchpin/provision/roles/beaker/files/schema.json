@@ -26,6 +26,7 @@
                                 "arch": { "type": "string", "required": false },
                                 "variant": { "type": "string", "required": false },
                                 "ks_meta": { "type": "string", "required": false },
+                                "reserve_duration": { "type": "integer", "required": false },
                                 "taskparam": {
                                     "type": "list",
                                     "required": false,
