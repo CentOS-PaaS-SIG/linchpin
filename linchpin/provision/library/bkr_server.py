@@ -134,6 +134,9 @@ class BkrFactory(BkrConn):
                 # so the use of 'force' is mutually exclusive with the use
                 # of any other 'hostRequires' filters
                 hostrequires_node.setAttribute('force', hostrequires['force'])
+            elif 'rawxml' in hostrequires:
+                requirement_node = xml.dom.minidom.parseString(hostrequires['rawxml']).documentElement
+                recipe_template.addHostRequires(requirement_node)
             else:
                 for requirement in hostrequires:
                     # If force is not used, a requirement can be any number

@@ -20,7 +20,13 @@
                          "anyof": [{
                              "type": "dict",
                              "schema": {
-                                "distro": { "type": "string", "required": true },
+                                "distro": { "type": "string", "required": false },
+                                "family": { "type": "string", "required": false },
+                                "tags": {
+                                    "type": "list",
+                                    "required": false,
+                                    "schema": { "type": "string", "required": true }
+                                },
                                 "name": { "type": "string", "required": false },
                                 "method": { "type": "string", "required": false },
                                 "arch": { "type": "string", "required": false },
@@ -67,6 +73,12 @@
                                             "type": "dict",
                                             "schema": {
                                                 "force": { "type": "string", "required": true }
+                                            }
+                                        },
+                                        {
+                                            "type": "dict",
+                                            "schema": {
+                                                "rawxml": { "type": "string", "required": true }
                                             }
                                         }]
                                     }
