@@ -1,5 +1,4 @@
-/* This job builds the LinchPin executor container based upon
- * config/dockerfiles/linchpin within 
+/* This job builds the LinchPin executor container based upon * config/dockerfiles/linchpin within 
  * https://github.com/CentOS-PaaS-SIG/contra-env-sample-project
  * and a couple of other projects which generate LinchPin docker images
  *
@@ -20,6 +19,9 @@ env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'linchpin_container'
 // Needed for podTemplate()
 env.SLAVE_TAG = env.SLAVE_TAG ?: 'stable'
 env.FEDORA27_TAG = env.FEDORA27_TAG ?: 'stable'
+
+env.IMAGE_NAME = env.IMAGE_NAME ?: 'linchpin-container'
+env.DOCKER_NAMESPACE = env.DOCKER_NAMESPACE ?: 'linchpin-container'
 
 //DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.1.1:5000'
@@ -88,8 +90,10 @@ podTemplate(name: podName,
                 workingDir: '/workDir')
         ],
         volumes: [
-            hostPathVolume(mountPath: '/var/run/containers', hostPath: '/var/run/containers'),
-            hostPathVolume(mountPath: '/var/lib/containers', hostPath: '/var/lib/containers')
+//            hostPathVolume(mountPath: '/var/run/containers', hostPath: '/var/run/containers'),
+//            hostPathVolume(mountPath: '/var/lib/containers', hostPath: '/var/lib/containers')
+            emptyDirVolume(mountPath: '/var/run/containers', memory: false),
+            emptyDirVolume(mountPath: '/var/lib/containers', memory: false)
         ]
 )
 
@@ -141,13 +145,39 @@ podTemplate(name: podName,
                     stage('Build Docker Image') {
                         dir('linchpin') {
 
-                            sh "su - -c 'ls -lR /var/run/containers/'"
-                            sh "buildah bud -t linchpin ./config/Dockerfiles/linchpin"
+                            sh "buildah bud -t ${IMAGE_NAME} ./config/Dockerfiles/linchpin"
                             string containerid = sh (
-                                script: "buildah from linchpin",
+                                script: "buildah from ${IMAGE_NAME}",
                                 returnStdout: true
-                                ).trim()
-                            //sh "buildah run -it " + containerid + " -- linchpin --version"
+                            ).trim()
+                            string version = sh (
+                                script: "buildah run " + containerid + " -- linchpin --version 2>&1 | cut -d' ' -f3",
+                                returnStdout: true
+                            ).trim()
+                            currentBuild.displayName = "Build#: ${env.BUILD_NUMBER} - LinchPin Container Build: " + version
+                        }
+                    }
+
+                    stage('Test Docker Image') {
+                        dir('linchpin') {
+
+                            string cwd = sh (
+                                script: "pwd",
+                                returnStdout: true
+                            ).trim()
+                            sh "buildah run -v " + cwd + "/docs/source/examples/workspace:/workdir/ " + containerid + " -- linchpin -c /etc/linchpin.conf -vvvp PinFile.dummy.yml -w /workdir up dummy-topo"
+
+                        }
+                    }
+                    stage('Tag/Push Docker Image') {
+                        dir('linchpin') {
+
+                            sh "buildah tag ${IMAGE_NAME} ${IMAGE_NAME}:latest ${IMAGE_NAME}:" + version
+                            sh "buildah images"
+                            withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'linchpin-docker', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
+                                sh "buildah push --creds ${DOCKER_USERNAME}:${DOCKER_PASSWORD} docker.io/library/${IMAGE_NAME}:latest docker://docker.io/${DOCKER_USERNAME}/${DOCKER_NAMESPACE}:latest"
+                                sh "buildah push --creds ${DOCKER_USERNAME}:${DOCKER_PASSWORD} docker.io/library/${IMAGE_NAME}:" + version + " docker://docker.io/${DOCKER_USERNAME}/${DOCKER_NAMESPACE}:" + version
+                            }
                         }
                     }
                 } catch (e) {
