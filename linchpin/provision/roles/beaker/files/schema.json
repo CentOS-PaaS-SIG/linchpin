@@ -20,8 +20,12 @@
                          "anyof": [{
                              "type": "dict",
                              "schema": {
-                                "distro": { "type": "string", "required": false },
-                                "family": { "type": "string", "required": false },
+                                "distro": { "type": "string",
+                                            "excludes": "family",
+                                            "required": true },
+                                "family": { "type": "string",
+                                            "excludes": "distro",
+                                            "required": true },
                                 "tags": {
                                     "type": "list",
                                     "required": false,
