@@ -2,7 +2,7 @@ FROM fedora:28
 LABEL name="contrainfra/linchpin-container" \
       maintainer="https://github.com/CentOS-PaaS-SIG/linchpin" \
       version="0.0.6" \
-      description="LinchPin executable container running the latest release Fedora"
+      description="LinchPin executable container running the latest Fedora release"
 
 ENV APP_ROOT=/linchpin/
 ENV PATH=${APP_ROOT}/bin:${PATH} HOME=${APP_ROOT}
@@ -13,6 +13,11 @@ COPY bin/ ${APP_ROOT}/bin/
 
 RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
     https://beaker-project.org/yum/beaker-client-Fedora.repo; \
+    if [ "INSTALL_LOCATION" == "." ]; then \
+        dnf install -y git; \
+        git clone git://github.com/GIT_PROJECT/GIT_REPO -b GIT_BRANCH lp; \
+        pushd lp; \
+    fi; \
     dnf install -y beaker-client \
         python-pip \
         ansible \
@@ -45,6 +50,8 @@ RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
         rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
         rm -f /lib/systemd/system/basic.target.wants/*; \
         rm -f /lib/systemd/system/anaconda.target.wants/*;
+        popd;
+        rm -rf lp;
 
 ### Containers should NOT run as root as a good practice
 USER 10001
