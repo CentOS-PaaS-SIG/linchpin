@@ -1,8 +1,8 @@
 FROM fedora:28
-LABEL name="contrainfra/linchpin-executor" \
+LABEL name="contrainfra/linchpin-container" \
       maintainer="https://github.com/CentOS-PaaS-SIG/linchpin" \
       version="0.0.6" \
-      description="LinchPin executable container running Fedora 28"
+      description="LinchPin executable container running the latest release Fedora"
 
 ENV APP_ROOT=/linchpin/
 ENV PATH=${APP_ROOT}/bin:${PATH} HOME=${APP_ROOT}
@@ -16,7 +16,7 @@ RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
     dnf install -y beaker-client \
         python-pip \
         ansible \
-        curl \
+        curl gcc \
         python-devel \
         python2-shade \
         openssl-devel \
@@ -47,7 +47,7 @@ RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
         rm -f /lib/systemd/system/anaconda.target.wants/*;
 
 ### Containers should NOT run as root as a good practice
-USER 1000
+USER 10001
 WORKDIR ${APP_ROOT}
 
 ### user name recognition at runtime w/ an arbitrary uid - for OpenShift deployments
