@@ -74,6 +74,9 @@ class BkrFactory(BkrConn):
             reserve_duration = kwargs.get("reserve_duration", None)
             if reserve_duration:
                 kwargs.update({"reserve_duration": "%s" % reserve_duration})
+            tags = kwargs.get("tags", [])
+            if tags:
+                kwargs.update({"tag": tags})
 
             requested_tasks = []
 
