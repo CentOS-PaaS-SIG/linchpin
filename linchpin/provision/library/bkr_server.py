@@ -71,6 +71,12 @@ class BkrFactory(BkrConn):
             method = kwargs.get("method", "nfs")
             priority = kwargs.get("priority", "Normal")
             hostrequires = kwargs.get("hostrequires", [])
+            reserve_duration = kwargs.get("reserve_duration", None)
+            if reserve_duration:
+                kwargs.update({"reserve_duration": "%s" % reserve_duration})
+            tags = kwargs.get("tags", [])
+            if tags:
+                kwargs.update({"tag": tags})
 
             requested_tasks = []
 
@@ -124,15 +130,20 @@ class BkrFactory(BkrConn):
             recipe_template = BeakerRecipe(*args, **kwargs)
 
             # Add Host Requirements
-            if 'force' in hostrequires:
-                # hostRequires element is created by BeakerRecipe, use it
-                hostrequires_node = recipe_template.node.getElementsByTagName('hostRequires')[0]  # noqa E501
-                # all other filters are ignored if the hostname is forced,
-                # so the use of 'force' is mutually exclusive with the use
-                # of any other 'hostRequires' filters
-                hostrequires_node.setAttribute('force', hostrequires['force'])
-            else:
-                for requirement in hostrequires:
+            for requirement in hostrequires:
+                if 'force' in requirement:
+                    # hostRequires element is created by BeakerRecipe, use it
+                    hostrequires_node = recipe_template.node.getElementsByTagName('hostRequires')[0]  # noqa E501
+                    # all other filters are ignored if the hostname is forced,
+                    # so the use of 'force' is mutually exclusive with the use
+                    # of any other 'hostRequires' filters
+                    hostrequires_node.setAttribute('force',
+                                                   requirement['force'])
+                elif 'rawxml' in requirement:
+                    requirement_node = xml.dom.minidom.parseString(
+                        requirement['rawxml']).documentElement
+                    recipe_template.addHostRequires(requirement_node)
+                else:
                     # If force is not used, a requirement can be any number
                     # of differently formatted XML elements, each with their
                     # own combination of element name and valid attrs. So,

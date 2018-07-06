@@ -20,12 +20,23 @@
                          "anyof": [{
                              "type": "dict",
                              "schema": {
-                                "distro": { "type": "string", "required": true },
+                                "distro": { "type": "string",
+                                            "excludes": "family",
+                                            "required": true },
+                                "family": { "type": "string",
+                                            "excludes": "distro",
+                                            "required": true },
+                                "tags": {
+                                    "type": "list",
+                                    "required": false,
+                                    "schema": { "type": "string", "required": true }
+                                },
                                 "name": { "type": "string", "required": false },
                                 "method": { "type": "string", "required": false },
                                 "arch": { "type": "string", "required": false },
                                 "variant": { "type": "string", "required": false },
                                 "ks_meta": { "type": "string", "required": false },
+                                "reserve_duration": { "type": "integer", "required": false },
                                 "taskparam": {
                                     "type": "list",
                                     "required": false,
@@ -66,6 +77,12 @@
                                             "type": "dict",
                                             "schema": {
                                                 "force": { "type": "string", "required": true }
+                                            }
+                                        },
+                                        {
+                                            "type": "dict",
+                                            "schema": {
+                                                "rawxml": { "type": "string", "required": true }
                                             }
                                         }]
                                     }
