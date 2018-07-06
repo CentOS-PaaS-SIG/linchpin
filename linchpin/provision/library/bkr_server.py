@@ -130,19 +130,19 @@ class BkrFactory(BkrConn):
             recipe_template = BeakerRecipe(*args, **kwargs)
 
             # Add Host Requirements
-            if 'force' in hostrequires:
-                # hostRequires element is created by BeakerRecipe, use it
-                hostrequires_node = recipe_template.node.getElementsByTagName('hostRequires')[0]  # noqa E501
-                # all other filters are ignored if the hostname is forced,
-                # so the use of 'force' is mutually exclusive with the use
-                # of any other 'hostRequires' filters
-                hostrequires_node.setAttribute('force', hostrequires['force'])
-            elif 'rawxml' in hostrequires:
-                requirement_node = xml.dom.minidom.parseString(
-                    hostrequires['rawxml']).documentElement
-                recipe_template.addHostRequires(requirement_node)
-            else:
-                for requirement in hostrequires:
+            for requirement in hostrequires:
+                if 'force' in requirement:
+                    # hostRequires element is created by BeakerRecipe, use it
+                    hostrequires_node = recipe_template.node.getElementsByTagName('hostRequires')[0]  # noqa E501
+                    # all other filters are ignored if the hostname is forced,
+                    # so the use of 'force' is mutually exclusive with the use
+                    # of any other 'hostRequires' filters
+                    hostrequires_node.setAttribute('force', requirement['force'])
+                elif 'rawxml' in requirement:
+                    requirement_node = xml.dom.minidom.parseString(
+                        requirement['rawxml']).documentElement
+                    recipe_template.addHostRequires(requirement_node)
+                else:
                     # If force is not used, a requirement can be any number
                     # of differently formatted XML elements, each with their
                     # own combination of element name and valid attrs. So,

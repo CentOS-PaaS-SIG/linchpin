@@ -1,0 +1,23 @@
+#!/bin/bash -xe
+
+# Verify distro selection in beaker
+# distros.exclude: none
+# providers.include: beaker
+# providers.exclude: none
+
+DISTRO=${1}
+PROVIDER=${2}
+
+PINFILE="PinFile.${PROVIDER}.yml"
+DTARGET="beaker-distro"
+FTARGET="beaker-family"
+TMP_FILE=$(mktemp)
+
+function clean_up {
+    set +e
+    linchpin -w . -p "${PINFILE}" -v destroy "${DTARGET}" "${FTARGET}"
+}
+trap clean_up EXIT SIGHUP SIGINT SIGTERM
+
+pushd docs/source/examples/workspace
+linchpin -w . -p "${PINFILE}" -v up "${DTARGET}" "${FTARGET}"
