@@ -9,15 +9,14 @@ DISTRO=${1}
 PROVIDER=${2}
 
 PINFILE="PinFile.${PROVIDER}.yml"
-DTARGET="beaker-distro"
-FTARGET="beaker-family"
+TARGET="beaker-family"
 TMP_FILE=$(mktemp)
 
 function clean_up {
     set +e
-    linchpin -w . -p "${PINFILE}" -v destroy "${DTARGET}" "${FTARGET}"
+    linchpin -w . -p "${PINFILE}" -v destroy "${TARGET}"
 }
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
 pushd docs/source/examples/workspace
-linchpin -w . -p "${PINFILE}" -v up "${DTARGET}" "${FTARGET}"
+linchpin -w . -p "${PINFILE}" -v up "${TARGET}"

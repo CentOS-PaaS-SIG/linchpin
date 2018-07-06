@@ -137,7 +137,8 @@ class BkrFactory(BkrConn):
                     # all other filters are ignored if the hostname is forced,
                     # so the use of 'force' is mutually exclusive with the use
                     # of any other 'hostRequires' filters
-                    hostrequires_node.setAttribute('force', requirement['force'])
+                    hostrequires_node.setAttribute('force',
+                                                   requirement['force'])
                 elif 'rawxml' in requirement:
                     requirement_node = xml.dom.minidom.parseString(
                         requirement['rawxml']).documentElement
