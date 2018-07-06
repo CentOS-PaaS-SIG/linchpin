@@ -9,13 +9,18 @@ class OpenstackInventory(InventoryFilter):
 
     def get_host_ips(self, topo):
         host_public_ips = []
-        for group in topo.get('os_server_res', []):
-            grp = group.get('openstack', [])
-            if isinstance(grp, list):
-                for server in grp:
-                    host_public_ips.append(str(server['accessIPv4']))
-            if isinstance(grp, dict):
-                host_public_ips.append(str(grp['accessIPv4']))
+        for group in topo['os_server_res']:
+            if 'results' in group.keys():
+                for res in group.get('results', []):
+                    os_vars = res.get('openstack', [])
+                    host_public_ips.append(os_vars.get('accessIPv4', ''))
+            else:
+                grp = group.get('openstack', [])
+                if isinstance(grp, list):
+                    for server in grp:
+                        host_public_ips.append(str(server['accessIPv4']))
+                if isinstance(grp, dict):
+                    host_public_ips.append(str(grp['accessIPv4']))
         return host_public_ips
 
     def get_inventory(self, topo, layout):
