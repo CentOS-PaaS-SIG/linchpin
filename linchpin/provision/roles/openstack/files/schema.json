@@ -47,7 +47,18 @@
                     "image_exclude": { "type": "string", "required": false },
                     "interface": { "type": "string", "required": false, "allowed": ["public", "internal", "admin"] },
                     "region_name": { "type": "string", "required": false },
-                    "verify": { "type": "string", "required": false }
+                    "verify": { "type": "string", "required": false },
+                    "additional_volumes": {
+			"type": "list",
+			"required": false,
+			"schema": {
+                            "name": { "type": "string", "required": true },
+                            "size": { "type": "integer", "required": false },
+                            "device_name": { "type": "string", "required": false }
+                        }
+
+		    }
+
                 }
             },
             {
