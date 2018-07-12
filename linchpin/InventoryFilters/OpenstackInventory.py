@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import json
 import StringIO
 
 from InventoryFilter import InventoryFilter
@@ -12,8 +12,11 @@ class OpenstackInventory(InventoryFilter):
         for group in topo['os_server_res']:
             if 'results' in group.keys():
                 for res in group.get('results', []):
-                    os_vars = res.get('openstack', [])
-                    host_public_ips.append(os_vars.get('accessIPv4', ''))
+                    if 'openstack' in res.keys():
+                        os_vars = res.get('openstack', [])
+                        host_public_ips.append(os_vars.get('accessIPv4', ''))
+                    else:
+                        continue
             else:
                 grp = group.get('openstack', [])
                 if isinstance(grp, list):
