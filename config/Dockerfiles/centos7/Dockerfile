@@ -10,12 +10,15 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
 RUN yum -y install python-pip \
     && pip install -U pip \
     && pip install -U setuptools \
-    && yum -y install ansible curl gcc python-devel openssl-devel \
+    && yum -y install curl \
+    && curl -o /etc/yum.repos.d/herlo-linchpin-epel7.repo \
+    https://copr.fedorainfracloud.org/coprs/herlo/linchpin-epel7/repo/epel-7/herlo-linchpin-epel7-epel-7.repo; \
+    yum -y install gcc python-devel openssl-devel ansible \
                     libvirt-daemon-driver-* libvirt-daemon libvirt-daemon-kvm \
                     qemu-kvm libvirt-daemon-config-network libvirt-python \
                     libvirt-devel file openssh mkisofs libvirt-client \
-                    net-tools git python-krbV make \
-                    libxslt-python krb5-workstation python-requests; \
+                    net-tools git python-krbV make libxslt-python krb5-workstation \
+                    PyYAML python-ipaddress python-requests; \
     #rm -rf /usr/lib/python2.7/site-packages/{urllib3,ipaddress}*; \
     #rm -rf /usr/lib64/python2.7/site-packages/{PyYAML,yaml}*; \
     #pip install -U 'ipaddress>=1.0.17'; \
