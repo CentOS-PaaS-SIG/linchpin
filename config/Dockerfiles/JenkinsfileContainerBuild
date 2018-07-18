@@ -151,6 +151,7 @@ podTemplate(name: podName,
                                 returnStdout: true
                             ).trim()
                             currentBuild.displayName = "Build#: ${env.BUILD_NUMBER} - LinchPin Container Build: ${version}"
+                            sh "buildah run ${containerid} id",
                         }
                     }
 
@@ -161,7 +162,7 @@ podTemplate(name: podName,
                                 script: "pwd",
                                 returnStdout: true
                             ).trim()
-                            sh "buildah run -v " + cwd + "/docs/source/examples/workspace:/workdir/ " + containerid + " -- linchpin -c /etc/linchpin.conf -vvvp PinFile.dummy.yml -w /workdir up dummy-topo"
+                            sh "buildah run -v ${cwd} /docs/source/examples/workspace:/workdir/ ${containerid} -- linchpin -c /etc/linchpin.conf -vvvp PinFile.dummy.yml -w /workdir up dummy-topo"
 
                         }
                     }
