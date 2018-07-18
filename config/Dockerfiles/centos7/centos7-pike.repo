@@ -1,0 +1,8 @@
+[centos-openstack-pike]
+name=CentOS 7 Openstack (pike) repo
+baseurl=http://mirror.centos.org/centos/7/cloud/x86_64/openstack-pike/
+skip_if_unavailable=True
+gpgcheck=0
+gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-7
+enabled=1
+
