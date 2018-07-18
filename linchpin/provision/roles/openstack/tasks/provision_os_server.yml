@@ -60,7 +60,7 @@
     image: "{{ res_def['image'] | default(omit) }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
-    timeout: 1200
+    timeout: 3600
     flavor: "{{ res_def['flavor'] }}"
     nics:  "{{ res_def['networks'] | default(None) | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
@@ -103,6 +103,11 @@
     loop_var: add_vol
   when: state == "present"
 
+- name: "Transform outputs to match the distiller format"
+  set_fact:
+    res_def_output: "{{ res_def_output | transform_os_server_output  }}"
+  when: not async and auth_var is defined
+
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_server: "{{ topology_outputs_os_server + [res_def_output] }}"
@@ -115,7 +120,7 @@
     image: "{{ res_def['image'] | default(omit) }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
-    timeout: 1200
+    timeout: 3600
     flavor: "{{ res_def['flavor'] }}"
     nics:  "{{ res_def['networks'] | default(None) | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
@@ -145,6 +150,11 @@
   loop_control:
     loop_var: prov_inst
 
+- name: "Transform outputs to match the distiller format"
+  set_fact:
+    res_def_output: "{{ res_def_output | transform_os_server_output  }}"
+  when: not async and auth_var is not defined
+
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_server: "{{ topology_outputs_os_server + [res_def_output] }}"
@@ -158,7 +168,7 @@
     image: "{{ res_def['image'] | default(omit) }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
-    timeout: 1200
+    timeout: 3600
     flavor: "{{ res_def['flavor'] }}"
     nics:  "{{ res_def['networks'] | default(None) | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
@@ -189,6 +199,11 @@
     loop_var: prov_inst
   async: "{{ async_timeout | default(1000) }}"
   poll: 0
+
+- name: "Transform outputs to match the distiller format"
+  set_fact:
+    res_def_output: "{{ res_def_output | transform_os_server_output  }}"
+  when: async and auth_var is defined
 
 - name: "Async:: Append outputitem to topology_outputs"
   set_fact:
