@@ -4,6 +4,7 @@ LABEL name="contrainfra/linchpin-container" \
       version="0.0.6" \
       description="LinchPin executable container running the latest Fedora release"
 
+ENV UID=10001
 ENV APP_ROOT=/linchpin/
 ENV PATH=${APP_ROOT}/bin:${PATH} HOME=${APP_ROOT}
 
@@ -56,7 +57,8 @@ RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
     fi;
 
 ### Containers should NOT run as root as a good practice
-USER 10001
+RUN groupadd -r linchpin && useradd -u ${UID} -g linchpin -G wheel --no-log-init linchpin
+USER ${UID}
 WORKDIR ${APP_ROOT}
 
 ### user name recognition at runtime w/ an arbitrary uid - for OpenShift deployments
