@@ -57,7 +57,8 @@ RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
     fi;
 
 ### Containers should NOT run as root as a good practice
-RUN groupadd -r linchpin && useradd -u ${UID} -g linchpin -G wheel --no-log-init linchpin
+RUN groupadd -r linchpin && useradd -u ${UID} -g linchpin -d /linchpin -G wheel --no-log-init linchpin \
+    && chown linchpin. /linchpin
 USER ${UID}
 WORKDIR ${APP_ROOT}
 

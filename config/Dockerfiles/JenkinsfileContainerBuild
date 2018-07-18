@@ -110,8 +110,6 @@ podTemplate(name: podName,
                         // Set our default env variables. Many of these
                         // are ci-pipeline specific, but we do need some
                         pipelineUtils.setDefaultEnvVars()
-                        // Decorate our build
-                        currentBuild.displayName = "LinchPin Container Build #: ${env.BUILD_NUMBER}"
 
                         // Gather some info about the node we are running on for diagnostics
                         pipelineUtils.verifyPod(OPENSHIFT_NAMESPACE, env.NODE_NAME)
