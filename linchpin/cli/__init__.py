@@ -186,10 +186,18 @@ class LinchpinCli(LinchpinAPI):
 
         dist_roles = self.get_cfg('distiller')
 
-        resources_path = self.get_evar('resources_folder')
-        context_path = '{0}/{1}'.format(self.workspace, resources_path)
+        resources_folder = self.get_evar('resources_folder',
+                                         default='resources')
+        context_path = '{0}/{1}'.format(self.workspace, resources_folder)
+
+        resources_path = os.path.expanduser(
+            self.get_evar('default_resources_path'))
+
+        if (os.path.isabs(resources_path)):
+                context_path = resources_path
         if not os.path.exists(context_path):
             os.makedirs(context_path)
+
         context_file = '{0}/{1}'.format(context_path, 'linchpin.distilled')
 
         roles = []

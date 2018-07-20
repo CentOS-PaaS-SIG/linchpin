@@ -56,10 +56,11 @@ default_roles_path = {{ lp_path }}/%(playbooks_folder)s/%(roles_folder)s
 # default credentials data, this path doesn't automatically exist
 default_credentials_path = %(default_config_path)s
 
+default_resources_path = {{ workspace }}/%(resources_folder)s
+
 # for 1.0.x compatibility
 enable_uhash = False
 generate_resources = True
-default_resources_path = {{ workspace }}/%(resources_folder)s
 
 #inventory_path = {{ workspace }}/{{inventories_folder}}/happy.inventory
 
