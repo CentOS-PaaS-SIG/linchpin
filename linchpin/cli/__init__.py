@@ -131,7 +131,7 @@ class LinchpinCli(LinchpinAPI):
                 # the multiple inventory files are being generated
                 inv_file_count = 0 if len(targets) > 1 else False
                 for name in targets:
-                    try:
+                    if "layout_data" in targets[name]["inputs"]:
                         lt_data = targets[name]["inputs"]["layout_data"]
                         layout = lt_data["inventory_layout"]
                         i_path = targets[name]["outputs"]["inventory_path"][0]
@@ -157,8 +157,6 @@ class LinchpinCli(LinchpinAPI):
                             with open(i_path, 'w') as the_file:
                                 the_file.write(inv)
                         all_inventories[name] = inv
-                    except KeyError as e:
-                        self.ctx.log_state('Error: {0} :Not found'.format(e))
             return all_inventories
 
         except Exception as e:
