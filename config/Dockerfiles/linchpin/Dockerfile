@@ -5,12 +5,12 @@ LABEL name="contrainfra/linchpin-container" \
       description="LinchPin executable container running the latest Fedora release"
 
 ENV UID=10001
-ENV APP_ROOT=/linchpin/
-ENV PATH=${APP_ROOT}/bin:${PATH} HOME=${APP_ROOT}
+ENV HOME=/linchpin/
+ENV PATH=${HOME}/bin:${PATH}
 
 COPY conf/ansible.cfg /etc/ansible/ansible.cfg
 COPY conf/linchpin.conf /etc/linchpin.conf
-COPY bin/ ${APP_ROOT}/bin/
+COPY bin/ ${HOME}/bin/
 
 RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
     https://beaker-project.org/yum/beaker-client-Fedora.repo; \
@@ -38,10 +38,10 @@ RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
         pip install -U setuptools; \
         pip install INSTALL_LOCATION; \
         pip install INSTALL_LOCATION[beaker]; \
-        mkdir -p ${APP_ROOT} && \
-        chmod -R u+x ${APP_ROOT}/bin && \
-        chgrp -R 0 ${APP_ROOT} && \
-        chmod -R g=u ${APP_ROOT} /etc/passwd; \
+        mkdir -p ${HOME}/bin/ && \
+        chmod -R u+x ${HOME}/bin && \
+        chown -R ${UID}.0 ${HOME} && \
+        chmod -R g=u ${HOME} /etc/passwd; \
         (cd /lib/systemd/system/sysinit.target.wants/; for i in *; \
         do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
         rm -f /lib/systemd/system/multi-user.target.wants/*; \
@@ -57,10 +57,8 @@ RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
     fi;
 
 ### Containers should NOT run as root as a good practice
-RUN groupadd -r linchpin && useradd -u ${UID} -g linchpin -d /linchpin -G wheel --no-log-init linchpin \
-    && chown linchpin. /linchpin
 USER ${UID}
-WORKDIR ${APP_ROOT}
+WORKDIR ${HOME}
 
 ### user name recognition at runtime w/ an arbitrary uid - for OpenShift deployments
 ENTRYPOINT [ "uid_entrypoint" ]
