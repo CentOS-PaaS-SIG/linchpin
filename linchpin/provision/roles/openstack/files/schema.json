@@ -1,0 +1,112 @@
+{
+    "res_defs": {
+        "type": "list",
+        "schema": {
+            "anyof": [{
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["os_server"]
+                    },
+                    "name": { "type": "string", "required": true },
+                    "flavor": { "type": "string", "required": true },
+                    "image": { "type": "string", "required": false },
+                    "count": { "type": "integer", "required": false },
+                    "networks": {
+                        "type": "list",
+                        "required": false,
+                        "schema": { "type": "string", "required": true }
+                    },
+                    "volumes": {
+                        "type": "list",
+                        "required": false,
+                        "schema": { "type": "string", "required": true }
+                    },
+                    "keypair": { "type": "string", "required": true },
+                    "security_groups": { "type": "string", "required": false },
+                    "auto_ip": { "type": "boolean", "required": false },
+                    "fip_pool": { "type": "string", "required": false },
+                    "userdata": { "type": "string", "required": false },
+                    "boot_from_volume": { "type": "boolean", "required": false },
+                    "volume_size": { "type": "string", "required": false },
+                    "boot_volume": { "type": "string", "required": false }
+                }
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["os_heat"] },
+                    "name": { "type": "string", "required": true },
+                    "template_path": { "type": "string", "required": true }
+                }
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["os_volume"] },
+                    "name": { "type": "string", "required": true },
+                    "count": { "type": "integer", "required": false },
+                    "size": { "type": "integer", "required": true }
+                }
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["os_object"] },
+                    "name": { "type": "string", "required": true },
+                    "count": { "type": "integer", "required": false },
+                    "access": { "type": "string", "required": false }
+                }
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["os_sg"] },
+                    "name": { "type": "string", "required": true},
+                    "description": { "type": "string", "required": false},
+                    "region": { "type": "string", "required": false},
+                    "rules": {
+                        "type": "list",
+                        "required": true,
+                        "schema": {
+                            "type": "dict",
+                            "schema": {
+                                "rule_type": { "type": "string", "required": false },
+                                "from_port": { "type": "number", "required": false },
+                                "to_port": { "type": "number", "required": false },
+                                "proto": { "type": "string", "required": false },
+                                "cidr_ip": { "type": "string", "required": false }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["os_keypair"] },
+                    "name": { "type": "string", "required": true},
+                    "public_key_path": { "type": "string", "required": false}
+                }
+            }]
+        }
+    }
+}
+

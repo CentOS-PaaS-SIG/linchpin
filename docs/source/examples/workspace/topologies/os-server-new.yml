@@ -1,0 +1,29 @@
+---
+topology_name: os-single-new
+resource_groups:
+  - resource_group_name: os-server-new
+    resource_group_type: openstack
+    resource_definitions:
+      - name: database
+        role: os_server
+        flavor: m1.small
+        image: CentOS-7-x86_64-GenericCloud-1612
+        count: 1
+        keypair: ci-factory
+        fip_pool: 10.8.240.0
+        networks:
+          - e2e-openstack
+      - name: frontend
+        role: os_server
+        flavor: m1.small
+        image: Fedora-Cloud-Base-26-compose-latest
+        count: 1
+        keypair: ci-factory
+        auto_ip: no
+        networks:
+          - e2e-openstack
+    credentials:
+      filename: clouds.yaml
+      profile: ci-rhos
+
+

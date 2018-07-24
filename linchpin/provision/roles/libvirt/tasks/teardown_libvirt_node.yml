@@ -45,6 +45,9 @@
 - name: "Delete associated image files"
   file:
     state: absent
-    path: "{{ item }}"
+    path: "{{ inst }}"
   with_items: "{{ vm_xml_dump | get_libvirt_files }}"
+  loop_control:
+    loop_var: inst
   ignore_errors: yes
+  become: "{{ libvirt_become }}"

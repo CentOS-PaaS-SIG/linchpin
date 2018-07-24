@@ -1,8 +1,4 @@
 ---
-#- name: auth_var
-#  debug:
-#    var: auth_var
-
 - name: "provision/teardown os_server resources with provided auth"
   os_server2:
     state: "{{ state }}"
@@ -11,8 +7,9 @@
     image: "{{ res_def['image'] | default(omit) }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
+    timeout: 1200
     flavor: "{{ res_def['flavor'] }}"
-    nics:  "{{ res_def['networks'] | default(omit) | os_net }}"
+    nics:  "{{ res_def['networks'] | default(None) | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
     userdata: "{{ res_def['userdata'] | default(omit) }}"
@@ -21,6 +18,7 @@
     terminate_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
     volume_size: "{{ res_def['volume_size'] | default(omit) }}"
     boot_volume: "{{ res_def['boot_volume'] | default(omit) }}"
+    volumes: "{{ res_def['volumes'] | default(omit) }}"
   register: res_def_output
   when: not async and auth_var is defined
 
@@ -36,8 +34,9 @@
     image: "{{ res_def['image'] | default(omit) }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
+    timeout: 1200
     flavor: "{{ res_def['flavor'] }}"
-    nics:  "{{ res_def['networks'] | default(omit) | os_net }}"
+    nics:  "{{ res_def['networks'] | default(None) | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
     userdata: "{{ res_def['userdata'] | default(omit) }}"
@@ -46,6 +45,7 @@
     terminate_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
     volume_size: "{{ res_def['volume_size'] | default(omit) }}"
     boot_volume: "{{ res_def['boot_volume'] | default(omit) }}"
+    volumes: "{{ res_def['volumes'] | default(omit) }}"
   register: res_def_output
   when: not async and auth_var is not defined
 
@@ -62,8 +62,9 @@
     image: "{{ res_def['image'] | default(omit) }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
+    timeout: 1200
     flavor: "{{ res_def['flavor'] }}"
-    nics:  "{{ res_def['networks'] | os_net }}"
+    nics:  "{{ res_def['networks'] | default(None) | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
     userdata: "{{ res_def['userdata'] | default(omit) }}"
@@ -72,6 +73,7 @@
     terminate_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
     volume_size: "{{ res_def['volume_size'] | default(omit) }}"
     boot_volume: "{{ res_def['boot_volume'] | default(omit) }}"
+    volumes: "{{ res_def['volumes'] | default(omit) }}"
   async: "{{ async_timeout | default(1000) }}"
   poll: 0
   register: res_def_output
@@ -89,8 +91,9 @@
     image: "{{ res_def['image'] | default(omit) }}"
     key_name: "{{ res_def['keypair'] }}"
     api_timeout: 99999
+    timeout: 1200
     flavor: "{{ res_def['flavor'] }}"
-    nics:  "{{ res_def['networks'] | os_net }}"
+    nics:  "{{ res_def['networks'] | default(None) | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
     userdata: "{{ res_def['userdata'] | default(omit) }}"
@@ -99,6 +102,7 @@
     terminate_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
     volume_size: "{{ res_def['volume_size'] | default(omit) }}"
     boot_volume: "{{ res_def['boot_volume'] | default(omit) }}"
+    volumes: "{{ res_def['volumes'] | default(omit) }}"
   async: "{{ async_timeout | default(1000) }}"
   poll: 0
   register: res_def_output

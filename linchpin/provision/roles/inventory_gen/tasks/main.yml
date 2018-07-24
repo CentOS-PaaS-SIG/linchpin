@@ -5,16 +5,34 @@
   set_fact:
     topology_name: "{{ topo_data['topology_name'] }}"
 
-- name: "Parse inventory layout as a ordered dict"
+- name: "Set inventory_layout"
   set_fact:
-    inventory_layout: "{{ layout_file | ordered_yaml }}"
+    inventory_layout: "{{ layout_data['inventory_layout'] }}"
+
+- name: "Updating uhash-based inventory_path with the absolute path"
+  set_fact:
+    inventory_path: "{{ inventory_path | default( workspace +'/'+inventories_folder+'/'+
+    topology_name.replace(' ', '_').lower() ) + '-' + uhash }}.inventory"
+  when: enable_uhash
 
 - name: "Updating inventory_path with the absolute path"
   set_fact:
-    inventory_path: "{{ inventory_path | default( default_inventories_path+'/'+
-    topology_name.replace(' ', '_').lower() ) + '-' + uhash }}.inventory"
+    inventory_path: "{{ inventory_path | default( workspace +'/'+inventories_folder+'/'+
+    topology_name.replace(' ', '_').lower() ) }}.inventory"
+  when: not enable_uhash
 
-- name: "Generate Generic Inventory"
+- name: set inv_path if provided in inventory layout
+  set_fact:
+    inv_path: "{{ layout_data['inventory_layout']['inventory_file'] | default(omit) }}"
+
+- name: "Generate Generic Inventory {{ inventory_path }}"
   template:
     src: "templates/generic_inventory_formatter.j2"
     dest: "{{ inventory_path }}"
+  when: inv_path is not defined
+
+- name: "Generate Generic Inventory {{ inv_path }}"
+  template:
+    src: "templates/generic_inventory_formatter.j2"
+    dest: "{{ inv_path }}"
+  when: inv_path is defined

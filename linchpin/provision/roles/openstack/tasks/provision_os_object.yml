@@ -3,7 +3,7 @@
   register: res_count
   when: res_def['count'] is defined
 
-- name: "provision/deprovision swift containers"
+- name: "provision/deprovision one swift container with authentication"
   os_object:
     auth: "{{ auth_var | default(omit) }}"
     container: "{{ res_def['res_name'] | default(res_def['name']) }}"
@@ -12,7 +12,7 @@
     state: "{{ state }}"
   when: res_def['count'] is not defined and auth_var is defined
 
-- name: "provision/deprovision swift containers"
+- name: "provision/deprovision one swift container without authentication"
   os_object:
     container: "{{ res_def['res_name'] | default(res_def['name']) }}"
     container_access: "{{ res_def['access'] | default('private') }}"
@@ -20,7 +20,7 @@
     state: "{{ state }}"
   when: res_def['count'] is not defined and auth_var is not defined
 
-- name: "provision/deprovision swift containers when count specified"
+- name: "provision/deprovision swift containers with authentication"
   os_object:
     auth: "{{ container.0 }}"
     container: "{{ container.1 }}_{{ container.4 }}"
@@ -38,7 +38,7 @@
   register: res_def_output
   when: res_def['count'] is defined and not async and auth_var is defined
 
-- name: "provision/deprovision swift containers when count specified"
+- name: "provision/deprovision swift containers without authentication"
   os_object:
     container: "{{ container.1 }}_{{ container.3 }}"
     container_access: "{{ container.1 }}"

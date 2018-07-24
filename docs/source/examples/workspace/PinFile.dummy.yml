@@ -1,0 +1,7 @@
+---
+# This is the pre-1.5 workspace. Hooks do not yet work.
+# Everything appended with '-new' should work properly.
+
+dummy-new:
+  topology: dummy-new.yml
+  layout: dummy-new.yml

@@ -1,0 +1,13 @@
+---
+# Wait for all containers in the pipeline to be finished building
+- name: "{{ container_config_name }} :: Wait for {{ container_config_name }} to be built and marked with latest tag"
+  shell: "oc get builds"
+  register: oc_build_result
+  until: oc_build_result.stdout.find(" Running ") == -1
+  retries: 100
+  delay: 10
+  failed_when: oc_build_result.stdout.find(" Failed ") != -1
+
+- name: Modify tags on images
+  shell: "oc get is | awk '{print $2}' | grep -v DOCKER | sed 's/.*5000\\///g' | xargs -i oc tag {}:latest {}:{{ tag }}"
+  when: 'modify_tags|bool == true'

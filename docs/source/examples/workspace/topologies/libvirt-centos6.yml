@@ -1,0 +1,25 @@
+---
+topology_name: libvirt-centos6
+resource_groups:
+  - resource_group_name: libvirt-centos6
+    resource_group_type: libvirt
+    resource_definitions:
+      - role: libvirt_node
+        name: centos66
+        uri: qemu:///system
+        count: 1
+        image_src: http://cloud.centos.org/centos/6.6/images/CentOS-6-x86_64-GenericCloud-1711.qcow2.xz
+        memory: 2048
+        vcpus: 1
+        arch: x86_64
+        networks:
+          - name: default
+        additional_storage: 10G
+        cloud_config:
+          users:
+            - name: herlo
+              gecos: Clint Savage
+              groups: wheel
+              sudo: ALL=(ALL) NOPASSWD:ALL
+              ssh-import-id: gh:herlo
+              lock_passwd: true

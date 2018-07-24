@@ -1,0 +1,16 @@
+{
+    "inventory_layout": {
+        "hosts": {
+            "example-node": {
+                "count": 1,
+                "host_groups": [
+                    "example"
+                ]
+            }
+        }, 
+        "vars": {
+            "hostname": "__IP__"
+        }
+    }
+}
+

@@ -3,6 +3,8 @@
 ansible.cfg
 *.swp
 .fuse*
+.cache
+.pytest_cache
 
 # generated files
 docs/build/
@@ -23,8 +25,6 @@ MANIFEST
 # local inventory files containing user-specific environment data
 configure/inventory/local/
 
-*workspace*
-
 .coverage
 *coverage*
 nosetests.xml
@@ -34,6 +34,10 @@ nosetests.xml
 .idea
 .pydevproject
 
-Dockerfiles/pip_install.sh
-Dockerfiles/lp_test_workspace
-Dockerfiles/duffy-ansible-module
+config/Dockerfiles/pip_install.sh
+config/Dockerfiles/duffy-ansible-module
+
+.rundb
+
+# Credential files for testing drivers
+keys/

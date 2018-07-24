@@ -1,0 +1,91 @@
+{
+    "res_defs": {
+        "type": "list",
+        "schema": {
+            "anyof": [{
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["aws_ec2"]
+                    },
+                    "name": { "type": "string", "required": true },
+                    "flavor": { "type": "string", "required": true },
+                    "region": { "type": "string", "required": false },
+                    "image": { "type": "string", "required": false },
+                    "count": { "type": "integer", "required": false },
+                    "keypair": { "type": "string", "required": false },
+                    "security_group": { "type": ["list", "string"], "required": false },
+                    "vpc_subnet_id": { "type": "string", "required": false },
+                    "assign_public_ip": { "type": "boolean", "required": false },
+                    "instance_tags": { "type": "dict", "required": false }
+                }
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["aws_sg"]
+                    },
+                    "name": { "type": "string", "required": true},
+                    "description": { "type": "string", "required": true},
+                    "region": { "type": "string", "required": false},
+                    "rules": {
+                        "type": "list",
+                        "required": true,
+                        "schema": {
+                            "type": "dict",
+                            "schema": {
+                                "rule_type": { "type": "string", "required": false },
+                                "from_port": { "type": ["string", "number"], "required": false },
+                                "to_port": { "type": ["string", "number"], "required": false },
+                                "proto": { "type": "string", "required": false },
+                                "cidr_ip": { "type": "string", "required": false }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["aws_s3"] },
+                    "name": { "type": "string", "required": true },
+                    "region": { "type": "string", "required": false },
+                    "permission": { "type": "string", "required": false }
+                }
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["aws_ec2_key"] },
+                    "name": { "type": "string", "required": true },
+                    "region": { "type": "string", "required": false },
+                    "public_key_path": { "type": "string", "required": false }
+                }
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["aws_cfn"] },
+                    "name": { "type": "string", "required": true },
+                    "region": { "type": "string", "required": true },
+                    "template_path": { "type": "string", "required": true }
+                }
+            }]
+        }
+    }
+}
+

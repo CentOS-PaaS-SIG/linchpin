@@ -3,39 +3,36 @@
 #  include: provision_libvirt_storage.yml
 - name: "Get host from uri"
   set_fact:
-    #uri_hostname: "{{ res_def['uri'] | get_host_from_uri }}"
     uri_hostname: "localhost"
 
-#  when: res_def['res_type']=="libvirt_storage" and state == "present"
 - name: set resource_type
   set_fact:
-    resource_type: "{{ res_def['res_type'] | default(res_def['type']) }}"
+    resource_type: "{{ res_def['role'] }}"
 
 - name: "provision libvirt network"
   include: provision_libvirt_network.yml
-  when: resource_type=="libvirt_network" and state == "present"
+  when:
+    - resource_type == "libvirt_network"
+    - state == "present"
 
 - name: "Set the resource node name"
   set_fact:
-    rsrc_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+    libvirt_resource_name: "{{ res_def['name'] }}"
 
 - name: "Create name using uhash value"
   set_fact:
-    libvirt_resource_name: "{{ rsrc_name + '-' + uhash }}"
+    libvirt_resource_name: "{{ libvirt_resource_name + '-' + uhash }}"
+  when: enable_uhash
 
 - name: "provision libvirt node"
   include: provision_libvirt_node.yml
-  when: resource_type=="libvirt_node" and state == "present"
+  when:
+    - resource_type == "libvirt_node"
+    - state == "present"
 
 - name: "teardown libvirt node"
   include: teardown_libvirt_node.yml
-  when: resource_type=="libvirt_node" and state == "absent"
-
-#- name: "teardown libvirt network"
-#  include: teardown_libvirt_network.yml
-#  when: res_def['res_type']=="libvirt_network" and state == "absent"
-
-#- name: "teardown libvirt storage"
-#  include: teardown_libvirt_storage.yml
-#  when: res_def['res_type']=="libvirt_storage" and state == "absent"
+  when:
+    - resource_type == "libvirt_node"
+    - state == "absent"
 

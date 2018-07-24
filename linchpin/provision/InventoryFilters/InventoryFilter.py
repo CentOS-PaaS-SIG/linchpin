@@ -25,10 +25,7 @@ class InventoryFilter(object):
     def get_layout_hosts(self, inv):
         count = 0
         for host_group in inv['hosts']:
-            if 'count' in inv['hosts'][host_group]:
-                count += inv['hosts'][host_group]['count']
-            else:
-                count += 1
+            count += host_group['count'] if 'count' in host_group else 1
         return count
 
     def get_layout_host_groups(self, inv):
@@ -37,8 +34,8 @@ class InventoryFilter(object):
         """
         host_groups = []
         for host in inv['hosts']:
-            if "host_groups" in inv["hosts"][host].keys():
-                host_groups.extend(inv['hosts'][host]["host_groups"])
+            if "host_groups" in host:
+                host_groups.extend(host["host_groups"])
         return list(set(host_groups))
 
     def add_sections(self, section_list):
@@ -74,20 +71,22 @@ class InventoryFilter(object):
         ip_to_host = {}
         inven_hosts.reverse()
         for host_name in layout['hosts']:
-            if 'count' in layout['hosts'][host_name]:
-                count = layout['hosts'][host_name]['count']
+            if 'count' in host_name.keys():
+                count = host_name['count']
             else:
                 count = 1
             host_list = []
-            for i in range(0, count):
+            if count > len(inven_hosts):
+                count = len(inven_hosts)
+            for i in range(count, 0, -1):
                 item = inven_hosts.pop()
                 host_list.append(item)
-            ip_to_host[host_name] = host_list
+            ip_to_host[host_name["name"]] = host_list
         # add ips to the respective host groups in inventory
         for host_name in layout['hosts']:
-            host_ips = ip_to_host[host_name]
+            host_ips = ip_to_host[host_name["name"]]
             for ip in host_ips:
-                for host_group in layout['hosts'][host_name]['host_groups']:
+                for host_group in host_name['host_groups']:
                     self.config.set(host_group, ip)
                     self.config.set("all", ip)
 

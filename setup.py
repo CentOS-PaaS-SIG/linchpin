@@ -16,30 +16,42 @@ reqs_file = 'requirements.txt'.format(dir_path)
 with open(reqs_file) as f:
     required = f.read().splitlines()
 
+setup_required = list(required)
+setup_required.append('pytest-runner')
+
 ignore_dir = ['.git']
 
 setup(
     name='linchpin',
     version=ver,
-    description='Ansible based multi cloud orchestrator',
+    description='Ansible based multi cloud provisioner',
     author='samvaran kashyap rallabandi',
     author_email='linchpin@redhat.com',
     url='http://linchpin.readthedocs.io/',
-    setup_requires=required,
+    setup_requires=setup_required,
     install_requires=required,
     entry_points='''
         [console_scripts]
-        linchpin=linchpin:runcli
+        linchpin=linchpin.shell:runcli
     ''',
+    tests_require=["pytest", "nose", "mock", "coverage", "flake8"],
     extras_require={
         'krbV': ["python-krbV"],
-        'beaker': ['beaker-client>=23.3'],
+        'beaker': ['beaker-client>=23.3', 'python-krbV'],
         'docs': ["docutils", "sphinx", "sphinx_rtd_theme"],
         'tests': ["nose", "mock", "coverage", "flake8"],
         'libvirt': ["libvirt-python>=3.0.0", "lxml"],
     },
     zip_safe=False,
     packages=find_packages(),
-    include_package_data=True
-    # scripts=['scripts/linchpin_complete.sh']
+    include_package_data=True,
+    package_data={
+        '': [
+            'linchpin.constants',
+        ],
+    },
+    scripts=[
+        'scripts/install_libvirt_deps.sh',
+        'scripts/install_selinux_venv.sh'
+    ]
 )

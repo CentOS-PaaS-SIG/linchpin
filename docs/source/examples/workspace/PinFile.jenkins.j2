@@ -1,0 +1,15 @@
+jenkins-slave:
+  topology: jenkins-slave.j2
+  layout: jenkins-slave.yml
+  {% if hooks %}
+  hooks:
+    {% if hooks.postUp %}
+    post-up:
+      {% if hooks.postUp.connectToMaster %}
+      name: cinch
+      type: shell
+      actions:
+        - cinch inventories/jenkins-slave.inventory
+      {% endif %}
+    {% endif %}
+  {% endif %}

@@ -1,5 +1,5 @@
 ---
-- name: "Get topology output data"
+- name: "Get topology output data from RunDB"
   rundb:
     conn_str: "{{ rundb_conn }}"
     operation: get
@@ -7,14 +7,24 @@
     key: "outputs"
     run_id: "{{ orig_run_id }}"
   register: topo_output
+  when: not generate_resources
 
 - name: "set topo_output_resources fact"
   set_fact:
-    topo_output_resources: "{{ topo_output.output[0]['resources'] }}"
+    topo_output_resources: "{{ topo_output.output[0]['bkr_id_values'] }}"
+  when: not generate_resources
 
-- name: debug topo_output_resources
-  debug:
-    var: topo_output_resources
+- name: "Get topology output data resources file"
+  output_parser:
+    output_file: "{{ default_resources_path + '/' +
+                 topo_data['topology_name'].replace(' ', '_').lower() + '.output' }}"
+  register: topo_output
+  when: generate_resources
+
+- name: "set topo_output_resources fact"
+  set_fact:
+    topo_output_resources: "{{ topo_output.output['content']['beaker_res'] }}"
+  when: generate_resources
 
 - name: "init job_ids"
   set_fact:
@@ -27,28 +37,20 @@
   loop_control:
     loop_var: fact_item
 
-#- name: job_ids
-#  debug:
-#    var: job_ids
-
 - name: "make ids a dict"
   set_fact:
     just_ids: {"ids": "{{ job_ids }}"}
 
-- name: "combine dicts"
-  set_fact:
-   combined:  "{{ recipeset | combine(just_ids) }}"
+- name: "Create Job structure to send to beaker API"
+  include: get_job_structure.yml res_grp={{ rs }}
   with_items:
-    - "{{ res_grp['recipesets'] }}"
+    - "{{ resources }}"
+  when: state == "absent"
   loop_control:
-    loop_var: recipeset
-
-- name: combined
-  debug:
-    var: combined
+    loop_var: rs
 
 - name: "teardown beaker systems"
   bkr_server:
     recipesets: "[ {{ combined }} ]"
     state: absent
-    job_group: "{{ res_grp['job_group'] | default('') }}"
+    job_group: "{{ resources['job_group'] | default('') }}"

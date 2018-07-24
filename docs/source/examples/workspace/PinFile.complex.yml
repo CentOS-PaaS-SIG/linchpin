@@ -1,0 +1,155 @@
+---
+dummy:
+  topology: dummy-new.yml
+  layout: dummy-new.yml
+
+dummy-new:
+  topology: dummy-new.yml
+  layout: dummy-new.yml
+  cfgs:
+    'x': 'y'
+  hooks:
+    postup:
+      - type: shell
+        name: hello
+        actions:
+          - echo hello
+
+os-server-new:
+  topology: os-server-new.yml
+  layout: os-server.yml
+
+# the libvirt module generates a key named for the topology
+libvirt-new:
+  topology: libvirt-new.yml
+  layout: libvirt.yml
+  hooks:
+    postup:
+      - type: ansible
+        name: ping
+        context: True
+        actions:
+          - playbook: ping.yaml
+            extra_vars: { "ansible_ssh_private_key_file": "~/.ssh/libvirt-new" }
+    preup:
+      - type: shell
+        name: hello
+        actions:
+          - echo hello
+    predestroy:
+      - type: shell
+        name: hello
+        actions:
+          - echo hello
+    postdestroy:
+      - type: shell
+        name: hello
+        actions:
+          - echo hello
+
+aws-ec2-new:
+  topology: aws-ec2-new.yml
+  layout: aws-ec2.yml
+
+gce-new:
+  topology: gce-new.yml
+  layout: gce.yml
+
+os-obj-new:
+  topology: os-obj-new.yml
+
+os-sg-new:
+  topology: os-sg-new.yml
+
+os-vol-new:
+  topology: os-vol-new.yml
+
+aws-s3-new:
+  topology: aws-s3-new.yml
+
+aws-ec2-key-new:
+  topology: aws-ec2-key-new.yml
+
+aws-sg-new:
+  topology: aws-sg-new.yml
+
+# to run these, see https://github.com/CentOS-PaaS-SIG/linchpin-providers-external
+
+bkr-new:
+  topology: bkr-new.yml
+
+duffy-new:
+  topology: duffy-new.yml
+
+openshift-new:
+  topology: openshift-new.yml
+
+ovirt-new:
+  topology: ovirt-new.yml
+
+rax-new:
+  topology: rax-new.yml
+
+#dummy:
+#  topology: dummy.yml
+#  layout: dummy.yml
+#
+#aws-ec2:
+#  topology: aws-ec2.yml
+#  layout: aws-ec2.yml
+#  hooks:
+#    postup:
+#      - type: ansible
+#        name: ping
+#        context: True
+#        actions:
+#          - playbook: ping.yaml
+#            extra_vars: {"ansible_ssh_private_key_file": "/home/herlo/.ssh/rh_rsa"}
+#
+#os-server:
+#  topology: os-server.yml
+#  layout: os-server.yml
+#  hooks:
+#    postup:
+#      - type: ansible
+#        name: ping
+#        context: True
+#        actions:
+#          - playbook: ping.yaml
+#            extra_vars: {"ansible_ssh_private_key_file": "/home/herlo/Projects/rh/git/atomic-ci-jobs/project/config/keys/ci-factory"}
+#
+#os-obj:
+#  topology: os-obj.yml
+#
+#os-vol:
+#  topology: os-vol.yml
+#
+#gce:
+#  topology: gce.yml
+#  layout: gce.yml
+#  hooks:
+#    postup:
+#      - type: ansible
+#        name: ping
+#        context: True
+#        actions:
+#          - playbook: ping.yaml
+#            extra_vars: {"ansible_ssh_private_key_file": "/home/herlo/.ssh/rh_rsa"}
+#
+libvirt:
+  topology: libvirt.yml
+  layout: libvirt.yml
+
+libvirt-centos6:
+  topology: libvirt-centos6.yml
+
+libvirt-el7net:
+  topology: libvirt-el7net.yml
+
+#
+#bkr:
+#  topology: bkr.yml
+#
+duffy:
+  topology: duffy.yml
+  layout: duffy.yml

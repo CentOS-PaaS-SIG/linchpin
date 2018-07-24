@@ -1,0 +1,237 @@
+/**
+ * CI Stage Linchpin Trigger
+ *
+ * This is a declarative pipeline for the CI linchpin pipeline
+ * that includes the building of images based on PRs
+ *
+ */
+
+// Openshift project
+openshiftProject = "continuous-infra"
+DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
+
+// Defaults for SCM operations
+env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/linchpin'
+env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
+
+// If this PR does not include an image change, then use this tag
+STABLE_LABEL = "stable"
+tagMap = [:]
+
+// Initialize
+tagMap['fedora26'] = STABLE_LABEL
+tagMap['fedora27'] = STABLE_LABEL
+tagMap['centos7'] = STABLE_LABEL
+
+// Target: [ PATH/IN/REPO to match, ]
+p_targets = ['dummy':
+              ["^(?!linchpin/version.py).*"],
+             'duffy':
+              ["^linchpin/provision/roles/duffy/.*",
+               "^linchpin/provision/duffy.yml"],
+             'libvirt':
+              ["^linchpin/provision/roles/libvirt/.*",
+               "^linchpin/provision/libvirt.yml"],
+             'aws-ec2-new':
+              ["^linchpin/provision/roles/aws/.*",
+               "^linchpin/provision/aws.yml"],
+             'bkr-new':
+              ["^linchpin/provision/roles/beaker/.*",
+               "^linchpin/provision/beaker.yml"],
+              'os-server-new':
+              ["^linchpin/provision/roles/openstack/.*",
+               "^linchpin/provision/openstack.yml"],
+              'os-sg-new':
+              ["^linchpin/provision/roles/openstack/.*",
+               "^linchpin/provision/openstack.yml"],
+              'os-vol-new':
+              ["^linchpin/provision/roles/openstack/.*",
+               "^linchpin/provision/openstack.yml"],
+            ]
+
+test_targets = ""
+
+// IRC properties
+IRC_NICK = "contra-bot"
+IRC_CHANNEL = "#contra-ci-cd"
+
+library identifier: "ci-pipeline@master",
+        retriever: modernSCM([$class: 'GitSCMSource',
+                              remote: "https://github.com/CentOS-Paas-SIG/ci-pipeline"])
+
+library identifier: "cico-pipeline-library@master",
+        retriever: modernSCM([$class: 'GitSCMSource',
+                              remote: "https://github.com/CentOS/cico-pipeline-library"])
+
+// Check out PR's version of library
+library identifier: "linchpin-pipeline@${env.ghprbActualCommit}",
+        retriever: modernSCM([$class: 'GitSCMSource',
+                              remote: "https://github.com/${env.ghprbGhRepository}",
+                              traits: [[$class: 'jenkins.plugins.git.traits.BranchDiscoveryTrait'],
+                                       [$class: 'RefSpecsSCMSourceTrait',
+                                        templates: [[value: '+refs/heads/*:refs/remotes/@{remote}/*'],
+[value: '+refs/pull/*:refs/remotes/origin/pr/*']]]]])
+
+properties([
+  buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '20')),
+  [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/CentOS-PaaS-SIG/linchpin/'],
+  parameters(
+    [
+      string(defaultValue: 'develop',
+             description: '',
+             name: 'ghprbActualCommit'),
+      string(defaultValue: '',
+             description: '',
+             name: 'sha1'),
+      string(defaultValue: '',
+             description: 'Pull Request Number',
+             name: 'ghprbPullId'),
+      string(defaultValue: '',
+             description: 'Pull Request Author username',
+             name: 'ghprbPullAuthorLogin'),
+      string(defaultValue: '',
+             description: 'Git Hub Repository',
+             name: 'ghprbGhRepository'),
+    ]
+  ),
+])
+
+pipeline {
+    agent {
+        kubernetes {
+            cloud 'openshift'
+            serviceAccount 'jenkins'
+            label 'stage-trigger-' + env.ghprbActualCommit
+            containerTemplate {
+                name 'jnlp'
+                args '${computer.jnlpmac} ${computer.name}'
+                image DOCKER_REPO_URL + '/' + openshiftProject + '/jenkins-continuous-infra-slave:' + STABLE_LABEL
+                ttyEnabled false
+                command ''
+            }
+        }
+    }
+    stages {
+        stage("Get Changelog") {
+            steps {
+                node('master') {
+                    script {
+                        echo "PR number is: ${env.ghprbPullId}"
+                        env.changeLogStr = pipelineUtils.getChangeLogFromCurrentBuild()
+                        echo env.changeLogStr
+                    }
+                    writeFile file: 'changelog.txt', text: env.changeLogStr
+                    archiveArtifacts allowEmptyArchive: true, artifacts: 'changelog.txt'
+                }
+            }
+        }
+        stage("Determine which targets to test") {
+            steps {
+                node('master') {
+                    script {
+                      def targets = linchpinPipelineUtils.getTargetsToTest(p_targets)
+                      test_targets = targets.join(" ")
+                    }
+                }
+            }
+        }
+        stage("Setup Container Templates") {
+            steps {
+                script {
+                    sh """
+                       oc whoami
+                    """
+                    pipelineUtils.setupContainerTemplates(openshiftProject)
+                }
+            }
+        }
+        stage("fedora26 image build") {
+            when {
+                // Only build if we have related files in changeset
+                changeset "config/Dockerfiles/fedora26/**"
+            }
+            steps {
+                script {
+                    tagMap['fedora26'] = pipelineUtils.buildImage(openshiftProject, "fedora26")
+                }
+            }
+        }
+        stage("fedora27 image build") {
+            when {
+                // Only build if we have related files in changeset
+                changeset "config/Dockerfiles/fedora27/**"
+            }
+            steps {
+                script {
+                    tagMap['fedora27'] = pipelineUtils.buildImage(openshiftProject, "fedora27")
+                }
+            }
+        }
+        stage("centos7 image build") {
+            when {
+                // Only build if we have related files in changeset
+                changeset "config/Dockerfiles/centos7/**"
+            }
+            steps {
+                script {
+                    tagMap['centos7'] = pipelineUtils.buildImage(openshiftProject, "centos7")
+                }
+            }
+        }
+        stage("Image Tag Report") {
+            steps {
+                script {
+                    // Use tags derived from above image builds
+                    //
+                    pipelineUtils.printLabelMap(tagMap)
+                }
+            }
+        }
+        stage("Run Stage Job") {
+            steps {
+                build job: 'ci-linchpin',
+                        parameters: [
+                                string(name: 'ghprbActualCommit',
+                                       value: "${env.ghprbActualCommit}"),
+                                string(name: 'ghprbGhRepository',
+                                       value: "${env.ghprbGhRepository}"),
+                                string(name: 'ghprbPullAuthorLogin',
+                                       value: "${env.ghprbPullAuthorLogin}"),
+                                string(name: 'sha1',
+                                       value: "${env.sha1}"),
+                                string(name: 'ghprbPullId',
+                                       value: "${env.ghprbPullId}"),
+                                string(name: 'ghprbGhRepository',
+                                       value: "${env.ghprbGhRepository}"),
+                                string(name: 'FEDORA26_TAG',
+                                       value: tagMap['fedora26']),
+                                string(name: 'FEDORA27_TAG',
+                                       value: tagMap['fedora27']),
+                                string(name: 'CENTOS7_TAG',
+                                       value: tagMap['centos7']),
+                                string(name: 'TEST_TARGETS',
+                                       value: test_targets)
+                        ],
+                        wait: true
+            }
+        }
+    }
+    post {
+        always {
+            script {
+                String prMsg = ""
+                if (env.ghprbActualCommit != null && env.ghprbActualCommit != "master") {
+                    prMsg = "(PR #${env.ghprbPullId} ${env.ghprbPullAuthorLogin})"
+                }
+                def message = "${JOB_NAME} ${prMsg} build #${BUILD_NUMBER}: ${currentBuild.currentResult}: ${BUILD_URL}"
+                pipelineUtils.sendIRCNotification("${IRC_NICK}-${UUID.randomUUID()}", IRC_CHANNEL, message)
+            }
+        }
+        success {
+            echo "yay!"
+        }
+        failure {
+            error "build failed!"
+        }
+    }
+}

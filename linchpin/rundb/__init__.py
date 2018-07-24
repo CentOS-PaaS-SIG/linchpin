@@ -14,6 +14,13 @@ class RunDB(object):
         return self.driver.update_record(table, run_id, key, value)
 
     @abstractmethod
+    def get_tx_record(self, tx_id):
+        return self.driver.get_tx_record(tx_id)
+
+    def get_tx_records(self, tx_ids):
+        return self.driver.get_tx_records(tx_ids)
+
+    @abstractmethod
     def get_record(self, table, action='up', run_id=None):
         return self.driver.get_record(table, run_id=run_id)
 

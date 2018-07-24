@@ -1,0 +1,109 @@
+import groovy.json.*
+
+executionID = UUID.randomUUID().toString()
+podName = 'linchpinMB-' + executionID
+OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
+OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
+
+// Check out PR's version of library
+library identifier: "linchpin-pipeline@develop",
+        retriever: modernSCM([$class: 'GitSCMSource',
+                              remote: "https://github.com/CentOS-PaaS-SIG/linchpin",
+                              traits: [[$class: 'jenkins.plugins.git.traits.BranchDiscoveryTrait'],
+                                       [$class: 'RefSpecsSCMSourceTrait',
+                                        templates: [[value: '+refs/heads/*:refs/remotes/@{remote}/*'],
+[value: '+refs/pull/*:refs/remotes/origin/pr/*']]]]])
+
+properties(
+        [
+                buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '50', daysToKeepStr: '', numToKeepStr: '100')),
+                parameters(
+                    [
+                        string(description: 'fedmsg msg', name: 'CI_MESSAGE'),
+                    ]
+                ),
+                pipelineTriggers(
+                        [[$class: 'CIBuildTrigger', checks: [],  overrides: [topic: 'org.centos.prod'], providerName: 'fedora-fedmsg', selector: 'topic = "org.centos.prod.ci.linchpin.pr.queued"']]
+                )
+        ]
+)
+
+podTemplate(name: podName,
+            label: podName,
+            cloud: 'openshift',
+            serviceAccount: OPENSHIFT_SERVICE_ACCOUNT,
+            idleMinutes: 0,
+            namespace: OPENSHIFT_NAMESPACE,
+
+        containers: [
+            // This adds the custom slave container to the pod.
+            // Must be first with name 'jnlp'
+            containerTemplate(name: 'jnlp',
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/jenkins-continuous-infra-slave:stable',
+                ttyEnabled: false,
+                args: '${computer.jnlpmac} ${computer.name}',
+                command: '',
+                workingDir: '/workDir')
+        ]
+)
+
+{
+    node(podName) {
+        ansiColor('xterm') {
+            timestamps {
+                currentBuild.result = 'SUCCESS'
+                def ghprbPullId = null
+                def ghprbGhRepository = null
+                try {
+                    stage('ci-linchpin-messageBus-trigger') {
+
+                        echo "CI_MESSAGE: ${env.CI_MESSAGE}"
+
+                        // parse CI_MESSAGE json
+                        def json_msg = readJSON text: CI_MESSAGE
+                        // parse message-content json
+                        def msg_content = readJSON text: json_msg['message-content']
+
+                        ghprbPullId = msg_content['ghprbPullId']
+                        def ghprbPullAuthorLogin = msg_content['ghprbPullAuthorLogin']
+                        def ghprbActualCommit = msg_content['ghprbActualCommit']
+                        ghprbGhRepository = msg_content['ghprbGhRepository']
+                        def sha1 = msg_content['sha1']
+
+                        currentBuild.displayName = "Build#: ${env.BUILD_NUMBER} - PR: ${ghprbPullId} - Author: ${ghprbPullAuthorLogin}"
+                        if (ghprbActualCommit != null && ghprbActualCommit != "develop") {
+                          currentBuild.description = "<a href=\"https://github.com/${ghprbGhRepository}/pull/${ghprbPullId}\">PR #${ghprbPullId} (${ghprbPullAuthorLogin})</a>"
+                        }
+
+                        build job: "ci-linchpin-container",
+                          parameters: [
+                            string(name: 'ghprbActualCommit',
+                                   value: "${ghprbActualCommit}"),
+                            string(name: 'ghprbPullId',
+                                   value: "${ghprbPullId}"),
+                            string(name: 'ghprbGhRepository', 
+                                   value: "${ghprbGhRepository}"),
+                            string(name: 'ghprbPullAuthorLogin',
+                                   value: "${ghprbPullAuthorLogin}"),
+                            string(name: 'sha1',
+                                   value: "${sha1}")
+                          ],
+                          wait: true
+                    }
+                } catch (e) {
+                    // Set build result
+                    currentBuild.result = 'FAILURE'
+
+                    // Report the exception
+                    echo e.getMessage()
+
+                    // Throw the error
+                    throw e
+                } finally {
+                    def message = "${JOB_NAME} build #${BUILD_NUMBER}: ${currentBuild.currentResult}: ${BUILD_URL}"
+                    linchpinPipelineUtils.sendPRComment(ghprbGhRepository, ghprbPullId, message)
+                }
+            }
+        }
+    }
+}

@@ -140,20 +140,32 @@ def main():
                     module.fail_json(msg=msg)
 
             if op == "get":
-                if run_id and key:
-                    runid = int(run_id)
-                    record = rundb.get_record(table,
-                                              action=action,
-                                              run_id=runid)[0]
+                if key:
+                    runid = None
+                    if run_id:
+                        runid = int(run_id)
+                    if key == 'run_id':
+                        output = rundb.get_record(table,
+                                                  action=action,
+                                                  run_id=runid)[1]
 
-                    if key in record:
-                        output = record.get(key)
                     else:
-                        msg = "key '{0}' was not found in record".format(key)
-                        module.fail_json(msg=msg)
+                        record = rundb.get_record(table,
+                                                  action=action,
+                                                  run_id=runid)[0]
+
+                        if key in record:
+                            output = record.get(key)
+                        else:
+                            msg = "key '{0}' was not found in"
+                            " record".format(key)
+                            module.fail_json(msg=msg)
+                else:
+                    msg = "The 'key' value must be passed"
+                    module.fail_json(msg=msg)
 
         else:
-            msg = ("Module 'action' required".format(action))
+            msg = "Module 'action' required"
             module.fail_json(msg=msg)
 
         if output:

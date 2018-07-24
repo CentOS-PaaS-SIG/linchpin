@@ -1,8 +1,4 @@
 ---
-- name: current res_grp
-  debug:
-    var: res_grp
-
 - name: "Set cred profile"
   set_fact:
     cred_profile: "{{ res_grp['credentials']['profile'] | default('default') }}"
@@ -12,49 +8,65 @@
   auth_driver:
     filename: "{{ res_grp['credentials']['filename']  }}"
     cred_type: "aws"
-    cred_path: "{{ creds_path }}"
+    cred_path: "{{ creds_path | default(default_credentials_path) }}"
     driver: "file"
   register: auth_var
   ignore_errors: true
   when: res_grp['credentials'] is defined
+  no_log: true
 
 - name: "Set auth_var"
   set_fact:
     auth_var: "{{ auth_var['output'][cred_profile] | default('') }}"
   ignore_errors: true
   when: auth_var is defined
+  no_log: true
 
-- name: "Get topology output data"
+- name: "Get topology output data from resources file"
+  output_parser:
+    output_file: "{{ default_resources_path + '/' +
+                 topo_data['topology_name'].replace(' ', '_').lower() + '.output' }}"
+  register: topo_output
+  when: generate_resources
+
+- name: "set topo_output_resources fact"
+  set_fact:
+    topo_output_resources: "{{ topo_output.output['content']['aws_ec2_res'][0] }}"
+  when: generate_resources
+
+# patch for role to type translation
+- name: "Add attribute role to res_grp resource_definitions"
+  set_fact:
+    resource_definitions: "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) | duplicateattr('role', 'role') }}"
+
+- name: "Get topology output data from RunDB"
   rundb:
     conn_str: "{{ rundb_conn }}"
     operation: get
     table: "{{ target }}"
     key: "outputs"
     run_id: "{{ orig_run_id }}"
-  register: topo_output
+  register: topo_output_rundb
+  when: not generate_resources
 
-- name: "set topo_output_resources fact"
+- name: "set topo_output_resources fact rundb"
   set_fact:
-    topo_output_resources: "{{ topo_output.output[0]['resources'] }}"
-
-# patch for res_type to type translation
-- name: "Add attribute res_type to res_grp resource_definitions"
-  set_fact:
-    resource_definitions: "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) | duplicateattr('type', 'res_type') }}"
+    topo_output_resources: "{{ topo_output_rundb.output[0]['resources'][0] }}"
+  when: not generate_resources
 
 - name: "teardown of ec2 resource definitions of current group"
   include: teardown_aws_ec2.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.2 }}
-  when: res_item.0['res_type'] == "aws_ec2"
+  when: res_item.0['role'] == "aws_ec2"
   with_nested:
     - "{{ resource_definitions }}"
-    - "{{ topo_output_resources }}"
+    - "{{ topo_output_resources['instances'] }}"
     - ["{{ res_grp['resource_group_name']  }}"]
   loop_control:
     loop_var: res_item
 
 - name: "teardown of s3 resource def of current group"
   include: teardown_aws_s3.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
-  when: res_item.0['res_type'] == "aws_s3"
+  when: res_item.0['role'] == "aws_s3"
   with_nested:
     - "{{ resource_definitions }}"
     - ["{{ res_grp['resource_group_name']  }}"]
@@ -63,7 +75,7 @@
 
 - name: "teardown of aws_ec2_key resource def of current group"
   include: teardown_aws_ec2_key.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
-  when: res_item.0['res_type'] == "aws_ec2_key"
+  when: res_item.0['role'] == "aws_ec2_key"
   with_nested:
     - "{{ resource_definitions }}"
     - ["{{ res_grp['resource_group_name']  }}"]
@@ -72,7 +84,7 @@
 
 - name: "teardown cfn stack resource def of current group"
   include: teardown_aws_cfn.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
-  when: res_item.0['res_type'] == "aws_cfn"
+  when: res_item.0['role'] == "aws_cfn"
   with_nested:
     - "{{ resource_definitions }}"
     - ["{{ res_grp['resource_group_name'] }}"]

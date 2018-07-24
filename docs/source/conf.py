@@ -33,7 +33,9 @@ from linchpin.version import __version__, __short_version__
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary'
+    'sphinx.ext.autosummary',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.extlinks'
 ]
 autosummary_generate = True
 
@@ -55,8 +57,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'linchpin'
-copyright = u'2017, Red Hat, Inc.'
-author = u'Samvaran Kashyap Rallabandi'
+copyright = u'2018, Red Hat, Inc.'
+author = u'Samvaran Kashyap Rallabandi, Clint Savage'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -342,3 +344,12 @@ texinfo_documents = [
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #
 # texinfo_no_detailmenu = False
+
+extlinks = {
+    'docs1.5': (
+    'https://raw.githubusercontent.com/CentOS-PaaS-SIG/linchpin/develop/docs/source/examples/%s', ''),
+    'code1.5': (
+    'https://raw.githubusercontent.com/CentOS-PaaS-SIG/linchpin/develop/%s', ''),
+    'dirs1.5': (
+    'https://github.com/CentOS-PaaS-SIG/linchpin/tree/develop/docs/source/examples/%s', ''),
+}

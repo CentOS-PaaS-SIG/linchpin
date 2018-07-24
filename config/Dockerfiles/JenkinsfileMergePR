@@ -1,0 +1,98 @@
+// Openshift project
+openshiftProject = "continuous-infra"
+DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
+STABLE_LABEL = "stable"
+
+// Defaults for SCM operations
+env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/ci-pipeline'
+env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
+
+// Add new images here
+imageList = ["fedora26", "fedora27", "centos7"]
+imageOperations = []
+
+library identifier: "ci-pipeline@master",
+        retriever: modernSCM([$class: 'GitSCMSource',
+                              remote: "https://github.com/CentOS-Paas-SIG/ci-pipeline"
+])
+
+properties([
+  buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '20')),
+  [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/CentOS-PaaS-SIG/linchpin/'],
+  parameters(
+    [
+      string(defaultValue: 'develop',
+             description: '',
+             name: 'ghprbActualCommit'),
+      string(defaultValue: '',
+             description: '',
+             name: 'sha1'),
+      string(defaultValue: '',
+             description: 'Pull Request Number',
+             name: 'ghprbPullId'),
+      string(defaultValue: '',
+             description: 'Pull Request Author username',
+             name: 'ghprbPullAuthorLogin'),
+      string(defaultValue: '',
+             description: 'Git Hub Repository',
+             name: 'ghprbGhRepository'),
+    ]
+  ),
+])
+
+pipeline {
+    agent {
+        kubernetes {
+            cloud 'openshift'
+            serviceAccount 'jenkins'
+            label 'merge-trigger-' + env.ghprbActualCommit
+            containerTemplate {
+                name 'jnlp'
+                args '${computer.jnlpmac} ${computer.name}'
+                image DOCKER_REPO_URL + '/' + openshiftProject + '/jenkins-continuous-infra-slave:' + STABLE_LABEL
+                ttyEnabled false
+                command ''
+            }
+        }
+    }
+    stages {
+        stage("Detect Images to Promote") {
+            steps {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject(openshiftProject) {
+                            imageList.each {
+                                String tagList = sh(
+                                        script: "oc get imagestreams -n ${openshiftProject} -o=jsonpath=\'{.items[?(@.metadata.name==\"${it}\")].status.tags[*].tag}\'",
+                                        returnStdout: true
+                                ).trim()
+                                def prTag = tagList.tokenize(' ').find { it == "PR-" + env.ghprbPullId }
+                                if (prTag != null) {
+                                    echo "Found PR tag: " + prTag + " for image ${it}"
+                                    imageOperations.add(it)
+                                } else {
+                                    echo "No tag found for image ${it}!"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        stage("Merge PR and Rebuild Images") {
+            steps {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject(openshiftProject) {
+                            imageOperations.each {
+                                pipelineUtils.buildStableImage(openshiftProject, it)
+                            }
+                        }
+                    }
+                    pipelineUtils.sendPRCommentforTags(imageOperations)
+                }
+            }
+        }
+    }
+}
+

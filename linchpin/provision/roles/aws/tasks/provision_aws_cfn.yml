@@ -1,7 +1,7 @@
 ---
 - name: "Set cfn parameters for template"
   set_fact:
-    cfn_grp_vars : "{{ res_grp_vars | selectattr('resource_group_name', 'equalto', res_grp_name ) | first }}"
+    cfn_grp_vars : "{{ res_grp_vars | selectattr('resource_group_name', 'match', '^' + res_grp_name + '$') | first }}"
 
 - name: "Set cfn parameters for template"
   set_fact:

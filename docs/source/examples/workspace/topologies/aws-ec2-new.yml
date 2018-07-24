@@ -1,0 +1,21 @@
+---
+topology_name: ec2-new
+resource_groups:
+  - resource_group_name: "aws"
+    resource_group_type: "aws"
+    resource_definitions:
+      - name: demo-day
+        flavor: m1.small
+        role: aws_ec2
+        region: us-east-1
+        image: ami-984189e2
+        count: 1
+        instance_tags:
+          color: blue
+          shape: oval
+        security_group:
+          - default
+          - public
+    credentials:
+      filename: aws.key
+      profile: default

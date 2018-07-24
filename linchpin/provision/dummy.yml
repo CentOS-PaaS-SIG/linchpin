@@ -1,0 +1,29 @@
+---
+# This playbook provisions dummy topology.
+
+- name:  "schema check and Pre Provisioning Activities on topology_file"
+  hosts: localhost
+  gather_facts: True
+  roles:
+    - { role: 'common' }
+
+- name:  "Provisioning resources based on resource group type"
+  hosts: localhost
+  gather_facts: True
+  roles:
+    - { role: 'dummy' }
+
+- name: "Writing contents to file"
+  hosts: localhost
+  gather_facts: True
+  roles:
+    - { role: 'gather_resources' }
+
+- name: "inventory generation role"
+  hosts: localhost
+  gather_facts: True
+  roles:
+    - role: 'inventory_gen'
+      when:
+        - state == 'present'
+        - layout_data is defined

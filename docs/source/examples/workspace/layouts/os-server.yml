@@ -1,0 +1,14 @@
+---
+inventory_layout:
+  vars:
+    hostname: __IP__
+  hosts:
+    db-node:
+      count: 1
+      host_groups:
+        - database
+    frontend-node:
+      count: 1
+      host_groups:
+        - frontend
+

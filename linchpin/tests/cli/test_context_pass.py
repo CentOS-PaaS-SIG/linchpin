@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+
+# flake8: noqa
+
 import os
 
 from nose.tools import *
@@ -33,7 +37,7 @@ def setup_context_data():
 
     cd = ContextData()
     cd.load_config_data()
-    cd.parse_config()
+    cd.create_config()
     evars_data = cd.evars
     config_path = cd.get_temp_filename()
     config_data = cd.cfg_data
@@ -47,19 +51,25 @@ def test_load_config():
 
     lpc = LinchpinCliContext()
     lpc.load_config(lpconfig=config_path)
+    cfg_data = dict(config_data)
 
-#    assert_dict_equal.__self__.maxDiff = None
-    assert_dict_equal(config_data, lpc.cfgs)
+    # remove things that will always differ
+    for cfg in ['lp', 'evars']:
+        lpc.cfgs.pop(cfg)
+        cfg_data.pop(cfg)
+
+    assert_dict_equal(cfg_data['console'],
+                      lpc.cfgs['console'])
 
 
 @with_setup(setup_context_data)
 def test_get_cfg():
 
     lpc = LinchpinCliContext()
-    lpc.load_config(config_path)
-    cfg_value = lpc.get_cfg('hookstates', 'up')
+    lpc.load_config()
+    cfg_value = lpc.get_cfg(section='lp', key='pkg')
 
-    assert_equal(cfg_value, config_data['hookstates']['up'])
+    assert_equal(cfg_value, config_data['lp']['pkg'])
 
 
 @with_setup(setup_context_data)
@@ -76,8 +86,16 @@ def test_set_cfg():
 def test_load_global_evars():
 
     lpc = LinchpinCliContext()
-    lpc.load_config(config_path)
+    lpc.load_config(lpconfig=config_path)
     lpc.load_global_evars()
+
+    # remove workspace key as it's not from the config file
+    for k in lpc.evars.keys():
+        if k == 'workspace':
+            if lpc.evars.get(k):
+                lpc.evars.pop(k)
+            if evars_data.get(k):
+                evars_data.pop(k)
 
     assert_dict_equal(evars_data, lpc.evars)
 
@@ -86,7 +104,7 @@ def test_load_global_evars():
 def test_get_evar():
 
     lpc = LinchpinCliContext()
-    lpc.load_config(config_path)
+    lpc.load_config(lpconfig=config_path)
     lpc.load_global_evars()
     evar_value = lpc.get_evar('_async')
 
@@ -97,7 +115,7 @@ def test_get_evar():
 def test_set_evar():
 
     lpc = LinchpinCliContext()
-    lpc.load_config(config_path)
+    lpc.load_config(lpconfig=config_path)
     lpc.load_global_evars()
     lpc.set_evar('test', 'me')
 
@@ -107,9 +125,11 @@ def test_set_evar():
 @with_setup(setup_context_data)
 def test_logging_setup():
 
-
     lpc = LinchpinCliContext()
-    lpc.load_config(config_path)
+    lpc.load_config(lpconfig=config_path)
+    lpc.set_cfg('logger',
+                'file',
+                config_data['logger']['file'])
     lpc.setup_logging()
 
     assert os.path.isfile(logfile)
@@ -126,7 +146,10 @@ def test_log_msg():
     regex = '^{0}.*{1}'.format(logging.getLevelName(lvl), msg)
 
     lpc = LinchpinCliContext()
-    lpc.load_config(config_path)
+    lpc.load_config(lpconfig=config_path)
+    lpc.set_cfg('logger',
+                'file',
+                config_data['logger']['file'])
     lpc.setup_logging()
     lpc.log(msg, level=lvl)
 
@@ -143,7 +166,10 @@ def test_log_state():
     regex = '^{0}.*STATE - {1}'.format(logging.getLevelName(lvl), msg)
 
     lpc = LinchpinCliContext()
-    lpc.load_config(config_path)
+    lpc.load_config(lpconfig=config_path)
+    lpc.set_cfg('logger',
+                'file',
+                config_data['logger']['file'])
     lpc.setup_logging()
     lpc.log_state(msg)
 
@@ -160,7 +186,10 @@ def test_log_info():
     regex = '^{0}.*{1}'.format(logging.getLevelName(lvl), msg)
 
     lpc = LinchpinCliContext()
-    lpc.load_config(config_path)
+    lpc.load_config(lpconfig=config_path)
+    lpc.set_cfg('logger',
+                'file',
+                config_data['logger']['file'])
     lpc.setup_logging()
     lpc.log_info(msg)
 
@@ -177,10 +206,12 @@ def test_log_debug():
     regex = '^{0}.*{1}'.format(logging.getLevelName(lvl), msg)
 
     lpc = LinchpinCliContext()
-    lpc.load_config(config_path)
+    lpc.load_config(lpconfig=config_path)
+    lpc.set_cfg('logger',
+                'file',
+                config_data['logger']['file'])
     lpc.setup_logging()
     lpc.log_debug(msg)
-
 
     with open(logfile) as f:
         line = f.readline()

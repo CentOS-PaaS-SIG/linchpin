@@ -1,0 +1,27 @@
+{
+    "res_defs": {
+        "type": "list",
+        "schema": {
+            "type": "dict",
+            "schema": {
+               "role": {
+                   "type": "string",
+                   "required": true,
+                   "allowed": ["rax_server"]
+               },
+               "name": { "type": "string", "required": true },
+               "flavor": { "type": ["string","integer"], "required": true },
+               "image": { "type": "string", "required": true },
+               "region": { "type": "string", "required": true },
+               "keypair": { "type": "string", "required": false },
+               "count": { "type": "integer", "required": false },
+               "networks": {
+                   "type": "list",
+                   "required": false,
+                   "schema": { "type": "string", "required": true }
+               }
+            }
+        }
+    }
+}
+

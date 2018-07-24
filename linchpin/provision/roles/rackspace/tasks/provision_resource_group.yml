@@ -1,10 +1,26 @@
-- name: "DEBUG:: provisioning resource group {{ res_grp }}"
-  debug:
-    msg: "The current server obj is {{ res_grp }}"
+---
+- name: "Unset the authvar from previous run"
+  set_fact:
+    auth_var: ""
 
-- name: "Including credentials of current resource {{ res_grp['resource_group_name'] }} "
-  include_vars: "roles/rackspace/vars/{{ res_grp['assoc_creds'] | default(res_grp['credentials']) }}.yml"
-  no_log: false 
+- name: "set cred profile"
+  set_fact:
+    cred_profile: "{{ res_grp['credentials']['profile'] | default('default') }}"
+  when: res_grp['credentials'] is defined
+
+- name: "Get creds from auth driver"
+  auth_driver:
+    filename: "{{ res_grp['credentials']['filename']  }}"
+    cred_type: "rackspace"
+    cred_path: "{{ creds_path | default(default_credentials_path) }}"
+    driver: "file"
+  register: auth_var
+  ignore_errors: true
+
+- name: "set auth_var"
+  set_fact:
+    auth_var: "{{ auth_var['output'] }}"
+  ignore_errors: true
 
 - name: "provisioning resource definitions of current group"
   include: provision_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}

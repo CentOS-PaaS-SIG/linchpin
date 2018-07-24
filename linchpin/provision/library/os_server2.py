@@ -421,6 +421,9 @@ def _network_args(module, cloud):
     args = []
     nics = module.params['nics']
 
+    if not nics:
+        return args
+
     if not isinstance(nics, list):
         module.fail_json(msg='The \'nics\' parameter must be a list.')
 
@@ -719,7 +722,7 @@ def main():
         key_name                        = dict(default=None),
         security_groups                 = dict(default=['default'], type='list'),
         network                         = dict(default=None),
-        nics                            = dict(default=[], type='list'),
+        nics                            = dict(default=None, type='list'),
         meta                            = dict(default=None, type='raw'),
         userdata                        = dict(default=None, aliases=['user_data']),
         config_drive                    = dict(default=False, type='bool'),

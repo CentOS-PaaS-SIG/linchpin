@@ -1,0 +1,30 @@
+---
+# Install the kvm plugin
+- name: Pull down kvm plugin
+  get_url:
+    url: https://github.com/dhiltgen/docker-machine-kvm/releases/download/v0.7.0/docker-machine-driver-kvm
+    dest: /usr/local/bin/docker-machine-driver-kvm
+    mode: 755
+  become: true
+
+- include: install_virtual_reqs.yml
+
+- name: Start and enable libvirtd
+  service:
+    name: libvirtd
+    state: started
+    enabled: yes
+  become: true
+
+- name: "Add user {{ remote_user }} to the libvirt group"
+  user:
+    name: "{{ remote_user }}"
+    groups: libvirt
+    append: yes
+  become: true
+
+- name: Newgroup libvirt
+  user:
+    name: libvirt
+    state: present
+  become: true

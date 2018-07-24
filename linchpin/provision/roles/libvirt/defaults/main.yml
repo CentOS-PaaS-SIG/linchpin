@@ -2,3 +2,5 @@
 # defaults file for libvirt
 
 libvirt_image_path: /var/lib/libvirt/images/linchpin/
+libvirt_user: root
+libvirt_become: yes

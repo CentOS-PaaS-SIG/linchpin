@@ -1,0 +1,116 @@
+---
+- name: "provision/teardown os_server resources with provided auth"
+  os_server2:
+    state: "{{ state }}"
+    auth: "{{ auth_var }}"
+    name: "{{ os_resource_name }}"
+    image: "{{ res_def['image'] | default(omit) }}"
+    key_name: "{{ res_def['keypair'] }}"
+    api_timeout: 99999
+    timeout: 1200
+    auto_ip: "{{ res_def['auto_ip'] | default('yes') }}"
+    flavor: "{{ res_def['flavor'] }}"
+    nics:  "{{ res_def['networks'] | default(None) | os_net }}"
+    security_groups: "{{ res_def['security_groups'] | default(omit) }}"
+    userdata: "{{ res_def['userdata'] | default(omit) }}"
+    count: "{{ res_def['count'] }}"
+    boot_from_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
+    terminate_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
+    volume_size: "{{ res_def['volume_size'] | default(omit) }}"
+    boot_volume: "{{ res_def['boot_volume'] | default(omit) }}"
+    volumes: "{{ res_def['volumes'] | default(omit) }}"
+  register: res_def_output
+  when: not async and auth_var is defined
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os_server: "{{ topology_outputs_os_server + [res_def_output] }}"
+  when: not async and auth_var is defined
+
+- name: "provision/teardown os_server resources"
+  os_server2:
+    state: "{{ state }}"
+    name: "{{ os_resource_name }}"
+    image: "{{ res_def['image'] | default(omit) }}"
+    key_name: "{{ res_def['keypair'] }}"
+    api_timeout: 99999
+    timeout: 1200
+    auto_ip: "{{ res_def['auto_ip'] | default(omit) }}"
+    flavor: "{{ res_def['flavor'] }}"
+    nics:  "{{ res_def['networks'] | default(None) | os_net }}"
+    security_groups: "{{ res_def['security_groups'] | default(omit) }}"
+    userdata: "{{ res_def['userdata'] | default(omit) }}"
+    count: "{{ res_def['count'] }}"
+    boot_from_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
+    terminate_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
+    volume_size: "{{ res_def['volume_size'] | default(omit) }}"
+    boot_volume: "{{ res_def['boot_volume'] | default(omit) }}"
+    volumes: "{{ res_def['volumes'] | default(omit) }}"
+  register: res_def_output
+  when: not async and auth_var is not defined
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os_server: "{{ topology_outputs_os_server + [res_def_output] }}"
+  when: not async and auth_var is not defined and res_def_output['skipped'] is not defined
+
+- name: "Async:: provision/teardown os_server resources by looping on count"
+  os_server2:
+    state: "{{ state }}"
+    auth: "{{ auth_var | provide_default(omit) }}"
+    name: "{{ os_resource_name }}"
+    image: "{{ res_def['image'] | default(omit) }}"
+    key_name: "{{ res_def['keypair'] }}"
+    api_timeout: 99999
+    timeout: 1200
+    auto_ip: "{{ res_def['auto_ip'] | default(omit) }}"
+    flavor: "{{ res_def['flavor'] }}"
+    nics:  "{{ res_def['networks'] | default(None) | os_net }}"
+    security_groups: "{{ res_def['security_groups'] | default(omit) }}"
+    userdata: "{{ res_def['userdata'] | default(omit) }}"
+    count: "{{ res_def['count'] }}"
+    boot_from_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
+    terminate_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
+    volume_size: "{{ res_def['volume_size'] | default(omit) }}"
+    boot_volume: "{{ res_def['boot_volume'] | default(omit) }}"
+    volumes: "{{ res_def['volumes'] | default(omit) }}"
+  async: "{{ async_timeout | default(1000) }}"
+  poll: 0
+  register: res_def_output
+  when: async and auth_var is defined
+
+- name: "Async:: Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os_server: "{{ topology_outputs_os_server + [res_def_output] }}"
+  when: async and auth_var is defined and res_def_output['skipped'] is not defined
+
+- name: "Async:: Provision/teardown os_server resources by looping on count"
+  os_server2:
+    state: "{{ state }}"
+    name: "{{ os_resource_name }}"
+    image: "{{ res_def['image'] | default(omit) }}"
+    key_name: "{{ res_def['keypair'] }}"
+    api_timeout: 99999
+    timeout: 1200
+    auto_ip: "{{ res_def['auto_ip'] | default(omit) }}"
+    flavor: "{{ res_def['flavor'] }}"
+    nics:  "{{ res_def['networks'] | default(None) | os_net }}"
+    security_groups: "{{ res_def['security_groups'] | default(omit) }}"
+    userdata: "{{ res_def['userdata'] | default(omit) }}"
+    count: "{{ res_def['count'] }}"
+    boot_from_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
+    terminate_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
+    volume_size: "{{ res_def['volume_size'] | default(omit) }}"
+    boot_volume: "{{ res_def['boot_volume'] | default(omit) }}"
+    volumes: "{{ res_def['volumes'] | default(omit) }}"
+  async: "{{ async_timeout | default(1000) }}"
+  poll: 0
+  register: res_def_output
+  when: async and auth_var is not defined
+
+# following tasks saves the async job details
+- name: "Async:: save the job id"
+  set_fact:
+   topology_outputs_os_server: "{{ topology_outputs_os_server + [ res_def_output ] }}"
+  when: async and res_def_output['skipped'] is not defined
+

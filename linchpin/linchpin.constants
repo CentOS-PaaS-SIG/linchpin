@@ -1,0 +1,109 @@
+[DEFAULT]
+pkg = linchpin
+default_config_path = ~/.config/linchpin
+
+[lp]
+module_folder = library
+rundb_conn = {{ workspace }}/.rundb/rundb-::mac::.json
+
+rundb_type = TinyRunDB
+rundb_conn_type = file
+rundb_schema = {"action": "",
+                "inputs": [],
+                "outputs": [],
+                "cfgs": [],
+                "start": "",
+                "end": "",
+                "rc": 0,
+                "uhash": ""}
+rundb_hash = sha256
+rundb_uhash_length = 6
+
+dateformat = %%m/%%d/%%Y %%I:%%M:%%S %%p
+default_pinfile = PinFile
+
+external_providers_path = %(default_config_path)s/linchpin-x
+use_rundb_for_actions = False
+distill_data = False
+distill_on_error = False
+use_actual_rcs = False
+
+[evars]
+_check_mode = False
+_async = False
+async_timeout = 1000
+default_ssh_key_path = ~/.ssh
+
+
+# NOTE: if either of these change, the value in linchpin/templates must also change
+layouts_folder = layouts
+topologies_folder = topologies
+
+hooks_folder = hooks
+roles_folder = roles
+inventories_folder = inventories
+resources_folder = resources
+schemas_folder = schemas
+playbooks_folder = provision
+
+# inputs
+default_schemas_path = {{ lp_path }}/defaults/%(schemas_folder)s
+default_topologies_path = {{ lp_path }}/defaults/%(topologies_folder)s
+default_layouts_path = {{ lp_path }}/defaults/%(layouts_folder)s
+default_inventories_path = {{ lp_path }}/defaults/%(inventories_folder)s
+default_roles_path = {{ lp_path }}/%(playbooks_folder)s/%(roles_folder)s
+
+# default credentials data, this path doesn't automatically exist
+default_credentials_path = %(default_config_path)s
+
+# for 1.0.x compatibility
+enable_uhash = False
+generate_resources = True
+default_resources_path = {{ workspace }}/%(resources_folder)s
+
+#inventory_path = {{ workspace }}/{{inventories_folder}}/happy.inventory
+
+[init]
+source = templates/
+pinfile = PinFile
+
+[distiller]
+bkr_server = id,url,system,name
+dummy_node: hosts
+aws_ec2 = instances.id,instances.public_ip,instances.private_ip,instances.public_dns_name,instances.private_dns_name,instances.tags:name
+os_server = servers.id,servers.interface_ip,servers.name,servers.private_v4,servers.public_v4
+
+[logger]
+enable = True
+file = linchpin.log
+format = %%(levelname)s %%(asctime)s %%(message)s
+dateformat = %%m/%%d/%%Y %%I:%%M:%%S %%p
+level = logging.DEBUG
+
+[console]
+# DO NOT REMOVE. Placeholder only, cannot disable.
+enable = True
+# logging to the console should also be possible
+format = %%(message)s
+level = logging.INFO
+
+[hookstates]
+up = pre,post,inv
+inv = post
+destroy = pre,post
+
+[extensions]
+playbooks = .yml
+inventory = .inventory
+
+[ansible]
+console = False
+
+[states]
+# in future each state may have comma separated substates
+preup = preup
+predestroy = predestroy
+postup = postup
+postdestroy = postdestroy
+postinv = inventory
+

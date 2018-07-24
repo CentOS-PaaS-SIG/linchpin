@@ -1,19 +1,14 @@
 ---
 - name: "set local_image_path"
   set_fact:
-    local_image_path: "{{ libvirt_image_path }}"
-
-- name: "Inside copy image src "
-  debug:
-    msg: "{{ local_image_path  }}  {{ libvirt_image_path }}"
-
+    local_image_path: "{{ libvirt_image_path | expanduser }}"
 
 - name: "delegate_to localhost :ensure local_image_path directory exists"
   file:
     path: "{{ local_image_path }}"
     state: directory
     mode: 0755
-  become: yes
+  become: "{{ libvirt_become }}"
 
 - name: "set image_src_basename"
   set_fact:
@@ -21,7 +16,7 @@
 
 - name: "Register local_image_src absolute path"
   set_fact:
-    local_image_src: "{{ local_image_path }}{{ image_src_basename }}"
+    local_image_src: "{{ local_image_path }}/{{ image_src_basename }}"
 
 
 - name: "does a local copy of image_src exist?"
@@ -34,7 +29,7 @@
   get_url:
     url: "{{ res_def['image_src'] }}"
     dest: "{{ local_image_src }}"
-  become: yes
+  become: "{{ libvirt_become }}"
   when: lis_local.stat.exists == false
   ignore_errors: yes
 
@@ -43,14 +38,7 @@
   stat:
     path: "{{ local_image_src }}"
     mime: true
-  become: yes
-  register: lismt_local
-
-- name: "determine image_src mime_type"
-  stat:
-    path: "{{ local_image_src }}"
-    mime: true
-  become: yes
+  become: "{{ libvirt_become }}"
   register: lismt_local
 
 - name: "set image_src for uncompressed files"
@@ -81,13 +69,13 @@
 - name: "does img_src exist at local_image_path?"
   stat:
     path: "{{ img_src }}"
-  become: yes
+  become: "{{ libvirt_become }}"
   register: ismt
   when: lismt_local.stat.mimetype == "application/x-xz"
 
 - name: "uncompress xz local_image_src"
   command: "xz -d --keep --force {{ local_image_src }}"
-  become: yes
+  become: "{{ libvirt_become }}"
   when: lismt_local.stat.mimetype == "application/x-xz" and ismt.stat.exists == false
 
 - name: "cp img_src to match node name"
@@ -102,5 +90,5 @@
     - ["{{ img_src_ext }}"]
   loop_control:
     loop_var: img_item
-  become: yes
+  become: "{{ libvirt_become }}"
   #when: ismt.stat.exists == false (if there's an option at some point to reuse disk, this would be helpful)

@@ -3,7 +3,6 @@ import os
 
 from time import sleep
 from sys import stderr
-from json import dumps
 import xml.etree.ElementTree as eT
 from ansible.module_utils.basic import AnsibleModule
 
@@ -12,32 +11,28 @@ from bkr.common.hub import HubProxy
 from bkr.common.pyconfig import PyConfigParser
 
 
-BEAKER_CONF = \
-    (os.environ.get('BEAKER_CONF', '/etc/beaker/client.conf'))
-WAIT_TIME = 60
+BEAKER_CONF = os.environ.get('BEAKER_CONF', '/etc/beaker/client.conf')
+
+
+def _jprefix(job_ids):
+    return ["J:" + _id for _id in job_ids]
 
 
 class BeakerTargets(object):
-    def __init__(self, params={}, logger=None):
-        self.__dict__ = params.copy()
+    def __init__(self, params, logger=None):
+        # params from AnsibleModule argument_spec below
+        self.ids = params['ids']
+        provision_params = params['provision_params']
+
+        # Set wait methods from provision params, with reasonable defaults
+        self.wait_time = provision_params.get('attempt_wait_time', 60)
+        self.max_attempts = provision_params.get('max_attempts', 60)
+
+        # set up beaker connection
         self.conf = PyConfigParser()
         default_config = os.path.expanduser(BEAKER_CONF)
         self.conf.load_from_file(default_config)
         self.hub = HubProxy(logger=logger, conf=self.conf)
-
-    def _get_url(self, bkr_id):
-        """
-        Constructs the Beaker URL for the job related to the provided Beaker
-        ID. That ID should be all numeric, unless the structure of Beaker
-        changes in the future. If that's the case, then the ID should be
-        appropriately URL encoded to be appended to the end of a URL properly.
-        """
-        base = self.conf.get('HUB_URL', '')
-        if base == '':
-            raise Exception("Unable to construct URL")
-        if base[-1] != '/':
-            base += '/'
-        return base + 'jobs/' + bkr_id
 
     def get_system_statuses(self):
         """
@@ -45,45 +40,45 @@ class BeakerTargets(object):
         hostname once the jobs have reached their defined status.
         """
         attempts = 0
-        pass_count = 0
-        all_count = len(self.ids)
         while attempts < self.max_attempts:
-            job_results = self._check_jobs(self.ids)
+            job_results, all_count = self._check_jobs()
             pass_count = 0
-            for resource in job_results['resources']:
+            for resource in job_results:
                 result = resource['result']
                 status = resource['status']
                 print >> stderr, "status: %s, result: %s" % (status, result)
                 if status not in ['Cancelled', 'Aborted']:
-                    if (result == 'Pass' or
-                       (result == 'Warn' and self.skip_no_system)):
+                    if result == 'Pass':
                         pass_count += 1
                     elif result in ['Fail', 'Warn', 'Panic', 'Completed']:
                         raise Exception("System failed with state"
                                         " '{0}'".format(result))
                 elif status == 'Aborted':
-                    if result == 'Warn' and self.skip_no_system:
-                        pass_count += 1
-                    else:
-                        raise Exception("System aborted")
+                    raise Exception("System aborted")
                 elif status == 'Cancelled':
                     raise Exception("System canceled")
             attempts += 1
             if pass_count == all_count:
-                return job_results['resources']
-            sleep(WAIT_TIME)
-        raise Exception("{0} system(s) never completed in {1}"
-                        " polling attempts. {2}".format(all_count - pass_count,
-                                                        attempts,
-                                                        dumps(job_results)))
+                return job_results
+            sleep(self.wait_time)
 
+        # max attempts exceeded, cancel jobs and fail
+        for job_id in _jprefix(self.ids):
+            self.hub.taskactions.stop(job_id, 'cancel',
+                                      'Provision request timed out')
+        # Fail with error msg, include results from last attempt to include
+        # in topology outputs even if provisioning failed so a destroy still
+        # cancels jobs
+        msg = ("{0} system(s) never completed in {1} polling attempts, jobs "
+               "have been cancelled: {2}".format(
+                   all_count - pass_count, attempts, ', '.join(self.ids)))
+        raise Exception(msg, job_results)
 
-    def _check_jobs(self, ids):
+    def _check_jobs(self):
         """
             Get state of a job in Beaker
         """
-        jobs = ["J:" + _id for _id in ids]
-        results = {}
+        jobs = _jprefix(self.ids)
         resources = []
         bkrcmd = BeakerCommand('BeakerCommand')
         bkrcmd.check_taskspec_args(jobs)
@@ -91,12 +86,7 @@ class BeakerTargets(object):
             myxml = self.hub.taskactions.to_xml(task)
             myxml = myxml.encode('utf8')
             root = eT.fromstring(myxml)
-            # TODO: Using getiterator() since its backward compatible
-            # with Python 2.6
-            # This is deprectated in 2.7 and we should be using iter()
-            for job in root.getiterator('job'):
-                results.update({'job_id': job.get('id'),
-                                'results': job.get('result')})
+            # Using getiterator() since its backward compatible with py26
             for recipe in root.getiterator('recipe'):
                 resources.append({'family': recipe.get('family'),
                                   'distro': recipe.get('distro'),
@@ -106,22 +96,29 @@ class BeakerTargets(object):
                                   'status': recipe.get('status'),
                                   'result': recipe.get('result'),
                                   'id': recipe.get('job_id')})
-                results.update({'resources': resources})
-        return results
+        return resources, len(resources)
 
 
 def main():
     mod = AnsibleModule(argument_spec={
-        'ids': {'type': 'list'},
-        'skip_no_system': {'type': 'bool', 'default': False},
-        'max_attempts': {'type': 'int', 'default': 60}
+        'ids': {'type': 'dict'},
+        'provision_params': {'type': 'dict'},
     })
     beaker = BeakerTargets(mod.params)
     try:
+        if len(beaker.ids) > 1:
+            mod.warn('When using multiple resource_definitions for beaker '
+                     'resources, only the provisioning parameters '
+                     '(max_attempts, attempt_wait_time) from the first '
+                     'resource_definition will be used. Consider using a '
+                     'single resource_definition with multiple recipes or '
+                     'recipesets instead.')
         results = beaker.get_system_statuses()
-        mod.exit_json(hosts=results, changed=True, success=True)
+        mod.exit_json(hosts=results, changed=True)
     except Exception as ex:
-        mod.fail_json(msg=str(ex))
+        msg = ": For more details please check jobs on beaker"
+        msg = str(ex) + msg
+        mod.fail_json(msg=msg, changed=True)
 
 
 # import module snippets

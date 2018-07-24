@@ -1,0 +1,77 @@
+---
+# run roles based on certain params
+skip_prereqs: false
+force_minishift_install: false
+setup_minishift: true
+start_minishift: true
+force_repo_clone: true
+setup_jenkins: true
+setup_fedmsg: true
+setup_containers: true
+
+# default location for minishift
+minishift_dest_dir: "{{ ansible_env.HOME }}/minishift"
+
+# default minishift profile name
+profile: minishift
+
+# disk and memory size
+disk_size: 40gb
+memory: 6400mb
+
+# base device size
+# for rootfs in pods
+basedevice_size: 20G
+
+# minishift iso location
+minishift_iso: http://artifacts.ci.centos.org/fedora-atomic/minishift/iso/minishift.iso
+
+# repo to clone
+pipeline_repo: https://github.com/CentOS-PaaS-SIG/linchpin
+
+# repo directory
+pipeline_dir: "{{ ansible_env.HOME }}/minishift/linchpin"
+
+# repo refspec
+pipeline_refspec: '+refs/pull/*:refs/heads/*'
+
+# repo branch or sha
+pipeline_branch: 'develop'
+
+# cluster username
+username: developer
+
+# cluster password
+password: developer
+
+# cluster admin username
+admin_username: system
+
+# cluster admin password
+admin_password: admin
+
+# project for openshift
+project: continuous-infra
+
+# Jenkins infra buildconfig templates:
+jenkins_bc_templates:
+  - jenkins/jenkins-persistent
+  - jenkins/jenkins-continuous-infra-slave
+
+# Pipeline container buildconfig templates:
+pipeline_bc_templates:
+  - distros/fedora26
+  - distros/fedora27
+  - distros/centos7
+  - distros/centos6
+
+fedmsg_bc_templates: ''
+
+# modify tags on images
+modify_tags: true
+
+# tag to use
+tag: stable
+
+# modify security context contraints (SCC) to run privileged containers
+modify_scc: true

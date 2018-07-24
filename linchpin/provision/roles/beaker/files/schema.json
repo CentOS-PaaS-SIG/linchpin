@@ -1,0 +1,89 @@
+{
+    "res_defs": {
+        "type": "list",
+        "schema": {
+            "type": "dict",
+            "schema": {
+                "role": {
+                    "type": "string",
+                    "required": true,
+                    "allowed": ["bkr_server"]
+                },
+                "whiteboard": { "type": "string", "required": false },
+                "job_group": { "type": "string", "required": false },
+                "cancel_message": { "type": "string", "required": false },
+                "max_attempts": { "type": "integer", "required": false },
+                "attempt_wait_time": { "type": "integer", "required": false },
+                "recipesets": {
+                    "type": "list",
+                    "schema": {
+                         "anyof": [{
+                             "type": "dict",
+                             "schema": {
+                                "distro": { "type": "string", "required": true },
+                                "name": { "type": "string", "required": false },
+                                "method": { "type": "string", "required": false },
+                                "arch": { "type": "string", "required": false },
+                                "variant": { "type": "string", "required": false },
+                                "taskparam": {
+                                    "type": "list",
+                                    "required": false,
+                                    "schema": { "type": "string", "required": true }
+                                },
+				"tasks": {
+				    "type": "list",
+				    "required": false,
+				    "schema": {
+                                        "anyof": [{
+                                            "type": "dict",
+                                            "schema": {
+                                                "arches": { "type": "list", "required": false },
+                                                "name": { "type": "string", "required": true }
+                                            }
+                                        }
+                                       ]
+                                    }
+
+				},
+                                "keyvalue": {
+                                    "type": "list",
+                                    "required": false,
+                                    "schema": { "type": "string", "required": true }
+                                },
+                                "hostrequires": {
+                                    "type": "list",
+                                    "schema": {
+                                        "anyof": [{
+                                            "type": "dict",
+                                            "schema": {
+                                                "tag": { "type": "string", "required": true },
+                                                "op": { "type": "string", "required": false },
+                                                "value": { "type": ["integer", "string"], "required": false },
+                                                "type": { "type": "string", "required": false }
+                                            }
+                                        },
+                                        {
+                                            "type": "dict",
+                                            "schema": {
+                                                "force": { "type": "string", "required": true }
+                                            }
+                                        }]
+                                    }
+                                },
+                                "bkr_data": { "type": "string", "required": false },
+                                "name": { "type": "string", "required": false },
+                                "count": { "type": "integer", "required": false },
+                                "ids": {
+                                    "type": "list",
+                                    "required": false,
+                                    "schema": { "type": "string", "required": true }
+                                }
+                             }
+                         }]
+                    }
+                }
+            }
+        }
+    }
+}
+

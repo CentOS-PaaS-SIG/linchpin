@@ -1,7 +1,7 @@
 ---
 - name: "Set os_res_type value"
   set_fact:
-    os_res_type: "{{ res_def['type'] | default(res_def['res_type']) }}"
+    os_res_type: "{{ res_def['role'] }}"
   when: async
 
 - name: "Add resource type to async_types"
@@ -11,12 +11,21 @@
 
 - name: "Get the resource name"
   set_fact:
-    rsrc_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+    os_resource_name: "{{ res_def['name'] }}"
 
 - name: "Create name using uhash value"
   set_fact:
-    os_resource_name: "{{ rsrc_name + '-' + uhash + '-' }}"
+    os_resource_name: "{{ os_resource_name + '-' + uhash + '-' }}"
+  when: enable_uhash
 
-- name: "provision/teardown resources of type {{ res_def['res_type'] | default(res_def['type']) }}"
-  include: "provision_{{ res_def['res_type'] | default(res_def['type']) }}.yml"
+- name: "provision/teardown resources }}"
+  include: "provision_{{ res_def['role'] }}.yml"
+  when: res_def['role'] != 'os_server'
 
+- name: "provision/teardown resources }}"
+  include: "provision_os_server.yml"
+  when: res_def['role'] == 'os_server' and res_def['auto_ip'] is not defined
+
+- name: "provision/teardown resources }}"
+  include: "provision_os_server-auto_ip.yml"
+  when: res_def['role'] == 'os_server' and res_def['auto_ip'] is defined

@@ -1,0 +1,17 @@
+---
+topology_name: rax-new
+resource_groups:
+  - resource_group_name: "testgroup1"
+    resource_group_type: "rackspace"
+    resource_definitions:
+      - role: rax_server
+        name: server
+        flavor: 2
+        image: b7486124-ea63-4247-9f24-e4c089dd3e97
+        region: DFW
+        count: 1
+        networks:
+          - public
+          - private
+    credentials:
+      filename: auth.json

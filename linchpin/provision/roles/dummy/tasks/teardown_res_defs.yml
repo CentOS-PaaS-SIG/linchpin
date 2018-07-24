@@ -1,11 +1,12 @@
 ---
 - name: "Get the resource name"
   set_fact:
-    resource_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+    dummy_name: "{{ res_def['name'] }}"
 
 - name: "Assign dummy name using uhash value"
   set_fact:
-    dummy_name: "{{ resource_name + '-' + uhash }}"
+    dummy_name: "{{ dummy_name + '-' + uhash }}"
+  when: enable_uhash
 
 - name: "Teardown dummy resources by looping on count"
   dummy:
@@ -13,7 +14,6 @@
     name: "{{ dummy_name }}"
     count: "{{ res_def['count'] | default(1) }}"
   register: outputitem
-  when: res_def['type']=="dummy_node"
 
 - name: "set tmp var"
   set_fact:
