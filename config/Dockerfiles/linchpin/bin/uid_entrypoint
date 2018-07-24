@@ -2,6 +2,7 @@
 if ! whoami &> /dev/null; then
   if [ -w /etc/passwd ]; then
     echo "${USERNAME:-linchpin}:x:$(id -u):0:${USERNAME:-linchpin} user:${HOME}:/sbin/nologin" >> /etc/passwd
+    whoami
   fi
 fi
 exec "$@"
