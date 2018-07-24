@@ -1,5 +1,4 @@
 #!/bin/sh
 id
-whoami
-linchpin -c /etc/linchpin.conf -vvvp PinFile.dummy.yml -w /workdir up dummy-topo"
+linchpin -c /etc/linchpin.conf -vvvp PinFile.dummy.yml -w /workdir up dummy-topo
 
