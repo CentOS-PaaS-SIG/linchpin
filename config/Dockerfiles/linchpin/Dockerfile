@@ -63,4 +63,4 @@ WORKDIR ${HOME}
 ### user name recognition at runtime w/ an arbitrary uid - for OpenShift deployments
 ENTRYPOINT [ "uid_entrypoint" ]
 
-CMD run
+CMD [ "run" ]
