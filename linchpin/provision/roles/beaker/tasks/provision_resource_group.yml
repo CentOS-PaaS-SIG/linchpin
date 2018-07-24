@@ -27,7 +27,7 @@
 
 - name: "set bkr_names"
   set_fact:
-      bkr_names: "{{ bkr_names | default([]) }} + {{ [{'name': brs['name']}] }}"
+      bkr_names: "{{ bkr_names | default([]) }} + {{ [{'name': brs['name'] | default(ansible_date_time.iso8601_micro | to_uuid)}] }}"
   with_items: "{{ bkr_rsets }}"
   loop_control:
     loop_var: brs
