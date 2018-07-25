@@ -1,0 +1,3 @@
+#!/bin/sh
+id
+exec tail -f /dev/null

@@ -2,3 +2,7 @@
 dummy-new:
   topology: dummy-new.yml
   layout: dummy-new.yml
+
+dummy-topo:
+  topology: dummy-new.yml
+  layout: dummy.yml
