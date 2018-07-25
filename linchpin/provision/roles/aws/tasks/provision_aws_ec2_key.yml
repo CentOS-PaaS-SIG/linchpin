@@ -7,6 +7,7 @@
     state: "{{ state }}"
     wait: "yes"
   register: res_def_output
+  no_log: true
 
 - name: "Generate keyfile "
   copy: 
