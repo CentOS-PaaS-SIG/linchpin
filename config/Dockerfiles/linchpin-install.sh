@@ -13,7 +13,7 @@ pip install .[libvirt]
 pip install .[beaker]
 
 # If duffy.key is available then install duffy ansible module.
-if [ -e "keys/duffy" ]; then
+if [ -e "keys/duffy.key" ]; then
     # duffy key needs to be in home dir by default
     #cp duffy ~/duffy,key
 
