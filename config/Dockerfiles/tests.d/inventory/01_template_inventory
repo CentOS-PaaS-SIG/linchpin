@@ -53,7 +53,9 @@ INVENTORY_FILE="./inventories/${TARGET}-${uhash}.inventory"
 ls -l ${INVENTORY_FILE}
 grep ${VAL2CHECK} ${INVENTORY_FILE} | grep ${VALUE}
 
-if [ ${RC0} -eq 0 ]; then
+RC1=${?}
+
+if [ ${RC0} -eq 0 ] && [ ${RC1} -eq 0 ]; then
     exit 0
 else
     exit 1
