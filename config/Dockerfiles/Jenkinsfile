@@ -34,7 +34,7 @@ OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
 executionID = UUID.randomUUID().toString()
 
 // Pod name to use
-podName = 'linchpin' + executionID
+podName = 'linchpin_container-' + executionID
 
 library identifier: "ci-pipeline@master",
         retriever: modernSCM([$class: 'GitSCMSource',
@@ -184,9 +184,9 @@ podTemplate(name: podName,
                                 withCredentials([file(credentialsId: provider + '-key', variable: 'FILEKEY')]) {
                                 sh """
                                     #!/bin/bash -x
-                                    mkdir -p keys/${provider}
-                                    cp ${FILEKEY} keys/${provider}/${cf.fileName}
-                                    chmod 0600 keys/${provider}/${cf.fileName}
+                                    mkdir -p keys/
+                                    cp ${FILEKEY} keys/${cf.fileName}
+                                    chmod 0600 keys/${cf.fileName}
                                 """
                                 }
                               }
