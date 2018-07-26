@@ -80,6 +80,20 @@ function set_providers () {
 summary=''
 result=0
 #
+
+export CREDS_PATH="$base_dir/keys"
+pushd "${CREDS_PATH}"
+for provider in ${PROVIDERS}; do
+    # If CREDS_PATH provides a tarball extract it and
+    # run it's install script
+    if [ -e "$CREDS_PATH/${provider}.tgz" ]; then
+        tmpdir=$(mktemp -d)
+        tar xvf $CREDS_PATH/${provider}.tgz -C $tmpdir
+        $tmpdir/install.sh
+    fi
+done
+popd
+
 #    # run generic tests by passing in the provider and distro
 #    # should be enough to test the 'basic' provision/teardown
 
@@ -92,14 +106,6 @@ for testdir in *; do
             if [ ! $(check_distro_exclude "${test}") ]; then
                 set_providers "${test}"
                 for provider in ${providers}; do
-                    export CREDS_PATH="$base_dir/keys/${provider}"
-                    # If CREDS_PATH provides a tarball extract it and
-                    # run it's install script
-                    if [ -e "$CREDS_PATH/${provider}.tgz" ]; then
-                        tmpdir=$(mktemp -d)
-                        tar xvf $CREDS_PATH/${provider}.tgz -C $tmpdir
-                        $tmpdir/install.sh
-                    fi
 
                     tname="${provider}/${test}"
                     testname=${distro}/${tname}
