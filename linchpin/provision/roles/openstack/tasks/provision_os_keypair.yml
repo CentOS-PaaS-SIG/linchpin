@@ -20,6 +20,7 @@
     content: "{{ res_def_output['key']['private_key'] }}"
     dest: "{{ keystore_path }}/{{ res_def['res_name'] | default(res_def['name']) }}.key"
   when: state=="present" and res_def_output['changed'] == true and not async
+  no_log: true
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
@@ -59,6 +60,7 @@
     content: "{{ job_result['key']['private_key'] }}"
     dest: "{{ keystore_path }}/{{ res_def['res_name'] | default(res_def['name']) }}.key"
   when: state=="present" and res_def_output['changed'] == true and async
+  no_log: true
 
 - name: "Async:: save the job id"
   set_fact:
