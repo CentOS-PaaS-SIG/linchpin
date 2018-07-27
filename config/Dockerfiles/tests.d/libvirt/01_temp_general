@@ -1,9 +1,12 @@
 #!/bin/bash -xe
 
 # Verify basic provisioning for all supplied providers
-# distros.exclude: none
-# providers.include: none
-# providers.exclude: libvirt
+# distros.exclude: fedora26 centos7 fedora28
+# providers.include: libvirt
+# providers.exclude: none
+
+## NOTE: This is a temporary test to run libvirt tests until we fix
+## the networking race condition. Tests will only run on centos7.
 
 DISTRO=${1}
 PROVIDER=${2}
@@ -15,21 +18,7 @@ DESCRIPTION="Test ${PROVIDER} provider with a simple up/destroy"
 echo "Test Name: ${TEST_NAME}"
 echo "${DESCRIPTION}"
 
-
-
-if [ "${PROVIDER}" == "libvirt" ]; then
-    TARGETS="libvirt-new" #libvirt-network"
-elif [ "${PROVIDER}" == "openstack" ]; then
-    TARGETS="os-server-new os-sg-new" #os-vol-new 
-elif [ "${PROVIDER}" == "aws" ]; then
-    TARGETS="aws-ec2-new" #aws-sg-new aws-s3-new aws-ec2-key-new
-elif [ "${PROVIDER}" == "beaker" ]; then
-    TARGETS="beaker-new"
-elif [ "${PROVIDER}" == "duffy" ]; then
-    TARGETS="duffy-new"
-else
-    TARGETS="dummy-new"
-fi
+TARGETS="libvirt-new"
 
 pushd docs/source/examples/workspace
 
