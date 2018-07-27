@@ -7,7 +7,17 @@ LinchPin is a simple and flexible hybrid cloud orchestration tool. Its intended 
 
 Additionally, LinchPin provides a Python API for managing resources. The cloud management component is backed by `Ansible <https://ansible.com>`_. The front-end API manages the interface between the command line (or other interfaces) and calls to the Ansible API.
 
-This documentation covers the current released version of LinchPin (|version|). For recent features, we attempt to note in each section the version of LinchPin where the feature was added.
+This documentation covers LinchPin version (|release|). For recent features, see the updated |link-pre|\ |version|\ |link-post|.
+
+.. note:: Releases are formatted using `semanting versioning <https://semver.org>`_. If the release shown above is a pre-release version, the content listed may not be supported. Use `latest </en/latest>`_ for the most up-to-date documentation.
+
+.. |link-pre| raw:: html
+
+    <a href="https://github.com/CentOS-PaaS-SIG/linchpin/releases/tag/v
+
+.. |link-post| raw:: html
+
+    ">release notes</a>
 
 
 .. toctree::
