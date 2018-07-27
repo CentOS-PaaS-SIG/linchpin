@@ -1,8 +1,33 @@
+---
+
+- name: "Provision ovirt_disk resources"
+  ovirt_disks:
+    state: "{{ state }}"
+    auth: "{{ ovirt_auth }}"
+    name: "{{ ovirt_resource_name }}-{{ disk_item['name'] }}"
+    size: "{{ disk_item['size'] }}"
+    format: "{{ disk_item['format'] }}"
+    storage_domain: "{{ disk_item['storage_domain'] }}"
+    interface: "{{ disk_item['interface'] | default(omit) }}"
+  with_items: "{{ res_def['disks'] | default([]) }}"
+  loop_control:
+    loop_var: disk_item
+  register: disk
+
+- set_fact:
+    disks: []
+    
+- set_fact:
+    disks: "{{ disks | default([]) }} + {{ [{ 'name': disks_item['disk']['alias'] }] }}"
+  with_items: "{{ disk.results }}"
+  loop_control:
+    loop_var: disks_item
+    
 - name: "Provision/deprovision ovirt_vms resources"
   ovirt_vms:
     state: "{{ state }}"
     auth: "{{ ovirt_auth }}"
-    name: "{{ res_grp_name }}_{{ res_def['res_name'] }}"
+    name: "{{ ovirt_resource_name }}"
     template: "{{ res_def['template'] | default(omit) }}"
     cluster: "{{ res_def['cluster'] }}"
     memory: "{{ res_def['memory'] | default(omit) }}"
@@ -16,23 +41,59 @@
     cd_iso: "{{ res_def['cd_iso'] | default(omit) }}"
     type: "{{ res_def['type'] | default(omit) }}"
     operating_system: "{{ res_def['operating_system'] | default(omit) }}"
-    disks: "{{ res_def['disks'] | default(omit) }}"
+    disks: "{{ disks | default(omit) }}"
     nics: "{{ res_def['nics'] | default(omit) }}"
+    fetch_nested: true
+    nested_attributes: ips
+  when: not async
+
+# If the machine isn't powered on and the guest agent has not reported the
+# IP address fetch_nested will not be able to retrieve the nested_attributes: ips
+# - After the machine has been created start the vm
+# - Wait for an IPv4 address
+# - Use ovirt_vms to fetch variables
+  
+- name: "Start Ovirt VMs"
+  ovirt_vms:
+    state: "running"
+    auth: "{{ ovirt_auth }}"
+    name: "{{ ovirt_resource_name }}"
+  when: not async
+  
+- name: Wait for IPv4 address
+  ovirt_nics_facts:
+    auth: "{{ ovirt_auth }}"
+    vm: "{{ ovirt_resource_name }}"
+    name: "nic1"
+  register: nics
+  when: not async
+  until: 
+    - ovirt_nics | length > 0
+    - ovirt_nics[0].reported_devices | length > 0
+    - ovirt_nics[0].reported_devices[0].ips | selectattr('version', 'match', 'v4') | list | length > 0
+  retries: 12
+  delay: 30
+  
+- name: "Retrieve Nested Attributes for Ovirt VM"
+  ovirt_vms:
+    state: "{{ state }}"
+    auth: "{{ ovirt_auth }}"
+    name: "{{ ovirt_resource_name }}"
     fetch_nested: true
     nested_attributes: ips
   when: not async
   register: res_def_output
-
+    
 - name: "Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_ovirt_vms: "{{ topology_outputs_ovirt_vms + [res_def_output] }}"
+    topology_outputs_ovirt_vms: "{{ topology_outputs_ovirt_vms + [ res_def_output ] }}"
   when: not async
 
 - name: "Provision/deprovision ovirt_vms resources"
   ovirt_vms:
     state: "{{ state }}"
     auth: "{{ ovirt_auth }}"
-    name: "{{ res_grp_name }}_{{ res_def['res_name'] }}"
+    name: "{{ ovirt_resource_name }}"
     template: "{{ res_def['template'] | default(omit) }}"
     cluster: "{{ res_def['cluster'] }}"
     memory: "{{ res_def['memory'] | default(omit) }}"
@@ -46,15 +107,14 @@
     cd_iso: "{{ res_def['cd_iso'] | default(omit) }}"
     type: "{{ res_def['type'] | default(omit) }}"
     operating_system: "{{ res_def['operating_system'] | default(omit) }}"
-    disks: "{{ res_def['disks'] | default(omit) }}"
+    disks: "{{ disks | default(omit) }}"
     nics: "{{ res_def['nics'] | default(omit) }}"
     fetch_nested: true
     nested_attributes: ips
-  when: async == false
+  when: async
   async: "{{ async_timeout | default(1000) }}"
   poll: 0
   register: res_def_output
-  when: async
 
 # following tasks saves the async job details
 - name: "Async:: save the job id"
