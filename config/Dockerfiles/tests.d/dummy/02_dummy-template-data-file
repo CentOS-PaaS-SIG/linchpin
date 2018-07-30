@@ -10,7 +10,7 @@ PROVIDER=${2}
 
 PINFILE="PinFile.${PROVIDER}.yml"
 TARGET="dummy-new"
-TEMPLATE_FILE="./dummy-data.yml"
+TEMPLATE_FILE=$(mktemp)
 
 function clean_up {
     set +e
