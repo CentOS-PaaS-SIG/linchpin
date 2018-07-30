@@ -76,8 +76,29 @@
                         "allowed": ["libvirt_storage"] },
                     "name": { "type": "string", "required": true },
                     "uri": { "type": "string", "required": false },
-                    "size": { "type": "integer", "required": true },
-                    "path": { "type": "integer", "required": true }
+                    "size": { "type": "integer", "required": false },
+                    "unit": { "type": "string", "requited": false,
+                        "allowed": ["KiB", "MiB", "GiB"]},
+                    "type": { "type": "string", "required": true,
+                        "allowed": [
+                            "dir", "fs", "netfs", "logical", "disk", "iscsi", "scsi",
+                            "mpath", "rbd", "sheepdog", "gluster", "zfs", "vstorage"]},
+                    "path": { "type": "string", "required": true },
+                    "device_path": { "type": "string", "required": false },
+                    "host_name": { "type": "string", "required": false },
+                    "port": { "type": "integer", "required": false },
+                    "dir_path": { "type": "string", "required": false },
+                    "source_format_type": { "type": "string", "required": false },
+                    "adapter_name": { "type": "string", "required": false },
+                    "auth_username": { "type": "string", "required": false },
+                    "auth_type": { "type": "string", "required": false },
+                    "secret_uuid": { "type": "string", "required": false },
+                    "capacity": { "type": "integer", "required": false },
+                    "capacity_unit": { "type": "string", "required", false },
+                    "allocation": { "type": "integer", "required": false },
+                    "allocation_unit": { "type": "string", "required": false },
+                    "target_format_type": { "type": "string", "required": false },
+                    "mode": { "type": "string", "required": false }
                 }
             }]
         }
