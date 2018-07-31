@@ -1,8 +1,9 @@
 from tinydb import TinyDB
 from tinydb.storages import JSONStorage
 from tinydb.operations import add
+from tinydb.operations import set as tinySet
 from tinydb.middlewares import CachingMiddleware
-
+from collections import defaultdict
 from .basedb import BaseDB
 
 
@@ -56,6 +57,14 @@ class TinyRunDB(BaseDB):
     @usedb
     def update_record(self, table, run_id, key, value):
         t = self.db.table(name=table)
+        tx_rec = t.get(eid=run_id).get("outputs", [])
+        if len(tx_rec) > 0 and isinstance(value, list):
+            if "resources" in tx_rec[0] and "resources" in value[0]:
+                de = defaultdict(list, tx_rec[0]["resources"])
+                for i, j in value[0]["resources"].items():
+                    de[i].extend(j)
+                de = {"resources": de}
+                return t.update(tinySet(key, [de]), eids=[run_id])
         return t.update(add(key, value), eids=[run_id])
 
 
