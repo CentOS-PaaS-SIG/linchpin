@@ -59,12 +59,19 @@ class TinyRunDB(BaseDB):
         t = self.db.table(name=table)
         tx_rec = t.get(eid=run_id).get("outputs", [])
         if len(tx_rec) > 0 and isinstance(value, list):
-            if "resources" in tx_rec[0] and "resources" in value[0]:
-                de = defaultdict(list, tx_rec[0]["resources"])
-                for i, j in value[0]["resources"].items():
-                    de[i].extend(j)
-                de = {"resources": de}
-                return t.update(tinySet(key, [de]), eids=[run_id])
+            # fetch the resources dict, index by filtering them from outputs list
+            res_list = [(idx, x) for idx, x in enumerate(tx_rec)
+                        if "resources" in x]
+            if len(res_list) != 0:
+                res_idx = res_list[0][0]
+                resources = res_list[0][1]
+                if "resources" in value[0]:
+                    de = defaultdict(list, resources["resources"])
+                    for i, j in value[0]["resources"].items():
+                        de[i].extend(j)
+                    de = {"resources": de}
+                    tx_rec[res_idx] = de
+                    return t.update(tinySet(key, [de]), eids=[run_id])
         return t.update(add(key, value), eids=[run_id])
 
 
