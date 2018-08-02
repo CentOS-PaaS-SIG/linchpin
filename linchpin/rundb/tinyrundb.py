@@ -59,7 +59,8 @@ class TinyRunDB(BaseDB):
         t = self.db.table(name=table)
         tx_rec = t.get(eid=run_id).get("outputs", [])
         if len(tx_rec) > 0 and isinstance(value, list):
-            # fetch the resources dict, index by filtering them from outputs list
+            # fetch the resources dict, index
+            # by filtering them from outputs list
             res_list = [(idx, x) for idx, x in enumerate(tx_rec)
                         if "resources" in x]
             if len(res_list) != 0:
