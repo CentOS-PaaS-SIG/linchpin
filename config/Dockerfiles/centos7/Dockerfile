@@ -26,7 +26,7 @@ RUN yum -y install python-pip \
     #pip install -U 'requests>=2.14.2'; \
     #pip install -U 'PyYAML>=3.12'; \
     #pip uninstall -y urllib3; \
-    #yum -y install virt-install \
+    yum -y install virt-install \
     #echo 'pip freeze | grep requests'; \
     #pip freeze | grep requests; \
     (cd /lib/systemd/system/sysinit.target.wants/; for i in *; \
