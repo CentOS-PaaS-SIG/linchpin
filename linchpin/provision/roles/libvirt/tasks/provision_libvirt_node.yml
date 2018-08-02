@@ -234,6 +234,35 @@
   delegate_to: "{{ uri_hostname }}"
   when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init"
 
+- name: "Install VM"
+  command: "virt-install --connect {{ definition[6] }} --import --name {{ definition[0] }}_{{ definition[7] }} --autostart --network bridge={{ definition[3] }},model=virtio --ram {{ definition[4] }} --disk path={{ definition[1] }}/{{ definition[0] }}_{{ definition[7] }}.{{ definition[2] }},format={{ definition[5] }},bus=virtio,cache=none --disk path=/tmp/vm-{{ definition[0] }}_{{ definition[7] }}.iso,device=cdrom --wait 10 --os-type=linux --nographics"
+  with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ libvirt_image_path | expanduser }}"]
+    - ["{{ img_src_ext }}"]
+    - ["{{ res_def['network_bridge'] | default('virbr0')  }}"]
+    - ["{{ res_def['memory'] | default(1024)  }}"]
+    - ["{{ res_def['format'] | default('qcow2')  }}"]
+    - ["{{ res_def['uri'] }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: definition
+  ignore_errors: yes
+  become: "{{ libvirt_become }}"
+  when: node_exists['failed'] is defined and res_def['cloud_config'] is defined
+
+
+- name: "Remove cloud-init cdrom "
+  command: virsh -c {{ definition[1] }} change-media {{ definition[0] }}_{{ definition[2] }} hda --eject --config
+  with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ res_def['uri'] }}"]
+    - "{{ res_count.stdout }}"
+  loop_control:
+    loop_var: definition
+  ignore_errors: yes
+  when: node_exists['failed'] is defined and res_def['cloud_config'] is defined
+
 - name: "define node when the cloud_config not defined"
   virt:
     name: "{{ libvirt_resource_name }}"
@@ -251,6 +280,18 @@
   when: node_exists['failed'] is defined
   ignore_errors: yes
 
+- name: "Create disk if it does not exist"
+  command: "qemu-img create -f qcow2 {{ libvirt_image_path }}/{{ libvirt_resource_name }}-{{ definition[1]['name'] }}.img {{ definition[1]['size'] }}{{ definition[1]['units'] }}"
+  with_nested:
+    - ["{{ res_def['name'] }}"]
+    - ["{{ res_def['storage'] }}"]
+  loop_control:
+    loop_var: definition
+  when:
+    - res_def['storage'] is defined
+    - definition[1].source is not defined
+  become: "{{ libvirt_become }}"
+
 - name: "Start VM"
   virt:
     name: "{{ definition[0] }}_{{ definition[2] }}"
@@ -262,7 +303,7 @@
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: definition
-  ignore_errors: yes
+  ignore_errors: no
 
 - name: "mac_and_ip | extract mac address"
   shell: >
