@@ -45,6 +45,8 @@ class GenericInventory(InventoryFilter):
         layout_host_count = self.get_layout_hosts(layout)
         # generate hosts list based on the layout host count
         inven_hosts = self.get_hosts_by_count(host_ip_dict, layout_host_count)
+        # reverse the hosts list
+        inven_hosts.reverse()
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)
 
