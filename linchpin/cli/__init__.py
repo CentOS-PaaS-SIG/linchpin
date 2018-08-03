@@ -405,6 +405,46 @@ class LinchpinCli(LinchpinAPI):
 
 
 
+    def lp_validate(self, targets=(), old_schema=False):
+        """
+        This function takes a list of targets, and validates their topology.
+
+        :param targets:
+            A tuple of targets to provision
+
+        :param old_schema
+            Denotes whether schema should be validated with the old schema
+            rather than the new one!/usr/bin/env python
+        """
+
+        # Prep input data
+
+        pf_w_path = self._get_pinfile_path()
+        pf_data_path = self._get_data_path()
+        if not pf_data_path:
+            pf = self.parser.process(pf_w_path, data=self.pf_data)
+        else:
+            pf = self.parser.process(pf_w_path,
+                                     data='@{0}'.format(pf_data_path))
+
+        if pf:
+            provision_data = self._build(pf, pf_data=self.pf_data)
+
+            pf_outfile = self.get_cfg('tmp', 'outfile')
+            if pf_outfile:
+                self.parser.write_json(provision_data, pf_outfile)
+
+        prov_data = OrderedDict()
+
+        if len(targets):
+            for target in targets:
+                prov_data[target] = provision_data.get(target)
+        else:
+            prov_data = provision_data
+
+        return self.do_validation(prov_data, old_schema=old_schema)
+
+
     def lp_destroy(self, targets=(), run_id=None, tx_id=None):
 
         """
@@ -488,6 +528,7 @@ class LinchpinCli(LinchpinAPI):
                 pf_outfile = self.get_cfg('tmp', 'outfile')
                 if pf_outfile:
                     self.parser.write_json(provision_data, pf_outfile)
+
 
             return_code, return_data = self._execute(provision_data,
                                                      targets,

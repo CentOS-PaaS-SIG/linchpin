@@ -31,9 +31,12 @@
                         "type": "list",
                         "required": false,
                         "schema": {
-                           "name": { "type": "string", "required": true },
-                           "ip": { "type": "string", "required": false },
-                           "mac": { "type": "string", "required": false }
+                            "type": "dict",
+                            "schema": {
+                                "name": { "type": "string", "required": true },
+                                "ip": { "type": "string", "required": false },
+                                "mac": { "type": "string", "required": false }
+                            }
                         }
                     },
                     "storage": {
