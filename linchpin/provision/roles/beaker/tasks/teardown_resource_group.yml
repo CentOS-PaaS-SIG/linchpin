@@ -9,9 +9,24 @@
   register: topo_output
   when: not generate_resources
 
+- name: Filter list for resources
+  set_fact:
+    topo_output_resources: "{{ topo_output.output | filter_list_by_attr('resources') }}"
+  when: not generate_resources
+
+- name: debug
+  debug:
+    msg: "{{ topo_output }}"
+  when: not generate_resources
+
+- name: debug
+  debug:
+    msg: "{{ topo_output_resources }}"
+  when: not generate_resources
+
 - name: "set topo_output_resources fact"
   set_fact:
-    topo_output_resources: "{{ topo_output.output[0]['resources'] }}"
+    topo_output_resources: "{{ topo_output_resources[0]['resources'] }}"
   when: not generate_resources
 
 - name: "Get topology output data resources file"
