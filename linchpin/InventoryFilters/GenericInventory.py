@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 
-import StringIO
-
 from InventoryFilter import InventoryFilter
 from InventoryProviders import get_all_drivers
+from InventoryProviders import get_inv_formatter
 
 
 class GenericInventory(InventoryFilter):
 
-    def __init__(self):
+    def __init__(self, inv_format="cfg"):
         InventoryFilter.__init__(self)
         self.filter_classes = get_all_drivers()
+        self.inv_formatter = get_inv_formatter(inv_format)()
 
     def get_host_ips(self, topo):
         """
@@ -45,16 +45,18 @@ class GenericInventory(InventoryFilter):
         layout_host_count = self.get_layout_hosts(layout)
         # generate hosts list based on the layout host count
         inven_hosts = self.get_hosts_by_count(host_ip_dict, layout_host_count)
+        # reverse the hosts list
+        inven_hosts.reverse()
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)
-        self.add_sections(host_groups)
+
+        self.inv_formatter.add_sections(host_groups)
         # set children for each host group
-        self.set_children(layout)
+        self.inv_formatter.set_children(layout)
         # set vars for each host group
-        self.set_vars(layout)
+        self.inv_formatter.set_vars(layout)
         # add ip addresses to each host
-        self.add_ips_to_groups(inven_hosts, layout)
-        self.add_common_vars(host_groups, layout)
-        output = StringIO.StringIO()
-        self.config.write(output)
-        return output.getvalue()
+        self.inv_formatter.add_ips_to_groups(inven_hosts, layout)
+        # add common vars to host_groups
+        self.inv_formatter.add_common_vars(host_groups, layout)
+        return self.inv_formatter.generate_inventory()

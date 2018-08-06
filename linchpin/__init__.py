@@ -25,6 +25,8 @@ from linchpin.exceptions import SchemaError
 from linchpin.exceptions import TopologyError
 from linchpin.exceptions import ValidationError
 
+from linchpin.InventoryFilters import GenericInventory
+
 
 class LinchpinAPI(object):
 
@@ -411,7 +413,6 @@ class LinchpinAPI(object):
             try:
                 sp = "{0}/roles/{1}/files/schema.json".format(pb_path,
                                                               res_grp_type)
-
                 schema = json.load(open(sp))
             except Exception as e:
                 raise LinchpinError("Error with schema: '{0}'"
@@ -431,6 +432,10 @@ class LinchpinAPI(object):
 
         return resources
 
+    def generate_inventory(self, topology_data, layout, inv_format="cfg"):
+        inv = GenericInventory.GenericInventory(inv_format=inv_format)
+        inventory = inv.get_inventory(topology_data, layout)
+        return inventory
 
     def get_pf_data_from_rundb(self, targets, run_id=None, tx_id=None):
         """
@@ -775,7 +780,11 @@ class LinchpinAPI(object):
         for target, run_id in tgt_run_ids.iteritems():
             record = rundb.get_record(target, run_id=run_id, action='up')
             field_data = {}
-            single_value_fields = ('action', 'start', 'end', 'rc', 'uhash')
+            single_value_fields = ('action',
+                                   'start',
+                                   'end',
+                                   'rc',
+                                   'uhash')
 
             for field in fields:
                 f = record[0].get(field)
@@ -787,9 +796,12 @@ class LinchpinAPI(object):
                         for fld in f:
                             for k, v in fld.iteritems():
                                 if field == 'outputs':
-                                    values = []
-                                    for value in v:
-                                        values.append(value)
+                                    if isinstance(v, dict):
+                                        values = v
+                                    else:
+                                        values = []
+                                        for value in v:
+                                            values.append(value)
                                     data_array[k] = values
                                 else:
                                     data_array[k] = v
@@ -799,6 +811,39 @@ class LinchpinAPI(object):
             target_data[target] = field_data
 
         return target_data
+
+    def _get_run_data_by_txid(self, tx_id=None):
+        rundb = self.setup_rundb()
+        latest_run_data = {}
+        run_data = {}
+        if tx_id is None:
+            latest_run_data = rundb.get_records('linchpin', count=1)
+            run_data = self.get_run_data(latest_run_data.keys()[0],
+                                         ('outputs',
+                                          'inputs'))
+        else:
+            latest_run_data = rundb.get_records('linchpin',
+                                                count='all')
+            latest_run_data = {tx_id: latest_run_data.get(tx_id)}
+            run_data = self.get_run_data(tx_id,
+                                         ('outputs',
+                                          'inputs'))
+        for k in latest_run_data:
+            v = latest_run_data[k]
+            target_group = v.get("targets", [])
+            # Note:
+            # target_group always returns a dict inside a list due to
+            # rundb implemenatation. This code works for one PinFile run
+            # might be subjected to change in future releases
+            if len(target_group) == 0:
+                continue
+            else:
+                target_group = target_group[0]
+            for key in target_group.keys():
+                target_group[key].update(run_data.get(key, {}))
+            latest_run_data[k]["targets"] = [target_group]
+        return latest_run_data
+
 
 
     def _invoke_playbooks(self, resources, action='up', console=True):

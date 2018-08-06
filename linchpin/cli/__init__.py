@@ -119,6 +119,52 @@ class LinchpinCli(LinchpinAPI):
             self.ctx.log_state('Error: {0}'.format(e))
             sys.exit(1)
 
+    def _write_to_inventory(self, tx_id=None, inv_path=None, inv_format="cfg"):
+        latest_run_data = self._get_run_data_by_txid()
+        if tx_id:
+            latest_run_data = self._get_run_data_by_txid(tx_id)
+        all_inventories = {}
+        try:
+            for t_id in latest_run_data:
+                targets = latest_run_data[t_id]["targets"][0]
+                # if there are multiple targets mentioned in pinfile
+                # the multiple inventory files are being generated
+                inv_file_count = 0 if len(targets) > 1 else False
+                for name in targets:
+                    if "layout_data" in targets[name]["inputs"]:
+                        lt_data = targets[name]["inputs"]["layout_data"]
+                        layout = lt_data["inventory_layout"]
+                        i_path = targets[name]["outputs"]["inventory_path"][0]
+                        if inv_path and inv_file_count is not False:
+                            i_path = inv_path + str(inv_file_count)
+                        # r_o -> resources_outputs
+                        r_o = targets[name]["outputs"]["resources"]
+                        inv = self.generate_inventory(r_o,
+                                                      layout,
+                                                      inv_format=inv_format)
+                        # if inv_path is explicitly mentioned it is used
+                        if inv_path:
+                            i_path = inv_path
+                        # if there are multiple targets based on
+                        # number of targets multiple files are
+                        # generated with suffixes
+                        if inv_path and isinstance(inv_file_count, int):
+                            i_path = inv_path + "." + str(name)
+                            with open(i_path, 'w') as the_file:
+                                the_file.write(inv)
+                            inv_file_count += 1
+                        else:
+                            with open(i_path, 'w') as the_file:
+                                the_file.write(inv)
+                        all_inventories[name] = inv
+            return all_inventories
+
+        except Exception as e:
+            self.ctx.log_state('Error: {0}'.format(e))
+            sys.exit(1)
+        return True
+
+
     def _get_pinfile_path(self, exists=True):
         """
         This function finds the self.pinfile. If the file is a full path,
@@ -216,7 +262,10 @@ class LinchpinCli(LinchpinAPI):
             fields = {}
             outputs = data.get('outputs', {})
             resources = outputs.get('resources', [])
-
+            format_resources = []
+            for provider in resources:
+                format_resources.extend(resources[provider])
+            resources = format_resources
             for dist_role, flds in dist_roles.iteritems():
                 if dist_role in roles:
                     for f in flds.split(','):
@@ -270,6 +319,16 @@ class LinchpinCli(LinchpinAPI):
         with open(context_file, 'w+') as f:
             f.write(json.dumps(dist_data))
 
+    def _write_latest_run(self):
+        latest_run_data = self._get_run_data_by_txid()
+        resources_path = self.get_evar('resources_folder')
+        context_path = '{0}/{1}'.format(self.workspace, resources_path)
+        if not os.path.exists(context_path):
+            os.makedirs(context_path)
+        context_file = '{0}/{1}'.format(context_path, 'linchpin.latest')
+        with open(context_file, 'w+') as f:
+            f.write(json.dumps(latest_run_data))
+
 
     def lp_down(self, pinfile, targets=(), run_id=None):
         """
@@ -291,7 +350,7 @@ class LinchpinCli(LinchpinAPI):
         pass
 
 
-    def lp_up(self, targets=(), run_id=None, tx_id=None):
+    def lp_up(self, targets=(), run_id=None, tx_id=None, inv_f="cfg"):
         """
         This function takes a list of targets, and provisions them according
         to their topology.
@@ -338,6 +397,8 @@ class LinchpinCli(LinchpinAPI):
                     self._write_distilled_context(run_data)
             else:
                     self._write_distilled_context(run_data)
+        self._write_latest_run()
+        self._write_to_inventory(inv_format=inv_f)
 
         # Show success and errors, with data
         return (return_code, return_data)
@@ -424,7 +485,7 @@ class LinchpinCli(LinchpinAPI):
             if pf:
                 provision_data = self._build(pf, pf_data=self.pf_data)
 
-                pf_outfile = self.get_cfg('tmp', 'output_pinfile')
+                pf_outfile = self.get_cfg('tmp', 'outfile')
                 if pf_outfile:
                     self.parser.write_json(provision_data, pf_outfile)
 

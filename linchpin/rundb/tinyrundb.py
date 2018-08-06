@@ -1,8 +1,9 @@
 from tinydb import TinyDB
 from tinydb.storages import JSONStorage
 from tinydb.operations import add
+from tinydb.operations import set as tinySet
 from tinydb.middlewares import CachingMiddleware
-
+from collections import defaultdict
 from .basedb import BaseDB
 
 
@@ -56,6 +57,22 @@ class TinyRunDB(BaseDB):
     @usedb
     def update_record(self, table, run_id, key, value):
         t = self.db.table(name=table)
+        tx_rec = t.get(eid=run_id).get("outputs", [])
+        if len(tx_rec) > 0 and isinstance(value, list):
+            # fetch the resources dict, index
+            # by filtering them from outputs list
+            res_list = [(idx, x) for idx, x in enumerate(tx_rec)
+                        if "resources" in x]
+            if len(res_list) != 0:
+                res_idx = res_list[0][0]
+                resources = res_list[0][1]
+                if "resources" in value[0]:
+                    de = defaultdict(list, resources["resources"])
+                    for i, j in value[0]["resources"].items():
+                        de[i].extend(j)
+                    de = {"resources": de}
+                    tx_rec[res_idx] = de
+                    return t.update(tinySet(key, [de]), eids=[run_id])
         return t.update(add(key, value), eids=[run_id])
 
 
@@ -101,17 +118,17 @@ class TinyRunDB(BaseDB):
 
     @usedb
     def get_records(self, table, count=10):
-
         records = {}
         if table in self.db.tables():
             t = self.db.table(name=table)
             if len(t.all()):
                 start = len(t)
-                end = start - count
-
+                if count == 'all':
+                    end = 0
+                else:
+                    end = start - count
                 for i in xrange(start, end, -1):
                     records[i] = t.get(doc_id=i)
-
         return records
 
 

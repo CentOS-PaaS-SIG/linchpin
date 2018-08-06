@@ -11,9 +11,9 @@
   with_together:
     - "{{ auth_var['aws_access_key_id'] | default(omit) }}"
     - "{{ auth_var['aws_secret_access_key'] | default(omit) }}"
-    - "{{ tp_out['id'] }}"
+    - "{{ tp_out[0]['id'] }}"
     - "{{ res_def['region'] }}"
-    - "{{ tp_out['tags']['resource_group_name'] }}"
+    - "{{ tp_out[0]['tags']['resource_group_name'] }}"
     - "{{ res_grp_name }}"
     - "{{ res_def['role'] }}"
     - "{{ async }}"

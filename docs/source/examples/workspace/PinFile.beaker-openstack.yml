@@ -22,7 +22,7 @@ beaker-openstack:
         resource_definitions:
             - role: os_server
               name: kusc-openstack
-              flavor: m1.large.small.disk
+              flavor: m1.small
               image:  Fedora-Cloud-Base-28-released-latest
               count: 1
               keypair: ci-factory

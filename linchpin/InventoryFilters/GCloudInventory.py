@@ -1,29 +1,23 @@
 #!/usr/bin/env python
+
 import StringIO
 
 from InventoryFilter import InventoryFilter
 
 
-class OvirtInventory(InventoryFilter):
+class GCloudInventory(InventoryFilter):
 
     def get_host_ips(self, topo):
         host_public_ips = []
-        for vm in topo['ovirt_vms_res']:
-            if vm['vm']['reported_devices']:
-                for dev in vm['vm']['reported_devices']:
-                    for ip in dev.get('ips', []):
-                        if ip['version'] == 'v4':
-                            host_public_ips.append(ip['address'])
-                            break
-            else:
-                host_public_ips.append('')
+        for group in topo.get('gcloud_gce_res', []):
+            for instance in group['instance_data']:
+                host_public_ips.append(instance['public_ip'])
         return host_public_ips
 
     def get_inventory(self, topo, layout):
-
-        if len(topo['ovirt_vms_res']) == 0:
+        if len(topo['gcloud_gce_res']) == 0:
             return ""
-        # no_of_groups = len(topo['ovirt_vms_res'])
+        # get inventory hosts
         inven_hosts = self.get_host_ips(topo)
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)

@@ -1,8 +1,8 @@
 #!/bin/bash -xe
 
 # Provision both beaker and openstack with one PinFile
-# distros.exclude: none
-# providers.include: beaker
+# distros.exclude: fedora27 fedora26 centos7
+# providers.include: none
 # providers.exclude: none
 #
 # NOTE: The _providers.include_ only sets beaker in an effort to run only the
@@ -21,14 +21,14 @@ echo "${DESCRIPTION}"
 
 function clean_up {
     set +e
-    linchpin -w . -p "${PINFILE}" -v destroy "${TARGET}"
+    linchpin -w . -p "${PINFILE}" --creds-path=../../../../keys/openstack -v destroy "${TARGET}"
     rm ${TMP_FILE}
 }
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
 pushd docs/source/examples/workspace
 
-linchpin -w . -p "${PINFILE}" -v up "${TARGET}" 2>&1 | tee -a ${TMP_FILE}
+linchpin -w . -p "${PINFILE}" --creds-path=../../../../keys/openstack -v up "${TARGET}" 2>&1 | tee -a ${TMP_FILE}
 
 RC0=${?}
 
