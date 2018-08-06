@@ -2,6 +2,7 @@
 - name: "Unset the authvar from previous run"
   set_fact:
     auth_var: !!null
+  no_log: true
 
 - name: "Set cred profile"
   set_fact:
