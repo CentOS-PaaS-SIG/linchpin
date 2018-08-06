@@ -485,7 +485,7 @@ class LinchpinCli(LinchpinAPI):
             if pf:
                 provision_data = self._build(pf, pf_data=self.pf_data)
 
-                pf_outfile = self.get_cfg('tmp', 'output_pinfile')
+                pf_outfile = self.get_cfg('tmp', 'outfile')
                 if pf_outfile:
                     self.parser.write_json(provision_data, pf_outfile)
 
