@@ -12,3 +12,4 @@
     region: "{{ res_def['region'] }}"
     permission: "{{ res_def['permission']| default(omit) }}"
   when: res_def['role'] == 'aws_s3'
+  no_log: true

@@ -20,6 +20,7 @@
     parameters: "{{ heat_params }}"
   register: res_def_output
   when: not async
+  no_log: true
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
@@ -41,6 +42,7 @@
   poll: 0
   register: res_def_output
   when: async
+  no_log: true
 
 # following tasks saves the async job details
 - name: "Async:: save the job id"

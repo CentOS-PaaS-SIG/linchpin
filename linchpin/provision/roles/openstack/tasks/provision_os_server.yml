@@ -21,6 +21,7 @@
     volumes: "{{ res_def['volumes'] | default(omit) }}"
   register: res_def_output
   when: not async and auth_var is defined
+  no_log: true
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
@@ -78,6 +79,7 @@
   poll: 0
   register: res_def_output
   when: async and auth_var is defined
+  no_log: true
 
 - name: "Async:: Append outputitem to topology_outputs"
   set_fact:
