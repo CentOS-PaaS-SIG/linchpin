@@ -6,6 +6,7 @@
     wait: "yes"
   register: res_def_output
   when: not async and auth_var['changed']== true
+  no_log: true
 
 - name: "provisioning/deprovisioning  keypair"
   os_keypair:
@@ -14,6 +15,7 @@
     wait: "yes"
   register: res_def_output
   when: not async and auth_var['changed']== false
+  no_log: true
 
 - name: "Generate keyfile "
   copy: 
@@ -37,6 +39,7 @@
   async: "{{ async_timeout }}"
   poll: 0
   when: async and auth_var['changed']== true
+  no_log: true
 
 - name: "Async:: provisioning/deprovisioning  keypair"
   os_keypair:
