@@ -7,9 +7,11 @@ from linchpin.exceptions import LinchpinError
 
 
 class FetchGit(Fetch):
-    def __init__(self, ctx, fetch_type, src, dest, cache_dir, root):
+
+    def __init__(self, ctx, fetch_type, src, dest, cache_dir, root, ref=None):
         super(FetchGit, self).__init__(ctx, fetch_type, dest, root)
         self.src = src
+        self.ref = ref
 
         self.cache_dir = os.path.join(cache_dir, "git")
         if not os.path.exists(self.cache_dir):
@@ -21,8 +23,13 @@ class FetchGit(Fetch):
         # urls in key during parsing. Delimiters can be specified when
         # initializing a configparser object in python 3 so this does not
         # become an issue.
-        key = "{0}|{1}".format(self.dest.replace(':', ''),
-                               self.src.replace(':', ''))
+
+        ref = 'None'
+        if self.ref:
+            ref = self.ref
+
+        key = "{0}|{1}|{2}".format(self.dest.replace(':', ''),
+                                   self.src.replace(':', ''), ref)
 
         fetch_dir = self.cfgs["git"].get(key, None)
         td = self.call_clone(fetch_dir)
@@ -38,14 +45,19 @@ class FetchGit(Fetch):
 
 
     def call_clone(self, fetch_dir=None):
+        ref = ''
+        if self.ref:
+            ref = self.ref
+
         if fetch_dir:
             retval = subprocess.call(
                 ['git', '-C', fetch_dir, 'pull', '--quiet'])
             tempdir = fetch_dir
         else:
             tempdir = tempfile.mkdtemp(prefix="git_", dir=self.cache_dir)
-            retval = subprocess.call(
-                ['git', 'clone', '--quiet', self.src, tempdir])
+            cmd = ['git', 'clone', '--quiet', self.src, '-b', ref, tempdir]
+            retval = subprocess.call(cmd, stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE)
 
         if retval != 0:
             raise LinchpinError("Unable to clone {0}".format(self.src))

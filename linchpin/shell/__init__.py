@@ -160,6 +160,7 @@ def runcli(ctx, config, pinfile, template_data, outfile,
 
     if workspace is not None:
         ctx.workspace = os.path.realpath(os.path.expanduser(workspace))
+        ctx.set_cfg('tmp', 'ws_set', True)
         ctx.log_debug("ctx.workspace: {0}".format(ctx.workspace))
 
     # global LinchpinCli placeholder
@@ -306,24 +307,39 @@ def destroy(ctx, targets, run_id, tx_id):
 
 
 @runcli.command()
-@click.argument('fetch_type', default=None, required=False, nargs=-1)
 @click.argument('remote', default=None, required=True, nargs=1)
-@click.option('-r', '--root', default=None, required=False,
-              help='Use this to specify the subdirectory of the workspace of'
-              ' the root url')
+@click.option('-t', '--type', 'fetch_type', required=False, default='workspace',
+              help='Which component of a workspace to fetch.'
+                   ' (Default: workspace)')
+@click.option('-r', '--root', default=None,
+              help='Use this to specify the location of the workspace'
+                   ' within the root url. If root is not set, the root'
+                   ' of the given remote will be used.')
+@click.option('--dest', 'dest_ws', default=None,
+              help='Workspaces destination, the workspace will be relative to'
+                   ' this location.')
+@click.option('--branch', 'fetch_ref', default=None,
+              help='Specify the git branch. Used only with'
+                   ' git protocol (eg. master).')
+@click.option('--protocol', 'fetch_protocol', default='git',
+              type=click.Choice(['git', 'http', 'local']),
+              help='Specify a protocol. (Default: git)')
 @pass_context
-def fetch(ctx, fetch_type, remote, root):
+def fetch(ctx, remote, fetch_type, root, dest_ws, fetch_ref, fetch_protocol):
     """
-    Fetches a specified linchpin workspace or component from a remote location.
-
-    fetch_type:     Specifies which component of a workspace the user wants to
-    fetch. Types include: topology, layout, resources, hooks, workspace
-
-    remote:         The URL or URI of the remote directory
+    Fetches a specified linchpin workspace or component from a remote location
 
     """
+
+    fetch_proto = 'Fetch{0}'.format(fetch_protocol.title())
+
+    if not fetch_type:
+        fetch_type = 'workspace'
     try:
-        lpcli.lp_fetch(remote, root=root, fetch_type=''.join(fetch_type))
+        ws_set = ctx.get_cfg('tmp', 'ws_set', default=False)
+        lpcli.lp_fetch(remote, root=root, fetch_type=fetch_type,
+                       fetch_protocol=fetch_proto, fetch_ref=fetch_ref,
+                       ws_set=ws_set, dest_ws=dest_ws)
     except LinchpinError as e:
         ctx.log_state(e)
         sys.exit(1)

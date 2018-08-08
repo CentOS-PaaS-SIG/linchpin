@@ -687,13 +687,16 @@ class LinchpinCli(LinchpinAPI):
                               tx_id=tx_id)
 
 
-    def lp_fetch(self, src, root=None, fetch_type='workspace'):
+    def lp_fetch(self, src, root=None, fetch_type='workspace',
+                 fetch_protocol=None, fetch_ref=None):
         if root is not None:
             root = list(filter(None, root.split(',')))
 
         dest = self.workspace
         if not os.path.exists(dest):
-            raise LinchpinError(dest + " does not exist")
+            self.ctx.log_state('Created destination workspace:'
+                               ' {0}'.format(dest))
+            os.makedirs(dest)
 
         fetch_aliases = {
             "topologies": self.get_evar("topologies_folder"),
@@ -703,31 +706,30 @@ class LinchpinCli(LinchpinAPI):
             "workspace": "workspace"
         }
 
-        fetch_dir = fetch_aliases.get(fetch_type, "workspace")
-
+        fetch_type = fetch_aliases.get(fetch_type,)
 
         cache_path = os.path.abspath(os.path.join(os.path.expanduser('~'),
                                                   '.cache/linchpin'))
         if not os.path.exists(cache_path):
             os.makedirs(cache_path)
 
-        protocol_regex = OrderedDict([
-            ('((git|ssh|http(s)?)|(git@[\w\.]+))'
-                '(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?',
-                'FetchGit'),
-            ('^(http|https)://', 'FetchHttp'),
-            ('^(file)://', 'FetchLocal')
-        ])
-        fetch_protocol = None
-        for regex, obj in protocol_regex.items():
-            if re.match(regex, src):
-                fetch_protocol = obj
-                break
         if fetch_protocol is None:
-            raise LinchpinError("The protocol speficied is not supported")
+            protocol_regex = OrderedDict([
+                ('((git|ssh|http(s)?)|(git@[\w\.]+))'
+                    '(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?',
+                    'FetchGit'),
+                ('^(http|https)://', 'FetchHttp'),
+                ('^(file)://', 'FetchLocal')
+            ])
+            for regex, obj in protocol_regex.items():
+                if re.match(regex, src):
+                    fetch_protocol = obj
+                    break
+        if fetch_protocol is None:  # assume fetch_protocol is git if None
+            fetch_protocol = 'FetchGit'
 
-
-        fetch_class = FETCH_CLASS[fetch_protocol](self.ctx, fetch_dir, src,
-                                                  dest, cache_path, root)
+        fetch_class = FETCH_CLASS[fetch_protocol](self.ctx, fetch_type, src,
+                                                  dest, cache_path, root,
+                                                  ref=fetch_ref)
         fetch_class.fetch_files()
         fetch_class.copy_files()

@@ -13,10 +13,11 @@ from linchpin.exceptions import LinchpinError
 class Fetch(object):
     __metaclass__ = ABCMeta
 
-    def __init__(self, ctx, fetch_type, dest, root):
+    def __init__(self, ctx, fetch_type, dest, root, ref=None):
         self.ctx = ctx
         self.fetch_type = fetch_type
         self.root = root
+        self.ref = ref
         self.tempdirs = []
         self.dest = os.path.abspath(os.path.realpath(dest))
         self.config_path = os.path.abspath(os.path.join(os.path.expanduser('~'),
@@ -57,7 +58,7 @@ class Fetch(object):
             dirs[:] = [d for d in dirs if not d[0] == '.']
             if not os.path.isdir(root):
                 os.makedirs(root)
-            for file in files:
+            for f in files:
                 rel_path = root.replace(src, '').lstrip(os.sep)
                 dest_path = os.path.join(dest, rel_path)
 
@@ -70,17 +71,18 @@ class Fetch(object):
                                                 ' in destination directory'
                                                 .format(e.filename))
 
-                s = os.path.join(root, file)
-                d = os.path.join(dest_path, file)
+                s_file = os.path.join(root, f)
+                d_file = os.path.join(dest_path, f)
 
-                if (not os.path.exists(d)) or (os.stat(d).st_mtime -
-                                               os.stat(dest).st_mtime > 1):
+                if (not os.path.exists(d_file) or
+                        (os.stat(d_file).st_mtime - os.stat(dest).st_mtime) > 1):  # noqa
                     try:
-                        if os.path.islink(s) and os.path.exists(os.readlink(s)):
-                            linkto = os.readlink(s)
-                            os.symlink(linkto, d)
+                        if (os.path.islink(s_file) and
+                                os.path.exists(os.readlink(s_file))):
+                            linkto = os.readlink(s_file)
+                            os.symlink(linkto, d_file)
                         else:
-                            shutil.copy2(s, d)
+                            shutil.copy2(s_file, d_file)
                     except (IOError, OSError):
                         pass
 
@@ -106,6 +108,7 @@ class Fetch(object):
             for k, v in config.items(section):
                 cfgs[section][k] = v
         return cfgs
+
 
     def write_cfg(self, section, key, value):
         config = configparser.ConfigParser()
