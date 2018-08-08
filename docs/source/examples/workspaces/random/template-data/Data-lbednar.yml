@@ -1,0 +1,8 @@
+---
+executor_name: my-executor-lbednar
+keypair: my-executor-lbednar-net-key
+network: my-executor-lbednar-net
+security_group: my-executor-lbednar-secgroup
+image: rhel-7.4-server-x86_64-latest
+fip_pool: 10.8.240.0
+os_cloud: centralci
