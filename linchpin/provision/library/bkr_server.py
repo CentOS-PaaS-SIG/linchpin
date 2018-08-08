@@ -231,6 +231,7 @@ class BkrFactory(BkrConn):
                                   'system': recipe.get('system'),
                                   'status': recipe.get('status'),
                                   'result': recipe.get('result'),
+                                  'rid': recipe.get('id'),
                                   'id': recipe.get('job_id')})
         return resources
 

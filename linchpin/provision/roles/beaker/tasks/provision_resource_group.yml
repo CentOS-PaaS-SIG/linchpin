@@ -44,10 +44,6 @@
     loop_control:
       loop_var: result
 
-  - name: "count bkr_ids"
-    set_fact:
-        bkr_id_count: "{{ (bkr_ids | length, 'count', 'id') }}"
-
   - name: "set bkr_hosts from results"
     set_fact:
       bkr_hosts: "{{ bkr_hosts | default([]) }} + {{ bh['hosts'] }}"
@@ -57,21 +53,7 @@
 
   - name: "count bkr_hosts"
     set_fact:
-      bkr_host_count: "{{ (bkr_hosts | length, 'count', 'distro') }}"
-
-  - name: "set unique value based upon count"
-    set_fact:
-      combine_keys: "{{ combine_keys | default([]) }} + [{{ cks }}]"
-    with_items:
-      - "{{ bkr_id_count }}"
-      - "{{ bkr_host_count }}"
-    loop_control:
-      loop_var: cks
-
-  # take the first item sorted, get the last value out of the triple tuple
-  - name: "set unique value based upon count"
-    set_fact:
-      combine_key: "{{ combine_keys | sort(reverse=True) | first | last }}"
+      bkr_host_count: "{{ (bkr_hosts | length, 'count', 'rid') }}"
 
   - name: "set bkr_host_values to an empty list"
     set_fact:
@@ -117,30 +99,11 @@
       provision_params: "{{ bkr.results[0].provision_params }}"
     register: _topo_out_bkr_server
 
-  - name: "set topology_outputs_beaker_server using id"
+  - name: "set topology_outputs_beaker_server using recipe id"
     set_fact:
-      tmp_topo_bkr_srvc: "{{ ttbs | combine(_topo_out_bkr_server['hosts'] | selectattr('id', 'match', '^' + ttbs.id + '$') | first) }}"
-    with_items: "{{ topology_outputs_beaker_server }}"
+      tmp_topo_bkr_srvc: "{{ ttbs | combine(_topo_out_bkr_server['hosts'] | selectattr('rid', 'match', '^' + ttbs.rid + '$') | first) }}"
     when:
       - state == 'present'
-      - combine_key == 'id'
-    register: tmp_bkr
-    loop_control:
-      loop_var: ttbs
-
-  - name: "Set topology_outputs_beaker_server to the current job(s) data"
-    set_fact:
-      topology_outputs_beaker_server: "{{ tmp_bkr.results | map_results('ansible_facts', 'tmp_topo_bkr_srvc') }}"
-    when:
-      - state == 'present'
-      - combine_key == 'id'
-
-  - name: "set topology_outputs_beaker_server using distro"
-    set_fact:
-      tmp_topo_bkr_srvc: "{{ ttbs | combine(_topo_out_bkr_server['hosts'] | selectattr('distro', 'match', '^' + ttbs.distro + '$') | first) }}"
-    when:
-      - state == 'present'
-      - combine_key == 'distro'
     with_items: "{{ topology_outputs_beaker_server }}"
     register: tmp_bkr
     loop_control:
@@ -151,4 +114,3 @@
       topology_outputs_beaker_server: "{{ tmp_bkr.results | map_results('ansible_facts', 'tmp_topo_bkr_srvc') }}"
     when:
       - state == 'present'
-      - combine_key == 'distro'
