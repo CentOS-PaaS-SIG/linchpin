@@ -6,7 +6,9 @@ import ast
 import sys
 import json
 import click
+import hashlib
 
+from random import randint
 from distutils import dir_util
 from collections import OrderedDict
 
@@ -688,15 +690,68 @@ class LinchpinCli(LinchpinAPI):
 
 
     def lp_fetch(self, src, root=None, fetch_type='workspace',
-                 fetch_protocol=None, fetch_ref=None):
-        if root is not None:
-            root = list(filter(None, root.split(',')))
+                 fetch_protocol=None, fetch_ref=None, ws_set=False,
+                 dest_ws=None):
+        """
+        Fetch a workspace from git, http(s), or a local directory, and
+        generate a provided workspace
+
+        :param src:         The URL or URI of the remote directory
+
+        :param root:        Used to specify the location of the workspace within
+                            the remote. If root is not set, the root of the given
+                            remote will be used.
+
+        :param fetch_type:   Specifies which component(s) of a workspace the user wants
+                            to fetch. Types include: topology, layout, resources,
+                            hooks, workspace.
+                            (default: workspace)
+
+        :param fetch_protocol:  The protocol to use to fetch the workspace.
+                                (default: git)
+
+        :param fetch_ref:   Specify the git branch. Used only with git protocol
+                            (eg. master). If not used, the default branch will be used.
+
+        :param ws_set:  Boolean to determine if the workspace was set. If so, use this
+                        value as the absolut path to workspace.
+
+        :param dest_ws: Workspaces destination, the workspace will be relative to
+                        this location.
+
+                        If `-r/--root` is provided, its basename will be the name
+                        of the workspace within the destination. If no root is
+                        provided, a random workspace name will be generated. The
+                        destination can also be explicitly set by using -w (see
+                        linchpin --help).
+
+
+        """
 
         dest = self.workspace
+        if dest_ws:
+            if not ws_set:
+                if root:
+                    abs_root = os.path.expanduser(os.path.realpath(root))
+                    root_ws = os.path.basename(abs_root.rstrip(os.path.sep))
+                    dest = '{0}/{1}'.format(dest_ws, root_ws)
+                else:
+                    # generate a unique value for the root
+                    uroot = hashlib.new('sha256:{0}{1}'.format(remote, dest))
+                    uroot = uh.hexdigest()[:8]
+                    min_under = randint(1,7)  # generate a location to put an underscore
+                    max_under = min_under + 1
+                    uroot = uroot[:min_under] + '_' + uroot[max_under:]
+                    dest = '{0}/{1}'.format(dest_ws, uroot)
+#            else:
+#                pass  # dest = self.workspace (set at the top)
+
+
+
         if not os.path.exists(dest):
+            os.makedirs(dest)
             self.ctx.log_state('Created destination workspace:'
                                ' {0}'.format(dest))
-            os.makedirs(dest)
 
         fetch_aliases = {
             "topologies": self.get_evar("topologies_folder"),
@@ -706,7 +761,7 @@ class LinchpinCli(LinchpinAPI):
             "workspace": "workspace"
         }
 
-        fetch_type = fetch_aliases.get(fetch_type,)
+        fetch_type = fetch_aliases.get(fetch_type, 'workspaces')
 
         cache_path = os.path.abspath(os.path.join(os.path.expanduser('~'),
                                                   '.cache/linchpin'))
@@ -730,6 +785,7 @@ class LinchpinCli(LinchpinAPI):
 
         fetch_class = FETCH_CLASS[fetch_protocol](self.ctx, fetch_type, src,
                                                   dest, cache_path, root,
+                                                  root_ws=root_ws,
                                                   ref=fetch_ref)
         fetch_class.fetch_files()
         fetch_class.copy_files()

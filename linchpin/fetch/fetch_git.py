@@ -8,10 +8,11 @@ from linchpin.exceptions import LinchpinError
 
 class FetchGit(Fetch):
 
-    def __init__(self, ctx, fetch_type, src, dest, cache_dir, root, ref=None):
-        super(FetchGit, self).__init__(ctx, fetch_type, dest, root)
+    def __init__(self, ctx, fetch_type, src, dest, cache_dir, root,
+                 root_ws=None, ref=None):
+        super(FetchGit, self).__init__(ctx, fetch_type, dest, root,
+                                       root_ws=root_ws, ref=ref)
         self.src = src
-        self.ref = ref
 
         self.cache_dir = os.path.join(cache_dir, "git")
         if not os.path.exists(self.cache_dir):
@@ -32,19 +33,16 @@ class FetchGit(Fetch):
                                    self.src.replace(':', ''), ref)
 
         fetch_dir = self.cfgs["git"].get(key, None)
-        td = self.call_clone(fetch_dir)
+        self.td = self.call_clone(fetch_dir)
+
+        self.td_w_root = '{0}/{1}'.format(self.td, self.root)
 
         if fetch_dir is None:
             self.write_cfg("git", key, td)
 
-        if self.root is not None:
-            for ext in self.root:
-                self.tempdirs.append(os.path.join(td, ext.lstrip('/')))
-        else:
-            self.tempdirs.append(td)
-
 
     def call_clone(self, fetch_dir=None):
+
         ref = ''
         if self.ref:
             ref = self.ref

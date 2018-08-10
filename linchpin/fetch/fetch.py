@@ -13,10 +13,13 @@ from linchpin.exceptions import LinchpinError
 class Fetch(object):
     __metaclass__ = ABCMeta
 
-    def __init__(self, ctx, fetch_type, dest, root, ref=None):
+    def __init__(self, ctx, fetch_type, dest, root, root_ws=None, ref=None):
+        """
+        """
         self.ctx = ctx
         self.fetch_type = fetch_type
         self.root = root
+        self.root_ws = root_ws
         self.ref = ref
         self.tempdirs = []
         self.dest = os.path.abspath(os.path.realpath(dest))
@@ -30,8 +33,7 @@ class Fetch(object):
 
     def copy_files(self):
         if self.fetch_type == 'workspace':
-            for path in self.tempdirs:
-                self.copy_dir(path, self.dest)
+            self.copy_dir('{0}/{1}'.format(self.td, self.root), self.dest)
         else:
             self.transfer_section(self.fetch_type)
 
@@ -41,16 +43,16 @@ class Fetch(object):
         dir_exists = True
         if section not in os.listdir(self.dest):
             dir_exists = False
-            os.mkdir(dest_dir)
+            os.makedirs(dest_dir)
 
-        for path in self.tempdirs:
-            src_dir = os.path.join(path, section)
-            if not os.path.exists(src_dir):
-                if not dir_exists:
-                    shutil.rmtree(dest_dir)
-                raise LinchpinError('The {0} directory does not exist in '
-                                    '{1}'.format(self.fetch_type, self.src))
-            self.copy_dir(src_dir, dest_dir)
+        src_dir = os.path.join('{0}/{1}'.format(self.td, self.root), section)
+        if not os.path.exists(src_dir):
+            if not dir_exists:
+                shutil.rmtree(dest_dir)
+            raise LinchpinError('The {0} directory does not exist in '
+                                '{1}'.format(self.fetch_type, self.src))
+        self.copy_dir(src_dir, dest_dir)
+
 
     def copy_dir(self, src, dest):
         for root, dirs, files in os.walk(src):
