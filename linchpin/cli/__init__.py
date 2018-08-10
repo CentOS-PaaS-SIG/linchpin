@@ -698,38 +698,37 @@ class LinchpinCli(LinchpinAPI):
 
         :param src:         The URL or URI of the remote directory
 
-        :param root:        Used to specify the location of the workspace within
-                            the remote. If root is not set, the root of the given
-                            remote will be used.
+        :param root:        Used to specify the location of the workspace
+                            within the remote. If root is not set, the root
+                            of the given remote will be used.
 
-        :param fetch_type:   Specifies which component(s) of a workspace the user wants
-                            to fetch. Types include: topology, layout, resources,
-                            hooks, workspace.
+        :param fetch_type:  Specifies which component(s) of a workspace the
+                            user wants to fetch. Types include: topology,
+                            layout, resources, hooks, workspace.
                             (default: workspace)
 
         :param fetch_protocol:  The protocol to use to fetch the workspace.
                                 (default: git)
 
         :param fetch_ref:   Specify the git branch. Used only with git protocol
-                            (eg. master). If not used, the default branch will be used.
+                            (eg. master). If not used, the default branch will
+                            be used.
 
-        :param ws_set:  Boolean to determine if the workspace was set. If so, use this
-                        value as the absolut path to workspace.
+        :param ws_set:  Boolean to determine if the workspace was set. If so,
+                        use this value as the absolut path to workspace.
 
-        :param dest_ws: Workspaces destination, the workspace will be relative to
-                        this location.
+        :param dest_ws: Workspaces destination, the workspace will be relative
+                        to this location.
 
-                        If `-r/--root` is provided, its basename will be the name
-                        of the workspace within the destination. If no root is
-                        provided, a random workspace name will be generated. The
-                        destination can also be explicitly set by using -w (see
-                        linchpin --help).
-
-
+                        If `-r/--root` is provided, its basename will be the
+                        name of the workspace within the destination. If no
+                        root is provided, a random workspace name will be
+                        generated. The destination can also be explicitly set
+                        by using -w (see linchpin --help).
         """
 
         dest = self.workspace
-        root_ws=None
+        root_ws = None
         if dest_ws:
             if not ws_set:
                 if root:
@@ -738,9 +737,11 @@ class LinchpinCli(LinchpinAPI):
                     dest = '{0}/{1}'.format(dest_ws, root_ws)
                 else:
                     # generate a unique value for the root
-                    uroot = hashlib.new('sha256:{0}{1}'.format(remote, dest))
-                    uroot = uh.hexdigest()[:8]
-                    min_under = randint(1,7)  # generate a location to put an underscore
+                    uroot = hashlib.new('sha256:{0}{1}'.format(src, dest))
+                    uroot = uroot.hexdigest()[:8]
+
+                    # generate a random location to put an underscore
+                    min_under = randint(1, 7)
                     max_under = min_under + 1
                     uroot = uroot[:min_under] + '_' + uroot[max_under:]
                     dest = '{0}/{1}'.format(dest_ws, uroot)

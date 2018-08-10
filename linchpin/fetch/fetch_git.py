@@ -43,17 +43,24 @@ class FetchGit(Fetch):
 
     def call_clone(self, fetch_dir=None):
 
-        ref = ''
+        ref = None
         if self.ref:
             ref = self.ref
 
+        import pdb
+        pdb.set_trace()
         if fetch_dir:
             retval = subprocess.call(
                 ['git', '-C', fetch_dir, 'pull', '--quiet'])
             tempdir = fetch_dir
         else:
             tempdir = tempfile.mkdtemp(prefix="git_", dir=self.cache_dir)
-            cmd = ['git', 'clone', '--quiet', self.src, '-b', ref, tempdir]
+
+            cmd = ['git', 'clone', '--quiet', self.src]
+            if ref:
+                cmd.extend(['-b', ref])
+            cmd.append(tempdir)
+
             retval = subprocess.call(cmd, stdout=subprocess.PIPE,
                                      stderr=subprocess.PIPE)
 
