@@ -38,7 +38,7 @@ class FetchGit(Fetch):
         self.td_w_root = '{0}/{1}'.format(self.td, self.root)
 
         if fetch_dir is None:
-            self.write_cfg("git", key, td)
+            self.write_cfg("git", key, self.td)
 
 
     def call_clone(self, fetch_dir=None):

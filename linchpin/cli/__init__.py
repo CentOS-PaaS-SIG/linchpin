@@ -729,6 +729,7 @@ class LinchpinCli(LinchpinAPI):
         """
 
         dest = self.workspace
+        root_ws=None
         if dest_ws:
             if not ws_set:
                 if root:
