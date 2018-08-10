@@ -135,6 +135,8 @@ class LinchpinCli(LinchpinAPI):
                         lt_data = targets[name]["inputs"]["layout_data"]
                         layout = lt_data["inventory_layout"]
                         i_path = targets[name]["outputs"]["inventory_path"][0]
+                        if not os.path.exists(os.path.dirname(i_path)):
+                            os.makedirs(os.path.dirname(i_path))
                         if inv_path and inv_file_count is not False:
                             i_path = inv_path + str(inv_file_count)
                         # r_o -> resources_outputs
