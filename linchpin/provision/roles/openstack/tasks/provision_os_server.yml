@@ -49,8 +49,10 @@
 
 - name: generate res_def_names
   set_fact:
-    res_def_names: "{{ res_def_names  + [os_resource_name + item] }}"
+    res_def_names: "{{ res_def_names  + [os_resource_name + inst_c] }}"
   with_sequence: start=1 end={{ res_def['count'] }}
+  loop_control:
+    loop_var: inst_c
 
 - name: "provision/teardown os_server resources with provided auth"
   os_server:
