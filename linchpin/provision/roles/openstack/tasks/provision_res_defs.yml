@@ -24,8 +24,4 @@
 
 - name: "provision/teardown resources }}"
   include: "provision_os_server.yml"
-  when: res_def['role'] == 'os_server' and res_def['auto_ip'] is not defined
-
-- name: "provision/teardown resources }}"
-  include: "provision_os_server-auto_ip.yml"
-  when: res_def['role'] == 'os_server' and res_def['auto_ip'] is defined
+  when: res_def['role'] == 'os_server' 
