@@ -324,8 +324,9 @@ def destroy(ctx, targets, run_id, tx_id):
 @click.option('--protocol', 'fetch_protocol', default='git',
               type=click.Choice(['git', 'http', 'local']),
               help='Specify a protocol. (Default: git)')
-@click.option('--nocache', is_flag=True, 
-              help='Do not check the cached time, just copy the data to the destination')
+@click.option('--nocache', is_flag=True,
+              help='Do not check the cached time, just copy the data to the'
+                   ' destination')
 @pass_context
 def fetch(ctx, remote, fetch_type, root, dest_ws,
           fetch_ref, fetch_protocol, nocache):

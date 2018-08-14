@@ -78,11 +78,11 @@ class Fetch(object):
                 s_file = os.path.join(root, f)
                 d_file = os.path.join(dest_path, f)
 
-                # fetch.always_update_workspace flag determines whether or not to update.
-                # can be overwritten on the cli with --force (or the like)
+                # fetch.always_update_workspace flag determines whether or
+                # not to update. can be overwritten on the cli with --nocache.
                 cache_ws = (ast.literal_eval(
-                                self.ctx.get_cfg('fetch', 'cache_ws',
-                                                 default='True')))
+                            self.ctx.get_cfg('fetch', 'cache_ws',
+                                             default='True')))
 
                 copy_files = False
                 if not cache_ws:

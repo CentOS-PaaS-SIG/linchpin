@@ -47,11 +47,10 @@ class FetchGit(Fetch):
         if self.ref:
             ref = self.ref
 
-        import pdb
-        pdb.set_trace()
         if fetch_dir:
-            retval = subprocess.call(
-                ['git', '-C', fetch_dir, 'pull', '--quiet'])
+            cmd = ['git', '-C', fetch_dir, 'pull', '--quiet']
+            retval = subprocess.call(cmd, stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE)
             tempdir = fetch_dir
         else:
             tempdir = tempfile.mkdtemp(prefix="git_", dir=self.cache_dir)
