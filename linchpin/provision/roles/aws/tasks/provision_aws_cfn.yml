@@ -21,7 +21,7 @@
       Stack: "{{ res_def['res_name'] | default(res_def['name']) }}"
   register: res_def_output
   when: not async
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "Provision cloud formation stack"
   cloudformation:
@@ -39,7 +39,7 @@
   async: "{{ async_timeout }}"
   poll: 0
   when: async
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:

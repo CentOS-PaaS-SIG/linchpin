@@ -33,6 +33,7 @@ _check_mode = False
 _async = False
 async_timeout = 1000
 default_ssh_key_path = ~/.ssh
+debug_mode = False
 
 
 # NOTE: if either of these change, the value in linchpin/templates must also change

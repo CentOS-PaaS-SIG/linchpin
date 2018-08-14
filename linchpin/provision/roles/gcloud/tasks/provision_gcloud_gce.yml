@@ -12,7 +12,7 @@
     tags: "{{ res_def['tags'] | default(omit) }}"
   register: res_def_output
   when: not async
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "Appending outputitem to topology_outputs"
   set_fact:
@@ -35,7 +35,7 @@
   when: async
   async: "{{ async_timeout }}"
   poll: 0
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "Appending outputitem to topology_outputs"
   set_fact:

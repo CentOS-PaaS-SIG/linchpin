@@ -13,7 +13,7 @@
     wait: yes
     state: "{{ state }}"
   register: res_def_output
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:

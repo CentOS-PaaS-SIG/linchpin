@@ -16,13 +16,13 @@
     driver: "file"
   register: auth_var
   ignore_errors: true
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "set auth_var"
   set_fact:
     auth_var: "{{ auth_var['output'] }}"
   ignore_errors: true
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "provisioning resource definitions of current group"
   include: provision_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}

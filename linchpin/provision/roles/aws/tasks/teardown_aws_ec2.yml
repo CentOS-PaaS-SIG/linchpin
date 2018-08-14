@@ -20,10 +20,10 @@
   loop_control:
     loop_var: res_def_item
   register: output_item
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 # following tasks saves the async job details
 - name: "Save the job id"
   set_fact:
     topology_outputs_aws_ec2: "{{ topology_outputs_aws_ec2 + [output_item] }}"
-  no_log: true
+  no_log: "{{ not debug_mode }}"

@@ -2,7 +2,7 @@
 - name: "Unset the authvar from previous run"
   set_fact:
     auth_var: !!null
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "Set cred profile"
   set_fact:
@@ -18,13 +18,13 @@
   register: auth_variable
   ignore_errors: true
   when: res_grp['credentials'] is defined
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "Set auth_var"
   set_fact:
     auth_var: "{{ auth_variable['output'][cred_profile] | default('') }}"
   when: cred_profile is defined and auth_variable['changed']
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "provisioning resource definitions of current group"
   include: provision_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}

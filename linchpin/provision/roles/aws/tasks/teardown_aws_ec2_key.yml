@@ -7,4 +7,4 @@
     state: "{{ state }}"
     wait: "yes"
   when: res_def['role'] == 'aws_ec2_key'
-  no_log: true
+  no_log: "{{ not debug_mode }}"

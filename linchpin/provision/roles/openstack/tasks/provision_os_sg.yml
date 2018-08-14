@@ -7,7 +7,7 @@
     state: "{{ state }}"
     wait: "yes"
   when: auth_var is defined
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "provision/teardown security group no auth"
   os_security_group:
@@ -37,7 +37,7 @@
     loop_var: group
   register: res_def_output
   when: state == "present" and auth_var is defined
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "provision/teardown security group"
   os_security_group_rule:
