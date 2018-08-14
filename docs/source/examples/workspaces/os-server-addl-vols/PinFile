@@ -6,7 +6,7 @@ os-server-addl-vols:
       - resource_group_name: os-server-addl-vols
         resource_group_type: openstack
         resource_definitions:
-          - name: "database"
+          - name: "hello"
             role: os_server
             flavor: m1.small
             image: CentOS-7-x86_64-GenericCloud-1612
@@ -14,7 +14,7 @@ os-server-addl-vols:
             keypair: ci-factory
             fip_pool: 10.8.240.0
             additional_volumes:
-              - name: "hello"
+              - name: "volume"
                 size: 1
                 device_name: "/dev/vdb"
             networks:
