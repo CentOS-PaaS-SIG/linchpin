@@ -1,5 +1,7 @@
 import os
+import ast
 import shutil
+
 try:
     import configparser
 except ImportError:
@@ -76,8 +78,27 @@ class Fetch(object):
                 s_file = os.path.join(root, f)
                 d_file = os.path.join(dest_path, f)
 
-                if (not os.path.exists(d_file) or
-                        (os.stat(d_file).st_mtime - os.stat(dest).st_mtime) > 1):  # noqa
+                # fetch.always_update_workspace flag determines whether or not to update.
+                # can be overwritten on the cli with --force (or the like)
+                cache_ws = (ast.literal_eval(
+                                self.ctx.get_cfg('fetch', 'cache_ws',
+                                                 default='True')))
+
+                copy_files = False
+                if not cache_ws:
+                    copy_files = True
+                else:
+                    if os.path.exists(d_file):
+                        cache_days = int(self.ctx.get_cfg('fetch',
+                                                          'cache_days',
+                                                          default=1))
+                        s_file_mtime = int(os.stat(s_file).st_mtime)
+                        d_file_mtime = int(os.stat(d_file).st_mtime)
+
+                        if (s_file_mtime - d_file_mtime) >= cache_days:
+                            copy_files = True
+
+                if copy_files:
                     try:
                         if (os.path.islink(s_file) and
                                 os.path.exists(os.readlink(s_file))):
@@ -86,7 +107,8 @@ class Fetch(object):
                         else:
                             shutil.copy2(s_file, d_file)
                     except (IOError, OSError):
-                        pass
+                        self.ctx.log_state('Unable to copy file:'
+                                           ' {0}'.format(s_file))
 
 
     def read_cfg(self):

@@ -691,7 +691,7 @@ class LinchpinCli(LinchpinAPI):
 
     def lp_fetch(self, src, root=None, fetch_type='workspace',
                  fetch_protocol=None, fetch_ref=None, ws_set=False,
-                 dest_ws=None):
+                 dest_ws=None, nocache=False):
         """
         Fetch a workspace from git, http(s), or a local directory, and
         generate a provided workspace
@@ -725,6 +725,11 @@ class LinchpinCli(LinchpinAPI):
                         root is provided, a random workspace name will be
                         generated. The destination can also be explicitly set
                         by using -w (see linchpin --help).
+
+        :param nocache: If true, don't copy from the cache dir, unless it's
+                        longer than the configured fetch.cache_days (1 day)
+                        (default: False)
+
         """
 
         dest = self.workspace
@@ -790,4 +795,8 @@ class LinchpinCli(LinchpinAPI):
                                                   root_ws=root_ws,
                                                   ref=fetch_ref)
         fetch_class.fetch_files()
+
+        if nocache:
+            self.set_cfg('fetch', 'cache_ws', 'False')
+
         fetch_class.copy_files()
