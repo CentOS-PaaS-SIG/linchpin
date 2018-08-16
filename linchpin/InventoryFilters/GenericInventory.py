@@ -37,8 +37,10 @@ class GenericInventory(InventoryFilter):
 
         all_hosts = []
         for provider in sort_order:
-            all_hosts.extend(host_dict[provider])
-
+            if isinstance(host_dict[provider], str):
+                all_hosts.append(host_dict[provider])
+            else:
+                all_hosts.extend(host_dict[provider])
         return all_hosts[:count]
 
     def get_inventory(self, res_output, layout, topology):

@@ -38,6 +38,9 @@ class JSONInventoryFormatter(InventoryFormatter):
                     self.config[host_group]["vars"] = {}
                 host_grp_vars = inv['host_groups'][host_group]['vars']
                 self.config[host_group]["vars"].update(host_grp_vars)
+        for host in inv['hosts']:
+            for host_group in host['host_groups']:
+                self.config[host_group] = {}
         return True
 
     def add_ips_to_groups(self, inven_hosts, layout):
