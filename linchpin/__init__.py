@@ -38,6 +38,8 @@ class LinchpinAPI(object):
 
         """
 
+        self.__meta__ = "API"
+
         self.ctx = ctx
 
         self.hook_state = None
@@ -705,7 +707,7 @@ class LinchpinAPI(object):
             if 'inv' in self.pb_hooks:
                 self.hook_state = 'postinv'
 
-            if 'post' in self.pb_hooks:
+            if ('post' in self.pb_hooks) and (self.__meta__ == "API"):
                 self.hook_state = '{0}{1}'.format('post', action)
 
             end = time.time()
