@@ -251,6 +251,10 @@
   ignore_errors: yes
   when: node_exists['failed'] is defined and virt_type == "cloud-init" and cloud_config != {}
 
+- name: "debug for conditions"
+  debug:
+    msg: "{{ node_exists }}   {{ res_def['networks'] }}  {{ virt_type }} {{ res_def['networks'] | length }}"
+
 - name: "Install VM when network_bridge is defined"
   command: "virt-install --connect {{ definition[6] }} --import --name {{ definition[0] }}_{{ definition[7] }} --autostart --network bridge={{ definition[3] }},model=virtio --ram {{ definition[4] }} --disk path={{ definition[1] }}/{{ definition[0] }}_{{ definition[7] }}.{{ definition[2] }},format={{ definition[5] }},bus=virtio,cache=none --disk path=/tmp/vm-{{ definition[0] }}_{{ definition[7] }}.iso,device=cdrom --wait 10 --os-type=linux --nographics"
   with_nested:
