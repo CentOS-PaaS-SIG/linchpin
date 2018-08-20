@@ -16,19 +16,10 @@ RUN yum -y install python-pip \
     yum -y install gcc python-devel openssl-devel ansible \
                     libvirt-daemon-driver-* libvirt-daemon libvirt-daemon-kvm \
                     qemu-kvm libvirt-daemon-config-network libvirt-python \
-                    libvirt-devel file openssh mkisofs libvirt-client \
-                    net-tools git python-krbV make libxslt-python krb5-workstation \
-                    PyYAML python-ipaddress python-requests; \
-    #rm -rf /usr/lib/python2.7/site-packages/{urllib3,ipaddress}*; \
-    #rm -rf /usr/lib64/python2.7/site-packages/{PyYAML,yaml}*; \
-    #pip install -U 'ipaddress>=1.0.17'; \
-    #pip install -U 'urllib3<1.24,>=1.21.1'; \
-    #pip install -U 'requests>=2.14.2'; \
-    #pip install -U 'PyYAML>=3.12'; \
-    #pip uninstall -y urllib3; \
-    #yum -y install virt-install \
-    #echo 'pip freeze | grep requests'; \
-    #pip freeze | grep requests; \
+                    libvirt-devel virt-install file openssh mkisofs \
+                    libvirt-client net-tools git python-krbV make \
+                    libxslt-python krb5-workstation PyYAML python-ipaddress \
+                    python-requests; \
     (cd /lib/systemd/system/sysinit.target.wants/; for i in *; \
      do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
     rm -f /lib/systemd/system/multi-user.target.wants/*;\
