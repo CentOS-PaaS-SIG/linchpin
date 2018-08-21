@@ -10,7 +10,7 @@
 - name: set_fact for cloud_config
   set_fact:
     cloud_config: "{{ res_def['cloud_config'] }}"
-    virt_args: []
+    virt_args: ""
     ssh_args: ""
 
 - name: set run_commands
@@ -20,22 +20,22 @@
 
 - name: set run_commands in virt_args
   set_fact:
-    virt_args: "{{ virt_args  + [ '--firstboot-command ' +'\"' +run_commands +'\"'] }}"
+    virt_args: "{{ virt_args }} --firstboot-command '{{ run_commands }}'"
   when : cloud_config['run_commands'] is defined
 
 - name: set run_script in virt_args
   set_fact:
-    virt_args: "{{ virt_args + [ '--run ' + cloud_config['run_script'] ] }}"
+    virt_args: "{{ virt_args }} --run {{ cloud_config['run_script'] }}"
   when : cloud_config['run_script'] is defined
 
 - name: set root_password in virt_args
   set_fact:
-    virt_args: "{{ virt_args + [ '--root-password password:' + cloud_config['root_password'] ] }}"
+    virt_args: "{{ virt_args }} --root-password password:'{{ cloud_config['root_password'] }}'"
   when : cloud_config['root_password'] is defined
 
 - name: set root_password in virt_args
   set_fact:
-    virt_args: "{{ virt_args + [ '--run /tmp/user_creation.sh' ] }}"
+    virt_args: "{{ virt_args }} --run /tmp/user_creation.sh"
   when : cloud_config['users'] is defined
 
 - name: "set_fact for users with inject_ssh_keys"
@@ -45,15 +45,13 @@
 
 - name: set ssh_args
   set_fact:
-    ssh_args: "{{ ssh_args }} --ssh-inject {{ item }}:string:\'{{ pubkey_local.stdout }}\'"
-  with_items:
-    - "{{ ssh_key_users }}"
-  when: ssh_key_users|length > 0
+    ssh_args: "{{ ssh_args | prepare_ssh_args(ssh_key_users, pubkey_local['stdout']) }}"
+  when: cloud_config['users'] is defined
 
 - name: set ssh-inject to virt_args
   set_fact:
-    virt_args: "{{ virt_args + [ ssh_args ] }}"
-  when: ssh_key_users|length > 0
+    virt_args: "{{ virt_args }} {{ ssh_args }}"
+  when: cloud_config['users'] is defined
 
 - name: set_fact for pkgs
   set_fact:
@@ -61,29 +59,21 @@
 
 - name: set  packages in virt_args
   set_fact:
-    virt_args: "{{ virt_args + [ '--update --install '+ pkgs ] }}"
-  when : cloud_config['users'] is defined
+    virt_args: "{{ virt_args }} --update --install {{ pkgs }} "
+  when : cloud_config['packages'] is defined
 
 - name: add selinux-relabel
   set_fact:
-    virt_args: "{{ virt_args + [ '--selinux-relabel' ] }}"
-
-- name: debug
-  debug:
-    msg: "{{ virt_args }}"
+    virt_args: "{{ virt_args }} --selinux-relabel "
 
 - name: "Run virt-customize commands"
-  shell: "virt-customize -v -x -a {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} {{ definition[3] }}"
-  environment:
-    LIBGUESTFS_BACKEND: direct
-    # FIXME(ykarel) LIBGUESTFS_BACKEND_SETTINGS can be removed once
-    # https://bugs.launchpad.net/tripleo/+bug/1743749 is completely fixed.
-    LIBGUESTFS_BACKEND_SETTINGS: force_tcg
+  command: "virt-customize -v -x -a {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} {{ definition[3] }}"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - ["{{ libvirt_image_path | expanduser }}"]
     - ["{{ img_src_ext }}"]
-    - ["{{ virt_args | join(' ')}} "]
+    - ["{{ virt_args }}"]
     - "{{ res_count.stdout }}"
   loop_control:
     loop_var: definition
+  become: "{{ libvirt_become }}"
