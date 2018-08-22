@@ -77,6 +77,9 @@ class BkrFactory(BkrConn):
             tags = kwargs.get("tags", [])
             if tags:
                 kwargs.update({"tag": tags})
+            repos = kwargs.get("repos", [])
+            if repos:
+                kwargs.update({"repo": repos})
 
             requested_tasks = []
 
@@ -94,17 +97,6 @@ class BkrFactory(BkrConn):
 
                 # Reserve the system after its installed
                 kwargs.update({"reserve": True})
-                # We don't need to run a task but beaker needs one.
-                # therefore its defaulted to
-                # [{arches:[], 'name': '/distribution/dummy'}]
-                # if no repos are defined but with no value use default repo
-                # This default will not work for Fedora
-                repos = kwargs.get(
-                    "repos",
-                    ["http://file.bos.redhat.com/~bpeck/restraint/rhel"
-                     "$releasever"]
-                )
-                kwargs.update({'repo': repos})
             else:
                 requested_tasks.append({'arches': [],
                                         'name': '/distribution/reservesys'})
