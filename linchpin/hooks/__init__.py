@@ -114,7 +114,7 @@ class LinchpinHooks(object):
         that is being set. these parameters are based topology name.
         """
 
-        topo_data = self.api.get_evar('topo_data')
+        topo_data = self.api.get_evar('topo_data', {})
 
         workspace = self.api.get_evar('workspace')
         inv_folder = self.api.get_evar('inventories_folder')
