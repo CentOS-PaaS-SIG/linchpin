@@ -27,4 +27,5 @@ runcmd:
  - systemctl disable cloud-init-local.service
  - systemctl disable cloud-final.service
  - systemctl disable cloud-config.service
- - poweroff
+# avoiding power off by default
+# - poweroff

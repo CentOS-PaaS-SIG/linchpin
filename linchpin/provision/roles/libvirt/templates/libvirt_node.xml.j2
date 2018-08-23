@@ -24,6 +24,16 @@
 {% else %}
     <emulator>{{ qemu_path }}qemu-kvm</emulator>
 {% endif %}
+
+{% if virt_type == 'cloud-init' %}
+    <disk type='file' device='cdrom'>
+      <driver name='qemu' type='raw'/>
+      <source file='/tmp/vm-{{ libvirt_resource_name }}_{{ definition[2] }}.iso'/>
+      <backingStore/>
+      <target dev='hda' bus='ide'/>
+      <readonly/>
+    </disk>
+{% endif %}
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2'/>
       <source file='{{ definition[3] }}/{{ libvirt_resource_name }}_{{ definition[2] }}.{{ definition[4] }}'/>
