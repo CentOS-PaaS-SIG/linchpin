@@ -26,6 +26,7 @@ class LinchpinCli(LinchpinAPI):
         """
 
         LinchpinAPI.__init__(self, ctx)
+        self.__meta__ = "CLI"
         self.parser = DataParser()
 
 
@@ -401,6 +402,8 @@ class LinchpinCli(LinchpinAPI):
                     self._write_distilled_context(run_data)
         self._write_latest_run()
         self._write_to_inventory(inv_format=inv_f)
+        if ('post' in self.pb_hooks) and (self.__meta__ == "CLI"):
+            self.hook_state = '{0}{1}'.format('post', 'up')
 
         # Show success and errors, with data
         return (return_code, return_data)
@@ -428,10 +431,14 @@ class LinchpinCli(LinchpinAPI):
         # prep inputs
 
 
-        return self._execute_action('destroy',
-                                    targets,
-                                    run_id=run_id,
-                                    tx_id=tx_id)
+        outputs = self._execute_action('destroy',
+                                       targets,
+                                       run_id=run_id,
+                                       tx_id=tx_id)
+        if ('post' in self.pb_hooks) and (self.__meta__ == "CLI"):
+            self.hook_state = '{0}{1}'.format('post', 'destroy')
+        return outputs
+
 
 
     def _execute_action(self, action, targets=(), run_id=None, tx_id=None):
