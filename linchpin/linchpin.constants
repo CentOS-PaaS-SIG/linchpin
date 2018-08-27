@@ -34,6 +34,8 @@ _async = False
 async_timeout = 1000
 default_ssh_key_path = ~/.ssh
 debug_mode = False
+vault_encryption = False
+vault_pass = ''
 
 
 # NOTE: if either of these change, the value in linchpin/templates must also change
