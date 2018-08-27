@@ -8,8 +8,23 @@
 import os
 import yaml
 import json
+import ansible
 
 from ansible.module_utils.basic import AnsibleModule
+
+try:
+    from ansible.parsing.vault import VaultLib
+except ImportError:
+    # Ansible<2.0
+    from ansible.utils.vault import VaultLib
+
+try:
+    import configparser as ConfigParser
+except ImportError:
+    import ConfigParser as ConfigParser
+
+
+_ansible_ver = float('.'.join(ansible.__version__.split('.')[:2]))
 
 DOCUMENTATION = '''
 ---
@@ -42,10 +57,12 @@ options:
 '''
 
 
-try:
-    import configparser as ConfigParser
-except ImportError:
-    import ConfigParser as ConfigParser
+def _make_secrets(secret):
+    if _ansible_ver < 2.4:
+        return secret
+    from ansible.constants import DEFAULT_VAULT_ID_MATCH
+    from ansible.parsing.vault import VaultSecret
+    return [(DEFAULT_VAULT_ID_MATCH, VaultSecret(secret))]
 
 
 class ConfigDict(ConfigParser.ConfigParser):
@@ -58,8 +75,13 @@ class ConfigDict(ConfigParser.ConfigParser):
         return d
 
 
-def parse_file(filename):
-    cred_str = open(filename, "r").read()
+def parse_file(filename, vault_enc, vault_pass):
+    if json.loads(vault_enc.lower()):
+        vault_pass = vault_pass.encode('utf-8')
+        vault = VaultLib(_make_secrets(vault_pass))
+        cred_str = vault.decrypt(open(filename).read())
+    else:
+        cred_str = open(filename, "r").read()
     try:
         out = json.loads(cred_str)
     except Exception as e:
@@ -77,7 +99,7 @@ def parse_file(filename):
     return out
 
 
-def get_cred(fname, creds_path):
+def get_cred(fname, creds_path, vault_enc, vault_pass):
 
     paths = creds_path.split(os.path.pathsep)
     # files = []
@@ -86,7 +108,7 @@ def get_cred(fname, creds_path):
         for filename in os.listdir(path):
             if fname == filename:
                 full_file_path = '{0}/{1}'.format(path, filename)
-                out = parse_file(full_file_path)
+                out = parse_file(full_file_path, vault_enc, vault_pass)
                 return out, path
 
     module.fail_json(msg="Error: Credential not found")
@@ -100,7 +122,9 @@ def main():
             'filename': {'required': True, 'aliases': ['name']},
             'cred_type': {'required': False, 'aliases': ['credential_type']},
             'cred_path': {'required': True, 'aliases': ['credential_store']},
-            'driver': {'required': True, 'aliases': ['driver_type']},
+            'driver': {'default': 'file', 'aliases': ['driver_type']},
+            'vault_pass': {'default': '', 'aliases': ['vault_pass', 'vault_password']},
+            'vault_enc': {'default': False, 'aliases': ['vault_encryption']},
         },
         required_one_of=[],
         supports_check_mode=True
@@ -109,7 +133,9 @@ def main():
     cred_type = module.params["cred_type"]  # noqa F841
     cred_path = module.params["cred_path"]
     driver_type = module.params["driver"]  # noqa F841
-    output, path = get_cred(filename, cred_path)
+    vault_pass = module.params["vault_pass"]  # noqa F841
+    vault_enc = module.params["vault_enc"]  # noqa F841
+    output, path = get_cred(filename, cred_path, vault_enc, vault_pass)
     changed = True
     module.exit_json(changed=changed,
                      output=output, params=module.params, path=path)
