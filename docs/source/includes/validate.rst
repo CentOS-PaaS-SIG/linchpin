@@ -1,9 +1,9 @@
-The purpose of the validate command is to determine whether topologies are syntactically valid and, if not, provide a list of errors that occured during validation
+Validate Command
+-----------------
 
-Using the validate command
-```````````````````````````
+The purpose of the validate command is to determine whether topologies and layouts are syntactically valid.  If not, it will provide a list of errors that occured during validation
 
-The command `linchpin validate` looks at the topology file for each target in a given PinFile. If the topology is not valid under the current schema, it will attempt to convert the topology to an older schema and try again. If the topology is still invalid, the command will report the topology and a list of errors found.
+The command `linchpin validate` looks at the topology and layout files for each target in a given PinFile. If the topology is not valid under the current schema, it will attempt to convert the topology to an older schema and try again. If the topology is still invalid, the command will report the topology and a list of errors found.
 
 Invalid Topologies
 ++++++++++++++++++
@@ -120,7 +120,7 @@ The topology below has been fixed so that it will validate under the current sch
                  ssh-import-id: gh:herlo
                  lock_passwd: true
 
-If `linchpin validate` is run on the PinFile above, this will be the output:
+If `linchpin validate` is run on a PinFile containing the topology above, this will be the output:
 
 .. code-block:: bash
 

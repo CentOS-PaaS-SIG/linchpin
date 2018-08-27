@@ -24,7 +24,7 @@ libvirt-new:
                   gecos: Clint Savage
                   groups: wheel
                   sudo: ALL=(ALL) NOPASSWD:ALL
-                  ssh-import-id: gh:herlo
+                  ssh_import_id: gh:herlo
                   lock_passwd: true
   layout:
     inventory_layout:

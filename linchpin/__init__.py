@@ -473,6 +473,27 @@ class LinchpinAPI(object):
             return msg
 
 
+    def _validate_layout(self, layout):
+        """
+        Validate the provided layout against the schema
+
+        :param layout: layout dictionary
+        """
+
+        pb_path = self._find_playbook_path("layout")
+        try:
+            sp = "{0}/roles/common/files/schema.json".format(pb_path)
+
+            schema = json.load(open(sp))
+        except Exception as e:
+            raise LinchpinError("Error with schema: '{0]' {1}".format(sp, e))
+
+        v = AnyofValidator(schema)
+
+        if not v.validate(layout):
+            raise SchemaError('Schema validation failed: {0}'.format(v.errors))
+
+
     def generate_inventory(self, resource_data, layout, inv_format="cfg",
                            topology_data={}):
         inv = GenericInventory.GenericInventory(inv_format=inv_format)
@@ -569,7 +590,6 @@ class LinchpinAPI(object):
                    to perform an idempotent reprovision, or destroy provisioned
                    resources.
         """
-
         ansible_console = False
         if self.ctx.cfgs.get('ansible'):
             ansible_console = (
@@ -688,6 +708,12 @@ class LinchpinAPI(object):
 
             if provision_data[target].get('layout', None):
                 l_data = provision_data[target]['layout']
+                try:
+                    self._validate_layout(l_data)
+                except SchemaError:
+                    raise ValidationError("Layout '{0}' does not"
+                                          " validate".format(l_data))
+
                 provision_data[target]['layout'] = self._convert_layout(l_data)
                 self.set_evar('layout_data', provision_data[target]['layout'])
 
@@ -816,6 +842,7 @@ class LinchpinAPI(object):
             results[target] = {}
             self.set_evar('target', target)
 
+            # validate topology
             topology_data = provision_data[target].get('topology')
 
             try:
@@ -847,11 +874,32 @@ errors:
                     results[target] = error
                     return_code += 1
                 else:
-                    results[target] = "valid with old schema"
+                    results[target] = "topology valid with old schema"
 
 
             else:
-                results[target] = "valid"
+                results[target] = "topology valid"
+
+            # validate layout
+            if provision_data[target].get('layout', None):
+                l_data = provision_data[target]['layout']
+
+                try:
+                    self._validate_layout(l_data)
+                except SchemaError as e:
+                    error = """
+Layout for target '{0}' does  not validate
+layout: '{1}'
+errors:
+""".format(target, l_data)
+                    for line in iter(str(e).splitlines(True)):
+                        error += "\t" + line
+
+                    results[target] += "\n" + error + "\n"
+
+                else:
+                    results[target] += "\nlayout valid"
+
 
         return return_code, results
 

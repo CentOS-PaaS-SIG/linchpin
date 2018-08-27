@@ -1,0 +1,32 @@
+{
+    "inventory_layout": {
+        "type": "dict",
+        "schema": {
+            "host_groups": {
+                "type": "dict",
+                "required": false,
+                "valueschema": {
+                    "type": "dict",
+                    "required": true,
+                    "schema": {
+                        "children": { "required": false, "type": "list" },
+                        "vars": { "allow_unknown": true, "type": "dict" }
+                    }
+                }
+            },
+            "hosts": {
+                "type": "dict",
+                "required": true,
+                    "valueschema": {
+                    "required": true,
+                    "schema": {
+                        "count": { "required": false, "type": "integer" },
+                        "host_groups": { "required": false, "type": "list" }
+                    }
+                }
+            },
+            "inventory_file": { "required": false, "type": "string" },
+            "vars": { "allow_unknown": true, "required": false, "type": "dict" }
+        }
+    }
+}
