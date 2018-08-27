@@ -34,15 +34,19 @@ OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
 executionID = UUID.randomUUID().toString()
 
 // Pod name to use
-podName = 'linchpin_container-' + executionID
+podName1 = 'lp_container-1-' + executionID
+podName2 = 'lp_container-2-' + executionID
+podName3 = 'lp_container-3-' + executionID
 
-library identifier: "ci-pipeline@master",
-        retriever: modernSCM([$class: 'GitSCMSource',
-                              remote: "https://github.com/CentOS-Paas-SIG/ci-pipeline"])
+def libraries = ['cico-pipeline'           : ['master', 'https://github.com/CentOS/cico-pipeline-library.git'],
+                 'ci-pipeline'             : ['master', 'https://github.com/CentOS-PaaS-SIG/ci-pipeline.git'],
+                 'upstream-fedora-pipeline': ['smalltest', 'https://github.com/johnbieren/upstream-fedora-pipeline.git']]
 
-library identifier: "cico-pipeline-library@master",
-        retriever: modernSCM([$class: 'GitSCMSource',
-                              remote: "https://github.com/CentOS/cico-pipeline-library"])
+libraries.each { name, repo ->
+    library identifier: "${name}@${repo[0]}",
+            retriever: modernSCM([$class: 'GitSCMSource',
+                                  remote: repo[1]])
+}
 
 properties(
     [
@@ -85,186 +89,190 @@ properties(
     ]
 )
 
-podTemplate(name: podName,
-            label: podName,
-            cloud: 'openshift',
-            serviceAccount: OPENSHIFT_SERVICE_ACCOUNT,
-            idleMinutes: 0,
-            namespace: OPENSHIFT_NAMESPACE,
+stage('Tests') {
+    currentBuild.displayName = "Build#: ${env.BUILD_NUMBER} - PR: ${env.ghprbPullId} - Author: ${env.ghprbPullAuthorLogin}"
+    if (env.ghprbActualCommit != null && env.ghprbActualCommit != "develop") {
+        currentBuild.description = "<a href=\"https://github.com/${env.ghprbGhRepository}/pull/${env.ghprbPullId}\">PR #${env.ghprbPullId} (${env.ghprbPullAuthorLogin})</a>"
+    }
+    try {
+        parallel (
+            "Centos7" : {
+                packagepipelineUtils.clearTemplateNames()
+                podTemplate(name: podName1,
+                            label: podName1,
+                            cloud: 'openshift',
+                            serviceAccount: OPENSHIFT_SERVICE_ACCOUNT,
+                            idleMinutes: 0,
+                            namespace: OPENSHIFT_NAMESPACE,
 
-        containers: [
-            // This adds the custom slave container to the pod.
-            // Must be first with name 'jnlp'
-            containerTemplate(name: 'jnlp',
-                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/jenkins-continuous-infra-slave:' + SLAVE_TAG,
-                ttyEnabled: false,
-                args: '${computer.jnlpmac} ${computer.name}',
-                command: '',
-                workingDir: '/workDir'),
-            containerTemplate(name: 'centos7',
-                alwaysPullImage: true,
-                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/centos7:' + CENTOS7_TAG,
-                ttyEnabled: false,
-                command: '/usr/sbin/init',
-                privileged: true,
-                workingDir: '/workDir'),
-            containerTemplate(name: 'fedora27',
-                alwaysPullImage: true,
-                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora27:' + FEDORA27_TAG,
-                ttyEnabled: false,
-                command: '/root/init_libvirt.sh',
-                privileged: true,
-                workingDir: '/workDir'),
-            containerTemplate(name: 'fedora26',
-                alwaysPullImage: true,
-                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora26:' + FEDORA26_TAG,
-                ttyEnabled: false,
-                command: '/root/init_libvirt.sh',
-                privileged: true,
-                workingDir: '/workDir')
-        ],
-        volumes: [
-            emptyDirVolume(memory: false, mountPath: '/sys/class/net')
-        ]
-)
+                        containers: [
+                            // This adds the custom slave container to the pod.
+                            // Must be first with name 'jnlp'
+                            containerTemplate(name: 'jnlp',
+                                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/jenkins-continuous-infra-slave:' + SLAVE_TAG,
+                                ttyEnabled: false,
+                                args: '${computer.jnlpmac} ${computer.name}',
+                                command: '',
+                                workingDir: '/workDir'),
+                            containerTemplate(name: 'centos7',
+                                alwaysPullImage: true,
+                                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/centos7:' + CENTOS7_TAG,
+                                ttyEnabled: false,
+                                command: '/usr/sbin/init',
+                                privileged: true,
+                                workingDir: '/workDir')
+                        ],
+                        volumes: [
+                            emptyDirVolume(memory: false, mountPath: '/sys/class/net')
+                        ]
+                )
+                {
+                    execute_test(podName1, "centos7")
+                }
+            }, fedora26: {
+                packagepipelineUtils.clearTemplateNames()
+                podTemplate(name: podName2,
+                            label: podName2,
+                            cloud: 'openshift',
+                            serviceAccount: OPENSHIFT_SERVICE_ACCOUNT,
+                            idleMinutes: 0,
+                            namespace: OPENSHIFT_NAMESPACE,
 
-// Here is the actual workflow...
-{
-    node(podName) {
-        ansiColor('xterm') {
-            timestamps {
-                // We need to set env.HOME because the openshift slave image
-                // forces this to /home/jenkins and then ~ expands to that
-                // even though id == "root"
-                // See https://github.com/openshift/jenkins/blob/master/slave-base/Dockerfile#L5
-                //
-                // Even the kubernetes plugin will create a pod with containers
-                // whose $HOME env var will be its workingDir
-                // See https://github.com/jenkinsci/kubernetes-plugin/blob/master/src/main/java/org/csanchez/jenkins/plugins/kubernetes/KubernetesLauncher.java#L311
-                //
-                env.HOME = "/root"
-                //
-                try {
-                    // Prepare our environment
-                    stage("prepare-environment") {
-                        deleteDir()
-                        // Set our default env variables. Many of these
-                        // are ci-pipeline specific, but we do need some
-                        pipelineUtils.setDefaultEnvVars()
-                        // Decorate our build
-                        currentBuild.displayName = "Build#: ${env.BUILD_NUMBER} - PR: ${env.ghprbPullId} - Author: ${env.ghprbPullAuthorLogin}"
-                        if (env.ghprbActualCommit != null && env.ghprbActualCommit != "develop") {
-                            currentBuild.description = "<a href=\"https://github.com/${env.ghprbGhRepository}/pull/${env.ghprbPullId}\">PR #${env.ghprbPullId} (${env.ghprbPullAuthorLogin})</a>"
-                        }
-                        // Gather some info about the node we are running on for diagnostics
-                        pipelineUtils.verifyPod(OPENSHIFT_NAMESPACE, env.NODE_NAME)
-                        dir('linchpin') {
-                            // Checkout our linchpin repo based on the value of env.ghprbActualCommit
-                            checkout([$class: 'GitSCM',
-                                      branches: [[name: env.ghprbActualCommit]],
-                                      doGenerateSubmoduleConfigurations: false,
-                                      extensions                       : [],
-                                      submoduleCfg                     : [],
-                                      userRemoteConfigs                : [
-                                              [refspec:
-                                                       '+refs/heads/*:refs/remotes/origin/*  +refs/pull/*:refs/remotes/origin/pr/* ',
-                                               url: "https://github.com/${env.ghprbGhRepository}"]
-                                      ]
-                            ])
-                            sh """
-                              git clone https://github.com/CentOS-PaaS-SIG/duffy-ansible-module.git
-                            """
-                            def creds = com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredentials(
-                              com.cloudbees.plugins.credentials.Credentials.class
-                            );
-                            for (provider in PPROVIDERS) {
-                              def cf = creds.findResult { it.id == provider + '-key' ? it : null }
-                              if ( cf ) {
-                                println "found credential ${cf.id} filename:${cf.fileName}"
-                                withCredentials([file(credentialsId: provider + '-key', variable: 'FILEKEY')]) {
-                                sh """
-                                    #!/bin/bash -x
-                                    mkdir -p keys/
-                                    cp ${FILEKEY} keys/${cf.fileName}
-                                    chmod 0600 keys/${cf.fileName}
-                                """
-                                }
-                              }
-                            }
-                        }
-                        // create audit message file
-                        //pipelineUtils.initializeAuditFile(msgAuditFile)
-                    }
-                    stage('Validations') {
-                      parallel centos7: {
-                        def currentStage = "centos7-install"
-                        stage(currentStage) {
-                          dir('linchpin') {
-                            pipelineUtils.executeInContainer(currentStage, "centos7", "./config/Dockerfiles/linchpin-install.sh")
-                          }
-                        }
-                        currentStage = "centos7-test"
-                        stage(currentStage) {
-                          dir('linchpin') {
-                            env.distro = "centos7"
-                            pipelineUtils.executeInContainer(currentStage, "centos7", "./config/Dockerfiles/linchpin-tests.sh")
-                          }
-                        }
-                      }, fedora26: {
-                        def currentStage = "fedora26-install"
-                        stage(currentStage) {
-                          dir('linchpin') {
-                            pipelineUtils.executeInContainer(currentStage, "fedora26", "./config/Dockerfiles/linchpin-install.sh")
-                          }
-                        }
-                        currentStage = "fedora26-test"
-                        stage(currentStage) {
-                          dir('linchpin') {
-                            env.distro = "fedora26"
-                            pipelineUtils.executeInContainer(currentStage, "fedora26", "./config/Dockerfiles/linchpin-tests.sh")
-                          }
-                        }
-                      }, fedora27: {
-                        def currentStage = "fedora27-install"
-                        stage(currentStage) {
-                          dir('linchpin') {
-                            pipelineUtils.executeInContainer(currentStage, "fedora27", "./config/Dockerfiles/linchpin-install.sh")
-                          }
-                        }
-                        currentStage = "fedora27-test"
-                        stage(currentStage) {
-                          dir('linchpin') {
-                            env.distro = "fedora27"
-                            pipelineUtils.executeInContainer(currentStage, "fedora27", "./config/Dockerfiles/linchpin-tests.sh")
-                          }
-                        }
-                      },
-                      failFast: true
-                    }
-                } catch (e) {
-                    // Set build result
-                    currentBuild.result = 'FAILURE'
+                        containers: [
+                            // This adds the custom slave container to the pod.
+                            // Must be first with name 'jnlp'
+                            containerTemplate(name: 'jnlp',
+                                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/jenkins-continuous-infra-slave:' + SLAVE_TAG,
+                                ttyEnabled: false,
+                                args: '${computer.jnlpmac} ${computer.name}',
+                                command: '',
+                                workingDir: '/workDir'),
+                            containerTemplate(name: 'fedora26',
+                                alwaysPullImage: true,
+                                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora26:' + FEDORA26_TAG,
+                                ttyEnabled: false,
+                                command: '/root/init_libvirt.sh',
+                                privileged: true,
+                                workingDir: '/workDir')
+                        ],
+                        volumes: [
+                            emptyDirVolume(memory: false, mountPath: '/sys/class/net')
+                        ]
+                )
+                {
+                    execute_test(podName2, "fedora26")
+                }
+            }, fedora27: {
+                packagepipelineUtils.clearTemplateNames()
+                podTemplate(name: podName3,
+                            label: podName3,
+                            cloud: 'openshift',
+                            serviceAccount: OPENSHIFT_SERVICE_ACCOUNT,
+                            idleMinutes: 0,
+                            namespace: OPENSHIFT_NAMESPACE,
 
-                    // Report the exception
-                    echo e.getMessage()
-
-                    // Throw the error
-                    throw e
-
-                } finally {
-                    pipelineUtils.getContainerLogsFromPod(OPENSHIFT_NAMESPACE, env.NODE_NAME)
-
-                    // Archive our artifacts
-                    step([$class: 'ArtifactArchiver', allowEmptyArchive: true, artifacts: '**/*_logs/**,*.txt,*.groovy,**/job.*,**/*.groovy,**/inventory.*', excludes: '**/job.props,**/job.props.groovy,**/*.example', fingerprint: true])
-
-                    // Set our message topic, properties, and content
-                    //messageFields = pipelineUtils.setMessageFields("complete")
-
-                    // Send message org.foo.bar.complete on fedmsg
-                    //pipelineUtils.sendMessageWithAudit(messageFields['properties'], messageFields['content'], msgAuditFile, fedmsgRetryCount)
-
+                        containers: [
+                            // This adds the custom slave container to the pod.
+                            // Must be first with name 'jnlp'
+                            containerTemplate(name: 'jnlp',
+                                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/jenkins-continuous-infra-slave:' + SLAVE_TAG,
+                                ttyEnabled: false,
+                                args: '${computer.jnlpmac} ${computer.name}',
+                                command: '',
+                                workingDir: '/workDir'),
+                            containerTemplate(name: 'fedora27',
+                                alwaysPullImage: true,
+                                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora27:' + FEDORA27_TAG,
+                                ttyEnabled: false,
+                                command: '/root/init_libvirt.sh',
+                                privileged: true,
+                                workingDir: '/workDir')
+                        ],
+                        volumes: [
+                            emptyDirVolume(memory: false, mountPath: '/sys/class/net')
+                        ]
+                )
+                {
+                    execute_test(podName3, "fedora27")
                 }
             }
+        )
+    } catch (e) {
+        // Set build result
+        currentBuild.result = 'FAILURE'
+
+        // Report the exception
+        echo e.getMessage()
+
+        // Throw the error
+        throw e
+
+    }
+}
+
+def prepare_env() {
+    dir('linchpin') {
+        checkout([$class: 'GitSCM',
+                  branches: [[name: env.ghprbActualCommit]],
+                  doGenerateSubmoduleConfigurations: false,
+                  extensions                       : [],
+                  submoduleCfg                     : [],
+                  userRemoteConfigs                : [
+                          [refspec:
+                                   '+refs/heads/*:refs/remotes/origin/*  +refs/pull/*:refs/remotes/origin/pr/* ',
+                           url: "https://github.com/${env.ghprbGhRepository}"]
+                  ]
+        ])
+        sh """
+          git clone https://github.com/CentOS-PaaS-SIG/duffy-ansible-module.git
+        """
+        def creds = com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredentials(
+          com.cloudbees.plugins.credentials.Credentials.class
+        );
+        for (provider in PPROVIDERS) {
+          def cf = creds.findResult { it.id == provider + '-key' ? it : null }
+          if ( cf ) {
+            println "found credential ${cf.id} filename:${cf.fileName}"
+            withCredentials([file(credentialsId: provider + '-key', variable: 'FILEKEY')]) {
+            sh """
+                #!/bin/bash -x
+                mkdir -p keys/
+                cp ${FILEKEY} keys/${cf.fileName}
+                chmod 0600 keys/${cf.fileName}
+            """
+            }
+          }
+        }
+    }
+}
+
+def execute_test(String podname, String container) {
+    node(podname) {
+        try {
+            stage('Validations') {
+                env.HOME = "/root"
+                deleteDir()
+                pipelineUtils.setDefaultEnvVars()
+                pipelineUtils.verifyPod(OPENSHIFT_NAMESPACE, env.NODE_NAME)
+                prepare_env()
+            }
+            def currentStage = container + "-install"
+            stage(currentStage) {
+                dir('linchpin') {
+                  pipelineUtils.executeInContainer(currentStage, container, "./config/Dockerfiles/linchpin-install.sh")
+                }
+            }
+            currentStage = container + "-test"
+            stage(currentStage) {
+                dir('linchpin') {
+                  env.distro = container
+                  pipelineUtils.executeInContainer(currentStage, container, "./config/Dockerfiles/linchpin-tests.sh")
+                }
+            }
+        } finally {
+            pipelineUtils.getContainerLogsFromPod(OPENSHIFT_NAMESPACE, env.NODE_NAME)
+            // Archive our artifacts
+            step([$class: 'ArtifactArchiver', allowEmptyArchive: true, artifacts: '**/*_logs/**,*.txt,*.groovy,**/job.*,**/*.groovy,**/inventory.*', excludes: '**/job.props,**/job.props.groovy,**/*.example', fingerprint: true])
         }
     }
 }
