@@ -9,10 +9,12 @@
 
 - name: "Get creds from auth driver"
   auth_driver:
-    filename: "{{ res_grp['credentials']['filename']  }}"
+    filename: "{{ res_grp['credentials']['filename'] }}"
     cred_type: "ovirt"
     cred_path: "{{ creds_path | default(default_credentials_path) }}"
     driver: "file"
+    vault_enc: "{{ vault_encryption }}"
+    vault_pass: "{{ vault_pass }}"
   register: auth_var
   ignore_errors: true
   no_log: "{{ not debug_mode }}"
