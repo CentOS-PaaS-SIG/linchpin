@@ -374,7 +374,7 @@ class LinchpinCli(LinchpinAPI):
         pass
 
 
-    def lp_up(self, targets=(), run_id=None, tx_id=None, inv_f="cfg"):
+    def lp_up(self, targets=(), run_id=None, tx_id=None, inv_f="cfg", vault_pass=''):
         """
         This function takes a list of targets, and provisions them according
         to their topology.
@@ -395,7 +395,8 @@ class LinchpinCli(LinchpinAPI):
         return_code, return_data = self._execute_action('up',
                                                         targets,
                                                         run_id=run_id,
-                                                        tx_id=tx_id)
+                                                        tx_id=tx_id,
+                                                        vault_pass=vault_pass)
 
         # Distill data
         new_tx_id = return_data.keys()[0]
@@ -428,7 +429,6 @@ class LinchpinCli(LinchpinAPI):
 
         # Show success and errors, with data
         return (return_code, return_data)
-
 
 
     def lp_validate(self, targets=(), old_schema=False):
@@ -471,7 +471,7 @@ class LinchpinCli(LinchpinAPI):
         return self.do_validation(prov_data, old_schema=old_schema)
 
 
-    def lp_destroy(self, targets=(), run_id=None, tx_id=None):
+    def lp_destroy(self, targets=(), run_id=None, tx_id=None, vault_pass=''):
 
         """
         This function takes a list of targets, and performs a destructive
@@ -495,14 +495,14 @@ class LinchpinCli(LinchpinAPI):
         outputs = self._execute_action('destroy',
                                        targets,
                                        run_id=run_id,
-                                       tx_id=tx_id)
+                                       tx_id=tx_id,
+                                       vault_pass=vault_pass)
         if ('post' in self.pb_hooks) and (self.__meta__ == "CLI"):
             self.hook_state = '{0}{1}'.format('post', 'destroy')
         return outputs
 
 
-
-    def _execute_action(self, action, targets=(), run_id=None, tx_id=None):
+    def _execute_action(self, action, targets=(), run_id=None, tx_id=None, vault_pass=''):
         """
         This function takes a list of targets, and performs a destructive
         teardown, including undefining nodes, according to the target(s).
@@ -563,7 +563,8 @@ class LinchpinCli(LinchpinAPI):
             return_code, return_data = self._execute(provision_data,
                                                      targets,
                                                      action=action,
-                                                     run_id=run_id)
+                                                     run_id=run_id,
+                                                     vault_pass=vault_pass)
         else:
             # get the pinfile data from the run_id or the tx_id
             provision_data = self.get_pf_data_from_rundb(targets,
@@ -575,7 +576,8 @@ class LinchpinCli(LinchpinAPI):
                                                          targets,
                                                          action=action,
                                                          run_id=run_id,
-                                                         tx_id=tx_id)
+                                                         tx_id=tx_id,
+                                                         vault_pass=vault_pass)
 
             else:
                 return (99, {})
@@ -674,7 +676,7 @@ class LinchpinCli(LinchpinAPI):
 
 
     def _execute(self, provision_data, targets,
-                 action='up', run_id=None, tx_id=None):
+                 action='up', run_id=None, tx_id=None, vault_pass=''):
         """
         This function takes a list of targets, constructs a dictionary of tasks
         and passes it to the LinchpinAPI.do_action method for processing.
@@ -703,7 +705,8 @@ class LinchpinCli(LinchpinAPI):
         return self.do_action(prov_data,
                               action=action,
                               run_id=run_id,
-                              tx_id=tx_id)
+                              tx_id=tx_id,
+                              vault_pass=vault_pass)
 
 
     def lp_fetch(self, src, root='', fetch_type='workspace',

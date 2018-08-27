@@ -208,8 +208,9 @@ def init(ctx):
               cls=MutuallyExclusiveOption, mutually_exclusive=["run_id"])
 @click.option('-if', '--inventory-format', default="cfg",
               help="Inventory format can be cfg or json")
+@click.option('--ask-vault-pass', is_flag=True)
 @pass_context
-def up(ctx, targets, run_id, tx_id, inventory_format):
+def up(ctx, targets, run_id, tx_id, inventory_format, ask_vault_pass):
     """
     Provisions nodes from the given target(s) in the given PinFile.
 
@@ -226,12 +227,17 @@ def up(ctx, targets, run_id, tx_id, inventory_format):
 
     run-id:     Use the data from the provided run_id value
     """
+    vault_pass = os.environ.get('VAULT_PASSWORD', '')
+
+    if ask_vault_pass:
+        vault_pass = click.prompt("enter vault password", hide_input=True)
 
     if tx_id:
         try:
             return_code, results = lpcli.lp_up(targets=targets,
                                                tx_id=tx_id,
-                                               inv_f=inventory_format)
+                                               inv_f=inventory_format,
+                                               vault_pass=vault_pass)
             _handle_results(ctx, results, return_code)
         except LinchpinError as e:
             ctx.log_state(e)
@@ -244,7 +250,8 @@ def up(ctx, targets, run_id, tx_id, inventory_format):
             return_code, results = lpcli.lp_up(targets=targets,
                                                run_id=run_id,
                                                tx_id=tx_id,
-                                               inv_f=inventory_format)
+                                               inv_f=inventory_format,
+                                               vault_pass=vault_pass)
             _handle_results(ctx, results, return_code)
         except LinchpinError as e:
             ctx.log_state(e)
@@ -267,8 +274,9 @@ def up(ctx, targets, run_id, tx_id, inventory_format):
 @click.option('-t', '--tx-id', metavar='tx_id', type=int,
               help='Destroy resources using the transaction ID (tx-id)',
               cls=MutuallyExclusiveOption, mutually_exclusive=["run_id"])
+@click.option('--ask-vault-pass', is_flag=True)
 @pass_context
-def destroy(ctx, targets, run_id, tx_id):
+def destroy(ctx, targets, run_id, tx_id, ask_vault_pass):
     """
     Destroys resources using either the run_id or tx_id (mutually exclusive).
 
@@ -282,11 +290,15 @@ def destroy(ctx, targets, run_id, tx_id):
     the appropriate PinFile will be destroyed.
 
     """
+    vault_pass = os.environ.get('VAULT_PASSWORD', '')
+    if ask_vault_pass:
+        vault_pass = click.prompt("enter vault password", hide_input=True)
 
     if tx_id:
         try:
             return_code, results = lpcli.lp_destroy(targets=targets,
-                                                    tx_id=tx_id)
+                                                    tx_id=tx_id,
+                                                    vault_pass=vault_pass)
             _handle_results(ctx, results, return_code)
         except LinchpinError as e:
             ctx.log_state(e)
@@ -298,7 +310,8 @@ def destroy(ctx, targets, run_id, tx_id):
         try:
             return_code, results = lpcli.lp_destroy(targets=targets,
                                                     run_id=run_id,
-                                                    tx_id=tx_id)
+                                                    tx_id=tx_id,
+                                                    vault_pass=vault_pass)
             _handle_results(ctx, results, return_code)
         except LinchpinError as e:
             ctx.log_state(e)
