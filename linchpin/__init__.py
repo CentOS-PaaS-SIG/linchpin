@@ -547,7 +547,8 @@ class LinchpinAPI(object):
         return pinfile
 
 
-    def do_action(self, provision_data, action='up', run_id=None, tx_id=None, vault_pass=''):
+    def do_action(self, provision_data, action='up', run_id=None, tx_id=None,
+                  vault_pass=''):
         """
         This function takes provision_data, and executes the given
         action for each target within the provision_data disctionary.

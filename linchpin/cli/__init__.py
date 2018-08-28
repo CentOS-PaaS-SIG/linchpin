@@ -374,7 +374,8 @@ class LinchpinCli(LinchpinAPI):
         pass
 
 
-    def lp_up(self, targets=(), run_id=None, tx_id=None, inv_f="cfg", vault_pass=''):
+    def lp_up(self, targets=(), run_id=None, tx_id=None, inv_f="cfg",
+              vault_pass=''):
         """
         This function takes a list of targets, and provisions them according
         to their topology.
@@ -502,7 +503,8 @@ class LinchpinCli(LinchpinAPI):
         return outputs
 
 
-    def _execute_action(self, action, targets=(), run_id=None, tx_id=None, vault_pass=''):
+    def _execute_action(self, action, targets=(), run_id=None, tx_id=None,
+                        vault_pass=''):
         """
         This function takes a list of targets, and performs a destructive
         teardown, including undefining nodes, according to the target(s).
