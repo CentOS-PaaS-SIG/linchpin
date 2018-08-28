@@ -93,6 +93,7 @@ stage('Tests') {
     if (env.ghprbActualCommit != null && env.ghprbActualCommit != "develop") {
         currentBuild.description = "<a href=\"https://github.com/${env.ghprbGhRepository}/pull/${env.ghprbPullId}\">PR #${env.ghprbPullId} (${env.ghprbPullAuthorLogin})</a>"
     }
+    openshift.setLockName("${env.JOB_NAME}_${env.BUILD_NUMBER}")
     try {
         parallel (
             "Centos7" : {
