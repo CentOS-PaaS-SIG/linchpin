@@ -6,12 +6,19 @@ else
     LP_PATH=${PWD}
 fi
 
+DNF='dnf'
+grep -i fedora /etc/os-release
+
+if [ "${?}" != 0 ]; then
+    DNF='yum'
+fi
+
 if [ "${USER}" != "root" ]; then
-    sudo dnf install libvirt-devel -yq
-    sudo dnf install libguestfs-tools python-libguestfs -yq
+    sudo ${DNF} install libvirt-devel -yq
+    sudo ${DNF} install libguestfs-tools python-libguestfs -yq
 else
-    dnf install libvirt-devel -yq
-    dnf install libguestfs-tools python-libguestfs -yq
+    ${DNF} install libvirt-devel -yq
+    ${DNF} install libguestfs-tools python-libguestfs -yq
 fi
 
 if [ -e "${LP_PATH}" ]; then
