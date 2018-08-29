@@ -160,7 +160,6 @@ def runcli(ctx, config, pinfile, template_data, outfile,
 
     if workspace is not None:
         ctx.workspace = os.path.realpath(os.path.expanduser(workspace))
-        ctx.set_cfg('tmp', 'ws_set', True)
         ctx.log_debug("ctx.workspace: {0}".format(ctx.workspace))
 
     # global LinchpinCli placeholder
@@ -316,8 +315,8 @@ def destroy(ctx, targets, run_id, tx_id):
                    ' within the root url. If root is not set, the root'
                    ' of the given remote will be used.')
 @click.option('--dest', 'dest_ws', metavar='DEST', default=None,
-              help='Workspaces destination, the workspace will be relative to'
-                   ' this location.')
+              help='Workspaces destination, the fetched workspace will be'
+                   ' relative to this location. (Overrides -w/--workspace)')
 @click.option('--branch', 'fetch_ref', metavar='REF', default=None,
               help='Specify the git branch. Used only with'
                    ' git protocol (eg. master).')
@@ -341,10 +340,9 @@ def fetch(ctx, remote, fetch_type, root, dest_ws,
         fetch_type = 'workspace'
 
     try:
-        ws_set = ctx.get_cfg('tmp', 'ws_set', default=False)
         lpcli.lp_fetch(remote, root=root, fetch_type=fetch_type,
                        fetch_protocol=fetch_proto, fetch_ref=fetch_ref,
-                       ws_set=ws_set, dest_ws=dest_ws, nocache=nocache)
+                       dest_ws=dest_ws, nocache=nocache)
     except LinchpinError as e:
         ctx.log_state(e)
         sys.exit(1)

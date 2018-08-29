@@ -690,8 +690,8 @@ class LinchpinCli(LinchpinAPI):
 
 
     def lp_fetch(self, src, root=None, fetch_type='workspace',
-                 fetch_protocol=None, fetch_ref=None, ws_set=False,
-                 dest_ws=None, nocache=False):
+                 fetch_protocol=None, fetch_ref=None, dest_ws=None,
+                 nocache=False):
         """
         Fetch a workspace from git, http(s), or a local directory, and
         generate a provided workspace
@@ -714,51 +714,51 @@ class LinchpinCli(LinchpinAPI):
                             (eg. master). If not used, the default branch will
                             be used.
 
-        :param ws_set:  Boolean to determine if the workspace was set. If so,
-                        use this value as the absolut path to workspace.
-
         :param dest_ws: Workspaces destination, the workspace will be relative
                         to this location.
 
-                        If `-r/--root` is provided, its basename will be the
-                        name of the workspace within the destination. If no
-                        root is provided, a random workspace name will be
-                        generated. The destination can also be explicitly set
-                        by using -w (see linchpin --help).
+                        If `dest_ws` is not provided and `-r/--root` is
+                        provided, the basename will be the name of the
+                        workspace within the destination. If no root is
+                        provided, a random workspace name will be generated.
+                        The destination can also be explicitly set by using
+                        -w (see linchpin --help).
 
         :param nocache: If true, don't copy from the cache dir, unless it's
                         longer than the configured fetch.cache_days (1 day)
                         (default: False)
-
         """
 
-        dest = self.workspace
-        root_ws = None
+        root_ws = ''
         if dest_ws:
-            if not ws_set:
-                if root:
-                    abs_root = os.path.expanduser(os.path.realpath(root))
-                    root_ws = os.path.basename(abs_root.rstrip(os.path.sep))
-                    dest = '{0}/{1}'.format(dest_ws, root_ws)
-                else:
-                    # generate a unique value for the root
-                    uroot = hashlib.new('sha256:{0}{1}'.format(src, dest))
-                    uroot = uroot.hexdigest()[:8]
+            if root:
+                abs_root = os.path.expanduser(os.path.realpath(root))
+                root_ws = os.path.basename(abs_root.rstrip(os.path.sep))
+            else:
+                # generate a unique value for the root
+                uroot = hashlib.new('sha256:{0}{1}'.format(src, dest_ws))
+                uroot = uroot.hexdigest()[:8]
 
-                    # generate a random location to put an underscore
-                    min_under = randint(1, 7)
-                    max_under = min_under + 1
-                    uroot = uroot[:min_under] + '_' + uroot[max_under:]
-                    dest = '{0}/{1}'.format(dest_ws, uroot)
-#            else:
-#                pass  # dest = self.workspace (set at the top)
+                # generate a random location to put an underscore
+                min_under = randint(1, 7)
+                max_under = min_under + 1
+                root_ws = uroot[:min_under] + '_' + uroot[max_under:]
+        else:
+            dest_ws = self.workspace
+            if root:
+                abs_root = os.path.expanduser(os.path.realpath(root))
+                root = os.path.basename(abs_root.rstrip(os.path.sep))
+#                else:
+#                    pass  # dest = self.workspace (set at the top)
 
+        dest = '{0}/{1}'.format(dest_ws, root_ws)
 
-
+        output_txt = 'destination workspace: {0}'.format(dest)
         if not os.path.exists(dest):
             os.makedirs(dest)
-            self.ctx.log_state('Created destination workspace:'
-                               ' {0}'.format(dest))
+            output_txt = 'Created {0}'.format(output_txt)
+
+        self.ctx.log_state(output_txt)
 
         fetch_aliases = {
             "topologies": self.get_evar("topologies_folder"),
@@ -787,8 +787,10 @@ class LinchpinCli(LinchpinAPI):
                 if re.match(regex, src):
                     fetch_protocol = obj
                     break
+
         if fetch_protocol is None:  # assume fetch_protocol is git if None
             fetch_protocol = 'FetchGit'
+
 
         fetch_class = FETCH_CLASS[fetch_protocol](self.ctx, fetch_type, src,
                                                   dest, cache_path, root,

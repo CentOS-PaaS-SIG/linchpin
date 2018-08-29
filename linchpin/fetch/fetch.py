@@ -15,7 +15,7 @@ from linchpin.exceptions import LinchpinError
 class Fetch(object):
     __metaclass__ = ABCMeta
 
-    def __init__(self, ctx, fetch_type, dest, root, root_ws=None, ref=None):
+    def __init__(self, ctx, fetch_type, dest, root, root_ws='', ref=None):
         """
         """
         self.ctx = ctx
@@ -84,11 +84,13 @@ class Fetch(object):
                             self.ctx.get_cfg('fetch', 'cache_ws',
                                              default='True')))
 
-                copy_files = False
+                cp_files = False
                 if not cache_ws:
-                    copy_files = True
+                    cp_files = True
                 else:
-                    if os.path.exists(d_file):
+                    if not os.path.exists(d_file):
+                        cp_files = True
+                    else:
                         cache_days = int(self.ctx.get_cfg('fetch',
                                                           'cache_days',
                                                           default=1))
@@ -96,23 +98,23 @@ class Fetch(object):
                         d_file_mtime = int(os.stat(d_file).st_mtime)
 
                         if (s_file_mtime - d_file_mtime) >= cache_days:
-                            copy_files = True
+                            cp_files = True
 
-                if copy_files:
+                if cp_files:
                     try:
                         if (os.path.islink(s_file) and
                                 os.path.exists(os.readlink(s_file))):
-                            linkto = os.readlink(s_file)
-                            os.symlink(linkto, d_file)
-                        else:
-                            shutil.copy2(s_file, d_file)
+                            s_file = '{0}/{1}'.format(self.td,
+                                                      os.readlink(s_file))
+
+                        shutil.copy2(s_file, d_file)
                     except (IOError, OSError):
                         self.ctx.log_state('Unable to copy file:'
                                            ' {0}'.format(s_file))
 
 
     def read_cfg(self):
-        config = configparser.ConfigParser()
+        config = configparser.SafeConfigParser()
         config.optionxform = str
 
         cfgs = {}
@@ -135,7 +137,7 @@ class Fetch(object):
 
 
     def write_cfg(self, section, key, value):
-        config = configparser.ConfigParser()
+        config = configparser.SafeConfigParser()
         config.optionxform = str
         config.read(self.config_path)
         config.set(section, key, value)
