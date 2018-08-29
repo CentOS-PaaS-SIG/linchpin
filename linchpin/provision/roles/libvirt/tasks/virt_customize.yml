@@ -13,15 +13,12 @@
     virt_args: ""
     ssh_args: ""
 
-- name: set run_commands
-  set_fact:
-    run_commands: "{{ cloud_config['run_commands'] | join(';') }}"
-  when : cloud_config['run_commands'] is defined
-
 - name: set run_commands in virt_args
   set_fact:
-    virt_args: "{{ virt_args }} --firstboot-command '{{ run_commands }}'"
-  when : cloud_config['run_commands'] is defined
+    virt_args: "{{ virt_args }} --run-command '{{ cmd }}'"
+  loop: "{{ cloud_config['run_commands'] | default([]) }}"
+  loop_control:
+    loop_var: cmd
 
 - name: set run_script in virt_args
   set_fact:
