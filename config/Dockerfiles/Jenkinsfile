@@ -93,8 +93,6 @@ stage('Tests') {
     if (env.ghprbActualCommit != null && env.ghprbActualCommit != "develop") {
         currentBuild.description = "<a href=\"https://github.com/${env.ghprbGhRepository}/pull/${env.ghprbPullId}\">PR #${env.ghprbPullId} (${env.ghprbPullAuthorLogin})</a>"
     }
-    openshift.withCluster() {
-        openshift.withProject(OPENSHIFT_NAMESPACE){
     try {
         parallel (
             "Centos7" : {
@@ -210,7 +208,6 @@ stage('Tests') {
         throw e
 
     }
-    }}
 }
 
 def prepare_env() {
@@ -257,7 +254,7 @@ def execute_test(String podname, String container) {
                 env.HOME = "/root"
                 deleteDir()
                 pipelineUtils.setDefaultEnvVars()
-                pipelineUtils.verifyPod(OPENSHIFT_NAMESPACE, env.NODE_NAME)
+                // pipelineUtils.ocVerifyPod(env.NODE_NAME)
                 prepare_env()
             }
             currentStage = container + "-install"
@@ -279,7 +276,7 @@ def execute_test(String podname, String container) {
                 }
             }
         } finally {
-            pipelineUtils.getContainerLogsFromPod(OPENSHIFT_NAMESPACE, env.NODE_NAME)
+            // pipelineUtils.ocGetContainerLogsFromPod(env.NODE_NAME)
             // Archive our artifacts
             step([$class: 'ArtifactArchiver',
                   allowEmptyArchive: true,
