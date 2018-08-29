@@ -1,0 +1,15 @@
+---
+topology_name: os-volume
+resource_groups:
+  - resource_group_name: os-vol
+    resource_group_type: openstack
+    resource_definitions:
+      - name: "{{ distro | default('') }}volume"
+        role: os_volume
+        size: 2
+        count: 1
+    credentials:
+      filename: clouds.yaml
+      profile: ci-rhos
+
+

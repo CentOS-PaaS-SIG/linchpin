@@ -1,0 +1,20 @@
+---
+bkr-multiarch:
+  topology:
+    topology_name: "bkr-march"
+    resource_groups:
+      - resource_group_name: "bkr-march"
+        resource_group_type: beaker
+        resource_definitions:
+          - role: bkr_server
+            whiteboard: Provisioned with linchpin
+            job_group: ci-ops-central
+            recipesets:
+            {% for arch in arches %}
+              - distro: RHEL-6.5
+                arch: "{{ arch }}"
+                hostrequires:
+                  - tag: processors
+                    op: ">="
+                    value: 1
+            {% endfor %}

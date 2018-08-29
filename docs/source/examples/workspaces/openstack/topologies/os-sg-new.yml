@@ -1,0 +1,25 @@
+---
+topology_name: os-sg-new
+resource_groups:
+  - resource_group_name: os-sg-new
+    resource_group_type: openstack
+    resource_definitions:
+      - name: "{{ distro | default('') }}security_group"
+        role: os_sg
+        description: "Openstack Security Group with ssh access"
+        rules:
+          - rule_type: "inbound"
+            from_port: 22
+            to_port: 22
+            proto: "tcp"
+            cidr_ip: "0.0.0.0/0"
+          - rule_type: "outbound"
+            from_port: 22
+            to_port: 22
+            proto: "tcp"
+            cidr_ip: "0.0.0.0/0"
+    credentials:
+      filename: clouds.yaml
+      profile: ci-rhos
+
+
