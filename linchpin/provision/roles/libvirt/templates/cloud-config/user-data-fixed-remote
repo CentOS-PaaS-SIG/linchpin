@@ -10,9 +10,9 @@ users:
     gecos: Admin User
     groups: wheel
     sudo: ALL=(ALL) NOPASSWD:ALL
-    ssh-import-id: None
+    ssh_import_id: None
     lock_passwd: true
-    ssh-authorized-keys:
+    ssh_authorized_keys:
       - {{ pubkey_remote["stdout"] }}
 
 timezone: UTC
