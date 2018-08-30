@@ -26,36 +26,45 @@
                     "type": "list",
                     "required": false,
                     "schema": {
-                        "name": {"type": "string", "required": true },
-                        "profile_name": {"type": "string", "required": false },
-                        "interface": {"type": "string", "required": false },
-                        "mac_address": {"type": "string", "required": false }
+                        "type": "dict",
+                        "schema": {
+                            "name": {"type": "string", "required": true },
+                            "profile_name": {"type": "string", "required": false },
+                            "interface": {"type": "string", "required": false },
+                            "mac_address": {"type": "string", "required": false }
+                        }
                     }
                 },
                 "disks": {
                     "type": "list",
                     "required": false,
                     "schema": {
-                        "name": { "type": "string", "required": true },
-                        "size": { "type": "string", "required": true },
-                        "format": { "type": "string", "required": true },
-                        "storage_domain": { "type": "string", "required": true },
-                        "id": { "type": "string", "required": false },
-                        "interface": { "type": "string", "required": false },
-                        "bootable": { "type": "string", "required": false }
+                        "type": "dict",
+                        "schema": {
+                            "name": { "type": "string", "required": true },
+                            "size": { "type": "string", "required": true },
+                            "format": { "type": "string", "required": true },
+                            "storage_domain": { "type": "string", "required": true },
+                            "id": { "type": "string", "required": false },
+                            "interface": { "type": "string", "required": false },
+                            "bootable": { "type": "string", "required": false }
+                        }
                     }
                 },
                 "cloud_init": {
                     "type": "list",
                     "required": false,
                     "schema": {
-                        "nic_name": { "type": "string", "required": true },
-                        "nic_ip": { "type": "string", "required": false },
-                        "nic_boot_protocol": { "type": "string", "required": false },
-                        "nic_netmask": { "type": "string", "required": false },
-                        "nic_gateway": { "type": "string", "required": false },
-                        "nic_on_boot": { "type": "string", "required": false },
-                        "hostname": { "type": "string", "required": false }
+                        "type": "dict",
+                        "schema": {
+                            "nic_name": { "type": "string", "required": true },
+                            "nic_ip": { "type": "string", "required": false },
+                            "nic_boot_protocol": { "type": "string", "required": false },
+                            "nic_netmask": { "type": "string", "required": false },
+                            "nic_gateway": { "type": "string", "required": false },
+                            "nic_on_boot": { "type": "string", "required": false },
+                            "hostname": { "type": "string", "required": false }
+                        }
                     }
                 }
             }

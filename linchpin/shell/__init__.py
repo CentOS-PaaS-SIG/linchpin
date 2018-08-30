@@ -504,6 +504,38 @@ def journal(ctx, targets, fields, count, view,
         ctx.log_state(output)
 
 
+@runcli.command()
+@click.option('--old-schema', '-o', is_flag=True)
+@click.argument('targets', metavar='TARGETS', required=False,
+                nargs=-1)
+@pass_context
+def validate(ctx, targets, old_schema):
+    """
+    Validate topologies for the given target(s) in the given PinFile.
+
+    The data from the targets is obtained from the PinFile (default).
+
+    targets:    Validate ONLY the listed target(s). If omitted, ALL targets in
+    the appropriate PinFile will be validate
+
+    """
+
+    try:
+        return_code, results = lpcli.lp_validate(targets=targets,
+                                                 old_schema=old_schema)
+        for target, result in results.iteritems():
+            if result == "valid":
+                result = "topology for target '{0}' is valid". format(target)
+            elif result == "valid with old schema":
+                result = "topology for target '{0}' is valid under old schema"\
+                    .format(target)
+            ctx.log_state(result)
+        sys.exit(return_code)
+    except LinchpinError as e:
+        ctx.log_state(e)
+        sys.exit(1)
+
+
 def main():
     # print("entrypoint")
     pass

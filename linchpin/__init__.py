@@ -7,7 +7,6 @@ import time
 import errno
 import hashlib
 
-from cerberus import Validator
 from uuid import getnode as get_mac
 from collections import OrderedDict
 
@@ -24,6 +23,9 @@ from linchpin.exceptions import LinchpinError
 from linchpin.exceptions import SchemaError
 from linchpin.exceptions import TopologyError
 from linchpin.exceptions import ValidationError
+from linchpin.exceptions import ValidationErrorHandler
+
+from linchpin.utils.validator import AnyofValidator
 
 from linchpin.InventoryFilters import GenericInventory
 
@@ -422,17 +424,54 @@ class LinchpinAPI(object):
 
             res_defs = group.get('resource_definitions')
 
+
             # preload this so it will validate against the schema
             document = {'res_defs': res_defs}
-            v = Validator(schema)
+            v = AnyofValidator(schema,
+                               error_handler=ValidationErrorHandler)
 
             if not v.validate(document):
-                raise SchemaError('Schema validation failed:'
-                                  ' {0}'.format(v.errors))
+                try:
+                    err = self._gen_error_msg("", "", v.errors)
+                    raise SchemaError(err)
+                except NotImplementedError as e:
+                    # we shouldn't have this issue using cerberus >= 1.2, but
+                    # this is here just in case an older version has to be used
+                    print "There was an error validating your schema, but we " \
+                        "can't seem to format it for you"
+                    print "Here's the raw error data in case you want to go " \
+                        "through it by hand:"
+                    print v._errors
 
             resources.append(group)
 
         return resources
+
+
+    def _gen_error_msg(self, prefix, section, error):
+        # set the prefix for this subtree
+        if section != "":
+            if prefix != "":
+                prefix += "[" + str(section) + "]"
+            else:
+                prefix = str(section)
+
+        if isinstance(error, str):
+            if prefix == "":
+                return error
+            return prefix + ": " + error + os.linesep
+        elif isinstance(error, list):
+            msg = ""
+            for i, e in enumerate(error):
+                # we don't need to change the Vprefix here
+                msg += self._gen_error_msg(prefix, "", e)
+            return msg
+        else:  # in this case, error is a dict
+            msg = ""
+            for key, val in error.iteritems():
+                msg += self._gen_error_msg(prefix, key, val)
+            return msg
+
 
     def generate_inventory(self, topology_data, layout, inv_format="cfg"):
         inv = GenericInventory.GenericInventory(inv_format=inv_format)
@@ -631,8 +670,10 @@ class LinchpinAPI(object):
                     self._convert_topology(topology_data)
                     resources = self._validate_topology(topology_data)
                 except SchemaError:
-                    raise ValidationError("Topology '{0}' does not"
-                                          " validate".format(topology_data))
+                    raise ValidationError("Topology '{0}' does not validate."
+                                          "For more information run `linchpin"
+                                          "validate`".format(topology_data))
+
 
             self.set_evar('topo_data', topology_data)
 
@@ -743,6 +784,71 @@ class LinchpinAPI(object):
                            'results_data': results}}
 
         return (return_code, lp_data)
+
+
+    def do_validation(self, provision_data, old_schema=False):
+        """
+        This function takes provision_data, and attempts to validate the
+        topologies for that data
+
+        :param provision_data: PinFile data as a dictionary, with
+        target information
+        """
+
+        results = {}
+
+
+        return_code = 0
+
+        for target in provision_data.keys():
+            if not isinstance(provision_data[target], dict):
+                raise LinchpinError("Target '{0}' does not"
+                                    " exist.".format(target))
+
+        targets = [x.lower() for x in provision_data.keys()]
+        if 'linchpin' in targets:
+            raise LinchpinError("Target 'linchpin' is not allowed.")
+
+        for target in provision_data.keys():
+            self.ctx.log_debug("Processing target: {0}".format(target))
+
+            results[target] = {}
+            self.set_evar('target', target)
+
+            topology_data = provision_data[target].get('topology')
+
+            try:
+                self._validate_topology(topology_data)
+            except SchemaError as e:
+                # try to validate against old schema
+                try:
+                    self._convert_topology(topology_data)
+                    self._validate_topology(topology_data)
+                except SchemaError as s:
+                    error = """
+Topology for target '{0}' does not validate
+topology: '{1}'
+errors:
+""".format(target, topology_data)
+                    if old_schema:
+                        # there's an inline way of doing this with join() but
+                        # this looks cleaner
+                        for line in iter(str(s).splitlines(True)):
+                            error += "\t" + line
+                    else:
+                        for line in iter(str(e).splitlines(True)):
+                            error += "\t" + line
+
+                    results[target] = error
+                    return_code += 1
+                else:
+                    results[target] = "valid with old schema"
+
+
+            else:
+                results[target] = "valid"
+
+        return return_code, results
 
 
     def get_run_data(self, tx_id, fields, targets=()):
