@@ -1,4 +1,4 @@
-#cloud-config
+_cloud-config
 #password: fedora
 #chpasswd: {expire: False}
 #ssh_pwauth: True
@@ -13,9 +13,9 @@ users:
     gecos: {{ item['gecos'] | default('Admin User') }}
     groups: {{ item['groups'] | default('wheel') }}
     sudo: {{ item['sudo'] | default('ALL=(ALL) NOPASSWD:ALL')}}
-    ssh-import-id: {{ item['ssh-import-id'] | default('None') }}
+    ssh_import_id: {{ item['ssh_import_id'] | default('None') }}
     lock_passwd: {{ item['lock_passwd'] | default('true') }}
-    ssh-authorized-keys:
+    ssh_authorized_keys:
       - {{ pubkey_remote['stdout'] }}
 {% endfor %}
 {% endif %}

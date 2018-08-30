@@ -12,9 +12,9 @@ users:
     {{ item.gecos | default('Admin User') }}
     {{ item.groups | default('wheel') }}
     {{ item.sudo | default('ALL=(ALL) NOPASSWD:ALL')}}
-    {{ item.ssh-import-id | default('None') }}
+    {{ item.ssh_import_id | default('None') }}
     {{ item.lock_passwd | default('true') }}
-    ssh-authorized-keys:
+    ssh_authorized_keys:
       - {{ pubkey["stdout"] }}
 {% endfor %}
 #users:
@@ -22,9 +22,9 @@ users:
 #    gecos: Admin User
 #    groups: wheel
 #    sudo: ALL=(ALL) NOPASSWD:ALL
-#    ssh-import-id: None
+#    ssh_import_id: None
 #    lock_passwd: true
-#    ssh-authorized-keys:
+#    ssh_authorized_keys:
 #      - {{ pubkey["stdout"] }}
 
 timezone: UTC

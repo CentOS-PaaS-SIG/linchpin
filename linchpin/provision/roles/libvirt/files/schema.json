@@ -27,26 +27,36 @@
                     "network_bridge": { "type": "string", "required": false },
                     "ssh_key": { "type": "string", "required": false },
                     "cloud_config": {
-			"type": "dict", 
-			"required": false,
-			"schema": {
+                        "type": "dict",
+                        "required": false,
+                        "schema": {
                            "virt_type": { "type": "string", "required": false },
                            "run_script": { "type": "string", "required": false },
                            "run_commands": { "type": "list", "required": false },
-                           "users": { 
-		               "type": "list",
-			       "required": false,
-			       "schema": {
-                                   "name": { "type": "string", "required": true },
-                                   "gecos": { "type": "string", "required": false },
-                                   "password": { "type": "string", "required": false },
-                                   "inject_ssh_keys": { "type": "string", "required": false }
-                               }
-			   },
-			   "root_password": { "type": "string", "required": false },
-                           "packages": { "type": "list", "required": false }
+                           "users": {
+                                "type": "list",
+                                "required": false,
+                                "schema": {
+                                    "type": "dict",
+                                    "required": false,
+                                    "schema": {
+                                        "name": { "type": "string", "required": true },
+                                        "gecos": { "type": "string", "required": false },
+                                        "primary_group": { "type": "string", "required": false },
+                                        "groups": { "type": "string", "required": false },
+                                        "sudo": { "type": "string", "required": false },
+                                        "passwd": { "type": "string", "required": false },
+                                        "lock_passwd": { "type": "boolean", "required": false },
+                                        "ssh_import_id": { "type": "string", "required": false },
+                                        "ssh_authorized_keys": { "type": "list", "required": false },
+                                        "inject_ssh_keys": { "type": "string", "required": false }
+                                    }
+                                }
+                            },
+                            "root_password": { "type": "string", "required": false },
+                            "packages": { "type": "list", "required": false }
                         }
-		    },
+                    },
                     "networks": {
                         "type": "list",
                         "required": false,
