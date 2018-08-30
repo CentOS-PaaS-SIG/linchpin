@@ -89,8 +89,14 @@
                                 },
                                 "repos": {
                                     "type": "list",
-                                    "required": false,
-                                    "schema": { "type": "string", "required": true }
+                                    "schema": {
+                                        "anyof": [{
+                                            "type": "dict",
+                                            "schema": {
+                                                "baseurl": { "type": "string", "required": true }
+                                            }
+                                        }]
+                                    }
 				},
                                 "install": {
                                     "type": "list",

@@ -78,8 +78,12 @@ class BkrFactory(BkrConn):
             if tags:
                 kwargs.update({"tag": tags})
             repos = kwargs.get("repos", [])
-            if repos:
-                kwargs.update({"repo": repos})
+            baseurls = []
+            for repo in repos:
+                if "baseurl" in repo:
+                    baseurls.append(repo.get("baseurl"))
+            else:
+                kwargs.update({"repo": baseurls})
 
             requested_tasks = []
 
