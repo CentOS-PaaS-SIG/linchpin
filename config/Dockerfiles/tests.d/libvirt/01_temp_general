@@ -12,7 +12,7 @@ DISTRO=${1}
 PROVIDER=${2}
 
 TARGETS="${PROVIDER}-new"
-TEST_NAME="${DISTRO}/${PROVIDER}/01_general"
+TEST_NAME="${DISTRO}/${PROVIDER}/01_temp_general"
 DESCRIPTION="Test ${PROVIDER} provider with a simple up/destroy"
 
 echo "Test Name: ${TEST_NAME}"
