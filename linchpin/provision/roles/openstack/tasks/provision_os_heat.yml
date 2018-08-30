@@ -1,51 +1,117 @@
 ---
-- name: "Set Heat parameters for template"
-  set_fact:
-    heat_params : "{{ res_grp_vars | selectattr('resource_group_name', 'match', '^' + res_grp_name + '$') | first }}"
-
-- name: "Set Heat parameters for template"
-  set_fact:
-    heat_params : "{{ heat_params['heat_params'] }}"
-
 - name: "provision/deprovision os_heat stack"
-  os_hot_stack:
-    stack_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
-    template: "{{ res_def['template_path'] }}"
+  os_stack:
+    auth: "{{ auth_var }}"
+    name: "{{ res_def['name'] }}"
+    tag: "{{ res_def['tag'] | default(omit) }}"
     state: "{{ state }}"
-    wait: "yes"
-    os_auth_url: "{{ auth_var['auth_url']| default(omit) }}"
-    os_username: "{{ auth_var['username']| default(omit) }}"
-    os_password: "{{ auth_var['password']| default(omit) }}"
-    os_tenant_name: "{{ auth_var['project_name']| default(omit) }}"
-    parameters: "{{ heat_params }}"
+    template: "{{ res_def['template_path'] }}"
+    environment: "{{ res_def['environment'] | default([]) }}"
+    interface: "{{ res_def['environment'] | default('public') }}"
+    key: "{{ res_def['key'] | default(omit) }}"
+    cacert: "{{ res_def['cacert'] | default(omit) }}"
+    cert: "{{ res_def['cert'] | default(omit) }}"
+    parameters: "{{ res_def['parameters'] | default(omit) }}"
+    region_name: "{{ res_def['region_name'] | default(omit) }}"
+    roll_back: "{{ res_def['roll_back'] | default(omit) }}"
+    verify: "{{ res_def['verify'] | default(omit) }}"
+    wait: "{{ res_def['wait'] | default(omit) }}"
+    api_timeout: 99999
+    timeout: 3600
+    cacert: "{{ res_def['cacert'] | default(omit) }}"
+    cert: "{{ res_def['cert'] | default(omit) }}"
   register: res_def_output
-  when: not async
+  when: not async and auth_var is defined
   no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_os_heat: "{{ topology_outputs_os_heat + [ res_def_output.output ] }}"
-  when: not async
+    topology_outputs_os_heat: "{{ topology_outputs_os_heat + [ res_def_output ] }}"
+  when: not async and state == 'present'
 
 - name: "provision/deprovision os_heat stack"
-  os_hot_stack:
-    stack_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
-    template: "{{ res_def['template_path']  }}"
+  os_stack:
+    name: "{{ res_def['name'] }}"
+    tag: "{{ res_def['tag'] | default(omit) }}"
     state: "{{ state }}"
-    wait: "yes"
-    os_auth_url: "{{ auth_var['auth_url'] | default(omit) }}"
-    os_username: "{{ auth_var['username']| default(omit) }}"
-    os_password: "{{ auth_var['password']| default(omit) }}"
-    os_tenant_name: "{{ auth_var['project_name'] | default(omit) }}"
-    parameters: "{{ heat_params }}"
+    template: "{{ res_def['template_path'] }}"
+    environment: "{{ res_def['environment'] | default([]) }}"
+    interface: "{{ res_def['environment'] | default('public') }}"
+    key: "{{ res_def['key'] | default(omit) }}"
+    parameters: "{{ res_def['parameters'] | default(omit) }}"
+    region_name: "{{ res_def['region_name'] | default(omit) }}"
+    roll_back: "{{ res_def['roll_back'] | default(omit) }}"
+    verify: "{{ res_def['verify'] | default(omit) }}"
+    wait: "{{ res_def['wait'] | default(omit) }}"
+    api_timeout: 99999
+    timeout: 3600
+    cacert: "{{ res_def['cacert'] | default(omit) }}"
+    cert: "{{ res_def['cert'] | default(omit) }}"
+  register: res_def_output
+  when: not async and auth_var is not defined
+  no_log: "{{ not debug_mode }}"
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os_heat: "{{ topology_outputs_os_heat + [ res_def_output ] }}"
+  when: not async and state == 'present'
+
+- name: "provision/deprovision os_heat stack"
+  os_stack:
+    auth: "{{ auth_var }}"
+    name: "{{ res_def['name'] }}"
+    tag: "{{ res_def['tag'] | default(omit) }}"
+    state: "{{ state }}"
+    template: "{{ res_def['template_path'] }}"
+    environment: "{{ res_def['environment'] | default([]) }}"
+    interface: "{{ res_def['environment'] | default('public') }}"
+    key: "{{ res_def['key'] | default(omit) }}"
+    parameters: "{{ res_def['parameters'] | default(omit) }}"
+    region_name: "{{ res_def['region_name'] | default(omit) }}"
+    roll_back: "{{ res_def['roll_back'] | default(omit) }}"
+    verify: "{{ res_def['verify'] | default(omit) }}"
+    wait: "{{ res_def['wait'] | default(omit) }}"
+    api_timeout: 99999
+    timeout: 3600
+    cacert: "{{ res_def['cacert'] | default(omit) }}"
+    cert: "{{ res_def['cert'] | default(omit) }}"
   async: "{{ async_timeout }}"
   poll: 0
   register: res_def_output
-  when: async
+  when: async and auth_var is defined
+  no_log: "{{ not debug_mode }}"
+
+- name: "Async:: save the job id"
+  set_fact:
+    topology_outputs_os_heat: "{{ topology_outputs_os_heat + [ res_def_output ] }}"
+  when: async and state == 'present'
+
+- name: "provision/deprovision os_heat stack"
+  os_stack:
+    name: "{{ res_def['name'] }}"
+    tag: "{{ res_def['tag'] | default(omit) }}"
+    state: "{{ state }}"
+    template: "{{ res_def['template_path'] }}"
+    environment: "{{ res_def['environment'] | default([]) }}"
+    interface: "{{ res_def['environment'] | default('public') }}"
+    key: "{{ res_def['key'] | default(omit) }}"
+    parameters: "{{ res_def['parameters'] | default(omit) }}"
+    region_name: "{{ res_def['region_name'] | default(omit) }}"
+    roll_back: "{{ res_def['roll_back'] | default(omit) }}"
+    verify: "{{ res_def['verify'] | default(omit) }}"
+    wait: "{{ res_def['wait'] | default(omit) }}"
+    api_timeout: 99999
+    timeout: 3600
+    cacert: "{{ res_def['cacert'] | default(omit) }}"
+    cert: "{{ res_def['cert'] | default(omit) }}"
+  async: "{{ async_timeout }}"
+  poll: 0
+  register: res_def_output
+  when: async and auth_var is not defined
   no_log: "{{ not debug_mode }}"
 
 # following tasks saves the async job details
 - name: "Async:: save the job id"
   set_fact:
     topology_outputs_os_heat: "{{ topology_outputs_os_heat + [ res_def_output ] }}"
-  when: async
+  when: async and state == 'present'
