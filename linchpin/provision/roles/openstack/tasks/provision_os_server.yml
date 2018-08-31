@@ -86,6 +86,7 @@
     region_name: "{{ res_def['region_name'] | default(omit) }}"
     scheduler_hints: "{{ res_def['scheduler_hints'] | default(omit) }}"
     verify: "{{ res_def['verify'] | default(omit) }}"
+    auto_ip: "{{ res_def['auto_ip'] | default(omit) }}"
   register: res_def_output
   loop: "{{ res_def_names }}"
   when: not async and auth_var is defined
@@ -146,6 +147,7 @@
     region_name: "{{ res_def['region_name'] | default(omit) }}"
     scheduler_hints: "{{ res_def['scheduler_hints'] | default(omit) }}"
     verify: "{{ res_def['verify'] | default(omit) }}"
+    auto_ip: "{{ res_def['auto_ip'] | default(omit) }}"
   register: res_def_output
   loop: "{{ res_def_names }}"
   when: not async and auth_var is not defined
@@ -194,6 +196,7 @@
     region_name: "{{ res_def['region_name'] | default(omit) }}"
     scheduler_hints: "{{ res_def['scheduler_hints'] | default(omit) }}"
     verify: "{{ res_def['verify'] | default(omit) }}"
+    auto_ip: "{{ res_def['auto_ip'] | default(omit) }}"
   register: res_def_output
   loop: "{{ res_def_names }}"
   when: async and auth_var is defined
