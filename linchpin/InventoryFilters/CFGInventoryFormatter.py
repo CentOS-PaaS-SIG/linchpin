@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import StringIO
+import collections
 
 from InventoryFormatter import InventoryFormatter
 
@@ -45,7 +46,7 @@ class CFGInventoryFormatter(InventoryFormatter):
 
     def add_ips_to_groups(self, inven_hosts, layout):
         # create a ip to host mapping based on count
-        ip_to_host = {}
+        ip_to_host = collections.OrderedDict()
         inven_hosts.reverse()
         for host_name in layout['hosts']:
             if 'count' in host_name.keys():
@@ -72,7 +73,7 @@ class CFGInventoryFormatter(InventoryFormatter):
         host_groups.append("all")
         common_vars = layout['vars'] if 'vars' in layout.keys() else []
         for group in host_groups:
-            items = dict(self.config.items(group)).keys()
+            items = collections.OrderedDict(self.config.items(group)).keys()
             self.config.remove_section(group)
             self.config.add_section(group)
             for item in items:

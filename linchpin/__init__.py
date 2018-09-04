@@ -437,11 +437,11 @@ class LinchpinAPI(object):
                 except NotImplementedError as e:
                     # we shouldn't have this issue using cerberus >= 1.2, but
                     # this is here just in case an older version has to be used
-                    print "There was an error validating your schema, but we " \
-                        "can't seem to format it for you"
-                    print "Here's the raw error data in case you want to go " \
-                        "through it by hand:"
-                    print v._errors
+                    print("There was an error validating your schema, but we\
+                          can't seem to format it for you")
+                    print("Here's the raw error data in case you want to go\
+                          through it by hand:")
+                    print(v._errors)
 
             resources.append(group)
 
@@ -473,9 +473,10 @@ class LinchpinAPI(object):
             return msg
 
 
-    def generate_inventory(self, topology_data, layout, inv_format="cfg"):
+    def generate_inventory(self, resource_data, layout, inv_format="cfg",
+                           topology_data={}):
         inv = GenericInventory.GenericInventory(inv_format=inv_format)
-        inventory = inv.get_inventory(topology_data, layout)
+        inventory = inv.get_inventory(resource_data, layout, topology_data)
         return inventory
 
     def get_pf_data_from_rundb(self, targets, run_id=None, tx_id=None):

@@ -12,39 +12,51 @@ class GenericInventory(InventoryFilter):
         self.filter_classes = get_all_drivers()
         self.inv_formatter = get_inv_formatter(inv_format)()
 
-    def get_host_ips(self, topo):
+    def get_host_ips(self, res_output):
         """
         currently it will return the dict as follows:
         {
-        "aws_inv": ["x.x.x.x"],
-        "os_inv" :["x.x.x.x","x.x.x.x"],
-        "gcloud_inv" : ["x.x.x.x","x.x.x.x"]
+        "aws": ["x.x.x.x"],
+        "os" :["x.x.x.x","x.x.x.x"],
+        "gcloud" : ["x.x.x.x","x.x.x.x"]
         }
         """
+
         host_ip_dict = {}
         for inv_filter in self.filter_classes:
-            ips = self.filter_classes[inv_filter]().get_host_ips(topo)
+            ips = self.filter_classes[inv_filter]().get_host_ips(res_output)
             host_ip_dict[inv_filter] = ips
         return host_ip_dict
 
-    def get_hosts_by_count(self, host_dict, count):
+    def get_hosts_by_count(self, host_dict, count, sort_order):
         """
         currently this function gets all the ips/hostname according to the
         order in which inventories are specified. later can be modified
         to work with user input
         """
+
         all_hosts = []
-        for inv in host_dict:
-            all_hosts.extend(host_dict[inv])
+        for provider in sort_order:
+            all_hosts.extend(host_dict[provider])
+
         return all_hosts[:count]
 
-    def get_inventory(self, topo, layout):
+    def get_inventory(self, res_output, layout, topology):
+
+        # get the provisioning order
+        sort_order = []
+        for resource_group in topology["resource_groups"]:
+            if not (resource_group.get("resource_group_type") in sort_order):
+                sort_order.append(resource_group.get("resource_group_type"))
         # get all the topology host_ips
-        host_ip_dict = self.get_host_ips(topo)
+        host_ip_dict = self.get_host_ips(res_output)
+        # sort it based on topology
         # get the count of all layout hosts needed
         layout_host_count = self.get_layout_hosts(layout)
         # generate hosts list based on the layout host count
-        inven_hosts = self.get_hosts_by_count(host_ip_dict, layout_host_count)
+        inven_hosts = self.get_hosts_by_count(host_ip_dict,
+                                              layout_host_count,
+                                              sort_order)
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)
 
