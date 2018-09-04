@@ -51,7 +51,7 @@ class ActionError(LinchpinError):
 
 class ValidationErrorHandler(cerberus_errors.BasicErrorHandler):
     messages = cerberus_errors.BasicErrorHandler.messages.copy()
-    messages[cerberus_errors.REQUIRED_FIELD.code] = "field '{field}' is"\
+    messages[cerberus_errors.REQUIRED_FIELD.code] = "field '{field}' is "\
         + "required"
     messages[cerberus_errors.UNKNOWN_FIELD.code] = "field '{field}' could not "\
         + "be recognized within the schema provided"
