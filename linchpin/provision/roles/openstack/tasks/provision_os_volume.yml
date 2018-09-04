@@ -6,7 +6,7 @@
     size: "{{ res_def['size'] }}"
     display_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
   when: res_def['count'] is not defined and auth_var is defined
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "provision/deprovision the os volume resource type"
   os_volume:
@@ -36,7 +36,7 @@
     loop_var: vol
   register: res_def_output
   when: res_def['count'] is defined and not async and auth_var is defined
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "provision/deprovision cinder volumes when count specified"
   os_volume:
@@ -77,7 +77,7 @@
   poll: 0
   register: res_def_output
   when: res_def['count'] is defined and async and auth_var is defined
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "Async:: save the job id"
   set_fact:

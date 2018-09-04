@@ -6,7 +6,7 @@
     wait: "yes"
   register: res_def_output
   when: not async and auth_var['changed']== true
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "provisioning/deprovisioning  keypair"
   os_keypair:
@@ -15,14 +15,14 @@
     wait: "yes"
   register: res_def_output
   when: not async and auth_var['changed']== false
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "Generate keyfile "
   copy: 
     content: "{{ res_def_output['key']['private_key'] }}"
     dest: "{{ keystore_path }}/{{ res_def['res_name'] | default(res_def['name']) }}.key"
   when: state=="present" and res_def_output['changed'] == true and not async
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
@@ -39,7 +39,7 @@
   async: "{{ async_timeout }}"
   poll: 0
   when: async and auth_var['changed']== true
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "Async:: provisioning/deprovisioning  keypair"
   os_keypair:
@@ -63,7 +63,7 @@
     content: "{{ job_result['key']['private_key'] }}"
     dest: "{{ keystore_path }}/{{ res_def['res_name'] | default(res_def['name']) }}.key"
   when: state=="present" and res_def_output['changed'] == true and async
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "Async:: save the job id"
   set_fact:

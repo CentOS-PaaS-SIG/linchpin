@@ -11,7 +11,7 @@
     wait: yes
     state: "{{ state }}"
   when: res_def['count'] is not defined and auth_var is defined
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "provision/deprovision one swift container without authentication"
   os_object:
@@ -38,7 +38,7 @@
     loop_var: container
   register: res_def_output
   when: res_def['count'] is defined and not async and auth_var is defined
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "provision/deprovision swift containers without authentication"
   os_object:
@@ -55,7 +55,7 @@
     loop_var: container
   register: res_def_output
   when: res_def['count'] is defined and not async and auth_var is not defined
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
@@ -81,7 +81,7 @@
   poll: 0
   register: res_def_output
   when: res_def['count'] is defined and async and auth_var is defined
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 # following tasks saves the async job details
 - name: "Async:: save the job id"

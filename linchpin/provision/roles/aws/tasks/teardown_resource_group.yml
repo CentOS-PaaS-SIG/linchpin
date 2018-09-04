@@ -13,14 +13,14 @@
   register: auth_var
   ignore_errors: true
   when: res_grp['credentials'] is defined
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "Set auth_var"
   set_fact:
     auth_var: "{{ auth_var['output'][cred_profile] | default('') }}"
   ignore_errors: true
   when: auth_var is defined
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: "Get topology output data from resources file"
   output_parser:

@@ -90,7 +90,7 @@
   register: res_def_output
   loop: "{{ res_def_names }}"
   when: not async and auth_var is defined
-  no_log: true
+  no_log: "{{ not debug_mode }}"
   loop_control:
     loop_var: prov_inst
 

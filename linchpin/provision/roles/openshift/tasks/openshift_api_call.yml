@@ -14,7 +14,7 @@
     file_reference: "{{ resource.file_reference | default(omit) }}"
     state: "{{ state }}"
   register: openshift_host
-  no_log: true
+  no_log: "{{ not debug_mode }}"
 
 - name: add output to topology
   set_fact:
