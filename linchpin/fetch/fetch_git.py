@@ -8,9 +8,9 @@ from linchpin.exceptions import LinchpinError
 
 class FetchGit(Fetch):
 
-    def __init__(self, ctx, fetch_type, src, dest, cache_dir, root,
+    def __init__(self, ctx, fetch_type, src, dest, cache_dir, root='',
                  root_ws='', ref=None):
-        super(FetchGit, self).__init__(ctx, fetch_type, dest, root,
+        super(FetchGit, self).__init__(ctx, fetch_type, dest, root=root,
                                        root_ws=root_ws, ref=ref)
         self.src = src
 

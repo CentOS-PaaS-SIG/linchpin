@@ -689,7 +689,7 @@ class LinchpinCli(LinchpinAPI):
                               tx_id=tx_id)
 
 
-    def lp_fetch(self, src, root=None, fetch_type='workspace',
+    def lp_fetch(self, src, root='', fetch_type='workspace',
                  fetch_protocol=None, fetch_ref=None, dest_ws=None,
                  nocache=False):
         """
@@ -730,13 +730,14 @@ class LinchpinCli(LinchpinAPI):
         """
 
         root_ws = ''
-        if dest_ws:
+        if dest_ws and dest_ws != '.':
             if root:
                 abs_root = os.path.expanduser(os.path.realpath(root))
                 root_ws = os.path.basename(abs_root.rstrip(os.path.sep))
             else:
                 # generate a unique value for the root
-                uroot = hashlib.new('sha256:{0}{1}'.format(src, dest_ws))
+                hash_string = 'sha256:{0}{1}'.format(src, dest_ws)
+                uroot = hashlib.new(hash_string)
                 uroot = uroot.hexdigest()[:8]
 
                 # generate a random location to put an underscore
@@ -793,7 +794,7 @@ class LinchpinCli(LinchpinAPI):
 
 
         fetch_class = FETCH_CLASS[fetch_protocol](self.ctx, fetch_type, src,
-                                                  dest, cache_path, root,
+                                                  dest, cache_path, root=root,
                                                   root_ws=root_ws,
                                                   ref=fetch_ref)
         fetch_class.fetch_files()

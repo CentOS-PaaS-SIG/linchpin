@@ -310,7 +310,7 @@ def destroy(ctx, targets, run_id, tx_id):
 @click.option('-t', '--type', 'fetch_type', metavar='TYPE', required=False,
               default='workspace', help='Which component of a workspace to'
               ' fetch. (Default: workspace)')
-@click.option('-r', '--root', metavar='ROOT', default=None,
+@click.option('-r', '--root', metavar='ROOT', default='',
               help='Use this to specify the location of the workspace'
                    ' within the root url. If root is not set, the root'
                    ' of the given remote will be used.')

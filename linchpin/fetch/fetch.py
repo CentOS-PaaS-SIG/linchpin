@@ -15,9 +15,10 @@ from linchpin.exceptions import LinchpinError
 class Fetch(object):
     __metaclass__ = ABCMeta
 
-    def __init__(self, ctx, fetch_type, dest, root, root_ws='', ref=None):
+    def __init__(self, ctx, fetch_type, dest, root='', root_ws='', ref=None):
         """
         """
+
         self.ctx = ctx
         self.fetch_type = fetch_type
         self.root = root
@@ -34,8 +35,10 @@ class Fetch(object):
         pass
 
     def copy_files(self):
+
         if self.fetch_type == 'workspace':
-            self.copy_dir('{0}/{1}'.format(self.td, self.root), self.dest)
+            src_dir ='{0}/{1}'.format(self.td, self.root)
+            self.copy_dir(src_dir, self.dest)
         else:
             self.transfer_section(self.fetch_type)
 
@@ -57,6 +60,7 @@ class Fetch(object):
 
 
     def copy_dir(self, src, dest):
+
         for root, dirs, files in os.walk(src):
             files = [f for f in files if not f[0] == '.']
             dirs[:] = [d for d in dirs if not d[0] == '.']
@@ -101,16 +105,15 @@ class Fetch(object):
                             cp_files = True
 
                 if cp_files:
+
                     try:
                         if (os.path.islink(s_file) and
                                 os.path.exists(os.readlink(s_file))):
-                            s_file = '{0}/{1}'.format(self.td,
-                                                      os.readlink(s_file))
+                            s_file = os.readlink(s_file)
 
                         shutil.copy2(s_file, d_file)
-                    except (IOError, OSError):
-                        self.ctx.log_state('Unable to copy file:'
-                                           ' {0}'.format(s_file))
+                    except (IOError, OSError) as e:
+                        self.ctx.log_state(e)
 
 
     def read_cfg(self):
