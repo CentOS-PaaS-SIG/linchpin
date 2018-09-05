@@ -357,4 +357,9 @@ extlinks = {
     'https://raw.githubusercontent.com/CentOS-PaaS-SIG/linchpin/develop/%s', ''),
     'dirs1.5': (
     'https://github.com/CentOS-PaaS-SIG/linchpin/tree/develop/docs/source/examples/%s', ''),
+    'lp_dir': (
+    'https://github.com/herlo/linchpin/tree/fetch_by_branch/%s', ''),
+    'lp_code': (
+    'https://raw.githubusercontent.com/herlo/linchpin/fetch_by_branch/%s', ''),
 }
+

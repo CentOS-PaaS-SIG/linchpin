@@ -61,6 +61,8 @@ Authentication
 
     :doc:`cli`
         Linchpin Command-Line Interface
+    :doc:`workflow`
+        Common LinchPin Workflows
     :doc:`managing_resources`
         Managing Resources
     :doc:`providers`
