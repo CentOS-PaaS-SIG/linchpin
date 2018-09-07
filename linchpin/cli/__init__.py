@@ -795,9 +795,9 @@ class LinchpinCli(LinchpinAPI):
 
 
         fetch_class = FETCH_CLASS[protocol](self.ctx, fetch_type, src,
-                                                  dest, cache_path, root=root,
-                                                  root_ws=root_ws,
-                                                  ref=fetch_ref)
+                                            dest, cache_path, root=root,
+                                            root_ws=root_ws,
+                                            ref=fetch_ref)
         fetch_class.fetch_files()
 
         if nocache:

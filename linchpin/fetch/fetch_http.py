@@ -12,7 +12,7 @@ class FetchHttp(Fetch):
     def __init__(self, ctx, fetch_type, src, dest, cache_dir, root='',
                  root_ws='', ref=None):
         super(FetchHttp, self).__init__(ctx, fetch_type, dest, root=root,
-                                       root_ws=root_ws, ref=ref)
+                                        root_ws=root_ws, ref=ref)
 
         self.cache_dir = os.path.join(cache_dir, "http")
         if not os.path.exists(self.cache_dir):
