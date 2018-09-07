@@ -9,12 +9,14 @@ from linchpin.exceptions import LinchpinError
 
 class FetchHttp(Fetch):
 
-    def __init__(self, ctx, fetch_type, src, dest, cache_dir, root):
-        super(FetchHttp, self).__init__(ctx, fetch_type, dest, root)
+    def __init__(self, ctx, fetch_type, src, dest, cache_dir, root='',
+                 root_ws='', ref=None):
+        super(FetchHttp, self).__init__(ctx, fetch_type, dest, root=root,
+                                       root_ws=root_ws, ref=ref)
 
         self.cache_dir = os.path.join(cache_dir, "http")
         if not os.path.exists(self.cache_dir):
-            os.mkdir(self.cache_dir)
+            os.makedirs(self.cache_dir)
 
         try:
             r = requests.get(src)
@@ -29,47 +31,39 @@ class FetchHttp(Fetch):
 
         self.src = src.rstrip('/')
 
+
     def fetch_files(self):
-        if self.root is not None:
-            for ext in self.root:
-                src = os.path.join(self.src, ext.lstrip('/'))
-                key = "{0}|{1}".format(self.dest.replace(':', ''),
-                                       src.replace(':', ''))
-                fetch_dir = self.cfgs["http"].get(key, None)
 
-                td = self.call_wget(src, fetch_dir)
-                self.tempdirs.append(td)
+        key = "{0}|{1}".format(self.dest.replace(':', ''),
+                               self.src.replace(':', ''))
 
-                if not fetch_dir:
-                    self.write_cfg("http", key, td)
-        else:
-            key = "{0}|{1}".format(self.dest.replace(':', ''),
-                                   self.src.replace(':', ''))
-            fetch_dir = self.cfgs["http"].get(key, None)
+        fetch_dir = self.cfgs["http"].get(key, None)
+        self.td = self.call_wget(fetch_dir)
 
-            td = self.call_wget(self.src, fetch_dir)
-            self.tempdirs.append(td)
+        self.td_w_root = '{0}/{1}/'.format(self.td, self.root)
 
-            if not fetch_dir:
-                self.write_cfg("http", key, td)
+        if not fetch_dir:
+            self.write_cfg("http", key, self.td)
 
-    def call_wget(self, src, fetch_dir=None):
-        list_args = src.split('/')
-        list_args = list_args[3:]
+
+    def call_wget(self, fetch_dir=None):
+
+        src_w_root = '{0}/{1}'.format(self.src, self.root)
         tempdir = None
 
-        if fetch_dir is None:
-            tempdir = tempfile.mkdtemp(prefix="http_", dir=self.cache_dir)
-            wget_args = ['wget', '-r', '-np', '-nH', '-q', '--reject', 'html',
-                         '--cut-dirs={0}'.format(len(list_args)),
-                         src, '-P', tempdir]
-        else:
-            tempdir = fetch_dir
-            wget_args = ['wget', '-r', '-np', '-N', '-nH', '-q', '--reject',
-                         'html', '--cut-dirs={0}'.format(len(list_args)), src,
-                         '-P', tempdir]
+        # globs to reject
+        rej = '*html*'
+
+
+        if not fetch_dir:
+            fetch_dir = tempfile.mkdtemp(prefix="http_", dir=self.cache_dir)
+
+        wget_args = ['wget', '-r', '-np', '-nH', '-q', '--reject',
+                     rej, src_w_root, '-P', fetch_dir]
 
         retval = subprocess.call(wget_args)
+
+
 
         if retval != 0:
             try:
@@ -78,4 +72,4 @@ class FetchHttp(Fetch):
                 pass
             raise LinchpinError('Unable to fetch files with the following'
                                 ' command:\n{0}'.format(" ".join(wget_args)))
-        return tempdir
+        return fetch_dir

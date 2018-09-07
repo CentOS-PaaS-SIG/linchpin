@@ -748,7 +748,7 @@ class LinchpinCli(LinchpinAPI):
             dest_ws = self.workspace
             if root:
                 abs_root = os.path.expanduser(os.path.realpath(root))
-                root = os.path.basename(abs_root.rstrip(os.path.sep))
+                root_ws = os.path.basename(abs_root.rstrip(os.path.sep))
 #                else:
 #                    pass  # dest = self.workspace (set at the top)
 
@@ -776,7 +776,8 @@ class LinchpinCli(LinchpinAPI):
         if not os.path.exists(cache_path):
             os.makedirs(cache_path)
 
-        if fetch_protocol is None:
+        protocol = fetch_protocol
+        if protocol is None:
             protocol_regex = OrderedDict([
                 ('((git|ssh|http(s)?)|(git@[\w\.]+))'
                     '(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?',
@@ -789,11 +790,11 @@ class LinchpinCli(LinchpinAPI):
                     fetch_protocol = obj
                     break
 
-        if fetch_protocol is None:  # assume fetch_protocol is git if None
-            fetch_protocol = 'FetchGit'
+        if protocol is None:  # assume fetch_protocol is git if None
+            protocol = 'FetchGit'
 
 
-        fetch_class = FETCH_CLASS[fetch_protocol](self.ctx, fetch_type, src,
+        fetch_class = FETCH_CLASS[protocol](self.ctx, fetch_type, src,
                                                   dest, cache_path, root=root,
                                                   root_ws=root_ws,
                                                   ref=fetch_ref)
