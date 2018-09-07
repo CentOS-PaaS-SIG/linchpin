@@ -45,5 +45,6 @@ keys/
 
 # ignore items imported during testing
 duffy-ansible-module
+duffy.py
 docs/source/examples/workspace/dummy-data.yml
 

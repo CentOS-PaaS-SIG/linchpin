@@ -37,7 +37,7 @@ class Fetch(object):
     def copy_files(self):
 
         if self.fetch_type == 'workspace':
-            src_dir ='{0}/{1}'.format(self.td, self.root)
+            src_dir = '{0}/{1}'.format(self.td, self.root)
             self.copy_dir(src_dir, self.dest)
         else:
             self.transfer_section(self.fetch_type)

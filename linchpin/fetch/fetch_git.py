@@ -37,7 +37,7 @@ class FetchGit(Fetch):
 
         self.td_w_root = '{0}/{1}'.format(self.td, self.root)
 
-        if fetch_dir is None:
+        if not fetch_dir:
             self.write_cfg("git", key, self.td)
 
 
