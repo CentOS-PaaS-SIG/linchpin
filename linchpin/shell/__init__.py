@@ -521,15 +521,31 @@ def validate(ctx, targets, old_schema):
     """
 
     try:
+        old_schema = False
         return_code, results = lpcli.lp_validate(targets=targets,
                                                  old_schema=old_schema)
         for target, result in results.iteritems():
             if result == "valid":
-                result = "topology for target '{0}' is valid". format(target)
+                result = "[SUCCESS] Topology for target '{0}' is "\
+                         "valid".format(target)
             elif result == "valid with old schema":
-                result = "topology for target '{0}' is valid under old schema"\
-                    .format(target)
+                old_schema = True
+                result = "[SUCCESS] Topology for target '{0}' is valid under "\
+                         "old schema".format(target)
+            else:
+                result = "[ERROR] " + result
             ctx.log_state(result)
+
+        if old_schema:
+            warning = """
+Topologies valid under the old schema may have older directives.
+It is suggested to update any of the following:
+    res_group_type -> resource_group_type
+    res_defs -> resource_definitions
+    res_name -> name
+    type -> role
+    res_type -> role"""
+            ctx.log_state(warning)
         sys.exit(return_code)
     except LinchpinError as e:
         ctx.log_state(e)

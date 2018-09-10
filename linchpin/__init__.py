@@ -665,7 +665,7 @@ class LinchpinAPI(object):
             # if validation fails the first time, convert topo from old -> new
             try:
                 resources = self._validate_topology(topology_data)
-            except SchemaError:
+            except (SchemaError, KeyError):
                 # if topology fails, try converting from old to new style
                 try:
                     self._convert_topology(topology_data)
@@ -820,14 +820,13 @@ class LinchpinAPI(object):
 
             try:
                 self._validate_topology(topology_data)
-            except SchemaError as e:
+            except (SchemaError, KeyError) as e:
                 # try to validate against old schema
                 try:
                     self._convert_topology(topology_data)
                     self._validate_topology(topology_data)
                 except SchemaError as s:
-                    error = """
-Topology for target '{0}' does not validate
+                    error = """Topology for target '{0}' does not validate
 topology: '{1}'
 errors:
 """.format(target, topology_data)
@@ -837,8 +836,12 @@ errors:
                         for line in iter(str(s).splitlines(True)):
                             error += "\t" + line
                     else:
-                        for line in iter(str(e).splitlines(True)):
-                            error += "\t" + line
+                        if type(e) == KeyError:
+                            error += "\tfield res_defs['type'] is no longer"\
+                                     "Please use 'role' instead"
+                        else:
+                            for line in iter(str(e).splitlines(True)):
+                                error += "\t" + line
 
                     results[target] = error
                     return_code += 1
