@@ -1,0 +1,15 @@
+aws:
+    __IP__: private_ip
+openstack:
+    __IP__: private_v4
+    __ZONE__: zone
+dummy:
+gcloud:
+    __IP__: public_ip
+beaker:
+    __IP__: system
+libvirt:
+    __IP__: ip
+duffy:
+ovirt:
+    __IP__: ips.address_v4

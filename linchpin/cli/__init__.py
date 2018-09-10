@@ -137,7 +137,10 @@ class LinchpinCli(LinchpinAPI):
                     if "layout_data" in targets[name]["inputs"]:
                         lt_data = targets[name]["inputs"]["layout_data"]
                         t_data = targets[name]["inputs"]["topology_data"]
+                        c_data = {}
                         layout = lt_data["inventory_layout"]
+                        if "cfgs" in targets[name].keys():
+                            c_data = targets[name]["cfgs"]["user"]
                         i_path = targets[name]["outputs"]["inventory_path"][0]
                         if not os.path.exists(os.path.dirname(i_path)):
                             os.makedirs(os.path.dirname(i_path))
@@ -148,7 +151,8 @@ class LinchpinCli(LinchpinAPI):
                         inv = self.generate_inventory(r_o,
                                                       layout,
                                                       inv_format=inv_format,
-                                                      topology_data=t_data)
+                                                      topology_data=t_data,
+                                                      config_data=c_data)
                         # if inv_path is explicitly mentioned it is used
                         if inv_path:
                             i_path = inv_path

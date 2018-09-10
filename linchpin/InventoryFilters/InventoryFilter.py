@@ -15,7 +15,7 @@ class InventoryFilter(object):
         self.config = ConfigParser(allow_no_value=True)
 
     @abc.abstractmethod
-    def get_host_ips(self, topo):
+    def get_host_data(self, topo, config):
         pass
 
     @abc.abstractmethod
@@ -109,3 +109,41 @@ class InventoryFilter(object):
                     else:
                         host_string += " " + var + "=" + common_vars[var]
                 self.config.set(group, host_string)
+
+    def get_hostname(self, data, cfgs, default_fields):
+        if '__IP__' in cfgs.keys():
+            val = self.config_value_helper(data, cfgs['__IP__'])
+            if val:
+                return val
+        for var in default_fields:
+            val = self.config_value_helper(data, var)
+            if val:
+                return val
+        return ''
+
+    def set_config_values(self, host_data, instance, cfgs={}):
+        """
+        """
+        if cfgs is None:
+            print "cfgs is None"
+            print host_data
+            print ''
+            print instance
+        for var in cfgs.keys():
+            host_data[var] = self.config_value_helper(instance, cfgs[var])
+
+    def config_value_helper(self, instance, keys):
+        if "." in keys:
+            key, rest = keys.split('.', 1)
+            # this handles errors in which the key does not exist
+            if isinstance(instance, list) and key.isdigit():
+                return self.config_value_helper(instance[int(key)], rest)
+            if key not in instance.keys():
+                return ''
+            return self.config_value_helper(instance[key], rest)
+        else:
+            if keys == '':
+                return ''
+            if keys not in instance.keys():
+                return ''
+            return instance[keys]

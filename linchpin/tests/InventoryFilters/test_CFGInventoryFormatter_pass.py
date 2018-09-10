@@ -4,6 +4,7 @@
 
 import os
 import json
+import yaml
 
 from nose.tools import *
 
@@ -29,6 +30,21 @@ def setup_json_inventory_formatter():
     template = 'parsed-layout.json'
     template_file = open(mock_path+'/'+template)
     inv = json.load(template_file)
+
+
+def setup_cfg_config():
+    global config
+
+    provider = 'general'
+    base_path = '{0}'.format(os.path.dirname(
+    os.path.realpath(__file__))).rstrip('/')
+    lib_path = os.path.realpath(os.path.join(base_path, os.pardir))
+    mock_path = '{0}/{1}/{2}'.format(lib_path, 'mockdata', provider)
+
+    cfg = 'config.yml'
+    cfg_file = open(mock_path+'/'+cfg)
+    config = yaml.load(cfg_file)
+    cfg_file.close()
 
 
 @with_setup(setup_json_inventory_formatter)
@@ -86,13 +102,14 @@ def test_add_ips_to_groups():
  
 
 @with_setup(setup_json_inventory_formatter)
+@with_setup(setup_cfg_config)
 def test_add_common_vars():
     """
     """
     host_groups = inv['host_groups'].keys()
     formatter.add_sections(host_groups)
     formatter.set_vars(inv)
-    formatter.add_common_vars(host_groups, inv)
+    formatter.add_common_vars(host_groups, inv, config)
 
 
 @with_setup(setup_json_inventory_formatter)

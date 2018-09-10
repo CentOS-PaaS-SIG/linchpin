@@ -474,9 +474,10 @@ class LinchpinAPI(object):
 
 
     def generate_inventory(self, resource_data, layout, inv_format="cfg",
-                           topology_data={}):
+                           topology_data={}, config_data={}):
         inv = GenericInventory.GenericInventory(inv_format=inv_format)
-        inventory = inv.get_inventory(resource_data, layout, topology_data)
+        inventory = inv.get_inventory(resource_data, layout, topology_data,
+                                      config_data)
         return inventory
 
     def get_pf_data_from_rundb(self, targets, run_id=None, tx_id=None):
@@ -584,7 +585,6 @@ class LinchpinAPI(object):
 
 
         return_code = 99
-
         for target in provision_data.keys():
             if not isinstance(provision_data[target], dict):
                 raise LinchpinError("Target '{0}' does not"
@@ -933,14 +933,16 @@ errors:
             latest_run_data = rundb.get_records('linchpin', count=1)
             run_data = self.get_run_data(latest_run_data.keys()[0],
                                          ('outputs',
-                                          'inputs'))
+                                          'inputs',
+                                          'cfgs'))
         else:
             latest_run_data = rundb.get_records('linchpin',
                                                 count='all')
             latest_run_data = {tx_id: latest_run_data.get(tx_id)}
             run_data = self.get_run_data(tx_id,
                                          ('outputs',
-                                          'inputs'))
+                                          'inputs',
+                                          'cfgs'))
         for k in latest_run_data:
             v = latest_run_data[k]
             target_group = v.get("targets", [])

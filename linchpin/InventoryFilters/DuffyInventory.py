@@ -6,22 +6,44 @@ from InventoryFilter import InventoryFilter
 
 
 class DuffyInventory(InventoryFilter):
+    def get_host_data(self, topo, cfgs):
+        """
+        Returns a dict of hostnames or IP addresses for use in an Ansible
+        inventory file, based on available data. Only a single hostname or IP
+        address will be returned per instance, so as to avoid duplicate runs of
+        Ansible on the same host via the generated inventory file.
 
-    def get_hostnames(self, topo):
-        hostnames = []
+        Each hostname contains mappings of any variable that was defined in the
+        cfgs section of the PinFile (e.g. __IP__) to the value in the field that
+        corresponds with that variable in the cfgs.
+
+        By default, the hostname will be the system field returned by duffy
+
+        :param topo:
+            linchpin Duffy resource data
+
+        :param cfgs:
+            map of config options from PinFile
+        """
+
+        host_data = {}
+        var_data = cfgs.get('duffy', {})
+        if var_data is None:
+            var_data = {}
         for group in topo.get('duffy_res', []):
             for host in group['hosts']:
-                hostnames.append(host)
-        return hostnames
+                host_data[host] = {}
+                self.set_config_values(host_data[host], group, var_data)
+        return host_data
 
-    def get_host_ips(self, topo):
-        return self.get_hostnames(topo)
+    def get_host_ips(self, host_data):
+        return host_data.keys()
 
-
-    def get_inventory(self, topo, layout):
+    def get_inventory(self, topo, layout, config):
         if len(topo['duffy_res']) == 0:
             return ""
-        inven_hosts = self.get_hostnames(topo)
+        host_data = self.get_host_data(topo, config)
+        inven_hosts = self.get_host_ips(host_data)
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)
         self.add_sections(host_groups)
