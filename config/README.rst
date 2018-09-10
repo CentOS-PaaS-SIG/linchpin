@@ -101,6 +101,7 @@ along with some directories which do not have tests::
     ├── inventory
     │   └── 01_template_inventory
     ├── libvirt
+    │   └── 02_libvirt-storage
     └── openstack
         ├── 01_os-server-new
         ├── 02_os-server-template

@@ -39,6 +39,44 @@
       <source file='{{ definition[3] }}/{{ libvirt_resource_name }}_{{ definition[2] }}.{{ definition[4] }}'/>
       <target dev='vda' bus='virtio'/>
     </disk>
+    {% if definition[1]['storage'] is defined %}
+      {% for storage_def in definition[1]['storage'] %}
+        <disk type='file' device='disk'>
+          <driver name='qemu' type='qcow2'/>
+          {% if storage_def['source'] is not defined %}
+            <source file='/var/lib/libvirt/images/linchpin/{{ libvirt_resource_name }}-{{ storage_def['name'] }}.img' />
+          {% elif storage_def['source']['file'] is defined %}
+            {% if storage_def['source']['file'].startswith('/') %}
+              <source file='{{ storage_def['source']['file'] }}'/>
+            {% else %}
+              <source file='{{ libvirt_image_path }}/{{ storage_def['source']['file'] }}'/>
+            {% endif %}
+          {% elif storage_def['source']['block'] is defined %}
+            <source block='{{ storage_def['source']['block'] }}'/>
+          {% elif storage_def['source']['dir'] is defined %}
+            <source dir='{{ storage_def['source']['dir'] }}'/>
+          {% elif storage_def['source']['volume'] is defined and sourage_def['source']['pool'] is defined %}
+            <source pool='{{ storage_def['source']['pool'] }}' volume='{{ storage_def['source']['volume'] }}'/>
+          {% elif storage_def['network_protocol'] is defined %}
+            {% if storage_def['source']['network_protocol'] ==  'rbd' or storage_def['source']['network_protocol'] ==  'sheepdog' or storage_def['source']['network_protocol'] ==  'gluster' or storage_def['source']['network_protocol'] ==  'vxhs' %}
+              <source protocol='{{ storage_def['source']['network_protocol'] }}' name='{{ storage_def['source']['network_name'] }}' />
+            {% endif %}
+          {% endif %}
+          {% if storage_def['disk_type'] is not defined or storage_def['disk_type'] == 'virtio_blk' %}
+            target dev='{{ storage_def['device'] | default('vda') }}' bus='virtio' />
+          {% else %}
+            <target dev='{{ storage_def['device'] | default('vda') }}' bus='scsi' />
+            <address type='drive' controller='0' />
+          {% endif %}
+          {% if storage_def['shareable'] is defined %}
+            <shareable />
+          {% endif %}
+        </disk>
+        {% if storage_def['disk_type'] is defined and storage_def['disk_type'] == 'virtio_scsi' %}
+          <controller type='scsi' model='virtio-scsi' />
+        {% endif %}
+      {% endfor %}
+    {% endif %}
 {% for network in definition[1]['networks'] %}
     <interface type='network'>
       <model type='virtio'/>

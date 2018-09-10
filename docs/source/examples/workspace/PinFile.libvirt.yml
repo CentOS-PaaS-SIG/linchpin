@@ -6,3 +6,5 @@ libvirt-new:
 libvirt-network:
   topology: libvirt-network.yml
 
+libvirt-storage:
+    topology: libvirt-storage.yml

@@ -73,12 +73,33 @@
                         "type": "list",
                         "required": false,
                         "schema": {
-                           "name": { "type": "string", "required": true },
-                           "size": { "type": "string", "required": true },
-                           "pool": { "type": "string", "required": true },
-                           "cache": { "type": "string", "required": false },
-                           "format": { "type": "string", "required": false },
-                           "mac": { "type": "string", "required": false }
+                            "type": "dict",
+                            "required": true,
+                            "schema": {
+                                "name": { "type": "string", "required": true },
+                                "size": { "type": "integer", "required": true },
+                                "units": { "type": "string", "required": false },
+                                "disk_type": { "type": "string", "required": false,
+                                    "allowed": ["virtio_blk", "virtio_scsi"] },
+                                "cache": { "type": "string", "required": false },
+                                "format": { "type": "string", "required": false },
+                                "shareable": { "type": "boolean", "required": false },
+                                "device": { "type": "string", "required": false },
+                                "source": {
+                                    "type": "dict",
+                                    "required": false,
+                                    "schema": {
+                                        "file": { "type": "string", "required": false },
+                                        "block": { "type": "string", "required": false },
+                                        "dir": { "type": "string", "required": false },
+                                        "network_protocol": { "type": "string", "required": false,
+                                            "allowed": ["nbd", "isci", "rbd", "sheepdog", "gluster", "vxhs"]},
+                                        "network_name": { "type": "string", "required": false },
+                                        "volume": { "type": "string", "required": false },
+                                        "pool": { "type": "string", "required": false }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
