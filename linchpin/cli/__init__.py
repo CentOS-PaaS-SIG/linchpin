@@ -6,7 +6,9 @@ import ast
 import sys
 import json
 import click
+import hashlib
 
+from random import randint
 from distutils import dir_util
 from collections import OrderedDict
 
@@ -687,13 +689,77 @@ class LinchpinCli(LinchpinAPI):
                               tx_id=tx_id)
 
 
-    def lp_fetch(self, src, root=None, fetch_type='workspace'):
-        if root is not None:
-            root = list(filter(None, root.split(',')))
+    def lp_fetch(self, src, root='', fetch_type='workspace',
+                 fetch_protocol=None, fetch_ref=None, dest_ws=None,
+                 nocache=False):
+        """
+        Fetch a workspace from git, http(s), or a local directory, and
+        generate a provided workspace
 
-        dest = self.workspace
+        :param src:         The URL or URI of the remote directory
+
+        :param root:        Used to specify the location of the workspace
+                            within the remote. If root is not set, the root
+                            of the given remote will be used.
+
+        :param fetch_type:  Specifies which component(s) of a workspace the
+                            user wants to fetch. Types include: topology,
+                            layout, resources, hooks, workspace.
+                            (default: workspace)
+
+        :param fetch_protocol:  The protocol to use to fetch the workspace.
+                                (default: git)
+
+        :param fetch_ref:   Specify the git branch. Used only with git protocol
+                            (eg. master). If not used, the default branch will
+                            be used.
+
+        :param dest_ws: Workspaces destination, the workspace will be relative
+                        to this location.
+
+                        If `dest_ws` is not provided and `-r/--root` is
+                        provided, the basename will be the name of the
+                        workspace within the destination. If no root is
+                        provided, a random workspace name will be generated.
+                        The destination can also be explicitly set by using
+                        -w (see linchpin --help).
+
+        :param nocache: If true, don't copy from the cache dir, unless it's
+                        longer than the configured fetch.cache_days (1 day)
+                        (default: False)
+        """
+
+        root_ws = ''
+        if dest_ws and dest_ws != '.':
+            if root:
+                abs_root = os.path.expanduser(os.path.realpath(root))
+                root_ws = os.path.basename(abs_root.rstrip(os.path.sep))
+            else:
+                # generate a unique value for the root
+                hash_string = 'sha256:{0}{1}'.format(src, dest_ws)
+                uroot = hashlib.new(hash_string)
+                uroot = uroot.hexdigest()[:8]
+
+                # generate a random location to put an underscore
+                min_under = randint(1, 7)
+                max_under = min_under + 1
+                root_ws = uroot[:min_under] + '_' + uroot[max_under:]
+        else:
+            dest_ws = self.workspace
+            if root:
+                abs_root = os.path.expanduser(os.path.realpath(root))
+                root_ws = os.path.basename(abs_root.rstrip(os.path.sep))
+#                else:
+#                    pass  # dest = self.workspace (set at the top)
+
+        dest = '{0}/{1}'.format(dest_ws, root_ws)
+
+        output_txt = 'destination workspace: {0}'.format(dest)
         if not os.path.exists(dest):
-            raise LinchpinError(dest + " does not exist")
+            os.makedirs(dest)
+            output_txt = 'Created {0}'.format(output_txt)
+
+        self.ctx.log_state(output_txt)
 
         fetch_aliases = {
             "topologies": self.get_evar("topologies_folder"),
@@ -703,31 +769,38 @@ class LinchpinCli(LinchpinAPI):
             "workspace": "workspace"
         }
 
-        fetch_dir = fetch_aliases.get(fetch_type, "workspace")
-
+        fetch_type = fetch_aliases.get(fetch_type, 'workspaces')
 
         cache_path = os.path.abspath(os.path.join(os.path.expanduser('~'),
                                                   '.cache/linchpin'))
         if not os.path.exists(cache_path):
             os.makedirs(cache_path)
 
-        protocol_regex = OrderedDict([
-            ('((git|ssh|http(s)?)|(git@[\w\.]+))'
-                '(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?',
-                'FetchGit'),
-            ('^(http|https)://', 'FetchHttp'),
-            ('^(file)://', 'FetchLocal')
-        ])
-        fetch_protocol = None
-        for regex, obj in protocol_regex.items():
-            if re.match(regex, src):
-                fetch_protocol = obj
-                break
-        if fetch_protocol is None:
-            raise LinchpinError("The protocol speficied is not supported")
+        protocol = fetch_protocol
+        if protocol is None:
+            protocol_regex = OrderedDict([
+                ('((git|ssh|http(s)?)|(git@[\w\.]+))'
+                    '(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?',
+                    'FetchGit'),
+                ('^(http|https)://', 'FetchHttp'),
+                ('^(file)://', 'FetchLocal')
+            ])
+            for regex, obj in protocol_regex.items():
+                if re.match(regex, src):
+                    fetch_protocol = obj
+                    break
+
+        if protocol is None:  # assume fetch_protocol is git if None
+            protocol = 'FetchGit'
 
 
-        fetch_class = FETCH_CLASS[fetch_protocol](self.ctx, fetch_dir, src,
-                                                  dest, cache_path, root)
+        fetch_class = FETCH_CLASS[protocol](self.ctx, fetch_type, src,
+                                            dest, cache_path, root=root,
+                                            root_ws=root_ws,
+                                            ref=fetch_ref)
         fetch_class.fetch_files()
+
+        if nocache:
+            self.set_cfg('fetch', 'cache_ws', 'False')
+
         fetch_class.copy_files()

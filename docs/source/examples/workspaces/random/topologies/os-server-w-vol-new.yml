@@ -1,0 +1,26 @@
+---
+topology_name: os-single-new
+resource_groups:
+  - resource_group_name: os-server-enw
+    resource_group_type: openstack
+    resource_definitions:
+      - name: volume-a
+        role: os_volume
+        size: 1
+        count: 1
+      - name: frontend
+        role: os_server
+        flavor: m1.small
+        image: Fedora-Cloud-Base-26-compose-latest
+        count: 1
+        keypair: ci-factory
+        networks:
+          - atomic-e2e-jenkins-test
+        fip_pool: 10.8.240.0
+        volumes:
+          - volume-a_0
+    credentials:
+      filename: clouds.yaml
+      profile: ci-rhos
+
+

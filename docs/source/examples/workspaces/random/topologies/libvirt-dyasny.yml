@@ -1,0 +1,28 @@
+---
+topology_name: cnv_libvirt_cluster
+resource_groups:
+  - resource_group_name: libvirt
+    resource_group_type: libvirt
+    resource_definitions:
+      - role: libvirt_node
+        name: master
+        uri: qemu:///system
+        count: 1
+        image_src: file:///var/lib/libvirt/images/base_image.qcow2
+        memory: 1024
+        vcpus: 2
+        arch: x86_64
+        ssh_key: id_rsa
+        networks:
+          - name: default
+      - role: libvirt_node
+        name: node
+        uri: qemu:///system
+        count: 2
+        image_src: file:///var/lib/libvirt/images/base_image.qcow2
+        memory: 1024
+        vcpus: 1
+        arch: x86_64
+        ssh_key: id_rsa
+        networks:
+          - name: default

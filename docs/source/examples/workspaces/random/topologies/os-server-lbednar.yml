@@ -1,0 +1,29 @@
+---
+topology_name: my_cluster
+resource_groups:
+  - resource_group_name: openstack
+    resource_group_type: openstack
+    resource_definitions:
+      - name: "{{ executor_name }}-master"
+        type: os_server
+        flavor: w1.large
+        image: "{{ image }}"
+        count: 1
+        keypair: "{{ keypair }}"
+        networks:
+          - "{{ network }}"
+        fip_pool: "{{ fip_pool }}"
+        security_groups: "{{ security_group }}"
+      - name: "{{ executor_name }}-node"
+        type: os_server
+        flavor: w1.large
+        image: "{{ image }}"
+        count: 2
+        keypair: "{{ keypair }}"
+        networks:
+          - "{{ network }}"
+        fip_pool: "{{ fip_pool }}"
+        security_groups: "{{ security_group }}"
+    credentials:
+      filename: clouds.yml
+      profile: "{{ os_cloud }}"

@@ -1,0 +1,70 @@
+inventory_layout:
+#  inventory_file: cnv-inventory.inv
+  vars:
+    hostname: __IP__
+  hosts:
+    "{{ executor_name }}-master":
+      count: 1
+      host_groups:
+        - masters
+        - etcd
+        - nodes
+        - nfs
+        - glusterfs
+    "{{ executor_name }}-node":
+      count: 2
+      host_groups:
+        - nodes
+        - glusterfs
+  host_groups:
+    OSEv3:
+      children:
+        - masters
+        - nodes
+        - etcd
+        - nfs
+        - glusterfs
+      vars:
+        ansible_ssh_user: root
+        containerized: true
+        openshift_version: "3.9.25"
+        openshift_release: "v3.9"
+        openshift_image_tag: "v3.9.25"
+        openshift_schedulable: true
+        osm_default_node_selector: ""
+        openshift_node_labels: "{'region': 'infra','zone': 'default', 'node-role.kubernetes.io/compute': 'true'}"
+        openshift_deployment_type: openshift-enterprise
+        openshift_clock_enabled: true
+        openshift_master_identity_providers: "[{'name': 'allow_all_auth', 'login': 'true', 'challenge': 'true', 'kind': 'AllowAllPasswordIdentityProvider'}]"
+        openshift_disable_check: "memory_availability,disk_availability"
+        openshift_enable_excluders: false
+        template_service_broker_install: false
+        openshift_use_manageiq: false
+        openshift_install_examples: false
+        openshift_master_default_subdomain: "cloudapps.{{ domain }}"
+        openshift_hosted_registry_routehost: "registry.cloudapps.{{ domain }}"
+
+        openshift_hosted_etcd_storage_kind: nfs
+        openshift_hosted_etcd_storage_nfs_options: "*(rw,root_squash,sync,no_wdelay)"
+        openshift_hosted_etcd_storage_nfs_directory: "/opt/osev3-etcd"
+        openshift_hosted_etcd_storage_volume_name: "etcd-vol2"
+        openshift_hosted_etcd_storage_access_modes: "['ReadWriteOnce']"
+        openshift_hosted_etcd_storage_volume_size: "1100M"
+        openshift_hosted_etcd_storage_labels: "{'storage': 'etcd'}"
+
+        ansible_service_broker_local_registry_whitelist: "[\".*-apb$\"]"
+
+        docker_dev: "/dev/vdb"
+        glusterfs_devices: "['/dev/vdc']"
+
+        # webconsole
+        openshift_web_console_prefix: "jniederm/origin-"
+        openshift_web_console_version: "demo-v10"
+
+        # cns
+        openshift_storage_glusterfs_namespace: "app-storage"
+        openshift_storage_glusterfs_storageclass: true
+        openshift_storageclass_default: false
+        openshift_storage_glusterfs_storageclass_default: true
+        openshift_storage_glusterfs_block_deploy: false
+

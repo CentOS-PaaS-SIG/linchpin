@@ -1,0 +1,24 @@
+---
+topology_name: "dummy_cluster" # topology name
+resource_groups:
+  - resource_group_name: "dummy"
+    resource_group_type: "dummy"
+    resource_definitions:
+      - name: "{{ distro | default('') }}test"
+        role: "dummy_node"
+        count: 1
+  - resource_group_name: os-two
+    resource_group_type: openstack
+    resource_definitions:
+      - name: "{{ distro | default('') }}frontend"
+        role: os_server
+        flavor: m1.small
+        image: CentOS-7-x86_64-GenericCloud-1612
+        count: 1
+        keypair: ci-factory
+        auto_ip: no
+        networks:
+          - e2e-openstack
+    credentials:
+      filename: clouds.yaml
+      profile: ci-rhos

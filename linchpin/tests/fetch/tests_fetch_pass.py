@@ -1,6 +1,8 @@
 import os
 import sys
+import time
 import shutil
+import tempfile
 
 from nose.tools import assert_equal
 from nose.tools import assert_list_equal
@@ -53,66 +55,46 @@ def setup_lp_fetch_env():
 
     setup_load_config()
 
-    pinfile = 'PinFile'
-    mock_path = '{0}/{1}/{2}'.format(lib_path, 'mockdata', provider)
-
     lpc = LinchpinCliContext()
     lpc.load_config(lpconfig=config_path)
     lpc.load_global_evars()
     lpc.setup_logging()
-    lpc.workspace = '/tmp/workspace/'
-    mockpath = os.path.realpath(mock_path)
 
-    if not os.path.exists(lpc.workspace):
-        os.mkdir(lpc.workspace)
+    lpc.workspace = tempfile.mkdtemp(prefix='fetch_')
+    print('workspace: {0}'.format(lpc.workspace))
 
     lpcli = LinchpinCli(lpc)
 
 
 @with_setup(setup_lp_fetch_env)
-def test_fetch_local():
-
-    src_path = os.path.join(mockpath, 'fetch/ws1')
-    src_uri = 'file://{0}'.format(src_path)
-    lpcli.lp_fetch(src_uri, root=None, fetch_type='workspace')
-
-    src_list = os.listdir(src_path)
-    dest_list = os.listdir(lpc.workspace)
-    src_list.sort()
-    dest_list.sort()
-    shutil.rmtree(lpc.workspace)
-    shutil.rmtree(os.path.join(os.path.expanduser('~'), '.cache/linchpin/'))
-    assert_list_equal(src_list, dest_list)
-
-
-@with_setup(setup_lp_fetch_env)
 def test_fetch_git():
 
-    src_url = 'https://github.com/agharibi/SampleLinchpinDirectory.git'
-    lpcli.lp_fetch(src_url, root='ws1', fetch_type='topologies')
-
-    src_list = ['topologies']
-    dest_list = os.listdir(lpc.workspace)
-
     shutil.rmtree(lpc.workspace)
-    shutil.rmtree(os.path.join(os.path.expanduser('~'), '.cache/linchpin/'))
+    os.makedirs(lpc.workspace)
+    os.chdir(lpc.workspace)
+    src_url = 'git://github.com/herlo/lp_test_workspaces'
+    root_dir = 'os-server-addl-vols'
 
-    assert_list_equal(src_list, dest_list)
+    lpcli.lp_fetch(src_url, root=root_dir)
+
+    chk_dir = '{0}/{1}/'.format(lpc.workspace, root_dir)
+    assert(os.path.exists('{0}/PinFile'.format(chk_dir)))
 
 
 @with_setup(setup_lp_fetch_env)
-def test_fetch_cache():
+def test_fetch_http():
 
-    src_url = 'https://github.com/agharibi/SampleLinchpinDirectory.git'
-    lpcli.lp_fetch(src_url, root='ws1', fetch_type='topologies')
-
-    cache_path = os.path.join(os.path.expanduser('~'), '.cache/linchpin/git')
-
-    cache_dir_list = os.listdir(cache_path)
     shutil.rmtree(lpc.workspace)
-    shutil.rmtree(os.path.join(os.path.expanduser('~'), '.cache/linchpin/'))
+    os.makedirs(lpc.workspace)
+    os.chdir(lpc.workspace)
+    src_url = 'https://herlo.fedorapeople.org'
+    root_dir = 'simple'
 
-    assert_equal(1, len(cache_dir_list))
+    lpcli.lp_fetch(src_url, root='lp_ws/{0}'.format(root_dir),
+                   fetch_protocol='FetchHttp')
+
+    chk_dir = '{0}/{1}/'.format(lpc.workspace, root_dir)
+    assert(os.path.exists('{0}/PinFile'.format(chk_dir)))
 
 
 def main():

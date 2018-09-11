@@ -306,24 +306,43 @@ def destroy(ctx, targets, run_id, tx_id):
 
 
 @runcli.command()
-@click.argument('fetch_type', default=None, required=False, nargs=-1)
 @click.argument('remote', default=None, required=True, nargs=1)
-@click.option('-r', '--root', default=None, required=False,
-              help='Use this to specify the subdirectory of the workspace of'
-              ' the root url')
+@click.option('-t', '--type', 'fetch_type', metavar='TYPE', required=False,
+              default='workspace', help='Which component of a workspace to'
+              ' fetch. (Default: workspace)')
+@click.option('-r', '--root', metavar='ROOT', default='',
+              help='Use this to specify the location of the workspace'
+                   ' within the root url. If root is not set, the root'
+                   ' of the given remote will be used.')
+@click.option('--dest', 'dest_ws', metavar='DEST', default=None,
+              help='Workspaces destination, the fetched workspace will be'
+                   ' relative to this location. (Overrides -w/--workspace)')
+@click.option('--branch', 'fetch_ref', metavar='REF', default=None,
+              help='Specify the git branch. Used only with'
+                   ' git protocol (eg. master).')
+@click.option('--protocol', 'fetch_protocol', default='git',
+              type=click.Choice(['git', 'http', 'local']),
+              help='Specify a protocol. (Default: git)')
+@click.option('--nocache', is_flag=True,
+              help='Do not check the cached time, just copy the data to the'
+                   ' destination')
 @pass_context
-def fetch(ctx, fetch_type, remote, root):
+def fetch(ctx, remote, fetch_type, root, dest_ws,
+          fetch_ref, fetch_protocol, nocache):
     """
-    Fetches a specified linchpin workspace or component from a remote location.
-
-    fetch_type:     Specifies which component of a workspace the user wants to
-    fetch. Types include: topology, layout, resources, hooks, workspace
-
-    remote:         The URL or URI of the remote directory
+    Fetches a specified linchpin workspace or component from a remote location
 
     """
+
+    fetch_proto = 'Fetch{0}'.format(fetch_protocol.title())
+
+    if not fetch_type:
+        fetch_type = 'workspace'
+
     try:
-        lpcli.lp_fetch(remote, root=root, fetch_type=''.join(fetch_type))
+        lpcli.lp_fetch(remote, root=root, fetch_type=fetch_type,
+                       fetch_protocol=fetch_proto, fetch_ref=fetch_ref,
+                       dest_ws=dest_ws, nocache=nocache)
     except LinchpinError as e:
         ctx.log_state(e)
         sys.exit(1)

@@ -1,0 +1,11 @@
+---
+simple:
+  topology:
+    topology_name: simple
+    resource_groups:
+      - resource_group_name: simple
+        resource_group_type: dummy
+        resource_definitions:
+          - name: web
+            role: dummy_node
+            count: 2

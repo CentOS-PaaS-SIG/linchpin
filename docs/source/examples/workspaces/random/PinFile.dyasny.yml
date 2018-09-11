@@ -1,0 +1,5 @@
+---
+libvirt-dyasny:
+  topology: libvirt-dyasny.yml
+  layout: libvirt-dyasny.yml
+
