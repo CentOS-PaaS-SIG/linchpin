@@ -29,9 +29,10 @@ class AWSInventory(InventoryFilter):
         host_dns_ip = []
         for group in topo.get('aws_ec2_res', []):
             for instance in group['instances']:
-                if instance['public_dns_name']:
+                print instance.keys()
+                if 'public_dns_name' in instance:
                     host_dns_ip.append(str(instance['public_dns_name']))
-                elif instance['public_ip']:
+                elif 'public_ip' in instance.keys():
                     host_dns_ip.append(str(instance['public_ip']))
                 else:
                     host_dns_ip.append(str(instance['private_ip']))

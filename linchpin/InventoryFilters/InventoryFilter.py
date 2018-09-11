@@ -65,6 +65,9 @@ class InventoryFilter(object):
                     grp_vars = inv['host_groups'][host_group]['vars'][var]
                     grp_vars = str(grp_vars)
                     self.config.set(host_group + ":" + "vars", var, grp_vars)
+        for host in inv['hosts']:
+            for host_group in host['host_groups']:
+                self.config[host_group] = {}
 
     def add_ips_to_groups(self, inven_hosts, layout):
         # create a ip to host mapping based on count
