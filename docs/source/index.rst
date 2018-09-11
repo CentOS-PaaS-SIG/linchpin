@@ -9,7 +9,7 @@ Additionally, LinchPin provides a Python API for managing resources. The cloud m
 
 This documentation covers LinchPin version (|release|). For recent features, see the updated |link-pre|\ |version|\ |link-post|.
 
-.. note:: Releases are formatted using `semanting versioning <https://semver.org>`_. If the release shown above is a pre-release version, the content listed may not be supported. Use `latest </en/latest>`_ for the most up-to-date documentation.
+.. note:: Releases are formatted using `semantic versioning <https://semver.org>`_. If the release shown above is a pre-release version, the content listed may not be supported. Use `latest </en/latest>`_ for the most up-to-date documentation.
 
 .. |link-pre| raw:: html
 
