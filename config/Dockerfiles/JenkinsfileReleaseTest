@@ -1,0 +1,160 @@
+/**
+ * CD LinchPin Release Test
+ *
+ * This job PRETENDS TO pull down the git repository when a new version
+ * has been provided, tags the release version and pushes a new release
+ * to pypi.org
+ */
+
+import com.cloudbees.plugins.credentials.Credentials
+
+// Execution ID for this run of the pipeline
+executionID = UUID.randomUUID().toString()
+// Use repoName everywhere for dirs and repo values
+repoName = 'linchpin'
+DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
+
+env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/' + repoName
+//env.ghprbGhRepository = env.ghprbGhRepository ?: 'herlo/' + repoName
+
+env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
+//env.ghprbActualCommit = env.ghprbActualCommit ?: 'test_pypi_install'
+
+env.ghprbPullAuthorLogin = env.ghprbPullAuthorLogin ?: ''
+
+env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop'
+//env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop-testing'
+env.MASTER_BRANCH = env.MASTER_BRANCH ?: 'master'
+//env.MASTER_BRANCH = env.MASTER_BRANCH ?: 'master-testing'
+
+env.TEST_PYPI_REPO = env.TEST_PYPI_REPO ?: 'pypitest'
+env.PROD_PYPI_REPO = env.PROD_PYPI_REPO ?: 'pypi'
+
+
+OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
+OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
+env.FEDORA27_TAG = env.FEDORA27_TAG ?: 'stable'
+
+// Pod name to use
+jslave_podName = 'jslave-' + repoName + '_' + executionID
+
+library identifier: "ci-pipeline@master",
+        retriever: modernSCM([$class: 'GitSCMSource',
+                              remote: "https://github.com/CentOS-PaaS-SIG/ci-pipeline"])
+
+library identifier: "cico-pipeline-library@master",
+        retriever: modernSCM([$class: 'GitSCMSource',
+                              remote: "https://github.com/CentOS/cico-pipeline-library"])
+
+
+properties([
+  buildDiscarder(logRotator(artifactDaysToKeepStr: '10', artifactNumToKeepStr: '15', daysToKeepStr: '10', numToKeepStr: '15')),
+  [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/' + env.ghprbGhRepository],
+  parameters(
+    [
+      string(defaultValue: 'develop',
+             description: '',
+             name: 'ghprbActualCommit'),
+      string(defaultValue: '',
+             description: 'Git Hub Repository',
+             name: 'ghprbGhRepository')
+    ]
+  ),
+])
+
+podTemplate(name: jslave_podName,
+            label: jslave_podName,
+            cloud: 'openshift',
+            serviceAccount: OPENSHIFT_SERVICE_ACCOUNT,
+            idleMinutes: 0,
+            namespace: OPENSHIFT_NAMESPACE,
+        containers: [
+            // This adds the custom slave container to the pod.
+            // Must be first with name 'jnlp'
+            containerTemplate(name: 'jnlp',
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/jenkins-continuous-infra-slave:stable',
+                ttyEnabled: false,
+                alwaysPullImage: true,
+                args: '${computer.jnlpmac} ${computer.name}',
+                command: '',
+                workingDir: '/workDir'),
+            containerTemplate(name: 'fedora27',
+                alwaysPullImage: true,
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora27:' + FEDORA27_TAG,
+                ttyEnabled: false,
+                command: '',
+                privileged: true,
+                workingDir: '/workDir')
+        ]
+)
+
+{
+    node(jslave_podName) {
+        ansiColor('xterm') {
+            timestamps {
+                // We need to set env.HOME because the openshift slave image
+                // forces this to /home/jenkins and then ~ expands to that
+                // even though id == "root"
+                // See https://github.com/openshift/jenkins/blob/master/slave-base/Dockerfile#L5
+                //
+                // Even the kubernetes plugin will create a pod with containers
+                // whose $HOME env var will be its workingDir
+                // See https://github.com/jenkinsci/kubernetes-plugin/blob/master/src/main/java/org/csanchez/jenkins/plugins/kubernetes/KubernetesLauncher.java#L311
+                //
+                env.HOME = "/root"
+                //
+                try {
+                    stage('checkout-linchpin') {
+                        deleteDir()
+                        pipelineUtils.setDefaultEnvVars()
+                        pipelineUtils.verifyPod(OPENSHIFT_NAMESPACE, env.NODE_NAME)
+                        dir(repoName) {
+
+                            withCredentials([string(credentialsId: 'paas-bot', variable: 'GH_TOKEN')]) {
+                                checkout([$class: 'GitSCM',
+                                    branches: [[name: env.ghprbActualCommit]],
+                                    doGenerateSubmoduleConfigurations: false,
+                                    extensions                       : [],
+                                    submoduleCfg                     : [],
+                                    userRemoteConfigs                : [
+                                        [refspec:
+                                            '+refs/heads/*:refs/remotes/origin/*  +refs/tags/*:refs/tags/*',
+                                            url: "https://paas-bot:" + GH_TOKEN + "@github.com/${env.ghprbGhRepository}"]
+                                        ]
+                                ])
+                            }
+
+                        }
+                    }
+                    stage('release-test-version') {
+
+                            sh "echo ghprbActualCommit: " + env.ghprbActualCommit
+                            sh "echo ghprbGhRepository"  + env.ghprGhRepository
+                        }
+                    }
+                }
+                catch (e) {
+
+                        // Set build result
+                        currentBuild.result = 'FAILURE'
+
+                        // Report the exception
+                        echo e.getMessage()
+
+                        // Throw the error
+                        throw e
+
+                }
+                } finally {
+                    // Archive our artifacts
+                    step([$class: 'ArtifactArchiver',
+                          allowEmptyArchive: true,
+                          artifacts: '**/*_logs/**,*.txt,*.groovy,**/job.*,**/*.groovy',
+                          excludes: '**/job.props,**/job.props.groovy,**/*.example',
+                          fingerprint: true])
+                }
+
+            }
+        }
+    }
+}
