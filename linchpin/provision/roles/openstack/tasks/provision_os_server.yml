@@ -14,7 +14,7 @@
 
 - name: Provision additional volumes
   os_volume:
-    state: "{{ state }}" 
+    state: "{{ state }}"
     auth: "{{ auth_var }}"
     name: "{{ prov_vol['name'] }}"
     region_name: "{{ res_def['region_name'] | default(omit) }}"
@@ -25,7 +25,7 @@
   loop_control:
     loop_var: prov_vol
 
-- name: Detach addtional volumes
+- name: Detach additional volumes
   os_server_volume:
     state: "{{ state }}"
     auth: "{{ auth_var }}"
@@ -89,7 +89,9 @@
     auto_ip: "{{ res_def['auto_ip'] | default(omit) }}"
   register: res_def_output
   loop: "{{ res_def_names }}"
-  when: not async and auth_var is defined
+  when:
+    - auth_var != ""
+    - not async
   no_log: "{{ not debug_mode }}"
   loop_control:
     loop_var: prov_inst
@@ -109,12 +111,12 @@
 - name: "Transform outputs to match the distiller format"
   set_fact:
     res_def_output: "{{ res_def_output | transform_os_server_output  }}"
-  when: not async and auth_var is defined
+  when: not async and auth_var != ""
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_server: "{{ topology_outputs_os_server + [res_def_output] }}"
-  when: not async and auth_var is defined
+  when: not async and auth_var != ""
 
 - name: "provision/teardown os_server resources when auth not defined"
   os_server:
@@ -150,19 +152,26 @@
     auto_ip: "{{ res_def['auto_ip'] | default(omit) }}"
   register: res_def_output
   loop: "{{ res_def_names }}"
-  when: not async and auth_var is not defined
+  when:
+    - auth_var == ""
+    - not async
   loop_control:
     loop_var: prov_inst
 
 - name: "Transform outputs to match the distiller format"
   set_fact:
     res_def_output: "{{ res_def_output | transform_os_server_output  }}"
-  when: not async and auth_var is not defined
+  when:
+    - auth_var == ""
+    - not async
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_server: "{{ topology_outputs_os_server + [res_def_output] }}"
-  when: not async and auth_var is not defined and res_def_output['skipped'] is not defined
+  when:
+    - auth_var == ""
+    - not async
+    - res_def_output['skipped'] is not defined
 
 - name: "Async:: provision/teardown os_server resources with provided auth"
   os_server:
@@ -199,7 +208,9 @@
     auto_ip: "{{ res_def['auto_ip'] | default(omit) }}"
   register: res_def_output
   loop: "{{ res_def_names }}"
-  when: async and auth_var is defined
+  when:
+    - async
+    - auth_var != ""
   loop_control:
     loop_var: prov_inst
   async: "{{ async_timeout | default(1000) }}"
@@ -208,9 +219,14 @@
 - name: "Transform outputs to match the distiller format"
   set_fact:
     res_def_output: "{{ res_def_output | transform_os_server_output  }}"
-  when: async and auth_var is defined
+  when:
+    - async
+    - auth_var != ""
 
 - name: "Async:: Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_server: "{{ topology_outputs_os_server + [ res_def_output ] }}"
-  when: async and auth_var is defined and res_def_output['skipped'] is not defined
+  when:
+    - async
+    - auth_var != ""
+    - res_def_output['skipped'] is not defined
