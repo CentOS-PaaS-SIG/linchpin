@@ -826,7 +826,8 @@ class LinchpinAPI(object):
                     self._convert_topology(topology_data)
                     self._validate_topology(topology_data)
                 except SchemaError as s:
-                    error = """Topology for target '{0}' does not validate
+                    error = "[ERROR]"
+                    error += """Topology for target '{0}' does not validate
 topology: '{1}'
 errors:
 """.format(target, topology_data)
