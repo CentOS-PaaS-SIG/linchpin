@@ -11,6 +11,7 @@ This document covers the ``linchpin`` Command Line Interface (CLI) in detail. Ea
    linchpin_destroy
    linchpin_journal
    linchpin_fetch
+   linchpin_validate
 
 
 
