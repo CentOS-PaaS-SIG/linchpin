@@ -1,0 +1,26 @@
+---
+topology_name: libvirt-new
+resource_groups:
+  - resource_group_name: libvirt-new
+    resource_group_type: libvirt
+    resource_definitions:
+      - role: libvirt_node
+        name: centos71
+        uri: qemu:///system
+        count: 1
+        image_src: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz
+        memory: 2048
+        vcpus: 1
+        arch: x86_64
+        ssh_key: libvirt
+        networks:
+          - name: default
+        additional_storage: 10G
+        cloud_config:
+          users:
+            - name: herlo
+              gecos: Clint Savage
+              groups: wheel
+              sudo: ALL=(ALL) NOPASSWD:ALL
+              ssh_import_id: gh:herlo
+              lock_passwd: true

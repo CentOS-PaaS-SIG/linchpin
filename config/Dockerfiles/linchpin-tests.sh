@@ -11,7 +11,7 @@ TESTS_DIR="./config/Dockerfiles/tests.d"
 
 
 if [ -z "${PROVIDERS}" ]; then
-    PROVIDERS="dummy libvirt"
+    PROVIDERS="dummy libvirt beaker openstack"
 fi
 
 # this function checks the distros.exclude value within the test.
