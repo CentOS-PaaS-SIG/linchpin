@@ -57,7 +57,7 @@ pipeline {
         stage("cd-linchpin-release-trigger") {
             steps {
                 node('master') {
-                    build job: 'cd-linchpin-release-test',
+                    build job: 'cd-linchpin-release',
                         parameters: [
                                 string(name: 'ghprbActualCommit',
                                        value: "${env.ghprbActualCommit}"),
