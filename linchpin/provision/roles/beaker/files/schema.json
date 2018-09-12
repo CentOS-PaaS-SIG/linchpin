@@ -87,6 +87,22 @@
                                         }]
                                     }
                                 },
+                                "repos": {
+                                    "type": "list",
+                                    "schema": {
+                                        "anyof": [{
+                                            "type": "dict",
+                                            "schema": {
+                                                "baseurl": { "type": "string", "required": true }
+                                            }
+                                        }]
+                                    }
+				},
+                                "install": {
+                                    "type": "list",
+                                    "required": false,
+                                    "schema": { "type": "string", "required": true }
+				},
                                 "bkr_data": { "type": "string", "required": false },
                                 "name": { "type": "string", "required": false },
                                 "count": { "type": "integer", "required": false },

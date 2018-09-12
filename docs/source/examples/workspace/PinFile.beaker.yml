@@ -29,3 +29,8 @@ beaker-family:
                 name: rhel7
                 hostrequires:
                   - rawxml: '<hostlabcontroller op="=" value="lab-02.rhts.eng.bos.redhat.com"/>'
+                repos:
+                  - baseurl: http://file.bos.redhat.com/~bpeck/restraint/el7--test/
+                install:
+                  - restraint-debuginfo
+
