@@ -1,0 +1,18 @@
+---
+libvirt-mi:
+  topology:
+    topology_name: "libvirt-multi"
+    resource_groups:
+      - resource_group_name: "libvirt-mi"
+        resource_group_type: "libvirt"
+        res_defs:
+        {% for instance in instances %}
+          - role: libvirt_node
+            name: {{ instance.name }}
+            image_src: {{ instance.src }}
+            memory: 1024
+            vcpus: 1
+            arch: "{{ instance.arch | default('x86_64') }}"
+            networks:
+              - name: default
+        {% endfor %}

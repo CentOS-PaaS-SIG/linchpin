@@ -1,0 +1,23 @@
+{
+    "duffy-new": {
+        "topology": {
+            "topology_name": "duffy-new", 
+            "resource_groups": [
+                {
+                    "resource_group_name": "duffy-new", 
+                    "resource_definitions": [
+                        {
+                            "count": 1, 
+                            "arch": "x86_64", 
+                            "version": 7, 
+                            "role": "duffy_node", 
+                            "name": "duffy"
+                        }
+                    ], 
+                    "resource_group_type": "duffy", 
+                    "credentials": "duffy.key"
+                }
+            ]
+        }
+    }
+}

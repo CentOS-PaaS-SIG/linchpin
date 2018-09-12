@@ -1,0 +1,73 @@
+---
+os-server-new:
+  topology:
+    topology_name: os-server-new
+    resource_groups:
+      - resource_group_name: os-server-new
+        resource_group_type: openstack
+        resource_definitions:
+          - name: "{{ distro | default('') }}database"
+            role: os_server
+            flavor: m1.small
+            image: CentOS-7-x86_64-GenericCloud-1612
+            count: 1
+            keypair: ci-factory
+            fip_pool: 10.8.240.0
+            networks:
+              - e2e-openstack
+          - name: "{{ distro | default('') }}frontend"
+            role: os_server
+            flavor: m1.small
+            image: CentOS-7-x86_64-GenericCloud-1612
+            count: 1
+            keypair: ci-factory
+            auto_ip: no
+            networks:
+              - e2e-openstack
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        db-node:
+          count: 1
+          host_groups:
+            - database
+        frontend-node:
+          count: 1
+          host_groups:
+            - frontend
+
+os-sg-new:
+  topology:
+    topology_name: os-sg-new
+    resource_groups:
+      - resource_group_name: os-sg-new
+        resource_group_type: openstack
+        resource_definitions:
+          - name: "{{ distro | default('') }}security_group"
+            role: os_sg
+            description: "Openstack Security Group with ssh access"
+            rules:
+              - rule_type: "inbound"
+                from_port: 22
+                to_port: 22
+                proto: "tcp"
+                cidr_ip: "0.0.0.0/0"
+              - rule_type: "outbound"
+                from_port: 22
+                to_port: 22
+                proto: "tcp"
+                cidr_ip: "0.0.0.0/0"
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos
+
+os-vol-new:
+  topology: os-vol-new.yml
+
+
+

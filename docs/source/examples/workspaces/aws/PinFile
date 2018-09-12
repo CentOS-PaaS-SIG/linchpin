@@ -1,0 +1,74 @@
+---
+aws-ec2-new:
+  topology:
+    topology_name: ec2-new
+    resource_groups:
+      - resource_group_name: "aws"
+        resource_group_type: "aws"
+        resource_definitions:
+          - name: demo-day
+            flavor: m1.small
+            role: aws_ec2
+            region: us-east-1
+            image: ami-984189e2
+            count: 1
+            instance_tags:
+              color: blue
+              shape: oval
+            security_group:
+              - default
+              - public
+        credentials:
+          filename: aws.key
+          profile: default
+
+aws-ec2-key-new:
+  topology:
+    topology_name: aws-ec2-key-new
+    resource_groups:
+      - resource_group_name: "aws"
+        resource_group_type: "aws"
+        resource_definitions:
+          - name: "ec2_keypair"
+            role: "aws_ec2_key"
+            region: "us-west-2"
+
+aws-sg-new:
+  topology:
+    topology_name: aws-sg-new
+    resource_groups:
+      - resource_group_name: "aws"
+        resource_group_type: "aws"
+        resource_definitions:
+          - name: "aws_sg_test"
+            role: "aws_sg"
+            description: "aws ssh security group"
+            region: "us-east-1"
+            rules:
+              - rule_type: "inbound"
+                from_port: "8"
+                to_port: -1
+                proto: "icmp"
+                cidr_ip: "0.0.0.0/0"
+              - rule_type: "inbound"
+                from_port: 22
+            to_port: 22
+            proto: "tcp"
+            cidr_ip: "0.0.0.0/0"
+          - rule_type: "outbound"
+            from_port: all
+            to_port: all
+            proto: "all"
+            cidr_ip: "0.0.0.0/0"
+
+aws-s3-new:
+  topology:
+    topology_name: aws-s3-new
+    resource_groups:
+      - resource_group_name: "aws_s3"
+        resource_group_type: "aws"
+        resource_definitions:
+          - name: "s3_bucket"
+            role: "aws_s3"
+            region: "us-west-2"
+

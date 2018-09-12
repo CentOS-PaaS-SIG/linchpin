@@ -1,0 +1,8 @@
+---
+libvirt-template-inventory:
+  topology: libvirt-template-inventory.yml
+  layout: template-inventory.yml
+
+aws-template-inventory:
+  topology: aws-ec2-template-inventory.yml
+  layout: template-inventory.yml

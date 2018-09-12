@@ -1,0 +1,53 @@
+---
+beaker-openstack:
+  topology:
+    topology_name: beaker-openstack
+    resource_groups:
+      - resource_group_name: beaker-topology
+        resource_group_type: beaker
+        resource_definitions:
+            - role: bkr_server
+              whiteboard: kusk whiteboard
+              attempt_wait_time: 60
+              cancel_message: Job cancelled on account of rain
+              recipesets:
+                - distro: "Fedora-28"
+                  name: kusc_fedora28
+                  arch: x86_64
+                  variant: Server
+                  count: 1
+                  ks_meta: harness=restraint-rhts
+      - resource_group_name: openstack-topology
+        resource_group_type: openstack
+        resource_definitions:
+            - role: os_server
+              name: kusc-openstack
+              flavor: m1.small
+              image:  Fedora-Cloud-Base-28-released-latest
+              count: 1
+              keypair: ci-factory
+              networks:
+                - e2e-openstack
+              fip_pool: 10.8.240.0
+        credentials:
+            filename: clouds.yaml
+            profile: ci-rhos
+    layout:
+      inventory_layout:
+        vars:
+          hostname: __IP__
+        hosts:
+          beaker-node:
+            count: 1
+            host_groups:
+              - beaker-layout
+          openstack-node:
+            count: 1
+            host_groups:
+              - openstack-layout
+        host_groups:
+          all:
+            vars:
+              ansible_python_interpreter: /usr/bin/python3
+              ansible_user: root
+              ansible_ssh_common_args: -o StrictHostKeyChecking=no
