@@ -100,5 +100,53 @@ pipeline {
                 }
             }
         }
+        stage("cd-linchpin-check-and-release") {
+            steps {
+                node('master') {
+                    dir('linchpin') {
+                        checkout([$class: 'GitSCM',
+                                  branches: [[name: env.ghprbActualCommit]],
+                                  doGenerateSubmoduleConfigurations: false,
+                                  extensions                       : [],
+                                  submoduleCfg                     : [],
+                                  userRemoteConfigs                : [
+                                          [refspec:
+                                                   '+refs/heads/*:refs/remotes/origin/*  +refs/pull/*:refs/remotes/origin/pr/* ',
+                                           url: "https://github.com/${env.ghprbGhRepository}"]
+                                  ]
+                        ])
+                        script {
+                            string lp_ver_mod = sh (
+                                script: "git show --pretty=\"\" --name-only ${env.ghprbActualCommit} | grep 'linchpin/version.py'",
+                                returnStdout: true).trim()
+
+                            // if the version shows up, it's a prerelease.
+                            // Don't release automatically!!
+                            if (lp_ver_mod == "") {
+
+                                string version = sh (
+                                    script: "grep __version__ linchpin/version.py | grep -E '([[:digit:]]\\.){2}[[:digit:]][[:alpha:]]?[[:digit:]]' | awk -F\"= \" '{print \$2}'",
+                                    returnStdout: true).trim()
+
+
+                                // make sure to put this to == before committing
+                                if (version != "") {
+                                    println "release version == ${version}"
+                                    build job: 'cd-linchpin-release',
+                                        parameters: [
+                                                string(name: 'ghprbActualCommit',
+                                                       value: "${env.ghprbActualCommit}"),
+                                                string(name: 'ghprbGhRepository',
+                                                       value: "${env.ghprbGhRepository}"),
+                                        ],
+                                        wait: true
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
