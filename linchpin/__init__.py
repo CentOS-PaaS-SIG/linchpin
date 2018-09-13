@@ -44,6 +44,8 @@ class LinchpinAPI(object):
 
         self.ctx = ctx
 
+        self.flags = {}
+
         self.hook_state = None
         self._hook_observers = []
         self.playbook_pre_states = self.get_cfg('playbook_pre_states',
@@ -547,7 +549,8 @@ class LinchpinAPI(object):
         return pinfile
 
 
-    def do_action(self, provision_data, action='up', run_id=None, tx_id=None):
+    def do_action(self, provision_data, action='up', run_id=None, tx_id=None,
+                  flags={}):
         """
         This function takes provision_data, and executes the given
         action for each target within the provision_data disctionary.
@@ -569,6 +572,7 @@ class LinchpinAPI(object):
                    to perform an idempotent reprovision, or destroy provisioned
                    resources.
         """
+        self.flags = flags
 
         ansible_console = False
         if self.ctx.cfgs.get('ansible'):
@@ -726,7 +730,10 @@ class LinchpinAPI(object):
             self.pb_hooks = self.get_cfg('hookstates', action)
             self.ctx.log_debug('calling: {0}{1}'.format('pre', action))
 
-            if 'pre' in self.pb_hooks:
+            if (('pre' in self.pb_hooks) and
+                not flags.get('no_hooks',
+                              ast.literal_eval(self.get_cfg('hooks',
+                                                            'no_hooks')))):
                 self.hook_state = '{0}{1}'.format('pre', action)
 
             # FIXME need to add rundb data for hooks results
@@ -746,10 +753,17 @@ class LinchpinAPI(object):
             # return an error code at the end.
 
             # add post provision hook for inventory generation
-            if 'inv' in self.pb_hooks:
+            if (('inv' in self.pb_hooks) and
+                not flags.get('no_hooks',
+                              ast.literal_eval(self.get_cfg('hooks',
+                                                            'no_hooks')))):
                 self.hook_state = 'postinv'
 
-            if ('post' in self.pb_hooks) and (self.__meta__ == "API"):
+            if (('post' in self.pb_hooks) and
+                    (self.__meta__ == "API") and
+                    not flags.get('no_hooks',
+                                  ast.literal_eval(self.get_cfg('hooks',
+                                                                'no_hooks')))):
                 self.hook_state = '{0}{1}'.format('post', action)
 
             end = time.time()

@@ -51,6 +51,7 @@ import sys
 
 from linchpin.hooks.action_managers import ACTION_MANAGERS
 from linchpin.exceptions import ActionManagerError
+from linchpin.exceptions import HookError
 
 
 class ActionBlockRouter(object):
@@ -298,10 +299,20 @@ class LinchpinHooks(object):
                     # validates the class object
                     a_b_obj.validate()
                     # executes the hook
-                    a_b_obj.execute()
+
+                    hook_result = a_b_obj.execute()
 
                     # intentionally using print here
                     self.api.ctx.log_state('end hook {0}:{1}\n-------'.format(
                                            a_b['type'], a_b['name']))
+
+                    if hook_result[0] > 0:
+                        raise HookError("Error in executing hook")
+
                 except Exception as e:
+                    dflt = self.api.get_cfg("hooks", 
+                                            "run_hooks_on_failure")
+                    dflt = ast.literal_eval(dflt)
+                    if not self.api.flags.get("run_hooks_on_failure", dflt):
+                        raise HookError("Error executing hook")
                     self.api.ctx.log_info(str(e))
