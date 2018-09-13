@@ -4,7 +4,7 @@ DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 STABLE_LABEL = "stable"
 
 // Defaults for SCM operations
-env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/ci-pipeline'
+env.ghprbGhRepository = env.ghprbGhRepository ?: 'herlo/linchpin'
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
 
 // Add new images here
@@ -18,7 +18,7 @@ library identifier: "ci-pipeline@master",
 
 properties([
   buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '20')),
-  [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/CentOS-PaaS-SIG/linchpin/'],
+  [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/herlo/linchpin/'],
   parameters(
     [
       string(defaultValue: 'develop',
