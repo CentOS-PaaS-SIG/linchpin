@@ -310,7 +310,7 @@ class LinchpinHooks(object):
                         raise HookError("Error in executing hook")
 
                 except Exception as e:
-                    dflt = self.api.get_cfg("hooks", 
+                    dflt = self.api.get_cfg("hooks",
                                             "run_hooks_on_failure")
                     dflt = ast.literal_eval(dflt)
                     if not self.api.flags.get("run_hooks_on_failure", dflt):

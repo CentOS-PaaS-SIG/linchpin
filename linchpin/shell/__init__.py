@@ -229,7 +229,7 @@ def up(ctx, targets, run_id, tx_id, inventory_format,
 
     run-id:     Use the data from the provided run_id value
     """
-    
+
     flags = {}
     if run_hooks_on_failure:
         flags["run_hooks_on_failure"] = run_hooks_on_failure
