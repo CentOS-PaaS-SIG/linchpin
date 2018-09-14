@@ -129,8 +129,13 @@ pipeline {
                                     returnStdout: true).trim()
 
 
-                                // make sure to put this to == before committing
-                                if (version != "") {
+                                // make sure to put this to == before merging
+                                // the regex checks if __version__ = '1.6.2a1' or the like.
+                                // if __version__ matches this, do nothing
+                                // if __version__ returns blank, we have good confidence
+                                // it's a full release version.
+                                // cd-linchpin-release will attempt a release
+                                if (version == "") {
                                     println "release version == ${version}"
                                     build job: 'cd-linchpin-release',
                                         parameters: [
