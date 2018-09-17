@@ -47,7 +47,7 @@ library identifier: "cico-pipeline-library@master",
 
 
 properties([
-  buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '20')),
+  buildDiscarder(logRotator(artifactDaysToKeepStr: '10', artifactNumToKeepStr: '15', daysToKeepStr: '10', numToKeepStr: '15')),
   [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/' + env.ghprbGhRepository],
   parameters(
     [
@@ -212,6 +212,15 @@ EOF
                         throw e
 
                 }
+                } finally {
+                    // Archive our artifacts
+                    step([$class: 'ArtifactArchiver',
+                          allowEmptyArchive: true,
+                          artifacts: '**/*_logs/**,*.txt,*.groovy,**/job.*,**/*.groovy',
+                          excludes: '**/job.props,**/job.props.groovy,**/*.example',
+                          fingerprint: true])
+                }
+
             }
         }
     }
