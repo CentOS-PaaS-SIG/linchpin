@@ -45,13 +45,15 @@
 #               extra_vars: { 'testvar': 'world'}
 #
 # """
-
+import os
 import ast
 import sys
 
 from linchpin.hooks.action_managers import ACTION_MANAGERS
+from linchpin.hooks.built_ins import GLOBAL_HOOKS
 from linchpin.exceptions import ActionManagerError
 from linchpin.exceptions import HookError
+
 
 
 class ActionBlockRouter(object):
@@ -232,6 +234,7 @@ class LinchpinHooks(object):
           actions:
             - echo ' this is 'postup' operation Hello hai how r u ?'
         """
+        global_hook_names = GLOBAL_HOOKS.keys()
 
         if is_global:
             raise NotImplementedError('Run Hooks is not implemented \
@@ -239,17 +242,32 @@ class LinchpinHooks(object):
         else:
             # a_b -> abbr for action_block
             for a_b in action_blocks:
+                if a_b['name'] in global_hook_names:
+                    t_a_b = GLOBAL_HOOKS.get(a_b['name'])
+                    # update the extra_vars dict
+                    t_a_b["actions"][0]["extra_vars"].update(
+                        a_b.get("extra_vars", {}))
+                    a_b = t_a_b
                 action_type = a_b.get('type', 'ansible')
                 ab_ctx = a_b['context'] if 'context' in a_b else False
                 if 'path' not in a_b:
+                    # search in global_hooks first if found resolve to
+                    # global_hooks_path
+                    if a_b['name'] in global_hook_names:
+                        # cp ~ current_file_path
+                        cfp = os.path.realpath(__file__).split("/")[0:-1]
+                        cfp = "/".join(cfp)
+                        a_b["path"] = '{0}/built_ins/{1}/'.format(
+                            cfp, a_b["name"])
                     # if the path is not defined it defaults to
                     # workspace/hooks/typeofhook/name
-                    a_b['path'] = '{0}/{1}/{2}/{3}/'.format(
-                        self.api.ctx.workspace,
-                        self.api.get_evar('hooks_folder',
-                                          default='hooks'),
-                        a_b.get('type', 'ansible'),
-                        a_b['name'])
+                    else:
+                        a_b['path'] = '{0}/{1}/{2}/{3}/'.format(
+                            self.api.ctx.workspace,
+                            self.api.get_evar('hooks_folder',
+                                              default='hooks'),
+                            a_b.get('type', 'ansible'),
+                            a_b['name'])
 
                 if 'action_manager' in a_b:
                     # fetches the action object from the path
