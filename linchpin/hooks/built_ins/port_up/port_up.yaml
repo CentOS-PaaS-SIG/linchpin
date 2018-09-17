@@ -1,0 +1,12 @@
+---
+- hosts: all
+  gather_facts: false
+  tasks:
+    - name: wait_for_port
+      wait_for:
+        host: "{{ inventory_hostname }}"
+        port: "{{ item }}"
+        timeout: "{{ timeout | default(10) }}"
+      delegate_to: localhost
+      with_items:
+        - "{{ ports | default([22]) }}"
