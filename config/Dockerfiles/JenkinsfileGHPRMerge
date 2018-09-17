@@ -105,23 +105,22 @@ pipeline {
                 node('master') {
                     dir('linchpin') {
                         checkout([$class: 'GitSCM',
-                                  branches: [[name: env.ghprbActualCommit]],
-                                  doGenerateSubmoduleConfigurations: false,
-                                  extensions                       : [],
-                                  submoduleCfg                     : [],
-                                  userRemoteConfigs                : [
-                                          [refspec:
-                                                   '+refs/heads/*:refs/remotes/origin/*  +refs/pull/*:refs/remotes/origin/pr/* ',
-                                           url: "https://github.com/${env.ghprbGhRepository}"]
-                                  ]
+                            branches: [[name: env.ghprbActualCommit]],
+                            doGenerateSubmoduleConfigurations: false,
+                            extensions                       : [
+                                [$class: 'ChangelogToBranch',
+                                    options: [compareRemote: 'origin',
+                                    compareTarget: 'cd_release_trigger'] // CHANGEME
+                                ]
+                            ],
+                            submoduleCfg                     : [],
+                            userRemoteConfigs                : [
+                                [refspec:
+                                         '+refs/heads/*:refs/remotes/origin/*  +refs/pull/*:refs/remotes/origin/pr/* ',
+                                 url: "https://github.com/${env.ghprbGhRepository}"]]
                         ])
                         script {
-                            string lp_ver_mod = sh (
-                                script: "git show --pretty=\"\" --name-only ${env.ghprbActualCommit} | grep 'linchpin/version.py'",
-                                returnStdout: true).trim()
-
-                            // Don't release automatically!!
-                            if (lp_ver_mod != "") {
+                            if (getChangedFile('linchpin/version.py')) {
 
                                 string pre_release = sh (
                                     script: "grep __version__ linchpin/version.py | grep -E '([[:digit:]]\\.){2}[[:digit:]][[:alpha:]][[:digit:]]' | awk -F\"= \" '{print \$2}'",
@@ -152,4 +151,27 @@ pipeline {
             }
         }
     }
+}
+
+
+// check the filePath against changed files
+// return file.path if there's a match, else false
+def getChangedFile(String filePath) {
+
+    def changeLogSets = currentBuild.changeSets
+    sz = changeLogSets.size()
+    for (int i = 0; i < sz; i++) {
+        def entries = changeLogSets[i].items
+        for (int j = 0; j < entries.length; j++) {
+            def entry = entries[j]
+            def files = new ArrayList(entry.affectedFiles)
+            for (int k = 0; k <files.size(); k++) {
+                def file = files[k]
+                if (file.path == filePath) {
+                    return file.path
+                }
+            }
+        }
+    }
+    return false
 }
