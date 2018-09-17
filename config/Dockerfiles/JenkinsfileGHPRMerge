@@ -120,12 +120,11 @@ pipeline {
                                 script: "git show --pretty=\"\" --name-only ${env.ghprbActualCommit} | grep 'linchpin/version.py'",
                                 returnStdout: true).trim()
 
-                            // if the version shows up, it's a prerelease.
                             // Don't release automatically!!
-                            if (lp_ver_mod == "") {
+                            if (lp_ver_mod != "") {
 
-                                string version = sh (
-                                    script: "grep __version__ linchpin/version.py | grep -E '([[:digit:]]\\.){2}[[:digit:]][[:alpha:]]?[[:digit:]]' | awk -F\"= \" '{print \$2}'",
+                                string pre_release = sh (
+                                    script: "grep __version__ linchpin/version.py | grep -E '([[:digit:]]\\.){2}[[:digit:]][[:alpha:]][[:digit:]]' | awk -F\"= \" '{print \$2}'",
                                     returnStdout: true).trim()
 
 
@@ -135,8 +134,7 @@ pipeline {
                                 // if __version__ returns blank, we have good confidence
                                 // it's a full release version.
                                 // cd-linchpin-release will attempt a release
-                                if (version == "") {
-                                    println "release version == ${version}"
+                                if (pre_release == "") {
                                     build job: 'cd-linchpin-release',
                                         parameters: [
                                                 string(name: 'ghprbActualCommit',
