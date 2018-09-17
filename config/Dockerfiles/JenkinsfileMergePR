@@ -4,7 +4,7 @@ DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 STABLE_LABEL = "stable"
 
 // Defaults for SCM operations
-env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/ci-pipeline'
+env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/linchpin'
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
 
 // Add new images here
