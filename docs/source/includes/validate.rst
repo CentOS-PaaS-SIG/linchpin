@@ -1,24 +1,14 @@
-Validate Command
------------------
-
-The purpose of the validate command is to determine whether topologies are
-syntactically valid and, if not, provide a list of errors that occured during
-validation
+The purpose of the validate command is to determine whether topologies are syntactically valid and, if not, provide a list of errors that occured during validation
 
 Using the validate command
 ```````````````````````````
 
-The command `linchpin validate` looks at the topology file for each target in
-a given PinFile. If the topology is not valid under the current schema, it will
-attempt to convert the topology to an older schema and try again. If the
-topology is still invalid, the command will report the topology and a list of
-errors found.
+The command `linchpin validate` looks at the topology file for each target in a given PinFile. If the topology is not valid under the current schema, it will attempt to convert the topology to an older schema and try again. If the topology is still invalid, the command will report the topology and a list of errors found.
 
 Invalid Topologies
 ++++++++++++++++++
 
-Here is a simple PinFile and topology file. The topology file has some errors
-and will not validate.
+Here is a simple PinFile and topology file. The topology file has some errors and will not validate.
 
 .. code-block:: yaml
 
@@ -79,8 +69,7 @@ and will not validate.
    topology for target 'libvirt-network' is valid
 
 
-The `linchpin validate` command can also provide a list of errors against the
-old schema with the `--old-schema` floag
+The `linchpin validate` command can also provide a list of errors against the old schema with the `--old-schema` flag
 
 .. code-block:: bash
 
@@ -95,17 +84,7 @@ old schema with the `--old-schema` floag
    topology for target 'libvirt' is valid under old schema
    topology for target 'libvirt-network' is valid
 
-As you can see, validation under both schemas result in an error stating that
-the field `additional_storage` could not be recognized.  In this case, there is
-simply an indentation error. `additional_storage` is a recognized field within
-`resource_definitions` but not within the `networks` sub-schema. Other times
-this unrecognized field may be a spelling error.  Both fields also flag the
-missing "name" field, which is required.  Both of these errors must be fixed
-in order for the topology file to validate.  Because making `count` a string
-only results in an error when validating against the old schema, this field
-does not have to be changed in order for the topology file to pass validation.
-However, it is best to change it anyway and keep your topology as up-to-date as
-possible.
+As you can see, validation under both schemas result in an error stating that the field `additional_storage` could not be recognized.  In this case, there is simply an indentation error. `additional_storage` is a recognized field within `resource_definitions` but not within the `networks` sub-schema. Other times this unrecognized field may be a spelling error.  Both fields also flag the missing "name" field, which is required.  Both of these errors must be fixed in order for the topology file to validate.  Because making `count` a string only results in an error when validating against the old schema, this field does not have to be changed in order for the topology file to pass validation. However, it is best to change it anyway and keep your topology as up-to-date as possible.
 
 Valid Topologies
 ++++++++++++++++
