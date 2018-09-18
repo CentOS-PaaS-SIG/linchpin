@@ -138,7 +138,18 @@ class LinchpinCli(LinchpinAPI):
                         lt_data = targets[name]["inputs"]["layout_data"]
                         t_data = targets[name]["inputs"]["topology_data"]
                         layout = lt_data["inventory_layout"]
-                        i_path = targets[name]["outputs"]["inventory_path"][0]
+                        # check whether inventory_file is mentioned in layout
+                        if layout.get("inventory_file", None):
+                            i_path = layout["inventory_file"]
+                            # if its not absolute path make path
+                            # relative to workspace
+                            if not os.path.isabs(i_path):
+                                i_path = "{0}/{1}".format(self.ctx.workspace,
+                                                          i_path)
+                        else:
+                            i_path = targets[name]["outputs"]
+                            i_path = i_path["inventory_path"][0]
+
                         if not os.path.exists(os.path.dirname(i_path)):
                             os.makedirs(os.path.dirname(i_path))
                         if inv_path and inv_file_count is not False:
