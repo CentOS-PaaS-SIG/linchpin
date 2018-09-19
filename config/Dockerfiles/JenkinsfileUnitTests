@@ -12,7 +12,7 @@ env.ghprbPullId = env.ghprbPullId ?: ''
 
 properties([
   buildDiscarder(logRotator(artifactNumToKeepStr: '10', numToKeepStr: '10')),
-  [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/p3ck/linchpin/'],
+  [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/CentOS-PaaS-SIG/linchpin/'],
   parameters(
     [
       string(defaultValue: 'develop',
