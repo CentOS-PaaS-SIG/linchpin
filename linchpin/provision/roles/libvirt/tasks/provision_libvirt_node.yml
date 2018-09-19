@@ -61,14 +61,6 @@
   set_fact:
     ssh_key_path: "{{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] | default(res_grp['resource_group_name'])}}"
 
-- name: "remote: does ssh key already exists ?"
-  stat:
-    path: "{{ ssh_key_path }}"
-  register: ssh_key_stat_remote
-  remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
-  delegate_to: "{{ uri_hostname }}"
-  when: uri_hostname != 'localhost'
-
 - name: "local: does ssh key already exists ?"
   stat:
     path: "{{ ssh_key_path }}"
