@@ -228,6 +228,19 @@ def test_do_action():
 
     assert not failed
 
+@with_setup(setup_lp_api)
+def test_do_validation():
+    return_code, results = lpa.do_validation(provision_data)
+
+    failed = False
+    if return_code:
+        failed = True
+        for target, data in results.iteritems():
+            if not data.startswith("valid"):
+                print("Validation for target '{0}': has failed with"
+                      " error '{1}'".format(target, msg))
+
+    assert not failed
 
 @with_setup(setup_lp_api)
 def test_lp_journal():

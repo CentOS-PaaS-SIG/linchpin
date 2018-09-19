@@ -8,7 +8,6 @@ class AnyofValidator(Validator):
 
     def _validate_anyof(self, definitions, field, value):
         """ {'type': 'list', 'logical': 'anyof'} """
-        # print "definitions:", definitions
 
         if 'role' not in definitions[0]['schema'].keys():
             return super(AnyofValidator, self)._validate_anyof(definitions,
