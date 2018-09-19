@@ -349,7 +349,7 @@
     loop_var: data
   when: not async and uri_hostname == 'localhost'
 
-- name: "Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
+- name: "remote: Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
   set_fact:
     topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0], 'ip': extract_ip_address_result_remote.results[data[1]].stdout }] }}"
   with_nested:
