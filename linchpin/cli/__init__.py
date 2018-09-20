@@ -144,8 +144,10 @@ class LinchpinCli(LinchpinAPI):
                             # if its not absolute path make path
                             # relative to workspace
                             if not os.path.isabs(i_path):
-                                i_path = "{0}/{1}".format(self.ctx.workspace,
-                                                          i_path)
+                                i_path = "{0}/{1}/{2}".format(
+                                        self.ctx.get_cfg('evars','workspace'),
+                                        self.ctx.get_cfg('evars','inventories_folder'),
+                                        i_path)
                         else:
                             i_path = targets[name]["outputs"]
                             i_path = i_path["inventory_path"][0]
