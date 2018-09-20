@@ -208,11 +208,11 @@ def init(ctx):
               cls=MutuallyExclusiveOption, mutually_exclusive=["run_id"])
 @click.option('-if', '--inventory-format', default="cfg",
               help="Inventory format can be cfg or json")
-@click.option('--rhof', '--run-hooks-on-failure', is_flag=True, default=None)
+@click.option('--ifh', '--ignore-failed-hooks', is_flag=True, default=None)
 @click.option('--nh', '--no-hooks', is_flag=True, default=None)
 @pass_context
 def up(ctx, targets, run_id, tx_id, inventory_format,
-       run_hooks_on_failure, no_hooks):
+       ignore_failed_hooks, no_hooks):
     """
     Provisions nodes from the given target(s) in the given PinFile.
 
@@ -230,18 +230,16 @@ def up(ctx, targets, run_id, tx_id, inventory_format,
     run-id:     Use the data from the provided run_id value
     """
 
-    flags = {}
-    if run_hooks_on_failure:
-        flags["run_hooks_on_failure"] = run_hooks_on_failure
+    if ignore_failed_hooks:
+        ctx.set_cfg("hook_flags", "ignore_failed_hooks", ignore_failed_hooks)
     if no_hooks:
-        flags["no_hooks"] = no_hooks
+        ctx.set_cfg("hook_flags", "no_hooks", no_hooks)
 
     if tx_id:
         try:
             return_code, results = lpcli.lp_up(targets=targets,
                                                tx_id=tx_id,
-                                               inv_f=inventory_format,
-                                               flags=flags)
+                                               inv_f=inventory_format)
             _handle_results(ctx, results, return_code)
         except LinchpinError as e:
             ctx.log_state(e)
@@ -254,8 +252,7 @@ def up(ctx, targets, run_id, tx_id, inventory_format,
             return_code, results = lpcli.lp_up(targets=targets,
                                                run_id=run_id,
                                                tx_id=tx_id,
-                                               inv_f=inventory_format,
-                                               flags=flags)
+                                               inv_f=inventory_format)
             _handle_results(ctx, results, return_code)
         except LinchpinError as e:
             ctx.log_state(e)
@@ -278,10 +275,10 @@ def up(ctx, targets, run_id, tx_id, inventory_format,
 @click.option('-t', '--tx-id', metavar='tx_id', type=int,
               help='Destroy resources using the transaction ID (tx-id)',
               cls=MutuallyExclusiveOption, mutually_exclusive=["run_id"])
-@click.option('--rhof', '--run-hooks-on-failure', is_flag=True)
+@click.option('--ifh', '--ignore-failed-hooks', is_flag=True)
 @click.option('--nh', '--no-hooks', is_flag=True)
 @pass_context
-def destroy(ctx, targets, run_id, tx_id, run_hooks_on_failure, no_hooks):
+def destroy(ctx, targets, run_id, tx_id, ignore_failed_hooks, no_hooks):
     """
     Destroys resources using either the run_id or tx_id (mutually exclusive).
 
@@ -295,15 +292,17 @@ def destroy(ctx, targets, run_id, tx_id, run_hooks_on_failure, no_hooks):
     the appropriate PinFile will be destroyed.
 
     """
-    flags = {}
-    flags["run_hooks_on_failure"] = run_hooks_on_failure
-    flags["no_hooks"] = no_hooks
+    
+    if ignore_failed_hooks:
+        ctx.set_cfg("hook_flags", "ignore_failed_hooks", ignore_failed_hooks)
+    if no_hooks:
+        ctx.set_cfg("hook_flags", "no_hooks", no_hooks)
+
 
     if tx_id:
         try:
             return_code, results = lpcli.lp_destroy(targets=targets,
-                                                    tx_id=tx_id,
-                                                    flags=flags)
+                                                    tx_id=tx_id)
             _handle_results(ctx, results, return_code)
         except LinchpinError as e:
             ctx.log_state(e)
@@ -315,8 +314,7 @@ def destroy(ctx, targets, run_id, tx_id, run_hooks_on_failure, no_hooks):
         try:
             return_code, results = lpcli.lp_destroy(targets=targets,
                                                     run_id=run_id,
-                                                    tx_id=tx_id,
-                                                    flags=flags)
+                                                    tx_id=tx_id)
             _handle_results(ctx, results, return_code)
         except LinchpinError as e:
             ctx.log_state(e)

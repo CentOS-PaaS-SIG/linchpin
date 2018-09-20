@@ -374,7 +374,7 @@ class LinchpinCli(LinchpinAPI):
         pass
 
 
-    def lp_up(self, targets=(), run_id=None, tx_id=None, inv_f="cfg", flags={}):
+    def lp_up(self, targets=(), run_id=None, tx_id=None, inv_f="cfg"):
         """
         This function takes a list of targets, and provisions them according
         to their topology.
@@ -395,8 +395,7 @@ class LinchpinCli(LinchpinAPI):
         return_code, return_data = self._execute_action('up',
                                                         targets,
                                                         run_id=run_id,
-                                                        tx_id=tx_id,
-                                                        flags=flags)
+                                                        tx_id=tx_id)
 
         # Distill data
         new_tx_id = return_data.keys()[0]
@@ -427,9 +426,7 @@ class LinchpinCli(LinchpinAPI):
 
         if (('post' in self.pb_hooks) and
                 (self.__meta__ == "CLI") and
-                not flags.get('no_hooks',
-                              ast.literal_eval(self.get_cfg('hooks',
-                                                            'no_hooks')))):
+                not self.get_cfg('hook_flags', 'no_hooks')):
             self.hook_state = '{0}{1}'.format('post', 'up')
 
         # Show success and errors, with data
@@ -477,7 +474,7 @@ class LinchpinCli(LinchpinAPI):
         return self.do_validation(prov_data, old_schema=old_schema)
 
 
-    def lp_destroy(self, targets=(), run_id=None, tx_id=None, flags={}):
+    def lp_destroy(self, targets=(), run_id=None, tx_id=None):
 
         """
         This function takes a list of targets, and performs a destructive
@@ -501,20 +498,16 @@ class LinchpinCli(LinchpinAPI):
         outputs = self._execute_action('destroy',
                                        targets,
                                        run_id=run_id,
-                                       tx_id=tx_id,
-                                       flags=flags)
+                                       tx_id=tx_id)
         if (('post' in self.pb_hooks) and
             (self.__meta__ == "CLI") and
-            not flags.get('no_hooks',
-                          ast.literal_eval(self.get_cfg('hooks',
-                                                        'no_hooks')))):
+            not self.get_cfg('hook_flags', 'no_hooks')):
             self.hook_state = '{0}{1}'.format('post', 'destroy')
         return outputs
 
 
 
-    def _execute_action(self, action, targets=(), run_id=None, tx_id=None,
-                        flags={}):
+    def _execute_action(self, action, targets=(), run_id=None, tx_id=None):
         """
         This function takes a list of targets, and performs a destructive
         teardown, including undefining nodes, according to the target(s).
@@ -575,8 +568,7 @@ class LinchpinCli(LinchpinAPI):
             return_code, return_data = self._execute(provision_data,
                                                      targets,
                                                      action=action,
-                                                     run_id=run_id,
-                                                     flags=flags)
+                                                     run_id=run_id)
         else:
             # get the pinfile data from the run_id or the tx_id
             provision_data = self.get_pf_data_from_rundb(targets,
@@ -588,8 +580,7 @@ class LinchpinCli(LinchpinAPI):
                                                          targets,
                                                          action=action,
                                                          run_id=run_id,
-                                                         tx_id=tx_id,
-                                                         flags=flags)
+                                                         tx_id=tx_id)
 
             else:
                 return (99, {})
@@ -688,7 +679,7 @@ class LinchpinCli(LinchpinAPI):
 
 
     def _execute(self, provision_data, targets,
-                 action='up', run_id=None, tx_id=None, flags={}):
+                 action='up', run_id=None, tx_id=None):
         """
         This function takes a list of targets, constructs a dictionary of tasks
         and passes it to the LinchpinAPI.do_action method for processing.
@@ -717,8 +708,7 @@ class LinchpinCli(LinchpinAPI):
         return self.do_action(prov_data,
                               action=action,
                               run_id=run_id,
-                              tx_id=tx_id,
-                              flags=flags)
+                              tx_id=tx_id)
 
 
     def lp_fetch(self, src, root='', fetch_type='workspace',
