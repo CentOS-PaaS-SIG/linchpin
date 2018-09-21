@@ -51,7 +51,7 @@ playbooks_folder = provision
 default_schemas_path = {{ lp_path }}/defaults/%(schemas_folder)s
 default_topologies_path = {{ lp_path }}/defaults/%(topologies_folder)s
 default_layouts_path = {{ lp_path }}/defaults/%(layouts_folder)s
-default_inventories_path = {{ lp_path }}/defaults/%(inventories_folder)s
+default_inventories_path = {{ workspace }}/inventories/
 default_roles_path = {{ lp_path }}/%(playbooks_folder)s/%(roles_folder)s
 
 # default credentials data, this path doesn't automatically exist
