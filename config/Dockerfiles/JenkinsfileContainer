@@ -180,6 +180,8 @@ pipeline {
                     sh """
                        oc whoami
                     """
+                    env.REPO_URL = "https://github.com/${env.ghOrg}/linchpin"
+                    env.REPO_REF = "${env.ghprbActualCommit}"
                     pipelineUtils.setupContainerTemplates(openshiftProject)
                 }
             }
