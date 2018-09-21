@@ -9,7 +9,7 @@ env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop'
 
 // Needed for podTemplate()
 env.SLAVE_TAG = env.SLAVE_TAG ?: 'stable'
-env.FEDORA26_TAG = env.FEDORA26_TAG ?: 'stable'
+env.FEDORA28_TAG = env.FEDORA28_TAG ?: 'stable'
 env.FEDORA27_TAG = env.FEDORA27_TAG ?: 'stable'
 env.CENTOS7_TAG = env.CENTOS7_TAG ?: 'stable'
 
@@ -34,9 +34,9 @@ OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
 executionID = UUID.randomUUID().toString()
 
 // Pod name to use
-podName1 = 'lp_test-1-' + executionID
-podName2 = 'lp_test-2-' + executionID
-podName3 = 'lp_test-3-' + executionID
+c7podName = 'lp_centos7-' + executionID
+f28podName = 'lp_fedora28-' + executionID
+f27podName = 'lp_fedora27-' + executionID
 
 def libraries = ['cico-pipeline' : ['master', 'https://github.com/CentOS/cico-pipeline-library.git'],
                  'ci-pipeline'   : ['master', 'https://github.com/CentOS-PaaS-SIG/ci-pipeline.git']]
@@ -73,8 +73,8 @@ properties(
                        description: 'Tag for slave image',
                        name: 'SLAVE_TAG'),
                 string(defaultValue: 'stable',
-                       description: 'Tag for fedora26 image',
-                       name: 'FEDORA26_TAG'),
+                       description: 'Tag for fedora28 image',
+                       name: 'FEDORA28_TAG'),
                 string(defaultValue: 'stable',
                        description: 'Tag for fedora27 image',
                        name: 'FEDORA27_TAG'),
@@ -95,10 +95,10 @@ stage('Tests') {
     }
     try {
         parallel (
-            "Centos7" : {
+            "centos7" : {
                 pipelineUtils.clearTemplateNames()
-                podTemplate(name: podName1,
-                            label: podName1,
+                podTemplate(name: c7podName,
+                            label: c7podName,
                             cloud: 'openshift',
                             serviceAccount: OPENSHIFT_SERVICE_ACCOUNT,
                             idleMinutes: 0,
@@ -126,12 +126,12 @@ stage('Tests') {
                         ]
                 )
                 {
-                    execute_test(podName1, "centos7")
+                    execute_test(c7podName, "centos7")
                 }
-            }, fedora26: {
+            }, fedora28: {
                 pipelineUtils.clearTemplateNames()
-                podTemplate(name: podName2,
-                            label: podName2,
+                podTemplate(name: f28podName,
+                            label: f28podName,
                             cloud: 'openshift',
                             serviceAccount: OPENSHIFT_SERVICE_ACCOUNT,
                             idleMinutes: 0,
@@ -146,9 +146,9 @@ stage('Tests') {
                                 args: '${computer.jnlpmac} ${computer.name}',
                                 command: '',
                                 workingDir: '/workDir'),
-                            containerTemplate(name: 'fedora26',
+                            containerTemplate(name: 'fedora28',
                                 alwaysPullImage: true,
-                                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora26:' + FEDORA26_TAG,
+                                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora28:' + FEDORA28_TAG,
                                 ttyEnabled: false,
                                 command: '/root/init_libvirt.sh',
                                 privileged: true,
@@ -159,12 +159,12 @@ stage('Tests') {
                         ]
                 )
                 {
-                    execute_test(podName2, "fedora26")
+                    execute_test(f28podName, "fedora28")
                 }
             }, fedora27: {
                 pipelineUtils.clearTemplateNames()
-                podTemplate(name: podName3,
-                            label: podName3,
+                podTemplate(name: f27podName,
+                            label: f27podName,
                             cloud: 'openshift',
                             serviceAccount: OPENSHIFT_SERVICE_ACCOUNT,
                             idleMinutes: 0,
@@ -192,7 +192,7 @@ stage('Tests') {
                         ]
                 )
                 {
-                    execute_test(podName3, "fedora27")
+                    execute_test(f27podName, "fedora27")
                 }
             },
             failFast: true
