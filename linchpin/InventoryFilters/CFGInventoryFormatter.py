@@ -72,7 +72,7 @@ class CFGInventoryFormatter(InventoryFormatter):
                     self.config.set(host_group, ip)
                     self.config.set("all", ip)
 
-    def add_common_vars(self, host_groups, layout):
+    def add_common_vars(self, host_groups, layout, config):
         # defaults common_vars to [] when they doesnot exist
         host_groups.append("all")
         common_vars = layout['vars'] if 'vars' in layout.keys() else []
@@ -83,10 +83,15 @@ class CFGInventoryFormatter(InventoryFormatter):
             for item in items:
                 host_string = item
                 for var in common_vars:
-                    if common_vars[var] == "__IP__":
-                        host_string += " " + var + "=" + item
-                    else:
-                        host_string += " " + var + "=" + common_vars[var]
+                    for provider in config.keys():
+                        if item not in config[provider].keys():
+                            continue
+                        if common_vars[var] in config[provider][item].keys():
+                            value = common_vars[var]
+                            host_string += " " + var + "=" +\
+                                           config[provider][item][value]
+                        else:
+                            host_string += " " + var + "=" + common_vars[var]
                 self.config.set(group, host_string)
 
     def generate_inventory(self):

@@ -496,9 +496,10 @@ class LinchpinAPI(object):
 
 
     def generate_inventory(self, resource_data, layout, inv_format="cfg",
-                           topology_data={}):
+                           topology_data={}, config_data={}):
         inv = GenericInventory.GenericInventory(inv_format=inv_format)
-        inventory = inv.get_inventory(resource_data, layout, topology_data)
+        inventory = inv.get_inventory(resource_data, layout, topology_data,
+                                      config_data)
         return inventory
 
     def get_pf_data_from_rundb(self, targets, run_id=None, tx_id=None):
@@ -622,6 +623,8 @@ class LinchpinAPI(object):
             raise LinchpinError("Target 'linchpin' is not allowed.")
 
         for target in provision_data.keys():
+            if target == 'cfgs':
+                continue
 
             self.ctx.log_debug("Processing target: {0}".format(target))
 
@@ -743,7 +746,7 @@ class LinchpinAPI(object):
                                          provision_data[target]['hooks']}
                                     ])
 
-            if provision_data[target].get('cfgs', None):
+            if provision_data.get('cfgs', None):
                 vars_data = provision_data[target].get('cfgs')
                 self.set_evar('cfgs_data', vars_data)
                 rundb.update_record(target,
@@ -751,7 +754,7 @@ class LinchpinAPI(object):
                                     'cfgs',
                                     [
                                         {'user':
-                                         provision_data[target]['cfgs']}
+                                         provision_data['cfgs']}
                                     ])
 
             # note : changing the state triggers the hooks
@@ -991,14 +994,16 @@ class LinchpinAPI(object):
             latest_run_data = rundb.get_records('linchpin', count=1)
             run_data = self.get_run_data(latest_run_data.keys()[0],
                                          ('outputs',
-                                          'inputs'))
+                                          'inputs',
+                                          'cfgs'))
         else:
             latest_run_data = rundb.get_records('linchpin',
                                                 count='all')
             latest_run_data = {tx_id: latest_run_data.get(tx_id)}
             run_data = self.get_run_data(tx_id,
                                          ('outputs',
-                                          'inputs'))
+                                          'inputs',
+                                          'cfgs'))
         for k in latest_run_data:
             v = latest_run_data[k]
             target_group = v.get("targets", [])

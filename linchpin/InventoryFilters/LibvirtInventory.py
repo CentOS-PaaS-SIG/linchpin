@@ -9,22 +9,51 @@ from .InventoryFilter import InventoryFilter
 
 
 class LibvirtInventory(InventoryFilter):
-
-    def get_host_ips(self, topo):
-        ips = []
-        if not ('libvirt_res' in topo):
-            return ips
-        for val in topo.get('libvirt_res', []):
-            ips.append(val.get('ip', 'NA'))
-        return ips
+    DEFAULT_HOSTNAMES = ['ip']
 
 
-    def get_inventory(self, topo, layout):
+    def get_host_data(self, topo, cfgs):
+        """
+        Returns a dict of hostnames or IP addresses for use in an Ansible
+        inventory file, based on available data. Only a single hostname or IP
+        address will be returned per instance, so as to avoid duplicate runs of
+        Ansible on the same host via the generated inventory file.
+
+        Each hostname contains mappings of any variable that was defined in the
+        cfgs section of the PinFile (e.g. __IP__) to the value in the field that
+        corresponds with that variable in the cfgs.
+
+        By default, the hostname will be the system field returned by libvirt
+
+        :param topo:
+            linchpin Libvirt resource data
+
+        :param cfgs:
+            map of config options from PinFile
+        """
+
+        host_data = {}
+        var_data = cfgs.get('libvirt', {})
+        if var_data is None:
+            var_data = {}
+        for group in topo.get('libvirt_res', []):
+            hostname = self.get_hostname(group, var_data,
+                                         self.DEFAULT_HOSTNAMES)
+            host_data[hostname] = {}
+            self.set_config_values(host_data[hostname], group, var_data)
+        return host_data
+
+    def get_host_ips(self, host_data):
+        return host_data.keys()
+
+
+    def get_inventory(self, topo, layout, config):
 
         if len(topo['libvirt_res']) == 0:
             return ""
 
-        inven_hosts = self.get_host_ips(topo)
+        host_data = self.get_host_data(topo, config)
+        inven_hosts = self.get_host_ips(host_data)
 
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)

@@ -8,31 +8,51 @@ from .InventoryFilter import InventoryFilter
 
 
 class OpenstackInventory(InventoryFilter):
+    DEFAULT_HOSTNAMES = ["accessIPv4", "public_v4", "private_v4"]
 
-    def get_host_ips(self, topo):
-        host_public_ips = []
+    def get_host_data(self, topo, cfgs):
+        host_data = {}
+        var_data = cfgs.get('openstack', {})
+        if var_data is None:
+            var_data = {}
+
         for group in topo['os_server_res']:
             if 'results' in group.keys():
                 for res in group.get('results', []):
                     if 'openstack' in res.keys():
                         os_vars = res.get('openstack', [])
-                        host_public_ips.append(os_vars.get('accessIPv4', ''))
+                        hostname = self.get_hostname(os_vars, var_data,
+                                                     self.DEFAULT_HOSTNAMES)
+                        host_data[hostname] = {}
+                        self.set_config_values(host_data[hostname], os_vars,
+                                               var_data)
                     else:
                         continue
             else:
                 grp = group.get('openstack', [])
                 if isinstance(grp, list):
                     for server in grp:
-                        host_public_ips.append(str(server['accessIPv4']))
+                        hostname = self.get_hostname(server, var_data,
+                                                     self.DEFAULT_HOSTNAMES)
+                        host_data[hostname] = {}
+                        self.set_config_values(host_data[hostname], server,
+                                               var_data)
                 if isinstance(grp, dict):
-                    host_public_ips.append(str(grp['accessIPv4']))
-        return host_public_ips
+                    hostname = self.get_hostname(grp, var_data,
+                                                 self.DEFAULT_HOSTNAMES)
+                    host_data[hostname] = {}
+                    self.set_config_values(host_data[hostname], grp, var_data)
+        return host_data
 
-    def get_inventory(self, topo, layout):
 
+    def get_host_ips(self, host_data):
+        return host_data.keys()
+
+    def get_inventory(self, topo, layout, config):
         if len(topo['os_server_res']) == 0:
             return ""
-        inven_hosts = self.get_host_ips(topo)
+        host_data = self.get_host_data(topo, config)
+        inven_hosts = self.get_host_ips(host_data)
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)
         self.add_sections(host_groups)
