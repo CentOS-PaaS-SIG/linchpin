@@ -45,7 +45,19 @@ def setup_generic_topology():
     topology = yaml.load(topo_file)
     topo_file.close()
 
+def setup_generic_config():
+    global config
 
+    provider = 'general'
+    base_path = '{0}'.format(os.path.dirname(
+    os.path.realpath(__file__))).rstrip('/')
+    lib_path = os.path.realpath(os.path.join(base_path, os.pardir))
+    mock_path = '{0}/{1}/{2}'.format(lib_path, 'mockdata', provider)
+
+    cfg = 'config.yml'
+    cfg_file = open(mock_path+'/'+cfg)
+    config = yaml.load(cfg_file)
+    cfg_file.close()
 
 def setup_generic_layout():
     global layout
@@ -71,36 +83,49 @@ def setup_complex_workspace():
 
 
 @with_setup(setup_generic_inventory_filter)
-def test_get_host_ips():
+@with_setup(setup_generic_config)
+def test_get_host_data():
     """
     """
-    ips = filter.get_host_ips(res_output)
-    expected_hosts = ['aws', 'openstack', 'dummy', 'gcloud', 'beaker',
-                      'libvirt', 'duffy', 'ovirt']
-    assert_equal(set(ips), set(expected_hosts))
+    host_data = filter.get_host_data(res_output, config)
+    expected_providers = ['aws', 'openstack', 'dummy', 'gcloud', 'beaker',
+                          'libvirt', 'duffy', 'ovirt']
+    assert_equal(set(host_data.keys()), set(expected_providers))
+
+    for provider in host_data:
+        for host in host_data[provider]:
+            if provider == 'dummy' or provider == 'duffy':
+                continue
+            assert_true('__IP__' in host_data[provider][host].keys())
+
 
 @with_setup(setup_generic_inventory_filter)
 def test_get_hosts_by_count():
     """
     """
     host_dict = dict()
-    host_dict['one'] = 'foo'
-    host_dict['two'] = 'bar'
-    expected_hosts = ['foo', 'bar']
+    host_dict['openstack'] = {}
+    host_dict['openstack']['os1'] = 'one'
+    host_dict['libvirt'] = {}
+    host_dict['libvirt']['l1'] = 'one'
+    host_dict['libvirt']['l2'] = 'two'
+    expected_hosts = ['os1', 'l1', 'l2']
 
-    hosts = filter.get_hosts_by_count(host_dict, 0, ['one', 'two'])
+    hosts = filter.get_hosts_by_count(host_dict, 0, ['openstack', 'libvirt'])
     assert_equal(len(hosts), 0)
-    hosts = filter.get_hosts_by_count(host_dict, 2, ['one', 'two'])
-    assert_equal(len(hosts), 2)
+    hosts = filter.get_hosts_by_count(host_dict, 3, ['openstack', 'libvirt'])
+    assert_equal(len(hosts), 3)
     assert_equal(set(hosts), set(expected_hosts))
 
 
 @with_setup(setup_generic_inventory_filter)
 @with_setup(setup_generic_topology)
+@with_setup(setup_generic_config)
 @with_setup(setup_generic_layout)
 def test_get_inventory():
     """
     """
+<<<<<<< HEAD
     inventory = filter.get_inventory(res_output, layout, topology)
     assert_true(inventory)
 
@@ -145,3 +170,7 @@ def test_output_order():
     diff = difflib.unified_diff(inventory_lines, correct_lines)
     print ''.join(diff)
     assert_equal(inventory, correct_inventory)
+=======
+    inventory = filter.get_inventory(res_output, layout, topology, config)
+    assert_true(inventory)
+>>>>>>> Update tests to work with variable parsing in inventory gen
