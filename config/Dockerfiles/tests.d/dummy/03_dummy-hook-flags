@@ -22,19 +22,17 @@ if [ -e /tmp/workspace ]; then
     rm /tmp/workspace
 fi
 
-#pushd docs/source/examples/workspace
-
 mkdir -p /tmp/workspace
 pushd /tmp/workspace
 
-linchpin fetch https://github.com/samvarankashyap/linchpin_dummy_ws_hooks.git
+linchpin fetch --dest /tmp/workspace https://github.com/samvarankashyap/linchpin_dummy_ws_hooks.git
 
 # testing no-hooks flag
 echo "Testing --no-hooks flag"
-linchpin -w . -p "${PINFILE}" -v up "${TARGET}" --no-hooks
+linchpin -w /tmp/workspace -p "${PINFILE}" -v up "${TARGET}" --no-hooks
 
 # testing no-hooks flag
 echo "Testing --ignore-failed-hooks flag"
-linchpin -w . -p "${PINFILE}" -v up "${TARGET}" --ignore-failed-hooks
+linchpin -w /tmp/workspace -p "${PINFILE}" -v up "${TARGET}" --ignore-failed-hooks
 
 grep "${DISTRO}" /tmp/dummy.hosts
