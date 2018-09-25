@@ -292,7 +292,7 @@ def destroy(ctx, targets, run_id, tx_id, ignore_failed_hooks, no_hooks):
     the appropriate PinFile will be destroyed.
 
     """
-    
+
     if ignore_failed_hooks:
         ctx.set_cfg("hook_flags", "ignore_failed_hooks", ignore_failed_hooks)
     if no_hooks:

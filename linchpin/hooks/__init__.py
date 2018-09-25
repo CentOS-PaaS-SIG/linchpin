@@ -248,7 +248,7 @@ class LinchpinHooks(object):
                         self.api.ctx.workspace,
                         self.api.get_evar('hooks_folder',
                                           default='hooks'),
-                        a_b.get('type','ansible'),
+                        a_b.get('type', 'ansible'),
                         a_b['name'])
 
                 if 'action_manager' in a_b:

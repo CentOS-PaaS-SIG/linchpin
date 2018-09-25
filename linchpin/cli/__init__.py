@@ -500,8 +500,8 @@ class LinchpinCli(LinchpinAPI):
                                        run_id=run_id,
                                        tx_id=tx_id)
         if (('post' in self.pb_hooks) and
-            (self.__meta__ == "CLI") and
-            not self.get_cfg('hook_flags', 'no_hooks')):
+            (self.__meta__ == "CLI") and not self.get_cfg('hook_flags',
+                                                          'no_hooks')):
             self.hook_state = '{0}{1}'.format('post', 'destroy')
         return outputs
 

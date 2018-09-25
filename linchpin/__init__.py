@@ -726,8 +726,8 @@ class LinchpinAPI(object):
             self.pb_hooks = self.get_cfg('hookstates', action)
             self.ctx.log_debug('calling: {0}{1}'.format('pre', action))
 
-            if (('pre' in self.pb_hooks) and
-                not self.get_cfg('hook_flags', 'no_hooks')):
+            if (('pre' in self.pb_hooks) and not self.get_cfg('hook_flags',
+                                                              'no_hooks')):
                 self.hook_state = '{0}{1}'.format('pre', action)
 
             # FIXME need to add rundb data for hooks results
@@ -747,8 +747,8 @@ class LinchpinAPI(object):
             # return an error code at the end.
 
             # add post provision hook for inventory generation
-            if (('inv' in self.pb_hooks) and
-                not self.get_cfg('hook_flags', 'no_hooks')):
+            if (('inv' in self.pb_hooks) and not self.get_cfg('hook_flags',
+                                                              'no_hooks')):
                 self.hook_state = 'postinv'
 
             if (('post' in self.pb_hooks) and
