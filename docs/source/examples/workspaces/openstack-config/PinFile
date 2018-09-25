@@ -1,0 +1,62 @@
+---
+cfgs:
+  openstack:
+    __IP__: addresses.e2e-openstack.0.OS-EXT-IPS-MAC:mac_addr
+    __ZONE__: location.zone
+
+os-private:
+  topology:
+    topology_name: my_cluster
+    resource_groups:
+      - resource_group_name: openstack
+        resource_group_type: openstack
+        resource_definitions:
+          - name: "596-master"
+            role: os_server
+            flavor: m1.small
+            image:  CentOS-7-x86_64-GenericCloud-1612
+            count: 1
+            keypair: ci-factory
+            networks:
+              - e2e-openstack
+            auto_ip: no
+          - name: "596-node"
+            role: os_server
+            flavor: m1.small
+            image:  CentOS-7-x86_64-GenericCloud-1612
+            count: 2
+            keypair: ci-factory
+            auto_ip: no
+            networks:
+              - e2e-openstack
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+        foo: bar
+        zone: __ZONE__
+      hosts:
+        "{{ executor_name }}-master":
+          count: 1
+          host_groups:
+            - masters
+            - etcd
+            - nodes
+            - nfs
+            - glusterfs
+        "{{ executor_name }}-node":
+          count: 2
+          host_groups:
+            - nodes
+            - glusterfs
+      host_groups:
+        OSEv3:
+          children:
+            - masters
+            - etcd
+            - nfs
+            - nodes
+            - glusterfs

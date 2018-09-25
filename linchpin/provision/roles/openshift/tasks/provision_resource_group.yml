@@ -3,6 +3,11 @@
   set_fact:
     auth_var: ""
 
+- name: "set default_cred_profile when res_grp[credentials] is undefined"
+  set_fact:
+    cred_profile: 'default'
+  when: res_grp['credentials'] is not defined
+
 - name: "set default_cred_filename when res_grp[credentials] is undefined"
   set_fact:
     cred_filename: 'openshift.yaml'
