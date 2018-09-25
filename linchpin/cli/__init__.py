@@ -11,6 +11,7 @@ import hashlib
 from random import randint
 from distutils import dir_util
 from collections import OrderedDict
+from jinja2 import Environment
 
 from linchpin import LinchpinAPI
 from linchpin.fetch import FETCH_CLASS
@@ -138,7 +139,23 @@ class LinchpinCli(LinchpinAPI):
                         lt_data = targets[name]["inputs"]["layout_data"]
                         t_data = targets[name]["inputs"]["topology_data"]
                         layout = lt_data["inventory_layout"]
-                        i_path = targets[name]["outputs"]["inventory_path"][0]
+                        # check whether inventory_file is mentioned in layout
+                        if layout.get("inventory_file", None):
+                            i_path = layout["inventory_file"]
+                            # if its not absolute path make path
+                            # relative to workspace
+                            if not os.path.isabs(i_path):
+                                # get default variable for inventories_path
+                                d_p = self.ctx.get_evar("default_inventories"
+                                                        "_path")
+                                d_p = Environment().from_string(d_p).render(
+                                    workspace=self.ctx.get_cfg('evars',
+                                                               'workspace'))
+                                i_path = "{0}/{1}".format(d_p, i_path)
+                        else:
+                            i_path = targets[name]["outputs"]
+                            i_path = i_path["inventory_path"][0]
+
                         if not os.path.exists(os.path.dirname(i_path)):
                             os.makedirs(os.path.dirname(i_path))
                         if inv_path and inv_file_count is not False:
