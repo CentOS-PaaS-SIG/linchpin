@@ -12,7 +12,7 @@ DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 
 // Defaults for SCM operations
 env.ghOrg = 'herlo'
-env.ghprbGhRepository = env.ghprbGhRepository ?: '${env.ghOrg}/linchpin'
+env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/linchpin'
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
 
 // If this PR does not include an image change, then use this tag
@@ -100,7 +100,7 @@ library identifier: "ci-pipeline@automate_lp",
 
 library identifier: "cico-pipeline-library@master",
         retriever: modernSCM([$class: 'GitSCMSource',
-                              remote: "https://github.com/${env.ghOrg}/cico-pipeline-library"])
+                              remote: "https://github.com/CentOS-PaaS-SIG/cico-pipeline-library"])
 
 // Check out PR's version of library
 library identifier: "linchpin-pipeline@${env.ghprbActualCommit}",

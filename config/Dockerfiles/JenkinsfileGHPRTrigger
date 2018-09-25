@@ -27,7 +27,7 @@ library identifier: "cico-pipeline-library@master",
 
 properties([
   buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '20')),
-  [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/' + env.ghprbGhRepository],
+  [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/CentOS-PaaS-SIG/linchpin/'],
   [$class: 'org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty', triggers:[
     [
       $class: 'org.jenkinsci.plugins.ghprb.GhprbTrigger',
