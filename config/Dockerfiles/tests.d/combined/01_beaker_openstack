@@ -1,7 +1,7 @@
 #!/bin/bash -xe
 
 # Provision both beaker and openstack with one PinFile
-# distros.exclude: fedora27 fedora26 centos7
+# distros.exclude: fedora27 fedora28 centos7
 # providers.include: none
 # providers.exclude: none
 #
