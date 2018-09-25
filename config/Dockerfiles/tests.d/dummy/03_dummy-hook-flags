@@ -10,29 +10,24 @@ PROVIDER=${2}
 
 PINFILE="PinFile"
 TARGET="dummy_target"
-
+WORKSPACE_PATH="docs/source/examples/workspaces/dummy-hook-flags/"
 
 function clean_up {
     set +e
-    linchpin -w . -p "${PINFILE}" -v destroy "${TARGET}"
+    linchpin -w "${WORKSPACE_PATH}" -p "${PINFILE}" -v destroy "${TARGET}"
 }
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
-if [ -e /tmp/workspace ]; then
-    rm /tmp/workspace
+if [ -e /tmp/dummy.hosts ]; then
+    rm /tmp/dummy.hosts
 fi
-
-mkdir -p /tmp/workspace
-pushd /tmp/workspace
-
-linchpin fetch --dest /tmp/workspace https://github.com/samvarankashyap/linchpin_dummy_ws_hooks.git
 
 # testing no-hooks flag
 echo "Testing --no-hooks flag"
-linchpin -w /tmp/workspace -p "${PINFILE}" -v up "${TARGET}" --no-hooks
+linchpin -w "${WORKSPACE_PATH}" -p "${PINFILE}" -v up "${TARGET}" --no-hooks
 
-# testing no-hooks flag
+# testing --ignore-failed-hooks flag
 echo "Testing --ignore-failed-hooks flag"
-linchpin -w /tmp/workspace -p "${PINFILE}" -v up "${TARGET}" --ignore-failed-hooks
+linchpin -w "${WORKSPACE_PATH}" -p "${PINFILE}" -v up "${TARGET}" --ignore-failed-hooks
 
 grep "${DISTRO}" /tmp/dummy.hosts
