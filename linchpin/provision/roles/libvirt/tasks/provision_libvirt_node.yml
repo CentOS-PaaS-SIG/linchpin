@@ -61,14 +61,6 @@
   set_fact:
     ssh_key_path: "{{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] | default(res_grp['resource_group_name'])}}"
 
-- name: "remote: does ssh key already exists ?"
-  stat:
-    path: "{{ ssh_key_path }}"
-  register: ssh_key_stat_remote
-  remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
-  delegate_to: "{{ uri_hostname }}"
-  when: uri_hostname != 'localhost'
-
 - name: "local: does ssh key already exists ?"
   stat:
     path: "{{ ssh_key_path }}"
@@ -390,9 +382,9 @@
     loop_var: data
   when: not async and uri_hostname == 'localhost'
 
-- name: "Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
+- name: "remote: Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
   set_fact:
-    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0], 'ip': extract_ip_address_result.results[data[1]].stdout }] }}"
+    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0], 'ip': extract_ip_address_result_remote.results[data[1]].stdout }] }}"
   with_nested:
     - "{{ output_name }}"
     - "{{ res_count.stdout }}"
