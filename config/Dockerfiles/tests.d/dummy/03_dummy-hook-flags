@@ -15,6 +15,11 @@ WORKSPACE_PATH="docs/source/examples/workspaces/dummy-hook-flags/"
 function clean_up {
     set +e
     linchpin -w "${WORKSPACE_PATH}" -p "${PINFILE}" -v destroy "${TARGET}"
+    D_RC=0
+    D_RC=(${?} -o ${D_RC})
+    if [ ${D_RC} -ne 0 ]; then
+        exit ${D_RC}
+    fi
 }
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
