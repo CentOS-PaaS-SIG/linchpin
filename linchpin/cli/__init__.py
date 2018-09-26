@@ -753,8 +753,8 @@ class LinchpinCli(LinchpinAPI):
                 root_ws = os.path.basename(abs_root.rstrip(os.path.sep))
             else:
                 # generate a unique value for the root
-                hash_string = 'sha256:{0}{1}'.format(src, dest_ws)
-                uroot = hashlib.new(hash_string)
+                hash_string = '{0}{1}'.format(src, dest_ws)
+                uroot = hashlib.sha256(hash_string)
                 uroot = uroot.hexdigest()[:8]
 
                 # generate a random location to put an underscore
