@@ -37,6 +37,18 @@ Credentials Management
 An openshift topology can have a ``credentials`` section for each
 :term:`resource_group`, which requires the `api_endpoint`, and the `api_token`
 values.
+Further, Openshift also honours --creds-path in linchpin. The credential file
+passed needs to be formatted as follows
+
+.. code-block:: yaml
+
+   ---
+   testprofile:
+       api_endpoint: example.com:8443/
+       api_token: mytokentextrighthere
+   default:
+       api_endpoint: testexample.com:8443/
+       api_token: someothertoken
 
 
 .. code-block:: yaml
@@ -56,4 +68,5 @@ values.
         credentials:
           api_endpoint: example.com:8443/
           api_token: mytokentextrighthere
-
+          # filename: name_of_credsfile.yaml  --> when --creds-path is provided
+          # profile: name_of_profile --> defaults to 'default' profile in cred_file
