@@ -9,31 +9,21 @@
 import com.cloudbees.plugins.credentials.Credentials
 
 env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/linchpin'
-env.ghprbActualCommit = env.ghprbActualCommit ?: ''
+env.ghprbActualCommit = env.ghprbActualCommit ?: 'master'
 
 // Needed for podTemplate()
 env.SLAVE_TAG = env.SLAVE_TAG ?: 'stable'
+env.TAG_NAME = env.TAG_NAME ?: 'v1.6.3a1'
 
 env.IMAGE_NAME = env.IMAGE_NAME ?: 'linchpin'
-
+OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 
-OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
-OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
-
-// Execution ID for this run of the pipeline
-executionID = UUID.randomUUID().toString()
-
-// Pod name to use
-podName = 'linchpin-build_' + executionID
-
-library identifier: "ci-pipeline@master",
-        retriever: modernSCM([$class: 'GitSCMSource',
-                              remote: "https://github.com/CentOS-PaaS-SIG/ci-pipeline"])
-
-library identifier: "cico-pipeline-library@master",
-        retriever: modernSCM([$class: 'GitSCMSource',
-                              remote: "https://github.com/CentOS/cico-pipeline-library"])
+// libraries.each { name, repo ->
+//     library identifier: "${name}@${repo[0]}",
+//             retriever: modernSCM([$class: 'GitSCMSource',
+//                                   remote: repo[1]])
+// }
 
 properties([
   buildDiscarder(logRotator(artifactDaysToKeepStr: '30', artifactNumToKeepStr: '15', daysToKeepStr: '90', numToKeepStr: '30')),
@@ -41,7 +31,7 @@ properties([
   disableConcurrentBuilds(),
   parameters(
     [
-        string(defaultValue: 'develop',
+        string(defaultValue: 'master',
                description: '',
                name: 'ghprbActualCommit'),
         string(defaultValue: '',
@@ -50,166 +40,43 @@ properties([
         string(defaultValue: 'stable',
                description: 'Tag for slave image',
                name: 'SLAVE_TAG'),
-        string(defaultValue: 'stable',
-               description: 'Tag for fedora27 image',
-               name: 'FEDORA27_TAG'),
         string(defaultValue: 'contrainfra',
                description: 'Namespace where Docker Container resides',
                name: 'DOCKER_NAMESPACE'),
         string(defaultValue: 'linchpin',
                description: 'Install from pypi (linchpin), or from the git checkout (.).',
                name: 'INSTALL_LOCATION'),
-        string(defaultValue: 'docker://docker.io',
+        string(defaultValue: '',
                description: 'Docker Registry',
-               name: 'DOCKER_REGISTRY')
+               name: 'DOCKER_REGISTRY'),
     ]
   ),
 ])
 
-podTemplate(name: podName,
-            label: podName,
-            cloud: 'openshift',
-            serviceAccount: OPENSHIFT_SERVICE_ACCOUNT,
-            idleMinutes: 0,
-            namespace: OPENSHIFT_NAMESPACE,
-        containers: [
-            // This adds the custom slave container to the pod.
-            // Must be first with name 'jnlp'
-            containerTemplate(name: 'jnlp',
-                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/jenkins-continuous-infra-slave:' + SLAVE_TAG,
-                ttyEnabled: false,
-                privileged: true,
-                alwaysPullImage: true,
-                args: '${computer.jnlpmac} ${computer.name}',
-                command: '',
-                workingDir: '/workDir')
-        ],
-        volumes: [
-            emptyDirVolume(mountPath: '/var/run/containers', memory: false),
-            emptyDirVolume(mountPath: '/var/lib/containers', memory: false)
-        ]
-)
+def test_cmd = "echo testing..."
 
-{
-    node(podName) {
-        ansiColor('xterm') {
-            timestamps {
-                // We need to set env.HOME because the openshift slave image
-                // forces this to /home/jenkins and then ~ expands to that
-                // even though id == "root"
-                // See https://github.com/openshift/jenkins/blob/master/slave-base/Dockerfile#L5
-                //
-                // Even the kubernetes plugin will create a pod with containers
-                // whose $HOME env var will be its workingDir
-                // See https://github.com/jenkinsci/kubernetes-plugin/blob/master/src/main/java/org/csanchez/jenkins/plugins/kubernetes/KubernetesLauncher.java#L311
+def containers = ['buildah']
+def build_root = "config/Dockerfiles/${env.IMAGE_NAME}"
+def credentials = [usernamePassword(credentialsId: 'linchpin-docker',
+                   usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]
 
-                env.HOME = "/root"
+// remove the v from the TAG
+def ver = env.TAG_NAME
+def version = ver.substring(1)
 
-                try {
-                    // Prepare our environment
-                    stage("Git Checkout LinchPin") {
-                        deleteDir()
-                        // Set our default env variables. Many of these
-                        // are ci-pipeline specific, but we do need some
-                        pipelineUtils.setDefaultEnvVars()
+podTemplate = [containers: containers,
+               docker_repo_url: DOCKER_REPO_URL,
+               openshift_namespace: OPENSHIFT_NAMESPACE,
+               podName: 'buildah-builder',
+               jenkins_slave_image: 'jenkins-continuous-infra-slave:' + SLAVE_TAG]
 
-                        // Gather some info about the node we are running on for diagnostics
-                        pipelineUtils.verifyPod(OPENSHIFT_NAMESPACE, env.NODE_NAME)
-                        dir('linchpin') {
-                            // Checkout our linchpin repo based on the value of env.ghprbActualCommit
-                            checkout([$class: 'GitSCM',
-                                      branches: [[name: env.ghprbActualCommit]],
-                                      doGenerateSubmoduleConfigurations: false,
-                                      extensions                       : [],
-                                      submoduleCfg                     : [],
-                                      userRemoteConfigs                : [
-                                              [refspec:
-                                                       '+refs/heads/*:refs/remotes/origin/*  +refs/pull/*:refs/remotes/origin/pr/* ',
-                                               url: "https://github.com/${env.ghprbGhRepository}"]
-                                      ]
-                            ])
-                        }
-                    }
-                    stage('Build Docker Image') {
-                        dir('linchpin') {
+buildTestContainer(podTemplateProps: podTemplate,
+                   version: version,
+                   test_cmd: test_cmd,
+                   build_root: build_root,
+                   image_name: IMAGE_NAME,
+                   send_metrics: false,
+                   docker_registry: DOCKER_REGISTRY,
+                   docker_namespace: DOCKER_NAMESPACE,
+                   credentials: credentials)
 
-                            sh "sed -i 's/INSTALL_LOCATION/${INSTALL_LOCATION}/g' config/Dockerfiles/linchpin/Dockerfile"
-                            if (INSTALL_LOCATION == '.') {
-                                repo = env.ghprbGhRepository.tokenize('/')
-                                sh "sed -i 's/GIT_PROJECT/${repo[0]}/' config/Dockerfiles/linchpin/Dockerfile"
-                                sh "sed -i 's/GIT_REPO/${repo[1]}/' config/Dockerfiles/linchpin/Dockerfile"
-                                sh "sed -i 's/GIT_BRANCH/${env.ghprbActualCommit}/' config/Dockerfiles/linchpin/Dockerfile"
-                                sh "cat config/Dockerfiles/linchpin/Dockerfile"
-                            }
-                            sh "buildah bud -t ${IMAGE_NAME} ./config/Dockerfiles/linchpin"
-                            string containerid = sh (
-                                script: "buildah from ${IMAGE_NAME}",
-                                returnStdout: true
-                            ).trim()
-                            string version = sh (
-                                script: "buildah run ${containerid} -- linchpin --version 2>&1 | cut -d' ' -f3",
-                                returnStdout: true
-                            ).trim()
-                            currentBuild.displayName = "Build#: ${env.BUILD_NUMBER} - LinchPin Container Build: ${version}"
-                        }
-                    }
-
-                    stage('Test Docker Image') {
-                        dir('linchpin') {
-
-                            string cwd = sh (
-                                script: "pwd",
-                                returnStdout: true
-                            ).trim()
-                            sh "buildah copy --chown 10001:0 ${containerid} ${cwd}/config/Dockerfiles/linchpin/bin/run-linchpin /linchpin/bin/run"
-                            sh "buildah commit ${containerid} linchpin-test"
-                            string testcontainerid = sh (
-                                script: "buildah from linchpin-test",
-                                returnStdout: true
-                            ).trim()
-                            sh "buildah run -v ${cwd}/docs/source/examples/workspace:/workdir ${testcontainerid} uid_entrypoint run"
-                        }
-                    }
-                    stage('Tag/Push Docker Image') {
-                        dir('linchpin') {
-
-                            sh "buildah tag ${IMAGE_NAME} ${IMAGE_NAME}:latest ${IMAGE_NAME}:" + version
-                            sh "buildah images"
-                            withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'linchpin-docker', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
-
-                                sh "buildah push --creds ${DOCKER_USERNAME}:${DOCKER_PASSWORD} localhost/${IMAGE_NAME}:${version} ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/${IMAGE_NAME}:${version}"
-
-                                if (env.INSTALL_LOCATION == 'linchpin') {
-                                    sh "buildah push --creds ${DOCKER_USERNAME}:${DOCKER_PASSWORD} localhost/${IMAGE_NAME}:latest ${DOCKER_REGISTRY}/${DOCKER_NAMESPACE}/${IMAGE_NAME}:latest"
-                                }
-
-                            }
-                        }
-                    }
-                } catch (e) {
-                    // Set build result
-                    currentBuild.result = 'FAILURE'
-
-                    // Report the exception
-                    echo e.getMessage()
-
-                    // Throw the error
-                    throw e
-
-                } finally {
-                    pipelineUtils.getContainerLogsFromPod(OPENSHIFT_NAMESPACE, env.NODE_NAME)
-
-                    // Archive our artifacts
-                    step([$class: 'ArtifactArchiver', allowEmptyArchive: true, artifacts: '**/*_logs/**,*.txt,*.groovy,**/job.*,**/*.groovy,**/inventory.*', excludes: '**/job.props,**/job.props.groovy,**/*.example', fingerprint: true])
-
-                    // Set our message topic, properties, and content
-                    //messageFields = pipelineUtils.setMessageFields("complete")
-
-                    // Send message org.foo.bar.complete on fedmsg
-                    //pipelineUtils.sendMessageWithAudit(messageFields['properties'], messageFields['content'], msgAuditFile, fedmsgRetryCount)
-
-                }
-            }
-        }
-    }
-}
