@@ -34,5 +34,3 @@ linchpin -w "${WORKSPACE_PATH}" -p "${PINFILE}" -v up "${TARGET}" --no-hooks
 # testing --ignore-failed-hooks flag
 echo "Testing --ignore-failed-hooks flag"
 linchpin -w "${WORKSPACE_PATH}" -p "${PINFILE}" -v up "${TARGET}" --ignore-failed-hooks
-
-grep "${DISTRO}" /tmp/dummy.hosts
