@@ -63,8 +63,6 @@ def credentials = [usernamePassword(credentialsId: 'linchpin-docker',
 def ver = env.TAG_NAME
 def version = ver.substring(1)
 
-println "DOCKER_REGISTRY: ---" + DOCKER_REGISTRY.getClass() + "---"
-
 podTemplate = [containers: containers,
                docker_repo_url: DOCKER_REPO_URL,
                openshift_namespace: OPENSHIFT_NAMESPACE,
@@ -73,12 +71,17 @@ podTemplate = [containers: containers,
 
 // we want to modify the Dockerfile to install from INSTALL_LOCATION
 repo = env.ghprbGhRepository.tokenize('/')
+build_args = ['install_location': INSTALL_LOCATION,
+              'git_project': repo[0],
+              'git_repo': repo[1],
+              'git_branch': env.ghprbActualCommit]
 
 buildTestContainer(podTemplateProps: podTemplate,
                    version: version,
                    test_cmd: test_cmd,
                    build_root: build_root,
                    image_name: IMAGE_NAME,
+                   build_args: build_args,
                    send_metrics: false,
                    docker_registry: DOCKER_REGISTRY,
                    docker_namespace: DOCKER_NAMESPACE,
