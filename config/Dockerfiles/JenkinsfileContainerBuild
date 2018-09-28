@@ -63,6 +63,8 @@ def credentials = [usernamePassword(credentialsId: 'linchpin-docker',
 def ver = env.TAG_NAME
 def version = ver.substring(1)
 
+println "DOCKER_REGISTRY: ---" + DOCKER_REGISTRY.getClass() + "---"
+
 podTemplate = [containers: containers,
                docker_repo_url: DOCKER_REPO_URL,
                openshift_namespace: OPENSHIFT_NAMESPACE,
