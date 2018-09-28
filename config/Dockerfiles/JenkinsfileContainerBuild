@@ -13,7 +13,7 @@ env.ghprbActualCommit = env.ghprbActualCommit ?: 'master'
 
 // Needed for podTemplate()
 env.SLAVE_TAG = env.SLAVE_TAG ?: 'stable'
-env.TAG_NAME = env.TAG_NAME ?: 'v1.6.3a1'
+env.TAG_NAME = env.TAG_NAME ?: 'v1.6.2a1'
 
 env.IMAGE_NAME = env.IMAGE_NAME ?: 'linchpin'
 OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
@@ -46,8 +46,7 @@ properties([
         string(defaultValue: 'linchpin',
                description: 'Install from pypi (linchpin), or from the git checkout (.).',
                name: 'INSTALL_LOCATION'),
-        string(defaultValue: '',
-               description: 'Docker Registry',
+        string(description: 'Docker Registry',
                name: 'DOCKER_REGISTRY'),
     ]
   ),
@@ -69,6 +68,9 @@ podTemplate = [containers: containers,
                openshift_namespace: OPENSHIFT_NAMESPACE,
                podName: 'buildah-builder',
                jenkins_slave_image: 'jenkins-continuous-infra-slave:' + SLAVE_TAG]
+
+// we want to modify the Dockerfile to install from INSTALL_LOCATION
+repo = env.ghprbGhRepository.tokenize('/')
 
 buildTestContainer(podTemplateProps: podTemplate,
                    version: version,
