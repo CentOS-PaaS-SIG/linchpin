@@ -13,3 +13,4 @@ tinydb
 requests>=2.14.2
 ipaddress>=1.0.17
 PyYAML>=3.12
+jinja2>=2.10
