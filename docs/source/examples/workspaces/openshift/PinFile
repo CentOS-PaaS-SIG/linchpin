@@ -37,3 +37,6 @@ openshift-new:
     credentials:
       api_endpoint: example.com:8443/
       api_token: mytokentextrighthere
+      # alternative way when --creds-path is used 
+      #filename: openshift.yaml
+      #profile: test

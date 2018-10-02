@@ -35,3 +35,6 @@ resource_groups:
     credentials:
       api_endpoint: example.com:8443/
       api_token: mytokentextrighthere
+      # alternative way when using --cred-path
+      #filename: openshift.yaml
+      #profile: test
