@@ -11,7 +11,7 @@
 - name: "Get creds from auth driver"
   auth_driver:
     filename: "{{ res_grp['credentials']['filename'] }}"
-    cred_type: "dummy"
+    cred_type: "gcloud"
     cred_path: "{{ creds_path | default(default_credentials_path) }}"
     driver: "file"
     vault_enc: "{{ vault_encryption }}"

@@ -547,8 +547,7 @@ class LinchpinAPI(object):
         return pinfile
 
 
-    def do_action(self, provision_data, action='up', run_id=None, tx_id=None,
-                  vault_pass=''):
+    def do_action(self, provision_data, action='up', run_id=None, tx_id=None):
         """
         This function takes provision_data, and executes the given
         action for each target within the provision_data disctionary.
@@ -585,13 +584,12 @@ class LinchpinAPI(object):
 
 
         return_code = 99
+        vault_pass = self.get_evar('vault_pass')
         if vault_pass == '':
             self.set_evar('vault_pass',
                           self.ctx.get_cfg('evars',
                                            'vault_pass',
                                            default=''))
-        else:
-            self.set_evar('vault_pass', vault_pass)
 
         for target in provision_data.keys():
             if not isinstance(provision_data[target], dict):
