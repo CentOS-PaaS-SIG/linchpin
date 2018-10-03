@@ -51,6 +51,7 @@ import sys
 
 from linchpin.hooks.action_managers import ACTION_MANAGERS
 from linchpin.exceptions import ActionManagerError
+from linchpin.exceptions import HookError
 
 
 class ActionBlockRouter(object):
@@ -238,7 +239,7 @@ class LinchpinHooks(object):
         else:
             # a_b -> abbr for action_block
             for a_b in action_blocks:
-                action_type = a_b['type']
+                action_type = a_b.get('type', 'ansible')
                 ab_ctx = a_b['context'] if 'context' in a_b else False
                 if 'path' not in a_b:
                     # if the path is not defined it defaults to
@@ -247,7 +248,7 @@ class LinchpinHooks(object):
                         self.api.ctx.workspace,
                         self.api.get_evar('hooks_folder',
                                           default='hooks'),
-                        a_b['type'],
+                        a_b.get('type', 'ansible'),
                         a_b['name'])
 
                 if 'action_manager' in a_b:
@@ -298,10 +299,19 @@ class LinchpinHooks(object):
                     # validates the class object
                     a_b_obj.validate()
                     # executes the hook
-                    a_b_obj.execute()
+
+                    hook_result = a_b_obj.execute()
 
                     # intentionally using print here
                     self.api.ctx.log_state('end hook {0}:{1}\n-------'.format(
                                            a_b['type'], a_b['name']))
+
+                    if hook_result[0] > 0:
+                        raise HookError("Error in executing hook")
+
                 except Exception as e:
+                    dflt = self.api.get_cfg("hook_flags",
+                                            "ignore_failed_hooks")
+                    if not dflt:
+                        raise HookError("Error executing hook")
                     self.api.ctx.log_info(str(e))

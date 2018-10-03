@@ -1,0 +1,16 @@
+---
+dummy_target:
+  topology: dummy-topology.yml
+  layout: dummy-layout.yml
+  hooks:
+    postup:
+      - name: fail_hook
+        type: ansible
+        context: True
+        actions:
+          - playbook: fail_hook.yaml
+      - name: success_hook
+        type: ansible
+        context: True
+        actions:
+          - playbook: success_hook.yaml

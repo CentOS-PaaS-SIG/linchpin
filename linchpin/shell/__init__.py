@@ -208,8 +208,12 @@ def init(ctx):
               cls=MutuallyExclusiveOption, mutually_exclusive=["run_id"])
 @click.option('-if', '--inventory-format', default="cfg",
               help="Inventory format can be cfg or json")
+@click.option('--ifh', '--ignore-failed-hooks', is_flag=True, default=None,
+              help='Ignores failed hooks')
+@click.option('--nh', '--no-hooks', is_flag=True, default=None,
+              help='Do not run hooks')
 @pass_context
-def up(ctx, targets, run_id, tx_id, inventory_format):
+def up(ctx, targets, run_id, tx_id, inventory_format, ifh, nh):
     """
     Provisions nodes from the given target(s) in the given PinFile.
 
@@ -226,6 +230,11 @@ def up(ctx, targets, run_id, tx_id, inventory_format):
 
     run-id:     Use the data from the provided run_id value
     """
+
+    if ifh:
+        ctx.set_cfg("hook_flags", "ignore_failed_hooks", ifh)
+    if nh:
+        ctx.set_cfg("hook_flags", "no_hooks", nh)
 
     if tx_id:
         try:
@@ -267,8 +276,11 @@ def up(ctx, targets, run_id, tx_id, inventory_format):
 @click.option('-t', '--tx-id', metavar='tx_id', type=int,
               help='Destroy resources using the transaction ID (tx-id)',
               cls=MutuallyExclusiveOption, mutually_exclusive=["run_id"])
+@click.option('--ifh', '--ignore-failed-hooks', is_flag=True,
+              help='Ignores failed hooks')
+@click.option('--nh', '--no-hooks', is_flag=True, help='Do not run hooks')
 @pass_context
-def destroy(ctx, targets, run_id, tx_id):
+def destroy(ctx, targets, run_id, tx_id, ifh, nh):
     """
     Destroys resources using either the run_id or tx_id (mutually exclusive).
 
@@ -282,6 +294,12 @@ def destroy(ctx, targets, run_id, tx_id):
     the appropriate PinFile will be destroyed.
 
     """
+
+    if ifh:
+        ctx.set_cfg("hook_flags", "ignore_failed_hooks", ifh)
+    if nh:
+        ctx.set_cfg("hook_flags", "no_hooks", nh)
+
 
     if tx_id:
         try:

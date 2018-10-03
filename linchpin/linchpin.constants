@@ -114,3 +114,6 @@ postup = postup
 postdestroy = postdestroy
 postinv = inventory
 
+[hookflags]
+no_hooks = False
+ignore_failed_hooks = False

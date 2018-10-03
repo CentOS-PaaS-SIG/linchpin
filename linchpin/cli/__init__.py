@@ -423,7 +423,10 @@ class LinchpinCli(LinchpinAPI):
                     self._write_distilled_context(run_data)
         self._write_latest_run()
         self._write_to_inventory(inv_format=inv_f)
-        if ('post' in self.pb_hooks) and (self.__meta__ == "CLI"):
+
+        if (('post' in self.pb_hooks) and
+                (self.__meta__ == "CLI") and
+                not self.get_cfg('hook_flags', 'no_hooks')):
             self.hook_state = '{0}{1}'.format('post', 'up')
 
         # Show success and errors, with data
@@ -496,7 +499,9 @@ class LinchpinCli(LinchpinAPI):
                                        targets,
                                        run_id=run_id,
                                        tx_id=tx_id)
-        if ('post' in self.pb_hooks) and (self.__meta__ == "CLI"):
+        if (('post' in self.pb_hooks) and
+            (self.__meta__ == "CLI") and not self.get_cfg('hook_flags',
+                                                          'no_hooks')):
             self.hook_state = '{0}{1}'.format('post', 'destroy')
         return outputs
 
