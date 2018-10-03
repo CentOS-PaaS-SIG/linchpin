@@ -208,8 +208,10 @@ def init(ctx):
               cls=MutuallyExclusiveOption, mutually_exclusive=["run_id"])
 @click.option('-if', '--inventory-format', default="cfg",
               help="Inventory format can be cfg or json")
-@click.option('--ifh', '--ignore-failed-hooks', is_flag=True, default=None)
-@click.option('--nh', '--no-hooks', is_flag=True, default=None)
+@click.option('--ifh', '--ignore-failed-hooks', is_flag=True, default=None,
+              help='Ignores failed hooks')
+@click.option('--nh', '--no-hooks', is_flag=True, default=None,
+              help='Do not run hooks')
 @pass_context
 def up(ctx, targets, run_id, tx_id, inventory_format, ifh, nh):
     """
@@ -274,8 +276,9 @@ def up(ctx, targets, run_id, tx_id, inventory_format, ifh, nh):
 @click.option('-t', '--tx-id', metavar='tx_id', type=int,
               help='Destroy resources using the transaction ID (tx-id)',
               cls=MutuallyExclusiveOption, mutually_exclusive=["run_id"])
-@click.option('--ifh', '--ignore-failed-hooks', is_flag=True)
-@click.option('--nh', '--no-hooks', is_flag=True)
+@click.option('--ifh', '--ignore-failed-hooks', is_flag=True,
+              help='Ignores failed hooks')
+@click.option('--nh', '--no-hooks', is_flag=True, help='Do not run hooks')
 @pass_context
 def destroy(ctx, targets, run_id, tx_id, ifh, nh):
     """
