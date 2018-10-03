@@ -13,4 +13,3 @@ features are covered here.
    advanced/rundb
    advanced/journal
    advanced/context_distiller
-   linchpin_validate
