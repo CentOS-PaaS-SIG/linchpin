@@ -183,7 +183,7 @@ stage('Tests') {
                                 alwaysPullImage: true,
                                 image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora27:' + FEDORA27_TAG,
                                 ttyEnabled: false,
-                                command: '/root/init_libvirt.sh',
+                                command: '',
                                 privileged: true,
                                 workingDir: '/workDir')
                         ],
