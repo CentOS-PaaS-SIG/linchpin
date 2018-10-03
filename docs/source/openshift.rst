@@ -18,7 +18,7 @@ The ansible module for openshift is written and bundled as part of LinchPin.
 .. note:: The `oc <https://docs.ansible.com/ansible/2.4/oc_module.html`_ module
    was included into ansible after the above openshift module was created and
    included with LinchPin. The future may see the oc module used.
-
+ 
 openshift_external
 ------------------
 
@@ -37,7 +37,7 @@ Credentials Management
 An openshift topology can have a ``credentials`` section for each
 :term:`resource_group`, which requires the `api_endpoint`, and the `api_token`
 values.
-Further, Openshift also honours --creds-path in linchpin. The credential file
+Further, Openshift also honors --creds-path in linchpin. The credential file
 passed needs to be formatted as follows
 
 .. code-block:: yaml
@@ -66,7 +66,5 @@ passed needs to be formatted as follows
           .. snip ..
 
         credentials:
-          api_endpoint: example.com:8443/
-          api_token: mytokentextrighthere
-          # filename: name_of_credsfile.yaml  --> when --creds-path is provided
-          # profile: name_of_profile --> defaults to 'default' profile in cred_file
+          filename: name_of_credsfile.yaml  # fetched from --creds-path is provided
+          profile: name_of_profile # defaults to 'default' profile in cred_file
