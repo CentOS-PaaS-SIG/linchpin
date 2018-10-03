@@ -26,7 +26,7 @@ RUN dnf -y install python-pip ansible curl gcc python-devel python2-shade \
 
 RUN curl -o /etc/yum.repos.d/beaker-client.repo \
             https://beaker-project.org/yum/beaker-client-Fedora.repo; \
-    yum install beaker-client; \
+    yum install -y beaker-client; \
     yum clean all
 
 COPY init_libvirt.sh $HOME/
