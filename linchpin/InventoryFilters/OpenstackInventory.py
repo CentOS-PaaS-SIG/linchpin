@@ -21,9 +21,14 @@ class OpenstackInventory(InventoryFilter):
                 for res in group.get('results', []):
                     if 'openstack' in res.keys():
                         os_vars = res.get('openstack', [])
-                        hostname = self.get_hostname(os_vars, var_data,
-                                                     self.DEFAULT_HOSTNAMES)
+                        host = self.get_hostname(os_vars, var_data,
+                                                 self.DEFAULT_HOSTNAMES)
+                        hostname_var = host[0]
+                        hostname = host[1]
                         host_data[hostname] = {}
+                        if '__IP__' not in var_data.keys():
+                            var_data['__IP__'] = hostname_var
+                            host_data[hostname] = {}
                         self.set_config_values(host_data[hostname], os_vars,
                                                var_data)
                     else:
@@ -32,14 +37,26 @@ class OpenstackInventory(InventoryFilter):
                 grp = group.get('openstack', [])
                 if isinstance(grp, list):
                     for server in grp:
-                        hostname = self.get_hostname(server, var_data,
-                                                     self.DEFAULT_HOSTNAMES)
+                        host = self.get_hostname(server, var_data,
+                                                 self.DEFAULT_HOSTNAMES)
+                        hostname_var = host[0]
+                        hostname = host[1]
+                        host_data[hostname] = {}
+                        if '__IP__' not in var_data.keys():
+                            var_data['__IP__'] = hostname_var
+                            host_data[hostname] = {}
                         host_data[hostname] = {}
                         self.set_config_values(host_data[hostname], server,
                                                var_data)
                 if isinstance(grp, dict):
-                    hostname = self.get_hostname(grp, var_data,
-                                                 self.DEFAULT_HOSTNAMES)
+                    host = self.get_hostname(grp, var_data,
+                                             self.DEFAULT_HOSTNAMES)
+                    hostname_var = host[0]
+                    hostname = host[1]
+                    host_data[hostname] = {}
+                    if '__IP__' not in var_data.keys():
+                        var_data['__IP__'] = hostname_var
+                        host_data[hostname] = {}
                     host_data[hostname] = {}
                     self.set_config_values(host_data[hostname], grp, var_data)
         return host_data

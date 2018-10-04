@@ -90,7 +90,7 @@ class InventoryFilter(object):
             host_ips = ip_to_host[host_name["name"]]
             for ip in host_ips:
                 for host_group in host_name['host_groups']:
-                    self.config.set(host_group, ip)
+                    self.config.set(str(host_group), ip)
                     self.config.set("all", ip)
 
     def add_common_vars(self, host_groups, layout):
@@ -114,25 +114,26 @@ class InventoryFilter(object):
         if '__IP__' in cfgs.keys():
             val = self.config_value_helper(data, cfgs['__IP__'])
             if val:
-                return val
+                return (cfgs['__IP__'], val)
         for var in default_fields:
             val = self.config_value_helper(data, var)
             if val:
-                return val
+                return (var, val)
         return ''
 
     def set_config_values(self, host_data, instance, cfgs={}):
         """
+        finds the key associated with each config variable and get the
+        value
         """
         if cfgs is None:
-            print "cfgs is None"
-            print host_data
-            print ''
-            print instance
+            return
         for var in cfgs.keys():
             host_data[var] = self.config_value_helper(instance, cfgs[var])
 
     def config_value_helper(self, instance, keys):
+        """
+        """
         if "." in keys:
             key, rest = keys.split('.', 1)
             # this handles errors in which the key does not exist

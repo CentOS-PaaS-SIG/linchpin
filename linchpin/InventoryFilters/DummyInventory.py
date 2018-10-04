@@ -33,10 +33,11 @@ class DummyInventory(InventoryFilter):
         var_data = cfgs.get('dummy', {})
         if var_data is None:
             var_data = {}
+            var_data['__IP__'] = '__SELF__'
         for group in topo.get('dummy_res', []):
             for host in group['hosts']:
                 host_data[host] = {}
-                self.set_config_values(host_data[host], group, var_data)
+                self.set_config_values(host_data[host], host, group, var_data)
         return host_data
 
     def get_host_ips(self, host_data):
@@ -60,3 +61,16 @@ class DummyInventory(InventoryFilter):
         output = StringIO()
         self.config.write(output)
         return output.getvalue()
+
+    def set_config_values(self, host_data, host, instance, cfgs={}):
+        """
+        """
+        if cfgs is None:
+            return
+        if 'hostname' not in cfgs.keys():
+            cfgs['hostname'] = '__IP__'
+        for var in cfgs.keys():
+            if var == 'hostname' and cfgs[var] == '__IP__':
+                host_data[cfgs[var]] = host
+            else:
+                host_data[var] = self.config_value_helper(instance, cfgs[var])

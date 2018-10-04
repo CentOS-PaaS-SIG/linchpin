@@ -39,9 +39,14 @@ class OvirtInventory(InventoryFilter):
         for group in topo.get('ovirt_vms_res', []):
             if group['vm']['reported_devices']:
                 for dev in group['vm']['reported_devices']:
-                    hostname = self.get_hostname(dev, var_data,
-                                                 self.DEFAULT_HOSTNAMES)
+                    host = self.get_hostname(dev, var_data,
+                                             self.DEFAULT_HOSTNAMES)
+                    hostname_var = host[0]
+                    hostname = host[1]
                     host_data[hostname] = {}
+                    if '__IP__' not in var_data.keys():
+                        var_data['__IP__'] = hostname_var
+                        host_data[hostname] = {}
                     self.set_config_values(host_data[hostname], dev, var_data)
         return host_data
 
@@ -78,11 +83,11 @@ class OvirtInventory(InventoryFilter):
         if '__IP__' in cfgs.keys():
             val = self.config_value_helper(data, cfgs['__IP__'])
             if val:
-                return val
+                return (cfgs['__IP__'], val)
         for var in default_fields:
             val = self.config_value_helper(data, var)
             if val:
-                return val
+                return (var, val)
         return ''
 
 

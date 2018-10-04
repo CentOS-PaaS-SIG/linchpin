@@ -35,9 +35,14 @@ class BeakerInventory(InventoryFilter):
         if var_data is None:
             var_data = {}
         for group in topo.get('beaker_res', []):
-            hostname = self.get_hostname(group, var_data,
-                                         self.DEFAULT_HOSTNAMES)
+            host = self.get_hostname(group, var_data,
+                                     self.DEFAULT_HOSTNAMES)
+            hostname_var = host[0]
+            hostname = host[1]
             host_data[hostname] = {}
+            if '__IP__' not in var_data.keys():
+                var_data['__IP__'] = hostname_var
+                host_data[hostname] = {}
             self.set_config_values(host_data[hostname], group, var_data)
         return host_data
 

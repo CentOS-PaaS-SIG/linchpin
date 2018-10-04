@@ -125,12 +125,12 @@ def test_get_hosts_by_count():
 def test_get_inventory():
     """
     """
-<<<<<<< HEAD
-    inventory = filter.get_inventory(res_output, layout, topology)
+    inventory = filter.get_inventory(res_output, layout, topology, config)
     assert_true(inventory)
 
 @with_setup(setup_complex_workspace)
 @with_setup(setup_generic_inventory_filter)
+@with_setup(setup_generic_config)
 def test_output_order():
     """
     Test that inventories are ordered correctly
@@ -156,7 +156,7 @@ def test_output_order():
     res_output = res_output[res_output.keys()[0]]['targets'][0]['complex-inventory']['outputs']['resources']
 
     # call get_inventory and print the result
-    inventory = filter.get_inventory(res_output, layout, topology)
+    inventory = filter.get_inventory(res_output, layout, topology, config)
 
     # load in "correct" inventory file
     correct_inv_path = '{0}/{1}'.format(workspace,
@@ -170,7 +170,3 @@ def test_output_order():
     diff = difflib.unified_diff(inventory_lines, correct_lines)
     print ''.join(diff)
     assert_equal(inventory, correct_inventory)
-=======
-    inventory = filter.get_inventory(res_output, layout, topology, config)
-    assert_true(inventory)
->>>>>>> Update tests to work with variable parsing in inventory gen

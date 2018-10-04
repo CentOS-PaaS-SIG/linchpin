@@ -60,7 +60,7 @@ def test_get_host_data():
     """
     """
     host_data = filter.get_host_data(topo, config)
-    expected_vars = []
+    expected_vars = ['__IP__']
     for host in host_data:
         assert_equal(set(host_data[host].keys()), set(expected_vars))
 
