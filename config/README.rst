@@ -138,12 +138,12 @@ The only two items passed in are 'distro' and 'provider' in that order. Another
 more complex example of the header may be helpful here, for clarity::
 
     # Verify template-based provisioning using complex template data file
-    # distros.exclude: fedora26 fedora27
+    # distros.exclude: fedora28 fedora27
     # providers.include: none
     # providers.exclude: dummy openstack beaker duffy aws
 
 This is the header for `inventory/01_template_inventory`. It excludes both
-fedora26 and fedora27 from being tested. Additionally, it excludes providers
+fedora28 and fedora27 from being tested. Additionally, it excludes providers
 dummy, openstack, beaker, duffy, and aws. Essentially, as of this writing,
 this test would run only on the centos7 distro, for libvirt.
 

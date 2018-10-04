@@ -11,6 +11,7 @@ openshiftProject = "continuous-infra"
 DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 
 // Defaults for SCM operations
+env.ghOrg = 'herlo'
 env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/linchpin'
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
 
@@ -19,7 +20,7 @@ STABLE_LABEL = "stable"
 tagMap = [:]
 
 // Initialize
-tagMap['fedora26'] = STABLE_LABEL
+tagMap['fedora28'] = STABLE_LABEL
 tagMap['fedora27'] = STABLE_LABEL
 tagMap['centos7'] = STABLE_LABEL
 
@@ -93,13 +94,13 @@ test_providers = ""
 IRC_NICK = "contra-bot"
 IRC_CHANNEL = "#contra-ci-cd"
 
-library identifier: "ci-pipeline@master",
+library identifier: "ci-pipeline@automate_lp",
         retriever: modernSCM([$class: 'GitSCMSource',
-                              remote: "https://github.com/CentOS-Paas-SIG/ci-pipeline"])
+                              remote: "https://github.com/${env.ghOrg}/ci-pipeline"])
 
 library identifier: "cico-pipeline-library@master",
         retriever: modernSCM([$class: 'GitSCMSource',
-                              remote: "https://github.com/CentOS/cico-pipeline-library"])
+                              remote: "https://github.com/CentOS-PaaS-SIG/cico-pipeline-library"])
 
 // Check out PR's version of library
 library identifier: "linchpin-pipeline@${env.ghprbActualCommit}",
@@ -112,7 +113,7 @@ library identifier: "linchpin-pipeline@${env.ghprbActualCommit}",
 
 properties([
   buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '20')),
-  [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/CentOS-PaaS-SIG/linchpin/'],
+  [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/${env.ghOrg}/linchpin/'],
   parameters(
     [
       string(defaultValue: 'develop',
@@ -179,18 +180,20 @@ pipeline {
                     sh """
                        oc whoami
                     """
+                    env.REPO_URL = "https://github.com/${env.ghOrg}/linchpin"
+                    env.REPO_REF = "${env.ghprbActualCommit}"
                     pipelineUtils.setupContainerTemplates(openshiftProject)
                 }
             }
         }
-        stage("fedora26 image build") {
+        stage("fedora28 image build") {
             when {
                 // Only build if we have related files in changeset
-                changeset "config/Dockerfiles/fedora26/**"
+                changeset "config/Dockerfiles/fedora28/**"
             }
             steps {
                 script {
-                    tagMap['fedora26'] = pipelineUtils.buildImage(openshiftProject, "fedora26")
+                    tagMap['fedora28'] = pipelineUtils.buildImage(openshiftProject, "fedora28")
                 }
             }
         }
@@ -241,8 +244,8 @@ pipeline {
                                        value: "${env.ghprbPullId}"),
                                 string(name: 'ghprbGhRepository',
                                        value: "${env.ghprbGhRepository}"),
-                                string(name: 'FEDORA26_TAG',
-                                       value: tagMap['fedora26']),
+                                string(name: 'FEDORA28_TAG',
+                                       value: tagMap['fedora28']),
                                 string(name: 'FEDORA27_TAG',
                                        value: tagMap['fedora27']),
                                 string(name: 'CENTOS7_TAG',

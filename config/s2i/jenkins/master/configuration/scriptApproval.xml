@@ -9,6 +9,17 @@
     <string>method org.jenkinsci.plugins.plaincredentials.FileCredentials getFileName</string>
     <string>staticMethod com.cloudbees.plugins.credentials.CredentialsProvider lookupCredentials java.lang.Class</string>
     <string>staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods intersect java.util.List java.lang.Iterable</string>
+    <string>method java.lang.Class isInstance java.lang.Object</string>
+    <string>new java.lang.Exception java.lang.String</string>
+    <string>new java.lang.Exception java.lang.String java.lang.Throwable</string>
+    <string>staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods contains java.lang.Object[] java.lang.Object</string>
+    <string>staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods getAt java.util.List groovy.lang.Range</string>
+    <string>staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods getAt java.util.List java.util.Collection</string>
+    <string>staticMethod org.jenkinsci.plugins.pipeline.modeldefinition.Utils markStageSkippedForConditional java.lang.String</string>
+    <string>field org.csanchez.jenkins.plugins.kubernetes.pipeline.AbstractInvisibleRunAction2 stack</string>
+    <string>method hudson.model.Actionable getAction java.lang.Class</string>
+    <string>method java.util.Collection clear </string>
+    <string>method org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper getRawBuild</string>
   </approvedSignatures>
   <aclApprovedSignatures>
   </aclApprovedSignatures>

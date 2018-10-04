@@ -19,7 +19,7 @@ env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
 
 library identifier: "ci-pipeline@master",
         retriever: modernSCM([$class: 'GitSCMSource',
-                              remote: "https://github.com/CentOS-Paas-SIG/ci-pipeline"])
+                              remote: "https://github.com/CentOS-PaaS-SIG/ci-pipeline"])
 
 library identifier: "cico-pipeline-library@master",
         retriever: modernSCM([$class: 'GitSCMSource',
