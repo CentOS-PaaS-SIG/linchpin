@@ -205,7 +205,10 @@ class LinchpinCli(LinchpinAPI):
                                         'default_pinfile',
                                         default='PinFile')
 
-        pf_w_path = os.path.realpath(os.path.expanduser(self.pinfile))
+        if self.workspace:
+            pf_w_path = '{0}/{1}'.format(self.workspace, self.pinfile)
+        else:
+            pf_w_path = os.path.realpath(os.path.expanduser(self.pinfile))
 
         # Ensure a PinFile path will exist
         if not os.path.exists(pf_w_path) and exists:
