@@ -19,7 +19,7 @@
     cacert: "{{ res_def['cacert'] | default(omit) }}"
     cert: "{{ res_def['cert'] | default(omit) }}"
   register: res_def_output
-  when: not async and auth_var is defined
+  when: not async and auth_var != ""
   no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
@@ -46,7 +46,7 @@
     cacert: "{{ res_def['cacert'] | default(omit) }}"
     cert: "{{ res_def['cert'] | default(omit) }}"
   register: res_def_output
-  when: not async and auth_var is not defined
+  when: not async and auth_var == ""
   no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
