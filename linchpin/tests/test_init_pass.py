@@ -192,7 +192,7 @@ def test_validate_topology():
     success = False
     topo = provision_data.get(provider).get('topology')
     try:
-        resources = lpa._validate_topology(topo)
+        resources = lpa.validate_topology(topo)
         success = len(resources)
     except Exception:
         pass
