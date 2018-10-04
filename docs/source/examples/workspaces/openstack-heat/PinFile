@@ -1,0 +1,15 @@
+---
+os_heat_target:
+  topology:
+    topology_name: "os_heat_ex"
+    resource_groups:
+      - resource_group_name: "hotstack"
+        resource_group_type: "openstack"
+        resource_definitions:
+          - role: "os_heat"
+            name: "test"
+            template_path: "docs/source/examples/workspaces/openstack-heat/os_stack.yml"
+            tag: "testtag"
+        credentials:
+          filename: clouds.yaml
+          profile: default
