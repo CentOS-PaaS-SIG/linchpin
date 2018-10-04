@@ -9,8 +9,6 @@
     environment: "{{ res_def['environment'] | default([]) }}"
     interface: "{{ res_def['environment'] | default('public') }}"
     key: "{{ res_def['key'] | default(omit) }}"
-    cacert: "{{ res_def['cacert'] | default(omit) }}"
-    cert: "{{ res_def['cert'] | default(omit) }}"
     parameters: "{{ res_def['parameters'] | default(omit) }}"
     region_name: "{{ res_def['region_name'] | default(omit) }}"
     roll_back: "{{ res_def['roll_back'] | default(omit) }}"
