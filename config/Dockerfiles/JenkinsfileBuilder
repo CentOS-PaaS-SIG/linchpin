@@ -60,14 +60,6 @@ def credentials = [usernamePassword(credentialsId: 'linchpin-docker',
                    usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]
 
 // remove the v from the TAG
-def ver = env.TAG_NAME
-def version = ver.substring(1)
-
-podTemplate = [containers: containers,
-               docker_repo_url: DOCKER_REPO_URL,
-               openshift_namespace: OPENSHIFT_NAMESPACE,
-               podName: 'buildah-builder',
-               jenkins_slave_image: 'jenkins-continuous-infra-slave:' + SLAVE_TAG]
 
 // we want to modify the Dockerfile to install from INSTALL_LOCATION
 repo = env.ghprbGhRepository.tokenize('/')
@@ -76,14 +68,48 @@ build_args = ['install_location': INSTALL_LOCATION,
               'git_repo': repo[1],
               'git_branch': env.ghprbActualCommit]
 
-buildTestContainer(podTemplateProps: podTemplate,
-                   version: version,
-                   test_cmd: test_cmd,
-                   build_root: build_root,
-                   image_name: IMAGE_NAME,
-                   build_args: build_args,
-                   send_metrics: false,
-                   docker_registry: DOCKER_REGISTRY,
-                   docker_namespace: DOCKER_NAMESPACE,
-                   credentials: credentials)
 
+def linchpin_version = null
+
+if (env.TAG_NAME) {
+    def ver = env.TAG_NAME
+    def version = ver.substring(1)
+    container_versions = ['latest', env.TAG_NAME]
+    linchpin_version = version
+}
+
+
+podTemplate = [containers: containers,
+               docker_repo_url: DOCKER_REPO_URL,
+               openshift_namespace: OPENSHIFT_NAMESPACE,
+               podName: 'buildah-builder',
+               jenkins_slave_image: 'jenkins-continuous-infra-slave:' + SLAVE_TAG]
+
+
+deployOpenShiftTemplate(podTemplate) {
+    ciPipeline(sendMetrics: false, decorateBuild: decoratePRBuild()) {
+
+        if (linchpin_version) {
+            testRelease(installCmd: "echo installing...",
+                        verifyCmd: "echo verifying...",
+                        repo: 'joejstuart/dockerImages',
+                        version: linchpin_version,
+                        credentials: credentials)
+        }
+
+        // add linchpin version
+        // linchpin version will either be latest/source/version number
+
+        buildTestContainer(version: [version],
+                           test_cmd: test_cmd,
+                           build_root: build_root,
+                           image_name: IMAGE_NAME,
+                           build_args: build_args,
+                           docker_registry: DOCKER_REGISTRY,
+                           docker_namespace: DOCKER_NAMESPACE,
+                           credentials: credentials)
+
+
+
+    }
+}
