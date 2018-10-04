@@ -206,8 +206,8 @@ def init(ctx):
 @click.option('-t', '--tx-id', metavar='tx_id', type=int,
               help='Provision resources using the Transaction ID (tx-id)',
               cls=MutuallyExclusiveOption, mutually_exclusive=["run_id"])
-@click.option('-if', '--inventory-format', default="cfg",
-              help="Inventory format can be cfg or json")
+@click.option('--inventory-format', '--if', default="cfg",
+              metavar='INVENTORY_FORMAT', help="Inventory format cfg/json")
 @click.option('--ifh', '--ignore-failed-hooks', is_flag=True, default=None,
               help='Ignores failed hooks')
 @click.option('--nh', '--no-hooks', is_flag=True, default=None,
