@@ -69,13 +69,14 @@ build_args = ['install_location': INSTALL_LOCATION,
               'git_branch': env.ghprbActualCommit]
 
 
-def linchpin_version = null
+def release_version = null
+def container_versions = ['latest']
 
 if (env.TAG_NAME) {
     def ver = env.TAG_NAME
     def version = ver.substring(1)
-    container_versions = ['latest', env.TAG_NAME]
-    linchpin_version = version
+    container_versions.add(version)
+    release_version = version
 }
 
 
@@ -91,11 +92,11 @@ deployOpenShiftTemplate(podTemplate) {
 
     ciPipeline(sendMetrics: false, decorateBuild: decoratePRBuild()) {
 
-        if (linchpin_version) {
+        if (release_version) {
             testRelease(installCmd: "echo installing...",
                         verifyCmd: "echo verifying...",
                         repo: 'joejstuart/dockerImages',
-                        version: linchpin_version,
+                        version: release_version,
                         credentials: credentials)
         }
 
