@@ -1,0 +1,23 @@
+---
+dummy_target:
+  topology: 
+    topology_name: "dummy"
+    resource_groups:
+      - resource_group_name: "dummy"
+        resource_group_type: "dummy"
+        resource_definitions:
+        - role: "dummy_node"
+          name: "web"
+          count: 1
+        credentials:
+          filename: dummy_creds.yml
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example
+

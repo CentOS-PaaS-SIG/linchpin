@@ -435,7 +435,6 @@ class LinchpinCli(LinchpinAPI):
         return (return_code, return_data)
 
 
-
     def lp_validate(self, targets=(), old_schema=False):
         """
         This function takes a list of targets, and validates their topology.
@@ -506,7 +505,6 @@ class LinchpinCli(LinchpinAPI):
                                                           'no_hooks')):
             self.hook_state = '{0}{1}'.format('post', 'destroy')
         return outputs
-
 
 
     def _execute_action(self, action, targets=(), run_id=None, tx_id=None):

@@ -127,9 +127,11 @@ def _handle_results(ctx, results, return_code):
 @click.option('--creds-path', type=click.Path(), envvar='CREDS_PATH',
               help='Use the specified credentials path. Also works'
                    ' if CREDS_PATH environment variable is set')
+@click.option('--ask-vault-pass', is_flag=True, default=False,
+              help='Prompts for vault password')
 @pass_context
 def runcli(ctx, config, pinfile, template_data, outfile,
-           workspace, verbose, version, creds_path):
+           workspace, verbose, version, creds_path, ask_vault_pass):
     """linchpin: hybrid cloud orchestration"""
 
     ctx.load_config(lpconfig=config)
@@ -161,6 +163,9 @@ def runcli(ctx, config, pinfile, template_data, outfile,
     if workspace is not None:
         ctx.workspace = os.path.realpath(os.path.expanduser(workspace))
         ctx.log_debug("ctx.workspace: {0}".format(ctx.workspace))
+
+    ctx.ask_vault_pass = ask_vault_pass
+
 
     # global LinchpinCli placeholder
     global lpcli
@@ -230,6 +235,12 @@ def up(ctx, targets, run_id, tx_id, inventory_format, ifh, nh):
 
     run-id:     Use the data from the provided run_id value
     """
+    vault_pass = os.environ.get('VAULT_PASSWORD', '')
+
+    if ctx.ask_vault_pass:
+        vault_pass = click.prompt("enter vault password", hide_input=True)
+
+    ctx.set_evar('vault_pass', vault_pass)
 
     if ifh:
         ctx.set_cfg("hook_flags", "ignore_failed_hooks", ifh)
@@ -294,6 +305,11 @@ def destroy(ctx, targets, run_id, tx_id, ifh, nh):
     the appropriate PinFile will be destroyed.
 
     """
+    vault_pass = os.environ.get('VAULT_PASSWORD', '')
+    if ctx.ask_vault_pass:
+        vault_pass = click.prompt("enter vault password", hide_input=True)
+
+    ctx.set_evar('vault_pass', vault_pass)
 
     if ifh:
         ctx.set_cfg("hook_flags", "ignore_failed_hooks", ifh)

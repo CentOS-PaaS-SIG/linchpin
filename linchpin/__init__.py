@@ -604,6 +604,12 @@ class LinchpinAPI(object):
 
 
         return_code = 99
+        vault_pass = self.get_evar('vault_pass')
+        if vault_pass == '':
+            self.set_evar('vault_pass',
+                          self.ctx.get_cfg('evars',
+                                           'vault_pass',
+                                           default=''))
 
         for target in provision_data.keys():
             if not isinstance(provision_data[target], dict):

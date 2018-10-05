@@ -7,6 +7,7 @@
 - name: "declare async_types array"
   set_fact:
     async_types: []
+    vault_encryption: "{{ vault_encryption | default(false) }}"
   when: async
 
 - name: "output vars"
