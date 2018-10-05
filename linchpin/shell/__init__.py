@@ -211,14 +211,16 @@ def init(ctx):
 @click.option('-t', '--tx-id', metavar='tx_id', type=int,
               help='Provision resources using the Transaction ID (tx-id)',
               cls=MutuallyExclusiveOption, mutually_exclusive=["run_id"])
-@click.option('--inventory-format', '--if', default="cfg",
+@click.option('--inventory-format', '--if', 'inventory_format', default="cfg",
               metavar='INVENTORY_FORMAT', help="Inventory format cfg/json")
-@click.option('--ifh', '--ignore-failed-hooks', is_flag=True, default=None,
+@click.option('--ignore-failed-hooks', '--ifh', 'ignore_failed_hooks',
+              is_flag=True, default=False, metavar='IGNORE_FAILED_HOOKS',
               help='Ignores failed hooks')
-@click.option('--nh', '--no-hooks', is_flag=True, default=None,
-              help='Do not run hooks')
+@click.option('--no-hooks', '--nh', 'no_hooks', is_flag=True, default=None,
+              metavar='NO_HOOKS', help='Do not run hooks')
 @pass_context
-def up(ctx, targets, run_id, tx_id, inventory_format, ifh, nh):
+def up(ctx, targets, run_id, tx_id, inventory_format, ignore_failed_hooks,
+       no_hooks):
     """
     Provisions nodes from the given target(s) in the given PinFile.
 
@@ -242,10 +244,10 @@ def up(ctx, targets, run_id, tx_id, inventory_format, ifh, nh):
 
     ctx.set_evar('vault_pass', vault_pass)
 
-    if ifh:
-        ctx.set_cfg("hook_flags", "ignore_failed_hooks", ifh)
-    if nh:
-        ctx.set_cfg("hook_flags", "no_hooks", nh)
+    if ignore_failed_hooks:
+        ctx.set_cfg("hook_flags", "ignore_failed_hooks", ignore_failed_hooks)
+    if no_hooks:
+        ctx.set_cfg("hook_flags", "no_hooks", no_hooks)
 
     if tx_id:
         try:
@@ -287,11 +289,13 @@ def up(ctx, targets, run_id, tx_id, inventory_format, ifh, nh):
 @click.option('-t', '--tx-id', metavar='tx_id', type=int,
               help='Destroy resources using the transaction ID (tx-id)',
               cls=MutuallyExclusiveOption, mutually_exclusive=["run_id"])
-@click.option('--ifh', '--ignore-failed-hooks', is_flag=True,
+@click.option('--ignore-failed-hooks', '--ifh', 'ignore_failed_hooks',
+              metavar='ignore_failed_hooks', is_flag=True, default=False,
               help='Ignores failed hooks')
-@click.option('--nh', '--no-hooks', is_flag=True, help='Do not run hooks')
+@click.option('--no-hooks', '--nh', 'no_hooks', metavar='NO_HOOKS',
+              is_flag=True, help='Do not run hooks')
 @pass_context
-def destroy(ctx, targets, run_id, tx_id, ifh, nh):
+def destroy(ctx, targets, run_id, tx_id, ignore_failed_hooks, no_hooks):
     """
     Destroys resources using either the run_id or tx_id (mutually exclusive).
 
@@ -311,10 +315,10 @@ def destroy(ctx, targets, run_id, tx_id, ifh, nh):
 
     ctx.set_evar('vault_pass', vault_pass)
 
-    if ifh:
-        ctx.set_cfg("hook_flags", "ignore_failed_hooks", ifh)
-    if nh:
-        ctx.set_cfg("hook_flags", "no_hooks", nh)
+    if ignore_failed_hooks:
+        ctx.set_cfg("hook_flags", "ignore_failed_hooks", ignore_failed_hooks)
+    if no_hooks:
+        ctx.set_cfg("hook_flags", "no_hooks", no_hooks)
 
 
     if tx_id:
