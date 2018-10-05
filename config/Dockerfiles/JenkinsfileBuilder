@@ -13,10 +13,10 @@ env.ghprbActualCommit = env.ghprbActualCommit ?: 'master'
 
 // Needed for podTemplate()
 env.SLAVE_TAG = env.SLAVE_TAG ?: 'stable'
-env.TAG_NAME = env.TAG_NAME ?: 'v1.6.2a1'
+// env.TAG_NAME = env.TAG_NAME ?: 'v1.6.2a1'
 
+// env.OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 env.IMAGE_NAME = env.IMAGE_NAME ?: 'linchpin'
-OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 
 // libraries.each { name, repo ->
@@ -81,12 +81,14 @@ if (env.TAG_NAME) {
 
 podTemplate = [containers: containers,
                docker_repo_url: DOCKER_REPO_URL,
-               openshift_namespace: OPENSHIFT_NAMESPACE,
                podName: 'buildah-builder',
                jenkins_slave_image: 'jenkins-continuous-infra-slave:' + SLAVE_TAG]
 
 
 deployOpenShiftTemplate(podTemplate) {
+
+    sh "env"
+
     ciPipeline(sendMetrics: false, decorateBuild: decoratePRBuild()) {
 
         if (linchpin_version) {
@@ -100,16 +102,14 @@ deployOpenShiftTemplate(podTemplate) {
         // add linchpin version
         // linchpin version will either be latest/source/version number
 
-        buildTestContainer(version: [version],
+        buildTestContainer(version: container_versions,
                            test_cmd: test_cmd,
                            build_root: build_root,
-                           image_name: IMAGE_NAME,
+                           image_name: env.IMAGE_NAME,
                            build_args: build_args,
                            docker_registry: DOCKER_REGISTRY,
                            docker_namespace: DOCKER_NAMESPACE,
                            credentials: credentials)
-
-
 
     }
 }
