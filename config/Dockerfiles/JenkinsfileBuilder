@@ -43,7 +43,7 @@ properties([
         string(defaultValue: 'contrainfra',
                description: 'Namespace where Docker Container resides',
                name: 'DOCKER_NAMESPACE'),
-        string(defaultValue: 'linchpin',
+        string(defaultValue: '.',
                description: 'Install from pypi (linchpin), or from the git checkout (.).',
                name: 'INSTALL_LOCATION'),
         string(description: 'Docker Registry',
@@ -52,7 +52,9 @@ properties([
   ),
 ])
 
-def test_cmd = "echo testing..."
+def test_cmd = "uid_entrypoint run"
+def modify_args = ['owner': 10001,
+                  'items': ['config/Dockerfiles/linchpin/bin/run-linchpin': '/linchpin/bin/run']]
 
 def containers = ['buildah']
 def build_root = "config/Dockerfiles/${env.IMAGE_NAME}"
@@ -82,7 +84,7 @@ if (env.TAG_NAME) {
 
 podTemplate = [containers: containers,
                docker_repo_url: DOCKER_REPO_URL,
-               podName: 'buildah-builder',
+               podName: 'linchpin-builder',
                jenkins_slave_image: 'jenkins-continuous-infra-slave:' + SLAVE_TAG]
 
 
@@ -103,8 +105,9 @@ deployOpenShiftTemplate(podTemplate) {
         // add linchpin version
         // linchpin version will either be latest/source/version number
 
-        buildTestContainer(version: container_versions,
+        buildTestContainer(versions: container_versions,
                            test_cmd: test_cmd,
+                           modify_args: modify_args,
                            build_root: build_root,
                            image_name: env.IMAGE_NAME,
                            build_args: build_args,
