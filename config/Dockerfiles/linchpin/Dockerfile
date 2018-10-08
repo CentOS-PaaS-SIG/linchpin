@@ -19,8 +19,8 @@ COPY bin/ ${HOME}/bin/
 
 RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
     https://beaker-project.org/yum/beaker-client-Fedora.repo; \
+    dnf install -y git; \
     if [ "${install_location}" == "." ]; then \
-        dnf install -y git; \
         git clone git://github.com/${git_project}/${git_repo} -b ${git_branch} lp; \
         pushd lp; \
     fi; \
