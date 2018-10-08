@@ -1,4 +1,4 @@
+<<<<<<< HEAD
 #!/bin/sh
 id
 linchpin -c /etc/linchpin.conf -vvvp PinFile.dummy.yml -w /workdir up dummy-topo
-
