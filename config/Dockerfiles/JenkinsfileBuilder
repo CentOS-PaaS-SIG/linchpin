@@ -1,6 +1,6 @@
 /* This job builds the LinchPin executor container based upon * config/dockerfiles/linchpin within
  * https://github.com/CentOS-PaaS-SIG/contra-env-sample-project
- * and a couple of other projects which generate LinchPin docker images
+ * and a couple of other projects which generate LinchPin container images
  *
  * This Jenkinsfile will be run after a release of LinchPin is complete,
  * producing and publishing the dockerfile in the appropriate locations.
@@ -38,10 +38,10 @@ properties([
                description: 'Tag for slave image',
                name: 'SLAVE_TAG'),
         string(defaultValue: 'contrainfra',
-               description: 'Namespace where Docker Container resides',
-               name: 'DOCKER_NAMESPACE'),
-        string(description: 'Docker Registry',
-               name: 'DOCKER_REGISTRY'),
+               description: 'Namespace where container resides',
+               name: 'CONTAINER_NAMESPACE'),
+        string(description: 'Container Registry',
+               name: 'CONTAINER_REGISTRY'),
     ]
   ),
 ])
@@ -51,11 +51,10 @@ def test_cmd = "uid_entrypoint run"
 def containers = ['buildah']
 def build_root = "config/Dockerfiles/${env.IMAGE_NAME}"
 def credentials = [usernamePassword(credentialsId: 'linchpin-docker',
-                   usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]
+                   usernameVariable: 'CONTAINER_USERNAME', passwordVariable: 'CONTAINER_PASSWORD')]
 
 // remove the v from the TAG
 
-// we want to modify the Dockerfile to install from INSTALL_LOCATION
 env.REPO_URL = "https://github.com/${env.GHRepository}"
 env.REPO_REF = env.BRANCH_NAME ?: 'develop'
 
@@ -73,8 +72,7 @@ if (env.TAG_NAME) {
 
 podTemplate = [containers: containers,
                docker_repo_url: DOCKER_REPO_URL,
-               podName: 'linchpin-builder',
-               jenkins_slave_image: 'jenkins-continuous-infra-slave:' + SLAVE_TAG]
+               podName: 'linchpin-buildah']
 
 
 deployOpenShiftTemplate(podTemplate) {
@@ -93,8 +91,8 @@ deployOpenShiftTemplate(podTemplate) {
 
         buildTestContainer(versions: container_versions,
                            image_name: env.IMAGE_NAME,
-                           docker_registry: DOCKER_REGISTRY,
-                           docker_namespace: DOCKER_NAMESPACE,
+                           container_registry: CONTAINER_REGISTRY,
+                           container_namespace: CONTAINER_NAMESPACE,
                            credentials: credentials,
                            build_root: build_root)
 
