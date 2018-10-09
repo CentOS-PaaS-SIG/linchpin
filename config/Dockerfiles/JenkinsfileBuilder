@@ -31,21 +31,15 @@ properties([
   disableConcurrentBuilds(),
   parameters(
     [
-        string(defaultValue: 'master',
-               description: '',
-               name: 'ghprbActualCommit'),
         string(defaultValue: '',
                description: 'Github Repository',
-               name: 'ghprbGhRepository'),
+               name: 'GHRepository'),
         string(defaultValue: 'stable',
                description: 'Tag for slave image',
                name: 'SLAVE_TAG'),
         string(defaultValue: 'contrainfra',
                description: 'Namespace where Docker Container resides',
                name: 'DOCKER_NAMESPACE'),
-        string(defaultValue: '.',
-               description: 'Install from pypi (linchpin), or from the git checkout (.).',
-               name: 'INSTALL_LOCATION'),
         string(description: 'Docker Registry',
                name: 'DOCKER_REGISTRY'),
     ]
@@ -53,8 +47,6 @@ properties([
 ])
 
 def test_cmd = "uid_entrypoint run"
-def modify_args = ['owner': 10001,
-                  'items': ['config/Dockerfiles/linchpin/bin/run-linchpin': '/linchpin/bin/run']]
 
 def containers = ['buildah']
 def build_root = "config/Dockerfiles/${env.IMAGE_NAME}"
@@ -64,11 +56,11 @@ def credentials = [usernamePassword(credentialsId: 'linchpin-docker',
 // remove the v from the TAG
 
 // we want to modify the Dockerfile to install from INSTALL_LOCATION
-repo = env.ghprbGhRepository.tokenize('/')
+repo = env.GHRepository.tokenize('/')
 build_args = ['install_location': INSTALL_LOCATION,
               'git_project': repo[0],
               'git_repo': repo[1],
-              'git_branch': env.ghprbActualCommit]
+              'git_branch': env.BRANCH_NAME ?: 'develop']
 
 
 def release_version = null
@@ -94,26 +86,23 @@ deployOpenShiftTemplate(podTemplate) {
 
     ciPipeline(sendMetrics: false, decorateBuild: decoratePRBuild()) {
 
-        if (release_version) {
-            testRelease(installCmd: "echo installing...",
-                        verifyCmd: "echo verifying...",
-                        repo: 'joejstuart/dockerImages',
-                        version: release_version,
-                        credentials: credentials)
-        }
+//        if (release_version) {
+//            testRelease(installCmd: "echo installing...",
+//                        verifyCmd: "echo verifying...",
+//                        repo: GHRepository,
+//                        version: release_version,
+//                        credentials: credentials)
+//        }
 
         // add linchpin version
         // linchpin version will either be latest/source/version number
 
         buildTestContainer(versions: container_versions,
-                           test_cmd: test_cmd,
-                           modify_args: modify_args,
-                           build_root: build_root,
                            image_name: env.IMAGE_NAME,
-                           build_args: build_args,
                            docker_registry: DOCKER_REGISTRY,
                            docker_namespace: DOCKER_NAMESPACE,
-                           credentials: credentials)
+                           credentials: credentials,
+                           build_root: build_root)
 
     }
 }
