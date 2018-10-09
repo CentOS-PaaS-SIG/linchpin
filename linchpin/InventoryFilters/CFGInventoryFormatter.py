@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 
-import StringIO
+try:
+    from StrinIO import StringIO
+except ImportError:
+    from io import StringIO
+
 import collections
 
-from InventoryFormatter import InventoryFormatter
+from .InventoryFormatter import InventoryFormatter
 
 try:
     from configparser import ConfigParser
@@ -86,6 +90,6 @@ class CFGInventoryFormatter(InventoryFormatter):
                 self.config.set(group, host_string)
 
     def generate_inventory(self):
-        output = StringIO.StringIO()
+        output = StringIO()
         self.config.write(output)
         return output.getvalue()

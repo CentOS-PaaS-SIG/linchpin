@@ -1,6 +1,6 @@
 import os
 import subprocess
-from action_manager import ActionManager
+from .action_manager import ActionManager
 from cerberus import Validator
 
 from linchpin.exceptions import HookError

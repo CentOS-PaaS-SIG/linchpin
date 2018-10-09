@@ -2,7 +2,7 @@
 
 import json
 
-from InventoryFormatter import InventoryFormatter
+from .InventoryFormatter import InventoryFormatter
 
 
 class JSONInventoryFormatter(InventoryFormatter):

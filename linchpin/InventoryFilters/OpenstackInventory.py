@@ -1,7 +1,10 @@
 #!/usr/bin/env python
-import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
-from InventoryFilter import InventoryFilter
+from .InventoryFilter import InventoryFilter
 
 
 class OpenstackInventory(InventoryFilter):
@@ -40,6 +43,6 @@ class OpenstackInventory(InventoryFilter):
         # add ip addresses to each host
         self.add_ips_to_groups(inven_hosts, layout)
         self.add_common_vars(host_groups, layout)
-        output = StringIO.StringIO()
+        output = StringIO()
         self.config.write(output)
         return output.getvalue()

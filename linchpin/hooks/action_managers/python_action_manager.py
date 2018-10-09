@@ -1,4 +1,4 @@
-from action_manager import ActionManager
+from .action_manager import ActionManager
 import sys
 import subprocess
 from cerberus import Validator

@@ -1,4 +1,4 @@
-from action_manager import ActionManager
+from .action_manager import ActionManager
 from Naked.toolshed.shell import run_js
 from cerberus import Validator
 
