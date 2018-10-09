@@ -5,8 +5,7 @@ LABEL name="contrainfra/linchpin" \
       description="LinchPin executable container running the latest Fedora release"
 
 ARG install_location='linchpin'
-ARG git_project='CentOS-PaaS-SIG'
-ARG git_repo='linchpin'
+ARG git_project='https://github.com/CentOS-PaaS-SIG/linchpin'
 ARG git_branch='develop'
 
 ENV UID=10001
@@ -19,12 +18,7 @@ COPY bin/ ${HOME}/bin/
 
 RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
     https://beaker-project.org/yum/beaker-client-Fedora.repo; \
-    dnf install -y git; \
-    if [ "${install_location}" == "." ]; then \
-        git clone git://github.com/${git_project}/${git_repo} -b ${git_branch} lp; \
-        pushd lp; \
-    fi; \
-    dnf install -y beaker-client \
+    dnf install -y git beaker-client \
         python-pip \
         ansible \
         curl gcc \
@@ -39,6 +33,10 @@ RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
         krb5-workstation \
         libselinux-python \
         && dnf clean all; \
+    if [ "${install_location}" == "." ]; then \
+        git clone ${git_project} -b ${git_branch} lp; \
+        pushd lp; \
+    fi; \
         pip install -U pip; \
         pip install -U setuptools; \
         pip install ${install_location}; \

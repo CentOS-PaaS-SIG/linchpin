@@ -78,9 +78,6 @@ podTemplate = [containers: containers,
 
 
 deployOpenShiftTemplate(podTemplate) {
-
-    sh "env"
-
     ciPipeline(sendMetrics: false, decorateBuild: decoratePRBuild()) {
 
 //        if (release_version) {
