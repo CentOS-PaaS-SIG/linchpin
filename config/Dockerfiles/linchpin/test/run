@@ -52,7 +52,7 @@ create_container() {
 }
 
 run_test_application() {
-  buildah run --runtime-flag debug ${CONTAINER_NAME}-test
+  buildah run --runtime-flag debug ${CONTAINER_NAME}-test -- uid_entrypoint run
 }
 
 cleanup() {
