@@ -8,14 +8,6 @@
 
 import com.cloudbees.plugins.credentials.Credentials
 
-env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/linchpin'
-env.ghprbActualCommit = env.ghprbActualCommit ?: 'master'
-
-// Needed for podTemplate()
-env.SLAVE_TAG = env.SLAVE_TAG ?: 'stable'
-// env.TAG_NAME = env.TAG_NAME ?: 'v1.6.2a1'
-
-// env.OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 env.IMAGE_NAME = env.IMAGE_NAME ?: 'linchpin'
 DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 
@@ -27,16 +19,10 @@ DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 
 properties([
   buildDiscarder(logRotator(artifactDaysToKeepStr: '30', artifactNumToKeepStr: '15', daysToKeepStr: '90', numToKeepStr: '30')),
-  [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/' + env.ghprbGhRepository],
+  [$class: 'GithubProjectProperty', displayName: ''],
   disableConcurrentBuilds(),
   parameters(
     [
-        string(defaultValue: '',
-               description: 'Github Repository',
-               name: 'GHRepository'),
-        string(defaultValue: 'stable',
-               description: 'Tag for slave image',
-               name: 'SLAVE_TAG'),
         string(defaultValue: 'contrainfra',
                description: 'Namespace where container resides',
                name: 'CONTAINER_NAMESPACE'),
@@ -53,15 +39,9 @@ def build_root = "config/Dockerfiles/${env.IMAGE_NAME}"
 def credentials = [usernamePassword(credentialsId: 'linchpin-docker',
                    usernameVariable: 'CONTAINER_USERNAME', passwordVariable: 'CONTAINER_PASSWORD')]
 
-// remove the v from the TAG
-
-env.REPO_URL = "https://github.com/${env.GHRepository}"
-env.REPO_REF = env.BRANCH_NAME ?: 'develop'
-
-
-def release_version = null
 def container_versions = ['latest']
 
+// remove the v from the TAG
 if (env.TAG_NAME) {
     def ver = env.TAG_NAME
     def version = ver.substring(1)
@@ -69,13 +49,20 @@ if (env.TAG_NAME) {
     release_version = version
 }
 
-
 podTemplate = [containers: containers,
                docker_repo_url: DOCKER_REPO_URL,
                podName: 'linchpin-buildah']
 
 
 deployOpenShiftTemplate(podTemplate) {
+
+    // set the REPO_URL and REPO_REF for the Makefile
+    def scmVars = checkout scm
+    env.REPO_URL = scmVars.GIT_URL
+    env.REPO_REF = scmVars.GIT_BRANCH
+
+    sh "env"
+
     ciPipeline(sendMetrics: false, decorateBuild: decoratePRBuild()) {
 
 //        if (release_version) {
@@ -86,15 +73,11 @@ deployOpenShiftTemplate(podTemplate) {
 //                        credentials: credentials)
 //        }
 
-        // add linchpin version
-        // linchpin version will either be latest/source/version number
-
         buildTestContainer(versions: container_versions,
                            image_name: env.IMAGE_NAME,
                            container_registry: CONTAINER_REGISTRY,
                            container_namespace: CONTAINER_NAMESPACE,
                            credentials: credentials,
                            build_root: build_root)
-
     }
 }
