@@ -23,7 +23,7 @@ properties([
   disableConcurrentBuilds(),
   parameters(
     [
-        string(defaultValue: 'contrainfra',
+        string(defaultValue: 'herlo',
                description: 'Namespace where container resides',
                name: 'CONTAINER_NAMESPACE'),
         string(description: 'Container Registry',
@@ -62,6 +62,7 @@ deployOpenShiftTemplate(podTemplate) {
     env.REPO_REF = scmVars.GIT_BRANCH
 
     sh "env"
+    print "scmVars: ${scmVars}"
 
     ciPipeline(sendMetrics: false, decorateBuild: decoratePRBuild()) {
 
