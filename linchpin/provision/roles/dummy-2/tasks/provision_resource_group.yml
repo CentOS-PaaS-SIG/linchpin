@@ -1,0 +1,35 @@
+---
+- name: "Unset the authvar from previous run"
+  set_fact:
+    auth_var: ""
+  when: res_grp['credentials'] is defined
+
+- name: "set default_cred_filename when res_grp[credentials] is defined"
+  set_fact:
+    cred_filename: "{{ res_grp['credentials']['filename'] }}"
+  when: res_grp['credentials'] is defined
+
+- name: "Get creds from auth driver"
+  auth_driver:
+    filename: "{{ cred_filename }}"
+    cred_type: "dummy"
+    cred_path: "{{ creds_path | default(default_credentials_path) }}"
+    driver: "file"
+    vault_enc: "{{ vault_encryption }}"
+    vault_pass: "{{ vault_pass }}"
+  register: auth_var
+  no_log: "{{ not debug_mode }}"
+  when: res_grp['credentials'] is defined
+
+- name: "Fail when auth_var is null"
+  fail:
+    msg: "Auth var not set"
+  when: res_grp['credentials'] is defined and auth_var == ""
+
+- name: "provisioning resource definitions of current group"
+  include: provision_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  with_nested:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
