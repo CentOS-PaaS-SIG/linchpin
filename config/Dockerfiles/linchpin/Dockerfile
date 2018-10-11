@@ -34,7 +34,7 @@ RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
         libselinux-python \
         && dnf clean all; \
     if [ "${install_location}" == "." ]; then \
-        git clone ${git_project} -b ${git_branch} lp; \
+        git clone -b ${git_branch} --single-branch ${git_project} lp; \
         pushd lp; \
     fi; \
         pip install -U pip; \
