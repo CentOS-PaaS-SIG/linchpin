@@ -1,4 +1,5 @@
-#!/bin/sh
-id
-linchpin -c /etc/linchpin.conf -vvvp PinFile.dummy.yml -w /workdir up dummy-topo
-
+#!/bin/bash
+id -a
+export DEST=$(linchpin -w /tmp fetch git://github.com/herlo/linchpin --root workspaces/dummy --branch automate_lp 2>&1 | awk -F':' '{ printf $2 }')
+echo "linchpin -vvv -c /etc/linchpin.conf -w ${DEST} up dummy-topo"
+linchpin -vvv -c /etc/linchpin.conf -w ${DEST} up dummy-topo

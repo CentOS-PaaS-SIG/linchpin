@@ -9,6 +9,7 @@ project="continuous-infra"
 ## List all templates to be processed
 templates="jenkins/jenkins-continuous-infra-slave-buildconfig-template.yaml \
     jenkins/jenkins-persistent-buildconfig-template.yaml \
+    jenkins/buildah-buildconfig-template.yaml \
     distros/centos7-buildconfig-template.yaml \
     distros/fedora27-buildconfig-template.yaml \
     distros/fedora28-buildconfig-template.yaml"

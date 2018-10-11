@@ -1,0 +1,80 @@
+#!/bin/bash -x
+#
+# The 'run-test' performs a simple test that verifies the S2I image.
+# The main focus here is to exercise the S2I scripts.
+#
+# For more information see the documentation:
+# https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+# IMAGE_NAME specifies a name of the candidate image used for testing.
+# The image has to be available before this script is executed.
+
+
+
+# Determining system utility executables (darwin compatibility check)
+READLINK_EXEC="readlink"
+MKTEMP_EXEC="mktemp"
+if [[ "$OSTYPE" =~ 'darwin' ]]; then
+  ! type -a "greadlink" &>"/dev/null" || READLINK_EXEC="greadlink"
+  ! type -a "gmktemp" &>"/dev/null" || MKTEMP_EXEC="gmktemp"
+fi
+
+test_dir="$($READLINK_EXEC -zf $(dirname "${BASH_SOURCE[0]}"))"
+image_dir=$($READLINK_EXEC -zf ${test_dir}/..)
+cid_file=$($MKTEMP_EXEC -u --suffix=.cid)
+
+image_exists() {
+  buildah inspect $1 &>/dev/null
+}
+
+
+prepare() {
+  if ! image_exists ${IMAGE_NAME}; then
+    echo "ERROR: The image ${IMAGE_NAME} must exist before this script is executed."
+    exit 1
+  fi
+  # s2i build requires the application is a valid 'Git' repository
+#  pushd ${test_dir}/test-app >/dev/null
+#  git init
+#  git config user.email "build@localhost" && git config user.name "builder"
+#  git add -A && git commit -m "Sample commit"
+#  popd >/dev/null
+
+  create_container
+
+}
+
+create_container() {
+  buildah from --name ${CONTAINER_NAME} ${IMAGE_NAME}
+  buildah copy --chown 10001:0 ${CONTAINER_NAME} ./bin/run-linchpin /linchpin/bin/run
+  buildah commit ${CONTAINER_NAME} ${IMAGE_NAME}-test
+  buildah from --name ${CONTAINER_NAME}-test ${IMAGE_NAME}-test
+}
+
+run_test_application() {
+  buildah run --runtime-flag debug ${CONTAINER_NAME}-test -- uid_entrypoint run
+}
+
+cleanup() {
+  if image_exists ${CONTAINER_NAME}; then
+    buildah rm ${CONTAINER_NAME}
+    buildah rmi ${IMAGE_NAME}
+    buildah rm ${CONTAINER_NAME}-test
+    buildah rmi ${IMAGE_NAME}-test
+  fi
+}
+trap cleanup EXIT SIGHUP SIGINT SIGTERM
+
+check_result() {
+  local result="$1"
+  if [[ "$result" != "0" ]]; then
+    echo "S2I image '${IMAGE_NAME}' test FAILED (exit code: ${result})"
+    exit $result
+  fi
+}
+
+# Build the application image twice to ensure the 'save-artifacts' and
+# 'restore-artifacts' scripts are working properly
+prepare
+
+run_test_application

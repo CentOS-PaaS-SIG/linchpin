@@ -1,8 +1,12 @@
 FROM fedora:28
-LABEL name="contrainfra/linchpin-container" \
+LABEL name="contrainfra/linchpin" \
       maintainer="https://github.com/CentOS-PaaS-SIG/linchpin" \
-      version="0.0.6" \
+      version="1.6.3.2" \
       description="LinchPin executable container running the latest Fedora release"
+
+ARG install_location='linchpin'
+ARG git_project='https://github.com/CentOS-PaaS-SIG/linchpin'
+ARG git_branch='develop'
 
 ENV UID=10001
 ENV HOME=/linchpin/
@@ -14,12 +18,7 @@ COPY bin/ ${HOME}/bin/
 
 RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
     https://beaker-project.org/yum/beaker-client-Fedora.repo; \
-    if [ "INSTALL_LOCATION" == "." ]; then \
-        dnf install -y git; \
-        git clone git://github.com/GIT_PROJECT/GIT_REPO -b GIT_BRANCH lp; \
-        pushd lp; \
-    fi; \
-    dnf install -y beaker-client \
+    dnf install -y git beaker-client \
         python-pip \
         ansible \
         curl gcc \
@@ -34,10 +33,14 @@ RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
         krb5-workstation \
         libselinux-python \
         && dnf clean all; \
+    if [ "${install_location}" == "." ]; then \
+        git clone -b ${git_branch} --single-branch ${git_project} lp; \
+        pushd lp; \
+    fi; \
         pip install -U pip; \
         pip install -U setuptools; \
-        pip install INSTALL_LOCATION; \
-        pip install INSTALL_LOCATION[beaker]; \
+        pip install ${install_location}; \
+        pip install ${install_location}[beaker]; \
         mkdir -p ${HOME}/bin/ && \
         chmod -R u+x ${HOME}/bin && \
         chown -R ${UID}.0 ${HOME} && \
@@ -51,7 +54,7 @@ RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
         rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
         rm -f /lib/systemd/system/basic.target.wants/*; \
         rm -f /lib/systemd/system/anaconda.target.wants/*; \
-    if [ "INSTALL_LOCATION" == "." ]; then \
+    if [ "install_location" == "." ]; then \
         popd; \
         rm -rf lp; \
     fi;
