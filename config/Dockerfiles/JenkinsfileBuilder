@@ -23,14 +23,14 @@ properties([
   disableConcurrentBuilds(),
   parameters(
     [
-        string(defaultValue: 'herlo',
+        string(defaultValue: 'contrainfra',
                description: 'Namespace where container resides',
                name: 'CONTAINER_NAMESPACE'),
-        string(defaultValue: '.',
-               description: "Installation Source. '.' uses the GIT_URL/GIT_BRANCH, 'linchpin' uses pypi.",
-               name: 'INSTALL_LOCATION'),
         string(description: 'Container Registry',
                name: 'CONTAINER_REGISTRY'),
+        string(defaultValue: '.',
+               description: "Installation Source. '.' uses the GIT_URL/GIT_BRANCH, 'linchpin' uses pypi.",
+               name: 'INSTALL_LOCATION')
     ]
   ),
 ])

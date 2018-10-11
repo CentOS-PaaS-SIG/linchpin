@@ -1,8 +1,8 @@
 IMAGE_NAME = linchpin
 CONTAINER_NAME = $(IMAGE_NAME)-z
 INSTALL_LOCATION ?= .
-REPO_URL ?= https://github.com/herlo/linchpin
-REPO_REF ?= automate_lp
+REPO_URL ?= https://github.com/CentOS-PaaS-SIG/linchpin
+REPO_REF ?= develop
 
 .PHONY: buildcontainer
 buildcontainer:
