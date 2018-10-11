@@ -26,6 +26,9 @@ properties([
         string(defaultValue: 'herlo',
                description: 'Namespace where container resides',
                name: 'CONTAINER_NAMESPACE'),
+        string(defaultValue: '.',
+               description: "Installation Source. '.' uses the GIT_URL/GIT_BRANCH, 'linchpin' uses pypi.",
+               name: 'INSTALL_LOCATION'),
         string(description: 'Container Registry',
                name: 'CONTAINER_REGISTRY'),
     ]
@@ -58,6 +61,7 @@ deployOpenShiftTemplate(podTemplate) {
 
     // set the REPO_URL and REPO_REF for the Makefile
     def scmVars = checkout scm
+    env.INSTALL_LOCATION = INSTALL_LOCATION
     env.REPO_URL = scmVars.GIT_URL
     env.REPO_REF = scmVars.GIT_BRANCH
 
