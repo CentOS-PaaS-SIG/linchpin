@@ -582,13 +582,16 @@ def validate(ctx, targets, old_schema):
         return_code, results = lpcli.lp_validate(targets=targets,
                                                  old_schema=old_schema)
         for target, result in results.iteritems():
-            if result == "valid":
+            if result == "toplogy valid":
                 result = "[SUCCESS] Topology for target '{0}' is "\
                          "valid".format(target)
-            elif result == "valid with old schema":
+            elif result == "topology valid with old schema":
                 old_schema = True
                 result = "[SUCCESS] Topology for target '{0}' is valid under "\
                          "old schema".format(target)
+            elif result == "layout valid":
+                result = "[SUCCESS] Layout for target'{0}' is"\
+                         "valid".format(target)
             else:
                 result = "[ERROR] " + result
             ctx.log_state(result)
