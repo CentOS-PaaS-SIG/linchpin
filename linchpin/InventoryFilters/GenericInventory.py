@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from InventoryFilter import InventoryFilter
-from InventoryProviders import get_all_drivers
-from InventoryProviders import get_inv_formatter
+from .InventoryFilter import InventoryFilter
+from .InventoryProviders import get_all_drivers
+from .InventoryProviders import get_inv_formatter
 
 
 class GenericInventory(InventoryFilter):

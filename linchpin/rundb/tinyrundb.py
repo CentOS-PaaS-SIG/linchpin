@@ -127,7 +127,7 @@ class TinyRunDB(BaseDB):
                     end = 0
                 else:
                     end = start - count
-                for i in xrange(start, end, -1):
+                for i in range(start, end, -1):
                     records[i] = t.get(doc_id=i)
         return records
 

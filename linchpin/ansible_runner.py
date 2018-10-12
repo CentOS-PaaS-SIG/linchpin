@@ -12,12 +12,12 @@ ansible_version = float(ansible.__version__[0:3])
 # used by the imports below - Ansible uses Jinja2 here
 
 try:
-    from callbacks import PlaybookCallback
+    from .callbacks import PlaybookCallback
     from ansible.parsing.dataloader import DataLoader
     from ansible.executor.playbook_executor import PlaybookExecutor
 except ImportError:
     sys.path.insert(0, '/usr/lib/python2.6/site-packages/Jinja2-2.6-py2.6.egg')
-    from callbacks import PlaybookCallback
+    from .callbacks import PlaybookCallback
     from ansible.parsing.dataloader import DataLoader
     from ansible.executor.playbook_executor import PlaybookExecutor
 

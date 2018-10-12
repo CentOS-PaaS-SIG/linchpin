@@ -3,17 +3,17 @@ Inventory Providers List
 """
 from linchpin.exceptions import LinchpinError
 
-from AWSInventory import AWSInventory
-from BeakerInventory import BeakerInventory
-from DuffyInventory import DuffyInventory
-from DummyInventory import DummyInventory
-from GCloudInventory import GCloudInventory
-from LibvirtInventory import LibvirtInventory
-from OpenstackInventory import OpenstackInventory
-from OvirtInventory import OvirtInventory
+from .AWSInventory import AWSInventory
+from .BeakerInventory import BeakerInventory
+from .DuffyInventory import DuffyInventory
+from .DummyInventory import DummyInventory
+from .GCloudInventory import GCloudInventory
+from .LibvirtInventory import LibvirtInventory
+from .OpenstackInventory import OpenstackInventory
+from .OvirtInventory import OvirtInventory
 
-from CFGInventoryFormatter import CFGInventoryFormatter
-from JSONInventoryFormatter import JSONInventoryFormatter
+from .CFGInventoryFormatter import CFGInventoryFormatter
+from .JSONInventoryFormatter import JSONInventoryFormatter
 
 filter_classes = {
     "aws": AWSInventory,
