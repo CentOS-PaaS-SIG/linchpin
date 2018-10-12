@@ -21,17 +21,17 @@ echo "${DESCRIPTION}"
 
 TARGET="libvirt-storage"
 
-pushd docs/source/examples/workspace
+pushd docs/source/examples/workspaces/${PROVIDER}
 
 function clean_up {
     set +e
-    linchpin -w . -p PinFile.${PROVIDER}.yml -v destroy ${TARGET}
+    linchpin -w . -v destroy ${TARGET}
     # remove output file used to gen uhash if it exists
     rm storage.txt || true
 }
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
-linchpin -w . -p PinFile.${PROVIDER}.yml -v up ${TARGET} | tee -a storage.txt
+linchpin -w . -v up ${TARGET} | tee -a storage.txt
 
 cat storage.txt
 uhash=$(grep ${TARGET} storage.txt | tail -n1 | cut -f3)
