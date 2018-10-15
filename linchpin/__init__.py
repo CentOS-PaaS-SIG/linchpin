@@ -697,8 +697,8 @@ class LinchpinAPI(object):
                     self._convert_topology(topology_data)
                     resources = self._validate_topology(topology_data)
                 except SchemaError:
-                    raise ValidationError("Topology '{0}' does not validate."
-                                          "For more information run `linchpin"
+                    raise ValidationError("Topology '{0}' does not validate.  "
+                                          "For more information run `linchpin "
                                           "validate`".format(topology_data))
 
 
