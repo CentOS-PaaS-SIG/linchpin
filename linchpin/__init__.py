@@ -398,7 +398,7 @@ class LinchpinAPI(object):
         return layout_json
 
 
-    def _validate_topology(self, topology):
+    def validate_topology(self, topology):
         """
         Validate the provided topology against the schema
 
@@ -473,7 +473,7 @@ class LinchpinAPI(object):
             return msg
 
 
-    def _validate_layout(self, layout):
+    def validate_layout(self, layout):
         """
         Validate the provided layout against the schema
 
@@ -690,12 +690,12 @@ class LinchpinAPI(object):
 
             # if validation fails the first time, convert topo from old -> new
             try:
-                resources = self._validate_topology(topology_data)
+                resources = self.validate_topology(topology_data)
             except (SchemaError, KeyError):
                 # if topology fails, try converting from old to new style
                 try:
                     self._convert_topology(topology_data)
-                    resources = self._validate_topology(topology_data)
+                    resources = self.validate_topology(topology_data)
                 except SchemaError:
                     raise ValidationError("Topology '{0}' does not validate.  "
                                           "For more information run `linchpin "
@@ -715,7 +715,7 @@ class LinchpinAPI(object):
             if provision_data[target].get('layout', None):
                 l_data = provision_data[target]['layout']
                 try:
-                    self._validate_layout(l_data)
+                    self.validate_layout(l_data)
                 except SchemaError:
                     raise ValidationError("Layout '{0}' does not"
                                           " validate".format(l_data))
@@ -856,15 +856,14 @@ class LinchpinAPI(object):
             topology_data = provision_data[target].get('topology')
 
             try:
-                self._validate_topology(topology_data)
+                self.validate_topology(topology_data)
             except (SchemaError, KeyError) as e:
                 # try to validate against old schema
                 try:
                     self._convert_topology(topology_data)
-                    self._validate_topology(topology_data)
+                    self.validate_topology(topology_data)
                 except SchemaError as s:
-                    error = "[ERROR]"
-                    error += """Topology for target '{0}' does not validate
+                    error = """Topology for target '{0}' does not validate
 topology: '{1}'
 errors:
 """.format(target, topology_data)
@@ -895,7 +894,7 @@ errors:
                 l_data = provision_data[target]['layout']
 
                 try:
-                    self._validate_layout(l_data)
+                    self.validate_layout(l_data)
                 except SchemaError as e:
                     error = """
 Layout for target '{0}' does  not validate
