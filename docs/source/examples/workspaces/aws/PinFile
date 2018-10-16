@@ -52,14 +52,14 @@ aws-sg-new:
                 cidr_ip: "0.0.0.0/0"
               - rule_type: "inbound"
                 from_port: 22
-            to_port: 22
-            proto: "tcp"
-            cidr_ip: "0.0.0.0/0"
-          - rule_type: "outbound"
-            from_port: all
-            to_port: all
-            proto: "all"
-            cidr_ip: "0.0.0.0/0"
+                to_port: 22
+                proto: "tcp"
+                cidr_ip: "0.0.0.0/0"
+              - rule_type: "outbound"
+                from_port: all
+                to_port: all
+                proto: "all"
+                cidr_ip: "0.0.0.0/0"
 
 aws-s3-new:
   topology:
