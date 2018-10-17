@@ -10,6 +10,7 @@
                    "allowed": ["dummy_node"]
                },
                "name": { "type": "string", "required": true },
+               "domain": { "type": "string", "required": true },
                "count": { "type": "integer", "required": false }
             }
         }
