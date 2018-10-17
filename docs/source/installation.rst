@@ -1,3 +1,5 @@
+.. _installation:
+
 Installation
 ============
 
@@ -70,7 +72,7 @@ Using mkvirtualenv with Python 3 (now default on some Linux systems) will attemp
     (linchpin) $ pip install linchpin
     ..snip..
 
-.. note:: mkvirtualenv is optional dependency you can install from `here <http://virtualenvwrapper.readthedocs.io/en/latest/install.html>`_. An alternative, virtualenv, also exists. Please refer to the `Virtualenv documentation <https://virtualenv.pypa.io/en/stable/>`_ for more details.
+.. note:: mkvirtualenv is optional dependency you can install from `here <http://virtualenvwrapper.readthedocs.io/en/latest/install.html>`_. An alternative, virtualenv, also exists. Please refer to the `virtualenv documentation <https://virtualenv.pypa.io/en/stable/>`_ for more details.
 
 
 To deactivate the virtualenv
@@ -110,7 +112,7 @@ When using a virtualenv with SELinux enabled, LinchPin may fail due to an error 
     (linchpin) $ ln -s ${LIBSELINUX_PATH}/selinux ${VIRTUAL_ENV}/${VENV_LIB_PATH}
     (linchpin) $ ln -s ${LIBSELINUX_PATH}/_selinux.so ${VIRTUAL_ENV}/${VENV_LIB_PATH}
 
-.. note:: A script is provided to do this work at :code1.5:`<scripts/install_selinux_venv.sh>`
+.. note:: A script is provided to do this work at :code1.5:`scripts/install_selinux_venv.sh`
 
 Installing on Fedora 26
 -----------------------

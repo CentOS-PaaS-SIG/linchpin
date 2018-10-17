@@ -1,60 +1,35 @@
 Getting Started
 ===============
 
-.. _gs_foreword:
+The LinchPin getting started guide will walk you through your first LinchPin project, and show off the basics of the major features LinchPin has to offer.
 
-Now that LinchPin is :doc:`installed <installation>`, this guide will walk you through the basics of using LinchPin. LinchPin is a command-line utility, a Python API, and Ansible playbooks. As this guide is intentionally brief to get you started, a more complete version can be found in the documentation links found to the left in the :doc:`index <index>`.
+If you are curious about LinchPin and its features, please read the ":ref:`index-why-linchpin`" page.
+
+This getting started guide will use LinchPin with the `dummy` provider. LinchPin can work with many other providers and use cases. After following this tutorial, check out some other :ref:`providers and use cases <providers-use-cases>`.
+
+Before starting, please :ref:`install the latest version of LinchPin <installation>`.
+
 
 .. toctree::
    :maxdepth: 1
+   :hidden:
 
-.. contents:: Topics
+   installation
+   init_workspace
+   dummy_use_case
+   up
+   hooks
+   inventory
+   destroy
 
-.. _gs_running:
+LinchPin Init
+=============
 
-Running the ``linchpin`` command
---------------------------------
+.. code-block:: bash
 
-.. include:: linchpin_cli.rst
+    $ linchpin init dummy
 
-.. _gs_workspace:
 
-The Workspace
--------------
-
-.. include:: gs/workspace.rst
-
-.. _gs_init:
-
-Initialization (init)
-`````````````````````
-.. include:: includes/initialization.rst
-
-.. _gs_resources:
-
-Resources
----------
-
-.. include:: resources.rst
-
-.. _gs_up:
-
-Provisioning (up)
-------------------
-
-.. include:: gs/provisioning.rst
-
-.. _gs_destroy:
-
-Teardown (destroy)
-------------------
-
-.. include:: gs/teardown_destroy.rst
-
-Authentication
---------------
-
-.. include:: credentials.rst
 
 
 .. seealso::
