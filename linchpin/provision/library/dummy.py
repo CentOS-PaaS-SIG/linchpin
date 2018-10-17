@@ -102,7 +102,7 @@ class Dummy:
             hosts.append(host)
         elif count > 1:
             for i in range(count):
-                #host = '{0}-{1}.example.net'.format(name, i)
+                # host = '{0}-{1}.example.net'.format(name, i)
                 host = '{0}-{1}{2}'.format(name, i, domain)
                 with open(self.DUMMY_FILE, 'a+') as f:
                     if not any('{0}\n'.format(host) in line for line in f):
@@ -149,8 +149,6 @@ class Dummy:
         name = module.params['name']
         state = module.params['state']
         count = module.params['count']
-        if count:
-            open("/tmp/count.txt","w").write(str(count))
         domain = module.params['domain']
 
         # allocate some systems if state is 'present' :)
