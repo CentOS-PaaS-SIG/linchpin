@@ -71,6 +71,12 @@ generate_resources = True
 source = templates/
 pinfile = PinFile
 
+remote = git://github.com/CentOS-PaaS-SIG/linchpin
+fetch_ref = master
+root = workspaces/dummy
+fetch_type = workspace
+nocache = True
+
 [distiller]
 bkr_server = id,url,system,name
 dummy_node: hosts
