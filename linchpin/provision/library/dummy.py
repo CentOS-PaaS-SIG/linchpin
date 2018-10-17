@@ -24,6 +24,9 @@ options:
   name:
     description:
       Given name for task
+  domain:
+    description:
+      Custom domain instead of default
   state:
     description:
       Allocate or Deallocate instances
@@ -79,7 +82,7 @@ class Dummy:
 #        return host_str
 
 
-    def allocate(self, name, count=1):
+    def allocate(self, name, count=1, domain=".example.net"):
         """
         Create some dummy host as if these systems existed.
         Write the host out to the dummy.hosts temporary file to avoid
@@ -90,18 +93,27 @@ class Dummy:
 
         hosts = []
 
-        for i in range(count):
-            host = '{0}-{1}.example.net'.format(name, i)
+        if count == 1:
+            host = '{0}{1}'.format(name, domain)
             with open(self.DUMMY_FILE, 'a+') as f:
                 if not any('{0}\n'.format(host) in line for line in f):
                     f.write('{0}\n'.format(host))
                     changed = True
             hosts.append(host)
+        elif count > 1:
+            for i in range(count):
+                #host = '{0}-{1}.example.net'.format(name, i)
+                host = '{0}-{1}{2}'.format(name, i, domain)
+                with open(self.DUMMY_FILE, 'a+') as f:
+                    if not any('{0}\n'.format(host) in line for line in f):
+                        f.write('{0}\n'.format(host))
+                        changed = True
+                hosts.append(host)
 
         return (changed, hosts)
 
 
-    def deallocate(self, name, count=1):
+    def deallocate(self, name, count=1, domain=".example.net"):
         """
         Deallocate some dummy host.
         Remove the host from the dummy.hosts temporary file.
@@ -116,8 +128,7 @@ class Dummy:
 
         with open(self.DUMMY_FILE, 'r+') as f:
             lines = f.readlines()
-
-            hostre = r'^{0}-\d.example.net'.format(name)
+            hostre = '^{0}-\d{1}'.format(name, domain)
             for line in lines:
                 if re.search(hostre, line):
                     hosts_to_del.append(line)
@@ -138,11 +149,14 @@ class Dummy:
         name = module.params['name']
         state = module.params['state']
         count = module.params['count']
+        if count:
+            open("/tmp/count.txt","w").write(str(count))
+        domain = module.params['domain']
 
         # allocate some systems if state is 'present' :)
         if state == 'present':
 
-            changed, hosts = self.allocate(name, count)
+            changed, hosts = self.allocate(name, count, domain)
             json_output['changed'] = changed
             json_output['hosts'] = hosts
             json_output['dummy_file'] = self.DUMMY_FILE
@@ -151,7 +165,7 @@ class Dummy:
 
         elif state == 'absent':
 
-            status = self.deallocate(name, count)
+            status = self.deallocate(name, count, domain)
             json_output['changed'] = status
             json_output['dummy_file'] = self.DUMMY_FILE
 
@@ -164,6 +178,7 @@ def main():
     module = AnsibleModule(
         argument_spec=dict(
             name=dict(type='str'),
+            domain=dict(type='str'),
             count=dict(default=1, type='int'),
             state=dict(choices=['present', 'absent']),
         ),
