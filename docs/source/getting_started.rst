@@ -16,18 +16,12 @@ Before starting, please :ref:`install the latest version of LinchPin <installati
 
    installation
    init_workspace
-   dummy_use_case
+   simple_workspace
+   simple_pinfile
    up
    hooks
    inventory
    destroy
-
-LinchPin Init
-=============
-
-.. code-block:: bash
-
-    $ linchpin init dummy
 
 
 
