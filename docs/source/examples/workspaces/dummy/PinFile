@@ -1,5 +1,5 @@
 ---
-dummy-new:
+dummy:
   topology:
     topology_name: "dummy_cluster" # topology name
     resource_groups:
@@ -30,7 +30,8 @@ dummy-new:
         all:
           vars:
             ansible_user: root
-            ansible_private_key_file: "{% raw -%}{{ lookup('env', 'TESTLP') | default('/tmp', true) }}/CSS/keystore/css-central{%- endraw %}"
+            ansible_private_key_file: |
+              "{% raw -%}{{ lookup('env', 'TESTLP') | default('/tmp', true) }}/CSS/keystore/css-central{%- endraw %}"
 
 dummy-topo:
   topology:
