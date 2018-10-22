@@ -33,7 +33,7 @@
 
 - name: "set topo_output_resources fact"
   set_fact:
-    topo_output_resources: "{{ topo_output.output['content']['aws_ec2_res'][0] }}"
+    topo_output_resources: "{{ topo_output.output['content'] }}"
   when: generate_resources
 
 # patch for role to type translation
