@@ -11,7 +11,7 @@ duffy-new:
             version: 7
             arch: x86_64
             count: 1
-    credentials: duffy.key
+        credentials: duffy.key
   layout:
     inventory_layout:
       vars:
