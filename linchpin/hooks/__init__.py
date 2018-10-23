@@ -298,7 +298,7 @@ class LinchpinHooks(object):
 
                     # validates the class object
                     a_b_obj.validate()
-                    
+
                     # executes the hook
                     hook_result = a_b_obj.execute()
                     if type(hook_result) is list:
