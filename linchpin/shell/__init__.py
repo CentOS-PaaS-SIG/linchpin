@@ -627,6 +627,22 @@ It is suggested to update any of the following:
         ctx.log_state(e)
         sys.exit(1)
 
+@runcli.command()
+@click.argument('providers', metavar='PROVIDERS', required=False,
+                nargs=-1)
+@click.option('--ask-sudo-pass', is_flag=True, default=False,
+              help='Prompts for sudo password for package installations')
+@pass_context
+def setup(ctx, providers, ask_sudo_pass):
+    """
+    Validate topologies for the given target(s) in the given PinFile.
+    The data from the targets is obtained from the PinFile (default).
+    targets:    Validate ONLY the listed target(s). If omitted, ALL targets in
+    the appropriate PinFile will be validate
+    """
+    lpcli.ctx.set_evar("ask_sudo_pass", ask_sudo_pass)
+    return_code, output = lpcli.lp_setup(providers)
+    return sys.exit(return_code)
 
 def main():
     # print("entrypoint")
