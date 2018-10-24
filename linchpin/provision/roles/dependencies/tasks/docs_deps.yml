@@ -1,0 +1,9 @@
+- name: Install pypi dependencies of docs
+  pip:
+    name: "{{ doc_pkg }}"
+  with_items:
+    - "docutils"
+    - "sphinx"
+    - "sphinx_rtd_theme"
+  loop_control:
+    loop_var: doc_pkg

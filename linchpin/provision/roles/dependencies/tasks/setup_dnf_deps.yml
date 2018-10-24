@@ -1,0 +1,37 @@
+
+- name: Create links for selinux libraries
+  file:
+    src: "{{ PYTHON_LIB_PATH }}/dnf"
+    dest: "{{ lookup('env','VIRTUAL_ENV') }}/{{ VENV_LIB_PATH }}/dnf"
+    state: link
+
+# cp -r /usr/lib64/python2.7/site-packages/librepo ~/.virtualenvs/lpdep14/lib/python2.7/site-packages/
+# cp -r /usr/lib64/python2.7/site-packages/libcomp ~/.virtualenvs/lpdep14/lib/python2.7/site-packages/
+# cp -r /usr/lib64/python2.7/site-packages/gi ~/.virtualenvs/lpdep14/lib/python2.7/site-packages/
+# cp -r /usr/lib64/python2.7/site-packages/hawkey ~/.virtualenvs/lpdep14/lib/python2.7/site-packages/
+# cp -r /usr/lib64/python2.7/site-packages/smartcols* ~/.virtualenvs/lpdep14/lib/python2.7/site-packages/
+# cp -r /usr/lib64/python2.7/site-packages/gpg ~/.virtualenvs/lpdep14/lib/python2.7/site-packages/gpg
+# cp -r /usr/lib64/python2.7/site-packages/lzma.so ~/.virtualenvs/lpdep14/lib/python2.7/site-packages/
+# pip install iniparse
+# cp -r /usr/lib64/python2.7/site-packages/rpm ~/.virtualenvs/lpdep14/lib/python2.7/site-packages/#
+
+- name: Create links for librepo
+  file:
+    src: "{{ PYTHON_LIB64_PATH }}/{{ dnf_pkg }}"
+    dest: "{{ lookup('env','VIRTUAL_ENV') }}/{{ VENV_LIB_PATH }}/{{ dnf_pkg }}"
+    state: link
+  with_items:
+    - "librepo"
+    - "libcomps"
+    - "gi"
+    - "hawkey"
+    - "smartcols.so"
+    - "gpg"
+    - "lzma.so"
+    - "rpm"
+  loop_control:
+    loop_var: dnf_pkg
+
+- name: Install iniparse
+  pip:
+    name: "iniparse"
