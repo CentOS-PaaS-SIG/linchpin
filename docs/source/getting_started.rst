@@ -18,7 +18,7 @@ Before starting, please :ref:`install the latest version of LinchPin <installati
    init_workspace
    simple_workspace
    simple_pinfile
-   up
+   simple_up
    hooks
    inventory
    destroy

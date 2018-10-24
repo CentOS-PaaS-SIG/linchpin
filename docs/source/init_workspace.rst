@@ -21,9 +21,9 @@ LinchPin Initialization
 
 After running the commands above, LinchPin should be able to provision for you. We'll use `linchpin init` and `linchpin fetch` throughout this tutorial to get you familiar with its inner workings.
 
-It's a minimal setup, using the `simple` provider. We'll get more into those in the upcoming parts of this tutorial.
+It's a minimal setup, using the `dummy` provider. We'll get more into those in the upcoming parts of this tutorial.
 
-Now that `LinchPin` is working, the dummy workspace is in place, let's learn more about :doc:`simple_workspace`.
+Now that `LinchPin` is working, the simple workspace is in place, let's learn more about :doc:`simple_workspace`.
 
 .. note:: If you were unable to get LinchPin successfully installed and/or working, please see the :ref:`troubleshooting` documentation.
 

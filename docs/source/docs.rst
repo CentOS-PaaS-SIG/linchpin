@@ -1,5 +1,5 @@
-LinchPin Documentation
-======================
+Documentation
+=============
 
 .. toctree::
    :maxdepth: 1
