@@ -35,5 +35,5 @@ openshift-new:
                       securityPolicy:
                         runAsUser: 1000090000
     credentials:
-      api_endpoint: example.com:8443/
-      api_token: mytokentextrighthere
+      filename: name_of_credsfile.yaml  # fetched from --creds-path is provided
+      profile: name_of_profile # defaults to 'default' profile in cred_file
