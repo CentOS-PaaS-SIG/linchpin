@@ -1,20 +1,25 @@
 ---
-- name: "provision beaker systems"
-  bkr_server:
-    recipesets: "{{ res.recipesets }}"
-    state: present
-    # these values have defaults set in the bkr_server module
-    # if omitted, or they are not required
-    whiteboard: "{{ res.whiteboard | default('Provisioned by LinchPin') }}"
-    job_group: "{{ res.job_group | default(omit) }}"
-    cancel_message: "{{ res.cancel_message | default(omit) }}"
-    max_attempts: "{{ res.max_attempts | default(omit) }}"
-    attempt_wait_time: "{{ attempt_wait_time | default(omit) }}"
-  with_items: "{{ res_defs['resource_definitions'] }}"
-  # loop over res_defs even though there should be only one for beaker
-  loop_control:
-    loop_var: res
-  register: bkr
+- name: Provision beaker systems
+  block:
+  - name: "provision beaker systems"
+    bkr_server:
+      recipesets: "{{ res.recipesets }}"
+      state: present
+      # these values have defaults set in the bkr_server module
+      # if omitted, or they are not required
+      whiteboard: "{{ res.whiteboard | default('Provisioned by LinchPin') }}"
+      job_group: "{{ res.job_group | default(omit) }}"
+      cancel_message: "{{ res.cancel_message | default(omit) }}"
+      max_attempts: "{{ res.max_attempts | default(omit) }}"
+      attempt_wait_time: "{{ attempt_wait_time | default(omit) }}"
+    with_items: "{{ res_defs['resource_definitions'] }}"
+    # loop over res_defs even though there should be only one for beaker
+    loop_control:
+      loop_var: res
+    register: bkr
+    rescue:
+    - fail:
+        msg: 'Error caught in beaker module execution. Might be beacuse of unresolved beaker dependencies. Please run `linchpin setup beaker` or pip install linchpin[beaker] to install beaker dependencies'
 
 - name: "set bkr_rsets"
   set_fact:
