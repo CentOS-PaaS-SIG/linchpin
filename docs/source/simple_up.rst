@@ -1,5 +1,5 @@
-Up and Destroy
---------------
+Up
+--
 
 It's time to provision your first LinchPin resources.
 
@@ -71,7 +71,7 @@ A common desire is to check the exit code\ :sup:`7`\. This is provided as an ind
 
 
 Destroy
-```````
+-------
 
 To destroy the previously provisioned resources, use ``linchpin destroy``.
 
@@ -99,4 +99,4 @@ As with ``linchpin up``, destroy provides a summary of the action taken. In this
     $ wc -l /tmp/dummy.hosts
     0 /tmp/dummy.hosts
 
-
+This concludes the introduction of the LinchPin getting started tutorial. For more information, see :doc:`providers`.
