@@ -117,7 +117,7 @@ class Dummy:
         with open(self.DUMMY_FILE, 'r+') as f:
             lines = f.readlines()
 
-            hostre = '^{0}-\d.example.net'.format(name)
+            hostre = r'^{0}-\d.example.net'.format(name)
             for line in lines:
                 if re.search(hostre, line):
                     hosts_to_del.append(line)

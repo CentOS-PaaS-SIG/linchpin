@@ -801,11 +801,11 @@ class LinchpinCli(LinchpinAPI):
         protocol = fetch_protocol
         if protocol is None:
             protocol_regex = OrderedDict([
-                ('((git|ssh|http(s)?)|(git@[\w\.]+))'
-                    '(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?',
-                    'FetchGit'),
-                ('^(http|https)://', 'FetchHttp'),
-                ('^(file)://', 'FetchLocal')
+                (r'((git|ssh|http(s)?)|(git@[\w\.]+))'
+                    r'(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?',
+                    r'FetchGit'),
+                (r'^(http|https)://', 'FetchHttp'),
+                (r'^(file)://', 'FetchLocal')
             ])
             for regex, obj in protocol_regex.items():
                 if re.match(regex, src):
