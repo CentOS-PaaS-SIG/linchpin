@@ -30,3 +30,9 @@ fi
 # testing no-hooks flag
 echo "Testing multi file hook"
 linchpin -w "${WORKSPACE_PATH}" -p "${PINFILE}" -v up "${TARGET}"
+
+cat /tmp/ex_hook.txt
+
+if [ -e /tmp/ex_hook.txt ]; then
+    rm /tmp/ex_hook.txt
+fi
