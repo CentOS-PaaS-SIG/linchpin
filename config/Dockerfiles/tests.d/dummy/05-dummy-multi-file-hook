@@ -31,7 +31,13 @@ fi
 echo "Testing multi file hook"
 linchpin -w "${WORKSPACE_PATH}" -p "${PINFILE}" -v up "${TARGET}"
 
-cat /tmp/ex_hook.txt
+# checks the contents of the file using grep
+grep "This is a example hook created" /tmp/ex_hook.txt
+
+# fail if previous command fails
+if [ ${?} -ne 0 ]; then
+    exit ${?}
+fi
 
 if [ -e /tmp/ex_hook.txt ]; then
     rm /tmp/ex_hook.txt
