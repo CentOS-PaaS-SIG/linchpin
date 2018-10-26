@@ -1,0 +1,12 @@
+---
+dummy_target:
+  topology: dummy-topology.yml
+  layout: dummy-layout.yml
+  hooks:
+    postup:
+      - name: ex_hook
+        type: ansible
+        context: False
+        actions:
+          - playbook: ex1.yaml
+          - playbook: ex2.yaml
