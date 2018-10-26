@@ -10,13 +10,13 @@ PROVIDER=${2}
 
 PINFILE="PinFile"
 TARGET="dummy_target"
-WORKSPACE_PATH="docs/source/examples/workspaces/dummy-creds-vault/"
-CREDS_PATH="docs/source/examples/workspaces/dummy-creds-vault/credentials/"
+WORKSPACE_PATH="docs/source/examples/workspaces/dummy-creds-vault"
+CREDS_PATH="credentials/"
 export VAULT_PASSWORD=testval
 
 function clean_up {
     set +e
-    linchpin -w "${WORKSPACE_PATH}" -p "${PINFILE}" -v destroy "${TARGET}"
+    linchpin -w .  -p "${PINFILE}" -v destroy "${TARGET}"
     D_RC=0
     D_RC=(${?} -o ${D_RC})
     if [ ${D_RC} -ne 0 ]; then
@@ -30,5 +30,6 @@ if [ -e /tmp/dummy.hosts ]; then
 fi
 
 # testing creds-vault
+pushd ${WORKSPACE_PATH}
 echo "Testing creds-path on dummy provider"
-linchpin --creds-path "${CREDS_PATH}" -w "${WORKSPACE_PATH}" -p "${PINFILE}" -v up "${TARGET}"
+linchpin -w . --creds-path "${CREDS_PATH}" -p "${PINFILE}" -v up "${TARGET}"

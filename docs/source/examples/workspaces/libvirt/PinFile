@@ -51,3 +51,59 @@ libvirt-network:
             dhcp_end: 192.168.74.112
             domain: linchpin.net
 
+libvirt-storage:
+  topology:
+    topology_name: libvirt-storage
+    resource_groups:
+      - resource_group_name: libvirt-storage
+        resource_group_type: libvirt
+        resource_definitions:
+          - role: libvirt_node
+            name: centos71
+            uri: qemu:///system
+            count: 1
+            image_src: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz
+            memory: 2048
+            vcpus: 2
+            arch: x86_64
+            ssh_key: libvirt
+            networks:
+              - name: default
+            additional_storage: 10G
+            storage:
+              - name: myscsi
+                size: 1
+                units: G
+                disk_type: virtio_scsi # can also be virtio_blk
+                device: sda
+
+libvirt-custom-img:
+  topology:
+    topology_name: libvirt-custom-img
+    resource_groups:
+      - resource_group_name: libvirt-custom-img
+        resource_group_type: libvirt
+        resource_definitions:
+          - role: libvirt_node
+            name: lci-centos7
+            uri: qemu:///system
+            count: 1
+            image_src: file:///home/herlo/Isos/CentOS-7-x86_64-GenericCloud.qcow2.xz
+            memory: 1024
+            vcpus: 1
+            arch: x86_64
+            networks:
+              - name: default
+            ssh_key: libvirt
+            additional_storage: 10G
+            cloud_config:
+              virt_type: virt-customize
+              root_password: "testrootpwd" # insecure plaintext password
+              users:
+                - name: herlo
+                  groups: wheel
+                  inject_ssh_keys: true  # by default linchpin generated libvirt key is injected.
+              run_commands:
+                - "yum install -y epel-release"
+              packages:
+                - nginx

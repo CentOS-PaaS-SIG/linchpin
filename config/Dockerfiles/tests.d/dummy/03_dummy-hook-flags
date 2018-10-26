@@ -9,12 +9,12 @@ DISTRO=${1}
 PROVIDER=${2}
 
 PINFILE="PinFile"
+WORKSPACE_PATH="docs/source/examples/workspaces/dummy-hook-flags"
 TARGET="dummy_target"
-WORKSPACE_PATH="docs/source/examples/workspaces/dummy-hook-flags/"
 
 function clean_up {
     set +e
-    linchpin -w "${WORKSPACE_PATH}" -p "${PINFILE}" -v destroy "${TARGET}"
+    linchpin -w . -p "${PINFILE}" -v destroy "${TARGET}"
     D_RC=0
     D_RC=(${?} -o ${D_RC})
     if [ ${D_RC} -ne 0 ]; then
@@ -27,10 +27,12 @@ if [ -e /tmp/dummy.hosts ]; then
     rm /tmp/dummy.hosts
 fi
 
+pushd ${WORKSPACE_PATH}
+pwd
 # testing no-hooks flag
 echo "Testing --no-hooks flag"
-linchpin -w "${WORKSPACE_PATH}" -p "${PINFILE}" -v up "${TARGET}" --no-hooks
+linchpin -w . -p "${PINFILE}" -v up "${TARGET}" --no-hooks
 
 # testing --ignore-failed-hooks flag
 echo "Testing --ignore-failed-hooks flag"
-linchpin -w "${WORKSPACE_PATH}" -p "${PINFILE}" -v up "${TARGET}" --ignore-failed-hooks
+linchpin -w . -p "${PINFILE}" -v up "${TARGET}" --ignore-failed-hooks
