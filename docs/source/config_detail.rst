@@ -1,5 +1,5 @@
-Configuration File
-==================
+Configuration Options
+=====================
 
 .. contents:: Topics
 
