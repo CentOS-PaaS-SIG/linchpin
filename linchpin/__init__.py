@@ -1019,7 +1019,7 @@ class LinchpinAPI(object):
         module_paths = []
         module_folder = self.get_cfg('lp',
                                      'module_folder',
-                                         default='library')
+                                     default='library')
         for path in reversed(self.pb_path):
             module_paths.append('{0}/{1}/'.format(path, module_folder))
         return module_paths
@@ -1036,7 +1036,8 @@ class LinchpinAPI(object):
                                           console=console)
         return return_code, res
 
-    def _invoke_playbooks(self, resources={}, action='up', console=True,  providers=[]):
+    def _invoke_playbooks(self, resources={}, action='up', console=True,
+                          providers=[]):
         """
         Uses the Ansible API code to invoke the specified linchpin playbook
 
@@ -1065,12 +1066,14 @@ class LinchpinAPI(object):
         if action == 'destroy':
             self.set_evar('state', 'absent')
 
+        inventory_src = '{0}/localhost'.format(self.workspace)
+
         for resource in resources:
             self.set_evar('resources', resource)
             playbook = resource.get('resource_group_type')
-            return_code, res = _find_n_run_pb(playbook,
-                                              inventory_src,
-                                              console=console)
+            return_code, res = self._find_n_run_pb(playbook,
+                                                   inventory_src,
+                                                   console=console)
             if res:
                 results.append(res)
 

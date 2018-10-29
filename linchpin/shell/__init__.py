@@ -627,6 +627,7 @@ It is suggested to update any of the following:
         ctx.log_state(e)
         sys.exit(1)
 
+
 @runcli.command()
 @click.argument('providers', metavar='PROVIDERS', required=False,
                 nargs=-1)
@@ -643,6 +644,7 @@ def setup(ctx, providers, ask_sudo_pass):
     lpcli.ctx.set_evar("ask_sudo_pass", ask_sudo_pass)
     return_code, output = lpcli.lp_setup(providers)
     return sys.exit(return_code)
+
 
 def main():
     # print("entrypoint")

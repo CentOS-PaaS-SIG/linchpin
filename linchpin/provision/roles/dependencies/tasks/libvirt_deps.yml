@@ -2,16 +2,12 @@
   block:
     - name: Install package dependencies
       package:
-        name: "{{ libvirt_pkg }}"
-        state: latest
-      with_items:
-      - python2-dnf 
-      - libvirt-devel
-      - libguestfs-tools 
-      - python-libguestfs
+        name:
+          - python2-dnf 
+          - libvirt-devel
+          - libguestfs-tools 
+          - python-libguestfs
       become: true
-      loop_control: 
-        loop_var: libvirt_pkg
     - name: Install pypi dependencies of libvirt
       pip:
         name: "{{ libvirt_pypi }}"

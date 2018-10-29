@@ -18,7 +18,6 @@ from linchpin.exceptions import ActionError
 from linchpin.exceptions import LinchpinError
 from linchpin.exceptions import TopologyError
 from linchpin.utils.dataparser import DataParser
-from linchpin.ansible_runner import ansible_runner
 
 
 
