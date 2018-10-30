@@ -183,20 +183,41 @@ def help(ctx):
 
 
 @runcli.command('init', short_help='Initializes a linchpin project.')
+@click.argument('provider', metavar='PROVIDER', required=False, nargs=1)
 @pass_context
-def init(ctx):
+def init(ctx, provider):
     """
     Initializes a linchpin project, which generates an example PinFile, and
     creates the necessary directory structure for topologies and layouts.
 
+    Utilizes lp_fetch with the following parameters:
+
+    remote:         git://github.com/CentOS-PaaS-SIG/linchpin
+    root:           workspaces
+    fetch_type:     workspace
+    fetch_protocol: FetchGit
+    fetch_ref:      master
+    dest_ws:        Unused, will use workspace/provider
+    nocache:        True
+
+
     """
 
-    # add a providers option someday
-    providers = None
+    remote = ctx.get_cfg('init', 'remote',
+                         default='git://github.com/CentOS-PaaS-SIG/linchpin')
+    root = ctx.get_cfg('init', 'root', default='workspaces/dummy')
+    fetch_type = ctx.get_cfg('init', 'fetch_type', default='workspace')
+    fetch_proto = 'FetchGit'
+    fetch_ref = ctx.get_cfg('init', 'fetch_ref', default='master')
+    nocache = ast.literal_eval(ctx.get_cfg('init', 'nocache', default='True'))
+
+    if provider:
+        root = 'workspaces/{0}'.format(provider)
 
     try:
-        # lpcli.lp_init(pf_w_path, targets) # TODO implement targets option
-        lpcli.lp_init(providers=providers)
+        lpcli.lp_fetch(remote, root=root, fetch_type=fetch_type,
+                       fetch_protocol=fetch_proto, fetch_ref=fetch_ref,
+                       dest_ws=None, nocache=nocache)
     except LinchpinError as e:
         ctx.log_state(e)
         sys.exit(1)
