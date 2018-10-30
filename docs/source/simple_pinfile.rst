@@ -3,7 +3,7 @@ PinFile
 
 A :term:`PinFile` takes a :term:`topology` and an optional :term:`layout`, among other options, as a combined set of configurations as a resource for provisioning. An example :term:`Pinfile` is shown.
 
-The *simple* PinFile is shown below
+The PinFile in the *simple* workspace is shown below.
 
 .. code-block:: yaml
 
@@ -34,7 +34,7 @@ A target will have subcomponents, which tell `linchpin` what it should do and ho
 Topology
 ++++++++
 
-A topology\ :sup:`3`\  consists of several items. First and foremost is the topology_name\ :sup:`4`\, followed by one or more resource_groups\ :sup:`5`\. In the *simple* example, there is only one resource group.
+A topology\ :sup:`3`\  consists of several items. First and foremost is the topology_name\ :sup:`4`\, followed by one or more resource_groups\ :sup:`5`\. In this PinFile, there is only one resource group.
 
 Resource Group
 ++++++++++++++
@@ -44,9 +44,9 @@ A resource group contains several items, minimally, it will have a resource_grou
 Resource Definitions
 ++++++++++++++++++++
 
-Within a resource group, multiple resource definitions can exist. In many cases, there are desires for two different resources to be provisioned within a resource group. In this example, there is only one. Each provider has its own constraints for what is required. There are some common fields, however. In the example above, there is name\ :sup:`9`\ and role\ :sup:`10`\, and count\ :sup:`11`\.
+Within a resource group, multiple resource definitions can exist. In many cases, there are desires for two different resources to be provisioned within a resource group. In this example, there is only one. Each provider has its own constraints for what is required. There are some common fields, however. In the example above, there is name\ :sup:`9`\, role\ :sup:`10`\, and count\ :sup:`11`\.
 
-.. note:: The role relates to the ansible role used to perform provisioning. In this case, that's the *dummy_node* role. But many providers have multiple roles within a resource.
+.. note:: The role relates to the ansible role used to perform provisioning. In this case, that's the *dummy_node* role. But many providers have multiple roles.
 
 Definitions help, but lets see it in :doc:`action <simple_up>`.
 
