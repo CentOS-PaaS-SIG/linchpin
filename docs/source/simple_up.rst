@@ -6,7 +6,7 @@ It's time to provision your first LinchPin resources.
 .. code-block:: bash
 
     1   [/tmp/simple]$ linchpin up
-    2    [WARNING]: Unable to parse /tmp/dummy/simple/localhost as an inventory source
+    2    [WARNING]: Unable to parse /tmp/simple/localhost as an inventory source
 
     3    [WARNING]: No inventory was parsed, only implicit localhost is available
 
@@ -36,23 +36,20 @@ Upon completion of every action, there is a summary that is provided. This summa
 uHash
 +++++
 
-The Unique-ish Hash, or uHash\ :sup:`8`\ provides a way for each instance to be unique within a set of resources.The uHash is used throughout LinchPin with reporting, idempotency, inventories, etc. The uHash is configurable, but currently is a sha256 hash of some unique data, trimmed to 6 characters.
+The Unique-ish Hash, or uHash\ :sup:`8` provides a way for each instance to be unique within a set of resources. The uHash is used throughout LinchPin with reporting, idempotency, inventories, etc. The uHash is configurable, but defaults to a sha256 hash of some unique data, trimmed to 6 characters.
 
 Run ID
 ++++++
 
-The Run ID\:sup:`8`\ can be used for idempotency. The Run ID is used for a specific target.
-
-ID
-++
-
-Similar to the Run ID explained above, the ID\ :sup:`5`\, or Transaction ID, is provided for idempotency. If desired, the entire transaction can be repeated using this value. Unlike the Run ID, however, the Transaction ID can be used to repeat the entire transaction (multiple targets).
+The Run ID\ :sup:`8` can be used for idempotency. The Run ID is used for a specific target. Passing ``-r <run-id>`` to ``linchpin up`` or ``linchpin destroy`` along with the target will provide an idempotent up or destroy action.
 
 .. code-block:: bash
 
-    $ linchpin up --tx-id 10
+    $ linchpin up --run-id 2 simple
 
     .. snip ..
+
+    Action 'up' on Target 'simple' is complete
 
     ID: 11
     Action: up
@@ -62,6 +59,26 @@ Similar to the Run ID explained above, the ID\ :sup:`5`\, or Transaction ID, is 
     simple              	     3	3a4038	        0
 
 The thing to notice here is that the uHash is the same here as in the original *up* action above. This provides idempotency when provisioning.
+
+ID
+++
+
+Similar to the Run ID explained above, the Transaction ID, or ID\ :sup:`5`\, is provided for idempotency. If desired, the entire transaction can be repeated using this value. Unlike the Run ID, however, the Transaction ID can be used to repeat the entire transaction (multiple targets). As with Run ID, passing ``-t <tx-id>`` will provide idempotent an idempotent up or destroy action.
+
+.. code-block:: bash
+
+    $ linchpin up --tx-id 10
+
+    .. snip ..
+
+    ID: 12
+    Action: up
+
+    Target              	Run ID	uHash	Exit Code
+    -------------------------------------------------
+    simple              	     4	3a4038	        0
+
+.. note:: All targets are executed when using ``-t/--tx-id``. This differs from ``-r/--run-id`` where only one target can be supplied per Run ID. This is useful when multiple targets are executed from the PinFile.
 
 
 Exit Code
@@ -78,13 +95,13 @@ To destroy the previously provisioned resources, use ``linchpin destroy``.
 .. code-block:: bash
 
     $ linchpin destroy
-     [WARNING]: Unable to parse /tmp/dummy/simple/localhost as an inventory source
+     [WARNING]: Unable to parse /tmp/simple/localhost as an inventory source
 
      [WARNING]: No inventory was parsed, only implicit localhost is available
 
     Action 'destroy' on Target 'simple' is complete
 
-    ID: 12
+    ID: 13
     Action: destroy
 
     Target              	Run ID	uHash	Exit Code
