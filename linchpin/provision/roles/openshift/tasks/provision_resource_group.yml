@@ -3,20 +3,17 @@
   set_fact:
     auth_var: ""
 
-- name: "set default_cred_profile when res_grp[credentials] is undefined"
-  set_fact:
-    cred_profile: 'default'
-  when: res_grp['credentials'] is not defined
-
 - name: "set default_cred_filename when res_grp[credentials] is undefined"
   set_fact:
     cred_filename: 'openshift.yaml'
   when: res_grp['credentials'] is not defined
 
+  # sets cred profile as 'default' if key profile is not mentioned in
+  # credentials section of topology
 - name: "set default_cred_filename when res_grp[credentials] is undefined"
   set_fact:
-    cred_profile: "{{ res_grp['credentials']['profile'] }}"
-  when: res_grp['credentials'] is defined and res_grp['credentials']['profile'] is defined
+    cred_profile: "{{ res_grp['credentials']['profile'] | default('default') }}"
+  when: res_grp['credentials'] is defined
 
 - name: "set default_cred_filename when res_grp[credentials] is defined"
   set_fact:
