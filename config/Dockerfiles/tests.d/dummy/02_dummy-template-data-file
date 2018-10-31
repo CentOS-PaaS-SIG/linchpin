@@ -8,7 +8,7 @@
 DISTRO=${1}
 PROVIDER=${2}
 
-TARGET="dummy-new"
+TARGET="dummy"
 TEMPLATE_FILE=$(mktemp)
 
 function clean_up {
