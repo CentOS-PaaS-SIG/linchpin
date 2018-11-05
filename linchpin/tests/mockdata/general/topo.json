@@ -73,6 +73,18 @@
         "hosts": ["test-b3a49a-0.example.net"],
         "dummy_file": "/tmp/dummy.hosts"
     }],
+    "nummy_res": [{
+        "failed": false,
+        "changed": true,
+        "hosts": ["web-b3a49a-0.example.net", "web-b3a49a-1.example.net", "web-b3a49a-2.example.net"],
+        "nummy_file": "/tmp/nummy.hosts"
+    },
+    {
+        "failed": false,
+        "changed": true,
+        "hosts": ["test-b3a49a-0.example.net"],
+        "nummy_file": "/tmp/nummy.hosts"
+    }],
     "beaker_res": [{
         "system": "25.23.79.188"
     },
