@@ -9,6 +9,7 @@
   set_fact:
     topology_outputs:
       dummy_res: "{{ topology_outputs_dummy | default([]) }}"
+      nummy_res: "{{ topology_outputs_nummy | default([]) }}"
       os_server_res: "{{ topology_outputs_os_server | default([]) }}"
       os_keypair_res: "{{ topology_outputs_os_keypair | default([]) }}"
       os_obj_res: "{{ topology_outputs_os_obj | default([]) }}"
