@@ -4,7 +4,7 @@
 # Author: samvarankashyap- @samvarankashyap <skr@redhat.com>
 #
 # Provision a nummy server. Useful for testing the linchpin api provisioner
-# without using actual resources. This is a clone of @herlo 's dummy provider 
+# without using actual resources. This is a clone of @herlo 's dummy provider
 # in linchpin
 
 import os
@@ -18,7 +18,7 @@ DOCUMENTATION = '''
 ---
 version_added: "0.1"
 module: nummy
-short_description: Dummy clone instance managemer 
+short_description: Dummy clone instance managemer
 description:
   - This module allows a user to manage any number of nummy systems.
 options:

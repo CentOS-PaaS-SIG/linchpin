@@ -89,15 +89,14 @@ def test_get_host_data():
     """
     host_data = filter.get_host_data(res_output, config)
     expected_providers = ['aws', 'openstack', 'dummy', 'gcloud', 'beaker',
-                          'libvirt', 'duffy', 'ovirt']
+                          'libvirt', 'duffy', 'ovirt', 'nummy']
     assert_equal(set(host_data.keys()), set(expected_providers))
 
     for provider in host_data:
         for host in host_data[provider]:
-            if provider == 'dummy' or provider == 'duffy':
+            if provider in ['duffy', 'dummy', 'nummy']:
                 continue
             assert_true('__IP__' in host_data[provider][host].keys())
-
 
 @with_setup(setup_generic_inventory_filter)
 def test_get_hosts_by_count():

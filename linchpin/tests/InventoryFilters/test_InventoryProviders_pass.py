@@ -11,6 +11,7 @@ from linchpin.InventoryFilters.AWSInventory import AWSInventory
 from linchpin.InventoryFilters.BeakerInventory import BeakerInventory
 from linchpin.InventoryFilters.DuffyInventory import DuffyInventory
 from linchpin.InventoryFilters.DummyInventory import DummyInventory
+from linchpin.InventoryFilters.NummyInventory import NummyInventory
 from linchpin.InventoryFilters.GCloudInventory import GCloudInventory
 from linchpin.InventoryFilters.LibvirtInventory import LibvirtInventory
 from linchpin.InventoryFilters.OpenstackInventory import OpenstackInventory
@@ -26,6 +27,7 @@ def test_get_all_drivers():
         "beaker": BeakerInventory,
         "duffy": DuffyInventory,
         "dummy": DummyInventory,
+        "nummy": NummyInventory,
         "gcloud": GCloudInventory,
         "libvirt": LibvirtInventory,
         "openstack": OpenstackInventory,
