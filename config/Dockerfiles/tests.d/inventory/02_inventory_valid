@@ -1,0 +1,90 @@
+#!/bin/bash -xe
+
+# Verify template-based provisioning using complex template data file
+# distros.exclude: none
+# providers.include: aws
+# providers.exclude: none
+
+DISTRO=${1}
+PROVIDER=${2}
+
+PINFILE="PinFile"
+TARGET="dummy-aws"
+CONFIG_FILE="../linchpin.conf"
+TMP_FILE=$(mktemp)
+
+DESCRIPTION="${PROVIDER} provisioning using complex template data file"
+
+echo "${DESCRIPTION}"
+
+function clean_up {
+    set +e
+    linchpin -w . -p "${PINFILE}" -v destroy "${TARGET}"
+    rm ${TMP_FILE}
+}
+trap clean_up EXIT SIGHUP SIGINT SIGTERM
+
+function verify_sections {
+    local INV_FILE=$1
+    # get the line number of each section header
+    local SECTIONS=($(grep -n '\[.*\]' $INV_FILE) | cut -f1 -d:)
+    TMP_RC=0
+    
+    # call parse section with the indices of the section header and the next section header
+    # in the file
+    for ((index=0; index < ${#SECTIONS[@]}; index++)); do
+        parse_section $INV_FILE SECTIONS[$index] SECTIONS[$(($index+1))]
+        RC0=$(($RC0+$TMP_RC))
+    done
+    # since there is not "next section header" for the last one, we use `wc -l` + 1
+    end = $((`wc -l $INV_FILE | cut -f1 -d' '` + 1))
+    parse_section $INV_FILE ${SECTIONS[-1]} $end
+    RC0=$(($RC0+$TMP_RC))
+}
+
+function parse_section {
+    local INV_FILE=$1
+    local HEADER=$2
+    declare -A PREFIXES=( ["[dummy-layout]"]="test-" ["[dummy-master]"]="test-" ["[aws-layout]"]="ec2-" ["[all]"]="" ["[all:vars]"]="" ["[dummy:vars]"]="" ["[dummy:children]"]="")
+    declare -A COUNTS=( ["[dummy-layout]"]=3 ["[dummy-master]"]=1 ["[aws-layout]"]=1 ["[all]"]=4 ["[all:vars]"]=3 ["[dummy:vars]"]=1 ["[dummy-children]"]=2)
+    local COUNT=0
+
+    # find the section the begins with $HEADER and ends at the next header section, which
+    # begins with a left square bracket. Iterate through each line
+    for line in $(awk -v h=$HEADER '0~h{p=1;print;next} p&&/^\[/{p=0};p' $INV_FILE); do
+        # ignore blank lines
+        if [[ -z $line ]]; then continue; fi
+        # check that line has correct prefix
+        if [[ $line != ${PREFIXES[$HEADER]}* ]]; then
+            echo "[ERROR] expected line containing prefix ${PREFIXES[$HEADER]}, found $line"
+        fi
+    done
+    if [[ $COUNT -ne ${COUNTS[$HEADER]} ]]; then
+        echo "[ERROR] expected ${COUNTS[$HEADER]} results for section $HEADER, found $COUNT"
+        TMP_RC=1
+    fi
+}
+
+
+
+pushd docs/source/examples/workspaces/template-inventory
+
+linchpin -w . -p "${PINFILE}" -c "${CONFIG_FILE}" -v up "${TARGET}" 2>&1 | tee -a ${TMP_FILE}
+
+sed -i '$ d' ${TMP_FILE}
+uhash=$(tail -n 1 ${TMP_FILE} | awk '{ print $3 }' )
+echo ${uhash}
+
+INVENTORY_FILE="./inventories/${TARGET}-${uhash}.inventory"
+ls -l ${INVENTORY_FILE}
+grep ${VAL2CHECK} ${INVENTORY_FILE} | grep ${VALUE}
+RC1=${?}
+
+verify_sections $INVENTORY_FILE
+
+
+if [ ${RC0} -eq 0 ] && [ ${RC1} -eq 0 ]; then
+    exit 0
+else
+    exit $((RC0+RC1))
+fi
