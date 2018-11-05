@@ -7,6 +7,7 @@ from .AWSInventory import AWSInventory
 from .BeakerInventory import BeakerInventory
 from .DuffyInventory import DuffyInventory
 from .DummyInventory import DummyInventory
+from .NummyInventory import NummyInventory
 from .GCloudInventory import GCloudInventory
 from .LibvirtInventory import LibvirtInventory
 from .OpenstackInventory import OpenstackInventory
@@ -20,6 +21,7 @@ filter_classes = {
     "beaker": BeakerInventory,
     "duffy": DuffyInventory,
     "dummy": DummyInventory,
+    "nummy": NummyInventory,
     "gcloud": GCloudInventory,
     "libvirt": LibvirtInventory,
     "openstack": OpenstackInventory,
