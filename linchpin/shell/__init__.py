@@ -606,11 +606,11 @@ def validate(ctx, targets, old_schema):
             result = ""
             for kind, outcome in item.iteritems():
                 if outcome == "valid" or outcome == "valid under old schema":
-                    result = "[SUCCESS] {0} for target '{1}' is "\
-                             "{2}".format(kind, target, outcome)
+                    result += "[SUCCESS] {0} for target '{1}' is "\
+                        "{2}\n".format(kind, target, outcome)
                 else:
-                    result = "[ERROR] {0} for target '{1}' does not "\
-                             "validate\n{3}".format(kind, target, outcome)
+                    result += "[ERROR] {0} for target '{1}' does not "\
+                              "validate\n{2}".format(kind, target, outcome)
             ctx.log_state(result)
 
         if old_schema:
