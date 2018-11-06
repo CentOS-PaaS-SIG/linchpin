@@ -1,41 +1,42 @@
 ---
-- name: "call OpenShift with filename"
-  openshift:
-    api_endpoint: "{{ auth_var['openshift_api_endpoint'] }}"
-    api_token: "{{ auth_var['openshift_api_token'] | default(omit) }}"
-    insecure: "{{ def_item['insecure'] | default(omit) }}"
-    file_reference: "{{ def_item['filename'] }}"
+- name: create resource definition
+  k8s:
+    host: "{{ auth_var['openshift_api_endpoint'] }}"
+    api_key: "{{ auth_var['openshift_api_token'] }}"
+    key: "{{ auth_var['openshift_key_file'] | default(omit) }}"
+    context: "{{ auth_var['context'] | default(omit) }}"
+    kubeconfig: "{{ auth_var['kubeconfig'] | default(omit) }}"
+    force: "{{ res_def['force'] | default('no') }}"
+    api_version: "{{ auth_var['openshift_api_version'] | default(omit) }}"
+    cert_file: "{{ auth_var['cert_file'] | default(omit) }}"
+    name: "{{ res_def['name'] }}"
+    namespace: "{{ res_def['namespace'] | default(omit) }}"
+    kind: "{{ res_def['kind'] | default(omit) }}"
     state: "{{ state }}"
-  register: openshift_host
-  when: res_def['role'] == 'openshift_external'
-  with_items: "{{ res_def['filename'] }}"
-  loop_control:
-    loop_var: def_item
+    definition: "{{ res_def['definition'] | default(omit) }}"
+    src: "{{ res_def['src'] | default(omit) }}"
+    verify_ssl: "{{ auth_var['verify_ssl'] | default('no') }}"
+    password: "{{ auth_var['password'] | default(omit) }}"
+    username: "{{ auth_var['username'] | default(omit) }}"
+    ssl_ca_cert: "{{ auth_var['ssl_ca_cert'] | default(omit) }}"
+  register: res_def_output
+  when: auth_var != ""
+
+- name: create resource definition when auth_var is fetched from env
+  k8s:
+    force: "{{ res_def['force'] | default('no') }}"
+    name: "{{ res_def['name'] }}"
+    namespace: "{{ res_def['namespace'] | default(omit) }}"
+    kind: "{{ res_def['kind'] | default(omit) }}"
+    state: "{{ state }}"
+    definition: "{{ res_def['definition'] | default(omit) }}"
+    src: "{{ res_def['src'] | default(omit) }}"
+    verify_ssl: "{{ auth_var['verify_ssl'] | default('no') }}"
+  register: res_def_output
+  when: auth_var == ""
 
 - name: add output to topology
   set_fact:
-    topology_outputs_openshift_resources: "{{ topology_outputs_openshift_resources + [openshift_host] }}"
+    topology_outputs_openshift_resources: "{{ topology_outputs_openshift_resources + [res_def_output] }}"
   when:
     - state == "present"
-    - res_def['filename'] is defined
-
-- name: "call OpenShift with inline data"
-  openshift:
-    api_endpoint: "{{ auth_var['openshift_api_endpoint'] }}"
-    api_token: "{{ auth_var['openshift_api_token'] | default(omit) }}"
-    insecure: "{{ def_item['insecure'] | default(omit) }}"
-    inline_data: "{{ def_item }}"
-    state: "{{ state }}"
-  register: openshift_host
-  when: res_def['role'] == 'openshift_inline'
-  with_items: "{{ res_def['data'] }}"
-  loop_control:
-    loop_var: def_item
-
-- name: add output to topology
-  set_fact:
-    topology_outputs_openshift_resources: "{{ topology_outputs_openshift_resources + [openshift_host] }}"
-  when:
-    - state == "present"
-    - res_def['data'] is defined
-
