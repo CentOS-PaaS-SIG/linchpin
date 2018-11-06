@@ -10,8 +10,11 @@
                     "allowed": ["openshift_inline", "openshift_external"]
                 },
                 "name": { "type": "string", "required": true },
-                "data": { "required": false },
-                "filename": { "required": false }
+                "force": {"type": "boolean", "required": false },
+                "kind": {"type": "string", "required": false },
+                "namespace": {"type": "string", "required": false },
+                "definition": {"type": "dict", "required": false },
+		"src": {"type": "string", "required": false }
             }
         }
     }
