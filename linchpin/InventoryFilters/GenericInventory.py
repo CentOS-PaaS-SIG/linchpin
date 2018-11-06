@@ -44,7 +44,6 @@ class GenericInventory(InventoryFilter):
         return all_hosts[:count]
 
     def get_inventory(self, res_output, layout, topology):
-
         # get the provisioning order
         sort_order = []
         for resource_group in topology["resource_groups"]:
