@@ -82,7 +82,7 @@ class Dummy:
 #        return host_str
 
 
-    def allocate(self, name, count=1, domain=".example.net"):
+    def allocate(self, name, count=1, domain=""):
         """
         Create some dummy host as if these systems existed.
         Write the host out to the dummy.hosts temporary file to avoid
@@ -113,7 +113,7 @@ class Dummy:
         return (changed, hosts)
 
 
-    def deallocate(self, name, count=1, domain=".example.net"):
+    def deallocate(self, name, count=1, domain=""):
         """
         Deallocate some dummy host.
         Remove the host from the dummy.hosts temporary file.
