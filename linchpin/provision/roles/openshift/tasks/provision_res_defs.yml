@@ -1,13 +1,13 @@
 ---
 - name: create resource definition
   k8s:
-    host: "{{ auth_var['openshift_api_endpoint'] }}"
-    api_key: "{{ auth_var['openshift_api_token'] }}"
-    key: "{{ auth_var['openshift_key_file'] | default(omit) }}"
+    host: "{{ auth_var['api_endpoint'] }}"
+    api_key: "{{ auth_var['api_token'] }}"
+    key: "{{ auth_var['key_file'] | default(omit) }}"
     context: "{{ auth_var['context'] | default(omit) }}"
     kubeconfig: "{{ auth_var['kubeconfig'] | default(omit) }}"
     force: "{{ res_def['force'] | default('no') }}"
-    api_version: "{{ auth_var['openshift_api_version'] | default(omit) }}"
+    api_version: "{{ auth_var['api_version'] | default(omit) }}"
     cert_file: "{{ auth_var['cert_file'] | default(omit) }}"
     name: "{{ res_def['name'] }}"
     namespace: "{{ res_def['namespace'] | default(omit) }}"
