@@ -484,6 +484,8 @@ def main():
             except KeyError:
                 module.fail_json(msg="invalid resource kind specified"
                                      " in the data: '%s'" % kind)
+            if namespace is None:
+                namespace = ""
             url = url.replace("{namespace}", namespace)
         else:
             url = target_endpoint
