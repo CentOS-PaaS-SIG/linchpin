@@ -107,6 +107,7 @@ class AnsibleActionManager(ActionManager):
 
         self.load()
         extra_vars = {}
+        runners = []
 
         for action in self.action_data["actions"]:
             path = self.action_data["path"]
@@ -127,16 +128,21 @@ class AnsibleActionManager(ActionManager):
 
             e_vars = action.get("extra_vars", {})
             extra_vars.update(e_vars)
+            verbosity = self.kwargs.get('verbosity', 1)
 
             if self.context:
                 extra_vars.update(self.get_ctx_params())
             if 'inventory_file' in self.target_data and self.context:
                 inv_file = self.target_data["inventory_file"]
-                verbosity = self.kwargs.get('verbosity', 1)
-                return ansible_runner(playbook,
-                                      "",
-                                      extra_vars,
-                                      inventory_src=inv_file,
-                                      verbosity=verbosity)
+                runners.append(ansible_runner(playbook,
+                                              "",
+                                              extra_vars,
+                                              inventory_src=inv_file,
+                                              verbosity=verbosity))
             else:
-                return ansible_runner(playbook, "", extra_vars)
+                runners.append(ansible_runner(playbook,
+                                              "",
+                                              extra_vars,
+                                              inventory_src="localhost",
+                                              verbosity=verbosity))
+        return runners

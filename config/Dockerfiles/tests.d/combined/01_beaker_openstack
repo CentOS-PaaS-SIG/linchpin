@@ -26,7 +26,7 @@ function clean_up {
 }
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
-pushd docs/source/examples/workspace
+pushd docs/source/examples/workspaces/${PROVIDER}
 
 linchpin -w . -p "${PINFILE}" --creds-path=../../../../keys/openstack -v up "${TARGET}" 2>&1 | tee -a ${TMP_FILE}
 

@@ -31,9 +31,9 @@ else
     TARGETS="dummy-new"
 fi
 
-pushd docs/source/examples/workspace
+pushd docs/source/examples/workspaces/${PROVIDER}
 
 echo "CREDS_PATH: ${CREDS_PATH}"
 for target in ${TARGETS}; do
-    linchpin -w . -p PinFile.${PROVIDER}.yml -vvvv validate ${target}
+    linchpin -w . -vvvv validate ${target}
 done

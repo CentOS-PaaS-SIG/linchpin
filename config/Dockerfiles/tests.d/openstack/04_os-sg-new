@@ -8,18 +8,17 @@
 DISTRO=${1}
 PROVIDER=${2}
 
-PINFILE="PinFile.${PROVIDER}.yml"
 TARGET="os-sg-new"
 TEMPLATE_DATA="{\"distro\": \"${DISTRO}-\"}"
 TMP_FILE=$(mktemp)
 
 function clean_up {
     set +e
-    linchpin -w . -p "${PINFILE}" --template-data "${TEMPLATE_DATA}" -v destroy "${TARGET}"
+    linchpin -w . --template-data "${TEMPLATE_DATA}" -v destroy "${TARGET}"
 }
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
-pushd docs/source/examples/workspace
-linchpin -w . -p "${PINFILE}" --template-data "${TEMPLATE_DATA}" --output-pinfile "${TMP_FILE}" -v up "${TARGET}"
+pushd docs/source/examples/workspaces/${PROVIDER}
+linchpin -w . --template-data "${TEMPLATE_DATA}" --output-pinfile "${TMP_FILE}" -v up "${TARGET}"
 
 grep "${DISTRO}" "${TMP_FILE}"

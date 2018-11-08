@@ -1,0 +1,38 @@
+#!/bin/bash -xe
+
+# Verify --no-hooks and --ignore-failed-hooks on dummy provider
+# distros.exclude: none
+# providers.include: dummy
+# providers.exclude: none
+
+DISTRO=${1}
+PROVIDER=${2}
+
+PINFILE="PinFile"
+WORKSPACE_PATH="docs/source/examples/workspaces/dummy-hook-flags"
+TARGET="dummy_target"
+
+function clean_up {
+    set +e
+    linchpin -w . -p "${PINFILE}" -v destroy "${TARGET}"
+    D_RC=0
+    D_RC=(${?} -o ${D_RC})
+    if [ ${D_RC} -ne 0 ]; then
+        exit ${D_RC}
+    fi
+}
+trap clean_up EXIT SIGHUP SIGINT SIGTERM
+
+if [ -e /tmp/dummy.hosts ]; then
+    rm /tmp/dummy.hosts
+fi
+
+pushd ${WORKSPACE_PATH}
+pwd
+# testing no-hooks flag
+echo "Testing --no-hooks flag"
+linchpin -w . -p "${PINFILE}" -v up "${TARGET}" --no-hooks
+
+# testing --ignore-failed-hooks flag
+echo "Testing --ignore-failed-hooks flag"
+linchpin -w . -p "${PINFILE}" -v up "${TARGET}" --ignore-failed-hooks

@@ -10,7 +10,7 @@ PROVIDER=${2}
 
 PINFILE="PinFile"
 TARGET="dummy_target"
-WORKSPACE_PATH="docs/source/examples/workspaces/dummy-hook-flags/"
+WORKSPACE_PATH="docs/source/examples/workspaces/dummy-multi-file-hook/"
 
 function clean_up {
     set +e
@@ -28,9 +28,17 @@ if [ -e /tmp/dummy.hosts ]; then
 fi
 
 # testing no-hooks flag
-echo "Testing --no-hooks flag"
-linchpin -w "${WORKSPACE_PATH}" -p "${PINFILE}" -v up "${TARGET}" --no-hooks
+echo "Testing multi file hook"
+linchpin -w "${WORKSPACE_PATH}" -p "${PINFILE}" -v up "${TARGET}"
 
-# testing --ignore-failed-hooks flag
-echo "Testing --ignore-failed-hooks flag"
-linchpin -w "${WORKSPACE_PATH}" -p "${PINFILE}" -v up "${TARGET}" --ignore-failed-hooks
+# checks the contents of the file using grep
+grep "This is a example hook created" /tmp/ex_hook.txt
+
+# fail if previous command fails
+if [ ${?} -ne 0 ]; then
+    exit ${?}
+fi
+
+if [ -e /tmp/ex_hook.txt ]; then
+    rm /tmp/ex_hook.txt
+fi

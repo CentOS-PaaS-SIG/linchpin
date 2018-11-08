@@ -1,22 +1,8 @@
 ---
-#- name: debug res_def
-#  debug:
-#    var: def_item
-#  with_items: "{{ res_def }}"
-#  loop_control:
-#    loop_var: def_item
-
-- name: debug res_def['data']
-  debug:
-    var: def_item
-  with_items: "{{ res_def['data'] }}"
-  loop_control:
-    loop_var: def_item
-
 - name: "call OpenShift with filename"
   openshift:
-    api_endpoint: "{{ openshift_api_endpoint }}"
-    api_token: "{{ openshift_api_token | default(omit) }}"
+    api_endpoint: "{{ auth_var['openshift_api_endpoint'] }}"
+    api_token: "{{ auth_var['openshift_api_token'] | default(omit) }}"
     insecure: "{{ def_item['insecure'] | default(omit) }}"
     file_reference: "{{ def_item['filename'] }}"
     state: "{{ state }}"
@@ -35,8 +21,8 @@
 
 - name: "call OpenShift with inline data"
   openshift:
-    api_endpoint: "{{ openshift_api_endpoint }}"
-    api_token: "{{ openshift_api_token | default(omit) }}"
+    api_endpoint: "{{ auth_var['openshift_api_endpoint'] }}"
+    api_token: "{{ auth_var['openshift_api_token'] | default(omit) }}"
     insecure: "{{ def_item['insecure'] | default(omit) }}"
     inline_data: "{{ def_item }}"
     state: "{{ state }}"

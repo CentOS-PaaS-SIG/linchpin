@@ -1,9 +1,48 @@
 ---
-- name: "Set cred filename"
+- name: "Unset the authvar from previous run"
   set_fact:
-    openshift_api_endpoint: "{{ res_grp['credentials']['api_endpoint'] | default('') }}"
-    openshift_api_token: "{{ res_grp['credentials']['api_token'] | default('') }}"
+    auth_var: ""
+
+- name: "set default_cred_filename when res_grp[credentials] is undefined"
+  set_fact:
+    cred_filename: 'openshift.yaml'
+  when: res_grp['credentials'] is not defined
+
+  # sets cred profile as 'default' if key profile is not mentioned in
+  # credentials section of topology
+- name: "set default_cred_filename when res_grp[credentials] is undefined"
+  set_fact:
+    cred_profile: "{{ res_grp['credentials']['profile'] | default('default') }}"
   when: res_grp['credentials'] is defined
+
+- name: "set default_cred_filename when res_grp[credentials] is defined"
+  set_fact:
+    cred_filename: "{{ res_grp['credentials']['filename'] }}"
+  when: res_grp['credentials'] is defined and res_grp['credentials']['filename'] is defined
+
+- name: "Get creds from auth driver"
+  auth_driver:
+    filename: "{{ cred_filename }}"
+    cred_type: "openshift"
+    cred_path: "{{ creds_path | default(default_credentials_path) }}"
+    driver: "file"
+  register: auth_var_out
+  ignore_errors: true
+  no_log: "{{ not debug_mode }}"
+  when: res_grp['credentials'] is defined and res_grp['credentials']['filename'] is defined
+
+- name: "set auth_var"
+  set_fact:
+    auth_var: "{{ auth_var_out['output'][cred_profile] }}"
+  ignore_errors: true
+  when: auth_var_out['output'] is defined
+  no_log: "{{ not debug_mode }}"
+  when: res_grp['credentials'] is defined and res_grp['credentials']['filename'] is defined
+
+- name: "set auth_var when filename is not defined"
+  set_fact:
+    auth_var: "{{ res_grp['credentials'] }}"
+  when: res_grp['credentials'] is defined and res_grp['credentials']['filename'] is not defined
 
 - name: "Initiating Provision/Teardown of openshift resource group"
   include: provision_res_defs.yml res_def={{ res_item }}
@@ -11,4 +50,3 @@
     - "{{ res_grp['resource_definitions'] }}"
   loop_control:
     loop_var: res_item
-

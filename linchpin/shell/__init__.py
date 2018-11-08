@@ -183,20 +183,41 @@ def help(ctx):
 
 
 @runcli.command('init', short_help='Initializes a linchpin project.')
+@click.argument('provider', metavar='PROVIDER', required=False, nargs=1)
 @pass_context
-def init(ctx):
+def init(ctx, provider):
     """
     Initializes a linchpin project, which generates an example PinFile, and
     creates the necessary directory structure for topologies and layouts.
 
+    Utilizes lp_fetch with the following parameters:
+
+    remote:         git://github.com/CentOS-PaaS-SIG/linchpin
+    root:           workspaces
+    fetch_type:     workspace
+    fetch_protocol: FetchGit
+    fetch_ref:      master
+    dest_ws:        Unused, will use workspace/provider
+    nocache:        True
+
+
     """
 
-    # add a providers option someday
-    providers = None
+    remote = ctx.get_cfg('init', 'remote',
+                         default='git://github.com/CentOS-PaaS-SIG/linchpin')
+    root = ctx.get_cfg('init', 'root', default='workspaces/dummy')
+    fetch_type = ctx.get_cfg('init', 'fetch_type', default='workspace')
+    fetch_proto = 'FetchGit'
+    fetch_ref = ctx.get_cfg('init', 'fetch_ref', default='master')
+    nocache = ast.literal_eval(ctx.get_cfg('init', 'nocache', default='True'))
+
+    if provider:
+        root = 'workspaces/{0}'.format(provider)
 
     try:
-        # lpcli.lp_init(pf_w_path, targets) # TODO implement targets option
-        lpcli.lp_init(providers=providers)
+        lpcli.lp_fetch(remote, root=root, fetch_type=fetch_type,
+                       fetch_protocol=fetch_proto, fetch_ref=fetch_ref,
+                       dest_ws=None, nocache=nocache)
     except LinchpinError as e:
         ctx.log_state(e)
         sys.exit(1)
@@ -581,19 +602,15 @@ def validate(ctx, targets, old_schema):
         old_schema = False
         return_code, results = lpcli.lp_validate(targets=targets,
                                                  old_schema=old_schema)
-        for target, result in results.iteritems():
-            if result == "topology valid":
-                result = "[SUCCESS] Topology for target '{0}' is "\
-                         "valid".format(target)
-            elif result == "topology valid with old schema":
-                old_schema = True
-                result = "[SUCCESS] Topology for target '{0}' is valid under "\
-                         "old schema".format(target)
-            elif result == "layout valid":
-                result = "[SUCCESS] Layout for target '{0} is "\
-                         "valid".format(target)
-            else:
-                result = "[ERROR] " + result
+        for target, item in results.iteritems():
+            result = ""
+            for kind, outcome in item.iteritems():
+                if outcome == "valid" or outcome == "valid under old schema":
+                    result += "[SUCCESS] {0} for target '{1}' is "\
+                        "{2}\n".format(kind, target, outcome)
+                else:
+                    result += "[ERROR] {0} for target '{1}' does not "\
+                              "validate\n{2}".format(kind, target, outcome)
             ctx.log_state(result)
 
         if old_schema:

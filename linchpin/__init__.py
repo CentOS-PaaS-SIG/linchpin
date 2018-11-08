@@ -863,10 +863,7 @@ class LinchpinAPI(object):
                     self._convert_topology(topology_data)
                     self.validate_topology(topology_data)
                 except SchemaError as s:
-                    error = """Topology for target '{0}' does not validate
-topology: '{1}'
-errors:
-""".format(target, topology_data)
+                    error = "errors:\n".format(target, topology_data)
                     if old_schema:
                         # there's an inline way of doing this with join() but
                         # this looks cleaner
@@ -880,14 +877,15 @@ errors:
                             for line in iter(str(e).splitlines(True)):
                                 error += "\t" + line
 
-                    results[target] = error
+                    results[target]['topology'] = error
                     return_code += 1
                 else:
-                    results[target] = "topology valid with old schema"
+                    results[target]['topology'] = "topology valid under old "\
+                                                  "schema"
 
 
             else:
-                results[target] = "topology valid"
+                results[target]['topology'] = "valid"
 
             # validate layout
             if provision_data[target].get('layout', None):
@@ -896,18 +894,14 @@ errors:
                 try:
                     self.validate_layout(l_data)
                 except SchemaError as e:
-                    error = """
-Layout for target '{0}' does  not validate
-layout: '{1}'
-errors:
-""".format(target, l_data)
+                    error = "errors:".format(target, l_data)
                     for line in iter(str(e).splitlines(True)):
                         error += "\t" + line
 
-                    results[target] += "\n" + error + "\n"
+                    results[target]['layout'] = error + "\n"
 
                 else:
-                    results[target] += "\nlayout valid"
+                    results[target]['layout'] = "valid"
 
 
         return return_code, results

@@ -1,18 +1,19 @@
 #!/bin/bash -xe
 
 # Verify template-based provisioning using complex template data file
-# distros.exclude: fedora28 fedora27
+# distros.exclude: none
 # providers.include: none
 # providers.exclude: dummy openstack beaker duffy
 
 DISTRO=${1}
 PROVIDER=${2}
 
-PINFILE="PinFile.template-inventory.yml"
+PINFILE="PinFile"
 TARGET="${PROVIDER}-template-inventory"
 TOPOLOGY_FILE="./topologies/${PROVIDER}-template-inventory.yml"
 LAYOUT_FILE="./layouts/template-inventory.yml"
 TEMPLATE_FILE="./template-data/template-inventory.yml"
+CONFIG_FILE="../linchpin.conf"
 TMP_FILE=$(mktemp)
 
 DESCRIPTION="${PROVIDER} provisioning using complex template data file"
@@ -26,8 +27,9 @@ function clean_up {
 }
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
-pushd docs/source/examples/workspace
+pushd docs/source/examples/workspaces/template-inventory
 
+ls
 tail -n +2 ${TEMPLATE_FILE} > ${TMP_FILE}
 KEY=$(cat "${TMP_FILE}" | awk -F':' '{ print $1 }')
 V=$(cat "${TMP_FILE}" | awk -F':' '{ print $2 }')
@@ -41,7 +43,7 @@ shopt -s extglob
 VAL2CHECK="${CHECK_VAL##+([[:space:]])}"
 shopt -u extglob
 
-linchpin -w . -p "${PINFILE}" --template-data "@${TEMPLATE_FILE}" -v up "${TARGET}" 2>&1 | tee -a ${TMP_FILE}
+linchpin -w . -p "${PINFILE}" --template-data "@${TEMPLATE_FILE}" -c "${CONFIG_FILE}" -v up "${TARGET}" 2>&1 | tee -a ${TMP_FILE}
 
 RC0=${?}
 
@@ -50,6 +52,7 @@ uhash=$(tail -n 1 ${TMP_FILE} | awk '{ print $3 }' )
 echo ${uhash}
 
 INVENTORY_FILE="./inventories/${TARGET}-${uhash}.inventory"
+ls -l ./inventories
 ls -l ${INVENTORY_FILE}
 grep ${VAL2CHECK} ${INVENTORY_FILE} | grep ${VALUE}
 
