@@ -7,7 +7,7 @@
                 "role": {
                     "type": "string",
                     "required": true,
-                    "allowed": ["openshift_inline", "openshift_external"]
+                    "allowed": ["openshift_inline", "openshift_external", "openshift"]
                 },
                 "name": { "type": "string", "required": true },
                 "force": {"type": "boolean", "required": false },
