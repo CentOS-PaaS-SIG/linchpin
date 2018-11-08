@@ -5,16 +5,17 @@
     state: "{{ state }}"
     wait: "yes"
   register: res_def_output
-  when: not async and auth_var['changed']== true
+  when: not async
   no_log: "{{ not debug_mode }}"
 
 - name: "provisioning/deprovisioning  keypair"
   os_keypair:
+    auth: "{{ auth_var | default(omit) }}"
     name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     state: "{{ state }}"
     wait: "yes"
   register: res_def_output
-  when: not async and auth_var['changed']== false
+  when: not async
   no_log: "{{ not debug_mode }}"
 
 - name: "Generate keyfile "
@@ -38,18 +39,19 @@
   register: res_def_output
   async: "{{ async_timeout }}"
   poll: 0
-  when: async and auth_var['changed']== true
+  when: async
   no_log: "{{ not debug_mode }}"
 
 - name: "Async:: provisioning/deprovisioning  keypair"
   os_keypair:
+    auth: "{{ auth_var | default(omit) }}"
     name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     state: "{{ state }}"
     wait: "yes"
   register: res_def_output
   async: "{{ async_timeout }}"
   poll: 0
-  when: async and auth_var['changed']== false
+  when: async
 
 - name: 'Async:: Check on keypair create task'
   async_status: jid={{ res_def_output.ansible_job_id }}
