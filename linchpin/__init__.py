@@ -2,6 +2,7 @@
 
 import os
 import ast
+import sys
 import json
 import time
 import errno
@@ -769,6 +770,12 @@ class LinchpinAPI(object):
                 self._invoke_playbooks(resources, action=action,
                                        console=ansible_console)
             )
+
+            # logs the return_code back to console and quits
+            # quits if return_code > 0
+            self.ctx.log("Playbook Return code {0}".format(str(return_code)))
+            if return_code > 0:
+                sys.exit(return_code)
 
             if not return_code:
                 self.ctx.log_state("Action '{0}' on Target '{1}' is "

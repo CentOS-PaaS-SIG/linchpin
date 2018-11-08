@@ -15,8 +15,6 @@
   loop_control:
     loop_var: res
   register: bkr
-  ignore_errors: true
-
 
 - name: "set bkr_rsets"
   set_fact:
