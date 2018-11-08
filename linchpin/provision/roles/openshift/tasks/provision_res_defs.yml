@@ -1,42 +1,6 @@
 ---
-- name: create resource definition
-  k8s:
-    host: "{{ auth_var['api_endpoint'] }}"
-    api_key: "{{ auth_var['api_token'] }}"
-    key: "{{ auth_var['key_file'] | default(omit) }}"
-    context: "{{ auth_var['context'] | default(omit) }}"
-    kubeconfig: "{{ auth_var['kubeconfig'] | default(omit) }}"
-    force: "{{ res_def['force'] | default('no') }}"
-    api_version: "{{ auth_var['api_version'] | default(omit) }}"
-    cert_file: "{{ auth_var['cert_file'] | default(omit) }}"
-    name: "{{ res_def['name'] }}"
-    namespace: "{{ res_def['namespace'] | default(omit) }}"
-    kind: "{{ res_def['kind'] | default(omit) }}"
-    state: "{{ state }}"
-    definition: "{{ res_def['definition'] | default(omit) }}"
-    src: "{{ res_def['src'] | default(omit) }}"
-    verify_ssl: "{{ auth_var['verify_ssl'] | default('no') }}"
-    password: "{{ auth_var['password'] | default(omit) }}"
-    username: "{{ auth_var['username'] | default(omit) }}"
-    ssl_ca_cert: "{{ auth_var['ssl_ca_cert'] | default(omit) }}"
-  register: res_def_output
-  when: auth_var != ""
-
-- name: create resource definition when auth_var is fetched from env
-  k8s:
-    force: "{{ res_def['force'] | default('no') }}"
-    name: "{{ res_def['name'] }}"
-    namespace: "{{ res_def['namespace'] | default(omit) }}"
-    kind: "{{ res_def['kind'] | default(omit) }}"
-    state: "{{ state }}"
-    definition: "{{ res_def['definition'] | default(omit) }}"
-    src: "{{ res_def['src'] | default(omit) }}"
-    verify_ssl: "{{ auth_var['verify_ssl'] | default('no') }}"
-  register: res_def_output
-  when: auth_var == ""
-
-- name: add output to topology
-  set_fact:
-    topology_outputs_openshift_resources: "{{ topology_outputs_openshift_resources + [res_def_output] }}"
-  when:
-    - state == "present"
+- name: "provision/teardown resources }}"
+  # The following include might change to role if 
+  # multiple openshift resources come in
+  #include: "provision_{{ res_def['role'] }}.yml"
+  include: "provision_openshift.yml"
