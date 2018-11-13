@@ -6,34 +6,40 @@ openshift-new:
       - resource_group_name: test1
         resource_group_type: openshift
         resource_definitions:
-          - name: openshift
+          - name: hellopod
             role: openshift_inline
-            data:
-              - apiVersion: v1
-                kind: ReplicationController
-                metadata:
-                  name: jenkins-slave
-                  namespace: central-ci-test-ghelling
-                spec:
-                  replicas: 7
-                  selector:
-                    name: jenkins-slave
-                  template:
-                    metadata:
-                      labels:
-                        name: jenkins-slave
-                    spec:
-                      containers:
-                        - image: redhatqecinch/jenkins_slave:latest
-                          name: jenkins-slave
-                          env:
-                            - name: JENKINS_MASTER_URL
-                              value: http://10.8.172.6/
-                            - name: JSLAVE_NAME
-                              value: mynode
-                      restartPolicy: Always
-                      securityPolicy:
-                        runAsUser: 1000090000
-    credentials:
-      filename: name_of_credsfile.yaml  # fetched from --creds-path is provided
-      profile: name_of_profile # defaults to 'default' profile in cred_file
+            namespace: continuous-infra
+            definition:
+              kind: Pod
+              apiVersion: v1
+              metadata:
+                name: hello-openshift
+                labels:
+                  name: hello-openshift
+              spec:
+                containers:
+                - name: hello-openshift
+                  image: openshift/hello-openshift
+                  ports:
+                  - containerPort: 8080
+                    protocol: TCP
+                  resources: {}
+                  volumeMounts:
+                  - name: tmp
+                    mountPath: /tmp
+                  terminationMessagePath: /dev/termination-log
+                  imagePullPolicy: IfNotPresent
+                  capabilities: {}
+                  securityContext:
+                    capabilities: {}
+                    privileged: false
+                volumes:
+                - name: tmp
+                  emptyDir: {}
+                restartPolicy: Always
+                dnsPolicy: ClusterFirst
+                serviceAccount: ''
+                status: {}
+        credentials:
+          filename: upshift.yaml # fetched from --creds-path is provided
+          profile: default
