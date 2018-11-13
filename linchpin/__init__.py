@@ -487,7 +487,7 @@ class LinchpinAPI(object):
 
             schema = json.load(open(sp))
         except Exception as e:
-            raise LinchpinError("Error with schema: '{0]' {1}".format(sp, e))
+            raise LinchpinError("Error with schema: '{0}' {1}".format(sp, e))
 
         v = AnyofValidator(schema)
 
