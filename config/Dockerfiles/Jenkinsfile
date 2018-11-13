@@ -280,7 +280,7 @@ def execute_test(String podname, String container) {
             // Archive our artifacts
             step([$class: 'ArtifactArchiver',
                   allowEmptyArchive: true,
-                  artifacts: '**/*_logs/**,*.txt,*.groovy,**/job.*,**/*.groovy,**/inventory.*',
+                  artifacts: '**/*_logs/**,*.txt,*.groovy,**/job.*,**/*.groovy,**/inventory.*,**/linchpin.latest',
                   excludes: '**/job.props,**/job.props.groovy,**/*.example',
                   fingerprint: true])
         }
