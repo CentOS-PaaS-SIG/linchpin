@@ -1,0 +1,21 @@
+---
+openshift-on-openstack:
+  topology: openshift-on-openstack.yml
+  layout: openshift.yml
+  hooks:
+    postup:
+      - name: openshift-install-rpmrepo
+        type: ansible
+        context: True
+        actions:
+          - playbook: install_openshift_repo.yml
+      - name: openshift-ansible
+        type: ansible
+        context: True
+        actions:
+          - playbook: playbooks/prerequisites.yml
+      - name: openshift-ansible
+        type: ansible
+        context: True
+        actions:
+          - playbook: playbooks/deploy_cluster.yml
