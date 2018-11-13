@@ -67,12 +67,6 @@ def getProvidersToTest(providersMap) {
                         providers[e.key] = 1
                     }
                 }
-                if (!this_match) {
-                    // If we get here then we have a non-target specific change
-                    // and all providers should be tested.
-                    println "Non-provider file matched, will test all providers"
-                    return keysToList(providersMap)
-                }
             }
         }
     }

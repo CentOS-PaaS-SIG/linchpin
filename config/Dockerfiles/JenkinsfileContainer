@@ -25,8 +25,10 @@ tagMap['fedora27'] = STABLE_LABEL
 tagMap['centos7'] = STABLE_LABEL
 
 // Provider: [ PATH/IN/REPO to match, ]
-p_providers = ['dummy':
-                ["^(?!linchpin/version.py).*",
+p_providers = ['__RELEASE__':
+                ["linchpin/version.py"],
+               'dummy':
+                [".*",
                  "^linchpin/provision/roles/dummy/.*",
                  "^linchpin/provision/dummy.yml",
                  "^linchpin/InventoryFilters/DummyInventory.py",
@@ -35,7 +37,8 @@ p_providers = ['dummy':
                  "^linchpin/InventoryFilters/InventoryProviders.py",
                  "^docs/source/examples/workspace/PinFile.dummy.yml",
                  "^config/Dockerfiles/tests.d/general/.*",
-                 "^config/Dockerfiles/tests.d/dummy/.*"],
+                 "^config/Dockerfiles/tests.d/dummy/.*",
+                 "linchpin/version.py"],
                'duffy':
                 ["^linchpin/provision/roles/duffy/.*",
                  "^linchpin/provision/duffy.yml",
@@ -45,7 +48,8 @@ p_providers = ['dummy':
                  "^linchpin/InventoryFilters/InventoryProviders.py",
                  "^docs/source/examples/workspace/PinFile.duffy.yml",
                  "^config/Dockerfiles/tests.d/general/.*",
-                 "^config/Dockerfiles/tests.d/duffy/.*"],
+                 "^config/Dockerfiles/tests.d/duffy/.*",
+                 "linchpin/version.py"],
                'libvirt':
                 ["^linchpin/provision/roles/libvirt/.*",
                  "^linchpin/provision/libvirt.yml",
@@ -55,7 +59,8 @@ p_providers = ['dummy':
                  "^linchpin/InventoryFilters/InventoryProviders.py",
                  "^docs/source/examples/workspace/PinFile.libvirt.yml",
                  "^config/Dockerfiles/tests.d/(general|inventory)/.*",
-                 "^config/Dockerfiles/tests.d/libvirt/.*"],
+                 "^config/Dockerfiles/tests.d/libvirt/.*",
+                 "linchpin/version.py"],
                'aws':
                 ["^linchpin/provision/roles/aws/.*",
                  "^linchpin/provision/aws.yml",
@@ -65,7 +70,8 @@ p_providers = ['dummy':
                  "^linchpin/InventoryFilters/InventoryProviders.py",
                  "^docs/source/examples/workspace/PinFile.aws.yml",
                  "^config/Dockerfiles/tests.d/(general|inventory)/.*",
-                 "^config/Dockerfiles/tests.d/aws/.*"],
+                 "^config/Dockerfiles/tests.d/aws/.*",
+                 "linchpin/version.py"],
                'beaker':
                 ["^linchpin/provision/roles/beaker/.*",
                  "^linchpin/provision/beaker.yml",
@@ -75,7 +81,8 @@ p_providers = ['dummy':
                  "^linchpin/InventoryFilters/InventoryProviders.py",
                  "^docs/source/examples/workspace/PinFile.beaker.yml",
                  "^config/Dockerfiles/tests.d/general/.*",
-                 "^config/Dockerfiles/tests.d/beaker/.*"],
+                 "^config/Dockerfiles/tests.d/beaker/.*",
+                 "linchpin/version.py"],
                'openstack':
                 ["^linchpin/provision/roles/openstack/.*",
                  "^linchpin/provision/openstack.yml",
@@ -85,7 +92,8 @@ p_providers = ['dummy':
                  "^linchpin/InventoryFilters/InventoryProviders.py",
                  "^docs/source/examples/workspace/PinFile.openstack.yml",
                  "^config/Dockerfiles/tests.d/general/.*",
-                 "^config/Dockerfiles/tests.d/openstack/.*"],
+                 "^config/Dockerfiles/tests.d/openstack/.*",
+                 "linchpin/version.py"],
               ]
 
 test_providers = ""
