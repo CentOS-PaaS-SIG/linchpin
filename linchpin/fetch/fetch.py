@@ -124,7 +124,6 @@ class Fetch(object):
         if not os.path.exists(self.config_path):
             config.add_section('http')
             config.add_section('git')
-            config.add_section('local')
             with open(self.config_path, 'w') as configfile:
                 config.write(configfile)
         else:
