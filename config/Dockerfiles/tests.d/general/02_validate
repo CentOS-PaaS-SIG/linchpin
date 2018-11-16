@@ -27,6 +27,8 @@ elif [ "${PROVIDER}" == "beaker" ]; then
     TARGETS="beaker-new"
 elif [ "${PROVIDER}" == "duffy" ]; then
     TARGETS="duffy-new"
+elif [ "${PROVIDER}" == "openshift" ]; then
+    TARGETS="openshift-new"
 else
     TARGETS="dummy-new"
 fi
