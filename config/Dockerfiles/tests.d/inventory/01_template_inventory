@@ -29,6 +29,10 @@ trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
 pushd docs/source/examples/workspaces/template-inventory
 
+if [ ${PROVIDER} -eq "openshift" ]; then
+    exit 0
+fi
+
 ls
 tail -n +2 ${TEMPLATE_FILE} > ${TMP_FILE}
 KEY=$(cat "${TMP_FILE}" | awk -F':' '{ print $1 }')
