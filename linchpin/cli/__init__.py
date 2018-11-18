@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import os
-import re
 import ast
 import sys
 import json
@@ -799,9 +798,9 @@ class LinchpinCli(LinchpinAPI):
             os.makedirs(cache_path)
 
         fetch_class = FETCH_CLASS[fetch_protocol](self.ctx, fetch_type, src,
-                                            dest, cache_path, root=root,
-                                            root_ws=root_ws,
-                                            ref=fetch_ref)
+                                                  dest, cache_path, root=root,
+                                                  root_ws=root_ws,
+                                                  ref=fetch_ref)
         fetch_class.fetch_files()
 
         if nocache:
