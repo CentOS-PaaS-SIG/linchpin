@@ -379,9 +379,10 @@ def destroy(ctx, targets, run_id, tx_id, ignore_failed_hooks, no_hooks):
 @click.option('--branch', 'fetch_ref', metavar='REF', default=None,
               help='Specify the git branch. Used only with'
                    ' git protocol (eg. master).')
-@click.option('--protocol', 'fetch_protocol', default='git',
-              type=click.Choice(['git', 'http', 'local']),
-              help='Specify a protocol. (Default: git)')
+@click.option('--git', 'fetch_protocol', flag_value='FetchGit', default=True,
+              help='Remote is a git repository (default)')
+@click.option('--web', 'fetch_protocol', flag_value='FetchHttp',
+              help='Remote is a web directory')
 @click.option('--nocache', is_flag=True,
               help='Do not check the cached time, just copy the data to the'
                    ' destination')
@@ -393,14 +394,12 @@ def fetch(ctx, remote, fetch_type, root, dest_ws,
 
     """
 
-    fetch_proto = 'Fetch{0}'.format(fetch_protocol.title())
-
     if not fetch_type:
         fetch_type = 'workspace'
 
     try:
         lpcli.lp_fetch(remote, root=root, fetch_type=fetch_type,
-                       fetch_protocol=fetch_proto, fetch_ref=fetch_ref,
+                       fetch_protocol=fetch_protocol, fetch_ref=fetch_ref,
                        dest_ws=dest_ws, nocache=nocache)
     except LinchpinError as e:
         ctx.log_state(e)

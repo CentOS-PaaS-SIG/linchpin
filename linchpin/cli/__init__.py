@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import os
-import re
 import ast
 import sys
 import json
@@ -712,7 +711,7 @@ class LinchpinCli(LinchpinAPI):
 
 
     def lp_fetch(self, src, root='', fetch_type='workspace',
-                 fetch_protocol=None, fetch_ref=None, dest_ws=None,
+                 fetch_protocol='FetchGit', fetch_ref=None, dest_ws=None,
                  nocache=False):
         """
         Fetch a workspace from git, http(s), or a local directory, and
@@ -798,28 +797,10 @@ class LinchpinCli(LinchpinAPI):
         if not os.path.exists(cache_path):
             os.makedirs(cache_path)
 
-        protocol = fetch_protocol
-        if protocol is None:
-            protocol_regex = OrderedDict([
-                (r'((git|ssh|http(s)?)|(git@[\w\.]+))'
-                    r'(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?',
-                    r'FetchGit'),
-                (r'^(http|https)://', 'FetchHttp'),
-                (r'^(file)://', 'FetchLocal')
-            ])
-            for regex, obj in protocol_regex.items():
-                if re.match(regex, src):
-                    fetch_protocol = obj
-                    break
-
-        if protocol is None:  # assume fetch_protocol is git if None
-            protocol = 'FetchGit'
-
-
-        fetch_class = FETCH_CLASS[protocol](self.ctx, fetch_type, src,
-                                            dest, cache_path, root=root,
-                                            root_ws=root_ws,
-                                            ref=fetch_ref)
+        fetch_class = FETCH_CLASS[fetch_protocol](self.ctx, fetch_type, src,
+                                                  dest, cache_path, root=root,
+                                                  root_ws=root_ws,
+                                                  ref=fetch_ref)
         fetch_class.fetch_files()
 
         if nocache:
