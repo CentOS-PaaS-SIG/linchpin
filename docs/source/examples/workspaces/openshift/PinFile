@@ -6,40 +6,19 @@ openshift-new:
       - resource_group_name: test1
         resource_group_type: openshift
         resource_definitions:
-          - name: hellopod
+          - name: testsecret
             role: openshift_inline
             namespace: continuous-infra
             definition:
-              kind: Pod
               apiVersion: v1
+              data:
+                password: dGVzdHBhc3N3b3Jk  # creates a secret with testpassword as password
+                username: dGVzdHVzZXJuYW1l  # creates a secret with testusername as username
+              kind: Secret
               metadata:
-                name: helloopenshift
-                labels:
-                  name: helloopenshift
-              spec:
-                containers:
-                - name: helloopenshift
-                  image: openshift/hello-openshift
-                  ports:
-                  - containerPort: 8080
-                    protocol: TCP
-                  resources: {}
-                  volumeMounts:
-                  - name: tmp
-                    mountPath: /tmp
-                  terminationMessagePath: /dev/termination-log
-                  imagePullPolicy: IfNotPresent
-                  capabilities: {}
-                  securityContext:
-                    capabilities: {}
-                    privileged: false
-                volumes:
-                - name: tmp
-                  emptyDir: {}
-                restartPolicy: Always
-                dnsPolicy: ClusterFirst
-                serviceAccount: ''
-                status: {}
+                name: testsecret
+                namespace: continuous-infra
+              type: kubernetes.io/basic-auth
         credentials:
           filename: upshift.yaml # fetched from --creds-path is provided
           profile: default

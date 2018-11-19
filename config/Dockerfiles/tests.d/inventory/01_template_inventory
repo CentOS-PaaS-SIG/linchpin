@@ -3,7 +3,7 @@
 # Verify template-based provisioning using complex template data file
 # distros.exclude: none
 # providers.include: none
-# providers.exclude: dummy openstack beaker duffy
+# providers.exclude: dummy openstack beaker duffy openshift
 
 DISTRO=${1}
 PROVIDER=${2}
@@ -28,10 +28,6 @@ function clean_up {
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
 pushd docs/source/examples/workspaces/template-inventory
-
-if [ ${PROVIDER} -eq "openshift" ]; then
-    exit 0
-fi
 
 ls
 tail -n +2 ${TEMPLATE_FILE} > ${TMP_FILE}
