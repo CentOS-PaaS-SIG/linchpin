@@ -13,12 +13,12 @@ openshift-new:
               kind: Pod
               apiVersion: v1
               metadata:
-                name: hello-openshift
+                name: helloopenshift
                 labels:
-                  name: hello-openshift
+                  name: helloopenshift
               spec:
                 containers:
-                - name: hello-openshift
+                - name: helloopenshift
                   image: openshift/hello-openshift
                   ports:
                   - containerPort: 8080
