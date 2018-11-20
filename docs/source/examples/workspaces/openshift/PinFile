@@ -1,14 +1,15 @@
 ---
-openshift-new:
+# http://<route_name>-<name_space>.cloud.<end_point>
+simple:
   topology:
-    topology_name: openshift
+    topology_name: simple
     resource_groups:
-      - resource_group_name: test1
+      - resource_group_name: simple
         resource_group_type: openshift
         resource_definitions:
           - name: testsecret
             role: openshift_inline
-            namespace: continuous-infra
+            namespace: {{ namespace | default('continuous-infra') }}
             definition:
               apiVersion: v1
               data:
@@ -19,6 +20,57 @@ openshift-new:
                 name: testsecret
                 namespace: continuous-infra
               type: kubernetes.io/basic-auth
+          - name: testpod
+            role: openshit_inline
+            definition:
+              apiVersion: v1
+              kind: Pod
+              metadata:
+                name: test1
+                namespace: {{ namespace | default('continuous-infra') }}
+                labels:
+                  name: test1-pod
+              spec:
+                containers:
+                  - image: bitnami/nginx
+                    name: test2
+                    ports:
+                      - containerPort: 8080
+          - name: testservice
+            role: openshit_inline
+            definition:
+              apiVersion: v1
+              kind: Service
+              metadata:
+                name: test1-service
+                namespace: {{ namespace | default('continuous-infra') }}
+              spec:
+                ports:
+                  - port: 80
+                    targetPort: 8080
+                selector:
+                  name: test1-pod
+          - name: testroute
+            role: openshit_inline
+            definition:
+              apiVersion: v1
+              kind: Route
+              metadata:
+                name: test1-route
+                namespace: {{ namespace | default('continuous-infra') }}
+              spec:
+                to:
+                  kind: Service
+                  name: test1-service
         credentials:
           filename: upshift.yaml # fetched from --creds-path is provided
           profile: default
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example
