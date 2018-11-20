@@ -9,9 +9,8 @@ def merge_two_dicts(x, y):
 
 def combine_hosts_names(hosts, names):
     result = []
-    for name in names:
-        for host in hosts:
-            result.append(merge_two_dicts(host, name))
+    for i in range(len(names)):
+        result.append(merge_two_dicts(hosts[i], names[i]))
     return result
 
 
