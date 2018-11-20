@@ -14,7 +14,8 @@
                 "kind": {"type": "string", "required": false },
                 "namespace": {"type": "string", "required": false },
                 "definition": {"type": "dict", "required": false },
-		"src": {"type": "string", "required": false }
+		"src": {"type": "string", "required": false },
+		"timeout": {"type": "integer", "required": false }
             }
         }
     }
