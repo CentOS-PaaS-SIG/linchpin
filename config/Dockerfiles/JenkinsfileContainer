@@ -79,7 +79,7 @@ p_providers = ['__RELEASE__':
                  "^linchpin/InventoryFilters/GenericInventory.py",
                  "^linchpin/InventoryFilters/.*InventoryFormatter.py",
                  "^linchpin/InventoryFilters/InventoryProviders.py",
-                 "^docs/source/examples/workspace/PinFile.beaker.yml",
+                 "^docs/source/examples/workspaces/beaker/.*",
                  "^config/Dockerfiles/tests.d/general/.*",
                  "^config/Dockerfiles/tests.d/beaker/.*",
                  "linchpin/version.py"],
