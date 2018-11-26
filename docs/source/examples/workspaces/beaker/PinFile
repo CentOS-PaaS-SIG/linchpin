@@ -17,11 +17,14 @@ beaker-new:
             # option to set cancellation message if linchpin cancels provisioning
             cancel_message: Job cancelled on account of rain
             recipesets:
-              - distro: RHEL-6.5
+              - distro: RHEL-7.5
                 name: rheltest
                 arch: x86_64
+                variant: Server
                 count: 1
-                name: rhel65
+                name: rhel75
+                hostrequires:
+                  - rawxml: '<key_value key="model" op="=" value="KVM"/>'
 
 beaker-family:
   topology:
@@ -44,9 +47,9 @@ beaker-family:
               - family: RedHatEnterpriseLinux7
                 tags:
                   - released
-                name: rheltest
                 arch: x86_64
                 count: 1
                 name: rhel7
+                variant: Server
                 hostrequires:
-                  - rawxml: '<hostlabcontroller op="=" value="lab-02.rhts.eng.bos.redhat.com"/>'
+                  - rawxml: '<key_value key="model" op="=" value="KVM"/>'
