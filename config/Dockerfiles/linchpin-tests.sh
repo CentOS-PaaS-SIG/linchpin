@@ -100,7 +100,6 @@ popd
 pushd "${TESTS_DIR}" &> /dev/null
 for testdir in *; do
     if [ -n "$(ls ${testdir})" ]; then
-	echo "Currently checking testdir ----->>    ${testdir}"
         pushd "${testdir}" &> /dev/null
         for test in *; do
             echo
