@@ -43,13 +43,18 @@
 
 - name: setfact for pod output
   set_fact: 
-    pod_output: "{{ pod_list | get_pod_status(res_def_output) }}"
+    pod_output: "{{ pod_list | get_pod_status(res_def_output) |default('') }}"
   when: state == "present" and res_def_output["result"]["kind"] == "Pod"
+
+- name: set default for pod output
+  set_fact:
+    pod_output: "{{ pod_output | default('') }}"
+  when: state == "present"
 
 - name: fail when pod_output is failure
   fail:
     msg: "Multiple pods in pending/failure state please adjust the timeout value and retry"
-  when: state == "present" and pod_output == 'Failure'
+  when: state == "present" and pod_output == 'Failure' 
 
 - name: add output to topology
   set_fact:
