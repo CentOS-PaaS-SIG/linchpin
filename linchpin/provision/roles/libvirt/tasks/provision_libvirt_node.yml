@@ -101,33 +101,38 @@
   delegate_to: "{{ uri_hostname }}"
   when: uri_hostname != 'localhost'
 
-- name: "Add additional storage"
-  command: "qemu-img resize {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} +{{ definition[3] }}"
-  with_nested:
+- name: Add additional storage
+  block:
+  - name: "Add additional storage"
+    command: "qemu-img resize {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} +{{ definition[3] }}"
+    with_nested:
     - ["{{ libvirt_resource_name }}"]
     - ["{{ libvirt_image_path | expanduser }}"]
     - ["{{ img_src_ext }}"]
     - ["{{ res_def['additional_storage'] | default('1G') }}"]
     - "{{ res_count.stdout }}"
-  loop_control:
-    loop_var: definition
-  become: "{{ libvirt_become }}"
-  when: res_def['additional_storage'] is defined and node_exists['failed'] is defined and uri_hostname == 'localhost'
+    loop_control:
+      loop_var: definition
+    become: "{{ libvirt_become }}"
+    when: res_def['additional_storage'] is defined and node_exists['failed'] is defined and uri_hostname == 'localhost'
 
-- name: "Add additional storage"
-  command: "qemu-img resize {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} +{{ definition[3] }}"
-  with_nested:
-    - ["{{ libvirt_resource_name }}"]
-    - ["{{ libvirt_image_path | expanduser }}"]
-    - ["{{ img_src_ext }}"]
-    - ["{{ res_def['additional_storage'] | default('1G') }}"]
-    - "{{ res_count.stdout }}"
-  loop_control:
-    loop_var: definition
-  become: "{{ libvirt_become }}"
-  remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
-  delegate_to: "{{ uri_hostname }}"
-  when: res_def['additional_storage'] is defined and node_exists['failed'] is defined and uri_hostname != 'localhost'
+  - name: "Add additional storage"
+    command: "qemu-img resize {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} +{{ definition[3] }}"
+    with_nested:
+      - ["{{ libvirt_resource_name }}"]
+      - ["{{ libvirt_image_path | expanduser }}"]
+      - ["{{ img_src_ext }}"]
+      - ["{{ res_def['additional_storage'] | default('1G') }}"]
+      - "{{ res_count.stdout }}"
+    loop_control:
+      loop_var: definition
+    become: "{{ libvirt_become }}"
+    remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
+    delegate_to: "{{ uri_hostname }}"
+    when: res_def['additional_storage'] is defined and node_exists['failed'] is defined and uri_hostname != 'localhost'
+  rescue:
+  - fail:
+      msg: 'Error running command qemu-img. Please make sure the dependencies are installed correctly . Try running `linchpin setup libvirt` to reinstall dependencies'
 
 - include_tasks: virt_customize.yml
   when: virt_type == "virt-customize"
@@ -226,9 +231,13 @@
   delegate_to: "{{ uri_hostname }}"
   when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init"
 
-- name: "Install VM"
-  command: "virt-install --connect {{ definition[6] }} --import --name {{ definition[0] }}_{{ definition[7] }} --autostart --network bridge={{ definition[3] }},model=virtio --ram {{ definition[4] }} --disk path={{ definition[1] }}/{{ definition[0] }}_{{ definition[7] }}.{{ definition[2] }},format={{ definition[5] }},bus=virtio,cache=none --disk path=/tmp/vm-{{ definition[0] }}_{{ definition[7] }}.iso,device=cdrom --wait 10 --os-type=linux --nographics"
-  with_nested:
+- name: running virt-install to boot prepared image
+  block:
+  - debug:
+      msg: 'I execute normally'
+  - name: "Install VM"
+    command: "virt-install --connect {{ definition[6] }} --import --name {{ definition[0] }}_{{ definition[7] }} --autostart --network bridge={{ definition[3] }},model=virtio --ram {{ definition[4] }} --disk path={{ definition[1] }}/{{ definition[0] }}_{{ definition[7] }}.{{ definition[2] }},format={{ definition[5] }},bus=virtio,cache=none --disk path=/tmp/vm-{{ definition[0] }}_{{ definition[7] }}.iso,device=cdrom --wait 10 --os-type=linux --nographics"
+    with_nested:
     - ["{{ libvirt_resource_name }}"]
     - ["{{ libvirt_image_path | expanduser }}"]
     - ["{{ img_src_ext }}"]
@@ -237,11 +246,30 @@
     - ["{{ res_def['format'] | default('qcow2')  }}"]
     - ["{{ res_def['uri'] }}"]
     - "{{ res_count.stdout }}"
-  loop_control:
-    loop_var: definition
-  ignore_errors: yes
-  become: "{{ libvirt_become }}"
-  when: node_exists['failed'] is defined and res_def['cloud_config'] is defined
+    loop_control:
+      loop_var: definition
+    ignore_errors: yes
+    become: "{{ libvirt_become }}"
+    when: node_exists['failed'] is defined and res_def['cloud_config'] is defined
+  - name: "Install VM"
+    command: "virt-install --connect {{ definition[6] }} --import --name {{ definition[0] }}_{{ definition[7] }} --autostart --network bridge={{ definition[3] }},model=virtio --ram {{ definition[4] }} --disk path={{ definition[1] }}/{{ definition[0] }}_{{ definition[7] }}.{{ definition[2] }},format={{ definition[5] }},bus=virtio,cache=none --disk path=/tmp/vm-{{ definition[0] }}_{{ definition[7] }}.iso,device=cdrom --wait 10 --os-type=linux --nographics"
+    with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ libvirt_image_path | expanduser }}"]
+    - ["{{ img_src_ext }}"]
+    - ["{{ res_def['network_bridge'] | default('virbr0')  }}"]
+    - ["{{ res_def['memory'] | default(1024)  }}"]
+    - ["{{ res_def['format'] | default('qcow2')  }}"]
+    - ["{{ res_def['uri'] }}"]
+    - "{{ res_count.stdout }}"
+    loop_control:
+      loop_var: definition
+    ignore_errors: yes
+    become: "{{ libvirt_become }}"
+    when: node_exists['failed'] is defined and res_def['cloud_config'] is defined
+  rescue:
+  - fail:
+      msg: 'Error running command virt-install. Please make sure the dependencies are installed correctly. Try running `linchpin setup libvirt` to reinstall dependencies'
 
 
 - name: "Remove cloud-init cdrom "
@@ -272,17 +300,22 @@
   when: node_exists['failed'] is defined
   ignore_errors: yes
 
-- name: "Create disk if it does not exist"
-  command: "qemu-img create -f qcow2 {{ libvirt_image_path }}/{{ libvirt_resource_name }}-{{ definition[1]['name'] }}.img {{ definition[1]['size'] }}{{ definition[1]['units'] }}"
-  with_nested:
+- name: Attempt and graceful roll back demo
+  block:
+  - name: "Create disk if it does not exist"
+    command: "qemu-img create -f qcow2 {{ libvirt_image_path }}/{{ libvirt_resource_name }}-{{ definition[1]['name'] }}.img {{ definition[1]['size'] }}{{ definition[1]['units'] }}"
+    with_nested:
     - ["{{ res_def['name'] }}"]
     - ["{{ res_def['storage'] }}"]
-  loop_control:
-    loop_var: definition
-  when:
+    loop_control:
+      loop_var: definition
+    when:
     - res_def['storage'] is defined
     - definition[1].source is not defined
-  become: "{{ libvirt_become }}"
+    become: "{{ libvirt_become }}"
+  rescue:
+  - fail:
+      msg: 'Error running command qemu-img. Please make sure the dependencies are installed correctly. Try running `linchpin setup libvirt` to reinstall dependencies'
 
 - name: "Start VM"
   virt:

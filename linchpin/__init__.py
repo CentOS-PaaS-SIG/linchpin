@@ -1015,9 +1015,29 @@ class LinchpinAPI(object):
             latest_run_data[k]["targets"] = [target_group]
         return latest_run_data
 
+    def _get_module_path(self):
+        module_paths = []
+        module_folder = self.get_cfg('lp',
+                                     'module_folder',
+                                     default='library')
+        for path in reversed(self.pb_path):
+            module_paths.append('{0}/{1}/'.format(path, module_folder))
+        return module_paths
 
+    def _find_n_run_pb(self, pb_name, inv_src, console=True):
+        pb_path = self._find_playbook_path(pb_name)
+        playbook_path = '{0}/{1}{2}'.format(pb_path, pb_name, self.pb_ext)
+        extra_vars = self.get_evar()
+        return_code, res = ansible_runner(playbook_path,
+                                          self._get_module_path(),
+                                          extra_vars,
+                                          inventory_src=inv_src,
+                                          verbosity=self.ctx.verbosity,
+                                          console=console)
+        return return_code, res
 
-    def _invoke_playbooks(self, resources, action='up', console=True):
+    def _invoke_playbooks(self, resources={}, action='up', console=True,
+                          providers=[]):
         """
         Uses the Ansible API code to invoke the specified linchpin playbook
 
@@ -1032,37 +1052,30 @@ class LinchpinAPI(object):
         self.set_evar('_action', action)
         self.set_evar('state', 'present')
 
+        if action == 'setup' or action == 'ask_sudo_setup':
+            self.set_evar('setup_providers', providers)
+            return_code, res = self._find_n_run_pb(action,
+                                                   "localhost",
+                                                   console=console)
+            if res:
+                results.append(res)
+            if not len(results):
+                results = None
+            return (return_code, results)
+
         if action == 'destroy':
             self.set_evar('state', 'absent')
+
+        inventory_src = '{0}/localhost'.format(self.workspace)
 
         for resource in resources:
             self.set_evar('resources', resource)
             playbook = resource.get('resource_group_type')
-            pb_path = self._find_playbook_path(playbook)
-            playbook_path = '{0}/{1}{2}'.format(pb_path, playbook, self.pb_ext)
-
-            module_paths = []
-            module_folder = self.get_cfg('lp',
-                                         'module_folder',
-                                         default='library')
-
-            for path in reversed(self.pb_path):
-                module_paths.append('{0}/{1}/'.format(path, module_folder))
-
-            extra_vars = self.get_evar()
-            inventory_src = '{0}/localhost'.format(self.workspace)
-
-            verbosity = self.ctx.verbosity
-            return_code, res = ansible_runner(playbook_path,
-                                              module_paths,
-                                              extra_vars,
-                                              inventory_src=inventory_src,
-                                              verbosity=verbosity,
-                                              console=console)
-
+            return_code, res = self._find_n_run_pb(playbook,
+                                                   inventory_src,
+                                                   console=console)
             if res:
                 results.append(res)
-
 
         if not len(results):
             results = None

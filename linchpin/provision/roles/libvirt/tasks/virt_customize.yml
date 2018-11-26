@@ -63,14 +63,19 @@
   set_fact:
     virt_args: "{{ virt_args }} --selinux-relabel "
 
-- name: "Run virt-customize commands"
-  command: "virt-customize -v -x -a {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} {{ definition[3] }}"
-  with_nested:
+- name: Run prepared virt-customized commands 
+  block:
+  - name: "Run virt-customize commands"
+    command: "virt-customize -v -x -a {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} {{ definition[3] }}"
+    with_nested:
     - ["{{ libvirt_resource_name }}"]
     - ["{{ libvirt_image_path | expanduser }}"]
     - ["{{ img_src_ext }}"]
     - ["{{ virt_args }}"]
     - "{{ res_count.stdout }}"
-  loop_control:
-    loop_var: definition
-  become: "{{ libvirt_become }}"
+    loop_control:
+      loop_var: definition
+    become: "{{ libvirt_become }}"
+  rescue:
+  - fail:
+      msg: 'Error running command virt-customize. Please make sure the dependencies are installed correctly . Try running `linchpin setup libvirt` to reinstall dependencies'

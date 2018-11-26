@@ -236,3 +236,18 @@ As an alternative, LinchPin can be installed via github. This may be done in ord
     ..snip..
     (linchpin) $ pip install file://$PWD/linchpin
 
+linchpin setup : Automatic Dependency installation:
+---------------------------------------------------
+From version 1.6.5 linchpin includes linchpin setup commandline option to automate installations of linchpin dependencies. 
+linchpin setup uses built in ansible-playbooks to carryout the installations. 
+
+Usage: 
+.. code-block:: bash
+    $ linchpin setup    # by default linchpin installs all the dependencies
+
+.. code-block:: bash
+    $ linchpin setup [dependency1] [dependency2] ..    # 
+    $ linchpin setup beaker docs
+
+.. code-block:: bash
+   $ linchpin setup libvirt --ask-sudo-pass    # Also supports ask-sudo-pass parameter when installing dnf related dependencies

@@ -20,6 +20,7 @@ from linchpin.exceptions import TopologyError
 from linchpin.utils.dataparser import DataParser
 
 
+
 class LinchpinCli(LinchpinAPI):
 
     def __init__(self, ctx):
@@ -472,6 +473,24 @@ class LinchpinCli(LinchpinAPI):
             prov_data = provision_data
 
         return self.do_validation(prov_data, old_schema=old_schema)
+
+
+    def lp_setup(self, providers=("all")):
+        """
+        This function takes a list of providers, and setsup the dependencies
+        :param providers:
+            A tuple of providers to install dependencies
+        """
+        if self.ctx.get_evar("ask_sudo_pass"):
+            output = self._invoke_playbooks(providers=providers,
+                                            action="ask_sudo_setup")
+        else:
+            output = self._invoke_playbooks(providers=providers,
+                                            action="setup")
+
+        return output
+
+
 
 
     def lp_destroy(self, targets=(), run_id=None, tx_id=None):

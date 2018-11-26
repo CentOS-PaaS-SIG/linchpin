@@ -1,0 +1,24 @@
+---
+- name: Debug for ask_sudo_pass
+  debug:
+    msg: "{{ setup_providers }}"
+
+
+- name: Install dependecies per provider
+  include_tasks: "{{ indv_prov }}_deps.yml"
+  with_items: "{{ setup_providers }}"
+  loop_control:
+    loop_var: indv_prov
+
+- name: Install all dependencies
+  include_tasks: "{{ setup_prov }}_deps.yml"
+  with_items:
+    - setup_dnf
+    - beaker
+    - libvirt
+    - docs
+    - test
+    - setup_selinux
+  when: setup_providers | length == 0
+  loop_control:
+    loop_var: setup_prov
