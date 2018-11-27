@@ -11,23 +11,25 @@ ansible_python_interpreter = /usr/bin/python3
 ansible_user = root
 
 [aws-layout]
-ec2-54-80-207-97.compute-1.amazonaws.com hostname=ec2-54-80-207-97.compute-1.amazonaws.com
+10.146.230.134 hostname=10.146.230.134
 
 [beaker-layout]
+hp-ml150gen9-01.rhts.eng.bos.redhat.com hostname=hp-ml150gen9-01.rhts.eng.bos.redhat.com
 intel-wildcatpass-03.khw1.lab.eng.bos.redhat.com hostname=intel-wildcatpass-03.khw1.lab.eng.bos.redhat.com
 
 [dummy-master]
-test-5c6dff-2.example.net hostname=test-5c6dff-2.example.net
+test-5c6dff-1.example.net hostname=test-5c6dff-1.example.net
 
 [dummy-layout]
+test-5c6dff-2.example.net hostname=test-5c6dff-2.example.net
 test-5c6dff-0.example.net hostname=test-5c6dff-0.example.net
 test-5c6dff-1.example.net hostname=test-5c6dff-1.example.net
-test-5c6dff-2.example.net hostname=test-5c6dff-2.example.net
 
 [all]
+test-5c6dff-2.example.net hostname=test-5c6dff-2.example.net
 test-5c6dff-0.example.net hostname=test-5c6dff-0.example.net
 test-5c6dff-1.example.net hostname=test-5c6dff-1.example.net
-test-5c6dff-2.example.net hostname=test-5c6dff-2.example.net
-ec2-54-80-207-97.compute-1.amazonaws.com hostname=ec2-54-80-207-97.compute-1.amazonaws.com
+10.146.230.134 hostname=10.146.230.134
+hp-ml150gen9-01.rhts.eng.bos.redhat.com hostname=hp-ml150gen9-01.rhts.eng.bos.redhat.com
 intel-wildcatpass-03.khw1.lab.eng.bos.redhat.com hostname=intel-wildcatpass-03.khw1.lab.eng.bos.redhat.com
 

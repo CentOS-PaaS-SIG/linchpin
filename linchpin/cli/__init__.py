@@ -138,6 +138,10 @@ class LinchpinCli(LinchpinAPI):
                     if "layout_data" in targets[name]["inputs"]:
                         lt_data = targets[name]["inputs"]["layout_data"]
                         t_data = targets[name]["inputs"]["topology_data"]
+                        c_data = {}
+                        if "cfgs" in targets[name].keys():
+                            c_data = targets[name]["cfgs"]["user"]
+                        i_path = targets[name]["outputs"]["inventory_path"][0]
                         layout = lt_data["inventory_layout"]
                         # check whether inventory_file is mentioned in layout
                         if layout.get("inventory_file", None):
@@ -165,7 +169,8 @@ class LinchpinCli(LinchpinAPI):
                         inv = self.generate_inventory(r_o,
                                                       layout,
                                                       inv_format=inv_format,
-                                                      topology_data=t_data)
+                                                      topology_data=t_data,
+                                                      config_data=c_data)
                         # if inv_path is explicitly mentioned it is used
                         if inv_path:
                             i_path = inv_path
@@ -660,6 +665,9 @@ class LinchpinCli(LinchpinAPI):
         provision_data = {}
 
         for target in pf.keys():
+            if target == 'cfgs':
+                provision_data['cfgs'] = pf['cfgs']
+                continue
 
             provision_data[target] = {}
 
@@ -690,8 +698,6 @@ class LinchpinCli(LinchpinAPI):
             if 'hooks' in pf[target]:
                 provision_data[target]['hooks'] = pf[target]['hooks']
             # grab target specific vars
-            if 'cfgs' in pf[target]:
-                provision_data[target]['cfgs'] = pf[target]['cfgs']
 
         return provision_data
 

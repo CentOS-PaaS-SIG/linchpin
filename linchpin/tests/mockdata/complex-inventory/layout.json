@@ -3,7 +3,7 @@
         {"count": 2, "name": "dummy-node", "host_groups": ["dummy-layout"]},
         {"count": 1, "name": "dummy-master", "host_groups": ["dummy-layout", "dummy-master"]}, 
         {"count": 1, "name": "aws-node", "host_groups": ["aws-layout"]},
-        {"count": 1, "name": "beaker-node", "host_groups": ["beaker-layout"]} 
+        {"count": 2, "name": "beaker-node", "host_groups": ["beaker-layout"]} 
     ],
     "vars": {"hostname": "__IP__"},
     "host_groups": {

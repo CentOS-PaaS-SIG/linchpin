@@ -9,13 +9,18 @@ from .InventoryFilter import InventoryFilter
 
 
 class AWSInventory(InventoryFilter):
+    DEFAULT_HOSTNAMES = ['public_dns_name', 'public_ip', 'private_ip']
 
-    def get_host_ips(self, topo):
+    def get_host_data(self, topo, cfgs):
         """
-        Returns a list of hostnames or IP addresses for use in an Ansible
+        Returns a dict of hostnames or IP addresses for use in an Ansible
         inventory file, based on available data. Only a single hostname or IP
         address will be returned per instance, so as to avoid duplicate runs of
         Ansible on the same host via the generated inventory file.
+
+        Each hostname contains mappings of any variable that was defined in the
+        cfgs section of the PinFile (e.g. __IP__) to the value in the field that
+        corresponds with that variable in the cfgs.
 
         If an instance has a public IP attached, its hostname in DNS will be
         returned if available, and if not the public IP address will be used.
@@ -27,24 +32,35 @@ class AWSInventory(InventoryFilter):
 
         :param topo:
             linchpin AWS EC2 resource data
+
+        :param cfgs:
+            map of config options from PinFile
         """
 
-        host_dns_ip = []
+        host_data = {}
+        var_data = cfgs.get('aws', {})
+        if var_data is None:
+            var_data = {}
         for group in topo.get('aws_ec2_res', []):
             for instance in group['instances']:
-                if 'public_dns_name' in instance:
-                    host_dns_ip.append(str(instance['public_dns_name']))
-                elif 'public_ip' in instance.keys():
-                    host_dns_ip.append(str(instance['public_ip']))
-                else:
-                    host_dns_ip.append(str(instance['private_ip']))
-        return host_dns_ip
+                host = self.get_hostname(instance, var_data,
+                                         self.DEFAULT_HOSTNAMES)
+                hostname_var = host[0]
+                hostname = host[1]
+                if '__IP__' not in var_data.keys():
+                    var_data['__IP__'] = hostname_var
+                host_data[hostname] = {}
+                self.set_config_values(host_data[hostname], instance, var_data)
+        return host_data
 
-    def get_inventory(self, topo, layout):
+    def get_host_ips(self, host_data):
+        return host_data.keys()
 
+    def get_inventory(self, topo, layout, config):
         if len(topo['aws_ec2_res']) == 0:
             return ""
-        inven_hosts = self.get_host_ips(topo)
+        host_data = self.get_host_data(topo, config)
+        inven_hosts = self.get_host_ips(host_data)
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)
         self.add_sections(host_groups)
