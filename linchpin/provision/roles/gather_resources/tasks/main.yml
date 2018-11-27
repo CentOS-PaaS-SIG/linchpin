@@ -25,6 +25,7 @@
       beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
       libvirt_res: "{{ topology_outputs_libvirt_nodes | default([]) }}"
       ovirt_vms_res: "{{ topology_outputs_ovirt_vms | default([]) }}"
+      openshift_res: "{{ topology_outputs_openshift_resources | default([]) }}"
 
 # this task only records the outputs necessary.
 # No more will the outputter record a record for every

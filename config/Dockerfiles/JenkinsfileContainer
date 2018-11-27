@@ -94,6 +94,12 @@ p_providers = ['__RELEASE__':
                  "^config/Dockerfiles/tests.d/general/.*",
                  "^config/Dockerfiles/tests.d/openstack/.*",
                  "linchpin/version.py"],
+               'openshift':
+                ["^linchpin/provision/roles/openshift/.*",
+                 "^linchpin/provision/openshift.yml",
+                 "^docs/source/examples/workspaces/openshift/.*",
+                 "^config/Dockerfiles/tests.d/openshift/.*",
+                 "linchpin/version.py"],
               ]
 
 test_providers = ""

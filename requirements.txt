@@ -4,9 +4,9 @@ boto>=2.40.0
 apache-libcloud>=0.20.1
 click
 yamlordereddictloader
-ansible>=2.3.1,<2.7.0
+ansible>=2.7.1
 six>=1.10.0
-shade>=1.18.0,!=1.21.0
+shade>=1.30.0
 naked
 Cerberus>=1.2
 tinydb
@@ -15,3 +15,4 @@ ipaddress>=1.0.17
 PyYAML>=3.12
 jinja2>=2.10
 configparser>=3.5.0
+openshift>=0.8.1

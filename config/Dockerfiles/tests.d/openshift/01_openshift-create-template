@@ -1,0 +1,24 @@
+#!/bin/bash -xe
+
+# Verify os-server provisioning using inline template data
+# distros.exclude: fedora27 centos7
+# providers.include: openshift
+# providers.exclude: none
+
+# Above makes sure that the openshift is ran only once avoiding 
+# residual resources on openshift provider
+
+DISTRO=${1}
+PROVIDER=${2}
+
+TARGET="openshift-new"
+TEMPLATE_DATA="{\"distro\": \"${DISTRO}-\"}"
+
+function clean_up {
+    set +e
+    linchpin -w . -p "${PINFILE}" -v destroy "${TARGET}"
+}
+trap clean_up EXIT SIGHUP SIGINT SIGTERM
+
+pushd docs/source/examples/workspaces/${PROVIDER}
+linchpin -w . -v up "${TARGET}"
