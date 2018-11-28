@@ -21,7 +21,7 @@ openshift-new:
                 namespace: continuous-infra
               type: kubernetes.io/basic-auth
           - name: testpod
-            role: openshit_inline
+            role: openshift_inline
             definition:
               apiVersion: v1
               kind: Pod
@@ -37,7 +37,7 @@ openshift-new:
                     ports:
                       - containerPort: 8080
           - name: testservice
-            role: openshit_inline
+            role: openshift_inline
             definition:
               apiVersion: v1
               kind: Service
@@ -51,7 +51,7 @@ openshift-new:
                 selector:
                   name: test1-pod
           - name: testroute
-            role: openshit_inline
+            role: openshift_inline
             definition:
               apiVersion: v1
               kind: Route
