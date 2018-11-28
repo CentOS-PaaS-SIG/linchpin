@@ -17,9 +17,9 @@
     loop_control:
       loop_var: res
     register: bkr
-    rescue:
-    - fail:
-        msg: 'Error caught in beaker module execution. Might be beacuse of unresolved beaker dependencies. Please run `linchpin setup beaker` or pip install linchpin[beaker] to install beaker dependencies'
+  rescue:
+  - fail:
+      msg: 'Error caught in beaker module execution. Might be beacuse of unresolved beaker dependencies. Please run `linchpin setup beaker` or pip install linchpin[beaker] to install beaker dependencies'
 
 - name: "set bkr_rsets"
   set_fact:
