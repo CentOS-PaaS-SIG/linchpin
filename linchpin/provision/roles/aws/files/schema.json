@@ -19,7 +19,8 @@
                     "security_group": { "type": ["list", "string"], "required": false },
                     "vpc_subnet_id": { "type": "string", "required": false },
                     "assign_public_ip": { "type": "boolean", "required": false },
-                    "instance_tags": { "type": "dict", "required": false }
+                    "instance_tags": { "type": "dict", "required": false },
+                    "wait_timeout": { "type": "integer", "required": false }
                 }
             },
             {
