@@ -1,10 +1,10 @@
 ---
 # http://<route_name>-<name_space>.cloud.<end_point>
-simple:
+openshift-new:
   topology:
-    topology_name: simple
+    topology_name: openshift
     resource_groups:
-      - resource_group_name: simple
+      - resource_group_name: test1
         resource_group_type: openshift
         resource_definitions:
           - name: testsecret
