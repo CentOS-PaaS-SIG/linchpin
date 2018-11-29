@@ -133,7 +133,8 @@ pipeline {
                                 // if __version__ returns blank, we have good confidence
                                 // it's a full release version.
                                 // cd-linchpin-release will attempt a release
-                                if (pre_release == "") {
+                                //if (pre_release == "") {
+                                if ("1" == "0") {
                                     build job: 'cd-linchpin-release',
                                         parameters: [
                                                 string(name: 'ghprbActualCommit',
