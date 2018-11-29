@@ -15,4 +15,4 @@ ipaddress>=1.0.17
 PyYAML>=3.12
 jinja2>=2.10
 configparser>=3.5.0
-openshift>=0.8.1
+openshift>=0.6
