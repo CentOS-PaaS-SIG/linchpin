@@ -777,7 +777,7 @@ class LinchpinAPI(object):
             # logs the return_code back to console and quits
             # quits if return_code > 0
             self.ctx.log("Playbook Return code {0}".format(str(return_code)))
-            if return_code > 0:
+            if return_code > 0 and action == "up":
                 sys.exit(return_code)
 
             if not return_code:
