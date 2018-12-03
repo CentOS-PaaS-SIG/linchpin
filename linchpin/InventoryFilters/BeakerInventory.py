@@ -9,8 +9,7 @@ from .InventoryFilter import InventoryFilter
 class BeakerInventory(InventoryFilter):
     DEFAULT_HOSTNAMES = ['system']
 
-
-    def get_host_data(self, topo, cfgs):
+    def get_host_data(self, res, cfgs):
         """
         Returns a dict of hostnames or IP addresses for use in an Ansible
         inventory file, based on available data. Only a single hostname or IP
@@ -31,34 +30,38 @@ class BeakerInventory(InventoryFilter):
         """
 
         host_data = {}
+        if res['resource_type'] != 'beaker_res':
+            return host_data
         var_data = cfgs.get('beaker', {})
         if var_data is None:
             var_data = {}
-        for group in topo.get('beaker_res', []):
-            host = self.get_hostname(group, var_data,
-                                     self.DEFAULT_HOSTNAMES)
-            hostname_var = host[0]
-            hostname = host[1]
-            host_data[hostname] = {}
-            if '__IP__' not in var_data.keys():
-                var_data['__IP__'] = hostname_var
-                host_data[hostname] = {}
-            self.set_config_values(host_data[hostname], group, var_data)
+        host = self.get_hostname(res, var_data,
+                                 self.DEFAULT_HOSTNAMES)
+        hostname_var = host[0]
+        hostname = host[1]
+        host_data[hostname] = {}
+        if '__IP__' not in var_data.keys():
+            var_data['__IP__'] = hostname_var
+        self.set_config_values(host_data[hostname], res, var_data)
         return host_data
 
     def get_host_ips(self, host_data):
-        return host_data.keys()
+        if host_data:
+            return host_data.keys()
+        else:
+            return []
 
     def add_hosts_to_groups(self, config, inven_hosts, layout):
         pass
 
     def get_inventory(self, topo, layout, config):
-        if not ('beaker_res' in topo):
-            return ''
-        if len(topo['beaker_res']) == 0:
-            return ''
-        host_data = self.get_host_data(topo, config)
-        inven_hosts = self.get_host_ips(host_data)
+        host_data = []
+        inven_hosts = []
+        for res in topo:
+            hd = self.get_host_data(res, config)
+            if hd:
+                host_data.append(hd)
+            inven_hosts.extend(self.get_host_ips(hd))
         host_groups = self.get_layout_host_groups(layout)
         self.add_sections(host_groups)
         # set children for each host group

@@ -83,13 +83,13 @@ class CFGInventoryFormatter(InventoryFormatter):
             for item in items:
                 host_string = item
                 for var in common_vars:
-                    for provider in config.keys():
-                        if item not in config[provider].keys():
+                    for cfg_item in config:
+                        if item not in cfg_item.keys():
                             continue
-                        if common_vars[var] in config[provider][item].keys():
+                        if common_vars[var] in cfg_item[item].keys():
                             value = common_vars[var]
                             host_string += " " + var + "=" +\
-                                           config[provider][item][value]
+                                           cfg_item[item][value]
                         else:
                             host_string += " " + var + "=" + common_vars[var]
                 self.config.set(group, host_string)

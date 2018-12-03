@@ -58,3 +58,12 @@
   set_fact:
     async_outputs_aws_ec2: "{{ async_outputs_aws_ec2 + [res_def_output] }}"
   when: async
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_aws_ec2: "{{ topology_outputs_aws_ec2 | add_res_type( 'aws_ec2_res') }}"
+    
+- name: "Async:: Add type to resource"
+  set_fact:
+    async_outputs_aws_ec2: "{{ async_outputs_aws_ec2 | add_res_type( 'aws_ec2_res') }}"
+  when: async

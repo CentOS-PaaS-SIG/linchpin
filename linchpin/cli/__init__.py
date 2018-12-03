@@ -293,10 +293,6 @@ class LinchpinCli(LinchpinAPI):
             fields = {}
             outputs = data.get('outputs', {})
             resources = outputs.get('resources', [])
-            format_resources = []
-            for provider in resources:
-                format_resources.extend(resources[provider])
-            resources = format_resources
             for dist_role, flds in dist_roles.iteritems():
                 if dist_role in roles:
                     for f in flds.split(','):

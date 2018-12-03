@@ -11,7 +11,7 @@ from .InventoryFilter import InventoryFilter
 class GCloudInventory(InventoryFilter):
     DEFAULT_HOSTNAMES = ['public_ip']
 
-    def get_host_data(self, topo, cfgs):
+    def get_host_data(self, res, cfgs):
         """
         Returns a dict of hostnames or IP addresses for use in an Ansible
         inventory file, based on available data. Only a single hostname or IP
@@ -30,33 +30,36 @@ class GCloudInventory(InventoryFilter):
         :param cfgs:
             map of config options from PinFile
         """
-
         host_data = {}
+        if res['resource_type'] != 'gcloud_gce_res':
+            return host_data
         var_data = cfgs.get('gcloud', {})
         if var_data is None:
             var_data = {}
-        for group in topo.get('gcloud_gce_res', []):
-            for instance in group['instance_data']:
-                host = self.get_hostname(instance, var_data,
-                                         self.DEFAULT_HOSTNAMES)
-                hostname_var = host[0]
-                hostname = host[1]
+        for instance in res['instance_data']:
+            host = self.get_hostname(instance, var_data,
+                                     self.DEFAULT_HOSTNAMES)
+            hostname_var = host[0]
+            hostname = host[1]
+            host_data[hostname] = {}
+            if '__IP__' not in var_data.keys():
+                var_data['__IP__'] = hostname_var
                 host_data[hostname] = {}
-                if '__IP__' not in var_data.keys():
-                    var_data['__IP__'] = hostname_var
-                    host_data[hostname] = {}
-                self.set_config_values(host_data[hostname], group, var_data)
+            self.set_config_values(host_data[hostname], instance, var_data)
         return host_data
 
     def get_host_ips(self, host_data):
         return host_data.keys()
 
     def get_inventory(self, topo, layout, config):
-        if len(topo['gcloud_gce_res']) == 0:
-            return ""
         # get inventory hosts
-        host_data = self.get_host_data(topo, config)
-        inven_hosts = self.get_host_ips(host_data)
+        host_data = []
+        inven_hosts = []
+        for res in topo:
+            hd = self.get_host_data(res, config)
+            if hd:
+                host_data.append(hd)
+            inven_hosts.extend(self.get_host_ips(hd))
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)
         self.add_sections(host_groups)

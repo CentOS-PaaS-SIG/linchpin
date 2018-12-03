@@ -69,3 +69,7 @@
   when:
     - state == "present" 
     - res_def_output["result"]["kind"] != "Pod"
+    
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_openshift_resources: "{{ topology_outputs_openshift_resources | add_res_type('openshift_res') }}"

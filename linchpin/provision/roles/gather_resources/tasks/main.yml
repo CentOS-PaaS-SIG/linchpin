@@ -5,40 +5,124 @@
 
 # NOTE: If there's async or not, lets just use topology_outputs_<resource> values
 # and do the updating after all data collection is complete.
-- name: "Updating topology_outputs"
+# ^^ I don't know what this comment means because it seems like the updating is done first
+- name: "Declare topology_outputs"
   set_fact:
-    topology_outputs:
-      dummy_res: "{{ topology_outputs_dummy | default([]) }}"
-      os_server_res: "{{ topology_outputs_os_server | default([]) }}"
-      os_keypair_res: "{{ topology_outputs_os_keypair | default([]) }}"
-      os_obj_res: "{{ topology_outputs_os_obj | default([]) }}"
-      os_volume_res: "{{ topology_outputs_os_volume | default([]) }}"
-      os_heat_res: "{{ topology_outputs_os_heat | default([]) }}"
-      os_sg_res: "{{ topology_outputs_os_sg | default([]) }}"
-      os_network: "{{ topology_outputs_os_network | default([]) }}"
-      aws_ec2_res: "{{ topology_outputs_aws_ec2 | default([]) }}"
-      aws_s3_res: "{{ topology_outputs_aws_s3 | default([]) }}"
-      aws_ec2_key_res: "{{ topology_outputs_aws_ec2_key | default([]) }}"
-      aws_cfn_res: "{{ topology_outputs_aws_cfn | default([]) }}"
-      gcloud_gce_res: "{{ topology_outputs_gcloud_gce | default([]) }}"
-      duffy_res: "{{ topology_outputs_duffy | default([]) }}"
-      rax_server_res: "{{ topology_outputs_rax_server | default([]) }}"
-      beaker_res: "{{ topology_outputs_beaker_server | default([]) }}"
-      libvirt_res: "{{ topology_outputs_libvirt_nodes | default([]) }}"
-      ovirt_vms_res: "{{ topology_outputs_ovirt_vms | default([]) }}"
-      openshift_res: "{{ topology_outputs_openshift_resources | default([]) }}"
+    topology_outputs: []
+
+- name: "Add dummy_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs_dummy }}"
+  when: topology_outputs_dummy is defined
+
+- name: "Add os_server_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs_os_server }}"
+  when: topology_outputs_os_server is defined
+
+# we have to append here, otherwise we'll nullify the previous os resources
+- name: "Add os_keypair_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs }} + {{ topology_outputs_os_keypair }}"
+  when: topology_outputs_os_keypair is defined and (topology_outputs_os_keypair != [])
+
+# we have to append here, otherwise we'll nullify the previous os resources
+- name: "Add os_obj_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs }} + {{ topology_outputs_os_obj }}"
+  when: topology_outputs_os_obj is defined and (topology_outputs_os_obj != [])
+
+# we have to append here, otherwise we'll nullify the previous os resources
+- name: "Add os_volume_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs }} + {{ topology_outputs_os_volume }}"
+  when: topology_outputs_os_volume is defined and (topology_outputs_os_volume != [])
+
+# we have to append here, otherwise we'll nullify the previous os resources
+- name: "Add os_heat_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs }} + {{ topology_outputs_os_heat }}"
+  when: topology_outputs_os_heat is defined and (topology_outputs_os_heat != [])
+
+# we have to append here, otherwise we'll nullify the previous os resources
+- name: "Add os_sg_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs }} + {{ topology_outputs_os_sg }}"
+  when: topology_outputs_os_sg is defined and (topology_outputs_os_sg != [])
+
+# we have to append here, otherwise we'll nullify the previous os resources
+- name: "Add os_network_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs }} + {{ topology_outputs_os_network }}"
+  when: topology_outputs_os_network is defined and (topology_outputs_os_network != [])
+
+- name: "Add aws_ec2_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs_aws_ec2 }}"
+  when: topology_outputs_aws_ec2 is defined
+
+# we have to append here, otherwise we'll nullify the previous aws resources
+- name: "Add aws_s3_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs }} + '{{ topology_outputs_aws_s3 }}'"
+  when: topology_outputs_aws_s3 is defined and (topology_outputs_aws_s3 != [])
+
+# we have to append here, otherwise we'll nullify the previous aws resources
+- name: "Add aws_ec2_key_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs_aws_ec2_key }}"
+  when: topology_outputs_aws_ec2_key is defined and (topology_outputs_aws_ec2_key != [])
+
+# we have to append here, otherwise we'll nullify the previous aws resources
+- name: "Add aws_cfn_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs_aws_cfn }}"
+  when: topology_outputs_aws_cfn is defined and (topology_outputs_aws_cfn != [])
+
+- name: "Add gcloud_gce_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs_gcloud_gce }}"
+  when: topology_outputs_gcloud_gce is defined
+
+- name: "Add duffy_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs_duffy }}"
+  when: topology_outputs_duffy is defined
+
+- name: "Add rax_server_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs_rax_server }}"
+  when: topology_outputs_rax_server is defined
+
+- name: "Add beaker_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs_beaker_server }}"
+  when: topology_outputs_beaker_server is defined
+
+- name: "Add libvirt_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs_libvirt_nodes }}"
+  when: topology_outputs_libvirt_nodes is defined
+
+- name: "Add ovirt_vms_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs_ovirt_vms }}"
+  when: topology_outputs_ovirt_vms is defined
+
+- name: "set value"
+  set_fact:
+    value: "[{{ {'resources': topology_outputs } }}]"
 
 # this task only records the outputs necessary.
 # No more will the outputter record a record for every
 # possible provider. This is done with the with_dict/when item.value test
-
 - name: "Add topology_outputs to the rundb"
   rundb:
     conn_str: "{{ rundb_conn }}"
     operation: update
     table: "{{ target }}"
     key: "outputs"
-    value: "[{{ {'resources': topology_outputs } }}]"
+    value: "{{ value }}"
     run_id: "{{ rundb_id }}"
 
 - name: "Create resources directory (v1.0.x compatibility)"

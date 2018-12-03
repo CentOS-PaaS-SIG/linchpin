@@ -21,10 +21,15 @@
     credentials: "{{ res_grp['credentials'] | default('') }}"
   when: res_grp['credentials'] is defined
 
-- name: debug topo_output"
+- name: "debug topo_output"
   debug:
     var: topo_output_resources
 
+- name: "Build duffy teardown list"
+  set_fact:
+    duffy_output_resources: "{{ topo_output_resources | get_provider_resources('duffy_res') }}"
+
+
 - name: "Teardown resource definitions of current group"
   include: teardown_res_defs.yml ssid="{{ item['ssid'] }}"
-  with_items: "{{ topo_output_resources['duffy_res'] }}"
+  with_items: "{{ duffy_output_resources }}"

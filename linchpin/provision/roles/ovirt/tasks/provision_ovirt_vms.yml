@@ -121,3 +121,7 @@
   set_fact:
     topology_outputs_ovirt_vms: "{{ topology_outputs_ovirt_vms + [ res_def_output ] }}"
   when: async
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_ovirt_vms: "{{ topology_outputs_ovirt_vms | add_res_type('ovirt_vms_res') }}"

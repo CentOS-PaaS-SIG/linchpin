@@ -44,3 +44,7 @@
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_aws_cfn: "{{ topology_outputs_aws_cfn + [res_def_output] }}"
+    
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_aws_cfn: "{{ topology_outputs_aws_cfn | add_res_type('aws_cf_res') }}"

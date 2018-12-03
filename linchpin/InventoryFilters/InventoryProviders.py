@@ -16,14 +16,14 @@ from .CFGInventoryFormatter import CFGInventoryFormatter
 from .JSONInventoryFormatter import JSONInventoryFormatter
 
 filter_classes = {
-    "aws": AWSInventory,
-    "beaker": BeakerInventory,
-    "duffy": DuffyInventory,
-    "dummy": DummyInventory,
-    "gcloud": GCloudInventory,
-    "libvirt": LibvirtInventory,
-    "openstack": OpenstackInventory,
-    "ovirt": OvirtInventory,
+    "aws_ec2_res": AWSInventory,
+    "beaker_res": BeakerInventory,
+    "duffy_res": DuffyInventory,
+    "dummy_res": DummyInventory,
+    "gcloud_gce_res": GCloudInventory,
+    "libvirt_res": LibvirtInventory,
+    "os_server_res": OpenstackInventory,
+    "ovirt_vms_res": OvirtInventory,
 }
 
 formatter_classes = {
