@@ -1079,6 +1079,11 @@ class LinchpinAPI(object):
             return_code, res = self._find_n_run_pb(playbook,
                                                    inventory_src,
                                                    console=console)
+            if action == "up" and return_code > 0:
+                raise LinchpinError("Unsuccessful provision of resource "
+                                    "System return: {0}".format(return_code))
+                sys.exit(return_code)
+
             if res:
                 results.append(res)
 
