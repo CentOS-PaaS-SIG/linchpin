@@ -50,9 +50,10 @@ class FetchGit(Fetch):
             src = '{0}@{1}'.format(self.src, ref)
 
         if fetch_dir and os.path.exists(fetch_dir):
-            cmd = ['git', '-C', fetch_dir, 'pull', '--quiet']
+            cmd = ['git', 'pull', '--quiet']
             retval = subprocess.call(cmd, stdout=subprocess.PIPE,
-                                     stderr=subprocess.PIPE)
+                                     stderr=subprocess.PIPE,
+                                     cwd=fetch_dir)
         else:
             if not fetch_dir:
                 fetch_dir = tempfile.mkdtemp(prefix="git_", dir=self.cache_dir)
