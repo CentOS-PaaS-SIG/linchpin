@@ -17,13 +17,18 @@ env.MSG_PROVIDER = 'fedora-fedmsg'
 env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/linchpin'
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
 
-library identifier: "ci-pipeline@master",
-        retriever: modernSCM([$class: 'GitSCMSource',
-                              remote: "https://github.com/CentOS-Paas-SIG/ci-pipeline"])
+def libraries = ['ci-pipeline'  : ['master', 'https://github.com/openshift/contra-lib.git']
+                ]
 
-library identifier: "cico-pipeline-library@master",
-        retriever: modernSCM([$class: 'GitSCMSource',
-                              remote: "https://github.com/CentOS/cico-pipeline-library"])
+    libraries.each { name, repo ->
+        library identifier: "${name}@${repo[0]}",
+                retriever: modernSCM([$class: 'GitSCMSource',
+                                      remote: repo[1]])
+    }
+
+@Library('contra-lib')
+import org.centos.contra.pipeline.GitHubAPI
+
 
 properties([
   buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '20')),
@@ -64,8 +69,19 @@ pipeline {
                             // build step and it assumes the build is complete.
                             currentBuild.result = 'SUCCESS'
                         }
-                        step([$class: 'GhprbPullRequestMerge', allowMergeWithoutTriggerPhrase: false, deleteOnMerge: false, disallowOwnCode: false, failOnNonMerge: false, mergeComment: ' ', onlyAdminsMerge: false])
                         script {
+                            withCredentials([string(credentialsId: 'paas-bot', variable: 'GH_TOKEN')]) {
+                                def github = new GitHubAPI(username: 'paas-bot',
+                                                           password: GH_TOKEN,
+                                                           repo: env.ghprbGhRepository)
+                                int pull_id = env.ghprbPullId as Integer
+                                pull_request = github.mergePRByNumber(pull_id,
+                                                                      'Merged by Jenkins')
+                                merge_commit_sha = pull_request.getMergeCommitSha()
+                            }
+                        }
+                        script {
+                            println "merge_commit_sha=${merge_commit_sha} ghprbActualCommit=${env.ghprbActualCommit}"
                             mTopic = "${topic}.ci.linchpin.pr_merge.queued"
                             mProperties = "topic=${topic}.ci.linchpin.pr_merge.queued\n" +
                                 "ghprbActualCommit=${env.ghprbActualCommit}\n" +
@@ -138,7 +154,7 @@ pipeline {
                                     build job: 'cd-linchpin-release',
                                         parameters: [
                                                 string(name: 'ghprbActualCommit',
-                                                       value: "${env.ghprbActualCommit}"),
+                                                       value: "${merge_commit_sha}"),
                                                 string(name: 'ghprbGhRepository',
                                                        value: "${env.ghprbGhRepository}"),
                                         ],
