@@ -1,3 +1,5 @@
+@Library('contra-lib') _
+
 /* This job builds the LinchPin executor container based upon * config/dockerfiles/linchpin within
  * https://github.com/CentOS-PaaS-SIG/contra-env-sample-project
  * and a couple of other projects which generate LinchPin container images
