@@ -1,7 +1,7 @@
 FROM fedora:28
 LABEL name="contrainfra/linchpin" \
       maintainer="https://github.com/CentOS-PaaS-SIG/linchpin" \
-      version="1.6.3.2" \
+      version="1.6.5" \
       description="LinchPin executable container running the latest Fedora release"
 
 ARG install_location='linchpin'
