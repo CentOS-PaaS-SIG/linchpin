@@ -44,8 +44,7 @@ def build_root = "config/Dockerfiles/${env.IMAGE_NAME}"
 def credentials = [usernamePassword(credentialsId: 'continuous-infra-contrainfra-dockercreds',
                    usernameVariable: 'CONTAINER_USERNAME', passwordVariable: 'CONTAINER_PASSWORD')]
 
-//def container_versions = ['latest']
-def container_versions = []
+def container_versions = ['latest']
 
 // remove the v from the TAG
 if (env.TAG_NAME) {
