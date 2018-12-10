@@ -34,8 +34,16 @@ RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
         libselinux-python \
         && dnf clean all; \
     if [ "${install_location}" == "." ]; then \
-        git clone -b ${git_branch} --single-branch ${git_project} lp; \
-        pushd lp; \
+        if [[ ${git_branch} == PR-* ]]; then \
+            git clone ${git_project} lp; \
+            pushd lp; \
+            PRNUM="$(cut -d'-' -f2 <<<${git_branch})" \
+            git fetch origin pull/${PRNUM}/head:pr_branch \
+            git checkout pr_branch \
+        else \
+            git clone -b ${git_branch} --single-branch ${git_project} lp; \
+            pushd lp; \
+        fi; \
     fi; \
         pip install -U pip; \
         pip install -U setuptools; \
