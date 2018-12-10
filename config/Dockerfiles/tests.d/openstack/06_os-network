@@ -22,4 +22,5 @@ pushd docs/source/examples/workspaces/${PROVIDER}
 
 linchpin -w . -v up "${TARGET}"
 
-grep "${DISTRO}" "${TMP_FILE}"
+# cleanup the network
+linchpin -w . -v destroy "${TARGET}"
