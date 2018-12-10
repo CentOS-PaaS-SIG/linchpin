@@ -37,9 +37,9 @@ RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
         if [[ ${git_branch} == PR-* ]]; then \
             git clone ${git_project} lp; \
             pushd lp; \
-            PRNUM="$(cut -d'-' -f2 <<<${git_branch})" \
-            git fetch origin pull/${PRNUM}/head:pr_branch \
-            git checkout pr_branch \
+            PRNUM="$(cut -d'-' -f2 <<<${git_branch})"; \
+            git fetch origin pull/${PRNUM}/head:pr_branch; \
+            git checkout pr_branch; \
         else \
             git clone -b ${git_branch} --single-branch ${git_project} lp; \
             pushd lp; \
