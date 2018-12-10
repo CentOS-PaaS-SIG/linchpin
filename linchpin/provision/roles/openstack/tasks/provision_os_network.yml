@@ -51,7 +51,7 @@
     timeout: "{{ res_def['timeout'] | default(600) }}"
     verify: no
     wait: yes
-  register: res_def_output_unq
+  register: res_def_output_unique
   no_log: "{{ not debug_mode }}"
   when:
    - is_unique
@@ -59,12 +59,12 @@
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_os_network: "{{ topology_outputs_os_network + [ res_def_output_unq ] }}"
+    topology_outputs_os_network: "{{ topology_outputs_os_network + [ res_def_output_unique ] }}"
   when:  
     - is_unique
     - auth_var == ""
 
-- name: "provision/deprovision os_network stack"
+- name: "provision/deprovision os_network"
   os_network:
     admin_state_up: "{{ res_def['admin_state_up'] | default(omit) }}"
     auth: "{{ auth_var }}"
@@ -82,7 +82,7 @@
     timeout: "{{ res_def['timeout'] | default(600) }}"
     verify: no
     wait: yes
-  register: res_def_output_nunq
+  register: res_def_output_not_unique
   no_log: "{{ not debug_mode }}"
   when: 
     - not is_unique
@@ -90,7 +90,7 @@
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_os_network: "{{ topology_outputs_os_network + [ res_def_output_unq ] }}"
+    topology_outputs_os_network: "{{ topology_outputs_os_network + [ res_def_output_not_unique ] }}"
   when: 
     - not is_unique
     - auth_var != ""
@@ -112,7 +112,7 @@
     timeout: "{{ res_def['timeout'] | default(600) }}"
     verify: no
     wait: yes
-  register: res_def_output_nunq
+  register: res_def_output_not_unique
   no_log: "{{ not debug_mode }}"
   when:
     - not is_unique
@@ -120,7 +120,7 @@
  
 - name: "Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_os_network: "{{ topology_outputs_os_network + [ res_def_output_nunq ] }}"
+    topology_outputs_os_network: "{{ topology_outputs_os_network + [ res_def_output_not_unique ] }}"
   when:
     - not is_unique
     - auth_var == ""
