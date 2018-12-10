@@ -132,7 +132,30 @@
                     "name": { "type": "string", "required": true},
                     "public_key_path": { "type": "string", "required": false}
                 }
-            }]
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["os_network"] },
+                    "admin_state_up": { "type": "boolean", "required": false},
+                    "external": { "type": "boolean", "required": false},
+                    "interface": { "type": "string", "required": false, "allowed": ["public", "internal", "admin"] },
+                    "key": { "type": "string", "required": false },
+                    "name": { "type": "string", "required": true},
+                    "project": { "type": "string", "required": false},
+                    "provider_network_type": { "type": "string", "required": false},
+                    "provider_physical_network": { "type": "string", "required": false},
+                    "provider_segmentation_id": { "type": "string", "required": false},
+                    "region_name": { "type": "string", "required": false},
+                    "shared": { "type": "boolean", "required": false},
+		    "timeout": { "type": "number", "required": false },
+		    "unique": { "type": "boolean", "required": false } 
+                }
+            }
+	    ]
         }
     }
 }
