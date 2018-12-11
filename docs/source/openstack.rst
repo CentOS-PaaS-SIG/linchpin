@@ -89,6 +89,13 @@ Openstack networks can be provisioned using this resource.
 * :docs1.5:`Topology Example <workspace/topologies/os-network.yml>`
 * `Ansible os_network module <https://docs.ansible.com/ansible/2.5/modules/os_network_module.html>`_
 
+os_router
+---------
+
+Openstack routers can be provisioned using this resource.
+* :docs1.5:`Topology Example <workspace/topologies/os-router.yml>`
+* `Ansible os_router module <https://docs.ansible.com/ansible/latest/modules/os_router_module.html>`_
+
 Additional Dependencies
 -----------------------
 
