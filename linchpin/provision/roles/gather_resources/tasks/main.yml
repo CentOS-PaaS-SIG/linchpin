@@ -15,6 +15,7 @@
       os_volume_res: "{{ topology_outputs_os_volume | default([]) }}"
       os_heat_res: "{{ topology_outputs_os_heat | default([]) }}"
       os_sg_res: "{{ topology_outputs_os_sg | default([]) }}"
+      os_network: "{{ topology_outputs_os_network | default([]) }}"
       aws_ec2_res: "{{ topology_outputs_aws_ec2 | default([]) }}"
       aws_s3_res: "{{ topology_outputs_aws_s3 | default([]) }}"
       aws_ec2_key_res: "{{ topology_outputs_aws_ec2_key | default([]) }}"

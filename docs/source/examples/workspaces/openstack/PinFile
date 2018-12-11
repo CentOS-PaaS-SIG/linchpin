@@ -70,5 +70,16 @@ os-sg-new:
 os-vol-new:
   topology: os-vol-new.yml
 
-
-
+os-network:
+  topology:
+    topology_name: os_network
+    resource_groups:
+      - resource_group_name: simple
+        resource_group_type: openstack
+        resource_definitions:
+          - name: testnet_example
+            role: os_network
+            unique: true
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos

@@ -81,6 +81,14 @@ Openstack Security Groups can be provisioned using this resource.
 * `Ansible Security Group module <http://docs.ansible.com/ansible/latest/os_security_group_module.html>`_
 * `Ansible Security Group Rule module <http://docs.ansible.com/ansible/latest/os_security_group_rule_module.html>`_
 
+os_network
+----------
+
+Openstack networks can be provisioned using this resource.
+
+* :docs1.5:`Topology Example <workspace/topologies/os-network.yml>`
+* `Ansible os_network module <https://docs.ansible.com/ansible/2.5/modules/os_network_module.html>`_
+
 Additional Dependencies
 -----------------------
 
