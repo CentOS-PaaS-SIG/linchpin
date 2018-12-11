@@ -21,7 +21,7 @@
     timeout: "{{ res_def['timeout'] | default(600) }}"
     verify: no
     wait: yes
-  register: res_def_output_unq
+  register: res_def_output_unique
   no_log: "{{ not debug_mode }}"
   when: 
    - is_unique
@@ -29,7 +29,7 @@
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_os_network: "{{ topology_outputs_os_network + [ res_def_output_unq ] }}"
+    topology_outputs_os_network: "{{ topology_outputs_os_network + [ res_def_output_unique ] }}"
   when:
     - is_unique
     - auth_var != ""

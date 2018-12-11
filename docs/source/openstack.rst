@@ -83,9 +83,11 @@ Openstack Security Groups can be provisioned using this resource.
 
 os_network
 ----------
+
 Openstack networks can be provisioned using this resource.
+
 * :docs1.5:`Topology Example <workspace/topologies/os-network.yml>`
-* `Ansible os_newtork module <https://docs.ansible.com/ansible/2.5/modules/os_network_module.html>`_
+* `Ansible os_network module <https://docs.ansible.com/ansible/2.5/modules/os_network_module.html>`_
 
 Additional Dependencies
 -----------------------
