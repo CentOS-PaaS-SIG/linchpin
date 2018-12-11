@@ -154,9 +154,39 @@
                     "timeout": { "type": "number", "required": false },
                     "unique": { "type": "boolean", "required": false }
                 }
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["os_router"] },
+                    "admin_state_up": { "type": "boolean", "required": false},
+                    "api_timeout": { "type": "number", "required": false},
+                    "external_fixed_ips": {
+                        "type": "list",
+                        "required": false,
+                        "schema": { "type": "string", "required": true }
+                    },
+                    "interfaces": {
+                        "type": "list",
+                        "required": false,
+                        "schema": { "type": "string", "required": true }
+                    },
+                    "network": { "type": "string", "required": false },
+                    "enable_snat": { "type": "boolean", "required": false},
+                    "external": { "type": "boolean", "required": false},
+                    "interface": { "type": "string", "required": false, "allowed": ["public", "internal", "admin"] },
+                    "key": { "type": "string", "required": false },
+                    "name": { "type": "string", "required": true},
+                    "project": { "type": "string", "required": false},
+                    "region_name": { "type": "string", "required": false},
+                    "timeout": { "type": "number", "required": false },
+                    "unique": { "type": "boolean", "required": false }
+                }
             }
 	    ]
         }
     }
 }
-
