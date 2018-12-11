@@ -83,3 +83,17 @@ os-network:
         credentials:
           filename: clouds.yaml
           profile: ci-rhos
+
+os-router:
+  topology:
+    topology_name: os_router
+    resource_groups:
+      - resource_group_name: ex_group
+        resource_group_type: openstack
+        resource_definitions:
+          - name: trouter_example
+            role: os_router
+            unique: true
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos
