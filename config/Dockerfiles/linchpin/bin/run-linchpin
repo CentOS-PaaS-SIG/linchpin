@@ -1,5 +1,5 @@
 #!/bin/bash
 id -a
 export DEST=$(linchpin -w /tmp fetch https://github.com/CentOS-PaaS-SIG/linchpin --root workspaces/dummy --branch develop 2>&1 | awk -F':' '{ printf $2 }')
-echo "linchpin -vvv -c /etc/linchpin.conf -w ${DEST} up dummy-new"
-linchpin -vvv -c /etc/linchpin.conf -w ${DEST} up dummy-new
+echo "linchpin -vvv -c /etc/linchpin.conf -w ${DEST} up dummy-topo"
+linchpin -vvv -c /etc/linchpin.conf -w ${DEST} up dummy-topo
