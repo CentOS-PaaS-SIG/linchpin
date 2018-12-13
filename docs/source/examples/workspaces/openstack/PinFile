@@ -105,7 +105,7 @@ os-subnet:
       - resource_group_name: ex_os_subnet
         resource_group_type: openstack
         resource_definitions:
-          - name: test_network_sk
+          - name: test_network_ex
             role: os_network
             unique: false
           - name: test_subnet_ex

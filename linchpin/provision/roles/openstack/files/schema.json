@@ -151,8 +151,8 @@
                     "provider_segmentation_id": { "type": "string", "required": false},
                     "region_name": { "type": "string", "required": false},
                     "shared": { "type": "boolean", "required": false},
-		    "timeout": { "type": "number", "required": false },
-		    "unique": { "type": "boolean", "required": false } 
+                    "timeout": { "type": "number", "required": false },
+                    "unique": { "type": "boolean", "required": false }
                 }
             },
             {
