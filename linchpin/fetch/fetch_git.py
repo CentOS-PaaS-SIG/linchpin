@@ -2,7 +2,7 @@ import os
 import subprocess
 import tempfile
 
-from fetch import Fetch
+from .fetch import Fetch
 from linchpin.exceptions import LinchpinError
 
 

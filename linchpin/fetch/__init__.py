@@ -1,5 +1,5 @@
-from fetch_http import FetchHttp
-from fetch_git import FetchGit
+from .fetch_http import FetchHttp
+from .fetch_git import FetchGit
 
 FETCH_CLASS = {
     "FetchHttp": FetchHttp,

@@ -3,7 +3,7 @@ import subprocess
 import tempfile
 import requests
 
-from fetch import Fetch
+from .fetch import Fetch
 from linchpin.exceptions import LinchpinError
 
 
