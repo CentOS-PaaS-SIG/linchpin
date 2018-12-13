@@ -1,3 +1,5 @@
+@Library('contra-lib') _
+
 /* This job builds the LinchPin executor container based upon * config/dockerfiles/linchpin within
  * https://github.com/CentOS-PaaS-SIG/contra-env-sample-project
  * and a couple of other projects which generate LinchPin container images
@@ -28,7 +30,7 @@ properties([
                name: 'CONTAINER_NAMESPACE'),
         string(description: 'Container Registry',
                name: 'CONTAINER_REGISTRY'),
-        string(defaultValue: '.',
+        string(defaultValue: 'linchpin',
                description: "Installation Source. '.' uses the GIT_URL/GIT_BRANCH, 'linchpin' uses pypi.",
                name: 'INSTALL_LOCATION')
     ]
@@ -39,10 +41,14 @@ def test_cmd = "uid_entrypoint run"
 
 def containers = ['buildah']
 def build_root = "config/Dockerfiles/${env.IMAGE_NAME}"
-def credentials = [usernamePassword(credentialsId: 'linchpin-docker',
+def credentials = [usernamePassword(credentialsId: 'continuous-infra-contrainfra-dockercreds',
                    usernameVariable: 'CONTAINER_USERNAME', passwordVariable: 'CONTAINER_PASSWORD')]
 
-def container_versions = ['latest']
+def container_versions = []
+
+if (env.BRANCH_NAME == 'master') {
+    container_versions.add('latest')
+}
 
 // remove the v from the TAG
 if (env.TAG_NAME) {
