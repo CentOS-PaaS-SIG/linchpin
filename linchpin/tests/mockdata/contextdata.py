@@ -1,7 +1,7 @@
 import os
 
 import tempfile
-import ConfigParser
+from six.moves import configparser as ConfigParser
 
 from linchpin.exceptions import LinchpinError
 

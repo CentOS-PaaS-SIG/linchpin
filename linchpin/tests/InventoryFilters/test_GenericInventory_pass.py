@@ -2,6 +2,7 @@
 
 # flake8: noqa
 
+from __future__ import print_function
 import os
 import json
 import yaml
@@ -168,5 +169,5 @@ def test_output_order():
     correct_lines = correct_inventory.splitlines(1)
     # if the assertion fails, this diff will display
     diff = difflib.unified_diff(inventory_lines, correct_lines)
-    print ''.join(diff)
+    print(''.join(diff))
     assert_equal(inventory, correct_inventory)
