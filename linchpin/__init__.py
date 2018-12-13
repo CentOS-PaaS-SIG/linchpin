@@ -10,6 +10,7 @@ import hashlib
 
 from uuid import getnode as get_mac
 from collections import OrderedDict
+from six import text_type
 
 from linchpin.ansible_runner import ansible_runner
 
@@ -655,9 +656,11 @@ class LinchpinAPI(object):
             uhash_length = self.get_cfg('lp', 'rundb_uhash_length')
             uhash_len = int(uhash_length)
             if not run_id:
-                uh = hashlib.new(self.rundb_hash,
-                                 ':'.join([target, str(tx_id),
-                                          str(rundb_id), str(st_uhash)]))
+                hash_str = ':'.join([target, str(tx_id), str(rundb_id),
+                                     str(st_uhash)])
+                if isinstance(hash_str, text_type):
+                    hash_str = hash_str.encode('utf-8')
+                uh = hashlib.new(self.rundb_hash, hash_str)
                 uhash = uh.hexdigest()[:uhash_len]
 
             if action == 'destroy' or run_id:
