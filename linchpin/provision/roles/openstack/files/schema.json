@@ -151,8 +151,8 @@
                     "provider_segmentation_id": { "type": "string", "required": false},
                     "region_name": { "type": "string", "required": false},
                     "shared": { "type": "boolean", "required": false},
-                    "timeout": { "type": "number", "required": false },
-                    "unique": { "type": "boolean", "required": false }
+		    "timeout": { "type": "number", "required": false },
+		    "unique": { "type": "boolean", "required": false } 
                 }
             },
             {
@@ -164,12 +164,12 @@
                         "allowed": ["os_router"] },
                     "admin_state_up": { "type": "boolean", "required": false},
                     "api_timeout": { "type": "number", "required": false},
-                    "external_fixed_ips": {
+		    "external_fixed_ips": {
                         "type": "list",
                         "required": false,
                         "schema": { "type": "string", "required": true }
                     },
-                    "interfaces": {
+		    "interfaces": {
                         "type": "list",
                         "required": false,
                         "schema": { "type": "string", "required": true }
@@ -185,8 +185,54 @@
                     "timeout": { "type": "number", "required": false },
                     "unique": { "type": "boolean", "required": false }
                 }
+            },
+	    {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["os_subnet"] },
+                    "allocation_pool_end": { "type": "string", "required": false },
+                    "allocation_pool_start": { "type": "string", "required": false },
+                    "api_timeout": { "type": "string", "required": false },
+                    "cidr": { "type": "string", "required": false },
+                    "dns_nameservers": {
+                        "type": "list",
+                        "required": false,
+                        "schema": { "type": "string", "required": true }
+                    },
+                    "enable_dhcp": { "type": "boolean", "required": false},
+		     "extra_specs": {
+                        "type": "dict",
+                        "required": false
+                    },
+                    "gateway_ip": { "type": "string", "required": false },
+                    "host_routes": {
+                        "type": "dict",
+                        "required": false,
+                        "schema": {
+                            "destination": { "type": "string", "required": false },
+                            "nexthop": { "type": "string", "required": false }
+                        }
+                    },
+                    "interface": { "type": "string", "required": false, "allowed": ["public", "internal", "admin"] },
+                    "ip_version": { "type": "number", "required": false },
+                    "ipv6_address_mode": { "type": "string", "required": false, "allowed": ["dhcpv6-stateful", "dhcpv6-stateless", "slaac"] },
+                    "ipv6_ra_mode": { "type": "string", "required": false, "allowed": ["dhcpv6-stateful", "dhcpv6-stateless", "slaac"] },
+                    "key": { "type": "string", "required": false },
+                    "name": { "type": "string", "required": true },
+                    "network_name": { "type": "string", "required": true },
+                    "no_gateway_ip": { "type": "boolean", "required": false},
+                    "use_default_subnetpool": { "type": "boolean", "required": false},
+                    "project": { "type": "string", "required": false},
+                    "region_name": { "type": "string", "required": false},
+                    "timeout": { "type": "number", "required": false },
+                    "unique": { "type": "boolean", "required": false }
+                }
             }
 	    ]
         }
     }
 }
+
