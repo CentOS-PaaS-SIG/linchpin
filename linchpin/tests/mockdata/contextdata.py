@@ -2,6 +2,7 @@ import os
 
 import tempfile
 from six.moves import configparser as ConfigParser
+from six import iteritems
 
 from linchpin.exceptions import LinchpinError
 
@@ -138,9 +139,9 @@ class ContextData(object):
 
         # we know that data is a dict, containing dicts
         try:
-            for k, v in config_data.iteritems():
+            for k, v in iteritems(config_data):
                 self.parser.add_section(k)
-                for kv, vv in v.iteritems():
+                for kv, vv in iteritems(v):
                     if type(vv) is not str:
                         vv = str(vv)
                     self.parser.set(k, kv, vv)

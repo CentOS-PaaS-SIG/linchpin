@@ -7,6 +7,7 @@ import json
 import yaml
 
 from nose.tools import *
+from six import iteritems
 
 from linchpin.InventoryFilters import CFGInventoryFormatter
 
@@ -87,7 +88,7 @@ def test_set_vars():
     formatter.set_vars(inv)
 
     host_group='OSEv3'
-    for key, val in inv['host_groups'][host_group]['vars'].iteritems():
+    for key, val in iteritems(inv['host_groups'][host_group]['vars']):
         var = formatter.config.get("{0}:vars".format(host_group), key)
         assert_equal(var, str(val))
 

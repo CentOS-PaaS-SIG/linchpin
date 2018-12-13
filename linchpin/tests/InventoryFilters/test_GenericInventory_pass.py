@@ -154,7 +154,7 @@ def test_output_order():
     # get res_output
     output_path = '{0}/{1}'.format(workspace, 'linchpin.benchmark')
     res_output = json.load(open(output_path))
-    res_output = res_output[res_output.keys()[0]]['targets'][0]['complex-inventory']['outputs']['resources']
+    res_output = res_output[list(res_output.keys())[0]]['targets'][0]['complex-inventory']['outputs']['resources']
 
     # call get_inventory and print the result
     inventory = filter.get_inventory(res_output, layout, topology, config)
