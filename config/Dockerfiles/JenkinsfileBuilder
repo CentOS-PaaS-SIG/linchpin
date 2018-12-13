@@ -30,7 +30,7 @@ properties([
                name: 'CONTAINER_NAMESPACE'),
         string(description: 'Container Registry',
                name: 'CONTAINER_REGISTRY'),
-        string(defaultValue: '.',
+        string(defaultValue: 'linchpin',
                description: "Installation Source. '.' uses the GIT_URL/GIT_BRANCH, 'linchpin' uses pypi.",
                name: 'INSTALL_LOCATION')
     ]
