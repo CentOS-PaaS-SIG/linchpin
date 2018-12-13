@@ -14,7 +14,7 @@ Provide valid context data to test against.
 
 class ContextData(object):
 
-    def __init__(self, parser=ConfigParser.SafeConfigParser):
+    def __init__(self, parser=ConfigParser.ConfigParser):
 
 
         self.lib_path = '{0}'.format(os.path.dirname(
@@ -82,7 +82,7 @@ class ContextData(object):
         """
 
         try:
-            config = ConfigParser.SafeConfigParser()
+            config = ConfigParser.ConfigParser()
             f = open(path)
             config.readfp(f)
             f.close()
