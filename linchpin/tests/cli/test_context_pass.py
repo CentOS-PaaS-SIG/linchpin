@@ -5,6 +5,11 @@
 import os
 
 from nose.tools import *
+try:
+    # Renamed in Python 3
+    from nose.tools import assert_regexp_matches as assertRegex
+except ImportError:
+    pass
 
 import logging
 from unittest import TestCase
@@ -156,7 +161,7 @@ def test_log_msg():
     with open(logfile) as f:
         line = f.readline()
 
-    assert_regexp_matches(line, regex)
+    assertRegex(line, regex)
 
 @with_setup(setup_context_data)
 def test_log_state():
@@ -176,7 +181,7 @@ def test_log_state():
     with open(logfile) as f:
         line = f.readline()
 
-    assert_regexp_matches(line, regex)
+    assertRegex(line, regex)
 
 @with_setup(setup_context_data)
 def test_log_info():
@@ -196,7 +201,7 @@ def test_log_info():
     with open(logfile) as f:
         line = f.readline()
 
-    assert_regexp_matches(line, regex)
+    assertRegex(line, regex)
 
 @with_setup(setup_context_data)
 def test_log_debug():
@@ -216,7 +221,7 @@ def test_log_debug():
     with open(logfile) as f:
         line = f.readline()
 
-    assert_regexp_matches(line, regex)
+    assertRegex(line, regex)
 
 
 def main():

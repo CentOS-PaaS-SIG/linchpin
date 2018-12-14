@@ -4,6 +4,7 @@ import os
 import json
 
 from nose.tools import *
+from six import iteritems
 
 from linchpin.InventoryFilters import JSONInventoryFormatter
 
@@ -64,7 +65,7 @@ def test_set_vars():
 
     host_group='OSEv3'
     vars = formatter.config[host_group]['vars']
-    for key, val in inv['host_groups'][host_group]['vars'].iteritems():
+    for key, val in iteritems(inv['host_groups'][host_group]['vars']):
         assert_equal(val, vars[key])
 
 

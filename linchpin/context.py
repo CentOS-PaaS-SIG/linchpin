@@ -67,9 +67,9 @@ class LinchpinContext(object):
         """
 
         try:
-            config = ConfigParser.SafeConfigParser()
+            config = ConfigParser.ConfigParser()
             f = open(path)
-            config.readfp(f)
+            config.read_file(f)
             f.close()
 
             for section in config.sections():
