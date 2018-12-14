@@ -97,3 +97,22 @@ os-router:
         credentials:
           filename: clouds.yaml
           profile: ci-rhos
+
+os-subnet:
+  topology:
+    topology_name: os-subnet
+    resource_groups:
+      - resource_group_name: ex_os_subnet
+        resource_group_type: openstack
+        resource_definitions:
+          - name: test_network_ex
+            role: os_network
+            unique: false
+          - name: test_subnet_ex
+            role: os_subnet
+            network_name: test_network_ex
+            unique: false
+            cidr: 192.167.128.0/24
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos
