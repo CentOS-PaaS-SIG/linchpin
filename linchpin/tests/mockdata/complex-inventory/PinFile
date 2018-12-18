@@ -77,7 +77,7 @@ complex-inventory:
           host_groups:
             - aws-layout
         beaker-node:
-          count: 1
+          count: 2
           host_groups:
             - beaker-layout
       host_groups:
