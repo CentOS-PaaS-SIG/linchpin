@@ -6,19 +6,40 @@ openshift-new:
       - resource_group_name: test1
         resource_group_type: openshift
         resource_definitions:
-          - name: testsecret
+          - name: openshift
             role: openshift_inline
-            namespace: continuous-infra
+            namespace: "{{ namespace | default('coninuous-infra') }}"
             definition:
+              kind: Pod
               apiVersion: v1
-              data:
-                password: dGVzdHBhc3N3b3Jk  # creates a secret with testpassword as password
-                username: dGVzdHVzZXJuYW1l  # creates a secret with testusername as username
-              kind: Secret
               metadata:
-                name: testsecret
-                namespace: continuous-infra
-              type: kubernetes.io/basic-auth
+                name: hello-openshift
+                labels:
+                  name: hello-openshift
+              spec:
+                containers:
+                - name: hello-openshift
+                  image: openshift/hello-openshift
+                  ports:
+                  - containerPort: 8080
+                    protocol: TCP
+                  resources: {}
+                  volumeMounts:
+                  - name: tmp
+                    mountPath: /tmp
+                  terminationMessagePath: /dev/termination-log
+                  imagePullPolicy: IfNotPresent
+                  capabilities: {}
+                  securityContext:
+                    capabilities: {}
+                    privileged: false
+                volumes:
+                - name: tmp
+                  emptyDir: {}
+                restartPolicy: Always
+                dnsPolicy: ClusterFirst
+                serviceAccount: ''
+                status: {}
         credentials:
-          filename: upshift.yaml # fetched from --creds-path is provided
-          profile: default
+          filename: "{{ credsfile | default('upshift.yaml') }}" # fetched from --creds-path is provided
+          profile: "{{ profile | default('default') }}"
