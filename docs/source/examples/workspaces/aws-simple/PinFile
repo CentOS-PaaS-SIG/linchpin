@@ -1,0 +1,30 @@
+---
+#  keypair need to be preset in AWS
+#  image centos-7:
+#  https://wiki.centos.org/Cloud/AWS#head-cc841c2a7d874025ae24d427776e05c7447024b2
+simple:
+  topology:
+    topology_name: simple
+    resource_groups:
+      - resource_group_name: aws
+        resource_group_type: aws
+        resource_definitions:
+          - name: simple
+            flavor: {{ aws_simple_flavor | default('t2.nano') }}
+            role: aws_ec2
+            region: {{ aws_simple_region | deafult('us-east-1') }}
+            image: {{ aws_simple_image | default('ami-9887c6e7') }}
+            security_group: {{ aws_simple_security | default('default' }}
+            count: 1
+            assign_public_ip: {{ aws_simple_public | default(false) }}
+            keypair: {{ aws_simple_keypair | default('ec2_keypair') }}
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+        ansible_ssh_private_key_file: {{ aws_simple_keypath | default('~/.ssh/id_rsa') }}
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example

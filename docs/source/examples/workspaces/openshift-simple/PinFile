@@ -1,0 +1,51 @@
+---
+simple:
+  topology:
+    topology_name: simple
+    resource_groups:
+      - resource_group_name: simple
+        resource_group_type: openshift
+        resource_definitions:
+          - name: openshift
+            role: openshift_inline
+            namespace: {{ openshift_simple_namespace | default('continuous-infra') }}
+            definition:
+              kind: Pod
+              apiVersion: v1
+              metadata:
+                name: hello-openshift
+                labels:
+                  name: hello-openshift
+              spec:
+                containers:
+                - name: hello-openshift
+                  image: openshift/hello-openshift
+                  ports:
+                  - containerPort: 8080
+                    protocol: TCP
+                  resources: {}
+                  volumeMounts:
+                  - name: tmp
+                    mountPath: /tmp
+                  terminationMessagePath: /dev/termination-log
+                  imagePullPolicy: IfNotPresent
+                  capabilities: {}
+                  securityContext:
+                    capabilities: {}
+                    privileged: false
+                volumes:
+                - name: tmp
+                  emptyDir: {}
+                restartPolicy: Always
+                dnsPolicy: ClusterFirst
+                serviceAccount: ''
+                status: {}
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example
