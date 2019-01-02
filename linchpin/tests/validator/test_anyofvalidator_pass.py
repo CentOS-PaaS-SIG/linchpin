@@ -11,7 +11,7 @@ from linchpin.utils.dataparser import DataParser
 from linchpin.context import LinchpinContext
 from linchpin.rundb import RunDB
 
-from linchpin.utils.validator import AnyofValidator
+from linchpin.validator import AnyofValidator
 
 from linchpin.tests.mockdata.contextdata import ContextData
 
@@ -38,7 +38,7 @@ def setup_validator():
     schema = json.load(open(sp))
 
     validator = AnyofValidator(schema)
-    
+
     topo_name = 'libvirt-new.yml'
     topo_file = '{0}/{1}/{2}'.format(lib_path, 'mockdata/libvirt', topo_name)
     topo = yaml.load(open(topo_file))
