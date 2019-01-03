@@ -255,7 +255,7 @@ parameters:
 - name: VOLUME_CAPACITY
   displayName: Volume Capacity
   description: Volume space available for data, e.g. 512Mi, 2Gi.
-  value: 5Gi
+  value: 20Gi
   required: true
 - name: NAMESPACE
   displayName: Jenkins ImageStream Namespace

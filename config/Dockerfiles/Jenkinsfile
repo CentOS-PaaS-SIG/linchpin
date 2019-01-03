@@ -49,7 +49,7 @@ libraries.each { name, repo ->
 
 properties(
     [
-        buildDiscarder(logRotator(artifactDaysToKeepStr: '30', artifactNumToKeepStr: '15', daysToKeepStr: '90', numToKeepStr: '30')),
+        buildDiscarder(logRotator(artifactDaysToKeepStr: '30', artifactNumToKeepStr: '15', daysToKeepStr: '90', numToKeepStr: '15')),
         [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/CentOS-PaaS-SIG/linchpin/'],
         disableConcurrentBuilds(),
         parameters(

@@ -2,7 +2,7 @@ import groovy.json.*
 
 properties(
         [
-                buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '50', daysToKeepStr: '', numToKeepStr: '100')),
+                buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '50', daysToKeepStr: '', numToKeepStr: '15')),
                 parameters(
                     [
                         string(description: 'fedmsg msg', name: 'CI_MESSAGE'),

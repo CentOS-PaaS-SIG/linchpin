@@ -126,7 +126,7 @@ library identifier: "linchpin-pipeline@${env.ghprbActualCommit}",
 [value: '+refs/pull/*:refs/remotes/origin/pr/*']]]]])
 
 properties([
-  buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '20')),
+  buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '15')),
   [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/${env.ghOrg}/linchpin/'],
   parameters(
     [

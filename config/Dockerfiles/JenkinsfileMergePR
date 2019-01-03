@@ -17,7 +17,7 @@ library identifier: "ci-pipeline@master",
 ])
 
 properties([
-  buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '20')),
+  buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '15')),
   [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/CentOS-PaaS-SIG/linchpin/'],
   parameters(
     [

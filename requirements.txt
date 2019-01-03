@@ -10,7 +10,7 @@ shade>=1.30.0
 naked
 Cerberus>=1.2
 tinydb
-requests>=2.14.2
+requests>=2.21.0
 ipaddress>=1.0.17
 PyYAML>=3.12
 jinja2>=2.10
