@@ -84,6 +84,18 @@ class BkrFactory(BkrConn):
                     baseurls.append(repo.get("baseurl"))
             else:
                 kwargs.update({"repo": baseurls})
+            ks_append = kwargs.get("ks_append", [])
+            ssh_key = kwargs.get("ssh_key", [])
+            if ssh_key:
+                ks_append.append("""%%post
+mkdir -p /root/.ssh
+cat >>/root/.ssh/authorized_keys << "__EOF__"
+%s
+__EOF__
+restorecon -R /root/.ssh
+chmod go-w /root /root/.ssh /root/.ssh/authorized_keys
+%%end""" % '\n'.join(ssh_key))
+                kwargs.update({"ks_append": ks_append})
 
             requested_tasks = []
 
