@@ -110,6 +110,16 @@
                                     "type": "list",
                                     "required": false,
                                     "schema": { "type": "string", "required": true }
+                                },
+                                "ssh_key": {
+                                    "type": "list",
+                                    "required": false,
+                                    "schema": { "type": "string", "required": true }
+                                },
+                                "ks_append": {
+                                    "type": "list",
+                                    "required": false,
+                                    "schema": { "type": "string", "required": true }
                                 }
                              }
                          }]
