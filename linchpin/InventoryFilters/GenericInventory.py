@@ -15,30 +15,15 @@ class GenericInventory(InventoryFilter):
     def get_host_data(self, res_output, config):
         """
         """
-        host_data = {}
-        for inv_filter in self.filter_classes:
+        host_data = []
+        for res_grp in res_output:
+            inv_filter = res_grp['resource_type']
             data = self.filter_classes[inv_filter]()\
-                .get_host_data(res_output, config)
-            host_data[inv_filter] = data
+                .get_host_data(res_grp, config)
+            host_data.append(data)
         return host_data
 
-    def get_host_ips(self, host_data):
-        """
-        Returns a list of hostnames from each provider's hosts
-
-        :param host_data
-            map of host data for each provider
-        """
-
-        hosts = []
-        for inv_filter in self.filter_classes:
-            data = self.filter_classes[inv_filter]()\
-                .get_host_ips(host_data[inv_filter])
-            hosts.extend(data)
-        return hosts
-
-
-    def get_hosts_by_count(self, host_dict, count, sort_order):
+    def get_hosts_by_count(self, host_data, count):
         """
         currently this function gets all the ips/hostname according to the
         order in which inventories are specified. later can be modified
@@ -46,8 +31,8 @@ class GenericInventory(InventoryFilter):
         """
 
         all_hosts = []
-        for provider in sort_order:
-            all_hosts.extend(host_dict[provider].keys())
+        for host in host_data:
+            all_hosts.extend(host.keys())
         return all_hosts[:count]
 
     def populate_config(self, host_dict, res_output, config):
@@ -64,11 +49,6 @@ class GenericInventory(InventoryFilter):
         return populated_config
 
     def get_inventory(self, res_output, layout, topology, config):
-        # get the provisioning order
-        sort_order = []
-        for resource_group in topology["resource_groups"]:
-            if not (resource_group.get("resource_group_type") in sort_order):
-                sort_order.append(resource_group.get("resource_group_type"))
         # get all the topology host_ips
         host_data = self.get_host_data(res_output, config)
         # sort it based on topology
@@ -76,8 +56,7 @@ class GenericInventory(InventoryFilter):
         layout_host_count = self.get_layout_hosts(layout)
         # generate hosts list based on the layout host count
         inven_hosts = self.get_hosts_by_count(host_data,
-                                              layout_host_count,
-                                              sort_order)
+                                              layout_host_count)
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)
 

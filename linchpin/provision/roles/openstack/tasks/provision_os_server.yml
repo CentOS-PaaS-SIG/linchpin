@@ -115,7 +115,7 @@
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_os_server: "{{ topology_outputs_os_server + [res_def_output] }}"
+    topology_outputs_os_server: "{{ topology_outputs_os_server }} + [  {{ res_def_output }} ]"
   when: not async and auth_var != ""
 
 - name: "provision/teardown os_server resources when auth not defined"
@@ -167,7 +167,7 @@
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_os_server: "{{ topology_outputs_os_server + [res_def_output] }}"
+    topology_outputs_os_server: "{{ topology_outputs_os_server }} + [  {{ res_def_output }} ]"
   when:
     - auth_var == ""
     - not async
@@ -225,8 +225,12 @@
 
 - name: "Async:: Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_os_server: "{{ topology_outputs_os_server + [ res_def_output ] }}"
+    topology_outputs_os_server: "{{ topology_outputs_os_server }} + [  {{ res_def_output }} ]"
   when:
     - async
     - auth_var != ""
     - res_def_output['skipped'] is not defined
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_os_server: "{{ topology_outputs_os_server | add_res_type('os_server_res') }}"

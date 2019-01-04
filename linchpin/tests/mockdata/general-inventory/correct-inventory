@@ -1,0 +1,29 @@
+[openstack-group:vars]
+zone = __ZONE__
+
+[aws-group]
+ec2-34-201-82-248.compute-1.amazonaws.com hostname=ec2-34-201-82-248.compute-1.amazonaws.com
+
+[openstack-group]
+10.8.246.233 hostname=10.8.246.233
+
+[bkr-group]
+hp-dl380pgen8-02-vm-15.lab.bos.redhat.com hostname=hp-dl380pgen8-02-vm-15.lab.bos.redhat.com
+
+[dummy-group]
+dummy-744068-2 hostname=dummy-744068-2
+dummy-744068-1 hostname=dummy-744068-1
+dummy-744068-0 hostname=dummy-744068-0
+
+[libvirt-group]
+192.168.122.219 hostname=192.168.122.219
+
+[all]
+ec2-34-201-82-248.compute-1.amazonaws.com hostname=ec2-34-201-82-248.compute-1.amazonaws.com
+hp-dl380pgen8-02-vm-15.lab.bos.redhat.com hostname=hp-dl380pgen8-02-vm-15.lab.bos.redhat.com
+dummy-744068-2 hostname=dummy-744068-2
+dummy-744068-1 hostname=dummy-744068-1
+dummy-744068-0 hostname=dummy-744068-0
+192.168.122.219 hostname=192.168.122.219
+10.8.246.233 hostname=10.8.246.233
+

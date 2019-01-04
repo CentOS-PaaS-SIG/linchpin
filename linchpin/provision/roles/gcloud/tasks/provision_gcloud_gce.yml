@@ -41,3 +41,12 @@
   set_fact:
     async_outputs_gcloud_gce: "{{ async_outputs_gcloud_gce + [ res_def_output ] }}"
   when: async
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce | add_res_type('gcloud_gce_res') }}"
+
+- name: "Async:: Add type to resource"
+  set_fact:
+    async_outputs_gcloud_gce: "{{ async_outputs_gcloud_gce | add_res_type('gcloud_gce_res') }}"
+  when: async

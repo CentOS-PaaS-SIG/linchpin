@@ -14,8 +14,7 @@
                     "vcpus": { "type": "integer", "required": true },
                     "memory": { "type": "integer", "required": true },
                     "count": { "type": "integer", "required": false },
-                    "uri": { "type": "string", "required": false },
-                    "driver": {
+                    "uri": { "type": "string", "required": false }, "driver": {
                         "type": "string",
                         "allowed": ["kvm", "qemu"],
                         "required": false },

@@ -50,3 +50,7 @@
   set_fact:
     topology_job_ids: "{{ topology_job_ids + [ res_def_output_async ] }}"
   when: async
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_os_keypair: "{{ topology_outputs_os_keypair | add_res_type('os_keypair_res') }}"

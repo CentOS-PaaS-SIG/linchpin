@@ -22,3 +22,6 @@
   set_fact:
     topology_outputs_duffy: "{{ topology_outputs_duffy + tmp }}"
 
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_duffy: "{{ topology_outputs_duffy | add_res_type('duffy_res') }}"

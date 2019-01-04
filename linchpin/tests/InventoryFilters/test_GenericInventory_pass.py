@@ -21,57 +21,57 @@ def setup_generic_inventory_filter():
 
     filter = GenericInventory.GenericInventory()
 
-    provider = 'general'
+    provider = 'general-inventory'
     base_path = '{0}'.format(os.path.dirname(
     os.path.realpath(__file__))).rstrip('/')
     lib_path = os.path.realpath(os.path.join(base_path, os.pardir))
     mock_path = '{0}/{1}/{2}'.format(lib_path, 'mockdata', provider)
 
-    res_output = 'topo.json'
+    res_output = 'linchpin.benchmark'
     res_file = open(mock_path+'/'+res_output)
-    res_output = json.load(res_file)
+    res_output = json.load(res_file)['17']['targets'][0]['general-inventory']['outputs']['resources']
     res_file.close()
 
 def setup_generic_topology():
     global topology
 
-    provider = 'dummy'
+    provider = 'general-inventory'
     base_path = '{0}'.format(os.path.dirname(
     os.path.realpath(__file__))).rstrip('/')
     lib_path = os.path.realpath(os.path.join(base_path, os.pardir))
     mock_path = '{0}/{1}/{2}'.format(lib_path, 'mockdata', provider)
 
-    topo = 'topologies/dummy-cluster.yml'
+    topo = 'PinFile'
     topo_file = open(mock_path+'/'+topo)
-    topology = yaml.load(topo_file)
+    topology = yaml.load(topo_file)['general-inventory']['topology']
     topo_file.close()
 
 def setup_generic_config():
     global config
 
-    provider = 'general'
+    provider = 'general-inventory'
     base_path = '{0}'.format(os.path.dirname(
     os.path.realpath(__file__))).rstrip('/')
     lib_path = os.path.realpath(os.path.join(base_path, os.pardir))
     mock_path = '{0}/{1}/{2}'.format(lib_path, 'mockdata', provider)
 
-    cfg = 'config.yml'
+    cfg = 'PinFile'
     cfg_file = open(mock_path+'/'+cfg)
-    config = yaml.load(cfg_file)
+    config = yaml.load(cfg_file)['general-inventory']['cfgs']
     cfg_file.close()
 
 def setup_generic_layout():
     global layout
 
-    provider = 'layouts'
+    provider = 'general-inventory'
     base_path = '{0}'.format(os.path.dirname(
     os.path.realpath(__file__))).rstrip('/')
     lib_path = os.path.realpath(os.path.join(base_path, os.pardir))
     mock_path = '{0}/{1}/{2}'.format(lib_path, 'mockdata', provider)
 
-    template = 'parsed-layout.json'
+    template = 'linchpin.benchmark'
     template_file = open(mock_path+'/'+template)
-    layout = json.load(template_file)
+    layout = json.load(template_file)['17']['targets'][0]['general-inventory']['inputs']['layout_data']['inventory_layout']
 
 def setup_complex_workspace():
     global workspace
@@ -89,32 +89,25 @@ def test_get_host_data():
     """
     """
     host_data = filter.get_host_data(res_output, config)
-    expected_providers = ['aws', 'openstack', 'dummy', 'gcloud', 'beaker',
-                          'libvirt', 'duffy', 'ovirt']
-    assert_equal(set(host_data.keys()), set(expected_providers))
-
-    for provider in host_data:
-        for host in host_data[provider]:
-            if provider == 'dummy' or provider == 'duffy':
-                continue
-            assert_true('__IP__' in host_data[provider][host].keys())
+    hosts = []
+    for data in host_data:
+        for host in data:
+            assert_true('__IP__' in data[host].keys())
+            hosts.append(data[host]['__IP__'])
+    expected_hosts = ['10.179.254.83', 'hp-dl380pgen8-02-vm-15.lab.bos.redhat.com', 'dummy-744068-0', 'dummy-744068-1', 'dummy-744068-2', '192.168.122.219', '172.16.100.11', '155.132.55.17', '11.50.197.1', '109.254.93.117', '180.20.194.96', '194.231.24.112', '171.109.242.199', 'test.example.com']
+    assert_equal(set(hosts), set(expected_hosts))
 
 
 @with_setup(setup_generic_inventory_filter)
+@with_setup(setup_generic_config)
 def test_get_hosts_by_count():
     """
     """
-    host_dict = dict()
-    host_dict['openstack'] = {}
-    host_dict['openstack']['os1'] = 'one'
-    host_dict['libvirt'] = {}
-    host_dict['libvirt']['l1'] = 'one'
-    host_dict['libvirt']['l2'] = 'two'
-    expected_hosts = ['os1', 'l1', 'l2']
-
-    hosts = filter.get_hosts_by_count(host_dict, 0, ['openstack', 'libvirt'])
+    host_data = filter.get_host_data(res_output, config)
+    expected_hosts = ['10.179.254.83', 'hp-dl380pgen8-02-vm-15.lab.bos.redhat.com', 'dummy-744068-2']
+    hosts = filter.get_hosts_by_count(host_data, 0)
     assert_equal(len(hosts), 0)
-    hosts = filter.get_hosts_by_count(host_dict, 3, ['openstack', 'libvirt'])
+    hosts = filter.get_hosts_by_count(host_data, 3)
     assert_equal(len(hosts), 3)
     assert_equal(set(hosts), set(expected_hosts))
 

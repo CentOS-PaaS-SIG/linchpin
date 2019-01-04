@@ -18,3 +18,7 @@
   set_fact:
     topology_outputs_aws_s3: "{{ topology_outputs_aws_s3 + [res_def] }}"
   when: res_def_output['changed'] == true and state == "present"
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_aws_s3: "{{ topology_outputs_aws_s3 | add_res_type('aws_s3_res') }}"

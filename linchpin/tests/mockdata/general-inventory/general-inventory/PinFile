@@ -1,0 +1,205 @@
+---
+general-inventory:
+  topology:
+    topology_name: general
+    resource_groups:
+      - resource_group_name: aws
+        resource_group_type: aws
+        resource_definitions:
+          - name: aws-ec2-new
+            flavor: m1.small
+            role: aws_ec2
+            region: us-east-1
+            image: ami-984189e2
+            count: 1
+            instance_tags:
+              color: blue
+              shape: oval
+            security_group:
+              - default
+              - public
+        credentials:
+          filename: aws.key
+          profile: default
+      - resource_group_name: bkr-new
+        resource_group_type: beaker
+        resource_definitions:
+          - role: bkr_server
+            whiteboard: Provisioned with linchpin
+            max_attempts: 240
+            attempt_wait_time: 60
+            cancel_message: JOb cancelled on account of rain
+            recipesets:
+              - distro: RHEL-7.5
+                name: rheltest
+                arch: x86_64
+                count: 1
+                name: rhel76
+                hostrequires:
+                  - rawxml: '<key_value key="model" op="=" value="KVM"/>'
+#      - resource_group_name: duffy-new
+#        resource_group_type: duffy
+#        resource_definitions:
+#          - role: duffy_node
+#            name: duffy
+#            version: 7
+#            arch: x86_64
+#            count: 1
+#        credentials: duffy.key
+      - resource_group_name:  dummy-new
+        resource_group_type: dummy
+        resource_definitions:
+          - name: "{{ distro | default('') }}dummy"
+            role: dummy_node
+            count: 3
+#      - resource_group_name: gcloud
+#        resource_group_type: gcloud
+#        resource_definitions:
+#          - name: gce-webserver
+#            flavor: f1-micro
+#            role: gcloud_gce
+#            region: us-central1-a
+#            image: centos-7
+#            count: 1
+#        credentials:
+#          filename: gce.json
+      - resource_group_name: libvirt-new
+        resource_group_type: libvirt
+        resource_definitions:
+          - role: libvirt_node
+            name: centos71
+            uri: qemu:///system
+            count: 1
+            image_src: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz
+            memory: 2048
+            vcpus: 1
+            arch: x86_64
+            ssh_key: libvirt
+            networks:
+              - name: default
+            additional_storage: 10G
+            cloud_config:
+              users:
+                - name: rycole
+                  gecos: Ryan Cole
+                  groups: wheel
+                  sudo: ALL=(ALL) NOPASSWD:ALL
+                  ssh_import_id: gh:rycole
+                  lock_passwd: true
+      - resource_group_name: openshift
+        resource_group_type: openshift
+        resource_definitions:
+          - name: testsecret
+            role: openshift_inline
+            namespace: continuous-infra
+            definition:
+              apiVersion: v1
+              data:
+                password: dGVzdHBhc3N3b3Jk
+                username: dGVzdHVzZXJuYW1l
+              kind: Secret
+              metadata:
+                name: testsecret
+                namespace: continuous-infra
+              type: kubernetes.io/basic-auth
+        credentials:
+          filename: upshift.yaml
+          profile: default
+      - resource_group_name: os-server-new
+        resource_group_type: openstack
+        resource_definitions:
+          - name: "{{ distro | default('') }}openstack"
+            role: os_server
+            flavor: m1.small
+            image: CentOS-7-x86_64-GenericCloud-1612
+            count: 1
+            keypair: ci-factory
+            fip_pool: 10.8.240.0
+            networks:
+              - e2e-openstack
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos
+#      - resource_group_name: ovirt-new
+#        resource_group_type: ovirt
+#        resource_definitions:
+#          - name: golden
+#            role: ovirt_vms
+#            template: golden_mixed_virtio_template
+#            cluster: golden_env_mixed_1
+#        credentials:
+#          filename: ex_ovirt_creds.yml
+#          profile: ge2
+#      - resource_group_name: rax-new
+#        resource_group_type: rackspace
+#        resource_definitions:
+#          - role: rax_server
+#            name: server
+#            flavor: 2
+#            image: b7496124-ea63-4247-9f24-e4c089dd3e97
+#            region: DFW
+#            count: 1
+#            networks:
+#              - public
+#              - private
+#        credentials:
+#          filename: auth.json
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        aws-node:
+          count: 1
+          host_groups:
+            - aws-group
+        beaker-node:
+          count: 1
+          host_groups:
+            - bkr-group
+#        duffy-node:
+#          count: 1
+#          host_groups:
+#           - duffy-group
+        dummy-node:
+          count: 3
+          host_groups:
+            - dummy-group
+#        gcloud-node:
+#          count: 1
+#          host_groups:
+#            - gce-group
+        libvirt-node:
+          count: 1
+          host_groups:
+            - libvirt-group
+        openstack-node:
+          count: 1
+          host_groups:
+            - openstack-group
+#        ovirt-node:
+#          count:: 1
+#          host_groups:
+#            - ovirt-group
+#        rackspace-node:
+#          count: 1
+#          host_groups:
+#            - rax-group
+      host_groups:
+        openstack-group:
+          vars:
+            zone: __ZONE__
+  cfgs:
+    aws:
+      __IP__: private_ip
+    beaker:
+      __IP__: system
+    gcloud:
+      __IP__: public_ip
+    libvirt:
+      __IP__: ip
+    openstack:
+      __IP__: private_v4
+      __ZONE__: zone
+    ovirt:
+      __IP__: ips.address_v4

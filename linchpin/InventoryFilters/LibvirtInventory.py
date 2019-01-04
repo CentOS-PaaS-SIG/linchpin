@@ -12,7 +12,7 @@ class LibvirtInventory(InventoryFilter):
     DEFAULT_HOSTNAMES = ['ip']
 
 
-    def get_host_data(self, topo, cfgs):
+    def get_host_data(self, res, cfgs):
         """
         Returns a dict of hostnames or IP addresses for use in an Ansible
         inventory file, based on available data. Only a single hostname or IP
@@ -33,21 +33,23 @@ class LibvirtInventory(InventoryFilter):
         """
 
         host_data = {}
+        if res['resource_type'] != 'libvirt_res':
+            return host_data
         var_data = cfgs.get('libvirt', {})
         if var_data is None:
             var_data = {}
-        for group in topo.get('libvirt_res', []):
-            host = self.get_hostname(group, var_data,
-                                     self.DEFAULT_HOSTNAMES)
-            hostname_var = host[0]
-            hostname = host[1]
+        host = self.get_hostname(res, var_data,
+                                 self.DEFAULT_HOSTNAMES)
+        hostname_var = host[0]
+        hostname = host[1]
+        host_data[hostname] = {}
+        if '__IP__' not in var_data.keys():
+            var_data['__IP__'] = hostname_var
             host_data[hostname] = {}
-            if '__IP__' not in var_data.keys():
-                var_data['__IP__'] = hostname_var
-                host_data[hostname] = {}
-            host_data[hostname] = {}
-            self.set_config_values(host_data[hostname], group, var_data)
+        host_data[hostname] = {}
+        self.set_config_values(host_data[hostname], res, var_data)
         return host_data
+
 
     def get_host_ips(self, host_data):
         return host_data.keys()
@@ -55,11 +57,13 @@ class LibvirtInventory(InventoryFilter):
 
     def get_inventory(self, topo, layout, config):
 
-        if len(topo['libvirt_res']) == 0:
-            return ""
-
-        host_data = self.get_host_data(topo, config)
-        inven_hosts = self.get_host_ips(host_data)
+        host_data = []
+        inven_hosts = []
+        for res in topo:
+            hd = self.get_host_data(res, config)
+            if hd:
+                host_data.append(hd)
+            inven_hosts.extend(self.get_host_ips(hd))
 
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)

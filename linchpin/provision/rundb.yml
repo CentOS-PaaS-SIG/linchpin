@@ -106,6 +106,40 @@
         key: "inputs"
         run_id: "{{ rundb_id }}"
 
+    - name: "set output_data fact"
+      set_fact:
+        output_data:
+          '[
+               [
+                   {
+                       "failed": False,
+                       "changed": True,
+                       "hosts": [
+                           "more-8dac81-0.example.net"
+                       ],
+                       "resource_type": "dummy_res",
+                       "dummy_file": "/tmp/dummy.hosts"
+                   }
+               ]
+           ]'
+
+    - name: "add outputs to rundb"
+      rundb:
+        conn_str: "{{ rundb_path }}"
+        operation: update
+        table: "{{ rundb_table }}"
+        key: "outputs"
+        value: [{ 'resources': "{{ output_data }}"  }]
+        run_id: "{{ rundb_id }}"
+
+    - name: "get output data from rundb"
+      rundb:
+        conn_str: "{{ rundb_path }}"
+        operation: get
+        table: "{{ rundb_table }}"
+        key: "outputs"
+        run_id: "{{ rundb_id }}"
+
 #operation:
 #run_id:
 #table: (aka target in linchpin)

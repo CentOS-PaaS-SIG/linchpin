@@ -12,7 +12,7 @@ class OvirtInventory(InventoryFilter):
     DEFAULT_HOSTNAMES = ['ips.address_v4']
 
 
-    def get_host_data(self, topo, cfgs):
+    def get_host_data(self, res, cfgs):
         """
         Returns a dict of hostnames or IP addresses for use in an Ansible
         inventory file, based on available data. Only a single hostname or IP
@@ -33,21 +33,22 @@ class OvirtInventory(InventoryFilter):
         """
 
         host_data = {}
+        if res['resource_type'] != 'ovirt_vms_res':
+            return host_data
         var_data = cfgs.get('ovirt', {})
         if var_data is None:
             var_data = {}
-        for group in topo.get('ovirt_vms_res', []):
-            if group['vm']['reported_devices']:
-                for dev in group['vm']['reported_devices']:
-                    host = self.get_hostname(dev, var_data,
-                                             self.DEFAULT_HOSTNAMES)
-                    hostname_var = host[0]
-                    hostname = host[1]
+        if res['vm']['reported_devices']:
+            for dev in res['vm']['reported_devices']:
+                host = self.get_hostname(dev, var_data,
+                                         self.DEFAULT_HOSTNAMES)
+                hostname_var = host[0]
+                hostname = host[1]
+                host_data[hostname] = {}
+                if '__IP__' not in var_data.keys():
+                    var_data['__IP__'] = hostname_var
                     host_data[hostname] = {}
-                    if '__IP__' not in var_data.keys():
-                        var_data['__IP__'] = hostname_var
-                        host_data[hostname] = {}
-                    self.set_config_values(host_data[hostname], dev, var_data)
+                self.set_config_values(host_data[hostname], dev, var_data)
         return host_data
 
     def get_host_ips(self, host_data):
@@ -92,12 +93,13 @@ class OvirtInventory(InventoryFilter):
 
 
     def get_inventory(self, topo, layout, config):
-
-        if len(topo['ovirt_vms_res']) == 0:
-            return ""
-        # no_of_groups = len(topo['ovirt_vms_res'])
-        host_data = self.get_host_data(topo, config)
-        inven_hosts = self.get_host_ips(host_data)
+        host_data = []
+        inven_hosts = []
+        for res in topo:
+            hd = self.get_host_data(res, config)
+            if hd:
+                host_data.append(hd)
+            inven_hosts = self.get_host_ips(hd)
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)
         self.add_sections(host_groups)
