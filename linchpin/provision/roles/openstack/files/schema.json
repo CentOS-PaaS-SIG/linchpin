@@ -151,6 +151,7 @@
                     "interface": { "type": "string", "required": false, "allowed": ["public", "internal", "admin"] },
                     "key": { "type": "string", "required": false },
                     "name": { "type": "string", "required": true},
+                    "unique": { "type": "boolean", "required": false},
                     "project": { "type": "string", "required": false},
                     "provider_network_type": { "type": "string", "required": false},
                     "provider_physical_network": { "type": "string", "required": false},
