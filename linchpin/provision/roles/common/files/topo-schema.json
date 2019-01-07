@@ -1,6 +1,6 @@
 {
     "topology": {
-        "type": "dict",
+        "type": ["dict", "string"],
         "schema": {
             "topology_name": {
                 "type": "string",
@@ -25,7 +25,7 @@
                             "required": true
                         },
                         "credentials": {
-                            "type": "string",
+                            "type": ["string", "dict"],
                             "required": false
                         }
                     }

@@ -13,6 +13,8 @@ from linchpin.validator.anyofvalidator import AnyofValidator
 
 
 class Validator(object):
+    SECTIONS = ['topology', 'layout', 'cfgs', 'hooks']
+
     def __init__(self, ctx, pb_path, pb_ext):
         self.ctx = ctx
         self.pb_path = pb_path
@@ -30,6 +32,13 @@ class Validator(object):
         :param old_schema: whether or not to validate using the old schema
                            by default
         """
+
+        for field in target.keys():
+            if field not in Validator.SECTIONS:
+                raise ValidationError("Section '{0}' not a valid top-level "
+                                      "PinFile section. valid sections "
+                                      "are '{1}'".format(target,
+                                                         Validator.SECTIONS))
         if 'topology' not in target.keys():
             raise ValidationError("Each target must have a topology")
 
@@ -52,14 +61,20 @@ class Validator(object):
         results = {}
         return_code = 0
 
+        for field in target.keys():
+            if field not in Validator.SECTIONS:
+                raise ValidationError("Section '{0}' not a valid top-level "
+                                      "PinFile section. valid sections "
+                                      "are '{1}'".format(target,
+                                                         Validator.SECTIONS))
         if 'topology' not in target.keys():
             results['topology'] = "Each target must have a topology"
 
+        err_prefix = "errors:\n"
         topo_data = target['topology']
         try:
             self.validate_topology(topo_data)
         except (SchemaError, KeyError) as e:
-            err_prefix = "errors:\n"
             # if topology fails, try converting from old to new style
             try:
                 self._convert_topology(topo_data)
@@ -80,6 +95,10 @@ class Validator(object):
                 return_code += 1
             else:
                 results['topology'] = "valid under old schema"
+        except TopologyError as t:
+            error = self._format_error(err_prefix, t)
+            results['topology'] = error
+            return_code += 1
         else:
             results['topology'] = "valid"
 
@@ -119,6 +138,10 @@ class Validator(object):
         ;param topo_data: topology dictionary
         """
 
+        # validate high-level topology-components
+        self.validate_topology_highlevel(topo_data)
+
+        # validate each resource group
         res_grps = topo_data.get('resource_groups')
         resources = []
         for group in res_grps:
@@ -126,6 +149,41 @@ class Validator(object):
             resources.append(group)
 
         return resources
+
+
+    def validate_topology_highlevel(self, topo_data):
+        """
+        validate the higher-level components of the topology
+
+        These are not specific to the provider and must be validated separately
+        from the items within each resource group
+
+        :param topo_data topology data from the pinfile
+        """
+
+        pb_path = self._find_playbook_path("layout")
+        try:
+            sp = "{0}/roles/common/files/topo-schema.json".format(pb_path)
+            schema = json.load(open(sp))
+        except Exception as e:
+            raise LinchpinError("Error with schema: '{0}'"
+                                " {1}".format(sp, e))
+
+        document = {'topology': topo_data}
+        v = AnyofValidator(schema, error_handler=ValidationErrorHandler)
+
+        if not v.validate(document):
+            try:
+                err = self._gen_error_msg("", "", v.errors)
+                raise TopologyError(err)
+            except NotImplementedError as e:
+                # we shouldn't have this issue using cererus >= 1.2, but
+                # this is here just in case an older version has to be used
+                self.ctx.log_state("There was an error validating your schema,\
+                      but we can't seem to format it for you")
+                self.ctx.log_state("Here's the raw error data in case you want\
+                      to go through it by hand:")
+                self.ctx.log_state(v._errors)
 
 
     def validate_resource_group(self, res_grp):
