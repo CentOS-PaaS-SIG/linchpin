@@ -15,6 +15,11 @@
     topology_outputs: "{{ topology_outputs_dummy }}"
   when: topology_outputs_dummy is defined
 
+- name: "Add nummy_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs_nummy }}"
+  when: topology_outputs_nummy is defined
+
 - name: "Add os_server_res"
   set_fact:
     topology_outputs: "{{ topology_outputs_os_server }}"

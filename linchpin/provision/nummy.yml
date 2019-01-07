@@ -1,0 +1,20 @@
+---
+# This playbook provisions dummy topology.
+
+- name:  "schema check and Pre Provisioning Activities on topology_file"
+  hosts: localhost
+  gather_facts: False
+  roles:
+    - { role: 'common' }
+
+- name:  "Provisioning resources based on resource group type"
+  hosts: localhost
+  gather_facts: False
+  roles:
+    - { role: 'nummy' }
+
+- name: "Writing contents to file"
+  hosts: localhost
+  gather_facts: False
+  roles:
+    - { role: 'gather_resources' }

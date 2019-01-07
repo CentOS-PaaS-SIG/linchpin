@@ -1,0 +1,16 @@
+---
+- name: "declaring output vars"
+  set_fact:
+    topology_outputs_nummy: []
+
+- name: "Initiating Provisioning of nummy resource group"
+  include: provision_resource_group.yml res_grp={{ item }}
+  with_items:
+    - "{{ resources }}"
+  when: state == "present"
+
+- name: "Initiating Teardown of nummy resource group"
+  include: teardown_resource_group.yml res_grp={{ item }}
+  with_items:
+    - "{{ resources }}"
+  when: state == "absent"
