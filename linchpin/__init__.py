@@ -23,11 +23,9 @@ from linchpin.rundb.drivers import DB_DRIVERS
 from linchpin.exceptions import ActionError
 from linchpin.exceptions import LinchpinError
 from linchpin.exceptions import SchemaError
-from linchpin.exceptions import TopologyError
 from linchpin.exceptions import ValidationError
-from linchpin.exceptions import ValidationErrorHandler
 
-from linchpin.utils.validator import AnyofValidator
+from linchpin.validator import Validator
 
 from linchpin.InventoryFilters import GenericInventory
 
@@ -331,57 +329,6 @@ class LinchpinAPI(object):
             return res_grp
 
 
-    def _convert_topology(self, topology):
-        """
-        For backward compatiblity, convert the old topology format
-        into the new format. Should be pretty straightforward and simple.
-
-        ;param topology: topology dictionary
-        """
-        try:
-            res_grps = topology.get('resource_groups')
-            if res_grps:
-                for res_grp in res_grps:
-                    if 'res_group_type' in res_grp.keys():
-                        res_grp['resource_group_type'] = (
-                            res_grp.pop('res_group_type'))
-
-                    if 'res_defs' in res_grp.keys():
-                        res_grp['resource_definitions'] = (
-                            res_grp.pop('res_defs'))
-
-                    res_defs = res_grp.get('resource_definitions')
-                    if not res_defs:
-                        # this means it's either a beaker or openshift topology
-                        res_grp_type = res_grp.get('resource_group_type')
-
-                        res_group = self._fix_broken_topologies(res_grp,
-                                                                res_grp_type)
-                        res_defs = res_group.get('resource_definitions')
-                        res_grp['resource_definitions'] = res_defs
-
-                    if res_defs:
-                        for res_def in res_defs:
-                            if 'res_name' in res_def.keys():
-                                res_def['name'] = res_def.pop('res_name')
-                            if 'type' in res_def.keys():
-                                res_def['role'] = res_def.pop('type')
-                            if 'res_type' in res_def.keys():
-                                res_def['role'] = res_def.pop('res_type')
-                            if 'count' in res_def.keys():
-                                res_def['count'] = int(res_def.pop('count'))
-                    else:
-                        raise TopologyError("'resource_definitions' do not"
-                                            " validate in topology"
-                                            " ({0})".format(topology))
-            else:
-                raise TopologyError("'resource_groups' do not validate"
-                                    " in topology ({0})".format(topology))
-
-        except Exception:
-            raise LinchpinError("Unknown error converting schema. Check"
-                                " template data")
-
     def _convert_layout(self, layout_data):
         """
         Convert the layout to retain order of the layout hosts
@@ -398,102 +345,6 @@ class LinchpinAPI(object):
             layout_hosts.append(layout_host)
         layout_json["inventory_layout"]["hosts"] = layout_hosts
         return layout_json
-
-
-    def validate_topology(self, topology):
-        """
-        Validate the provided topology against the schema
-
-        ;param topology: topology dictionary
-        """
-
-        res_grps = topology.get('resource_groups')
-        resources = []
-
-        for group in res_grps:
-            res_grp_type = (group.get('resource_group_type') or
-                            group.get('res_group_type'))
-
-            pb_path = self._find_playbook_path(res_grp_type)
-
-            try:
-                sp = "{0}/roles/{1}/files/schema.json".format(pb_path,
-                                                              res_grp_type)
-                schema = json.load(open(sp))
-            except Exception as e:
-                raise LinchpinError("Error with schema: '{0}'"
-                                    " {1}".format(sp, e))
-
-            res_defs = group.get('resource_definitions')
-
-
-            # preload this so it will validate against the schema
-            document = {'res_defs': res_defs}
-            v = AnyofValidator(schema,
-                               error_handler=ValidationErrorHandler)
-
-            if not v.validate(document):
-                try:
-                    err = self._gen_error_msg("", "", v.errors)
-                    raise SchemaError(err)
-                except NotImplementedError as e:
-                    # we shouldn't have this issue using cerberus >= 1.2, but
-                    # this is here just in case an older version has to be used
-                    print("There was an error validating your schema, but we\
-                          can't seem to format it for you")
-                    print("Here's the raw error data in case you want to go\
-                          through it by hand:")
-                    print(v._errors)
-
-            resources.append(group)
-
-        return resources
-
-
-    def _gen_error_msg(self, prefix, section, error):
-        # set the prefix for this subtree
-        if section != "":
-            if prefix != "":
-                prefix += "[" + str(section) + "]"
-            else:
-                prefix = str(section)
-
-        if isinstance(error, str):
-            if prefix == "":
-                return error
-            return prefix + ": " + error + os.linesep
-        elif isinstance(error, list):
-            msg = ""
-            for i, e in enumerate(error):
-                # we don't need to change the Vprefix here
-                msg += self._gen_error_msg(prefix, "", e)
-            return msg
-        else:  # in this case, error is a dict
-            msg = ""
-            for key, val in error.iteritems():
-                msg += self._gen_error_msg(prefix, key, val)
-            return msg
-
-
-    def validate_layout(self, layout):
-        """
-        Validate the provided layout against the schema
-
-        :param layout: layout dictionary
-        """
-
-        pb_path = self._find_playbook_path("layout")
-        try:
-            sp = "{0}/roles/common/files/schema.json".format(pb_path)
-
-            schema = json.load(open(sp))
-        except Exception as e:
-            raise LinchpinError("Error with schema: '{0}' {1}".format(sp, e))
-
-        v = AnyofValidator(schema)
-
-        if not v.validate(layout):
-            raise SchemaError('Schema validation failed: {0}'.format(v.errors))
 
 
     def generate_inventory(self, resource_data, layout, inv_format="cfg",
@@ -693,22 +544,15 @@ class LinchpinAPI(object):
             self.set_evar('rundb_id', rundb_id)
             self.set_evar('uhash', uhash)
 
-            topology_data = provision_data[target].get('topology')
-
-            # if validation fails the first time, convert topo from old -> new
             try:
-                resources = self.validate_topology(topology_data)
-            except (SchemaError, KeyError):
-                # if topology fails, try converting from old to new style
-                try:
-                    self._convert_topology(topology_data)
-                    resources = self.validate_topology(topology_data)
-                except SchemaError:
-                    raise ValidationError("Topology '{0}' does not validate.  "
-                                          "For more information run `linchpin "
-                                          "validate`".format(topology_data))
+                validator = Validator(self.ctx, self.pb_path, self.pb_ext)
+                resources = validator.validate(provision_data[target])
+            except SchemaError:
+                raise ValidationError("Target '{0}' does not validate.  For"
+                                      " more information run `linchpin "
+                                      "validate`".format(target))
 
-
+            topology_data = provision_data[target].get('topology')
             self.set_evar('topo_data', topology_data)
 
             rundb.update_record(target,
@@ -721,12 +565,6 @@ class LinchpinAPI(object):
 
             if provision_data[target].get('layout', None):
                 l_data = provision_data[target]['layout']
-                try:
-                    self.validate_layout(l_data)
-                except SchemaError:
-                    raise ValidationError("Layout '{0}' does not"
-                                          " validate".format(l_data))
-
                 provision_data[target]['layout'] = self._convert_layout(l_data)
                 self.set_evar('layout_data', provision_data[target]['layout'])
 
@@ -865,57 +703,12 @@ class LinchpinAPI(object):
             results[target] = {}
             self.set_evar('target', target)
 
-            # validate topology
-            topology_data = provision_data[target].get('topology')
-
-            try:
-                self.validate_topology(topology_data)
-            except (SchemaError, KeyError) as e:
-                # try to validate against old schema
-                try:
-                    self._convert_topology(topology_data)
-                    self.validate_topology(topology_data)
-                except SchemaError as s:
-                    error = "errors:\n".format(target, topology_data)
-                    if old_schema:
-                        # there's an inline way of doing this with join() but
-                        # this looks cleaner
-                        for line in iter(str(s).splitlines(True)):
-                            error += "\t" + line
-                    else:
-                        if type(e) == KeyError:
-                            error += "\tfield res_defs['type'] is no longer"\
-                                     "Please use 'role' instead"
-                        else:
-                            for line in iter(str(e).splitlines(True)):
-                                error += "\t" + line
-
-                    results[target]['topology'] = error
-                    return_code += 1
-                else:
-                    results[target]['topology'] = "topology valid under old "\
-                                                  "schema"
-
-
-            else:
-                results[target]['topology'] = "valid"
-
-            # validate layout
-            if provision_data[target].get('layout', None):
-                l_data = provision_data[target]['layout']
-
-                try:
-                    self.validate_layout(l_data)
-                except SchemaError as e:
-                    error = "errors:".format(target, l_data)
-                    for line in iter(str(e).splitlines(True)):
-                        error += "\t" + line
-
-                    results[target]['layout'] = error + "\n"
-
-                else:
-                    results[target]['layout'] = "valid"
-
+            validator = Validator(self.ctx, self.pb_path, self.pb_ext)
+            target_dict = provision_data[target]
+            ret, results[target] = validator.validate_pretty(target_dict,
+                                                             target,
+                                                             old_schema)
+            return_code += ret
 
         return return_code, results
 
