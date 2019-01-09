@@ -116,6 +116,8 @@ chmod go-w /root /root/.ssh /root/.ssh/authorized_keys
             else:
                 requested_tasks.append({'arches': [],
                                         'name': '/distribution/reservesys'})
+                if reserve_duration:
+                    task_params.append("RESERVETIME=%s" % reserve_duration)
 
             # Update defaults
             kwargs.update({"suppress_install_task": True})
