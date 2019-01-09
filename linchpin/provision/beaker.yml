@@ -3,18 +3,18 @@
 
 - name:  "schema check and Pre Provisioning Activities on topology_file"
   hosts: localhost
-  gather_facts: True
+  gather_facts: False
   roles:
     - { role: 'common' }
 
 - name:  "Provisioning beaker resources"
   hosts: localhost
-  gather_facts: True
+  gather_facts: False
   roles:
     - { role: 'beaker' }
 
 - name: "Gather resources to the RunDB"
   hosts: localhost
-  gather_facts: True
+  gather_facts: False
   roles:
     - { role: 'gather_resources' }
