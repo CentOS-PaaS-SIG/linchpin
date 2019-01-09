@@ -85,7 +85,27 @@
                     "region": { "type": "string", "required": true },
                     "template_path": { "type": "string", "required": true }
                 }
-            }]
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["aws_ec2_eip"] },
+                    "allow_reassociation": { "type": "string", "required": false },
+                    "name": { "type": "string", "required": true },
+                    "device_id": { "type": "string", "required": false },
+                    "ec2_url": { "type": "string", "required": false },
+                    "in_vpc": { "type": "string", "required":false },
+                    "private_ip_address": { "type": "string", "required": false },
+                    "public_ip": { "type": "string", "required": false },
+                    "region": { "type": "string", "required": true },
+                    "release_on_disassociation": { "type": "string", "required": false },
+                    "reuse_existing_ip_allowed": { "type": "string", "required": false }
+                }
+            }
+	    ]
         }
     }
 }
