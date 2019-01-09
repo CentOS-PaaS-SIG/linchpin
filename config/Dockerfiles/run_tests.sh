@@ -7,7 +7,8 @@ shift
 DISTROS=$*
 #TARGETS="dummy os-server-new os-sg-new os-vol-new"
 
-PROVIDERS="dummy openstack"
+#PROVIDERS="dummy openstack"
+PROVIDERS="aws"
 
 export WORKSPACE="/tmp"
 
