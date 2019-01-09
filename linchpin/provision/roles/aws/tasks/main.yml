@@ -5,6 +5,7 @@
     topology_outputs_aws_s3: []
     topology_outputs_aws_ec2_key: []
     topology_outputs_aws_cfn: []
+    topology_outputs_aws_net: []
 
 - name: "Initiating Provisioning of aws resource group"
   include: provision_resource_group.yml res_grp={{ item }}
