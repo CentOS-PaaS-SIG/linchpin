@@ -17,16 +17,14 @@ class DummyInventory(InventoryFilter):
         Ansible on the same host via the generated inventory file.
 
         :param topo:
-            linchpin Dummy resource data
+            linchpin Dummy/nummy resource data
 
         :param cfgs:
             map of config options from PinFile
         """
-
         host_data = {}
-        if res['resource_type'] != 'dummy_res':
-            return host_data
         var_data = cfgs.get('dummy', {})
+        var_data.update(cfgs.get('nummy', {}))
         if var_data is None:
             var_data = {}
             var_data['__IP__'] = '__SELF__'

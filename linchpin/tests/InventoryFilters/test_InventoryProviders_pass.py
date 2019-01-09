@@ -26,6 +26,7 @@ def test_get_all_drivers():
         "beaker_res": BeakerInventory,
         "duffy_res": DuffyInventory,
         "dummy_res": DummyInventory,
+        "nummy_res": DummyInventory,
         "gcloud_gce_res": GCloudInventory,
         "libvirt_res": LibvirtInventory,
         "os_server_res": OpenstackInventory,
