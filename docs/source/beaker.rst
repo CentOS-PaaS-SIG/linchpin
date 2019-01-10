@@ -106,7 +106,7 @@ describes the available recipesets options.
 +---------------------+------------+----------+-----------------------------------------+
 | ssh_key             | false      | list     | list of strings                         |
 +---------------------+------------+----------+-----------------------------------------+
-| kickstart           | false      | string   | N/A                                     |
+| kickstart           | false      | string   | absolute path to a kickstart template   |
 +---------------------+------------+----------+-----------------------------------------+
 
 Additional Dependencies
