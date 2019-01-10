@@ -318,5 +318,5 @@ class LinchpinHooks(object):
                     dflt = self.api.get_cfg("hook_flags",
                                             "ignore_failed_hooks")
                     if not dflt:
-                        raise HookError("Error executing hook")
+                        raise HookError("Error executing hook: '{0}'".format(e))
                     self.api.ctx.log_info(str(e))
