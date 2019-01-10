@@ -122,7 +122,8 @@
                                     "type": "list",
                                     "required": false,
                                     "schema": { "type": "string", "required": true }
-                                }
+                                },
+                                "kickstart": { "type": "string", "required": false }
                              }
                          }]
                     }
