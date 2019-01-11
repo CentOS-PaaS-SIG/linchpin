@@ -89,9 +89,10 @@ class SubprocessActionManager(ActionManager):
         """
 
         command = action
+        data = ""
         for key in self.target_data:
-            command += " {0}={1} ".format(key, self.target_data[key])
-        return command
+            data += "{0}={1}; ".format(key, self.target_data[key])
+        return data + command
 
 
     def execute(self):
