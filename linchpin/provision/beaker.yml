@@ -3,7 +3,7 @@
 
 - name:  "schema check and Pre Provisioning Activities on topology_file"
   hosts: localhost
-  gather_facts: False
+  gather_facts: True
   roles:
     - { role: 'common' }
 
