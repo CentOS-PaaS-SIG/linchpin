@@ -188,17 +188,20 @@ How to get to know API_ENDPOINT and API_TOKEN:
 
 Once the openshift cluster is up and running try logging into openshift using the following command
 
-.. code-block::
+.. code-block:: bash
+
    oc login
 
 After login run following command to get the API_ENDPOINT: 
 
-.. code-block::
+.. code-block:: bash
+
    oc version | grep Server | awk '{print $2}'
 
 Run the following command to get API_TOKEN
 
-.. code-block::
+.. code-block:: bash
+
    oc whomai -t
 
 Make sure your openshift user has permissions to create resources: 
