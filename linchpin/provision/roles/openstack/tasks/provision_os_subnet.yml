@@ -4,7 +4,7 @@
     allocation_pool_end:  "{{ res_def['allocation_pool_end'] | default(omit) }}"
     allocation_pool_start:  "{{ res_def['allocation_pool_start'] | default(omit) }}"
     api_timeout: "{{ res_def['api_timeout'] | default(omit) }}"
-    auth: "{{ auth_var | omit_filter(auth_var, omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
     cidr:  "{{ res_def['cidr'] | default(omit) }}"
     dns_nameservers:  "{{ res_def['dns_nameservers'] | default(omit) }}"
     enable_dhcp: "{{ res_def['enable_dhcp'] | default(omit) }}"

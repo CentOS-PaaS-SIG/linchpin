@@ -3,7 +3,7 @@
   os_router:
     admin_state_up: "{{ res_def['admin_state_up'] | default(omit) }}"
     api_timeout: "{{ res_def['api_timeout'] | default(omit) }}"
-    auth: "{{ auth_var | omit_filter(auth_var, omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
     enable_snat: "{{ res_def['enable_snat'] | default(omit) }}"
     external_fixed_ips: "{{ res_def['external_fixed_ips'] | default(omit) }}"
     interface: "{{ res_def['interface'] | default(omit) }}"

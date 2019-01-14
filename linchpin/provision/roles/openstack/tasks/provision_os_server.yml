@@ -15,7 +15,7 @@
 - name: Provision additional volumes
   os_volume:
     state: "{{ state }}"
-    auth: "{{ auth_var | omit_filter(auth_var, omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
     name: "{{ prov_vol['name'] }}"
     region_name: "{{ res_def['region_name'] | default(omit) }}"
     scheduler_hints: "{{ res_def['scheduler_hints'] | default(omit) }}"
@@ -28,7 +28,7 @@
 - name: Detach additional volumes
   os_server_volume:
     state: "{{ state }}"
-    auth: "{{ auth_var | omit_filter(auth_var, omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
     server: "{{ detach_vol['server_name']  }}"
     volume: "{{ detach_vol['name'] }}"
     device: "{{ detach_vol['device_name'] | default(omit) }}"
@@ -40,7 +40,7 @@
 - name: Delete additional volumes
   os_volume:
     state: "{{ state }}"
-    auth: "{{ auth_var | omit_filter(auth_var, omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
     name: "{{ del_vol['name'] }}"
   loop: "{{ res_def_add_vol }}"
   when: state == "absent"
@@ -57,7 +57,7 @@
 - name: "provision/teardown os_server resources with provided auth"
   os_server:
     state: "{{ state }}"
-    auth: "{{ auth_var | omit_filter(auth_var, omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
     name: "{{ prov_inst }}"
     image: "{{ res_def['image'] | default(omit) }}"
     key_name: "{{ res_def['keypair'] }}"
@@ -98,7 +98,7 @@
 - name: Attach addtional volumes
   os_server_volume:
     state: "{{ state }}"
-    auth: "{{ auth_var | omit_filter(auth_var, omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
     server: "{{ add_vol['server_name']  }}"
     volume: "{{ add_vol['name'] }}"
     device: "{{ add_vol['device_name'] | default(omit) }}"
@@ -122,7 +122,7 @@
 - name: "Async:: provision/teardown os_server resources"
   os_server:
     state: "{{ state }}"
-    auth: "{{ auth_var | omit_filter(auth_var, omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
     name: "{{ prov_inst }}"
     image: "{{ res_def['image'] | default(omit) }}"
     key_name: "{{ res_def['keypair'] }}"

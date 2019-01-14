@@ -5,7 +5,7 @@
 
 - name: "provision/deprovision one swift container when count is not defined"
   os_object:
-    auth: "{{ auth_var | omit_filter(auth_var, omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
     container: "{{ res_def['res_name'] | default(res_def['name']) }}"
     container_access: "{{ res_def['access'] | default('private') }}"
     wait: yes
@@ -15,7 +15,7 @@
 
 - name: "provision/deprovision swift containers when count is defined"
   os_object:
-    auth: "{{ auth_var | omit_filter(auth_var, omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
     container: "{{ container.1 }}_{{ container.4 }}"
     container_access: "{{ container.2 }}"
     wait: yes
@@ -39,7 +39,7 @@
 
 - name: "Async:: provision/deprovision swift containers when count specified"
   os_object:
-    auth: "{{ auth_var | omit_filter(auth_var, omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
     container: "{{ container.1 }}_{{ container.4 }}"
     container_access: "{{ container.2 }}"
     wait: yes

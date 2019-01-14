@@ -1,7 +1,7 @@
 ---
 - name: "provision/teardown security group with auth"
   os_security_group:
-    auth: "{{ auth_var | omit_filter(auth_var, omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
     name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     description: "{{ res_def['description'] | default('Created by LinchPin') }}"
     state: "{{ state }}"
@@ -11,7 +11,7 @@
 - name: "provision/teardown security group"
   os_security_group_rule:
     auth: "{{ group.0 }}"
-    auth: "{{ auth_var | omit_filter(auth_var, omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
     security_group: "{{ group.1 }}"
     state: "{{ group.2 }}"
     protocol: "{{ group.3['proto']  }}"
@@ -21,7 +21,7 @@
     remote_ip_prefix: "{{ group.3['cidr_ip']  }}"
     wait: "yes"
   with_nested:
-    - ["{{ auth_var | omit_filter(auth_var, omit) }}"]
+    - ["{{ auth_var | omit_filter(omit) }}"]
     - ["{{ res_def['res_name'] | default(res_def['name']) }}"]
     - ["{{ state }}"]
     - "{{ res_def['rules'] }}"

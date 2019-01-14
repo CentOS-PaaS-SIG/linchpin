@@ -2,7 +2,7 @@
 - name: "provision/deprovision os_network"
   os_network:
     admin_state_up: "{{ res_def['admin_state_up'] | default(omit) }}"
-    auth: "{{ auth_var | omit_filter(auth_var, omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
     external: "{{ res_def['external'] | default(omit) }}"
     interface: "{{ res_def['interface'] | default(omit) }}"
     key: "{{ res_def['key'] | default(omit) }}"

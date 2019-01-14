@@ -1,7 +1,7 @@
 ---
 - name: "provision/deprovision the os volume resource type"
   os_volume:
-    auth: "{{ auth_var | omit_filter(auth_var, omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
     state: "{{ state }}"
     size: "{{ res_def['size'] }}"
     display_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
@@ -15,7 +15,7 @@
 
 - name: "provision/deprovision cinder volumes when count specified"
   os_volume:
-    auth: "{{ auth_var | omit_filter(auth_var, omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
     state: "{{ vol.3 }}"
     size: "{{ vol.2 }}"
     display_name: "{{ vol.1 }}_{{ vol.4 }}"
@@ -38,7 +38,7 @@
 
 - name: "Async:: provision/deprovision cinder volumes when count specified"
   os_volume:
-    auth: "{{ auth_var | omit_filter(auth_var, omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
     state: "{{ vol.3 }}"
     size: "{{ vol.2 }}"
     display_name: "{{ vol.1 }}_{{ vol.4 }}"
