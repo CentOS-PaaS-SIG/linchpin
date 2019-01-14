@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import json
-
 
 def format_output(output, omit):
     if output == "":
