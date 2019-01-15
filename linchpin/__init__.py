@@ -876,8 +876,16 @@ class LinchpinAPI(object):
                                                    inventory_src,
                                                    console=console)
             if action == "up" and return_code > 0:
-                raise LinchpinError("Unsuccessful provision of resource "
-                                    "System return: {0}".format(return_code))
+                if self.ctx.verbosity > 0:
+                    raise LinchpinError("Unsuccessful provision of resource")
+                else:
+                    res_grp_name = resource['resource_group_name']
+                    msg = res['failed'][0]._result['msg']
+                    task = res['failed'][0].task_name
+                    raise LinchpinError("Unable to provision resource group "
+                                        "'{0}' due to '{1}' at task "
+                                        " '{2}'".format(res_grp_name,
+                                                        msg, task))
                 sys.exit(return_code)
 
             if res:
