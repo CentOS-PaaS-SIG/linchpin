@@ -7,7 +7,7 @@
   roles:
     - { role: 'common' }
 
-- name:  "Provisioning openstack resources"
+- name:  "Provisioning google cloud resources"
   hosts: localhost
   gather_facts: True
   roles:
