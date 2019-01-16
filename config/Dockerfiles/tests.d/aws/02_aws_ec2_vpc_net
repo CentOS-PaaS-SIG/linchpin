@@ -20,7 +20,7 @@ trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
 pushd docs/source/examples/workspaces/${PROVIDER}
 
-linchpin -w . -v up "${TARGET}"
+linchpin -w . -vvvv up "${TARGET}"
 
 # cleanup the network
-linchpin -w . -v destroy "${TARGET}"
+linchpin -w . -vvvv destroy "${TARGET}"
