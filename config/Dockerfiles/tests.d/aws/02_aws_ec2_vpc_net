@@ -1,7 +1,7 @@
 #!/bin/bash -xe
 
 # Verify the aws ec2 vpc net provisioning
-# distros.exclude: none
+# distros.exclude: centos7 fedora27
 # providers.include: aws
 # providers.exclude: none
 
@@ -9,8 +9,6 @@ DISTRO=${1}
 PROVIDER=${2}
 
 TARGET="aws-ec2-vpc-net"
-TEMPLATE_DATA="{\"distro\": \"${DISTRO}-\"}"
-TMP_FILE=$(mktemp)
 
 function clean_up {
     set +e
