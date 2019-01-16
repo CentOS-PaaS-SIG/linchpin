@@ -86,7 +86,7 @@
                     "template_path": { "type": "string", "required": true }
                 }
             },
-            {
+	    {
                 "type": "dict",
                 "schema": {
                     "role": {
@@ -104,9 +104,28 @@
                     "release_on_disassociation": { "type": "string", "required": false },
                     "reuse_existing_ip_allowed": { "type": "string", "required": false }
                 }
-            }
-	    ]
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["aws_ec2_vpc_net"] },
+                    "name": { "type": "string", "required": true },
+                    "region": { "type": "string", "required": true },
+		    "cidr_block": { "type": "string", "required": true },
+		    "dhcp_opts_id": { "type": "string", "required": false },
+		    "dns_hostnames": { "type": "boolean", "required": false },
+		    "dns_support": { "type": "boolean", "required": false },
+		    "ec2_url": { "type": "string", "required": false },
+		    "multi_ok": { "type": "boolean", "required": false },
+		    "purge_cidrs": { "type": "boolean", "required": false },
+                    "tags": { "type": "dict", "required": false },
+		    "tenancy": { "type": "string", "required": false },
+		    "validate_certs": { "type": "boolean", "required": false }
+                }
+            }]
         }
     }
 }
-
