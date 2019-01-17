@@ -12,6 +12,7 @@
   gather_facts: False
   roles:
     - { role: 'dummy', when: dummy_res_grps | length > 0 }
+    - { role: 'nummy', when: nummy_res_grps | length > 0 }
     - { role: 'openstack', when: os_res_grps | length > 0  }
     - { role: 'aws', when: aws_res_grps | length > 0 }
     - { role: 'gcloud', when: gcloud_res_grps | length > 0 }

@@ -619,7 +619,6 @@ class LinchpinCli(LinchpinAPI):
             (default: topology)
 
         """
-
         folder = self.get_evar('topologies_folder', 'topologies')
         if ftype == 'layout':
             folder = self.get_evar('layouts_folder', 'layouts')
@@ -667,7 +666,7 @@ class LinchpinCli(LinchpinAPI):
 
             provision_data[target] = {}
 
-            if not isinstance(pf[target]['topology'], dict):
+            if isinstance(pf[target]['topology'], str):
                 topology_path = self.find_include(pf[target]["topology"])
                 topology_data = self.parser.process(topology_path,
                                                     data=self.pf_data)

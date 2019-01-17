@@ -307,8 +307,8 @@ class LinchpinHooks(object):
                                 raise HookError("Error in executing hook")
                     else:
                         # for other types of hooks
-                        if hook_result[0] > 0:
-                            raise HookError("Error in executing hook")
+                        if hook_result > 0:
+                                raise HookError("Error in executing hook")
 
                     # intentionally using print here
                     self.api.ctx.log_state('end hook {0}:{1}\n-------'.format(
@@ -318,5 +318,5 @@ class LinchpinHooks(object):
                     dflt = self.api.get_cfg("hook_flags",
                                             "ignore_failed_hooks")
                     if not dflt:
-                        raise HookError("Error executing hook")
+                        raise HookError("Error executing hook: '{0}'".format(e))
                     self.api.ctx.log_info(str(e))

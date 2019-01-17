@@ -67,6 +67,12 @@
         "hosts": ["web-b3a49a-0.example.net", "web-b3a49a-1.example.net", "web-b3a49a-2.example.net"],
         "dummy_file": "/tmp/dummy.hosts"
     },
+    "nummy_res": [{
+        "failed": false,
+        "changed": true,
+        "hosts": ["web-c3a49a-0.example.net", "web-c3a49a-1.example.net", "web-c3a49a-2.example.net"],
+        "dummy_file": "/tmp/dummy.hosts"
+    },
     {
         "failed": false,
         "changed": true,

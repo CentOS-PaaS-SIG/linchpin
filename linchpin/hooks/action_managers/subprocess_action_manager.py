@@ -89,9 +89,10 @@ class SubprocessActionManager(ActionManager):
         """
 
         command = action
+        data = ""
         for key in self.target_data:
-            command += " {0}={1} ".format(key, self.target_data[key])
-        return command
+            data += "{0}={1}; ".format(key, self.target_data[key])
+        return data + command
 
 
     def execute(self):
@@ -106,7 +107,15 @@ class SubprocessActionManager(ActionManager):
                 command = self.add_context_params(action)
             else:
                 command = action
-            proc = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
-            proc.wait()
-            for line in proc.stdout:
+            proc = subprocess.Popen(command,
+                                    shell=True,
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT)
+            output, err = proc.communicate()
+            for line in output.split('\n'):
                 print(line)
+
+            if proc.returncode != 0:
+                return proc.returncode
+
+        return 0
