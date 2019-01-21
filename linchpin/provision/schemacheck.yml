@@ -1,6 +1,6 @@
 - name: "Initiating playbook to perform schema_check on files"
   hosts: localhost
-  gather_facts: false
+  gather_facts: False
   tasks:
     - name: "Initiating schema_check"
       schema_check:

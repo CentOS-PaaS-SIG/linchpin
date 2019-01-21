@@ -1,5 +1,6 @@
 ---
 - hosts: localhost
+  gather_facts: False
   vars:
     VENV_LIB_PATH: "lib/python2.7/site-packages"
     PYTHON_LIB_PATH: "/usr/lib/python2.7/site-packages"
