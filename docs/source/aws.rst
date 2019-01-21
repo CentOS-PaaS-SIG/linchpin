@@ -83,7 +83,7 @@ AWS Simple Storage Service buckets can be provisioned using this resource.
 .. note:: This resource will not be torn down during a :term:`destroy`
    action. This is because other resources may depend on the now existing
    resource.
-
+ 
 aws_sg
 ------
 
@@ -120,8 +120,15 @@ aws_ec2_vpc_net
 AWS VPC networks can be provisioned using this resource.
 
 * :docs1.5:`Topology Example <workspace/topologies/aws-ec2-vpc-net.yml>`
-* `ec2_vpc_net module <http://docs.ansible.com/ansible/latest/ec2_vpc_net.html
->`_
+* `ec2_vpc_net module <http://docs.ansible.com/ansible/latest/ec2_vpc_net.html>`_
+
+
+aws_ec2_vpc_subnet
+---------------
+
+AWS VPC subnets can be provisioned using this resource.
+* :docs1.5:`Topology Example <workspace/topologies/aws-ec2-vpc-subnet.yml>`
+* `ec2_vpc_subnet module <http://docs.ansible.com/ansible/latest/ec2_vpc_subnet.html>`_
 
 
 Additional Dependencies
