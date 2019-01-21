@@ -60,14 +60,6 @@
     topo_output_resources: "{{ topo_output_rundb.output[0]['resources'] }}"
   when: not generate_resources
 
-- name: debug
-  debug:
-    msg: "{{ resource_definitions }}"
-
-- name: debug
-  debug:
-    msg: "{{ topo_output_resources }}"
-
 - name: "teardown of ec2 resource definitions of current group"
   include: teardown_aws_ec2.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.2 }}
   when: res_item.0['role'] == "aws_ec2"

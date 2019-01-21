@@ -16,11 +16,7 @@
     state: "{{ state }}"
     validate_certs: no
   register: res_def_output
-  #  no_log: "{{ not debug_mode }}"
-
-- name: debug
-  debug:
-    msg: "{{ res_def_output }}"
+  no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
