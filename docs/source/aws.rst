@@ -59,7 +59,7 @@ address will be provided since private EC2 DNS hostnames (e.g.
 For instances with both a public and private IP address, the public address is
 always provided instead of the private address, so as to avoid duplicate runs
 of Ansible on the same host via the generated inventory file.
-
+ 
 aws_ec2_key
 -----------
 
@@ -71,8 +71,8 @@ AWS SSH keys can be added using this resource.
 .. note:: This resource will not be torn down during a :term:`destroy`
    action. This is because other resources may depend on the now existing
    resource.
-
-aws_s3
+ 
+aws_s3 
 ------
 
 AWS Simple Storage Service buckets can be provisioned using this resource.
@@ -90,11 +90,19 @@ aws_sg
 AWS Security Groups can be provisioned using this resource.
 
 * :docs1.5:`Topology Example <workspace/topologies/aws-sg-new.yml>`
-* `ec2_group module <http://docs.ansible.com/ansible/latest/ec2_group_module.html>`_
+* `ec2_group module <http://docs.ansible.com/ansible/latest/ec2_group_module.html>`
 
 .. note:: This resource will not be torn down during a :term:`destroy`
    action. This is because other resources may depend on the now existing
    resource.
+  
+aws_ec2_eip
+-----------
+
+AWS EC2 elastic ips can be provisioned using this resource.
+
+* :docs1.5:`Topology Example <workspace/topologies/aws-ec2-eip.yml>`
+* `ec2_eip module <http://docs.ansible.com/ansible/latest/ec2_eip_module.html>`
 
 Additional Dependencies
 -----------------------
@@ -118,7 +126,7 @@ Environment Variables
 ~~~~~~~~~~~~~~~~~~~~~
 
 LinchPin honors the AWS environment variables
-
+ 
 Provisioning
 ~~~~~~~~~~~~
 

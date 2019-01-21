@@ -1,0 +1,11 @@
+---
+- name: "teardown AWS_EC2_EIP"
+  ec2_eip:
+    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
+    device_id: "{{ res_def['device_id'] | default(omit) }}"
+    public_ip: "{{ tp_out['public_ip'] | default(omit) }}"
+    region: "{{ res_def['region'] | default(omit) }}"
+    state: "{{ state }}"
+    validate_certs: no
+  register: res_def_output

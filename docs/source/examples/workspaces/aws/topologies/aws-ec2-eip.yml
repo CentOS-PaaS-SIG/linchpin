@@ -1,0 +1,11 @@
+---
+topology_name: ec2-new
+resource_groups:
+  - resource_group_name: "aws"
+    resource_group_type: "aws"
+    resource_definitions:
+      - name: demoday
+        role: aws_ec2_eip
+    credentials:
+      filename: aws.key
+      profile: default

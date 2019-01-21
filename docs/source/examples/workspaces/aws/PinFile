@@ -72,3 +72,16 @@ aws-s3-new:
             role: "aws_s3"
             region: "{{ aws_region | default('us-east-1') }}"
 
+aws-ec2-eip:
+  topology:
+    topology_name: ec2-new
+    resource_groups:
+      - resource_group_name: "aws"
+        resource_group_type: "aws"
+        resource_definitions:
+          - name: demoday
+            role: aws_ec2_eip
+            region: us-east-1
+        credentials:
+          filename: aws.key
+          profile: default
