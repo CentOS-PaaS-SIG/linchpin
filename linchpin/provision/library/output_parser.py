@@ -57,7 +57,7 @@ def main():
     content = open(data_file_path, "r").read()
     c = yaml.load(content)
     resp = {"path": data_file_path, "content": c}
-    if resp["content"]:
+    if resp["content"] or resp["content"] == []:
         changed = True
         module.exit_json(changed=changed, output=resp)
     else:
