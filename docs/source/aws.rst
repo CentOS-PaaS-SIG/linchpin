@@ -109,7 +109,7 @@ aws_ec2_vpc_net
 
 AWS VPC networks can be provisioned using this resource.
 
-* :docs1.5:`Topology Example <workspace/topologies/aws-ec2-vpc-net.yml>`
+* :docs1.5:`Topology Example <workspaces/topologies/aws-ec2-vpc-net.yml>`
 * `ec2_vpc_net module <http://docs.ansible.com/ansible/latest/ec2_vpc_net.html
 >`_
 
