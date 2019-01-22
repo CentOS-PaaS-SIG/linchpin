@@ -622,6 +622,8 @@ class LinchpinCli(LinchpinAPI):
         folder = self.get_evar('topologies_folder', 'topologies')
         if ftype == 'layout':
             folder = self.get_evar('layouts_folder', 'layouts')
+        elif ftype == 'hooks':
+            folder = self.get_evar('hooks_folder', 'hooks')
 
         path = os.path.realpath('{0}/{1}'.format(self.workspace, folder))
         files = os.listdir(path)
@@ -691,7 +693,15 @@ class LinchpinCli(LinchpinAPI):
                     provision_data[target]['layout'] = layout_data
 
             if 'hooks' in pf[target]:
-                provision_data[target]['hooks'] = pf[target]['hooks']
+                if isinstance(pf[target]['hooks'], str):
+                    hook_path = self.find_include(pf[target]['hooks'],
+                                                  ftype='hooks')
+                    hook_data = self.parser.process(hook_path,
+                                                    data=self.pf_data)
+                    provision_data[target]['hooks'] = hook_data
+                else:
+                    hook_data = pf[target]['hooks']
+                    provision_data[target]['hooks'] = hook_data
             # grab target specific vars
 
         return provision_data
