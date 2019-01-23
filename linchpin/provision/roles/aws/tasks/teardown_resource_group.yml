@@ -26,8 +26,7 @@
 
 - name: "Get topology output data from resources file"
   output_parser:
-    output_file: "{{ default_resources_path + '/' +
-                 topo_data['topology_name'].replace(' ', '_').lower() + '.output' }}"
+    output_file: "{{ default_resources_path + '/' + topo_data['topology_name'].replace(' ', '_').lower() + '.output' }}"
   register: topo_output
   when: generate_resources
 
@@ -100,6 +99,16 @@
 - name: "teardown aws_ec2_eip resource def of current group"
   include: teardown_aws_ec2_eip.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.1 }}
   when: res_item.0['role'] == "aws_ec2_eip"
+  with_nested:
+    - "{{ resource_definitions }}"
+    - "{{ topo_output_resources }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
+
+- name: "teardown aws_ec2_vpc_net resource def of current group"
+  include: teardown_aws_ec2_vpc_net.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.1 }}
+  when: res_item.0['role'] == "aws_ec2_vpc_net"
   with_nested:
     - "{{ resource_definitions }}"
     - "{{ topo_output_resources }}"
