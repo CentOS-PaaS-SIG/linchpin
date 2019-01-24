@@ -14,6 +14,16 @@
     vpc_id_fetched: "{{ vpc_net_details['vpcs'] | first | default({}) | fetch_attr('vpc_id', '')}}"
   when: res_def['vpc_name'] is defined
 
+- name: "Add tags to subnet"
+  set_fact:
+    subnet_tags: "{{ res_def['tags'] | default({}) }}"
+
+- name: "Add name to subnet"
+  set_fact:
+    subnet_tags: "{{ subnet_tags | combine({item.key: item.value}) }}"
+  with_items:
+    - { key: 'Name', value: "{{ res_def['name'] }}" }
+
 - name: "Provision/teardown AWS_EC2_VPC_SUBNET"
   ec2_vpc_subnet:
     aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
@@ -27,7 +37,7 @@
     map_public: "{{ res_def['map_public'] | default(omit) }}"
     purge_tags: "{{ res_def['purge_tags'] | default(omit) }}"
     region: "{{ res_def['region'] }}"
-    tags: "{{ res_def['tags'] | default(omit) }}"
+    tags: "{{ subnet_tags | default(omit) }}"
     validate_certs: "{{ res_def['validate_certs'] | default('no') }}"
     state: "{{ state }}"
   register: res_def_output
