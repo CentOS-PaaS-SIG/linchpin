@@ -20,5 +20,3 @@ pushd docs/source/examples/workspaces/${PROVIDER}
 
 linchpin -w . -v up "${TARGET}"
 
-# cleanup the network
-linchpin -w . -v destroy "${TARGET}"
