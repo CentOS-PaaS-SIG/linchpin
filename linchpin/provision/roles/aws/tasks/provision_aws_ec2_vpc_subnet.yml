@@ -13,7 +13,7 @@
     vpc_id_fetched: "{{ vpc_net_details['vpcs'] | first | default({}) | fetch_attr('vpc_id', '')}}"
   when: res_def['vpc_name'] is defined
 
-- name: "Provisioning AWS_EC2_VPC_NET"
+- name: "Provision/teardown AWS_EC2_VPC_SUBNET"
   ec2_vpc_subnet:
     aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
     aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
@@ -34,7 +34,6 @@
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_aws_net: "{{ topology_outputs_aws_net + [res_def_output] }}"
-  when: res_def_output['changed'] == true
 
 - name: "Add type to resource"
   set_fact:
