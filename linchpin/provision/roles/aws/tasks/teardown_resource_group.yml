@@ -106,6 +106,16 @@
   loop_control:
     loop_var: res_item
 
+- name: "teardown aws_ec2_vpc_routetable resource def of current group"
+  include: teardown_aws_ec2_vpc_routetable.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.1 }}
+  when: res_item.0['role'] == "aws_ec2_vpc_routetable"
+  with_nested:
+    - "{{ resource_definitions }}"
+    - "{{ topo_output_resources }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
+
 - name: "teardown aws_ec2_vpc_subnet resource def of current group"
   include: teardown_aws_ec2_vpc_subnet.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.1 }}
   when: res_item.0['role'] == "aws_ec2_vpc_subnet"

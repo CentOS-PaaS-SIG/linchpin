@@ -124,12 +124,18 @@ AWS VPC networks can be provisioned using this resource.
 
 
 aws_ec2_vpc_subnet
----------------
+------------------
 
 AWS VPC subnets can be provisioned using this resource.
 * :docs1.5:`Topology Example <workspace/topologies/aws-ec2-vpc-subnet.yml>`
 * `ec2_vpc_subnet module <http://docs.ansible.com/ansible/latest/ec2_vpc_subnet.html>`_
 
+aws_ec2_vpc_routetable
+----------------------
+
+AWS VPC routetable can be provisioned using this resource.
+* :docs1.5:`Topology Example <workspace/topologies/aws-ec2-vpc-routetable.yml>`
+* `ec2_vpc_route_table module <https://docs.ansible.com/ansible/latest/modules/ec2_vpc_route_table_module.html#ec2-vpc-route-table-module>`_
 
 Additional Dependencies
 -----------------------

@@ -147,6 +147,39 @@
                     "tags": { "type": "dict", "required": false },
                     "validate_certs": { "type": "boolean", "required": false }
                 }
+            },
+	    {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["aws_ec2_vpc_routetable"] },
+			
+                    "name": { "type": "string", "required": true },
+                    "propagating_vgw_ids": { "type": "string", "required": false },
+                    "purge_routes": { "type": "boolean", "required": false },
+                    "purge_subnets": { "type": "boolean", "required": false },
+                    "purge_tags": { "type": "boolean", "required": false },
+                    "region": { "type": "string", "required": true },
+                    "route_table_id": { "type": "string", "required": false },
+                    "routes": {
+                        "type": "list",
+                        "required": false,
+                        "schema": {
+                            "type": "dict",
+                            "schema": {
+                                "dest": { "type": "string", "required": false },
+                                "gateway_id": { "type": "string", "required": false }
+                            }
+                        }
+                    },
+                    "subnets": { "type": ["list", "string"], "required": false },
+                    "tags": { "type": "dict", "required": false },
+                    "vpc_id": { "type": "string", "required": false },
+                    "vpc_name": { "type": "string", "required": false },
+                    "validate_certs": { "type": "boolean", "required": false }
+                }
             }
 	    ]
         }
