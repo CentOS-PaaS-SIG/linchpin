@@ -3,27 +3,19 @@
   register: res_count
   when: res_def['count'] is defined
 
-- name: "provision/deprovision one swift container with authentication"
+- name: "provision/deprovision one swift container when count is not defined"
   os_object:
-    auth: "{{ auth_var | default(omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
     container: "{{ res_def['res_name'] | default(res_def['name']) }}"
     container_access: "{{ res_def['access'] | default('private') }}"
     wait: yes
     state: "{{ state }}"
-  when: res_def['count'] is not defined and auth_var is defined
+  when: res_def['count'] is not defined and not async
   no_log: "{{ not debug_mode }}"
 
-- name: "provision/deprovision one swift container without authentication"
+- name: "provision/deprovision swift containers when count is defined"
   os_object:
-    container: "{{ res_def['res_name'] | default(res_def['name']) }}"
-    container_access: "{{ res_def['access'] | default('private') }}"
-    wait: yes
-    state: "{{ state }}"
-  when: res_def['count'] is not defined and auth_var is not defined
-
-- name: "provision/deprovision swift containers with authentication"
-  os_object:
-    auth: "{{ container.0 }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
     container: "{{ container.1 }}_{{ container.4 }}"
     container_access: "{{ container.2 }}"
     wait: yes
@@ -37,24 +29,7 @@
   loop_control:
     loop_var: container
   register: res_def_output
-  when: res_def['count'] is defined and not async and auth_var is defined
-  no_log: "{{ not debug_mode }}"
-
-- name: "provision/deprovision swift containers without authentication"
-  os_object:
-    container: "{{ container.1 }}_{{ container.3 }}"
-    container_access: "{{ container.1 }}"
-    wait: yes
-    state: "{{ container.2 }}"
-  with_nested:
-    - ["{{ res_def['res_name'] | default(res_def['name']) }}"]
-    - ["{{ res_def['access'] | default('private') }}"]
-    - ["{{ state }}"]
-    - "{{ res_count.stdout }}"
-  loop_control:
-    loop_var: container
-  register: res_def_output
-  when: res_def['count'] is defined and not async and auth_var is not defined
+  when: res_def['count'] is defined and not async
   no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
@@ -62,9 +37,9 @@
     topology_outputs_os_object: "{{ topology_outputs_os_object + res_def_output.results }}"
   when: not async
 
-- name: "Async:: provision/deprovision swift containers when count specified and auth provided"
+- name: "Async:: provision/deprovision swift containers when count specified"
   os_object:
-    auth: "{{ container.0 }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
     container: "{{ container.1 }}_{{ container.4 }}"
     container_access: "{{ container.2 }}"
     wait: yes
@@ -80,32 +55,8 @@
   async: "{{ async_timeout }}"
   poll: 0
   register: res_def_output
-  when: res_def['count'] is defined and async and auth_var is defined
+  when: res_def['count'] is defined and async
   no_log: "{{ not debug_mode }}"
-
-# following tasks saves the async job details
-- name: "Async:: save the job id"
-  set_fact:
-    topology_outputs_os_object: "{{ topology_outputs_os_object + [ res_def_output ] }}"
-  when: async
-
-- name: "Async:: provision/deprovision swift containers when count specified"
-  os_object:
-    container: "{{ container.0 }}_{{ container.3 }}"
-    container_access: "{{ container.1 }}"
-    wait: yes
-    state: "{{ container.2 }}"
-  with_nested:
-    - ["{{ res_def['res_name'] | default(res_def['name']) }}"]
-    - ["{{ res_def['access'] | default('private') }}"]
-    - ["{{ state }}"]
-    - "{{ res_count.stdout }}"
-  loop_control:
-    loop_var: container
-  async: "{{ async_timeout }}"
-  poll: 0
-  register: res_def_output
-  when: res_def['count'] is defined and async and auth_var is not defined
 
 # following tasks saves the async job details
 - name: "Async:: save the job id"
