@@ -125,7 +125,30 @@
 		    "tenancy": { "type": "string", "required": false },
 		    "validate_certs": { "type": "boolean", "required": false }
                 }
-            }]
+            },
+	    {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["aws_ec2_vpc_subnet"] },
+                    "name": { "type": "string", "required": true },
+                    "assign_instances_ipv6": { "type": "boolean", "required": false },
+                    "vpc_name": { "type": "string", "required": false },
+                    "vpc_id": { "type": "string", "required": false },
+                    "az": { "type": "string", "required": false },
+                    "cidr": { "type": "string", "required": false },
+                    "ec2_url": { "type": "string", "required": false },
+                    "ipv6_cidr": { "type": "string", "required": false },
+                    "map_public": { "type": "boolean", "required": false },
+                    "purge_tags": { "type": "boolean", "required": false },
+                    "region": { "type": "string", "required": true },
+                    "tags": { "type": "dict", "required": false },
+                    "validate_certs": { "type": "boolean", "required": false }
+                }
+            }
+	    ]
         }
     }
 }

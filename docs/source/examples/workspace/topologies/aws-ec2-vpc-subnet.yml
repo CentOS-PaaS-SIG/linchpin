@@ -1,0 +1,26 @@
+---
+topology:
+  topology_name: ec2vpcsubnetdemo
+  resource_groups:
+    - resource_group_name: "awsvpcsubnet"
+      resource_group_type: "aws"
+      resource_definitions:
+        - name: demovpcnetsubnet
+          role: aws_ec2_vpc_net
+          region: us-east-1
+          cidr_block: 13.0.0.0/16
+          tags:
+            module: aws_ec2_vpc_net
+            this: alsoworks
+          tenancy: dedicated
+        - name: demodayvpcsubnet
+          role: aws_ec2_vpc_subnet
+          region: us-east-1
+          cidr_block: 13.0.1.0/24 
+          tags:
+            module: aws_ec2_vpc_net
+            this: alsoworks
+          tenancy: dedicated
+      credentials:
+        filename: aws.key
+        profile: default

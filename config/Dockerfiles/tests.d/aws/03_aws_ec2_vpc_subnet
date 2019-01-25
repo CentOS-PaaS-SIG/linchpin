@@ -1,6 +1,6 @@
 #!/bin/bash -xe
 
-# Verify the aws ec2 vpc net provisioning
+# Verify the aws ec2 vpc subnet provisioning
 # distros.exclude: centos7 fedora27
 # providers.include: aws
 # providers.exclude: none
@@ -8,7 +8,7 @@
 DISTRO=${1}
 PROVIDER=${2}
 
-TARGET="aws-ec2-vpc-net"
+TARGET="aws-ec2-vpc-subnet"
 
 function clean_up {
     set +e
@@ -17,6 +17,8 @@ function clean_up {
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
 pushd docs/source/examples/workspaces/${PROVIDER}
+
+linchpin -w . validate
 
 linchpin -w . -v up "${TARGET}"
 

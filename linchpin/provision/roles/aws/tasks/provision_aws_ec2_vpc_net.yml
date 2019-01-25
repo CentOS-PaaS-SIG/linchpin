@@ -1,5 +1,5 @@
 ---
-- name: "Provisioning AWS_EC2_VPC_NET"
+- name: "Provision/Teardown AWS_EC2_VPC_NET"
   ec2_vpc_net:
     aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
     aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
