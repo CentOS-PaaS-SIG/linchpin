@@ -31,7 +31,7 @@ dummy-new:
           vars:
             ansible_user: root
             ansible_private_key_file: |
-              "{% raw -%}{{ lookup('env', 'TESTLP') | default('/tmp', true) }}/CSS/keystore/css-central{%- endraw %}"
+              "{{ lookup('env', 'TESTLP') | default('/tmp', true) }}/CSS/keystore/css-central"
 
 dummy-topo:
   topology:
