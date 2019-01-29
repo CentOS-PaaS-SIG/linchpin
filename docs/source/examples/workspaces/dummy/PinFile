@@ -14,7 +14,7 @@ dummy-new:
             count: 1
   layout:
     inventory_layout:
-      inventory_file: [ "{{ workspace }}/inventories/dummy-new-{{ uhash }}.inventory" ]
+      inventory_file: [ "{{ workspace }}/inventories/dummy-new.inventory" ]
       vars:
         hostname: __IP__
       hosts:
