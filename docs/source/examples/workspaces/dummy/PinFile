@@ -31,7 +31,7 @@ dummy-new:
           vars:
             ansible_user: root
             ansible_private_key_file: |
-              [{{ lookup('env', 'TESTLP') | default('/tmp', true) }}/CSS/keystore/css-central }}]
+              "{{ lookup('env', 'TESTLP') | default('/tmp', true) }}/CSS/keystore/css-central }}"
 
 dummy-topo:
   topology:
