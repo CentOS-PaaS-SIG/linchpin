@@ -152,10 +152,15 @@
   set_fact:
     topology_name: "{{ topo_data['topology_name'] }}"
 
+- name: "get inventory file name from layout"
+  set_fact:
+    inventory_path: "{{ layout_data['inventory_layout']['inventory_file'] | default(omit) }}"
+  when: layout_data is defined
+
 - name: "Updating uhash-based inventory_path with the absolute path"
   set_fact:
     inventory_path: "{{ inventory_path | default( workspace +'/'+inventories_folder+'/'+
-    topology_name.replace(' ', '_').lower() ) + '-' + uhash }}.inventory"
+    topology_name.replace(' ', '_').lower() + '-' + uhash + '.inventory')}}"
   when: enable_uhash
 
 - name: "Updating inventory_path with the absolute path"
@@ -163,6 +168,10 @@
     inventory_path: "{{ inventory_path | default( workspace +'/'+inventories_folder+'/'+
     topology_name.replace(' ', '_').lower() ) }}.inventory"
   when: not enable_uhash
+
+- name: "Info"
+  debug:
+    msg: "{{ inventory_path }}"
 
 - name: "Add inventory_path to outputs"
   rundb:
