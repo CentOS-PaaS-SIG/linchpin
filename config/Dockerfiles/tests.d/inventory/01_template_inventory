@@ -31,8 +31,8 @@ pushd docs/source/examples/workspaces/template-inventory
 
 ls
 tail -n +2 ${TEMPLATE_FILE} > ${TMP_FILE}
-KEY=$(cat "${TMP_FILE}" | awk -F':' '{ print $1 }')
-V=$(cat "${TMP_FILE}" | awk -F':' '{ print $2 }')
+KEY=$(cat "${TMP_FILE}" | awk -F':' '{ print $1 }' | head -n 1) 
+V=$(cat "${TMP_FILE}" | awk -F':' '{ print $2 }' | head -n 1)
 
 shopt -s extglob
 VALUE="${V##+([[:space:]])}"
