@@ -8,7 +8,7 @@ openshift-new:
         resource_definitions:
           - name: openshift
             role: openshift_inline
-            namespace: "{{ namespace | default('coninuous-infra') }}"
+            namespace: "{{ namespace | default('continuous-infra') }}"
             definition:
               kind: Pod
               apiVersion: v1
