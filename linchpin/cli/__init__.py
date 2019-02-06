@@ -679,7 +679,8 @@ class LinchpinCli(LinchpinAPI):
                 topology_path = self.find_include(pf[target]["topology"])
                 topology_data = self.parser.process(topology_path,
                                                     data=self.pf_data)
-                topology_data = self._render_template(topology_data, self.pf_data)
+                topology_data = self._render_template(topology_data,
+                                                      self.pf_data)
             else:
                 topology_data = pf[target]['topology']
 
@@ -694,7 +695,8 @@ class LinchpinCli(LinchpinAPI):
 
                     layout_data = self.parser.process(layout_path,
                                                       data=self.pf_data)
-                    layout_data = self._render_template(layout_data, self.pf_data)
+                    layout_data = self._render_template(layout_data,
+                                                        self.pf_data)
                     layout_data = self._make_layout_integers(layout_data)
                 else:
                     layout_data = pf[target]['layout']

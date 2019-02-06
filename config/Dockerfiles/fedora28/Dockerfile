@@ -10,7 +10,7 @@ RUN dnf -y install python-pip ansible curl gcc python-devel python2-shade \
                    libvirt-daemon-kvm qemu-kvm libvirt-daemon-config-network \
                    libvirt-python libvirt-devel redhat-rpm-config file \
                    openssh mkisofs libvirt-client virt-install net-tools \
-                   python-krbV make libxslt-python krb5-workstation \
+                   python-krbV make libxslt-python krb5-workstation jq \
     && yum clean all; \
     (cd /lib/systemd/system/sysinit.target.wants/; for i in *; \
      do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \

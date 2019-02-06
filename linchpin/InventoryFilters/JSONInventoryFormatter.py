@@ -73,7 +73,7 @@ class JSONInventoryFormatter(InventoryFormatter):
                         self.config["all"]["hosts"].append(ip)
         return True
 
-    def add_common_vars(self, host_groups, layout):
+    def add_common_vars(self, host_groups, layout, config):
         # defaults cvrs to [] when they doesnot exist
         # cvrs --> common_vars
         host_groups.append("all")
@@ -85,11 +85,13 @@ class JSONInventoryFormatter(InventoryFormatter):
                 self.config["_meta"]["hostvars"] = {}
             for item in items:
                 for var in cvrs:
-                    self.config["_meta"]["hostvars"][item] = {}
-                    if cvrs[var] == "__IP__":
-                        self.config["_meta"]["hostvars"][item][var] = item
-                    else:
-                        self.config["_meta"]["hostvars"][item][var] = cvrs[var]
+                    for cfg_item in config:
+                        if item not in cfg_item.keys():
+                            continue
+                        if cvrs[var] in cfg_item[item].keys():
+                            value = cvrs[var]
+                            self.config["_meta"]["hostvars"][item] = \
+                                cfg_item[item][value]
         return True
 
     def generate_inventory(self):
