@@ -39,5 +39,5 @@ RUN pip install -U pip; \
 RUN echo "namespaces = []" >> /etc/libvirt/qemu.conf
 
 # /workdir should include the source code of linchpin
-VOLUME [ "/workdir" , "/sys/fs/cgroup"]
+VOLUME [ "/workdir" ]
 CMD ["/usr/sbin/init"]
