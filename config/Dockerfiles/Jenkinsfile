@@ -10,7 +10,7 @@ env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop'
 // Needed for podTemplate()
 env.SLAVE_TAG = env.SLAVE_TAG ?: 'stable'
 env.FEDORA28_TAG = env.FEDORA28_TAG ?: 'stable'
-env.FEDORA27_TAG = env.FEDORA27_TAG ?: 'stable'
+env.FEDORA29_TAG = env.FEDORA29_TAG ?: 'stable'
 env.CENTOS7_TAG = env.CENTOS7_TAG ?: 'stable'
 
 DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
@@ -36,7 +36,7 @@ executionID = UUID.randomUUID().toString()
 // Pod name to use
 c7podName = 'lp_centos7-' + executionID
 f28podName = 'lp_fedora28-' + executionID
-f27podName = 'lp_fedora27-' + executionID
+f29podName = 'lp_fedora29-' + executionID
 
 def libraries = ['cico-pipeline' : ['master', 'https://github.com/CentOS/cico-pipeline-library.git'],
                  'ci-pipeline'   : ['master', 'https://github.com/CentOS-PaaS-SIG/ci-pipeline.git']]
@@ -76,8 +76,8 @@ properties(
                        description: 'Tag for fedora28 image',
                        name: 'FEDORA28_TAG'),
                 string(defaultValue: 'stable',
-                       description: 'Tag for fedora27 image',
-                       name: 'FEDORA27_TAG'),
+                       description: 'Tag for fedora29 image',
+                       name: 'FEDORA29_TAG'),
                 string(defaultValue: 'stable',
                        description: 'Tag for centos7 image',
                        name: 'CENTOS7_TAG'),
@@ -161,10 +161,10 @@ stage('Tests') {
                 {
                     execute_test(f28podName, "fedora28")
                 }
-            }, fedora27: {
+            }, fedora29: {
                 pipelineUtils.clearTemplateNames()
-                podTemplate(name: f27podName,
-                            label: f27podName,
+                podTemplate(name: f29podName,
+                            label: f29podName,
                             cloud: 'openshift',
                             serviceAccount: OPENSHIFT_SERVICE_ACCOUNT,
                             idleMinutes: 0,
@@ -179,9 +179,9 @@ stage('Tests') {
                                 args: '${computer.jnlpmac} ${computer.name}',
                                 command: '',
                                 workingDir: '/workDir'),
-                            containerTemplate(name: 'fedora27',
+                            containerTemplate(name: 'fedora29',
                                 alwaysPullImage: true,
-                                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora27:' + FEDORA27_TAG,
+                                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora29:' + FEDORA29_TAG,
                                 ttyEnabled: false,
                                 command: '',
                                 privileged: true,
@@ -192,7 +192,7 @@ stage('Tests') {
                         ]
                 )
                 {
-                    execute_test(f27podName, "fedora27")
+                    execute_test(f29podName, "fedora29")
                 }
             },
             failFast: true

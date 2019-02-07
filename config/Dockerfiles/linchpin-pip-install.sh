@@ -3,7 +3,7 @@
 # This script installs linchpin from test.pypi.org
 # used by cd-linchpin-release (JenkinsfileRelease)
 # will only be used on the latest distro (currently
-# fedora27 and the dummy provider).
+# fedora29 and the dummy provider).
 
 VERSION=${1}
 TMPDIR=$(mktemp -d)
