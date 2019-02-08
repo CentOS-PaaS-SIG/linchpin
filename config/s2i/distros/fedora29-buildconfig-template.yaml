@@ -1,30 +1,30 @@
 apiVersion: v1
 kind: Template
 labels:
-  template: fedora27-builder
+  template: fedora29-builder
 metadata:
   annotations:
-    description: fedora27 container
-    iconClass: fedora27
+    description: fedora29 container
+    iconClass: fedora29
     tags: instant-app
-  name: fedora27-builder
+  name: fedora29-builder
 objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
     annotations:
     labels:
-    name: fedora27
+    name: fedora29
   spec: {}
 - apiVersion: v1
   kind: BuildConfig
   metadata:
-    name: fedora27
+    name: fedora29
   spec:
     output:
       to:
         kind: ImageStreamTag
-        name: fedora27:latest
+        name: fedora29:latest
     resources: {}
     source:
       contextDir: ${REPO_CONTEXTDIR}
@@ -34,10 +34,10 @@ objects:
       type: Git
     strategy:
       dockerStrategy:
-        dockerfilePath: fedora27/Dockerfile
+        dockerfilePath: fedora29/Dockerfile
         env:
           - name: CONTAINER_NAME
-            value: fedora27
+            value: fedora29
       type: Docker
     triggers:
     - type: ConfigChange

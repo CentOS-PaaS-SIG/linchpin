@@ -11,7 +11,7 @@ RUN dnf -y install python-pip ansible curl gcc python-devel python2-shade \
                    libvirt-python libvirt-devel redhat-rpm-config file \
                    openssh mkisofs libvirt-client virt-install net-tools \
                    python-krbV make libxslt-python krb5-workstation jq \
-    && yum clean all; \
+    && dnf clean all; \
     (cd /lib/systemd/system/sysinit.target.wants/; for i in *; \
      do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
     rm -f /lib/systemd/system/multi-user.target.wants/*;\
@@ -21,13 +21,16 @@ RUN dnf -y install python-pip ansible curl gcc python-devel python2-shade \
     rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
     rm -f /lib/systemd/system/basic.target.wants/*;\
     rm -f /lib/systemd/system/anaconda.target.wants/*; \
+    rm -f /usr/sbin/vgs; \
+    rm -f /usr/sbin/lvs; \
+    rm -f /usr/sbin/pvs; \
     systemctl enable libvirtd; \
     systemctl enable virtlockd
 
 RUN curl -o /etc/yum.repos.d/beaker-client.repo \
             https://beaker-project.org/yum/beaker-client-Fedora.repo; \
-    yum install beaker-client; \
-    yum clean all
+    dnf -y install beaker-client; \
+    dnf clean all
 
 COPY init_libvirt.sh $HOME/
 

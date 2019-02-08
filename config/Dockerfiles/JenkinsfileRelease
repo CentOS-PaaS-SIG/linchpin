@@ -32,7 +32,7 @@ env.PROD_PYPI_REPO = env.PROD_PYPI_REPO ?: 'pypi'
 
 OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
-env.FEDORA27_TAG = env.FEDORA27_TAG ?: 'stable'
+env.FEDORA29_TAG = env.FEDORA29_TAG ?: 'stable'
 
 // Pod name to use
 jslave_podName = 'jslave-' + repoName + '_' + executionID
@@ -77,9 +77,9 @@ podTemplate(name: jslave_podName,
                 args: '${computer.jnlpmac} ${computer.name}',
                 command: '',
                 workingDir: '/workDir'),
-            containerTemplate(name: 'fedora27',
+            containerTemplate(name: 'fedora29',
                 alwaysPullImage: true,
-                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora27:' + FEDORA27_TAG,
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora29:' + FEDORA29_TAG,
                 ttyEnabled: false,
                 command: '',
                 privileged: true,
@@ -178,15 +178,15 @@ EOF
                     currentStage = 'test-pypi-install'
                     stage(currentStage) {
                       dir(repoName) {
-                        pipelineUtils.executeInContainer(currentStage, "fedora27", "./config/Dockerfiles/linchpin-pip-install.sh " + version)
+                        pipelineUtils.executeInContainer(currentStage, "fedora29", "./config/Dockerfiles/linchpin-pip-install.sh " + version)
                       }
                     }
                     currentStage = "test-pypi-verify"
                     stage(currentStage) {
                       dir('linchpin') {
-                        env.distro = "fedora27"
+                        env.distro = "fedora29"
                         env.PROVIDERS = "dummy"
-                        pipelineUtils.executeInContainer(currentStage, "fedora27", "./config/Dockerfiles/linchpin-tests.sh")
+                        pipelineUtils.executeInContainer(currentStage, "fedora29", "./config/Dockerfiles/linchpin-tests.sh")
                       }
                     }
                     stage('release-prod-version') {

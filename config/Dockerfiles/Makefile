@@ -1,6 +1,6 @@
 PARENT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))/../../)
 
-DISTROS := fedora28
+DISTROS := fedora29
 
 .PHONY: all
 all:
