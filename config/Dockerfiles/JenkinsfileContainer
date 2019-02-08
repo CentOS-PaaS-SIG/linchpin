@@ -75,6 +75,7 @@ p_providers = ['__RELEASE__':
                'beaker':
                 ["^linchpin/provision/roles/beaker/.*",
                  "^linchpin/provision/beaker.yml",
+                 "^linchpin/provision/library/bkr.*py",
                  "^linchpin/InventoryFilters/BeakerInventory.py",
                  "^linchpin/InventoryFilters/GenericInventory.py",
                  "^linchpin/InventoryFilters/.*InventoryFormatter.py",
