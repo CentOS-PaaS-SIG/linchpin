@@ -44,3 +44,11 @@
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_server: "{{ topology_outputs_os_server + [job_result_present] }}"
+
+- name: "Transform outputs to match the distiller format"
+  set_fact:
+    res_def_output: "{{ res_def_output | transform_os_server_output }}"
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_os_server: "{{ topology_outputs_os_server | add_res_type('os_server_res') }}"
