@@ -1,4 +1,8 @@
 ---
+- name: Set default ssh keys path
+  set_fact:
+    default_ssh_keys_path: "{{ creds_path | default(default_credentials_path) }}"
+
 - name: Provision beaker systems
   block:
   - name: "provision beaker systems"
@@ -12,6 +16,7 @@
       cancel_message: "{{ res.cancel_message | default(omit) }}"
       max_attempts: "{{ res.max_attempts | default(omit) }}"
       attempt_wait_time: "{{ attempt_wait_time | default(omit) }}"
+      ssh_keys_path: "{{ res.ssh_keys_path | default(default_ssh_keys_path) }}"
     with_items: "{{ res_defs['resource_definitions'] }}"
     # loop over res_defs even though there should be only one for beaker
     loop_control:

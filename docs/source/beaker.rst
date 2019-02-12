@@ -39,6 +39,9 @@ role definition, the following options are available.
 +-------------------+------------+----------+-------------------+-----------------+
 | attempt_wait_time | false      | integer  | attempt_wait_time |                 |
 +-------------------+------------+----------+-------------------+-----------------+
+| ssh_keys_path     | false      | string   | ssh_keys_path     | Credentials     |
+|                   |            |          |                   | directory       |
++-------------------+------------+----------+-------------------+-----------------+
 | recipesets        | false      | string   | recipesets        | see table below |
 +-------------------+------------+----------+-------------------+-----------------+
 
@@ -105,6 +108,8 @@ describes the available recipesets options.
 | ks_append           | false      | list     | list of strings                         |
 +---------------------+------------+----------+-----------------------------------------+
 | ssh_key             | false      | list     | list of strings                         |
++---------------------+------------+----------+-----------------------------------------+
+| ssh_key_file        | false      | list     | list of file names                      |
 +---------------------+------------+----------+-----------------------------------------+
 | kickstart           | false      | string   | absolute path to a kickstart template   |
 +---------------------+------------+----------+-----------------------------------------+
