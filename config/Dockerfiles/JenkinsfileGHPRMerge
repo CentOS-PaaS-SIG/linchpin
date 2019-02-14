@@ -80,11 +80,7 @@ pipeline {
                         script {
                             println "merge_commit_sha=${merge_commit_sha} ghprbActualCommit=${env.ghprbActualCommit}"
                             mTopic = "${topic}.ci.linchpin.pr_merge.queued"
-                            mProperties = "topic=${topic}.ci.linchpin.pr_merge.queued\n" +
-                                "ghprbActualCommit=${env.ghprbActualCommit}\n" +
-                                "ghprbPullId=${env.ghprbPullId}\n" +
-                                "ghprbPullAuthorLogin=${env.ghprbPullAuthorLogin}\n" +
-                                "sha1=${env.sha1}"
+                            mProperties = ''
                             mContent = [
                                 "topic": "${topic}.ci.linchpin.pr_merge.queued",
                                 "ghprbActualCommit": env.ghprbActualCommit,

@@ -9,7 +9,17 @@ properties(
                     ]
                 ),
                 pipelineTriggers(
-                        [[$class: 'CIBuildTrigger', checks: [],  overrides: [topic: 'org.centos.prod'], providerName: 'fedora-fedmsg', selector: 'topic = "org.centos.prod.ci.linchpin.pr_merge.queued"']]
+                        [[$class: 'CIBuildTrigger',
+                          noSquash: true,
+                          providerData: [
+                              $class: 'FedMsgSubscriberProviderData',
+                              name: 'fedora-fedmsg',
+                              overrides: [
+                                  topic: 'org.centos.prod.ci.linchpin.pr_merge.queued'
+                              ],
+                              checks: []
+                          ]
+                        ]]
                 )
         ]
 )

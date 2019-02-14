@@ -60,11 +60,7 @@ pipeline {
                 node('master') {
                     script {
                         mTopic = "${topic}.ci.linchpin.pr.queued"
-                        mProperties = "topic=${topic}.ci.linchpin.pr.queued\n" +
-                            "ghprbActualCommit=${env.ghprbActualCommit}\n" +
-                            "ghprbPullId=${env.ghprbPullId}\n" +
-                            "ghprbPullAuthorLogin=${env.ghprbPullAuthorLogin}\n" +
-                            "sha1=${env.sha1}"
+                        mProperties = ''
                         mContent = [
                             "topic": "${topic}.ci.linchpin.pr.queued",
                             "ghprbActualCommit": env.ghprbActualCommit,

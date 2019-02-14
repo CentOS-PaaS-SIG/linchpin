@@ -49,14 +49,16 @@
     </hudson.model.ParametersDefinitionProperty>
     <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
       <triggers>
-        <com.redhat.jenkins.plugins.ci.CIBuildTrigger plugin="jms-messaging@1.0.35">
-          <spec></spec>
-          <selector>topic = &quot;org.centos.prod.ci.linchpin.pr.queued&quot;</selector>
-          <providerName>fedora-fedmsg</providerName>
-          <checks/>
-          <overrides>
-            <topic>org.centos.prod</topic>
-          </overrides>
+        <com.redhat.jenkins.plugins.ci.CIBuildTrigger plugin="jms-messaging@1.1.2">
+           <spec />
+           <noSquash>true</noSquash>
+           <providerData class="com.redhat.jenkins.plugins.ci.provider.data.FedMsgSubscriberProviderData">
+              <name>fedora-fedmsg</name>
+              <overrides>
+                 <topic>org.centos.prod.ci.linchpin.pr.queued</topic>
+              </overrides>
+              <checks />
+           </providerData>
         </com.redhat.jenkins.plugins.ci.CIBuildTrigger>
       </triggers>
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
