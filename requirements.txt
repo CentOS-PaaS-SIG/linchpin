@@ -1,6 +1,6 @@
 setuptools>=35.0
 pyopenssl
-boto>=2.40.0
+boto>=2.49.0
 boto3
 apache-libcloud>=0.20.1
 click
