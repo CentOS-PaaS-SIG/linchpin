@@ -38,6 +38,8 @@
 
 - name: Get all endpoints with specific filters
   ec2_vpc_endpoint_facts:
+    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
     query: endpoints
     region: "{{ res_def['region'] | default(omit) }}"
     filters:

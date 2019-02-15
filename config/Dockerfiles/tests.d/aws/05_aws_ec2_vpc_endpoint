@@ -18,5 +18,9 @@ trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
 pushd docs/source/examples/workspaces/${PROVIDER}
 
+echo "add default profile in config"
+mkdir -p ~/.aws/
+printf "[default]\nregion = us-east-1" > ~/.aws/config
+
 linchpin -w . -v up "${TARGET}"
 
