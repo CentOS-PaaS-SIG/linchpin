@@ -155,7 +155,6 @@
                         "type": "string",
                         "required": true,
                         "allowed": ["aws_ec2_vpc_routetable"] },
-			
                     "name": { "type": "string", "required": true },
                     "propagating_vgw_ids": { "type": "string", "required": false },
                     "purge_routes": { "type": "boolean", "required": false },
@@ -176,6 +175,33 @@
                     },
                     "subnets": { "type": ["list", "string"], "required": false },
                     "tags": { "type": "dict", "required": false },
+                    "vpc_id": { "type": "string", "required": false },
+                    "vpc_name": { "type": "string", "required": false },
+                    "validate_certs": { "type": "boolean", "required": false }
+                }
+            },
+	    {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["aws_ec2_vpc_endpoint"] },
+                    "name": { "type": "string", "required": true },
+                    "service": { "type": "string", "required": false },
+                    "vpc_endpoint_id": { "type": "string", "required": false },
+                    "vpc_id": { "type": "string", "required": false },
+                    "policy": { "type": "string", "required": false },
+                    "policy_file": { "type": "string", "required": false },
+                    "region": { "type": "string", "required": true },
+                    "route_table_ids": {
+                        "type": "list",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "route_table_name": { "type": "string", "required": false },
                     "vpc_id": { "type": "string", "required": false },
                     "vpc_name": { "type": "string", "required": false },
                     "validate_certs": { "type": "boolean", "required": false }
