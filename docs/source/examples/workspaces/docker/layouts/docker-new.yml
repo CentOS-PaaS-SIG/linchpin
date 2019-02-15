@@ -1,0 +1,9 @@
+---
+inventory_layout:
+  vars:
+    ansible_connection: docker
+  hosts:
+    container:
+      count: 1
+      host_groups:
+        - fc29

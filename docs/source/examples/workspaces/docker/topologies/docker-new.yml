@@ -1,0 +1,12 @@
+---
+topology_name: "docker-new"
+resource_groups:
+  - resource_group_name: docker
+    resource_group_type: docker
+    resource_definitions:
+      - role: docker_container
+        name: fc29
+        command: sleep infinity
+        image: 'fedora:29'
+        devices:
+          - "/dev/kvm:/dev/kvm"

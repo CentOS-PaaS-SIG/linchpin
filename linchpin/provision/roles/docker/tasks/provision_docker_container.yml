@@ -1,0 +1,32 @@
+---
+# Provision a docker container
+
+- set_fact:
+    docker_container_params: {}
+
+# Build the list of parameters to Ansible's docker_container module.
+# The topology's resource definition parameters should map to
+# Ansible's docker_container parameters, except for 'role'.
+
+- set_fact:
+        docker_container_params: "{{ docker_container_params | combine({res_def_item.key: res_def_item.value}) }}"
+  with_dict: "{{ res_def }}"
+  when: res_def_item.key not in ['role']
+  loop_control:
+    loop_var: res_def_item
+
+- name: Provision Docker container
+  docker_container: "{{ docker_container_params }}"
+  register: outputitem
+
+- name: "set tmp var"
+  set_fact:
+    tmp: ["{{ outputitem['ansible_facts']['docker_container'] | combine({'resource_definition': res_def}) }}"]
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_docker_container: "{{ topology_outputs_docker_container + tmp }}"
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_docker_container: "{{ topology_outputs_docker_container | add_res_type('docker_container_res') }}"

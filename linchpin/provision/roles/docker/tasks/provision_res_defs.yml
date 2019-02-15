@@ -1,0 +1,3 @@
+---
+- name: "Provision resource"
+  include: "provision_{{ res_def['role'] }}.yml"

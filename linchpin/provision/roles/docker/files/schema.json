@@ -1,0 +1,286 @@
+{
+    "res_defs": {
+        "type": "list",
+        "schema": {
+            "type": "dict",
+            "schema": {
+               "role": {
+                   "type": "string",
+                   "required": true,
+                   "allowed": ["docker_container"]
+               },
+               "api_version": { "type": "string", "required": false },
+               "auto_remove": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "yes"]
+                },
+               "blkio_weight": { "type": "integer", "required": false },
+               "cacert_path": { "type": "string", "required": false },
+               "cap_drop": {
+                 "type": "list",
+                 "required": false,
+                 "schema": { "type": "string", "required": true }
+               },
+               "capabilities": {
+                 "type": "list",
+                 "required": false,
+                 "schema": { "type": "string", "required": true }
+               },
+               "cert_path": { "type": "string", "required": false },
+               "cleanup": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "yes"]
+                },
+               "command": { "type": "string", "required": false },
+               "cpu_period": { "type": "string", "required": false },
+               "cpu_quota": { "type": "string", "required": false },
+               "cpu_shares": { "type": "string", "required": false },
+               "cpuset_cpus": { "type": "string", "required": false },
+               "cpuset_mems": { "type": "string", "required": false },
+               "debug": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "yes"]
+                },
+               "detach": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "yes"]
+                },
+               "devices": {
+                 "type": "list",
+                 "required": false,
+                 "schema": { "type": "string", "required": true }
+               },
+               "dns_opts": {
+                 "type": "list",
+                 "required": false,
+                 "schema": { "type": "string", "required": true }
+               },
+               "dns_search_domains": {
+                 "type": "list",
+                 "required": false,
+                 "schema": { "type": "string", "required": true }
+               },
+               "dns_servers": {
+                 "type": "list",
+                 "required": false,
+                 "schema": { "type": "string", "required": true }
+               },
+               "docker_host": { "type": "string", "required": false},
+               "domainname": { "type": "string", "required": false },
+               "entrypoint": { "type": "string", "required": false },
+               "env": {
+                 "type": "dict",
+                 "required": false
+               },
+               "env_file": { "type": "string", "required": false },
+               "etc_hosts": {
+                 "type": "dict",
+                 "required": false
+               },
+               "exposed_ports": {
+                 "type": "list",
+                 "required": false,
+                 "schema": { "type": "integer", "required": true }
+               },
+               "force_kill": { "type": "string", "required": false },
+               "groups": {
+                 "type": "list",
+                 "required": false,
+                 "schema": { "type": "string", "required": true }
+               },
+               "hostname": { "type": "string", "required": false },
+               "ignore_image": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "yes"]
+                },
+               "image": { "type": "string", "required": false },
+               "init": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "yes"]
+                },
+               "interactive": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "yes"]
+                },
+               "ipc_mode": { "type": "string", "required": false },
+               "keep_volumes": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "yes"]
+                },
+               "kernel_memory:": { "type": "string", "required": false },
+               "key_path": { "type": "string", "required": false },
+               "kill_signal": { "type": "string", "required": false },
+               "labels": {
+                 "type": "dict",
+                 "required": false
+               },
+               "links": {
+                 "type": "list",
+                 "required": false,
+                 "schema": { "type": "string", "required": true }
+               },
+               "log_driver": { "type": "string", "required": false },
+               "log_options": {
+               "type": "dict",
+                 "required": false
+                },
+                "mac_address": { "type": "string", "required": false },
+                "memory": { "type": "string", "required": false },
+                "memory_reservation": { "type": "string", "required": false },
+                "memory_swap": { "type": "string", "required": false },
+                "memory_swappiness": { "type": "integer", "required": false },
+                "name": { "type": "string", "required": true },
+                "network_mode": { "type": "string", "required": false },
+                "networks": {
+                  "type": "list",
+                  "required": false,
+                  "schema": {
+                    "type": "dict",
+                    "required": true,
+                    "schema": {
+                      "name": { "type": "string", "required": true },
+                      "ipv4_address": { "type": "string", "required": false },
+                      "ipv6_address": { "type": "string", "required": false },
+                      "links": {
+                        "type": "list",
+                        "required": false,
+                        "schema": { "type": "string", "required": true }
+                      },
+                      "aliases": {
+                        "type": "list",
+                        "required": false,
+                        "schema": { "type": "string", "required": true }
+                      }
+                    }
+                  }
+                },
+                "oom_killer": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "yes"]
+                },
+                "oom_score_adj": { "type": "integer", "required": false },
+                "output_logs": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "yes"]
+                },
+                "paused": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "yes"]
+                },
+                "pid_mode": { "type": "string", "required": false },
+                "privileged": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "yes"]
+                },
+                "published_ports": {
+                  "type": "list",
+                  "required": false,
+                  "schema": { "type": "string", "required": true }
+                },
+                "pull": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "yes"]
+                },
+                "purge_networks": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "yes"]
+                },
+                "read_only": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "yes"]
+                },
+                "recreate": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "yes"]
+                },
+                "restart": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "yes"]
+                },
+                "restart_policy": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "on-failure", "always", "unless-stopped"]
+                },
+                "restart_retries": { "type": "integer", "required": false },
+                "security_opts": {
+                  "type": "list",
+                  "required": false,
+                  "schema": { "type": "string", "required": true }
+                },
+                "shm_size":  { "type": "string", "required": false },
+                "ssl_version": { "type": "string", "required": false },
+                "stop_signal": { "type": "string", "required": false },
+                "stop_timeout": { "type": "integer", "required": false },
+                "sysctls": {
+                  "type": "dict",
+                  "required": false
+                },
+                "timeout":  { "type": "integer", "required": false },
+                "tls": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "yes"]
+                },
+                "tls_hostname": { "type": "string", "required": false },
+                "tls_verify": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "yes"]
+                },
+                "tmpfs": { "type": "string", "required": false },
+                "trust_image_content": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "yes"]
+                },
+                "tty": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["no", "yes"]
+                },
+                "ulimits": {
+                  "type": "list",
+                  "required": false,
+                  "schema": { "type": "string", "required": true }
+                },
+                "user": { "type": "string", "required": false },
+                "userns_mode": {
+                  "type": "string",
+                  "required": false,
+                  "allowed": ["host"]
+                },
+                "uts": { "type": "string", "required": false },
+                "volume_driver": { "type": "string", "required": false },
+                "volumes": {
+                  "type": "list",
+                  "required": false,
+                  "schema": { "type": "string", "required": true }
+                },
+                "volumes_from": {
+                  "type": "list",
+                  "required": false,
+                  "schema": { "type": "string", "required": true }
+                },
+                "working_dir": { "type": "string", "required": false }
+              }
+        }
+    }
+}

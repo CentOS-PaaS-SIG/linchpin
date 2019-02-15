@@ -13,6 +13,7 @@ LinchPin has many default providers. This choose-your-own-adventure page takes y
    beaker
    duffy
    ovirt
+   docker
    openshift
    rackspace
    provider_external

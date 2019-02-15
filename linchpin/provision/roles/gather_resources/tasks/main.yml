@@ -124,6 +124,10 @@
     topology_outputs: "{{ topology_outputs_vmware_guest }}"
   when: topology_outputs_vmware_guest is defined
 
+- name: "Add docker_container_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs + topology_outputs_docker_container }}"
+  when: topology_outputs_docker_container is defined and (topology_outputs_docker_container != [])
 
 - name: "set value"
   set_fact:
