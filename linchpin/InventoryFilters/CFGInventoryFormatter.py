@@ -48,10 +48,11 @@ class CFGInventoryFormatter(InventoryFormatter):
                     grp_vars = str(grp_vars)
                     self.config.set(host_group + ":" + "vars", var, grp_vars)
 
+
     def add_ips_to_groups(self, inven_hosts, layout):
         # create a ip to host mapping based on count
-        ip_to_host = collections.OrderedDict()
         inven_hosts.reverse()
+        self.add_ips_to_host_group("all", inven_hosts)
         for host_name in layout['hosts']:
             if 'count' in host_name.keys():
                 count = host_name['count']
@@ -63,14 +64,15 @@ class CFGInventoryFormatter(InventoryFormatter):
             for i in range(count, 0, -1):
                 item = inven_hosts.pop()
                 host_list.append(item)
-            ip_to_host[host_name["name"]] = host_list
-        # add ips to the respective host groups in inventory
-        for host_name in layout['hosts']:
-            host_ips = ip_to_host[host_name["name"]]
-            for ip in host_ips:
-                for host_group in host_name['host_groups']:
-                    self.config.set(host_group, ip)
-                    self.config.set("all", ip)
+            for host_group in host_name['host_groups']:
+                self.add_ips_to_host_group(host_group, host_list)
+        return True
+
+
+    def add_ips_to_host_group(self, host_group, hosts):
+        for ip in hosts:
+            self.config.set(host_group, ip)
+
 
     def add_common_vars(self, host_groups, layout, config):
         # defaults common_vars to [] when they doesnot exist

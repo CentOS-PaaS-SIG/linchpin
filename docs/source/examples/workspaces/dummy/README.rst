@@ -8,7 +8,7 @@ the provisioning steps for easy testing of linchpin features
 
 dummy-new
 ========
-Porivions  a new set of dummy resources and creates a layout to go with them.  The name of the inventory file is dynamically generated based on the uhash
+Provisions a new set of dummy resources and creates a layout to go with them.  The name of the inventory file is dynamically generated based on the uhash
 
 dummy-topo
 ========
