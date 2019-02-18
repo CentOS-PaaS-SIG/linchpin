@@ -119,7 +119,8 @@
                     "dhcp_end": { "type": "string", "required": false },
                     "bridge": { "type": "string", "required": false },
                     "domain": { "type": "string", "required": false },
-                    "forward_mode": { "type": "string", "required": false }
+                    "forward_mode": { "type": "string", "required": false },
+                    "netmask": { "type": "string", "required": false }
                 }
             },
             {
