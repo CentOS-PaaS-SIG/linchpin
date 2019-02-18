@@ -1,6 +1,6 @@
 FROM fedora:28
 LABEL maintainer "https://github.com/CentOS-PaaS-SIG/linchpin"
-LABEL description "This container will verify linchpin works under Fedora28"
+LABEL description "This container will verify linchpin works under Fedora-28"
 
 ENV HOME=/root
 WORKDIR $HOME

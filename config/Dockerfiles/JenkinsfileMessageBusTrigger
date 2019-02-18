@@ -70,9 +70,7 @@ podTemplate(name: podName,
                         echo "CI_MESSAGE: ${env.CI_MESSAGE}"
 
                         // parse CI_MESSAGE json
-                        def json_msg = readJSON text: CI_MESSAGE
-                        // parse message-content json
-                        def msg_content = readJSON text: json_msg['message-content']
+                        def msg_content = readJSON text: CI_MESSAGE
 
                         ghprbPullId = msg_content['ghprbPullId']
                         def ghprbPullAuthorLogin = msg_content['ghprbPullAuthorLogin']
