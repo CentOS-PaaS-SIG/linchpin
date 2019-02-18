@@ -1,0 +1,59 @@
+---
+gcloud-gce-new:
+  topology:
+    topology_name: gce-new
+    resource_groups:
+      - resource_group_name: "gcloud"
+        resource_group_type: "gcloud"
+        resource_definitions:
+          - name: "gce-webserver"
+            flavor: "f1-micro"
+            role: "gcloud_gce"
+            region: "us-central1-a"
+            image: "centos-7"
+            count: 1
+        credentials:
+          filename: linchpinadmincreds.json
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example
+
+gcloud-gce:
+  topology:
+    topology_name: gcloud
+    resource_groups:
+      - resource_group_name: "gcloud"
+        resource_group_type: "gcloud"
+        resource_definitions:
+          - name: "webserver"
+            flavor: "f1-micro"
+            type: "gcloud_gce"
+            region: "us-central1-a"
+            image: "centos-7"
+            count: 1
+        credentials:
+          filename: linchpinadmincreds.json
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example
+  hooks:
+    postup:
+      - type: ansible
+        name: ping
+        context: True
+        actions:
+          - playbook: ../hooks/ansible/ping/ping.yaml
+            extra_vars: {"ansible_ssh_private_key_file": "/home/herlo/.ssh/rh_rsa"}
+

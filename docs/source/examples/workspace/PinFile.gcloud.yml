@@ -1,5 +1,5 @@
 ---
-gce-new:
+gcloud-gce-new:
   topology:
     topology_name: gce-new
     resource_groups:
@@ -13,19 +13,18 @@ gce-new:
             image: "centos-7"
             count: 1
         credentials:
-          filename: LinchPin-GCE.json
+          filename: linchpinadmincreds.json
   layout:
     inventory_layout:
       vars:
-        hostname: __ip__
+        hostname: __IP__
       hosts:
         example-node:
           count: 1
           host_groups:
             - example
 
-
-gce:
+gcloud-gce:
   topology:
     topology_name: gcloud
     resource_groups:
@@ -39,11 +38,11 @@ gce:
             image: "centos-7"
             count: 1
         credentials:
-          filename: LinchPin-GCE.json
+          filename: linchpinadmincreds.json
   layout:
     inventory_layout:
       vars:
-        hostname: __ip__
+        hostname: __IP__
       hosts:
         example-node:
           count: 1
