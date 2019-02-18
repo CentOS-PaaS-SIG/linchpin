@@ -343,9 +343,10 @@
     loop_var: node
   register: extract_mac_address_result
 
+# needs to be updated when multiple external addresses are involved
 - name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
-    /usr/sbin/arp -an | grep -F {{ extract_mac_address_result.results[mac].stdout }} | cut -f 2 -d "(" | cut -f 1 -d ")"
+    /usr/sbin/arp -an | grep -F {{ extract_mac_address_result.results[mac].stdout_lines[0] }} | cut -f 2 -d "(" | cut -f 1 -d ")"
   with_items:
     - "{{ res_count.stdout }}"
   loop_control:
@@ -356,9 +357,10 @@
   delay: 10
   when: uri_hostname == 'localhost'
 
+# Note: The task needs to be updated when multiple external addresses are involved 
 - name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
-    /usr/sbin/arp -an | grep -F {{ extract_mac_address_result.results[mac].stdout }} | cut -f 2 -d "(" | cut -f 1 -d ")"
+    /usr/sbin/arp -an | grep -F {{ extract_mac_address_result.results[mac].stdout_lines[0] }} | cut -f 2 -d "(" | cut -f 1 -d ")"
   with_items:
     - "{{ res_count.stdout }}"
   loop_control:
