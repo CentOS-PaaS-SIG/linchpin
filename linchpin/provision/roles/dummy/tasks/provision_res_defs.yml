@@ -24,6 +24,10 @@
   set_fact:
     topology_outputs_dummy: "{{ topology_outputs_dummy + tmp }}"
 
+- name: "debug"
+  debug:
+    msg: "{{ topology_outputs_dummy }}"
+
 - name: "Add type to resource"
   set_fact:
     topology_outputs_dummy: "{{ topology_outputs_dummy | add_res_type('dummy_res') }}"
