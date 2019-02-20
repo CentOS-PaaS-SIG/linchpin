@@ -120,7 +120,8 @@
                     "bridge": { "type": "string", "required": false },
                     "domain": { "type": "string", "required": false },
                     "forward_mode": { "type": "string", "required": false },
-                    "netmask": { "type": "string", "required": false }
+                    "netmask": { "type": "string", "required": false },
+                    "forward_dev": { "type": "string", "required": false }
                 }
             },
             {
