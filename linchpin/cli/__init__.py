@@ -644,8 +644,8 @@ class LinchpinCli(LinchpinAPI):
                 data = strm.read()
 
         try:
-            template_dict = json.loads(json.dumps(template))
-            render = self.parser.render(template_dict, data)
+            template = json.dumps(template)
+            render = self.parser.render(template, data)
         except TypeError:
             error_txt = "Error attempting to parse PinFile data file."
             error_txt += "\nTemplate-data files require a prepended '@'"
@@ -654,7 +654,7 @@ class LinchpinCli(LinchpinAPI):
             error_txt += " template-data is missing or the incorrect path?."
             raise ValidationError(error_txt)
 
-        return OrderedDict(ast.literal_eval(render))
+        return json.JSONDecoder(object_pairs_hook=OrderedDict).decode(render)
 
 
     def _build(self, pf, pf_data=None):

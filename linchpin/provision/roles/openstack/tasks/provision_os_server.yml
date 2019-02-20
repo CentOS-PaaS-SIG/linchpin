@@ -119,10 +119,6 @@
     - not async
     - res_def_output['skipped'] is not defined
 
-- name: "debug"
-  debug:
-    msg: "{{ topology_outputs_os_server }}"
-
 - name: "Async:: provision/teardown os_server resources"
   os_server:
     state: "{{ state }}"
