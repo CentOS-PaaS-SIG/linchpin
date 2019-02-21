@@ -113,7 +113,7 @@
                         "allowed": ["libvirt_network"] },
                     "name": { "type": "string", "required": true },
                     "uri": { "type": "string", "required": false },
-                    "ip": { "type": "string", "required": true },
+                    "ip": { "type": "string", "required": false },
                     "prefix": { "type": "string", "required": false },
                     "dhcp_start": { "type": "string", "required": false },
                     "dhcp_end": { "type": "string", "required": false },

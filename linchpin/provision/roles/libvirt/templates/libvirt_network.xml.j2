@@ -3,12 +3,15 @@
   {% if res_def['bridge'] is defined %}
   <bridge name="{{ res_def['bridge'] }}" stp='on' delay='0'/>
   {% endif %}/>
+{% if res_def['forward_mode'] is defined %}
   <forward mode="{{ res_def['forward_mode'] | default('nat') }}"
+{% endif %}
 {% if res_def['forward_dev'] is defined %}
      dev="{{ res_def['forward_dev'] }}"{% endif %}/>
 {% if res_def['domain'] is defined %}
   <domain name="{{ res_def['domain'] }}" localOnly="yes"/>
 {% endif %}
+{% if res_def['ip'] is defined %}
   <ip address="{{ res_def['ip'] }}">
 {% if res_def['dhcp_start'] is defined %}
     <dhcp>
@@ -16,4 +19,5 @@
     </dhcp>
 {% endif %}
   </ip>
+{% endif %}
 </network>
