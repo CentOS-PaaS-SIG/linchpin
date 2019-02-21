@@ -11,6 +11,7 @@ class DockerInventory(InventoryFilter):
 
     def get_host_data(self, res, config):
         host_data = {}
+        # Only docker_container resource type produces host data.
         if res['resource_type'] != 'docker_container_res':
             return host_data
         var_data = config.get('docker', {})

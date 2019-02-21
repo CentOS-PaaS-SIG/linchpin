@@ -4,9 +4,14 @@ resource_groups:
   - resource_group_name: docker
     resource_group_type: docker
     resource_definitions:
+      - role: docker_image
+        name: custom_fedora29
+        dockerfile: fedora29
+        path: dockerfiles
+        tag: python
       - role: docker_container
-        name: fc29
+        name: myfedora29
         command: sleep infinity
-        image: 'fedora:29'
+        image: "custom_fedora29:python"
         devices:
           - "/dev/kvm:/dev/kvm"

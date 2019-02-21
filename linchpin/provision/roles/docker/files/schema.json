@@ -1,8 +1,77 @@
 {
-    "res_defs": {
-        "type": "list",
-        "schema": {
-            "type": "dict",
+  "res_defs": {
+      "type": "list",
+      "schema": {
+        "anyof": [
+            {
+             "type": "dict",
+             "schema": {
+               "role": {
+                 "type": "string",
+                 "required": true,
+                 "allowed": ["docker_image"]
+               },
+               "name": { "type": "string", "required": true },
+               "path": { "type": "string", "required": false },
+               "api_version": { "type": "string", "required": false },
+               "buildargs": {
+                 "type": "dict",
+                 "schema": { "type": "string", "required": true }
+               },
+               "cacert_path": { "type": "string", "required": false },
+               "cert_path": { "type": "string", "required": false },
+               "container_limits": {
+                 "type": "dict",
+                 "schema": {
+                   "cpusetcpus": { "type": "string", "required": false},
+                   "cpushares": { "type": "string", "required": false},
+                   "memory": { "type": "string", "required": false},
+                   "memswap": { "type": "string", "required": false}
+                 }
+               },
+               "debug": {
+                 "type": "string",
+                 "required": false,
+                 "allowed": ["no", "yes"]
+               },
+               "docker_host": { "type": "string", "required": false},
+               "dockerfile": { "type": "string", "required": false},
+               "force": {
+                 "type": "string",
+                 "required": false,
+                 "allowed": ["no", "yes"]
+               },
+               "http_timeout": { "type": "integer", "required": false},
+               "load_path": { "type": "string", "required": false},
+               "nocache": {
+                 "type": "string",
+                 "required": false,
+                 "allowed": ["no", "yes"]
+               },
+               "pull": { "type": "string", "required": false},
+               "repository": { "type": "string", "required": false},
+               "rm": {
+                 "type": "string",
+                 "required": false,
+                 "allowed": ["no", "yes"]
+               },
+               "ssl_version": { "type": "string", "required": false},
+               "tag": { "type": "string", "required": false},
+               "timeout": { "type": "integer", "required": false},
+               "tls": {
+                 "type": "string",
+                 "required": false,
+                 "allowed": ["no", "yes"]
+               },
+               "tls_hostname": { "type": "string", "required": false },
+               "tls_verify": {
+                 "type": "string",
+                 "required": false,
+                 "allowed": ["no", "yes"]
+               }
+             }
+            },
+            {"type": "dict",
             "schema": {
                "role": {
                    "type": "string",
@@ -281,6 +350,7 @@
                 },
                 "working_dir": { "type": "string", "required": false }
               }
+             }]
         }
-    }
+  }
 }

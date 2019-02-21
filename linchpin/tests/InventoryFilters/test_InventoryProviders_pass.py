@@ -36,6 +36,7 @@ def test_get_all_drivers():
         "ovirt_vms_res": OvirtInventory,
         "vmware_guest_res": VMwareInventory,
         "docker_container_res": DockerInventory,
+        "docker_image_res": DockerInventory,
     }
     if_drivers = InventoryProviders.get_all_drivers()
     assert_equal(drivers,if_drivers)

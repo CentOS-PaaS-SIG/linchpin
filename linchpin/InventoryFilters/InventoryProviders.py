@@ -30,6 +30,7 @@ filter_classes = {
     "ovirt_vms_res": OvirtInventory,
     "vmware_guest_res": VMwareInventory,
     "docker_container_res": DockerInventory,
+    "docker_image_res": DockerInventory,
 }
 
 formatter_classes = {

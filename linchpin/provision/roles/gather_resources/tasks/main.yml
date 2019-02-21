@@ -129,6 +129,11 @@
     topology_outputs: "{{ topology_outputs + topology_outputs_docker_container }}"
   when: topology_outputs_docker_container is defined and (topology_outputs_docker_container != [])
 
+- name: "Add docker_image_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs + topology_outputs_docker_image }}"
+  when: topology_outputs_docker_image is defined and (topology_outputs_docker_image != [])
+
 - name: "set value"
   set_fact:
     value: "[{{ {'resources': topology_outputs } }}]"
