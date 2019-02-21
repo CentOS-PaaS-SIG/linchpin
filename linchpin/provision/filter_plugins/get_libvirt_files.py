@@ -6,16 +6,17 @@ def get_libvirt_files(output):
     files = []
     results = output['results']
     for result in results:
-        stdout = result['stdout']
-        myxml = fromstring(stdout)
-        devices = myxml.findall('devices')
-        for device in devices:
-            disks = device.findall('disk')
-            for disk in disks:
-                if disk.attrib["type"] == 'file':
-                    if len(disk.findall('source')) > 0:
-                        source = disk.findall('source')[0]
-                        files.append(source.attrib['file'])
+        if len(result['stdout']) > 0:
+            stdout = result['stdout']
+            myxml = fromstring(stdout)
+            devices = myxml.findall('devices')
+            for device in devices:
+                disks = device.findall('disk')
+                for disk in disks:
+                    if disk.attrib["type"] == 'file':
+                        if len(disk.findall('source')) > 0:
+                            source = disk.findall('source')[0]
+                            files.append(source.attrib['file'])
     return files
 
 
