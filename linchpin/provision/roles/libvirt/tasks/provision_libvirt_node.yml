@@ -1,6 +1,6 @@
-- name: "register resource count"
-  shell: python -c "print [x for x in range( 0, {{ res_def['count'] | default(1) }} )]"
-  register: res_count
+- set_fact:
+      res_count: '{{ (res_count | default([])) + [item | int] }}'
+  with_sequence: "start=0 end={{ res_def['count'] | default(1) |int - 1 }}"
 
 - name: "does node already exist"
   virt:
@@ -9,7 +9,7 @@
     uri: "{{ nodeinfo[1]['uri'] | default('qemu:///system') }}"
   with_nested:
     - "{{ libvirt_resource_name }}"
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   ignore_errors: yes
   loop_control:
     loop_var: nodeinfo
@@ -50,7 +50,7 @@
   with_nested:
     - ["{{ res_def['uri'] | default('qemu:///system') }}"]
     - ["{{ res_def }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
     - ["{{ local_image_path }}"]
     - ["{{ img_src_ext }}"]
   loop_control:
@@ -110,7 +110,7 @@
     - ["{{ libvirt_image_path | expanduser }}"]
     - ["{{ img_src_ext }}"]
     - ["{{ res_def['additional_storage'] | default('1G') }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
     loop_control:
       loop_var: definition
     become: "{{ libvirt_become }}"
@@ -123,7 +123,7 @@
       - ["{{ libvirt_image_path | expanduser }}"]
       - ["{{ img_src_ext }}"]
       - ["{{ res_def['additional_storage'] | default('1G') }}"]
-      - "{{ res_count.stdout }}"
+      - "{{ res_count }}"
     loop_control:
       loop_var: definition
     become: "{{ libvirt_become }}"
@@ -143,7 +143,7 @@
     state: "directory"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   loop_control:
     loop_var: definition
   remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
@@ -156,7 +156,7 @@
     state: "directory"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   loop_control:
     loop_var: definition
   when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init"
@@ -167,7 +167,7 @@
     dest: "/tmp/vm-{{ definition[0] }}_{{ definition[1] }}/user-data"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   loop_control:
     loop_var: definition
   vars:
@@ -180,7 +180,7 @@
     dest: "/tmp/vm-{{ definition[0] }}_{{ definition[1] }}/user-data"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   loop_control:
     loop_var: definition
   remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
@@ -193,7 +193,7 @@
     dest: "/tmp/vm-{{ definition[0] }}_{{ definition[1] }}/meta-data"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   loop_control:
     loop_var: definition
   when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init"
@@ -204,7 +204,7 @@
     dest: "/tmp/vm-{{ definition[0] }}_{{ definition[1] }}/meta-data"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   loop_control:
     loop_var: definition
   remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
@@ -215,7 +215,7 @@
   command: mkisofs -o /tmp/vm-{{ definition[0] }}_{{ definition[1] }}.iso -V cidata -r -J --quiet /tmp/vm-{{ definition[0] }}_{{ definition[1] }}/user-data /tmp/vm-{{ definition[0] }}_{{ definition[1] }}/meta-data
   with_nested:
     - ["{{ libvirt_resource_name }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   loop_control:
     loop_var: definition
   when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init" 
@@ -224,7 +224,7 @@
   command: mkisofs -o /tmp/vm-{{ definition[0] }}_{{ definition[1] }}.iso -V cidata -r -J --quiet /tmp/vm-{{ definition[0] }}_{{ definition[1] }}/user-data /tmp/vm-{{ definition[0] }}_{{ definition[1] }}/meta-data
   with_nested:
     - ["{{ libvirt_resource_name }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   loop_control:
     loop_var: definition
   remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
@@ -245,7 +245,7 @@
     - ["{{ res_def['memory'] | default(1024)  }}"]
     - ["{{ res_def['format'] | default('qcow2')  }}"]
     - ["{{ res_def['uri'] }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
     loop_control:
       loop_var: definition
     ignore_errors: yes
@@ -261,7 +261,7 @@
     - ["{{ res_def['memory'] | default(1024)  }}"]
     - ["{{ res_def['format'] | default('qcow2')  }}"]
     - ["{{ res_def['uri'] }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
     loop_control:
       loop_var: definition
     ignore_errors: yes
@@ -277,7 +277,7 @@
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - ["{{ res_def['uri'] }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   loop_control:
     loop_var: definition
   ignore_errors: yes
@@ -292,7 +292,7 @@
   with_nested:
     - ["{{ res_def['uri'] | default('qemu:///system') }}"]
     - ["{{ res_def }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
     - ["{{ local_image_path }}"]
     - ["{{ img_src_ext }}"]
   loop_control:
@@ -325,7 +325,7 @@
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - ["{{ res_def['uri'] | default('qemu:///system') }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   loop_control:
     loop_var: definition
   ignore_errors: no
@@ -338,17 +338,16 @@
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - ["{{ res_def['uri'] | default('qemu:///system') }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   loop_control:
     loop_var: node
   register: extract_mac_address_result
 
-# needs to be updated when multiple external addresses are involved
 - name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
     /usr/sbin/arp -an | grep -F {{ extract_mac_address_result.results[mac].stdout_lines[0] }} | cut -f 2 -d "(" | cut -f 1 -d ")"
   with_items:
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   loop_control:
     loop_var: mac
   register: extract_ip_address_result
@@ -357,12 +356,11 @@
   delay: 10
   when: uri_hostname == 'localhost'
 
-# Note: The task needs to be updated when multiple external addresses are involved 
 - name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
     /usr/sbin/arp -an | grep -F {{ extract_mac_address_result.results[mac].stdout_lines[0] }} | cut -f 2 -d "(" | cut -f 1 -d ")"
   with_items:
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   loop_control:
     loop_var: mac
   register: extract_ip_address_result_remote
@@ -378,7 +376,7 @@
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - ["{{ res_def['uri'] }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   loop_control:
     loop_var: definition
   ignore_errors: yes
@@ -392,7 +390,7 @@
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - ["{{ res_def['uri'] | default('qemu:///system') }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   loop_control:
     loop_var: data
   when: not async
@@ -400,10 +398,10 @@
 
 - name: "Set Output name"
   set_fact:
-      output_name: "{{ data[0] }}_{{ data[1] }}"
+      output_name: '{{ output_name|default([]) + [data[0]+"_"+data[1]|string] }}'
   with_nested:
     - "{{ libvirt_resource_name }}"
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   loop_control:
     loop_var: data
 
@@ -412,17 +410,19 @@
     topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0], 'ip': extract_ip_address_result.results[data[1]].stdout, 'resource_type': 'libvirt_res' }] }}"
   with_nested:
     - "{{ output_name }}"
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   loop_control:
     loop_var: data
-  when: not async and uri_hostname == 'localhost'
+  when:
+    - not async and uri_hostname == 'localhost'
+    - data[0][-1]|int == data[1]|int
 
 - name: "remote: Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
   set_fact:
     topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0], 'ip': extract_ip_address_result_remote.results[data[1]].stdout, 'resource_type': 'libvirt_res' }] }}"
   with_nested:
     - "{{ output_name }}"
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   loop_control:
     loop_var: data
   when: not async and uri_hostname != 'localhost'
