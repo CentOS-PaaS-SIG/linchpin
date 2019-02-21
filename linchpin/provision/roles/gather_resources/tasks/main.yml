@@ -114,6 +114,11 @@
     topology_outputs: "{{ topology_outputs_ovirt_vms }}"
   when: topology_outputs_ovirt_vms is defined
 
+- name: "Add openshift_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs_openshift_resources }}"
+  when: topology_outputs_openshift_resources is defined
+
 - name: "set value"
   set_fact:
     value: "[{{ {'resources': topology_outputs } }}]"
