@@ -3,6 +3,40 @@
   {% if res_def['bridge'] is defined %}
   <bridge name="{{ res_def['bridge'] }}" stp='on' delay='0'/>
   {% endif %}
+
+{% if res_def['dns'] is defined %}
+  <dns>
+ {% if res_def['dns']['texts'] is defined %}
+  {% for text in res_def['dns']['texts'] %}
+   <txt {% if text['name'] is defined %}name={{ '\"' + text['name'] + '\"' }}{% endif %}{% if text['value'] is defined %} value={{ '\"' + text['value'] + '\"' }}{% endif %}/> 
+  {% endfor %}
+ {% endif %}
+
+ {% if res_def['dns']['forwarders'] is defined %}
+  {% for fwd in res_def['dns']['forwarders'] %}
+   <forwarder {% if fwd['addr'] is defined %}addr={{ '\'' + fwd['addr'] + '\'' }}{% endif %}{% if fwd['domain'] is defined %} domain={{ '\'' + fwd['domain'] + '\'' }}{% endif %}/>
+  {% endfor %}
+ {% endif %}
+
+ {% if res_def['dns']['services'] is defined %}
+  {% for srv in res_def['dns']['services'] %}
+  <srv {% if srv['name'] is defined %}service={{ '\'' + srv['name'] + '\'' }}{% endif %}{% if srv['protocol'] is defined %} protocol={{ '\'' + srv['protocol'] + '\'' }}{% endif %}{% if srv['domain'] is defined %} domain={{ '\'' + srv['domain'] + '\'' }}{% endif %} {% if srv['target'] is defined %}target={{ '\'' + srv['target'] + '\'' }}{% endif %} {% if srv['port'] is defined %}port={{ '\'' }}{{ srv['port'] }}{{ '\'' }}{% endif %} {% if srv['priority'] is defined %}priority={{ '\'' }}{{ srv['priority'] }}{{ '\'' }}{% endif %} {% if srv['weight'] is defined %}weight={{ '\'' }}{{ srv['weight'] }}{{ '\'' }}{% endif %}/>
+  {% endfor %}
+ {% endif %}
+
+{% if res_def['dns']['hosts'] is defined %}
+  {% for host in res_def['dns']['hosts'] %}
+  <host {% if host['ip'] is defined %}ip={{ '\'' + host['ip'] + '\'' }}{% endif %}>
+{% if host['hostnames'] is defined %}
+  {% for hname in host['hostnames'] %}
+    <hostname>{{ hname }}</hostname>
+  {% endfor %}
+{% endif %}
+    </host>
+  {% endfor %}
+{% endif %}
+</dns>
+  {% endif %}
 <forward mode="{{ res_def['forward_mode'] | default('nat') }}"{% if res_def['forward_dev'] is defined %} dev="{{ res_def['forward_dev'] }}"{% endif %}/>
 {% if res_def['domain'] is defined %}
   <domain name="{{ res_def['domain'] }}" localOnly="yes"/>
