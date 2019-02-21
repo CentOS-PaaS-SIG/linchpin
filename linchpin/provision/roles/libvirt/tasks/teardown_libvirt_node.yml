@@ -53,3 +53,4 @@
   ignore_errors: yes
   become: "{{ libvirt_become }}"
   delegate_to: "{{ uri_hostname }}"
+  when: not async
