@@ -121,7 +121,65 @@
                     "domain": { "type": "string", "required": false },
                     "forward_mode": { "type": "string", "required": false },
                     "netmask": { "type": "string", "required": false },
-                    "forward_dev": { "type": "string", "required": false }
+                    "forward_dev": { "type": "string", "required": false },
+                    "dns": {
+		        "type": "dict",
+		       	"required": false,
+			"schema": {
+		            "texts": {
+                                "type": "list",
+                                "required": false,
+                                "schema": {
+                                    "type": "dict",
+                                    "schema": {
+                                        "name": { "type": "string", "required": true },
+                                        "value": { "type": "string", "required": true }
+                                    }
+                                }
+                            },
+			    "forwarders": {
+                                "type": "list",
+                                "required": false,
+                                "schema": {
+                                    "type": "dict",
+                                    "schema": {
+                                        "domain": { "type": "string", "required": false },
+                                        "addr": { "type": "string", "required": false }
+                                    }
+                                }
+                            },
+			    "services": {
+                                "type": "list",
+                                "required": false,
+                                "schema": {
+                                    "type": "dict",
+                                    "schema": {
+                                        "name": { "type": "string", "required": false },
+                                        "protocol": { "type": "string", "required": false },
+                                        "domain": { "type": "string", "required": false },
+                                        "target": { "type": "string", "required": false },
+                                        "port": { "type": "number", "required": false },
+                                        "priority": { "type": "number", "required": false },
+                                        "weight": { "type": "number", "required": false }
+                                    }
+                                }
+                            },
+			    "hosts": {
+                                "type": "list",
+                                "required": false,
+                                "schema": {
+                                    "type": "dict",
+                                    "schema": {
+                                        "ip": { "type": "string", "required": false },
+                                        "hostnames": { 
+					    "type": "list", 
+					    "required": true
+					}
+                                    }
+                                }
+                            }
+			}
+		    }
                 }
             },
             {
