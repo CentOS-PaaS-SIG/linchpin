@@ -91,7 +91,7 @@
   with_nested:
     - ["{{ local_image_path }}"]
     - ["{{ libvirt_resource_name }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
     - ["{{ img_src_ext }}"]
   loop_control:
     loop_var: img_item
