@@ -40,14 +40,14 @@
   set_fact:
     auth_var: "{{ auth_var_out['output'][cred_profile] }}"
   ignore_errors: true
-  when: auth_var_out['output'] is defined
   no_log: "{{ not debug_mode }}"
-  when: res_grp['credentials'] is defined and res_grp['credentials']['filename'] is defined
+  when: auth_var_out['output'] is defined and res_grp['credentials'] is defined and res_grp['credentials']['filename'] is defined
 
 - name: "set auth_var when filename is not defined"
   set_fact:
     auth_var: "{{ res_grp['credentials'] }}"
   when: res_grp['credentials'] is defined and res_grp['credentials']['filename'] is not defined
+  ignore_errors: true
 
 - name: "Initiating Provision/Teardown of openshift resource group"
   include: provision_res_defs.yml res_def={{ res_item }}
