@@ -1,6 +1,6 @@
-- name: "register resource count"
-  shell: python -c "print [x for x in range( 0, {{ res_def['count'] | default(1) }} )]"
-  register: res_count
+- set_fact:
+      res_count: '{{ (res_count | default([])) + [item | int] }}'
+  with_sequence: "start=0 end={{ res_def['count'] | default(1) |int - 1 }}"
 
 - name: "halt node"
   virt:
@@ -9,7 +9,7 @@
     uri: "{{ instance[1]['uri'] | default('qemu:///system') }}"
   with_nested:
     - ["{{ res_def }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   loop_control:
     loop_var: instance
   register: res_def_output
@@ -22,7 +22,7 @@
   with_nested:
     - ["{{  libvirt_resource_name }}"]
     - ["{{ res_def['uri'] | default('qemu:///system') }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   loop_control:
     loop_var: instance
   when: not async
@@ -36,7 +36,7 @@
     uri: "{{ instance[0]['uri'] | default('qemu:///system') }}"
   with_nested:
     - ["{{ res_def }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
   loop_control:
     loop_var: instance
   register: res_def_output
@@ -53,3 +53,4 @@
   ignore_errors: yes
   become: "{{ libvirt_become }}"
   delegate_to: "{{ uri_hostname }}"
+  when: not async

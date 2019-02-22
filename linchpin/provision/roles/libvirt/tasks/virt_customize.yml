@@ -72,7 +72,7 @@
     - ["{{ libvirt_image_path | expanduser }}"]
     - ["{{ img_src_ext }}"]
     - ["{{ virt_args }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
     loop_control:
       loop_var: definition
     become: "{{ libvirt_become }}"

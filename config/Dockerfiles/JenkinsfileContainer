@@ -72,6 +72,17 @@ p_providers = ['__RELEASE__':
                  "^config/Dockerfiles/tests.d/(general|inventory)/.*",
                  "^config/Dockerfiles/tests.d/aws/.*",
                  "linchpin/version.py"],
+               'gcloud':
+                ["^linchpin/provision/roles/gcloud/.*",
+                 "^linchpin/provision/gcloud.yml",
+                 "^linchpin/InventoryFilters/GCloudInventory.py",
+                 "^linchpin/InventoryFilters/GenericInventory.py",
+                 "^linchpin/InventoryFilters/.*InventoryFormatter.py",
+                 "^linchpin/InventoryFilters/InventoryProviders.py",
+                 "^docs/source/examples/workspace/PinFile.gcloud.yml",
+                 "^config/Dockerfiles/tests.d/(general|inventory)/.*",
+                 "^config/Dockerfiles/tests.d/gcloud/.*",
+                 "linchpin/version.py"],
                'beaker':
                 ["^linchpin/provision/roles/beaker/.*",
                  "^linchpin/provision/beaker.yml",
