@@ -44,7 +44,7 @@
         <disk type='file' device='disk'>
           <driver name='qemu' type='qcow2'/>
           {% if storage_def['source'] is not defined %}
-            <source file='/var/lib/libvirt/images/linchpin/{{ libvirt_resource_name }}-{{ storage_def['name'] }}.img' />
+            <source file='/var/lib/libvirt/images/linchpin/{{ libvirt_resource_name }}_{{ definition[2] }}_{{ storage_def['name'] }}.qcow2' />
           {% elif storage_def['source']['file'] is defined %}
             {% if storage_def['source']['file'].startswith('/') %}
               <source file='{{ storage_def['source']['file'] }}'/>
@@ -63,7 +63,7 @@
             {% endif %}
           {% endif %}
           {% if storage_def['disk_type'] is not defined or storage_def['disk_type'] == 'virtio_blk' %}
-            target dev='{{ storage_def['device'] | default('vda') }}' bus='virtio' />
+            <target dev='{{ storage_def['device'] | default('vda') }}' bus='virtio' />
           {% else %}
             <target dev='{{ storage_def['device'] | default('vda') }}' bus='scsi' />
             <address type='drive' controller='0' />
