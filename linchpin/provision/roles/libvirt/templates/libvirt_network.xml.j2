@@ -1,15 +1,13 @@
 <network ipv6='yes'>
-  <name>{{ res_def['res_name'] | default(res_def['name'])  }}</name>
+  <name>{{ res_def['res_name'] | default(res_def['name']) }}</name>
   {% if res_def['bridge'] is defined %}
   <bridge name="{{ res_def['bridge'] }}" stp='on' delay='0'/>
-  {% endif %}/>
-  <forward mode="{{ res_def['forward_mode'] | default('nat') }}"
-{% if res_def['forward_dev'] is defined %}
-     dev="{{ res_def['forward_dev'] }}"{% endif %}/>
+  {% endif %}
+<forward mode="{{ res_def['forward_mode'] | default('nat') }}"{% if res_def['forward_dev'] is defined %} dev="{{ res_def['forward_dev'] }}"{% endif %}/>
 {% if res_def['domain'] is defined %}
   <domain name="{{ res_def['domain'] }}" localOnly="yes"/>
 {% endif %}
-  <ip address="{{ res_def['ip'] }}">
+  <ip address="{{ res_def['ip'] }}" {% if res_def['netmask'] is defined %} netmask="{{ res_def['netmask'] }}" {% endif %}>
 {% if res_def['dhcp_start'] is defined %}
     <dhcp>
       <range start="{{ res_def['dhcp_start'] }}" end="{{ res_def['dhcp_end'] }}"/>
