@@ -25,6 +25,14 @@
     cred_filename: "{{ res_grp['credentials']['filename'] }}"
   when: res_grp['credentials'] is defined and res_grp['credentials']['filename'] is defined
 
+- name: debug to checkout workspace env var
+  debug:
+    msg: "{{ lookup('env','workspace') }}"
+
+- name: debug to checkout workspace extra var
+  debug:
+    msg: "{{ workspace }}"
+
 - name: "Get creds from auth driver"
   auth_driver:
     filename: "{{ cred_filename }}"
