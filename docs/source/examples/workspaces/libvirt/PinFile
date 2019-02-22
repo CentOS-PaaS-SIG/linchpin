@@ -109,3 +109,60 @@ libvirt-custom-img:
                 - "yum install -y epel-release"
               packages:
                 - nginx
+
+libvirt-network-dns:
+  topology:
+    topology_name: "libvirt_network"
+    resource_groups:
+      - resource_group_name: "libvirt_network"
+        resource_group_type: "libvirt"
+        resource_definitions:
+          - name: testnetworkdns
+            role: libvirt_network
+            uri: qemu:///system
+            ip: 192.168.123.2
+            dhcp_start: 192.168.123.22
+            dhcp_end: 192.168.123.44
+            domain: redhat.local
+            bridge: "testdnslinchpin"
+            netmask: 255.255.255.0
+            dns:
+              texts:
+              - name: example
+                value: examplevalue
+              - name: example2
+                value: examplevalue2
+              forwarders:
+              - domain: example.com
+                addr: 8.8.4.4
+              - domain: example.com
+              services:
+              - name: testservice
+                protocol: tcp
+                domain: test.domain.com
+                target: .
+                port: 1024
+                priority: 10
+                weight: 10
+              - name: someservice
+                protocol: udp
+                domain: some.domain.com
+                target: .
+                port: 1024
+                weight: 10
+              - name: anoservice
+                protocol: icmp
+                domain: ano.domain.com
+                target: .
+                port: 1022
+                weight: 1
+              hosts:
+              - ip: 192.168.122.2
+                hostnames:
+                - myhost
+                - myhostalias
+              - ip: 192.168.188.6
+                hostnames:
+                - testhost
+                - testhostalias
+
