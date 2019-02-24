@@ -1,7 +1,4 @@
 ---
-#  keypair need to be preset in AWS
-#  image centos-7:
-#  https://wiki.centos.org/Cloud/AWS#head-cc841c2a7d874025ae24d427776e05c7447024b2
 simple:
   topology:
     topology_name: simple

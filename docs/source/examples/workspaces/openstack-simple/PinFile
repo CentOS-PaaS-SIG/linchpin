@@ -1,6 +1,4 @@
 ---
-# https://github.com/CentOS-PaaS-SIG/linchpin/issues/682
-# empty credentials file required due to a bug
 simple:
   topology:
     topology_name: simple
@@ -8,7 +6,7 @@ simple:
       - resource_group_name: os-server-new
         resource_group_type: openstack
         resource_definitions:
-          - name: {{ os_simple_distro | default('') }}database
+          - name: {{ os_simple_name | default('database') }}
             role: os_server
             flavor: {{ os_simple_flavor | default('m1.small') }}
             image: {{ os_simple_image | default('CentOS-7-x86_64-GenericCloud-1612') }}
@@ -17,9 +15,6 @@ simple:
             fip_pool: {{ os_simple_fip_pool | default('10.8.240.0') }}
             networks:
               - {{ os_simple_networks | default('e2e-openstack') }}
-        credentials:
-          filename: clouds.yml
-          profile: cirhos
   layout:
     inventory_layout:
       vars:
