@@ -144,6 +144,13 @@ AWS VPC endpoint can be provisioned using this resource.
 * :docs1.5:`Topology Example <workspace/topologies/aws-ec2-vpc-endpoint.yml>`
 * `ec2_vpc_endpoint module <https://docs.ansible.com/ansible/latest/modules/ec2_vpc_endpoint_module.html>`_
 
+aws_ec2_elb_lb
+--------------
+
+AWS EC2 elb lb load balancer can be provisioned using this resource.
+* :docs1.5:`Topology Example <workspace/topologies/aws-ec2-elb-lb.yml>`
+* `ec2_vpc_endpoint module <https://docs.ansible.com/ansible/latest/modules/ec2_elb_module.html>`_
+
 Additional Dependencies
 -----------------------
 

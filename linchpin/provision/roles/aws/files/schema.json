@@ -206,6 +206,43 @@
                     "vpc_name": { "type": "string", "required": false },
                     "validate_certs": { "type": "boolean", "required": false }
                 }
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["aws_ec2_elb_lb"] },
+                    "access_logs": { "type": "dict", "required": false },
+                    "region": { "type": "string", "required": true },
+                    "name": { "type": "string", "required": true },
+                    "connection_draining_timeout": { "type": ["string", "number"], "required": false },
+                    "cross_az_load_balancing": { "type": "boolean", "required": false },
+                    "ec2_url": { "type": "string", "required": false },
+                    "health_check": { "type": "dict", "required": false },
+                    "tags": { "type": "dict", "required": false },
+                    "zones": { "type": "list", "required": false },
+                    "subnets": { "type": "list", "required": false },
+                    "idle_timeout": { "type": ["string", "number"], "required": false },
+                    "instance_ids": { "type": "list", "required": false },
+                    "stickiness": { "type": "dict", "required": false },
+                    "security_token": { "type": "string", "required": false },
+                    "security_group_ids": { "type": "list", "required": false },
+                    "security_group_names": { "type": "list", "required": false },
+                    "listeners": {
+                        "type": "list",
+                        "required": false,
+                        "schema": {
+                            "type": "dict"
+                        }
+                    },
+                    "purge_instance_ids": { "type": "boolean", "required": false },
+                    "purge_listeners": { "type": "boolean", "required": false },
+                    "purge_subnets": { "type": "boolean", "required": false },
+                    "purge_zones": { "type": "boolean", "required": false },
+		    "scheme": { "type": "string", "required": false, "allowed": ["internal", "internet-facing"] }
+                }
             }
 	    ]
         }
