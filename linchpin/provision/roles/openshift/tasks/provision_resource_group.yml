@@ -25,6 +25,14 @@
     cred_filename: "{{ res_grp['credentials']['filename'] }}"
   when: res_grp['credentials'] is defined and res_grp['credentials']['filename'] is defined
 
+- name: debug to checkout workspace env var
+  debug:
+    msg: "{{ lookup('env','workspace') }}"
+
+- name: debug to checkout workspace extra var
+  debug:
+    msg: "{{ workspace }}"
+
 - name: "Get creds from auth driver"
   auth_driver:
     filename: "{{ cred_filename }}"
@@ -35,6 +43,17 @@
   ignore_errors: true
   no_log: "{{ not debug_mode }}"
   when: res_grp['credentials'] is defined and res_grp['credentials']['filename'] is defined
+
+- name: "Search creds from workspace when not found in default_credentials_path"
+  auth_driver:
+    filename: "{{ cred_filename }}"
+    cred_type: "openshift"
+    cred_path: "{{ creds_path | default(workspace) }}"
+    driver: "file"
+  register: auth_var_out
+  ignore_errors: true
+  no_log: "{{ not debug_mode }}"
+  when: res_grp['credentials'] is defined and res_grp['credentials']['filename'] is defined and auth_var_out['failed']
 
 - name: "set auth_var"
   set_fact:
