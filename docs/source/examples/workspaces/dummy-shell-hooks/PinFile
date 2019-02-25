@@ -1,7 +1,23 @@
 ---
-dummy_target:
-  topology: dummy-topology.yml
-  layout: dummy-layout.yml
+dummy_shell_hooks:
+  topology:
+    topology_name: "dummy_shell_hooks"
+    resource_groups:
+      - resource_group_name: "dummy"
+        resource_group_type: "dummy"
+        resource_definitions:
+          - role: "dummy_node"
+            name: "shell_hooks"
+            count: 1
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example
   hooks:
     postup:
       - name: shell_hook_pass

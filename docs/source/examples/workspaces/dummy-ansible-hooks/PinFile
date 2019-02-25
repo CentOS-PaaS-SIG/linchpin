@@ -1,0 +1,32 @@
+---
+dummy_ansible_hooks:
+  topology:
+    topology_name: "dummy_ansible_hooks"
+    resource_groups:
+    - resource_group_name: "dummy"
+      resource_group_type: "dummy"
+      resource_definitions:
+        - role: "dummy_node"
+          name: "ansible_hooks"
+          count: 1
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example
+  hooks:
+    postup:
+      - name: fail_hook
+        type: ansible
+        context: True
+        actions:
+          - playbook: fail_hook.yaml
+      - name: success_hook
+        type: ansible
+        context: True
+        actions:
+          - playbook: success_hook.yaml

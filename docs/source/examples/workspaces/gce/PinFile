@@ -1,19 +1,17 @@
 ---
-gce-new:
+gce-simple:
   topology:
-    topology_name: gce-new
+    topology_name: gce
     resource_groups:
       - resource_group_name: "gcloud"
         resource_group_type: "gcloud"
         resource_definitions:
-          - name: "gce-webserver"
-            flavor: "f1-micro"
+          - name: "gce-simple"
             role: "gcloud_gce"
-            region: "us-central1-a"
-            image: "centos-7"
+            flavor: "{{ gce_simple_flavor | default('f1-micro') }}"
+            region: "{{ gce_simple_region | default('us-central1-a') }}"
+            image: "{{ gce_simple_image | default('centos-7') }}"
             count: 1
-        credentials:
-          filename: LinchPin-GCE.json
   layout:
     inventory_layout:
       vars:
@@ -23,38 +21,3 @@ gce-new:
           count: 1
           host_groups:
             - example
-
-
-gce:
-  topology:
-    topology_name: gcloud
-    resource_groups:
-      - resource_group_name: "gcloud"
-        resource_group_type: "gcloud"
-        resource_definitions:
-          - name: "webserver"
-            flavor: "f1-micro"
-            type: "gcloud_gce"
-            region: "us-central1-a"
-            image: "centos-7"
-            count: 1
-        credentials:
-          filename: LinchPin-GCE.json
-  layout:
-    inventory_layout:
-      vars:
-        hostname: __ip__
-      hosts:
-        example-node:
-          count: 1
-          host_groups:
-            - example
-  hooks:
-    postup:
-      - type: ansible
-        name: ping
-        context: True
-        actions:
-          - playbook: ../hooks/ansible/ping/ping.yaml
-            extra_vars: {"ansible_ssh_private_key_file": "/home/herlo/.ssh/rh_rsa"}
-

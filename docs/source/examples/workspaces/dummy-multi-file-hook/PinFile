@@ -1,7 +1,23 @@
 ---
-dummy_target:
+dummy_multi_hook:
   topology: dummy-topology.yml
-  layout: dummy-layout.yml
+    topology_name: "dummy_multi_hook"
+    resource_groups:
+      - resource_group_name: "dummy"
+        resource_group_type: "dummy"
+        resource_definitions:
+          - role: "dummy_node"
+            name: "multi_hook"
+            count: 10
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 10
+          host_groups:
+            - example
   hooks:
     postup:
       - name: ex_hook

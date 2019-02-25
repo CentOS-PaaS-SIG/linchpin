@@ -6,17 +6,17 @@ dummy-aws:
       - resource_group_name: dummy-topology
         resource_group_type: dummy
         resource_definitions:
-          - name: "{{ distro | default('') }}test"
+          - name: "{{ distro | default('test') }}"
             role: "dummy_node"
             count: 1
       - resource_group_name: aws-topology
         resource_group_type: aws
         resource_definitions:
           - name: demo-day
-            flavor: m1.small
             role: aws_ec2
-            region: us-east-1
-            image: ami-984189e2
+            flavor: "{{ dummy_aws_flavor | default('m1.small') }}"
+            region: "{{ dummy_aws_region | default('us-east-1') }}"
+            image: "{{ dummy_aws_image | default('ami-984189e2') }}"
             count: 1
             instance_tags:
               color: blue

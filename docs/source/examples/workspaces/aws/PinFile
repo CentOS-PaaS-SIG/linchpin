@@ -7,7 +7,7 @@ aws-ec2-new:
         resource_group_type: "aws"
         resource_definitions:
           - name: demo-day
-            flavor: m1.small
+            flavor: "{{ aws_flavor | default('m1.small') }}"
             role: aws_ec2
             region: "{{ aws_region | default('us-east-1') }}"
             image: "{{ aws_image | default('ami-984189e2') }}"
@@ -81,7 +81,7 @@ aws-ec2-eip:
         resource_definitions:
           - name: demoday
             role: aws_ec2_eip
-            region: us-east-1
+            region: "{{ aws_region | default('us-east-1') }}"
         credentials:
           filename: aws.key
           profile: default
@@ -95,7 +95,7 @@ aws-ec2-vpc-net:
         resource_definitions:
           - name: demo_day_vpc
             role: aws_ec2_vpc_net
-            region: us-east-1
+            region: "{{ aws_region | default('us-east-1') }}"
             cidr_block: 10.10.0.0/16
             tags:
               module: aws_ec2_vpc_net
@@ -114,7 +114,7 @@ aws-ec2-vpc-subnet:
         resource_definitions:
           - name: demovpcnetsubnet
             role: aws_ec2_vpc_net
-            region: us-east-1
+            region: "{{ aws_region | default('us-east-1') }}"
             cidr_block: 13.0.0.0/16
             tags:
               module: aws_ec2_vpc_net
@@ -122,7 +122,7 @@ aws-ec2-vpc-subnet:
             tenancy: dedicated
           - name: demodayvpcsubnet
             role: aws_ec2_vpc_subnet
-            region: us-east-1
+            region: "{{ aws_region | default('us-east-1') }}"
             vpc_name: demovpcnetsubnet
             cidr: 13.0.1.0/24
             tags:
@@ -141,7 +141,7 @@ aws-ec2-vpc-routetable:
         resource_definitions:
           - name: demo_vpc_net_r
             role: aws_ec2_vpc_net
-            region: us-east-1
+            region: "{{ aws_region | default('us-east-1') }}"
             cidr_block: 15.0.0.0/16
             tags:
               module: aws_ec2_vpc_net
@@ -149,7 +149,7 @@ aws-ec2-vpc-routetable:
             tenancy: dedicated
           - name: demo_vpc_subnet_r
             role: aws_ec2_vpc_subnet
-            region: us-east-1
+            region: "{{ aws_region | default('us-east-1') }}"
             vpc_name: demo_vpc_net_r
             cidr: 15.0.1.0/24
             tags:
@@ -157,7 +157,7 @@ aws-ec2-vpc-routetable:
               this: alsoworks
           - name: demo_routetable
             role: aws_ec2_vpc_routetable
-            region: us-east-1
+            region: "{{ aws_region | default('us-east-1') }}"
             vpc_name: demo_vpc_net_r
             tags:
               module: aws_ec2_vpc_routetable

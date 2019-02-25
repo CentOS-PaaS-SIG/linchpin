@@ -1,7 +1,0 @@
----
-- hosts: all
-  tasks:
-    - name: Git task
-      git:
-        repo: ssh://git@github.com/mylogin/hello.git
-        dest: /tmp/

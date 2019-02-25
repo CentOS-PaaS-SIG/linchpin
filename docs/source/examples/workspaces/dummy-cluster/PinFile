@@ -1,20 +1,20 @@
 ---
-dummy-new:
+dummy_cluster_dynamic_inventory:
   topology:
-    topology_name: "dummy_cluster" # topology name
+    topology_name: "dummy_cluster_dynamic_inventory"
     resource_groups:
       - resource_group_name: "dummy"
         resource_group_type: "dummy"
         resource_definitions:
-          - name: "{{ distro | default('') }}web"
+          - name: "{{ distro | default('web') }}"
             role: "dummy_node"
             count: 3
-          - name: "{{ distro | default('') }}test"
+          - name: "{{ distro | default('test') }}"
             role: "dummy_node"
             count: 1
   layout:
     inventory_layout:
-      inventory_file: "{% raw -%}{{ workspace }}/inventories/dummy-new-{{ uhash }}.inventory{%- endraw %}"
+      inventory_file: "{% raw -%}{{ workspace }}/inventories/dummy_cluster-{{ uhash }}.inventory{%- endraw %}"
       vars:
         hostname: __IP__
       hosts:
@@ -32,17 +32,17 @@ dummy-new:
             ansible_user: root
             ansible_private_key_file: "{% raw -%}{{ lookup('env', 'TESTLP') | default('/tmp', true) }}/CSS/keystore/css-central{%- endraw %}"
 
-dummy-topo:
+dummy_cluster_simple:
   topology:
-    topology_name: "dummy_cluster" # topology name
+    topology_name: "dummy_cluster_simple"
     resource_groups:
       - resource_group_name: "dummy"
         resource_group_type: "dummy"
         resource_definitions:
-          - name: "{{ distro | default('') }}web"
+          - name: "{{ distro | default('web') }}"
             role: "dummy_node"
             count: 3
-          - name: "{{ distro | default('') }}test"
+          - name: "{{ distro | default('test') }}"
             role: "dummy_node"
             count: 1
   layout:

@@ -1,4 +1,0 @@
----
-dummy-two:
-  topology: dummy-two.yml
-  layout: dummy-new.yml

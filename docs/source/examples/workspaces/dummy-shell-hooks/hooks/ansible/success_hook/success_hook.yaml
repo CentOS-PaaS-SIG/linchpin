@@ -1,5 +1,0 @@
----
-- hosts: localhost
-  tasks:
-    - debug:
-        msg: "Example for success"

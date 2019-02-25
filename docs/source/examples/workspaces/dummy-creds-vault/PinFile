@@ -1,13 +1,13 @@
 ---
-dummy_target:
+dummy_creds:
   topology: 
-    topology_name: "dummy"
+    topology_name: "dummy_creds"
     resource_groups:
       - resource_group_name: "dummy"
         resource_group_type: "dummy"
         resource_definitions:
         - role: "dummy_node"
-          name: "web"
+          name: "creds"
           count: 1
         credentials:
           filename: dummy_creds.yml

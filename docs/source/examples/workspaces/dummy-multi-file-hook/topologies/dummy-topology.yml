@@ -1,9 +1,0 @@
----
-topology_name: "dummy"
-resource_groups:
-  - resource_group_name: "dummy"
-    resource_group_type: "dummy"
-    resource_definitions:
-      - role: "dummy_node"
-        name: "web"
-        count: 10
