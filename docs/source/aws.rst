@@ -137,6 +137,13 @@ AWS VPC routetable can be provisioned using this resource.
 * :docs1.5:`Topology Example <workspace/topologies/aws-ec2-vpc-routetable.yml>`
 * `ec2_vpc_route_table module <https://docs.ansible.com/ansible/latest/modules/ec2_vpc_route_table_module.html#ec2-vpc-route-table-module>`_
 
+aws_ec2_vpc_endpoint
+--------------------
+
+AWS VPC endpoint can be provisioned using this resource.
+* :docs1.5:`Topology Example <workspace/topologies/aws-ec2-vpc-endpoint.yml>`
+* `ec2_vpc_endpoint module <https://docs.ansible.com/ansible/latest/modules/ec2_vpc_endpoint_module.html>`_
+
 Additional Dependencies
 -----------------------
 
@@ -149,8 +156,7 @@ AWS provides several ways to provide credentials. LinchPin supports
 some of these methods for passing credentials for use with AWS resources.
 
 One method to provide AWS credentials that can be loaded by LinchPin is to use
-the INI format that the `AWS CLI tool
-<https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html>`_
+the INI format that the `AWS CLI tool <https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html>`_
 uses.
 
 .. include:: includes/aws_creds.rst
