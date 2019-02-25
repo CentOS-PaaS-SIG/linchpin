@@ -52,6 +52,7 @@ libvirt-network:
             dhcp_end: 192.168.74.112
             domain: linchpin.net
             netmask: 255.255.255.0
+            delete_on_destroy: True
 
 libvirt-storage:
   topology:

@@ -122,6 +122,7 @@
                     "forward_mode": { "type": "string", "required": false },
                     "netmask": { "type": "string", "required": false },
                     "forward_dev": { "type": "string", "required": false },
+                    "delete_on_destroy": { "type": "boolean", "required": false },
                     "dns": {
 		        "type": "dict",
 		       	"required": false,

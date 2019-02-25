@@ -15,6 +15,7 @@ PROVIDER=${2}
 
 TEST_NAME="${DISTRO}/${PROVIDER}/03_libvirt-network"
 DESCRIPTION="Test ${PROVIDER} provider with network provisioning"
+NETWORK_NAME="linchpin-centos74"
 
 echo "Test Name: ${TEST_NAME}"
 echo "${DESCRIPTION}"
@@ -25,11 +26,17 @@ pushd docs/source/examples/workspaces/${PROVIDER}
 
 function clean_up {
     set +e
-    linchpin -w . -v destroy ${TARGET}
-    # remove output file used to gen uhash if it exists
-    rm storage.txt || true
+    # no clean up necessary because linchpin destroy is run as a a part of the
+    # test
 }
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
 linchpin -w . -v up ${TARGET}
 
+# if the network does not exist, this will fail
+virsh net-list --all | grep ${NETWORK_NAME}
+
+linchpin -w . -v destroy ${TARGET}
+
+# if the still network exists, this will fail
+virsh net-list --all | grep -v ${NETWORK_NAME}
