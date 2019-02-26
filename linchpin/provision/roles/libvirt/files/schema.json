@@ -11,6 +11,7 @@
                         "allowed": ["libvirt_node"]
                     },
                     "name": { "type": "string", "required": true },
+                    "name_separator": { "type": "string", "required": false },
                     "vcpus": { "type": "integer", "required": true },
                     "memory": { "type": "integer", "required": true },
                     "count": { "type": "integer", "required": false },

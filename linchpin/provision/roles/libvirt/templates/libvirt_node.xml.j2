@@ -1,5 +1,5 @@
 <domain type='{{ definition[1]['driver'] | default('kvm') }}'>
-  <name>{{ libvirt_resource_name }}_{{ definition[2] }}</name>
+  <name>{{ libvirt_resource_name }}{{ definition[5] }}{{ definition[2] }}</name>
   <memory unit='KiB'>{{ definition[1]['memory'] * 1024 | int }}</memory>
   <vcpu placement='static'>{{ definition[1]['vcpus'] }}</vcpu>
   <os>
@@ -28,7 +28,7 @@
 {% if virt_type == 'cloud-init' %}
     <disk type='file' device='cdrom'>
       <driver name='qemu' type='raw'/>
-      <source file='/tmp/vm-{{ libvirt_resource_name }}_{{ definition[2] }}.iso'/>
+      <source file='/tmp/vm-{{ libvirt_resource_name }}{{ definition[5] }}{{ definition[2] }}.iso'/>
       <backingStore/>
       <target dev='hda' bus='ide'/>
       <readonly/>
@@ -36,7 +36,7 @@
 {% endif %}
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2'/>
-      <source file='{{ definition[3] }}/{{ libvirt_resource_name }}_{{ definition[2] }}.{{ definition[4] }}'/>
+      <source file='{{ definition[3] }}/{{ libvirt_resource_name }}{{ definition[5] }}{{ definition[2] }}.{{ definition[4] }}'/>
       <target dev='vda' bus='virtio'/>
     </disk>
     {% if definition[1]['storage'] is defined %}
@@ -44,7 +44,7 @@
         <disk type='file' device='disk'>
           <driver name='qemu' type='qcow2'/>
           {% if storage_def['source'] is not defined %}
-            <source file='/var/lib/libvirt/images/linchpin/{{ libvirt_resource_name }}_{{ definition[2] }}_{{ storage_def['name'] }}.qcow2' />
+            <source file='/var/lib/libvirt/images/linchpin/{{ libvirt_resource_name }}{{ definition[5] }}{{ definition[2] }}{{ definition[5] }}{{ storage_def['name'] }}.qcow2' />
           {% elif storage_def['source']['file'] is defined %}
             {% if storage_def['source']['file'].startswith('/') %}
               <source file='{{ storage_def['source']['file'] }}'/>
