@@ -3,7 +3,6 @@
 # Verify the openstack router provisioning
 # distros.exclude: centos7 fedora28
 # providers.include: gcloud
-# providers.exclude: none
 
 DISTRO=${1}
 PROVIDER=${2}
