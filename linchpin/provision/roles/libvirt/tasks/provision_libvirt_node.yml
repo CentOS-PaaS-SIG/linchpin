@@ -303,10 +303,11 @@
 - name: Attempt and graceful roll back demo
   block:
   - name: "Create disk if it does not exist"
-    command: "qemu-img create -f qcow2 {{ libvirt_image_path }}/{{ libvirt_resource_name }}-{{ definition[1]['name'] }}.img {{ definition[1]['size'] }}{{ definition[1]['units'] }}"
+    command: "qemu-img create -f qcow2 {{ libvirt_image_path }}/{{ libvirt_resource_name }}_{{ definition[2] }}_{{ definition[1]['name'] }}.qcow2 {{ definition[1]['size'] }}{{ definition[1]['units'] }}"
     with_nested:
     - ["{{ res_def['name'] }}"]
-    - ["{{ res_def['storage'] }}"]
+    - "{{ res_def['storage'] }}"
+    - "{{ res_count }}"
     loop_control:
       loop_var: definition
     when:
