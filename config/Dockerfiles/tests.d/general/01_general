@@ -11,6 +11,7 @@ PROVIDER=${2}
 TARGETS="${PROVIDER}-new"
 TEST_NAME="${DISTRO}/${PROVIDER}/01_general"
 DESCRIPTION="Test ${PROVIDER} provider with a simple up/destroy"
+TEMPLATE_DATA="{\"distro\": \"${DISTRO}-\"}"
 
 echo "Test Name: ${TEST_NAME}"
 echo "${DESCRIPTION}"
@@ -52,5 +53,5 @@ trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
 echo "CREDS_PATH: ${CREDS_PATH}"
 for target in ${TARGETS}; do
-    linchpin -w . -vvvv up ${target}
+    linchpin -w . --template-data "${TEMPLATE_DATA}"  -vvvv up ${target}
 done
