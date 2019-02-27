@@ -636,10 +636,10 @@ It is suggested to update any of the following:
 @pass_context
 def setup(ctx, providers, ask_sudo_pass):
     """
-    Validate topologies for the given target(s) in the given PinFile.
-    The data from the targets is obtained from the PinFile (default).
-    targets:    Validate ONLY the listed target(s). If omitted, ALL targets in
-    the appropriate PinFile will be validate
+    Install the dependencies needed for the given provider(s).
+
+    providers:    Setup ONLY the providers listed. If omitted, it installs
+    the dependencies for ALL providers.
     """
     lpcli.ctx.set_evar("ask_sudo_pass", ask_sudo_pass)
     return_code, output = lpcli.lp_setup(providers)
