@@ -15,9 +15,13 @@
   loop_control:
     loop_var: res_def_item
 
-- name: Provision Docker container
-  docker_container: "{{ docker_container_params }}"
-  register: outputitem
+- block:
+  - name: Provision Docker container
+    docker_container: "{{ docker_container_params }}"
+    register: outputitem
+  rescue:
+  - fail:
+      msg: 'An error occurred with docker_container module. It might be caused by either the lack of Docker on the host, dependencies, or daemon access denial. Please make sure the dependencies are installed and Docker configured correctly. Try running `linchpin setup docker` to install Docker, or `pip install linchpin[docker] to install Python dependencies.'
 
 - name: "set tmp var"
   set_fact:
