@@ -6,6 +6,10 @@ import com.redhat.jenkins.plugins.ci.messaging.*
 import hudson.markup.RawHtmlMarkupFormatter
 import hudson.model.*
 import hudson.security.*
+import javaposse.jobdsl.dsl.DslScriptLoader
+import javaposse.jobdsl.plugin.JenkinsJobManagement
+import javaposse.jobdsl.plugin.GlobalJobDslSecurityConfiguration
+import groovy.io.FileType
 
 def logger = Logger.getLogger("")
 logger.info("Disabling CLI over remoting")
@@ -57,3 +61,16 @@ if ( envVarsNodePropertyList == null || envVarsNodePropertyList.size() == 0 ) {
 // for other environments.
 envVars.put("DOCKER_REPO_URL", "172.30.1.1:5000")
 instance.save()
+
+// Add ci-linchpin-messageBus-* jobs via dsl
+env = System.getenv()
+logger.info('Disabling job dsl script security')
+GlobalConfiguration.all().get(GlobalJobDslSecurityConfiguration.class).useScriptSecurity=false
+def dslDir = new File("${env['JENKINS_HOME']}/dsl-jobs")
+dslDir.eachFileRecurse (FileType.FILES) { file ->
+    config = new File(file.path).text
+    workspace = new File("${env['JENKINS_HOME']}")
+    jobManagement = new JenkinsJobManagement(System.out, [:], workspace)
+    new DslScriptLoader(jobManagement).runScript(config)
+    logger.info('Created jms job: ' + file.path)
+}
