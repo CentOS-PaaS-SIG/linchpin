@@ -331,24 +331,43 @@
     loop_var: definition
   ignore_errors: no
 
-- name: "mac_and_ip | extract mac address"
-  shell: >
-    virsh -c {{ node[1] }} dumpxml {{ node[0] }}_{{ node[2] }}
-    | grep 'mac address'
-    | cut -f 2 -d "'"
+- name: "dump node data"
+  virt:
+    name: "{{ data[0] }}_{{ data[2] }}"
+    command: get_xml
+    uri: "{{ data[1] }}"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - ["{{ res_def['uri'] | default('qemu:///system') }}"]
     - "{{ res_count }}"
   loop_control:
-    loop_var: node
-  register: extract_mac_address_result
+    loop_var: data
+  when: not async
+  register: node_data
+
+- xml:
+    xmlstring: "{{ node_data.results[0].get_xml }}"
+    xpath: "//interface[@type='network']/source[@network='{{net.name}}']/../mac"
+    content: attribute
+  register: mac_addresses
+  loop_control:
+    loop_var: net
+  with_items: "{{ res_def['networks'] }}"
+  when:
+    - res_def['networks'] is defined
+    - net.dhcp is not defined or net.dhcp == true
+
+- debug:
+    var: mac_addresses.results
+
+- set_fact:
+    mac_addresses: "{{ mac_addresses.results[0].matches | default([]) }}"
 
 - name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
-    /usr/sbin/arp -an | grep -F {{ extract_mac_address_result.results[mac].stdout_lines[0] }} | cut -f 2 -d "(" | cut -f 1 -d ")"
+    /usr/sbin/arp -an | grep -F {{ mac.mac.address }} | cut -f 2 -d "(" | cut -f 1 -d ")"
   with_items:
-    - "{{ res_count }}"
+    - "{{ mac_addresses }}"
   loop_control:
     loop_var: mac
   register: extract_ip_address_result
@@ -359,9 +378,9 @@
 
 - name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
-    /usr/sbin/arp -an | grep -F {{ extract_mac_address_result.results[mac].stdout_lines[0] }} | cut -f 2 -d "(" | cut -f 1 -d ")"
+    /usr/sbin/arp -an | grep -F {{ mac.mac.address }} | cut -f 2 -d "(" | cut -f 1 -d ")"
   with_items:
-    - "{{ res_count }}"
+    - "{{ mac_address.results[0].matches }}"
   loop_control:
     loop_var: mac
   register: extract_ip_address_result_remote
@@ -383,20 +402,6 @@
   ignore_errors: yes
   when: node_exists['failed'] is defined and virt_type == "cloud-init"
 
-- name: "dump node data"
-  virt:
-    name: "{{ data[0] }}_{{ data[2] }}"
-    command: get_xml
-    uri: "{{ data[1] }}"
-  with_nested:
-    - ["{{ libvirt_resource_name }}"]
-    - ["{{ res_def['uri'] | default('qemu:///system') }}"]
-    - "{{ res_count }}"
-  loop_control:
-    loop_var: data
-  when: not async
-  register: node_data
-
 - name: "Set Output name"
   set_fact:
       output_name: '{{ output_name|default([]) + [data[0]+"_"+data[1]|string] }}'
@@ -417,6 +422,7 @@
   when:
     - not async and uri_hostname == 'localhost'
     - data[0][-1]|int == data[1]|int
+    - extract_ip_address_result is defined and extract_ip_address_result.changed == true
 
 - name: "remote: Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
   set_fact:
@@ -426,4 +432,17 @@
     - "{{ res_count }}"
   loop_control:
     loop_var: data
-  when: not async and uri_hostname != 'localhost'
+  when:
+    - not async and uri_hostname != 'localhost'
+    - extract_ip_address_result_remote is defined and extract_ip_address_result.changed == true
+
+- name: "Append to topology_outputs_libvirt_nodes"
+  set_fact:
+    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0], 'resource_type': 'libvirt_res' }] }}"
+  with_nested:
+    - "{{ output_name }}"
+  loop_control:
+    loop_var: data
+  when:
+    - extract_ip_address_result is not defined
+    - extract_ip_address_result is not defined
