@@ -350,15 +350,13 @@
     xpath: "//interface[@type='network']/source[@network='{{net.name}}']/../mac"
     content: attribute
   register: mac_addresses
+  ignore_errors: yes
   loop_control:
     loop_var: net
   with_items: "{{ res_def['networks'] }}"
   when:
     - res_def['networks'] is defined
     - net.dhcp is not defined or net.dhcp == true
-
-- debug:
-    var: mac_addresses.results
 
 - set_fact:
     mac_addresses: "{{ mac_addresses.results[0].matches | default([]) }}"
@@ -445,4 +443,4 @@
     loop_var: data
   when:
     - extract_ip_address_result is not defined
-    - extract_ip_address_result is not defined
+    - extract_ip_address_result_remote is not defined
