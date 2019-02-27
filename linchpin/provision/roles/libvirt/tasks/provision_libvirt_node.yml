@@ -432,7 +432,7 @@
     loop_var: data
   when:
     - not async and uri_hostname != 'localhost'
-    - extract_ip_address_result_remote is defined and extract_ip_address_result.changed == true
+    - extract_ip_address_result_remote is defined and extract_ip_address_result_remote.changed == true
 
 - name: "Append to topology_outputs_libvirt_nodes"
   set_fact:
