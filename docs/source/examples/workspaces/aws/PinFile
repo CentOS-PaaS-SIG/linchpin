@@ -232,3 +232,36 @@ aws-ec2-elb-lb:
         credentials:
           filename: aws.key
           profile: default
+
+aws-ec2-template:
+  topology:
+    topology_name: aws-template-inventory
+    resource_groups:
+      - resource_group_name: "aws-template-inventory"
+        resource_group_type: "aws"
+        resource_definitions:
+        - name: "template-inventory{{ distro }}"
+          flavor: m1.small
+          role: aws_ec2
+          region: us-east-1
+          image: ami-984189e2
+          count: 1
+          instance_tags:
+            color: blue
+            shape: oval
+            distro: "{{ distro }}"
+          security_group:
+          - default
+          - public
+        credentials:
+          filename: aws.key
+          profile: default
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example
