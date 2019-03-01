@@ -3,7 +3,42 @@
 Installation
 ============
 
-Currently, LinchPin can be run from any machine with Python 2.6+ (Python 3.x is currently experimental), and requires Ansible 2.3.1 or newer.
+LinchPin can be run either as a container or as a bare-metal application
+
+.. _docker_installation:
+
+Docker Installation
+-------------------
+
+The LinchPin container is built using the latest Fedora image.  The image exists in the docker hub as contrainfra/linchpin and is updated with each release.  The image can also be build manually.
+
+From within the config/Dockerfiles/linchpin directory:
+
+.. code::
+
+   $ sudo buildah bud -t linchpin .
+
+Finally, to run the linchpin container:
+
+.. code::
+
+   $ sudo buildah run linchpin -v /path/to/workspace:/workdir -- linchpin -w /wordir up
+   $ sudo buildah run linchpin -v /path/to/workspace:/workdir -- linchpin -w /workdir -vv destroy
+
+.. note::
+   Setting the CREDS_PATH environment variable pointing the /workdir is recommended.
+   AWS credentials can also be passed as evironment variables when the container is run, named  AWS_SECRET_ACCESS_KEY and AWS_ACCESS_KEY_ID
+
+.. note::
+   Beaker uses kinit, which is installed in the container but must be run within the container after it starts
+   The default /etc/krb5.conf for kerberos requires privilege escalation.  The linchpin Dockerfile replaces it with a version that eliminates this need
+
+
+.. bare_metal_installation
+
+Bare Metal Installation
+-----------------------
+Currently, LinchPin can be run from any machine with Python 2.6+ (Python 3.x is currently experimental), and requires Ansible 2.7.1 or newer.
 
 .. note:: Some providers have additional dependencies. Additional software requirements can be found in the :doc:`providers` documentation.
 
