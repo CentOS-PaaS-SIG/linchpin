@@ -65,7 +65,7 @@ objects:
       limits:
         memory: ${MEMORY_LIMIT}
     source:
-      contextDir: ${CONTEXT_DIR}
+      contextDir: ${MASTER_CONTEXT_DIR}
       git:
         uri: ${REPO_URL}
         ref: ${REPO_REF}
@@ -233,8 +233,9 @@ parameters:
   name: REPO_REF
   value: develop
 - description: Path within Git project to build; empty for root project directory.
-  name: CONTEXT_DIR
-  value: config/s2i/jenkins/master
+  name: MASTER_CONTEXT_DIR
+  required: true
+  value: config/s2i/jenkins/master-upstream
 - name: JENKINS_SERVICE_NAME
   displayName: Jenkins Service Name
   description: The name of the OpenShift Service exposed for the Jenkins container.
