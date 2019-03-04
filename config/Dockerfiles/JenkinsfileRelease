@@ -29,6 +29,9 @@ env.MASTER_BRANCH = env.MASTER_BRANCH ?: 'master'
 env.TEST_PYPI_REPO = env.TEST_PYPI_REPO ?: 'pypitest'
 env.PROD_PYPI_REPO = env.PROD_PYPI_REPO ?: 'pypi'
 
+DOCKER_HUB_USERNAME ?: 'contrainfra'
+DOCKER_HUB_IMAGE ?: 'linchpin'
+
 
 OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
@@ -192,6 +195,21 @@ EOF
                     stage('release-prod-version') {
                         dir(repoName) {
                             sh "twine upload --config-file /tmp/pypirc -r " + env.PROD_PYPI_REPO + " dist/*"
+                        }
+                    }
+                    stage('release-container') {
+                        dir('config/Dockerfiles/linchpin'){
+                            string version= sh (
+                                script: "python setup.py --version",
+                                returnStdout: true
+                                ).trim()
+                            )
+                            image = "docker.io/" + env.DOCKER_HUB_USERNAME + "/" + env.DOCKER_HUB_IMAGE
+                            tagged_img = image + ":" + version
+                            sh "buildah bud -t " + image + " ."
+                            sh "buildah push --authfile " + $docker-creds + " " + image
+                            sh "buildah tag " + image + " " + tagged_image
+                            sh "buildah push --authfile " + $docker-creds + " " + image
                         }
                     }
                     stage('push-to-master') {
