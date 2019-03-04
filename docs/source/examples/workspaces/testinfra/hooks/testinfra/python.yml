@@ -1,0 +1,10 @@
+---
+- hosts: example
+  tasks:
+    - name: install python
+      package:
+        name: python2
+        state: present
+      become: true 
+
+
