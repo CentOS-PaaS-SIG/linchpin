@@ -96,6 +96,12 @@ if [ -z "${REPO_REF}" ] ; then
 else
   REPO_REF_PARAM="-p REPO_REF=${REPO_REF}"
 fi
+##
+if [ -z "{MASTER_CONTEXT_DIR}" ]; then
+  MASTER_CONTEXT_DIR=""
+else
+  MASTER_CONTEXT_DIR="-p MASTER_CONTEXT_DIR=${MASTER_CONTEXT_DIR}"
+fi
 
 oc project "${project}" > /dev/null 2>&1
 if [ $? -ne 0 ] ; then

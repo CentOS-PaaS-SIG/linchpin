@@ -2,18 +2,18 @@
 <flow-definition plugin="workflow-job@2.17">
   <actions>
     <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobAction plugin="pipeline-model-definition@1.2.7"/>
+    <org.jenkinsci.plugins.workflow.multibranch.JobPropertyTrackerAction plugin="workflow-multibranch@2.17">
+      <jobPropertyDescriptors>
+        <string>hudson.model.ParametersDefinitionProperty</string>
+        <string>com.coravy.hudson.plugins.github.GithubProjectProperty</string>
+        <string>jenkins.model.BuildDiscarderProperty</string>
+      </jobPropertyDescriptors>
+    </org.jenkinsci.plugins.workflow.multibranch.JobPropertyTrackerAction>
     <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction plugin="pipeline-model-definition@1.2.7">
       <jobProperties/>
       <triggers/>
       <parameters/>
     </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
-    <org.jenkinsci.plugins.workflow.multibranch.JobPropertyTrackerAction plugin="workflow-multibranch@2.17">
-      <jobPropertyDescriptors>
-        <string>hudson.model.ParametersDefinitionProperty</string>
-        <string>org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty</string>
-        <string>jenkins.model.BuildDiscarderProperty</string>
-      </jobPropertyDescriptors>
-    </org.jenkinsci.plugins.workflow.multibranch.JobPropertyTrackerAction>
   </actions>
   <description></description>
   <keepDependencies>false</keepDependencies>
@@ -27,12 +27,16 @@
     <jenkins.model.BuildDiscarderProperty>
       <strategy class="hudson.tasks.LogRotator">
         <daysToKeep>-1</daysToKeep>
-        <numToKeep>100</numToKeep>
+        <numToKeep>20</numToKeep>
         <artifactDaysToKeep>-1</artifactDaysToKeep>
-        <artifactNumToKeep>50</artifactNumToKeep>
+        <artifactNumToKeep>20</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
     <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.29.0">
+      <projectUrl>https://github.com/CentOS-PaaS-SIG/linchpin/</projectUrl>
+      <displayName></displayName>
+    </com.coravy.hudson.plugins.github.GithubProjectProperty>
     <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
       <autoRebuild>false</autoRebuild>
       <rebuildDisabled>false</rebuildDisabled>
@@ -40,29 +44,37 @@
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
-          <name>CI_MESSAGE</name>
-          <description>fedmsg msg</description>
+          <name>ghprbActualCommit</name>
+          <description></description>
+          <defaultValue>develop</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>sha1</name>
+          <description></description>
+          <defaultValue></defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>ghprbPullId</name>
+          <description>Pull Request Number</description>
+          <defaultValue></defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>ghprbPullAuthorLogin</name>
+          <description>Pull Request Author username</description>
+          <defaultValue></defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>ghprbGhRepository</name>
+          <description>Git Hub Repository</description>
           <defaultValue></defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
-    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
-      <triggers>
-        <com.redhat.jenkins.plugins.ci.CIBuildTrigger plugin="jms-messaging@1.1.5">
-           <spec/>
-           <noSquash>true</noSquash>
-           <providerData class="com.redhat.jenkins.plugins.ci.provider.data.FedMsgSubscriberProviderData">
-              <name>fedora-fedmsg</name>
-              <overrides>
-                 <topic>org.centos.prod.ci.linchpin.pr.queued</topic>
-              </overrides>
-              <checks/>
-              <timeout>60</timeout>
-           </providerData>
-        </com.redhat.jenkins.plugins.ci.CIBuildTrigger>
-      </triggers>
-    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.45">
     <scm class="hudson.plugins.git.GitSCM" plugin="git@3.8.0">
@@ -75,16 +87,23 @@
       </userRemoteConfigs>
       <branches>
         <hudson.plugins.git.BranchSpec>
-          <name>develop</name>
+          <name>${ghprbActualCommit}</name>
         </hudson.plugins.git.BranchSpec>
       </branches>
       <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
       <submoduleCfg class="list"/>
-      <extensions/>
+      <extensions>
+        <hudson.plugins.git.extensions.impl.ChangelogToBranch>
+          <options>
+            <compareRemote>origin</compareRemote>
+            <compareTarget>develop</compareTarget>
+          </options>
+        </hudson.plugins.git.extensions.impl.ChangelogToBranch>
+      </extensions>
     </scm>
-    <scriptPath>config/Dockerfiles/JenkinsfileMessageBusTrigger</scriptPath>
+    <scriptPath>config/Dockerfiles/JenkinsfileMergePR</scriptPath>
     <lightweight>false</lightweight>
   </definition>
   <triggers/>
-  <disabled>true</disabled>
+  <disabled>false</disabled>
 </flow-definition>
