@@ -1,0 +1,13 @@
+---
+topology:
+  topology_name: gcloud
+  resource_groups:
+    - resource_group_name: "gcloud"
+      resource_group_type: "gcloud"
+      resource_definitions:
+        - name: "testgcloudlinchpinautonet"
+          role: gcloud_gce_net
+          mode: auto
+      credentials:
+        filename: gcloud.key
+

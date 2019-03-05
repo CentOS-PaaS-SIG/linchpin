@@ -8,7 +8,7 @@ gcloud_gce
 
 Google Compute Engine (gce) instances are provisioned using this resource.
 
-* :docs1.5:`Topology Example <workspace/topologies/gce-new.yml>`
+* :docs1.5:`Topology Example <workspaces/topologies/gce-new.yml>`
 * `Ansible module <http://docs.ansible.com/ansible/latest/gce_module.html>`_
 
 gcloud_gce_eip
@@ -17,7 +17,16 @@ gcloud_gce_eip
 Google Compute enginer external IP (gce_eip) are provisioned using this resource.
 
 * :docs1.5:`Topology Example <workspaces/topologies/gce-eip.yml>`
-* `Ansible module <http://docs.ansible.com/ansible/latest/gce_eip_module.html>`_
+* `Ansible module <http://docs.ansible.com/ansible/latest/gce_eip_module.html>`
+
+gcloud_gce_net
+--------------
+
+Google compute engine network (gce_net) are provisioned using this resource.
+
+* :docs1.5:`Topology Example <workspace/topologies/gce-net.yml>`
+* `Ansible module <http://docs.ansible.com/ansible/latest/gce_net_module.html>`_
+>>>>>>> Updated examples for gce_net module
 
 Additional Dependencies
 -----------------------
