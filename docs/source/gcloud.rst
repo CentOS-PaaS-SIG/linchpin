@@ -35,6 +35,13 @@ Google DNS zone (gcdns_zone) are provisioned using this resource.
 * :docs1.5:`Topology Example <workspaces/topologies/gcdns-zone.yml>`
 * `Ansible module <https://docs.ansible.com/ansible/latest/modules/gcdns_zone_module.html>`
 
+gcloud_gcdns_record
+-------------------
+
+Google DNS zone records (gcdns_record) are provisioned using this resource.
+
+* :docs1.5:`Topology Example <workspace/topologies/gcdns-record.yml>`
+* `Ansible module <https://docs.ansible.com/ansible/latest/modules/gcdns_record_module.html>`
 
 Additional Dependencies
 -----------------------
