@@ -16,11 +16,7 @@ gcloud_gce_eip
 
 Google Compute enginer external IP (gce_eip) are provisioned using this resource.
 
-<<<<<<< HEAD
 * :docs1.5:`Topology Example <workspaces/topologies/gce-eip.yml>`
-=======
-* :docs1.5:`Topology Example <workspace/topologies/gce-eip.yml>`
->>>>>>> Updated examples for gce_net module
 * `Ansible module <http://docs.ansible.com/ansible/latest/gce_eip_module.html>`
 
 gcloud_gce_net
@@ -46,6 +42,7 @@ Google DNS zone records (gcdns_record) are provisioned using this resource.
 
 * :docs1.5:`Topology Example <workspaces/topologies/gcdns-record.yml>`
 * `Ansible module <https://docs.ansible.com/ansible/latest/modules/gcdns_record_module.html>`
+
 
 Additional Dependencies
 -----------------------
