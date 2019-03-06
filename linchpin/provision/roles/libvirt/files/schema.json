@@ -25,6 +25,7 @@
                     "remote_user": { "type": "string", "required": false },
                     "boot_dev": { "type": "string", "required": false },
                     "additional_storage": { "type": "string", "required": false },
+                    "disk_cache": { "type": "string", "required": false },
                     "network_bridge": { "type": "string", "required": false },
                     "ssh_key": { "type": "string", "required": false },
                     "cloud_config": {
