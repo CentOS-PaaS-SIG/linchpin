@@ -350,7 +350,7 @@
 
 - xml:
     xmlstring: "{{ node_data.results[net.1].get_xml }}"
-    xpath: "//interface[@type='network']/source[@network='{{net.0.name}}']/../mac"
+    xpath: "//interface[@type='network' and ./source[@network='{{net.0.name}}']]/mac | //interface[@type='bridge' and ./source[@bridge='virbr0']]/mac"
     content: attribute
   register: mac_addresses
   ignore_errors: yes
