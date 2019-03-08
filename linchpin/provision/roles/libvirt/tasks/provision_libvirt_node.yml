@@ -166,7 +166,7 @@
 
 - name: "Prepare cloud-config/user-data-local"
   template:
-    src: "templates/cloud-config/user-data-local"
+    src: "templates/cloud-config/user-data"
     dest: "/tmp/vm-{{ definition[0] }}_{{ definition[1] }}/user-data"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
@@ -179,7 +179,7 @@
   
 - name: "Prepare cloud-config/user-data-remote"
   template:
-    src: "templates/cloud-config/user-data-remote"
+    src: "templates/cloud-config/user-data"
     dest: "/tmp/vm-{{ definition[0] }}_{{ definition[1] }}/user-data"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
@@ -234,59 +234,7 @@
   delegate_to: "{{ uri_hostname }}"
   when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init"
 
-- name: running virt-install to boot prepared image
-  block:
-  - debug:
-      msg: 'I execute normally'
-  - name: "Install VM"
-    command: "virt-install --connect {{ definition[6] }} --import --name {{ definition[0] }}_{{ definition[7] }} --autostart --network bridge={{ definition[3] }},model=virtio --ram {{ definition[4] }} --disk path={{ definition[1] }}/{{ definition[0] }}_{{ definition[7] }}.{{ definition[2] }},format={{ definition[5] }},bus=virtio,cache=none --disk path=/tmp/vm-{{ definition[0] }}_{{ definition[7] }}.iso,device=cdrom --wait 10 --os-type=linux --nographics"
-    with_nested:
-    - ["{{ libvirt_resource_name }}"]
-    - ["{{ libvirt_image_path | expanduser }}"]
-    - ["{{ img_src_ext }}"]
-    - ["{{ res_def['network_bridge'] | default('virbr0')  }}"]
-    - ["{{ res_def['memory'] | default(1024)  }}"]
-    - ["{{ res_def['format'] | default('qcow2')  }}"]
-    - ["{{ res_def['uri'] }}"]
-    - "{{ res_count }}"
-    loop_control:
-      loop_var: definition
-    ignore_errors: yes
-    become: "{{ libvirt_become }}"
-    when: node_exists['failed'] is defined and res_def['cloud_config'] is defined
-  - name: "Install VM"
-    command: "virt-install --connect {{ definition[6] }} --import --name {{ definition[0] }}_{{ definition[7] }} --autostart --network bridge={{ definition[3] }},model=virtio --ram {{ definition[4] }} --disk path={{ definition[1] }}/{{ definition[0] }}_{{ definition[7] }}.{{ definition[2] }},format={{ definition[5] }},bus=virtio,cache=none --disk path=/tmp/vm-{{ definition[0] }}_{{ definition[7] }}.iso,device=cdrom --wait 10 --os-type=linux --nographics"
-    with_nested:
-    - ["{{ libvirt_resource_name }}"]
-    - ["{{ libvirt_image_path | expanduser }}"]
-    - ["{{ img_src_ext }}"]
-    - ["{{ res_def['network_bridge'] | default('virbr0')  }}"]
-    - ["{{ res_def['memory'] | default(1024)  }}"]
-    - ["{{ res_def['format'] | default('qcow2')  }}"]
-    - ["{{ res_def['uri'] }}"]
-    - "{{ res_count }}"
-    loop_control:
-      loop_var: definition
-    ignore_errors: yes
-    become: "{{ libvirt_become }}"
-    when: node_exists['failed'] is defined and res_def['cloud_config'] is defined
-  rescue:
-  - fail:
-      msg: 'Error running command virt-install. Please make sure the dependencies are installed correctly. Try running `linchpin setup libvirt` to reinstall dependencies'
-
-
-- name: "Remove cloud-init cdrom "
-  command: virsh -c {{ definition[1] }} change-media {{ definition[0] }}_{{ definition[2] }} hda --eject --config
-  with_nested:
-    - ["{{ libvirt_resource_name }}"]
-    - ["{{ res_def['uri'] }}"]
-    - "{{ res_count }}"
-  loop_control:
-    loop_var: definition
-  ignore_errors: yes
-  when: node_exists['failed'] is defined and res_def['cloud_config'] is defined
-
-- name: "define node when the cloud_config not defined"
+- name: "define node"
   virt:
     name: "{{ libvirt_resource_name }}"
     command: define
@@ -334,6 +282,48 @@
     loop_var: definition
   ignore_errors: no
 
+- name: wait for the vm to shut down (cloud-init)
+  virt:
+    name: "{{ definition[0] }}_{{ definition[2] }}"
+    command: status
+    uri: "{{ definition[1] }}"
+  register: vmstatus
+  until: vmstatus.status == 'shutdown'
+  retries: 1500
+  delay: 10
+  with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ res_def['uri'] | default('qemu:///system') }}"]
+    - "{{ res_count }}"
+  loop_control:
+    loop_var: definition
+  when: node_exists['failed'] is defined and virt_type == "cloud-init"
+
+- name: "Remove cdrom (cloud-init)"
+  command: virsh -c {{ definition[1] }} change-media {{ definition[0] }}_{{ definition[2] }} hda --eject --config
+  with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ res_def['uri'] }}"]
+    - "{{ res_count }}"
+  loop_control:
+    loop_var: definition
+  ignore_errors: yes
+  when: node_exists['failed'] is defined and virt_type == "cloud-init"
+
+- name: "Start VM again (post cloud-init)"
+  virt:
+    name: "{{ definition[0] }}_{{ definition[2] }}"
+    state: "running"
+    uri: "{{ definition[1] }}"
+  with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ res_def['uri'] | default('qemu:///system') }}"]
+    - "{{ res_count }}"
+  loop_control:
+    loop_var: definition
+  ignore_errors: no
+  when: node_exists['failed'] is defined and virt_type == "cloud-init"
+
 - name: "dump node data"
   virt:
     name: "{{ data[0] }}_{{ data[2] }}"
@@ -350,7 +340,7 @@
 
 - xml:
     xmlstring: "{{ node_data.results[net.1].get_xml }}"
-    xpath: "//interface[@type='network' and ./source[@network='{{net.0.name}}']]/mac | //interface[@type='bridge' and ./source[@bridge='virbr0']]/mac"
+    xpath: "//interface[@type='network' and ./source[@network='{{net.0.name}}']]/mac"
     content: attribute
   register: mac_addresses
   ignore_errors: yes
@@ -397,17 +387,6 @@
   remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
   delegate_to: "{{ uri_hostname }}"
   when: uri_hostname != 'localhost'
-
-- name: "Remove cloud-init cdrom"
-  command: virsh -c {{ definition[1] }} change-media {{ definition[0] }}_{{ definition[2] }} hda --eject --config
-  with_nested:
-    - ["{{ libvirt_resource_name }}"]
-    - ["{{ res_def['uri'] }}"]
-    - "{{ res_count }}"
-  loop_control:
-    loop_var: definition
-  ignore_errors: yes
-  when: node_exists['failed'] is defined and virt_type == "cloud-init"
 
 - name: "Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
   set_fact:
