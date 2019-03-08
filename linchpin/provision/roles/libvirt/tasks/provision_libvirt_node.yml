@@ -2,6 +2,9 @@
       res_count: '{{ (res_count | default([])) + [item | int] }}'
   with_sequence: "start=0 end={{ res_def['count'] | default(1) |int - 1 }}"
 
+- set_fact:
+    res_count: "{{ res_count | unique }}"
+
 - name: "does node already exist"
   virt:
     name: "{{ nodeinfo[0] }}_{{ nodeinfo[1] }}"
@@ -331,24 +334,47 @@
     loop_var: definition
   ignore_errors: no
 
-- name: "mac_and_ip | extract mac address"
-  shell: >
-    virsh -c {{ node[1] }} dumpxml {{ node[0] }}_{{ node[2] }}
-    | grep 'mac address'
-    | cut -f 2 -d "'"
+- name: "dump node data"
+  virt:
+    name: "{{ data[0] }}_{{ data[2] }}"
+    command: get_xml
+    uri: "{{ data[1] }}"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - ["{{ res_def['uri'] | default('qemu:///system') }}"]
     - "{{ res_count }}"
   loop_control:
+    loop_var: data
+  when: not async
+  register: node_data
+
+- xml:
+    xmlstring: "{{ node_data.results[net.1].get_xml }}"
+    xpath: "//interface[@type='network' and ./source[@network='{{net.0.name}}']]/mac | //interface[@type='bridge' and ./source[@bridge='virbr0']]/mac"
+    content: attribute
+  register: mac_addresses
+  ignore_errors: yes
+  loop_control:
+    loop_var: net
+  loop: "{{ res_def['networks']|product(res_count)|list }}"
+  when:
+    - res_def['networks'] is defined
+    - net.dhcp is not defined or net.dhcp == true
+
+- set_fact:
+    macs: []
+
+- set_fact:
+    macs: "{{ macs + [mac_addresses.results[node.1].matches[node.0].mac.address] }}"
+  loop: "{{ range(0,res_def['networks']|length,1)|list|product(res_count)|list }}"
+  loop_control:
     loop_var: node
-  register: extract_mac_address_result
 
 - name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
-    /usr/sbin/arp -an | grep -F {{ extract_mac_address_result.results[mac].stdout_lines[0] }} | cut -f 2 -d "(" | cut -f 1 -d ")"
+    /usr/sbin/arp -an | grep -F {{ mac }} | cut -f 2 -d "(" | cut -f 1 -d ")"
   with_items:
-    - "{{ res_count }}"
+    - "{{ macs }}"
   loop_control:
     loop_var: mac
   register: extract_ip_address_result
@@ -359,9 +385,9 @@
 
 - name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
-    /usr/sbin/arp -an | grep -F {{ extract_mac_address_result.results[mac].stdout_lines[0] }} | cut -f 2 -d "(" | cut -f 1 -d ")"
+    /usr/sbin/arp -an | grep -F {{ mac }} | cut -f 2 -d "(" | cut -f 1 -d ")"
   with_items:
-    - "{{ res_count }}"
+    - "{{ macs }}"
   loop_control:
     loop_var: mac
   register: extract_ip_address_result_remote
@@ -383,47 +409,38 @@
   ignore_errors: yes
   when: node_exists['failed'] is defined and virt_type == "cloud-init"
 
-- name: "dump node data"
-  virt:
-    name: "{{ data[0] }}_{{ data[2] }}"
-    command: get_xml
-    uri: "{{ data[1] }}"
-  with_nested:
-    - ["{{ libvirt_resource_name }}"]
-    - ["{{ res_def['uri'] | default('qemu:///system') }}"]
-    - "{{ res_count }}"
-  loop_control:
-    loop_var: data
-  when: not async
-  register: node_data
-
-- name: "Set Output name"
+- name: "Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
   set_fact:
-      output_name: '{{ output_name|default([]) + [data[0]+"_"+data[1]|string] }}'
+    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0]+'_'+data[1]|string, 'ip': extract_ip_address_result.results[data[1]].stdout, 'resource_type': 'libvirt_res' }] }}"
   with_nested:
     - "{{ libvirt_resource_name }}"
     - "{{ res_count }}"
   loop_control:
     loop_var: data
+  when:
+    - not async and uri_hostname == 'localhost'
+    - extract_ip_address_result is defined and extract_ip_address_result.changed == true
 
-- name: "Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
+- name: "remote: Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
   set_fact:
-    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0], 'ip': extract_ip_address_result.results[data[1]].stdout, 'resource_type': 'libvirt_res' }] }}"
+    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0]+'_'+data[1]|string, 'ip': extract_ip_address_result_remote.results[data[1]].stdout, 'resource_type': 'libvirt_res' }] }}"
   with_nested:
-    - "{{ output_name }}"
+    - "{{ libvirt_resource_name }}"
     - "{{ res_count }}"
   loop_control:
     loop_var: data
   when:
-    - not async and uri_hostname == 'localhost'
-    - data[0][-1]|int == data[1]|int
+    - not async and uri_hostname != 'localhost'
+    - extract_ip_address_result_remote is defined and extract_ip_address_result_remote.changed == true
 
-- name: "remote: Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
+- name: "Append to topology_outputs_libvirt_nodes"
   set_fact:
-    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0], 'ip': extract_ip_address_result_remote.results[data[1]].stdout, 'resource_type': 'libvirt_res' }] }}"
+    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0]+'_'+data[1]|string, 'resource_type': 'libvirt_res' }] }}"
   with_nested:
-    - "{{ output_name }}"
+    - "{{ libvirt_resource_name }}"
     - "{{ res_count }}"
   loop_control:
     loop_var: data
-  when: not async and uri_hostname != 'localhost'
+  when:
+    - extract_ip_address_result is not defined
+    - extract_ip_address_result_remote is not defined

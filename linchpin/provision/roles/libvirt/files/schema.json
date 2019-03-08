@@ -65,6 +65,7 @@
                             "schema": {
                                 "name": { "type": "string", "required": true },
                                 "ip": { "type": "string", "required": false },
+                                "dhcp": { "type": "boolean", "required": false },
                                 "mac": { "type": "string", "required": false }
                             }
                         }
@@ -172,8 +173,8 @@
                                     "type": "dict",
                                     "schema": {
                                         "ip": { "type": "string", "required": false },
-                                        "hostnames": { 
-					    "type": "list", 
+                                        "hostnames": {
+					    "type": "list",
 					    "required": true
 					}
                                     }
