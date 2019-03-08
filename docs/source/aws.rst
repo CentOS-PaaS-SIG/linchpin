@@ -162,11 +162,9 @@ Credentials Management
 AWS provides several ways to provide credentials. LinchPin supports
 some of these methods for passing credentials for use with AWS resources.
 
-One method to provide AWS credentials that can be loaded by LinchPin is to use
-the INI format that the `AWS CLI tool <https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html>`_
-uses.
 
-.. include:: includes/aws_creds.rst
+
+.. include:: credentials/aws.rst
 
 Environment Variables
 ~~~~~~~~~~~~~~~~~~~~~
