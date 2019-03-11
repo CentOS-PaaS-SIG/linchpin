@@ -3,7 +3,7 @@
 # Verify template-based provisioning using complex template data file
 # distros.exclude: centos7 fedora28
 # providers.include: none
-# providers.exclude: dummy openstack beaker duffy openshift gcloud aws
+# providers.exclude: dummy openstack beaker duffy openshift gcloud aws docker
 
 DISTRO=${1}
 PROVIDER=${2}

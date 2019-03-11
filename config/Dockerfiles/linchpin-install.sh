@@ -11,6 +11,7 @@ pip install .
 pip install .[tests]
 pip install .[libvirt]
 pip install .[beaker]
+pip install .[docker]
 
 # If duffy.key is available then install duffy ansible module.
 if [ -e "keys/duffy.key" ]; then
