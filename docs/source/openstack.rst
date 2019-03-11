@@ -1,12 +1,12 @@
-Openstack
+OpenStack
 =========
 
-The openstack provider manages multiple types of resources.
+The OpenStack provider manages multiple types of resources.
 
 os_server
 ---------
 
-Openstack instances can be provisioned using this resource.
+OpenStack instances can be provisioned using this resource.
 
 * :docs1.5:`Topology Example <workspace/topologies/os-server-new.yml>`
 * `Ansible module <http://docs.ansible.com/ansible/latest/os_server_module.html>`_
@@ -19,47 +19,51 @@ Topology Schema
 ~~~~~~~~~~~~~~~
 
 Within Linchpin, the :term:`os_server` :term:`resource_definition` has more options
-than what are shown in the examples above. For each :term:`os_server` definition, the
+than what is shown in the examples above. For each :term:`os_server` definition, the
 following options are available.
 
-+------------------+------------+----------+-------------------+----------------+
-| Parameter        | required   | type     | ansible value     | comments       |
-+==================+============+==========+===================+================+
-| name             | true       | string   | name              |                |
-+------------------+------------+----------+-------------------+----------------+
-| flavor           | true       | string   | flavor            |                |
-+------------------+------------+----------+-------------------+----------------+
-| image            | true       | string   | image             |                |
-+------------------+------------+----------+-------------------+----------------+
-| region           | false      | string   | region            |                |
-+------------------+------------+----------+-------------------+----------------+
-| count            | false      | integer  | count             |                |
-+------------------+------------+----------+-------------------+----------------+
-| keypair          | false      | string   | key_name          |                |
-+------------------+------------+----------+-------------------+----------------+
-| security_groups  | false      | string   | security_groups   |                |
-+------------------+------------+----------+-------------------+----------------+
-| fip_pool         | false      | string   | floating_ip_pools |                |
-+------------------+------------+----------+-------------------+----------------+
-| nics             | false      | string   | networks          |                |
-+------------------+------------+----------+-------------------+----------------+
-| userdata         | false      | string   | userdata          |                |
-+------------------+------------+----------+-------------------+----------------+
-| volumes          | false      | list     | volumes           |                |
-+------------------+------------+----------+-------------------+----------------+
-| boot_from_volume | false      | string   | boot_from_volume  |                |
-+------------------+------------+----------+-------------------+----------------+
-| terminate_volume | false      | string   | terminate_volume  |                |
-+------------------+------------+----------+-------------------+----------------+
-| volume_size      | false      | string   | volume_size       |                |
-+------------------+------------+----------+-------------------+----------------+
-| boot_volume      | false      | string   | boot_volume       |                |
-+------------------+------------+----------+-------------------+----------------+
++------------------+------------+----------+-------------------+----------------------------------+
+| Parameter        | required   | type     | ansible value     | comments                         |
++==================+============+==========+===================+==================================+
+| name             | true       | string   | name              | Name of the instance             |
++------------------+------------+----------+-------------------+----------------------------------+
+| flavor           | true       | string   | flavor            | Defines the compute, memory,     |
+|                  |            |          |                   | and storage capacity of the node |
++------------------+------------+----------+-------------------+----------------------------------+
+| image            | true       | string   | image             | The disk image used to provision |
+|                  |            |          |                   | the server instances             |
++------------------+------------+----------+-------------------+----------------------------------+
+| region           | false      | string   | region            |                                  |
++------------------+------------+----------+-------------------+----------------------------------+
+| count            | false      | integer  | count             |                                  |
++------------------+------------+----------+-------------------+----------------------------------+
+| keypair          | false      | string   | key_name          | Public key of an OpenSSH keypair |
+|                  |            |          |                   | to be used for access to created |
+|                  |            |          |                   | servers                          |
++------------------+------------+----------+-------------------+----------------------------------+
+| security_groups  | false      | string   | security_groups   |                                  |
++------------------+------------+----------+-------------------+----------------------------------+
+| fip_pool         | false      | string   | floating_ip_pools |                                  |
++------------------+------------+----------+-------------------+----------------------------------+
+| networks         | false      | string   | networks          |                                  |
++------------------+------------+----------+-------------------+----------------------------------+
+| userdata         | false      | string   | userdata          |                                  |
++------------------+------------+----------+-------------------+----------------------------------+
+| volumes          | false      | list     | volumes           |                                  |
++------------------+------------+----------+-------------------+----------------------------------+
+| boot_from_volume | false      | string   | boot_from_volume  |                                  |
++------------------+------------+----------+-------------------+----------------------------------+
+| terminate_volume | false      | string   | terminate_volume  |                                  |
++------------------+------------+----------+-------------------+----------------------------------+
+| volume_size      | false      | string   | volume_size       |                                  |
++------------------+------------+----------+-------------------+----------------------------------+
+| boot_volume      | false      | string   | boot_volume       |                                  |
++------------------+------------+----------+-------------------+----------------------------------+
 
 os_obj
 ------
 
-Openstack Object Storage can be provisioned using this resource.
+OpenStack Object Storage can be provisioned using this resource.
 
 * :docs1.5:`Topology Example <workspace/topologies/os-obj-new.yml>`
 * `Ansible module <http://docs.ansible.com/ansible/latest/os_object_module.html>`_
@@ -67,7 +71,7 @@ Openstack Object Storage can be provisioned using this resource.
 os_vol
 ------
 
-Openstack Cinder Volumes can be provisioned using this resource.
+OpenStack Cinder Volumes can be provisioned using this resource.
 
 * :docs1.5:`Topology Example <workspace/topologies/os-vol-new.yml>`
 * `Ansible module <http://docs.ansible.com/ansible/latest/os_volume_module.html>`_
@@ -75,7 +79,7 @@ Openstack Cinder Volumes can be provisioned using this resource.
 os_sg
 -----
 
-Openstack Security Groups can be provisioned using this resource.
+OpenStack Security Groups can be provisioned using this resource.
 
 * :docs1.5:`Topology Example <workspace/topologies/os-sg-new.yml>`
 * `Ansible Security Group module <http://docs.ansible.com/ansible/latest/os_security_group_module.html>`_
@@ -84,7 +88,7 @@ Openstack Security Groups can be provisioned using this resource.
 os_network
 ----------
 
-Openstack networks can be provisioned using this resource.
+OpenStack networks can be provisioned using this resource.
 
 * :docs1.5:`Topology Example <workspace/topologies/os-network.yml>`
 * `Ansible os_network module <https://docs.ansible.com/ansible/2.5/modules/os_network_module.html>`_
@@ -92,7 +96,7 @@ Openstack networks can be provisioned using this resource.
 os_router
 ---------
 
-Openstack routers can be provisioned using this resource.
+OpenStack routers can be provisioned using this resource.
 
 * :docs1.5:`Topology Example <workspace/topologies/os-router.yml>`
 * `Ansible os_router module <https://docs.ansible.com/ansible/latest/modules/os_router_module.html>`_
@@ -100,7 +104,7 @@ Openstack routers can be provisioned using this resource.
 os_subnet
 ---------
 
-Openstack subnets can be provisioned using this resource.
+OpenStack subnets can be provisioned using this resource.
 
 * :docs1.5:`Topology Example <workspace/topologies/os-subnet.yml>`
 * `Ansible os_router module <https://docs.ansible.com/ansible/latest/modules/os_subnet_module.html>`_
@@ -109,33 +113,33 @@ Openstack subnets can be provisioned using this resource.
 Additional Dependencies
 -----------------------
 
-No additional dependencies are required for the Openstack Provider.
+No additional dependencies are required for the OpenStack Provider.
 
 Credentials Management
 ----------------------
 
-Openstack provides several ways to provide credentials. LinchPin supports
-some of these methods for passing credentials for use with openstack resources.
+OpenStack provides several ways to provide credentials. LinchPin supports
+some of these methods for passing credentials for use with OpenStack resources.
 
 Environment Variables
 `````````````````````
 
-LinchPin honors the openstack environment variables such as ``$OS_USERNAME``,
+LinchPin honors the OpenStack environment variables such as ``$OS_USERNAME``,
 ``$OS_PROJECT_NAME``, etc.
 
-See `the openstack documentation cli documentation 
+See `the OpenStack documentation cli documentation 
 <https://docs.openstack.org/python-openstackclient/pike/cli/man/openstack.html#manpage>`_
 for details.
 
 .. note:: No credentials files are needed for this method. When LinchPin calls
-   the openstack provider, the environment variables are automatically picked
-   up by the openstack Ansible modules, and passed to openstack for
+   the OpenStack provider, the environment variables are automatically picked
+   up by the OpenStack Ansible modules, and passed to OpenStack for
    authentication.
 
-Using Openstack Credentials
+Using OpenStack Credentials
 ```````````````````````````
 
-Openstack provides a simple file structure using a file called
+OpenStack provides a simple file structure using a file called
 `clouds.yaml <https://docs.openstack.org/os-client-config/latest/user/configuration.html>`_,
 to provide authentication to a particular tenant. A single clouds.yaml file
 might contain several entries.
@@ -159,7 +163,7 @@ might contain several entries.
 
 Using this mechanism requires that credentials data be passed into LinchPin.
 
-An openstack topology can have a ``credentials`` section for each
+An OpenStack topology can have a ``credentials`` section for each
 :term:`resource_group`, which requires the filename, and the profile name.
 
 .. code-block:: yaml
@@ -181,8 +185,8 @@ Provisioning
 ````````````
 
 Provisioning with credentials uses the ``--creds-path`` option. Assuming
-the ``clouds.yaml`` file was placed in ``~/.config/openstack``, and the
-topology described above, a provision task could occur.
+the ``clouds.yaml`` file was placed in ``~/.config/OpenStack``, and the
+topology described above, a provisioning task could occur.
 
 .. code-block:: bash
 
@@ -198,4 +202,3 @@ Alternatively, the credentials path can be set as an environment variable,
 
    $ export CREDS_PATH="/path/to/credential_dir/"
    $ linchpin -v up
-
