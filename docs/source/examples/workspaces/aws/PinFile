@@ -80,7 +80,7 @@ aws-sg-new:
                 from_port: {{ rule.from_port }}
                 to_port: {{ rule.to_port }}
                 proto: {{ rule.proto }}
-                cidr_ip {{ rule.cidr_ip }}
+                cidr_ip: {{ rule.cidr_ip }}
               {% endfor %}
             {% else %}
             rules:
