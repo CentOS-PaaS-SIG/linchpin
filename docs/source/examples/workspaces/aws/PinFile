@@ -7,20 +7,40 @@ aws-ec2-new:
         resource_group_type: "aws"
         resource_definitions:
           - name: demo-day
-            flavor: m1.small
             role: aws_ec2
-            region: "{{ aws_region | default('us-east-1') }}"
-            image: "{{ aws_image | default('ami-984189e2') }}"
+            flavor: {{ flavor | default('m1.small') }}
+            region: {{ region | default('us-east-1') }}
+            image: {{ image | default('ami-984189e2') }}
             count: 1
+            {% if tags is defined %}
+            instance_tags:
+              {% for tag in tags %}
+              - {{ tag }}
+              {% endfor %}
+            {% else %}
             instance_tags:
               color: blue
               shape: oval
+            {% endif %}
+            {% if security_groups is defined %}
+            instance_tags:
+              {% for group in securit_groups %}
+              - {{ group }}
+              {% endfor %}
+            {% else %}
             security_group:
               - default
               - public
+            {% endif %}
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
         credentials:
           filename: aws.key
           profile: default
+        {% endif %}
 
 aws-ec2-key-new:
   topology:
@@ -31,7 +51,16 @@ aws-ec2-key-new:
         resource_definitions:
           - name: "ec2_keypair"
             role: "aws_ec2_key"
-            region: "{{ aws_region | default('us-east-1') }}"
+            region: "{{ region | default('us-east-1') }}"
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
+        credentials:
+          filename: aws.key
+          profile: default
+        {% endif %}
 
 aws-sg-new:
   topology:
@@ -42,8 +71,18 @@ aws-sg-new:
         resource_definitions:
           - name: "aws_sg_test"
             role: "aws_sg"
-            description: "aws ssh security group"
-            region: "{{ aws_region | default('us-east-1') }}"
+            description: {{ description | default('aws ssh security group') }}
+            region: "{{ region | default('us-east-1') }}"
+            {% if rules is defined %}
+            rules:
+              {% for rule in rules %}
+              - rule_type: {{ rule.type }}
+                from_port: {{ rule.from_port }}
+                to_port: {{ rule.to_port }}
+                proto: {{ rule.proto }}
+                cidr_ip: {{ rule.cidr_ip }}
+              {% endfor %}
+            {% else %}
             rules:
               - rule_type: "inbound"
                 from_port: "8"
@@ -60,6 +99,16 @@ aws-sg-new:
                 to_port: all
                 proto: "all"
                 cidr_ip: "0.0.0.0/0"
+            {% endif %}
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
+        credentials:
+          filename: aws.key
+          profile: default
+        {% endif %}
 
 aws-s3-new:
   topology:
@@ -70,7 +119,17 @@ aws-s3-new:
         resource_definitions:
           - name: "s3_bucket"
             role: "aws_s3"
-            region: "{{ aws_region | default('us-east-1') }}"
+            region: "{{ region | default('us-east-1') }}"
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
+        credentials:
+          filename: aws.key
+          profile: default
+        {% endif %}
+
 
 aws-ec2-eip:
   topology:
@@ -81,10 +140,17 @@ aws-ec2-eip:
         resource_definitions:
           - name: demoday
             role: aws_ec2_eip
-            region: us-east-1
+            region: "{{ region | default('us-east-1') }}"
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
         credentials:
           filename: aws.key
           profile: default
+        {% endif %}
+
 
 aws-ec2-vpc-net:
   topology:
@@ -95,15 +161,29 @@ aws-ec2-vpc-net:
         resource_definitions:
           - name: demo_day_vpc
             role: aws_ec2_vpc_net
-            region: us-east-1
-            cidr_block: 10.10.0.0/16
+            region: "{{ region | default('us-east-1') }}"
+            cidr_block: {{ cidr_block | default('10.10.0.0/16') }}
+            {% if tags is defined %}
+              tags:
+              {% for key value in tags.items() %}
+                {{key}}: {{value}}
+              {% endfor %}
+            {% else %}
             tags:
               module: aws_ec2_vpc_net
               this: works
-            tenancy: dedicated
+            {% endif %}
+            tenancy: {{ tenancy | default('dedicated') }}
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
         credentials:
           filename: aws.key
           profile: default
+        {% endif %}
+
 
 aws-ec2-vpc-subnet:
   topology:
@@ -114,23 +194,44 @@ aws-ec2-vpc-subnet:
         resource_definitions:
           - name: demovpcnetsubnet
             role: aws_ec2_vpc_net
-            region: us-east-1
-            cidr_block: 13.0.0.0/16
+            region: {{ region | default('us-east-1') }}
+            cidr_block: {{ cidr_block | default('13.0.0.0/16') }}
+            {% if tags is defined %}
+              tags:
+              {% for key value in tags.items() %}
+                {{key}}: {{value}}
+              {% endfor %}
+            {% else %}
             tags:
               module: aws_ec2_vpc_net
-              this: alsoworks
-            tenancy: dedicated
+              this: works
+            {% endif %}
+            tenancy: {{ tenancy | default('dedicated') }}
           - name: demodayvpcsubnet
             role: aws_ec2_vpc_subnet
-            region: us-east-1
+            region: {{ region | default('us-east-1') }}
             vpc_name: demovpcnetsubnet
-            cidr: 13.0.1.0/24
+            cidr: {{ cidr| default('13.0.1.0/24') }}
+            {% if tags is defined %}
+              tags:
+              {% for key value in tags.items() %}
+                {{key}}: {{value}}
+              {% endfor %}
+            {% else %}
             tags:
               module: aws_ec2_vpc_subnet
-              this: alsoworks
+              this: works
+            {% endif %}
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
         credentials:
           filename: aws.key
           profile: default
+        {% endif %}
+
 
 aws-ec2-vpc-routetable:
   topology:
@@ -164,9 +265,16 @@ aws-ec2-vpc-routetable:
               this: alsoworks
             subnets:
               - 'demo_vpc_subnet_r'
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
         credentials:
           filename: aws.key
           profile: default
+        {% endif %}
+
 
 aws-ec2-vpc-endpoint:
   topology:
@@ -207,9 +315,16 @@ aws-ec2-vpc-endpoint:
             vpc_name: demo_vpc_net_ep
             service: com.amazonaws.us-east-1.s3
             route_table_name: demo_routetable_ep
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
         credentials:
           filename: aws.key
           profile: default
+        {% endif %}
+
 
 aws-ec2-elb-lb:
   topology:
@@ -220,18 +335,42 @@ aws-ec2-elb-lb:
         resource_definitions:
           - name: demoec2elblb
             role: aws_ec2_elb_lb
-            region: us-east-1
+            region: {{ region | defualt('us-east-1') }}
+            {% if zones is defined }}
+            zones:
+              {% for zone in zones %}
+              - {{ zone }}
+              {% endfor %}
+            {% else %}
             zones:
             - us-east-1a
             - us-east-1d
+            {% endif %}
+            {% if listeners is defined %}
+            listeners:
+              {% for listener in listeners %}
+            - protocol: {{ listener.protocol }}
+              load_balancer_port: {{ listener.lb_port }}
+              instance_port: {{ listener.instance_port }}
+              proxy_protocol: {{ listener.proxy }}
+              {% endfor %}
+            {% else %}
             listeners:
             - protocol: http # options are http, https, ssl, tcp
               load_balancer_port: 80
               instance_port: 80
               proxy_protocol: True
+            {% endif %}
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
         credentials:
           filename: aws.key
           profile: default
+        {% endif %}
+
 
 aws-ec2-template:
   topology:
@@ -253,9 +392,16 @@ aws-ec2-template:
           security_group:
           - default
           - public
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
         credentials:
           filename: aws.key
           profile: default
+        {% endif %}
+
   layout:
     inventory_layout:
       vars:

@@ -6,28 +6,34 @@ os-server-new:
       - resource_group_name: os-server-new
         resource_group_type: openstack
         resource_definitions:
-          - name: "{{ distro | default('') }}database"
+          - name: {{ distro | default('') }}database
             role: os_server
-            flavor: "{{ flavor | default('m1.small') }}"
-            image: "{{ image | default('CentOS-7-x86_64-GenericCloud-1612') }}"
+            flavor: {{ flavor | default('m1.small') }}
+            image: {{ image | default('CentOS-7-x86_64-GenericCloud-1612') }}
             count: 1
-            keypair: "{{ keypair | default('ci-factory') }}"
-            fip_pool: "{{ fip_pool | default('10.8.240.0') }}"
+            keypair: {{ keypair | default('ci-factory') }}
+            fip_pool: {{ fip_pool | default('10.8.240.0') }}
             networks:
-              - "{{ networks | default('e2e-openstack') }}"
-          - name: "{{ distro | default('') }}frontend"
+              - {{ networks | default('e2e-openstack') }}
+          - name: {{ distro | default('') }}frontend
             role: os_server
-            flavor: m1.small
-            flavor: "{{ flavor | default('m1.small') }}"
-            image: "{{ image | default('CentOS-7-x86_64-GenericCloud-1612') }}"
+            flavor: {{ flavor | default('m1.small') }}
+            image: {{ image | default('CentOS-7-x86_64-GenericCloud-1612') }}
             count: 1
-            keypair: "{{ keypair | default('ci-factory') }}"
+            keypair: {{ keypair | default('ci-factory') }}
             auto_ip: no
             networks:
-              - "{{ networks | default('e2e-openstack') }}"
+              - {{ networks | default('e2e-openstack') }}
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
         credentials:
           filename: clouds.yaml
           profile: ci-rhos
+        {% endif %}
+
   layout:
     inventory_layout:
       vars:
@@ -51,7 +57,17 @@ os-sg-new:
         resource_definitions:
           - name: "{{ distro | default('') }}security_group"
             role: os_sg
-            description: "Openstack Security Group with ssh access"
+            description: {{ description | default('Openstack Security Group with ssh access') }}
+            {% if rules is defined %}
+            rules:
+              {% for rule in rules %}
+              - rule_type: {{ rule.type }}
+                from_port: {{ rule.from_port }}
+                to_port: {{ rule.to_port }}
+                proto: {{ rule.proto }}
+                cidr_ip: {{ rule.cidr_ip }}
+              {% endfor %}
+            {% else %}
             rules:
               - rule_type: "inbound"
                 from_port: 22
@@ -63,9 +79,16 @@ os-sg-new:
                 to_port: 22
                 proto: "tcp"
                 cidr_ip: "0.0.0.0/0"
+            {% endif %}
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
         credentials:
           filename: clouds.yaml
           profile: ci-rhos
+        {% endif %}
 
 os-vol-new:
   topology: os-vol-new.yml
@@ -79,10 +102,16 @@ os-network:
         resource_definitions:
           - name: testnet_example
             role: os_network
-            unique: true
+            unique: {{ unique | default(true) }}
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
         credentials:
           filename: clouds.yaml
           profile: ci-rhos
+        {% endif %}
 
 os-router:
   topology:
@@ -93,10 +122,16 @@ os-router:
         resource_definitions:
           - name: trouter_example
             role: os_router
-            unique: true
+            unique: {{ unique | default(true) }}
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
         credentials:
           filename: clouds.yaml
           profile: ci-rhos
+        {% endif %}
 
 os-subnet:
   topology:
@@ -107,12 +142,18 @@ os-subnet:
         resource_definitions:
           - name: test_network_ex
             role: os_network
-            unique: false
+            unique: {{ unique | default(false) }}
           - name: test_subnet_ex
             role: os_subnet
             network_name: test_network_ex
-            unique: false
-            cidr: 192.167.128.0/24
+            unique: {{ unique | default(false) }}
+            cidr: {{ cidr | default('192.167.128.0/24') }}
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
         credentials:
           filename: clouds.yaml
           profile: ci-rhos
+        {% endif %}
