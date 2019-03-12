@@ -40,7 +40,7 @@ aws-ec2-new:
         credentials:
           filename: aws.key
           profile: default
-        {% end %}
+        {% endif %}
 
 aws-ec2-key-new:
   topology:
@@ -60,7 +60,7 @@ aws-ec2-key-new:
         credentials:
           filename: aws.key
           profile: default
-        {% end %}
+        {% endif %}
 
 aws-sg-new:
   topology:
@@ -108,7 +108,7 @@ aws-sg-new:
         credentials:
           filename: aws.key
           profile: default
-        {% end %}
+        {% endif %}
 
 aws-s3-new:
   topology:
@@ -128,7 +128,7 @@ aws-s3-new:
         credentials:
           filename: aws.key
           profile: default
-        {% end %}
+        {% endif %}
 
 
 aws-ec2-eip:
@@ -149,7 +149,7 @@ aws-ec2-eip:
         credentials:
           filename: aws.key
           profile: default
-        {% end %}
+        {% endif %}
 
 
 aws-ec2-vpc-net:
@@ -182,7 +182,7 @@ aws-ec2-vpc-net:
         credentials:
           filename: aws.key
           profile: default
-        {% end %}
+        {% endif %}
 
 
 aws-ec2-vpc-subnet:
@@ -230,7 +230,7 @@ aws-ec2-vpc-subnet:
         credentials:
           filename: aws.key
           profile: default
-        {% end %}
+        {% endif %}
 
 
 aws-ec2-vpc-routetable:
@@ -273,7 +273,7 @@ aws-ec2-vpc-routetable:
         credentials:
           filename: aws.key
           profile: default
-        {% end %}
+        {% endif %}
 
 
 aws-ec2-vpc-endpoint:
@@ -323,7 +323,7 @@ aws-ec2-vpc-endpoint:
         credentials:
           filename: aws.key
           profile: default
-        {% end %}
+        {% endif %}
 
 
 aws-ec2-elb-lb:
@@ -369,7 +369,7 @@ aws-ec2-elb-lb:
         credentials:
           filename: aws.key
           profile: default
-        {% end %}
+        {% endif %}
 
 
 aws-ec2-template:
@@ -400,7 +400,7 @@ aws-ec2-template:
         credentials:
           filename: aws.key
           profile: default
-        {% end %}
+        {% endif %}
 
   layout:
     inventory_layout:

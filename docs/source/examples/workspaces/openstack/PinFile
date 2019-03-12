@@ -32,7 +32,7 @@ os-server-new:
         credentials:
           filename: clouds.yaml
           profile: ci-rhos
-        {% end %}
+        {% endif %}
 
   layout:
     inventory_layout:
@@ -88,7 +88,7 @@ os-sg-new:
         credentials:
           filename: clouds.yaml
           profile: ci-rhos
-        {% end %}
+        {% endif %}
 
 os-vol-new:
   topology: os-vol-new.yml
@@ -111,7 +111,7 @@ os-network:
         credentials:
           filename: clouds.yaml
           profile: ci-rhos
-        {% end %}
+        {% endif %}
 
 os-router:
   topology:
@@ -131,7 +131,7 @@ os-router:
         credentials:
           filename: clouds.yaml
           profile: ci-rhos
-        {% end %}
+        {% endif %}
 
 os-subnet:
   topology:
@@ -156,4 +156,4 @@ os-subnet:
         credentials:
           filename: clouds.yaml
           profile: ci-rhos
-        {% end %}
+        {% endif %}
