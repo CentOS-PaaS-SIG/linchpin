@@ -8,24 +8,35 @@ libvirt-new:
         resource_definitions:
           - role: libvirt_node
             name: centos71
-            uri: qemu:///system
+            uri: {{ uri | default('qemu:///system') }}
             count: 1
-            image_src: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz
-            memory: 2048
-            vcpus: 1
-            arch: x86_64
-            ssh_key: libvirt
+            image_src: {{ image_src | default('http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz') }}
+            memory: {{ memory | default('2048') }}
+            vcpus: {{ vcpus | default('1') }}
+            arch: {{ arch |  default('x86_64') }}
+            ssh_key: {{ ssh_key | default('libvirt') }}
+            {% if networks is defined %}
+            networks:
+              {% for net in networks %}
+              - {{ net }}
+              {% endfor %}
+            {% else %}
             networks:
               - name: default
+            {% endif %}
+            {% if storage is defined %}
+            additional_storage: {{ storage }}
+            {% else %}
             additional_storage: 10G
+            {% endif %}
             cloud_config:
               users:
-                - name: herlo
-                  gecos: Clint Savage
-                  groups: wheel
-                  sudo: ALL=(ALL) NOPASSWD:ALL
-                  ssh_import_id: gh:herlo
-                  lock_passwd: true
+                - name: {{ user.name | default('herlo') }}
+                  gecos: {{ user.gecos | default('Clint Savage') }}
+                  groups: {{ user.groups | default('wheel') }}
+                  sudo: {{ user.sudo | default('ALL=(ALL) NOPASSWD:ALL') }}
+                  ssh_import_id: {{ user.ssh_id | default('gh:herlo') }}
+                  lock_passwd: {{ user.lock | default(true) }}
   layout:
     inventory_layout:
       vars:
@@ -45,14 +56,14 @@ libvirt-network:
         resource_definitions:
           - name: linchpin-centos74
             role: libvirt_network
-            uri: qemu:///system
-            ip: 192.168.74.100
-            dhcp_start: 192.168.74.101
-            forward_mode: nat
-            dhcp_end: 192.168.74.112
-            domain: linchpin.net
-            netmask: 255.255.255.0
-            delete_on_destroy: True
+            uri: {{ uri | default('qemu:///system') }}
+            ip: {{ ip | default('192.168.74.100') }}
+            dhcp_start: {{ dhcp_start | default('192.168.74.101') }}
+            forward_mode: { forward_mode | default('nat') }}
+            dhcp_end: {{ dhcp_end | default('192.168.74.112') }}
+            domain: {{ domain | default('linchpin.net') }}
+            netmask: {{ netmask | default('255.255.255.0') }}
+            delete_on_destroy: {{ delete | default('True') }}
 
 libvirt-storage:
   topology:
@@ -63,22 +74,33 @@ libvirt-storage:
         resource_definitions:
           - role: libvirt_node
             name: centos71
-            uri: qemu:///system
+            uri: {{ uri | default('qemu:///system') }}
             count: 1
-            image_src: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz
-            memory: 2048
-            vcpus: 2
-            arch: x86_64
-            ssh_key: libvirt
+            image_src: {{ image_src | default('http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz') }}
+            memory: {{ memory | default('2048') }}
+            vcpus: {{ vcpus | default('2') }}
+            arch: {{ arch |  default('x86_64') }}
+            ssh_key: {{ ssh_key | default('libvirt') }}
+            {% if networks is defined %}
+            networks:
+              {% for net in networks %}
+              - {{ net }}
+              {% endfor %}
+            {% else %}
             networks:
               - name: default
+            {% endif %}
+            {% if add_storage is defined %}
+            additional_storage: {{ storage }}
+            {% else %}
             additional_storage: 10G
+            {% endif %}
             storage:
-              - name: myscsi
-                size: 1
-                units: G
-                disk_type: virtio_scsi # can also be virtio_blk
-                device: sda
+              - name: {{ storage.name | default('myscsi') }}
+                size: {{ storage.size | default('1') }}
+                units: {{ storage.units| default('G') }}
+                disk_type: {{ storage.type | defualt('virtio_scsi') }} # can also be virtio_blk
+                device: {{ storage.dev | default('sda') }}
 
 libvirt-custom-img:
   topology:
@@ -89,27 +111,52 @@ libvirt-custom-img:
         resource_definitions:
           - role: libvirt_node
             name: lci-centos7
-            uri: qemu:///system
+            uri: {{ uri | default('qemu:///system') }}
             count: 1
-            image_src: file:///home/herlo/Isos/CentOS-7-x86_64-GenericCloud.qcow2.xz
-            memory: 1024
-            vcpus: 1
-            arch: x86_64
+            image_src: {{ image_src | default('http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz') }}
+            memory: {{ memory | default('2048') }}
+            arch: {{ arch |  default('x86_64') }}
+            vcpus: {{ vcpus | default('1') }}
+            {% if networks is defined %}
+            networks:
+              {% for net in networks %}
+              - {{ net }}
+              {% endfor %}
+            {% else %}
             networks:
               - name: default
-            ssh_key: libvirt
+            {% endif %}
+            ssh_key: {{ ssh_key | default('libvirt') }}
+            {% if storage is defined %}
+            additional_storage: {{ storage }}
+            {% else %}
             additional_storage: 10G
+            {% endif %}
             cloud_config:
               virt_type: virt-customize
-              root_password: "testrootpwd" # insecure plaintext password
+              root_password: {{ password | default("testrootpwd") }} # insecure plaintext password
               users:
-                - name: herlo
-                  groups: wheel
-                  inject_ssh_keys: true  # by default linchpin generated libvirt key is injected.
+                - name: {{ user.name | default('herlo') }}
+                  groups: {{ user.groups | default('wheel') }}
+                  inject_ssh_keys: {{ user.inject | default(true) }}  # by default linchpin generated libvirt key is injected.
+              {% if commands is defined %}
+              run_commands:
+                {% for command in commands %}
+                - {{ command }}
+                {% endfor %}
+              {% else %}
               run_commands:
                 - "yum install -y epel-release"
+              {% endif %}
+              {% if pacakges is defined %}
+              packages:
+                {% for package in packages %}
+                - {{ package }}
+                {% endfor %}
+              {% else %}
               packages:
                 - nginx
+              {% endif %}
 
 libvirt-network-dns:
   topology:

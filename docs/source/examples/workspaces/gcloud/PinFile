@@ -3,17 +3,22 @@ gcloud-gce-new:
   topology:
     topology_name: gce-new
     resource_groups:
-      - resource_group_name: "gcloud"
-        resource_group_type: "gcloud"
+      - resource_group_name: gcloud
+        resource_group_type: gcloud
         resource_definitions:
-          - name: "gce-webserver"
-            flavor: "f1-micro"
-            role: "gcloud_gce"
-            region: "us-central1-a"
-            image: "centos-7"
+          - name: gce-webserver
+            role: gcloud_gce
+            flavor: {{ flavor | default('f1-micro') }}
+            region: {{ region | default('us-central1-a') }}
+            image: {{ image | default('centos-7') }}
             count: 1
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+        {% else %}
         credentials:
           filename: gcloud.key
+        {% endif %}
   layout:
     inventory_layout:
       vars:
@@ -28,17 +33,22 @@ gcloud-template-inventory:
   topology:
     topology_name: gcloud
     resource_groups:
-      - resource_group_name: "gcloud"
-        resource_group_type: "gcloud"
+      - resource_group_name: gcloud
+        resource_group_type: gcloud
         resource_definitions:
-          - name: "webserver"
-            flavor: "f1-micro"
-            type: "gcloud_gce"
-            region: "us-central1-a"
-            image: "centos-7"
+          - name: webserver
+            type: gcloud_gce
+            flavor: {{ flavor | default('f1-micro') }}
+            region: {{ region | default('us-central1-a') }}
+            image: {{ image | default('centos-7') }}
             count: 1
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+        {% else %}
         credentials:
           filename: gcloud.key
+        {% endif %}
   layout:
     inventory_layout:
       vars:
