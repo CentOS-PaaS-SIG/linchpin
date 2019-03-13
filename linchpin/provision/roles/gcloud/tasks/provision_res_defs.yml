@@ -23,5 +23,5 @@
     gce_resource_name: "{{ gce_resource_name + '-' + uhash }}"
   when: enable_uhash
 
-- name: "provision resource type : {{ res_def['role'] }}"
+- name: "provision/teardown resource type : {{ res_def['role'] }}"
   include: "provision_{{ res_def['role'] }}.yml"
