@@ -122,3 +122,16 @@ gcloud-gcdns-zone-record:
             - '203.0.113.10'
         credentials:
           filename: gcloud.key
+
+gcloud-gcp-compute-network:
+  topology:
+    topology_name: gcloud
+    resource_groups:
+      - resource_group_name: "gcloud"
+        resource_group_type: "gcloud"
+        resource_definitions:
+          - name: "testgcpcomputenetwork"
+            role: gcloud_gcp_compute_network
+            description: test_gcp_compute_network_linchpin
+        credentials:
+          filename: gcloud.key
