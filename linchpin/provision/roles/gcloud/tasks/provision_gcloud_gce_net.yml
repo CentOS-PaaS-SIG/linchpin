@@ -19,7 +19,7 @@
     subnet_region: "{{ res_def['subnet_region'] | default(omit) }}"
     target_tags: "{{ res_def['target_tags'] | default(omit) }}"
   register: res_def_output
- #  no_log: "{{ not debug_mode }}"
+  no_log: "{{ not debug_mode }}"
 
 - debug:
     msg: "{{ res_def_output }}"
