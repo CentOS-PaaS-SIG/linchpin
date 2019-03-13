@@ -85,6 +85,21 @@
                     "zone_id": { "type": "string", "required": false },
                     "value": { "type": "string", "required": false }
                 }
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["gcloud_gcp_compute_network"]
+                    },
+                    "auto_create_subnetworks": { "type": "boolean", "required": false },
+                    "description": { "type": "string", "required": false },
+                    "gateway_ipv4": { "type": "string", "required": false },
+                    "gateway_ipv4": { "type": "string", "required": false },
+                    "name": { "type": "string", "required": true }
+                }
             }
 	    ]
 	 }
