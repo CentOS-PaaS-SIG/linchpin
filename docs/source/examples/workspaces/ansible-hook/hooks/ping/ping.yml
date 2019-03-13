@@ -1,0 +1,4 @@
+---
+- hosts: example
+  tasks:
+    - ping:

@@ -1,12 +1,12 @@
 ---
-simple:
+ansible-hook:
   topology:
-    topology_name: simple
+    topology_name: ansible-hook
     resource_groups:
-      - resource_group_name: os-server-new
+      - resource_group_name: ansible-hook
         resource_group_type: openstack
         resource_definitions:
-          - name: {{ name | default('database') }}
+          - name: ansible-hook
             role: os_server
             flavor: {{ flavor | default('m1.small') }}
             image: {{ image | default('CentOS-7-x86_64-GenericCloud-1612') }}
@@ -15,6 +15,9 @@ simple:
             fip_pool: {{ fip_pool | default('10.8.240.0') }}
             networks:
               - {{ networks | default('e2e-openstack') }}
+        credentials:
+          filename: clouds.yml
+          profile: cirhos
   layout:
     inventory_layout:
       vars:
@@ -25,3 +28,11 @@ simple:
           count: 1
           host_groups:
             - example
+  hooks:
+    postup:
+      - name: ping
+        type: ansible
+        context: true
+        path: hooks/ping
+        actions:
+          - playbook: ping.yml

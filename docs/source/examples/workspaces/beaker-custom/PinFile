@@ -1,0 +1,28 @@
+---
+custom:
+  topology:
+    topology_name: custom
+    resource_groups:
+      - resource_group_name: custom
+        resource_group_type: beaker
+        resource_definitions:
+          - role: bkr_server
+            recipesets:
+              - distro: {{ distro | default('RHEL-7.5') }}
+                arch: {{ arch | default('x86_64') }}
+                count: 1
+                variant: Server
+                name: {{ name | default('rhel75') }}
+                tasks:
+                  - name: "{{ task | default('/installation/sshkey') }}"
+                taskparam:
+                  - "SSH_KEY={{ ssh_key | default('ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCytALUAofclqRVw+snWTC/lWk97XfMaozHsOQV37LpbDjgs87sVt3WmcioUjjh9G4AEKVdEOfSKxNJ/NizzeZtZ+Egq3nxjviewZWwnd94aT1dW806etEYPahcad/u8fuJ/XZLKaD4QX3gl8TGiSZVr7lXtWCP9at8DpDdmGJLbP5ObY9T3q9N2wX2VFCn5hPzlhfzRDvWevcQ5i+uOFEJsKMQ4E7juMN75TmZF7ys6x8NjDcW7MVV9PZHfHEaOz18EUptBVpE9IolSVPpqZn+6EfEyWYP+fsDL8H5/tid2bkwBJGTVnUBuojC7Oe9jhPB9zf2KVbLpxk2dJVCfDQWHu3jRON9frlPoYJoKiF5Zdj45+OLZof8MYGKrMhaRbUNmPvYfGYq9G9k0qOpkyoc5+PRufy4LozRc/b4AcOhWrQTKBb8ksFWmwOg+RiWdb3cXvANhUOYBfGrZD6HFspMk3cA94nYfKUzvXbl1x9VDqQfjNVyA5F9siISDQK0euDLnt6u244FfPrvhkuAYiKwm9IKpfJ5H9EPIzPXKeRaq/iop1g/IlcuVrIZwlgrfDr3kKpzBotYqln5otQ5AlbLHC5z+1MieXmvTFWQ0xmQQlzrkswLN/c7wskDkzzc46rHDhyq+IjoiAIL3NmNiUJhjL5XmPsHF6726Zu+md6mTw== cardno:000606111718') }}"
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example

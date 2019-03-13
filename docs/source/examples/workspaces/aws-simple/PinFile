@@ -7,19 +7,26 @@ simple:
         resource_group_type: aws
         resource_definitions:
           - name: simple
-            flavor: {{ aws_simple_flavor | default('t2.nano') }}
+            flavor: {{ flavor | default('t2.nano') }}
             role: aws_ec2
-            region: {{ aws_simple_region | deafult('us-east-1') }}
-            image: {{ aws_simple_image | default('ami-9887c6e7') }}
-            security_group: {{ aws_simple_security | default('default' }}
+            region: {{ region | default('us-east-1') }}
+            image: {{ image | default('ami-9887c6e7') }}
+            {% if security_groups is defined %}
+            security_group:
+              {% for group in security_groups %}
+              - {{ group }}
+              {% endfor %}
+            {% endif %}
             count: 1
-            assign_public_ip: {{ aws_simple_public | default(false) }}
-            keypair: {{ aws_simple_keypair | default('ec2_keypair') }}
+            {% if assign_public_ip is defined %}
+            assign_public_ip: {{ assign_public_ip }}
+            {% endif %}
+            keypair: {{ keypair | default('ec2_keypair') }}
   layout:
     inventory_layout:
       vars:
         hostname: __IP__
-        ansible_ssh_private_key_file: {{ aws_simple_keypath | default('~/.ssh/id_rsa') }}
+        ansible_ssh_private_key_file: {{ keypath | default('~/.ssh/id_rsa') }}
       hosts:
         example-node:
           count: 1
