@@ -276,13 +276,20 @@ linchpin setup : Automatic Dependency installation:
 From version 1.6.5 linchpin includes linchpin setup commandline option to automate installations of linchpin dependencies. 
 linchpin setup uses built in ansible-playbooks to carryout the installations. 
 
-Usage: 
-.. code-block:: bash
-    $ linchpin setup    # by default linchpin installs all the dependencies
+Install all the dependencies:
 
 .. code-block:: bash
-    $ linchpin setup [dependency1] [dependency2] ..    # 
+
+    $ linchpin setup
+
+To install only a subset of dependencies, pass as arguments list:
+
+.. code-block:: bash
+
     $ linchpin setup beaker docs
 
+It also supports ask-sudo-pass parameter when installing dnf related dependencies:
+
 .. code-block:: bash
-   $ linchpin setup libvirt --ask-sudo-pass    # Also supports ask-sudo-pass parameter when installing dnf related dependencies
+
+   $ linchpin setup libvirt --ask-sudo-pass
