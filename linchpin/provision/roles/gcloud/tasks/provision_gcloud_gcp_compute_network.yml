@@ -9,7 +9,7 @@
     project: "{{ auth_var['output']['project_id'] | default(omit) }}"
     scopes: "{{ res_def['scopes'] | default(['https://www.googleapis.com/auth/compute']) }}"
     service_account_file: "{{ auth_var['path'] }}/{{ auth_var['params']['filename'] | default(omit) }}"
-    state: "{{ present }}"
+    state: "{{ state }}"
   register: res_def_output
   no_log: "{{ not debug_mode }}"
 
