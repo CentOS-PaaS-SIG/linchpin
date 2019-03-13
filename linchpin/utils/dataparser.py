@@ -77,7 +77,10 @@ class DataParser(object):
             A dictionary of variables to be rendered againt the template
         """
 
-        c = self.parse_json_yaml(context, ordered=ordered)
+        # setting ordered=False may be problematic, but it is required until
+        # ansible supports OrderedDict in templates, which can't happen until
+        # it stops supporting python 2.6
+        c = self.parse_json_yaml(context, ordered=False)
         t = Environment(loader=BaseLoader).from_string(str(template))
         return t.render(c)
 
