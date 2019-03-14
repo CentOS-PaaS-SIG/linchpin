@@ -4,6 +4,8 @@ executionID = UUID.randomUUID().toString()
 podName = 'linchpinMB-' + executionID
 OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
+env.ghprbTargetBranch = env.ghprbTargetBranch ?: 'default'
+STABLE_LABEL = 'stable-' + env.ghprbTargetBranch
 
 // Check out PR's version of library
 library identifier: "linchpin-pipeline@develop",
@@ -49,7 +51,7 @@ podTemplate(name: podName,
             // This adds the custom slave container to the pod.
             // Must be first with name 'jnlp'
             containerTemplate(name: 'jnlp',
-                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/jenkins-continuous-infra-slave:stable',
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/jenkins-continuous-infra-slave' + STABLE_LABEL,
                 ttyEnabled: false,
                 args: '${computer.jnlpmac} ${computer.name}',
                 command: '',
@@ -75,6 +77,7 @@ podTemplate(name: podName,
                         ghprbPullId = msg_content['ghprbPullId']
                         def ghprbPullAuthorLogin = msg_content['ghprbPullAuthorLogin']
                         def ghprbActualCommit = msg_content['ghprbActualCommit']
+                        env.ghprbTargetBranch = msg_content['ghprbTargetBranch']
                         ghprbGhRepository = msg_content['ghprbGhRepository']
                         def sha1 = msg_content['sha1']
 
@@ -93,6 +96,8 @@ podTemplate(name: podName,
                                    value: "${ghprbGhRepository}"),
                             string(name: 'ghprbPullAuthorLogin',
                                    value: "${ghprbPullAuthorLogin}"),
+                            string(name: 'ghprbTargetBranch',
+                                   value: "${env.ghprbTargetBranch}"),
                             string(name: 'sha1',
                                    value: "${sha1}")
                           ],

@@ -16,6 +16,7 @@ env.MSG_PROVIDER = 'fedora-fedmsg'
 // Defaults for SCM operations
 env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/linchpin'
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
+env.ghprbTargetBranch = env.ghprbTargetBranch ?: 'develop'
 
 library identifier: "ci-pipeline@master",
         retriever: modernSCM([$class: 'GitSCMSource',
@@ -86,6 +87,7 @@ pipeline {
                                 "ghprbActualCommit": env.ghprbActualCommit,
                                 "ghprbPullId": env.ghprbPullId,
                                 "ghprbPullAuthorLogin": env.ghprbPullAuthorLogin,
+                                "ghprbTargetBranch": env.ghprbTargetBranch,
                                 "sha1": env.sha1
                             ]
                             mContentString = JsonOutput.toJson(mContent)
