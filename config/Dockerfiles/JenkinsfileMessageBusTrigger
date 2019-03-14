@@ -4,7 +4,7 @@ executionID = UUID.randomUUID().toString()
 podName = 'linchpinMB-' + executionID
 OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
-env.ghprbTargetBranch = env.ghprbTargetBranch ?: 'default'
+env.ghprbTargetBranch = env.ghprbTargetBranch ?: 'develop'
 STABLE_LABEL = 'stable-' + env.ghprbTargetBranch
 
 // Check out PR's version of library
@@ -51,7 +51,7 @@ podTemplate(name: podName,
             // This adds the custom slave container to the pod.
             // Must be first with name 'jnlp'
             containerTemplate(name: 'jnlp',
-                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/jenkins-continuous-infra-slave' + STABLE_LABEL,
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/jenkins-continuous-infra-slave:' + STABLE_LABEL,
                 ttyEnabled: false,
                 args: '${computer.jnlpmac} ${computer.name}',
                 command: '',
