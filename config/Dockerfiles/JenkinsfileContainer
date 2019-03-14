@@ -14,9 +14,10 @@ DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 env.ghOrg = 'herlo'
 env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/linchpin'
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
+env.ghprbTargetBranch = env.ghprbTargetBranch ?: 'develop'
 
 // If this PR does not include an image change, then use this tag
-STABLE_LABEL = "stable"
+STABLE_LABEL = "stable-" + env.ghprbTargetBranch
 tagMap = [:]
 
 // Initialize
@@ -145,6 +146,9 @@ properties([
       string(defaultValue: 'develop',
              description: '',
              name: 'ghprbActualCommit'),
+      string(defaultValue: 'develop',
+             description: '',
+             name: 'ghprbTargetBranch'),
       string(defaultValue: '',
              description: '',
              name: 'sha1'),

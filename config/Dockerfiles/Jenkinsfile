@@ -2,16 +2,17 @@ import com.cloudbees.plugins.credentials.Credentials
 
 env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/linchpin'
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
+env.ghprbTargetBranch = env.ghprbTargetBranch ?: 'develop'
 env.ghprbPullAuthorLogin = env.ghprbPullAuthorLogin ?: ''
 env.ghprbPullId = env.ghprbPullId ?: ''
 
-env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop'
+env.TARGET_BRANCH = env.ghprbTargetBranch ?: 'develop'
 
 // Needed for podTemplate()
-env.SLAVE_TAG = env.SLAVE_TAG ?: 'stable'
-env.FEDORA28_TAG = env.FEDORA28_TAG ?: 'stable'
-env.FEDORA29_TAG = env.FEDORA29_TAG ?: 'stable'
-env.CENTOS7_TAG = env.CENTOS7_TAG ?: 'stable'
+env.SLAVE_TAG = env.SLAVE_TAG ?: 'stable-' + env.ghprbTargetBranch
+env.FEDORA28_TAG = env.FEDORA28_TAG ?: 'stable-' + env.ghprbTargetBranch
+env.FEDORA29_TAG = env.FEDORA29_TAG ?: 'stable-' + env.ghprbTargetBranch
+env.CENTOS7_TAG = env.CENTOS7_TAG ?: 'stable-' + env.ghprbTargetBranch
 
 DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 // if LINCHPIN_PROVIDERS is defined in jenkins global
@@ -69,16 +70,16 @@ properties(
                 string(defaultValue: '',
                        description: 'Git Hub Repository',
                        name: 'ghprbGhRepository'),
-                string(defaultValue: 'stable',
+                string(defaultValue: 'stable-' + env.ghprbTargetBranch,
                        description: 'Tag for slave image',
                        name: 'SLAVE_TAG'),
-                string(defaultValue: 'stable',
+                string(defaultValue: 'stable-' + env.ghprbTargetBranch,
                        description: 'Tag for fedora28 image',
                        name: 'FEDORA28_TAG'),
-                string(defaultValue: 'stable',
+                string(defaultValue: 'stable-' + env.ghprbTargetBranch,
                        description: 'Tag for fedora29 image',
                        name: 'FEDORA29_TAG'),
-                string(defaultValue: 'stable',
+                string(defaultValue: 'stable-' + env.ghprbTargetBranch,
                        description: 'Tag for centos7 image',
                        name: 'CENTOS7_TAG'),
                 string(description: 'Providers to be tested',

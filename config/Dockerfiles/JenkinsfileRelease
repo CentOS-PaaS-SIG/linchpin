@@ -18,10 +18,11 @@ env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/' + repoName
 
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
 //env.ghprbActualCommit = env.ghprbActualCommit ?: 'test_pypi_install'
+env.ghprbTargetBranch = env.ghprbTargetBranch ?: 'develop'
 
 env.ghprbPullAuthorLogin = env.ghprbPullAuthorLogin ?: ''
 
-env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop'
+env.TARGET_BRANCH = env.ghprbTargetBranch ?: 'develop'
 //env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop-testing'
 env.MASTER_BRANCH = env.MASTER_BRANCH ?: 'master'
 //env.MASTER_BRANCH = env.MASTER_BRANCH ?: 'master-testing'
@@ -35,7 +36,8 @@ DOCKER_HUB_IMAGE ?: 'linchpin'
 
 OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
-env.FEDORA29_TAG = env.FEDORA29_TAG ?: 'stable'
+STABLE_LABEL = 'stable-' + env.ghprbTargetBranch
+env.FEDORA29_TAG = env.FEDORA29_TAG ?: STABLE_LABEL
 
 // Pod name to use
 jslave_podName = 'jslave-' + repoName + '_' + executionID
@@ -74,7 +76,7 @@ podTemplate(name: jslave_podName,
             // This adds the custom slave container to the pod.
             // Must be first with name 'jnlp'
             containerTemplate(name: 'jnlp',
-                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/jenkins-continuous-infra-slave:stable',
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/jenkins-continuous-infra-slave:' + STABLE_LABEL,
                 ttyEnabled: false,
                 alwaysPullImage: true,
                 args: '${computer.jnlpmac} ${computer.name}',
