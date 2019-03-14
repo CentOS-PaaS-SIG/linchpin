@@ -83,7 +83,7 @@
         <hudson.plugins.git.extensions.impl.ChangelogToBranch>
           <options>
             <compareRemote>origin</compareRemote>
-            <compareTarget>develop</compareTarget>
+	    <compareTarget>${ghprbTargetBranch}</compareTarget>
           </options>
         </hudson.plugins.git.extensions.impl.ChangelogToBranch>
       </extensions>
