@@ -1,4 +1,5 @@
 FROM centos:7
+# trigger 2.0 release 
 LABEL maintainer "https://github.com/CentOS-PaaS-SIG/linchpin"
 LABEL description "This container will verify linchpin works under Centos7"
 
