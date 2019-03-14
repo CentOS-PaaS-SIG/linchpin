@@ -8,7 +8,10 @@ openshift-new:
         resource_definitions:
           - name: openshift
             role: openshift_inline
-            namespace: "{{ namespace | default('continuous-infra') }}"
+            # the variable name must not be 'namespace' due to collision
+            # with Jinja2 internal variable. Known issue:
+            # https://github.com/ansible/ansible/issues/41955
+            namespace: {{ oc_namespace | default('continuous-infra') }}
             definition:
               kind: Pod
               apiVersion: v1
@@ -40,6 +43,12 @@ openshift-new:
                 dnsPolicy: ClusterFirst
                 serviceAccount: ''
                 status: {}
+        {% if credentials is defined %}
         credentials:
-          filename: "{{ credsfile | default('upshift.yaml') }}" # fetched from --creds-path is provided
-          profile: "{{ profile | default('default') }}"
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
+        credentials:
+          filename: upshift.yaml
+          profile: default
+        {% endif %}
