@@ -349,13 +349,13 @@
   loop: "{{ res_def['networks']|product(res_count)|list }}"
   when:
     - res_def['networks'] is defined
-    - net.dhcp is not defined or net.dhcp == true
+    - net[0]['dhcp'] is not defined or net[0]['dhcp']== true
 
 - set_fact:
     macs: []
 
 - set_fact:
-    macs: "{{ macs + [mac_addresses.results[node.1].matches[node.0].mac.address] }}"
+    macs: "{{ macs + [mac_addresses.results[node.1].matches[node.0].mac.address | default('')] | difference(['']) }}"
   loop: "{{ range(0,res_def['networks']|length,1)|list|product(res_count)|list }}"
   loop_control:
     loop_var: node
