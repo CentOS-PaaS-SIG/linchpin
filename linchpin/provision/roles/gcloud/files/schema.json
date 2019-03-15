@@ -100,6 +100,22 @@
                     "gateway_ipv4": { "type": "string", "required": false },
                     "name": { "type": "string", "required": true }
                 }
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["gcloud_gcp_compute_router"]
+                    },
+                    "bgp": { "type": "dict", "required": true },
+                    "description": { "type": "string", "required": false },
+                    "name": { "type": "string", "required": true },
+                    "region": { "type": "string", "required": true },
+                    "network_name": { "type": "string", "required": true },
+                    "scopes": { "type": "list", "required": false }
+                }
             }
 	    ]
 	 }
