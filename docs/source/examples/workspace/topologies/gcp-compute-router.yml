@@ -1,0 +1,26 @@
+topology:
+  topology_name: gcloud
+  resource_groups:
+    - resource_group_name: "gcloud"
+      resource_group_type: "gcloud"
+      resource_definitions:
+        # since network names cannot be propagated to subsequent 
+        # resource definitions make sure you set enable_uhash = False
+        # in linchpin.conf
+        - name: "tcomputenetwork"
+          role: gcloud_gcp_compute_network
+          description: test_gcp_compute_network_linchpin
+        - name: "tcomputerouter"
+          role: gcloud_gcp_compute_router
+          bgp:
+            asn: 64514
+            advertise_mode: CUSTOM
+            advertised_groups:
+            - ALL_SUBNETS
+            advertised_ip_ranges:
+            - range: 1.2.3.4
+            - range: 6.7.0.0/16
+          network_name: tcomputenetwork
+          region: us-central1
+      credentials:
+        filename: gcloud.key
