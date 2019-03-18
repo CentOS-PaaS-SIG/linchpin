@@ -22,6 +22,7 @@ Before starting, please :ref:`install the latest version of LinchPin <installati
    hooks
    inventory
    destroy
+   tutorials
 
 
 
