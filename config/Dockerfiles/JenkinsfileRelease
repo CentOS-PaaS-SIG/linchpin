@@ -219,6 +219,16 @@ EOF
                             sh "git push --tags origin " + env.ghprbActualCommit + ":" + MASTER_BRANCH
                         }
                     }
+                    stage('Trigger readthedocs webhook') {
+                        steps {
+                            withCredentials([string(credentialsId: 'readthedocstoken', variable: 'DOCSTOKEN')]) {
+                                sh """
+                                   #!/bin/bash -x
+                                   curl -X POST -d "branches=${env.ghprbTargetBranch}" -d "token=${DOCSTOKEN}" https://readthedocs.org/api/v2/webhook/linchpin/78530/
+                                   """
+                            }
+                        }
+                    }
                 }
                 catch (e) {
 
