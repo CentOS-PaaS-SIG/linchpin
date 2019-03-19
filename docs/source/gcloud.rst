@@ -24,9 +24,8 @@ gcloud_gce_net
 
 Google compute engine network (gce_net) are provisioned using this resource.
 
-* :docs1.5:`Topology Example <workspace/topologies/gce-net.yml>`
+* :docs1.5:`Topology Example <workspaces/topologies/gce-net.yml>`
 * `Ansible module <http://docs.ansible.com/ansible/latest/gce_net_module.html>`_
->>>>>>> Updated examples for gce_net module
 
 Additional Dependencies
 -----------------------
