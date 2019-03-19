@@ -1,4 +1,4 @@
-Provisioning OpenStack Server with linchpin
+Provisioning OpenStack Server with LinchPin
 =================================================
 
 LinchPin can be used to provision compute instances on OpenStack.  If you need to familiarize yourself with OpenStack Server, `read this`_. Now let's step through the process of creating a new workspace for provisioning OpenStack

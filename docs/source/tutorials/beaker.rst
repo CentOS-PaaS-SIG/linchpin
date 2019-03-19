@@ -1,4 +1,4 @@
-Provisioning Beaker Server with linchpin
+Provisioning Beaker Server with LinchPin
 =================================================
 
 LinchPin can be used to provision compute instances on Beaker.  If you need to familiarize yourself with Beaker Server, `read this`_. Now let's step through the process of creating a new workspace for provisioning Beaker
