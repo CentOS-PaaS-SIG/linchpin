@@ -56,6 +56,41 @@ libvirt-new:
           host_groups:
             - example
 
+libvirt-custom-xml:
+  topology:
+    topology_name: libvirt-custom-xml
+    resource_groups:
+      - resource_group_name: libvirt-custom-xml
+        resource_group_type: libvirt
+        resource_definitions:
+          - role: libvirt_node
+            name: centos71
+            count: 1
+            uri: {{ uri | default('qemu:///system') }}
+            image_src: {{ image_src | default('http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz') }}
+            memory: {{ memory | default('2048') }}
+            vcpus: {{ vcpus | default('1') }}
+            arch: {{ arch |  default('x86_64') }}
+            xml: {{ xml | default('custom.xml') }}
+            {% if networks is defined %}
+            networks:
+              {% for net in networks %}
+              - {{ net }}
+              {% endfor %}
+            {% else %}
+            networks:
+              - name: default
+            {% endif %}
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example
+
 libvirt-network:
   topology:
     topology_name: "libvirt_network"
