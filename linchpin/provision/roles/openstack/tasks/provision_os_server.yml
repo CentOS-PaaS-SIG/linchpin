@@ -51,8 +51,14 @@
   set_fact:
     res_def_names: "{{ res_def_names  + [os_resource_name + inst_c] }}"
   with_sequence: start=1 end={{ res_def['count'] }}
+  when: res_def['count'] > 1
   loop_control:
     loop_var: inst_c
+
+- name: generate res_def_names
+  set_fact:
+    res_def_names: "{{ res_def_names  + [os_resource_name] }}"
+  when: res_def['count'] == 1
 
 - name: "provision/teardown os_server resources with provided auth"
   os_server:
