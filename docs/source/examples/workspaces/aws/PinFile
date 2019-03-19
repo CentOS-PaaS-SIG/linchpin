@@ -165,7 +165,7 @@ aws-ec2-vpc-net:
             cidr_block: {{ cidr_block | default('10.10.0.0/16') }}
             {% if tags is defined %}
               tags:
-              {% for key value in tags.items() %}
+              {% for key, value in tags.items() %}
                 {{key}}: {{value}}
               {% endfor %}
             {% else %}
@@ -198,7 +198,7 @@ aws-ec2-vpc-subnet:
             cidr_block: {{ cidr_block | default('13.0.0.0/16') }}
             {% if tags is defined %}
               tags:
-              {% for key value in tags.items() %}
+              {% for key, value in tags.items() %}
                 {{key}}: {{value}}
               {% endfor %}
             {% else %}
@@ -214,7 +214,7 @@ aws-ec2-vpc-subnet:
             cidr: {{ cidr| default('13.0.1.0/24') }}
             {% if tags is defined %}
               tags:
-              {% for key value in tags.items() %}
+              {% for key, value in tags.items() %}
                 {{key}}: {{value}}
               {% endfor %}
             {% else %}
@@ -335,8 +335,8 @@ aws-ec2-elb-lb:
         resource_definitions:
           - name: demoec2elblb
             role: aws_ec2_elb_lb
-            region: {{ region | defualt('us-east-1') }}
-            {% if zones is defined }}
+            region: {{ region | default('us-east-1') }}
+            {% if zones is defined %}
             zones:
               {% for zone in zones %}
               - {{ zone }}
