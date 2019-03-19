@@ -58,3 +58,16 @@ gcloud-template-inventory:
           count: 1
           host_groups:
             - example
+
+gcloud-gce-eip:
+  topology:
+    topology_name: gcloud
+    resource_groups:
+      - resource_group_name: "gcloud"
+        resource_group_type: "gcloud"
+        resource_definitions:
+          - name: "testgcloudeiplinchpin"
+            role: gcloud_gce_eip
+            region: us-east1
+        credentials:
+          filename: gcloud.key

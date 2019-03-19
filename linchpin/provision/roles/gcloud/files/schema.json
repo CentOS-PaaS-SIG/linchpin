@@ -2,20 +2,35 @@
     "res_defs": {
         "type": "list",
         "schema": {
-            "type": "dict",
-            "schema": {
-               "role": {
-                   "type": "string",
-                   "required": true,
-                   "allowed": ["gcloud_gce"]
-               },
-               "name": { "type": "string", "required": true },
-               "flavor": { "type": "string", "required": true },
-               "region": { "type": "string", "required": true },
-               "image": { "type": "string", "required": true },
-               "count": { "type": "integer", "required": false }
+            "anyof": [{
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["gcloud_gce"]
+                    },
+		    "name": { "type": "string", "required": true },
+                    "flavor": { "type": "string", "required": true },
+                    "region": { "type": "string", "required": true },
+                    "image": { "type": "string", "required": true },
+                    "count": { "type": "integer", "required": false }
+		}
+	    },
+	    {
+		"type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["gcloud_gce_eip"]
+                    },
+                    "name": { "type": "string", "required": true },
+                    "region": { "type": "string", "required": true }
+                }
             }
-        }
+	    ]
+	 }
     }
 }
 

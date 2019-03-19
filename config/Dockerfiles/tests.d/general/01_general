@@ -3,7 +3,7 @@
 # Verify basic provisioning for all supplied providers
 # distros.exclude: none
 # providers.include: none
-# providers.exclude: none
+# providers.exclude: gcloud
 
 DISTRO=${1}
 PROVIDER=${2}
