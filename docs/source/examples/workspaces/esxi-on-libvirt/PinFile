@@ -1,0 +1,50 @@
+---
+esxi-libvirt:
+  topology:
+    topology_name: esxi-libvirt
+    resource_groups:
+      - resource_group_name: ansible-hook
+        resource_group_type: libvirt
+        resource_definitions:
+          - name: esxi
+            role: libvirt_node
+            uri: qemu:///system
+            count: 1
+            image_src: "file:///{{ workspace }}/Nested_ESXi6.7u1_Appliance_Template_v1.qcow2"
+            memory: 4096
+            vcpus: 1
+            xml: custom.xml
+            networks:
+              - name: default
+            additional_storage: 1G
+            cloud_config:
+              virt_type: do_nothing
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+        ansible_ssh_user: root
+        ansible_ssh_pass: VMware1!
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - esxi
+  hooks:
+    preup:
+      - name: Prepare ESXi Image
+        type: ansible
+        context: true
+        path: hooks/esxi_vm
+        actions:
+          - playbook: image.yml
+            extra_vars:
+              image_name: Nested_ESXi6.7u1_Appliance_Template_v1
+    postup:
+      # pip install PyVmomi
+      - name: Setup ESXi
+        type: ansible
+        context: true
+        path: hooks/esxi_vm
+        actions:
+          - playbook: setup.yml
