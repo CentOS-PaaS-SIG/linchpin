@@ -698,6 +698,9 @@ class LinchpinAPI(object):
             raise LinchpinError("Target 'linchpin' is not allowed.")
 
         for target in provision_data.keys():
+            if target == 'cfgs':
+                continue
+
             self.ctx.log_debug("Processing target: {0}".format(target))
 
             results[target] = {}
