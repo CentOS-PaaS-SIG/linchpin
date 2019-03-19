@@ -4,12 +4,13 @@
 
 - name: "halt node"
   virt:
-    name: "{{ libvirt_resource_name }}_{{ instance[1] }}"
+    name: "{{ libvirt_resource_name }}{{ instance[2] }}{{ instance[1] }}"
     state: destroyed
     uri: "{{ instance[1]['uri'] | default('qemu:///system') }}"
   with_nested:
     - ["{{ res_def }}"]
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: instance
   register: res_def_output
@@ -18,11 +19,12 @@
   when: not async
 
 - name: "get XML definition of vm"
-  command: "virsh -c {{ instance[1]  }} dumpxml {{ instance[0] }}_{{ instance[2] }}"
+  command: "virsh -c {{ instance[1]  }} dumpxml {{ instance[0] }}{{ instance[3] }}{{ instance[2] }}"
   with_nested:
     - ["{{  libvirt_resource_name }}"]
     - ["{{ res_def['uri'] | default('qemu:///system') }}"]
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: instance
   when: not async
@@ -31,12 +33,13 @@
 
 - name: "undefine node"
   virt:
-    name: "{{ libvirt_resource_name }}_{{ instance[1] }}"
+    name: "{{ libvirt_resource_name }}{{ instance[2] }}{{ instance[1] }}"
     command: undefine
     uri: "{{ instance[0]['uri'] | default('qemu:///system') }}"
   with_nested:
     - ["{{ res_def }}"]
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: instance
   register: res_def_output

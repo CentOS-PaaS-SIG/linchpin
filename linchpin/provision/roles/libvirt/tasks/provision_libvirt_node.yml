@@ -7,12 +7,13 @@
 
 - name: "does node already exist"
   virt:
-    name: "{{ nodeinfo[0] }}_{{ nodeinfo[1] }}"
+    name: "{{ nodeinfo[0] }}{{ nodeinfo[2] }}{{ nodeinfo[1] }}"
     command: status
     uri: "{{ nodeinfo[1]['uri'] | default('qemu:///system') }}"
   with_nested:
     - "{{ libvirt_resource_name }}"
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   ignore_errors: yes
   loop_control:
     loop_var: nodeinfo
@@ -49,13 +50,14 @@
 - name: "define node template"
   template:
     src: "../templates/libvirt_node.xml.j2"
-    dest: "/tmp/{{ libvirt_resource_name }}_{{ definition[3] }}"
+    dest: "/tmp/{{ libvirt_resource_name }}{{ definition[5] }}{{ definition[3] }}"
   with_nested:
     - ["{{ res_def['uri'] | default('qemu:///system') }}"]
     - ["{{ res_def }}"]
     - "{{ res_count }}"
     - ["{{ local_image_path }}"]
     - ["{{ img_src_ext }}"]
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: definition
   when:  node_exists['failed'] is defined
@@ -107,26 +109,28 @@
 - name: Add additional storage
   block:
   - name: "Add additional storage"
-    command: "qemu-img resize {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} +{{ definition[3] }}"
+    command: "qemu-img resize {{ definition[1] }}/{{ definition[0] }}{{ definition[5] }}{{ definition[4] }}.{{ definition[2] }} +{{ definition[3] }}"
     with_nested:
     - ["{{ libvirt_resource_name }}"]
     - ["{{ libvirt_image_path | expanduser }}"]
     - ["{{ img_src_ext }}"]
     - ["{{ res_def['additional_storage'] | default('1G') }}"]
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
     loop_control:
       loop_var: definition
     become: "{{ libvirt_become }}"
     when: res_def['additional_storage'] is defined and node_exists['failed'] is defined and uri_hostname == 'localhost'
 
   - name: "Add additional storage"
-    command: "qemu-img resize {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} +{{ definition[3] }}"
+    command: "qemu-img resize {{ definition[1] }}/{{ definition[0] }}{{ definition[5] }}{{ definition[4] }}.{{ definition[2] }} +{{ definition[3] }}"
     with_nested:
       - ["{{ libvirt_resource_name }}"]
       - ["{{ libvirt_image_path | expanduser }}"]
       - ["{{ img_src_ext }}"]
       - ["{{ res_def['additional_storage'] | default('1G') }}"]
       - "{{ res_count }}"
+      - ["{{ res_def['name_separator'] | default('_')  }}"]
     loop_control:
       loop_var: definition
     become: "{{ libvirt_become }}"
@@ -142,11 +146,12 @@
 
 - name: "Create directories"
   file:
-    path: "/tmp/vm-{{ definition[0] }}_{{ definition[1] }}"
+    path: "/tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}"
     state: "directory"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: definition
   remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
@@ -155,11 +160,12 @@
 
 - name: "Create directories"
   file:
-    path: "/tmp/vm-{{ definition[0] }}_{{ definition[1] }}"
+    path: "/tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}"
     state: "directory"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: definition
   when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init"
@@ -167,10 +173,11 @@
 - name: "Prepare cloud-config/user-data-local"
   template:
     src: "templates/cloud-config/user-data"
-    dest: "/tmp/vm-{{ definition[0] }}_{{ definition[1] }}/user-data"
+    dest: "/tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}/user-data"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: definition
   vars:
@@ -180,10 +187,11 @@
 - name: "Prepare cloud-config/user-data-remote"
   template:
     src: "templates/cloud-config/user-data"
-    dest: "/tmp/vm-{{ definition[0] }}_{{ definition[1] }}/user-data"
+    dest: "/tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}/user-data"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: definition
   remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
@@ -193,10 +201,11 @@
 - name: "Prepare cloud-config/meta-data"
   template:
     src: "templates/cloud-config/meta-data"
-    dest: "/tmp/vm-{{ definition[0] }}_{{ definition[1] }}/meta-data"
+    dest: "/tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}/meta-data"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: definition
   when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init"
@@ -204,10 +213,11 @@
 - name: "Prepare cloud-config/meta-data remote"
   template:
     src: "templates/cloud-config/meta-data"
-    dest: "/tmp/vm-{{ definition[0] }}_{{ definition[1] }}/meta-data"
+    dest: "/tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}/meta-data"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: definition
   remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
@@ -215,19 +225,21 @@
   when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init"
 
 - name: "localhost: Generate ci data cd image for cloud-init when cloud config is defined"
-  command: mkisofs -o /tmp/vm-{{ definition[0] }}_{{ definition[1] }}.iso -V cidata -r -J --quiet /tmp/vm-{{ definition[0] }}_{{ definition[1] }}/user-data /tmp/vm-{{ definition[0] }}_{{ definition[1] }}/meta-data
+  command: mkisofs -o /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}.iso -V cidata -r -J --quiet /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}/user-data /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}/meta-data
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: definition
   when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init" 
 
 - name: "remote_host: Generate ci data cd image for cloud-init when cloud config is defined"
-  command: mkisofs -o /tmp/vm-{{ definition[0] }}_{{ definition[1] }}.iso -V cidata -r -J --quiet /tmp/vm-{{ definition[0] }}_{{ definition[1] }}/user-data /tmp/vm-{{ definition[0] }}_{{ definition[1] }}/meta-data
+  command: mkisofs -o /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}.iso -V cidata -r -J --quiet /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}/user-data /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}/meta-data
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: definition
   remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
@@ -246,6 +258,7 @@
     - "{{ res_count }}"
     - ["{{ local_image_path }}"]
     - ["{{ img_src_ext }}"]
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: definition
   when: node_exists['failed'] is defined
@@ -254,11 +267,12 @@
 - name: Attempt and graceful roll back demo
   block:
   - name: "Create disk if it does not exist"
-    command: "qemu-img create -f qcow2 {{ libvirt_image_path }}/{{ libvirt_resource_name }}_{{ definition[2] }}_{{ definition[1]['name'] }}.qcow2 {{ definition[1]['size'] }}{{ definition[1]['units'] }}"
+    command: "qemu-img create -f qcow2 {{ libvirt_image_path }}/{{ libvirt_resource_name }}{{ definition[3] }}{{ definition[2] }}{{ definition[3] }}{{ definition[1]['name'] }}.qcow2 {{ definition[1]['size'] }}{{ definition[1]['units'] }}"
     with_nested:
     - ["{{ res_def['name'] }}"]
     - "{{ res_def['storage'] }}"
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
     loop_control:
       loop_var: definition
     when:
@@ -271,20 +285,21 @@
 
 - name: "Start VM"
   virt:
-    name: "{{ definition[0] }}_{{ definition[2] }}"
+    name: "{{ definition[0] }}{{ definition[3] }}{{ definition[2] }}"
     state: "running"
     uri: "{{ definition[1] }}"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - ["{{ res_def['uri'] | default('qemu:///system') }}"]
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: definition
   ignore_errors: no
 
 - name: wait for the vm to shut down (cloud-init)
   virt:
-    name: "{{ definition[0] }}_{{ definition[2] }}"
+    name: "{{ definition[0] }}{{ definition[3] }}{{ definition[2] }}"
     command: status
     uri: "{{ definition[1] }}"
   register: vmstatus
@@ -295,16 +310,18 @@
     - ["{{ libvirt_resource_name }}"]
     - ["{{ res_def['uri'] | default('qemu:///system') }}"]
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: definition
   when: node_exists['failed'] is defined and virt_type == "cloud-init"
 
 - name: "Remove cdrom (cloud-init)"
-  command: virsh -c {{ definition[1] }} change-media {{ definition[0] }}_{{ definition[2] }} hda --eject --config
+  command: virsh -c {{ definition[1] }} change-media {{ definition[0] }}{{ definition[3] }}{{ definition[2] }} hda --eject --config
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - ["{{ res_def['uri'] }}"]
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: definition
   ignore_errors: yes
@@ -312,13 +329,14 @@
 
 - name: "Start VM again (post cloud-init)"
   virt:
-    name: "{{ definition[0] }}_{{ definition[2] }}"
+    name: "{{ definition[0] }}{{ definition[3] }}{{ definition[2] }}"
     state: "running"
     uri: "{{ definition[1] }}"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - ["{{ res_def['uri'] | default('qemu:///system') }}"]
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: definition
   ignore_errors: no
@@ -326,13 +344,14 @@
 
 - name: "dump node data"
   virt:
-    name: "{{ data[0] }}_{{ data[2] }}"
+    name: "{{ data[0] }}{{ data[3] }}{{ data[2] }}"
     command: get_xml
     uri: "{{ data[1] }}"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - ["{{ res_def['uri'] | default('qemu:///system') }}"]
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: data
   when: not async
@@ -390,10 +409,11 @@
 
 - name: "Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
   set_fact:
-    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0]+'_'+data[1]|string, 'ip': extract_ip_address_result.results[data[1]].stdout, 'resource_type': 'libvirt_res' }] }}"
+    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0]+data[2]+data[1]|string, 'ip': extract_ip_address_result.results[data[1]].stdout, 'resource_type': 'libvirt_res' }] }}"
   with_nested:
     - "{{ libvirt_resource_name }}"
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: data
   when:
@@ -402,10 +422,11 @@
 
 - name: "remote: Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
   set_fact:
-    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0]+'_'+data[1]|string, 'ip': extract_ip_address_result_remote.results[data[1]].stdout, 'resource_type': 'libvirt_res' }] }}"
+    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0]+data[2]+data[1]|string, 'ip': extract_ip_address_result_remote.results[data[1]].stdout, 'resource_type': 'libvirt_res' }] }}"
   with_nested:
     - "{{ libvirt_resource_name }}"
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: data
   when:
@@ -414,10 +435,11 @@
 
 - name: "Append to topology_outputs_libvirt_nodes"
   set_fact:
-    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0]+'_'+data[1]|string, 'resource_type': 'libvirt_res' }] }}"
+    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0]+data[2]+data[1]|string, 'resource_type': 'libvirt_res' }] }}"
   with_nested:
     - "{{ libvirt_resource_name }}"
     - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: data
   when:
