@@ -16,7 +16,7 @@ gcloud_gce_eip
 
 Google Compute enginer external IP (gce_eip) are provisioned using this resource.
 
-* :docs1.5:`Topology Example <workspace/topologies/gce-eip.yml>`
+* :docs1.5:`Topology Example <workspaces/topologies/gce-eip.yml>`
 * `Ansible module <http://docs.ansible.com/ansible/latest/gce_eip_module.html>`_
 
 Additional Dependencies
