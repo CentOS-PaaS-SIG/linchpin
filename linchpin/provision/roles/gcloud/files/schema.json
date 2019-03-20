@@ -28,6 +28,27 @@
                     "name": { "type": "string", "required": true },
                     "region": { "type": "string", "required": true }
                 }
+            },
+  	    {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["gcloud_gce_net"]
+                    },
+                    "name": { "type": "string", "required": true },
+                    "allowed": { "type": "string", "required": false },
+                    "fwname": { "type": "string", "required": false },
+                    "ipv4_range": { "type": "string", "required": false },
+                    "mode": { "type": "string", "required": false },
+                    "src_range": { "type": "list", "required": false },
+                    "src_tags": { "type": "list", "required": false },
+                    "subnet_desc": { "type": "string", "required": false },
+		    "subnet_name": { "type": "string", "required": false },
+                    "subnet_region": { "type": "string", "required": false },
+                    "target_tags": { "type": "list", "required": false }
+                }
             }
 	    ]
 	 }
