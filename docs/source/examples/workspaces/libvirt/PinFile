@@ -99,6 +99,7 @@ libvirt-storage:
             networks:
               - name: default
             {% endif %}
+            disk_cache: none
             {% if add_storage is defined %}
             additional_storage: {{ storage }}
             {% else %}
@@ -108,6 +109,7 @@ libvirt-storage:
             storage:
               - name: {{ storage.name | default('myscsi') }}
                 size: {{ storage.size | default('1') }}
+                cache: none
                 units: {{ storage.units| default('G') }}
                 disk_type: {{ storage.type | default('virtio_scsi') }} # can also be virtio_blk
                 device: {{ storage.dev | default('sda') }}
