@@ -91,9 +91,10 @@ class CFGInventoryFormatter(InventoryFormatter):
                         if common_vars[var] in cfg_item[item].keys():
                             value = common_vars[var]
                             host_string += " " + var + "=" +\
-                                           cfg_item[item][value]
+                                           str(cfg_item[item][value])
                         else:
-                            host_string += " " + var + "=" + common_vars[var]
+                            host_string += " " + var + "=" +\
+                                           str(common_vars[var])
                 self.config.set(group, host_string)
 
     def generate_inventory(self):
