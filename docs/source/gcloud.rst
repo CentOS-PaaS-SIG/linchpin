@@ -32,7 +32,7 @@ gcloud_gcdns_zone
 
 Google DNS zone (gcdns_zone) are provisioned using this resource.
 
-* :docs1.5:`Topology Example <workspace/topologies/gcdns-zone.yml>`
+* :docs1.5:`Topology Example <workspaces/topologies/gcdns-zone.yml>`
 * `Ansible module <https://docs.ansible.com/ansible/latest/modules/gcdns_zone_module.html>`
 
 
