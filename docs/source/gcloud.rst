@@ -40,7 +40,7 @@ gcloud_gcdns_record
 
 Google DNS zone records (gcdns_record) are provisioned using this resource.
 
-* :docs1.5:`Topology Example <workspace/topologies/gcdns-record.yml>`
+* :docs1.5:`Topology Example <workspaces/topologies/gcdns-record.yml>`
 * `Ansible module <https://docs.ansible.com/ansible/latest/modules/gcdns_record_module.html>`
 
 Additional Dependencies
