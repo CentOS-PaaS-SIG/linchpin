@@ -357,6 +357,18 @@
   when: not async
   register: node_data
 
+- set_fact:
+    networks: []
+
+- set_fact:
+    networks: "{{ networks + [net] }}"
+  loop: "{{ res_def['networks'] }}"
+  loop_control:
+    loop_var: net
+  when:
+    - res_def['networks'] is defined
+    - net.dhcp is not defined or net.dhcp == true
+
 - xml:
     xmlstring: "{{ node_data.results[net.1].get_xml }}"
     xpath: "//interface[@type='network' and ./source[@network='{{net.0.name}}']]/mac"
@@ -365,17 +377,14 @@
   ignore_errors: yes
   loop_control:
     loop_var: net
-  loop: "{{ res_def['networks']|product(res_count)|list }}"
-  when:
-    - res_def['networks'] is defined
-    - net.dhcp is not defined or net.dhcp == true
+  loop: "{{ networks|product(res_count)|list }}"
 
 - set_fact:
     macs: []
 
 - set_fact:
     macs: "{{ macs + [mac_addresses.results[node.1].matches[node.0].mac.address] }}"
-  loop: "{{ range(0,res_def['networks']|length,1)|list|product(res_count)|list }}"
+  loop: "{{ range(0,networks|length,1)|list|product(res_count)|list }}"
   loop_control:
     loop_var: node
 
