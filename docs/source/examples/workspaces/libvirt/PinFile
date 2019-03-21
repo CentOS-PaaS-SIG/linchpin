@@ -46,6 +46,12 @@ libvirt-new:
                   ssh_import_id: gh:admin
                   lock_passwd: true
             {% endif %}
+            storage:
+              - name: osd0
+                size: 1
+                units: G
+                disk_type: virtio_blk
+                device: vdb
   layout:
     inventory_layout:
       vars:
