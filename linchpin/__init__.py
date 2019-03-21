@@ -236,14 +236,14 @@ class LinchpinAPI(object):
                 tgt_records = rundb.get_records(table=target, count=count)
 
                 if fields and 'start' in fields:
-                    for run_id, record in tgt_records.iteritems():
+                    for run_id, record in tgt_records.items():
                         st = record.get('start')
                         strt = float(st) if len(st) else float(1000000000.0)
                         start = time.localtime(strt)
                         record['start'] = time.strftime(dateformat, start)
 
                 if fields and 'end' in fields:
-                    for run_id, record in tgt_records.iteritems():
+                    for run_id, record in tgt_records.items():
                         en = record.get('end')
                         endt = float(st) if len(en) else float(1000000000.0)
                         end = time.localtime(endt)
@@ -389,8 +389,8 @@ class LinchpinAPI(object):
 
             if len(targets):
                 for tgts in record['targets']:
-                        for tgt, data in tgts.iteritems():
-                            run_id = int(data.keys()[0])
+                        for tgt, data in tgts.items():
+                            run_id = int(list(data.keys())[0])
                             if tgt in targets:
                                 tgt_data = (rundb.get_record(tgt,
                                             action=record['action'],
@@ -398,15 +398,15 @@ class LinchpinAPI(object):
                                 pf_data[tgt] = tgt_data
             else:
                 for tgts in record['targets']:
-                    for tgt, data in tgts.iteritems():
-                        run_id = int(data.keys()[0])
+                    for tgt, data in tgts.items():
+                        run_id = int(list(data.keys())[0])
                         tgt_data = (rundb.get_record(tgt,
                                     action=record['action'],
                                     run_id=run_id))
                         pf_data[tgt] = tgt_data
 
 
-        for t, data in pf_data.iteritems():
+        for t, data in pf_data.items():
             topo_data = data[0]['inputs'][0].get('topology_data')
             layout_data = data[0]['inputs'][0].get('layout_data')
             hooks_data = data[0]['inputs'][0].get('hooks_data')
@@ -465,16 +465,16 @@ class LinchpinAPI(object):
                                            'vault_pass',
                                            default=''))
 
-        for target in provision_data.keys():
+        for target in list(provision_data.keys()):
             if not isinstance(provision_data[target], dict):
                 raise LinchpinError("Target '{0}' does not"
                                     " exist.".format(target))
 
-        targets = [x.lower() for x in provision_data.keys()]
+        targets = [x.lower() for x in list(provision_data.keys())]
         if 'linchpin' in targets:
             raise LinchpinError("Target 'linchpin' is not allowed.")
 
-        for target in provision_data.keys():
+        for target in list(provision_data.keys()):
             if target == 'cfgs':
                 continue
 
@@ -487,7 +487,7 @@ class LinchpinAPI(object):
 
             if tx_id:
                 record = rundb.get_tx_record(tx_id)
-                run_id = (record['targets'][0][target].keys()[0])
+                run_id = (list(record['targets'][0][target].keys())[0])
 
 
             rundb_schema = json.loads(self.get_cfg(section='lp',
@@ -660,8 +660,8 @@ class LinchpinAPI(object):
 
         summary = {}
 
-        for target, data in results.iteritems():
-            for k, v in data['rundb_data'].iteritems():
+        for target, data in results.items():
+            for k, v in data['rundb_data'].items():
                 summary[target] = {k: {'rc': v['rc'], 'uhash': v['uhash']}}
 
         rundb.update_record('linchpin', lp_id, 'action', action)
@@ -688,16 +688,16 @@ class LinchpinAPI(object):
 
         return_code = 0
 
-        for target in provision_data.keys():
+        for target in list(provision_data.keys()):
             if not isinstance(provision_data[target], dict):
                 raise LinchpinError("Target '{0}' does not"
                                     " exist.".format(target))
 
-        targets = [x.lower() for x in provision_data.keys()]
+        targets = [x.lower() for x in list(provision_data.keys())]
         if 'linchpin' in targets:
             raise LinchpinError("Target 'linchpin' is not allowed.")
 
-        for target in provision_data.keys():
+        for target in list(provision_data.keys()):
             if target == 'cfgs':
                 continue
 
@@ -742,15 +742,15 @@ class LinchpinAPI(object):
         # get run_ids to query
         if len(targets):
             for tgts in record['targets']:
-                    for tgt, data in tgts.iteritems():
+                    for tgt, data in tgts.items():
                         if tgt in targets:
-                            tgt_run_ids[tgt] = int(data.keys()[0])
+                            tgt_run_ids[tgt] = int(list(data.keys())[0])
         else:
             for tgts in record['targets']:
-                for tgt, data in tgts.iteritems():
-                    tgt_run_ids[tgt] = int(data.keys()[0])
+                for tgt, data in tgts.items():
+                    tgt_run_ids[tgt] = int(list(data.keys())[0])
 
-        for target, run_id in tgt_run_ids.iteritems():
+        for target, run_id in tgt_run_ids.items():
             record = rundb.get_record(target, run_id=run_id, action='up')
             field_data = {}
             single_value_fields = ('action',
@@ -767,7 +767,7 @@ class LinchpinAPI(object):
                     else:
                         data_array = {}
                         for fld in f:
-                            for k, v in fld.iteritems():
+                            for k, v in fld.items():
                                 if field == 'outputs':
                                     if isinstance(v, dict):
                                         values = v
@@ -791,7 +791,7 @@ class LinchpinAPI(object):
         run_data = {}
         if tx_id is None:
             latest_run_data = rundb.get_records('linchpin', count=1)
-            run_data = self.get_run_data(latest_run_data.keys()[0],
+            run_data = self.get_run_data(list(latest_run_data.keys())[0],
                                          ('outputs',
                                           'inputs',
                                           'cfgs'))
@@ -814,7 +814,7 @@ class LinchpinAPI(object):
                 continue
             else:
                 target_group = target_group[0]
-            for key in target_group.keys():
+            for key in list(target_group.keys()):
                 target_group[key].update(run_data.get(key, {}))
             latest_run_data[k]["targets"] = [target_group]
         return latest_run_data
