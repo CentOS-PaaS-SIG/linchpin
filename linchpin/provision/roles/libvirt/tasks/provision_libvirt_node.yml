@@ -247,11 +247,14 @@
   delegate_to: "{{ uri_hostname }}"
   when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init"
 
+- set_fact:
+    vm_xml: "{% if res_def.xml is defined %}{{workspace}}/{{res_def.xml}}{% else %}libvirt_node.xml.j2{%endif%}"
+
 - name: "define node"
   virt:
     name: "{{ libvirt_resource_name }}"
     command: define
-    xml: "{{ lookup('template', 'libvirt_node.xml.j2') }}"
+    xml: "{{ lookup('template', vm_xml) }}"
     uri: "{{ definition[0] }}"
   with_nested:
     - ["{{ res_def['uri'] | default('qemu:///system') }}"]
