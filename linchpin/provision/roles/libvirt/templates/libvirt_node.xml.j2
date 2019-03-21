@@ -44,7 +44,7 @@
         <disk type='file' device='disk'>
           <driver name='qemu' type='qcow2' cache="{{ storage_def['cache'] | default('none') }}"/>
           {% if storage_def['source'] is not defined %}
-            <source file='/var/lib/libvirt/images/linchpin/{{ libvirt_resource_name }}{{ definition[5] }}{{ definition[2] }}{{ definition[5] }}{{ storage_def['name'] }}.qcow2' />
+            <source file='{{ libvirt_image_path }}/{{ libvirt_resource_name }}{{ definition[5] }}{{ definition[2] }}{{ definition[5] }}{{ storage_def['name'] }}.qcow2' />
           {% elif storage_def['source']['file'] is defined %}
             {% if storage_def['source']['file'].startswith('/') %}
               <source file='{{ storage_def['source']['file'] }}'/>
