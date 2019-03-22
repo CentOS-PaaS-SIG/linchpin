@@ -5,6 +5,7 @@
 #
 # Ansible module to provision, deprovision openstack hot templates
 
+from __future__ import absolute_import
 import os
 import ast
 from openstack import connection
