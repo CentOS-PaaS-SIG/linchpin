@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
 import libvirt
 from xml.dom import minidom
 
@@ -39,7 +40,7 @@ def iterate_interfaces(interface, network):
     for node in interfaceNodes:
         if node.nodeName != 'source':
             continue
-        if 'network' not in node.attributes.keys():
+        if 'network' not in list(node.attributes.keys()):
             return False
         if node.attributes['network'].nodeValue == network:
             return True
