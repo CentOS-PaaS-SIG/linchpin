@@ -6,11 +6,13 @@
 # Provision a dummy server. Useful for testing the linchpin api provisioner
 # without using actual resources.
 
+from __future__ import absolute_import
 import os
 import re
 import tempfile
 
 from ansible.module_utils.basic import AnsibleModule
+from six.moves import range
 
 # ---- Documentation Start ----------------#
 DOCUMENTATION = '''
