@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 
+from __future__ import absolute_import
 import os
 import sys
 import ast
@@ -15,6 +16,7 @@ from linchpin.exceptions import LinchpinError
 from linchpin.cli.context import LinchpinCliContext
 from linchpin.shell.click_default_group import DefaultGroup
 from linchpin.shell.mutually_exclusive import MutuallyExclusiveOption
+import six
 
 
 pass_context = click.make_pass_decorator(LinchpinCliContext, ensure=True)
@@ -39,7 +41,7 @@ def _handle_results(ctx, results, return_code):
     output = 'Nothing to do. Check input and try again.'
     rcs = [return_code]
 
-    for k, v in results.iteritems():
+    for k, v in six.iteritems(results):
 
         output = '\nID: {0}\n'.format(k)
         output += 'Action: {0}\n'.format(v['action'])
@@ -48,8 +50,8 @@ def _handle_results(ctx, results, return_code):
                                                                 'uHash',
                                                                 'Exit Code')
         output += '-------------------------------------------------\n'
-        for target, run_data in v['summary_data'].iteritems():
-            for rundb_id, data in run_data.iteritems():
+        for target, run_data in six.iteritems(v['summary_data']):
+            for rundb_id, data in six.iteritems(run_data):
 
                 output += '{0:<20}\t{1:>6}\t{2:>5}'.format(target,
                                                            rundb_id,
@@ -63,7 +65,7 @@ def _handle_results(ctx, results, return_code):
 
         task_results = v.get('results_data')
         if task_results:
-            for target, results in task_results.iteritems():
+            for target, results in six.iteritems(task_results):
                 if results['task_results']:
                     tasks = results['task_results'][0].get('failed')
 
@@ -481,7 +483,7 @@ def journal(ctx, targets, fields, count, view,
             ctx.log_state(e)
             sys.exit(1)
 
-        all_fields = json.loads(lpcli.get_cfg('lp', 'rundb_schema')).keys()
+        all_fields = list(json.loads(lpcli.get_cfg('lp', 'rundb_schema')).keys())
 
         if not fields:
             fields = ['action', 'uhash', 'rc']
@@ -506,8 +508,8 @@ def journal(ctx, targets, fields, count, view,
 
 
         if len(journal):
-            for target, values in journal.iteritems():
-                keys = values.keys()
+            for target, values in six.iteritems(journal):
+                keys = list(values.keys())
 
                 if len(keys):
                     print('\nTarget: {0}'.format(target), file=sys.stderr)
@@ -545,7 +547,7 @@ def journal(ctx, targets, fields, count, view,
             if not len(tx_id):
                 journal = OrderedDict(reversed(sorted(j.items())))
             else:
-                journal = OrderedDict(j.items())
+                journal = OrderedDict(list(j.items()))
         except LinchpinError as e:
             ctx.log_state(e)
             sys.exit(1)
@@ -553,7 +555,7 @@ def journal(ctx, targets, fields, count, view,
         output = ''
 
         if len(journal):
-            for lp_id, v in journal.iteritems():
+            for lp_id, v in six.iteritems(journal):
 
                 if v:
                     output += '\nID: {0}\t\t\t'.format(lp_id)
@@ -564,8 +566,8 @@ def journal(ctx, targets, fields, count, view,
                     output += '---\n'
 
                     for targets in v['targets']:
-                        for target, values in targets.iteritems():
-                            for rundb_id, data in values.iteritems():
+                        for target, values in six.iteritems(targets):
+                            for rundb_id, data in six.iteritems(values):
                                 output += '{0:<20}\t{1:>6}\t'.format(target,
                                                                      rundb_id)
                                 output += '{0:>5}'.format(data['uhash'])
@@ -601,9 +603,9 @@ def validate(ctx, targets, old_schema):
         old_schema = False
         return_code, results = lpcli.lp_validate(targets=targets,
                                                  old_schema=old_schema)
-        for target, item in results.iteritems():
+        for target, item in six.iteritems(results):
             result = ""
-            for kind, outcome in item.iteritems():
+            for kind, outcome in six.iteritems(item):
                 if outcome == "valid" or outcome == "valid under old schema":
                     result += "[SUCCESS] {0} for target '{1}' is "\
                         "{2}\n".format(kind, target, outcome)
