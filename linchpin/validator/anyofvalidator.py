@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from cerberus import Validator
 from cerberus import errors
 
@@ -9,7 +10,7 @@ class AnyofValidator(Validator):
     def _validate_anyof(self, definitions, field, value):
         """ {'type': 'list', 'logical': 'anyof'} """
 
-        if 'role' not in definitions[0]['schema'].keys():
+        if 'role' not in list(definitions[0]['schema'].keys()):
             return super(AnyofValidator, self)._validate_anyof(definitions,
                                                                field, value)
 
