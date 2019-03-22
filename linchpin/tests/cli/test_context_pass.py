@@ -2,6 +2,7 @@
 
 # flake8: noqa
 
+from __future__ import absolute_import
 import os
 
 from nose.tools import *
@@ -17,7 +18,7 @@ from unittest import TestCase
 try:
     import configparser as ConfigParser
 except ImportError:
-    import ConfigParser as ConfigParser
+    import six.moves.configparser as ConfigParser
 
 from linchpin.cli.context import LinchpinCliContext
 from linchpin.tests.mockdata.contextdata import ContextData
