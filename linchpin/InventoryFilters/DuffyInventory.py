@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
 try:
     from StrinIO import StringIO
 except ImportError:
@@ -36,13 +37,13 @@ class DuffyInventory(InventoryFilter):
             var_data = {}
         for host in res['hosts']:
             host_data[host] = {}
-            if '__IP__' not in var_data.keys():
+            if '__IP__' not in list(var_data.keys()):
                 host_data[host]['__IP__'] = host
             self.set_config_values(host_data[host], res, var_data)
         return host_data
 
     def get_host_ips(self, host_data):
-        return host_data.keys()
+        return list(host_data.keys())
 
     def get_inventory(self, topo, layout, config):
         host_data = []
