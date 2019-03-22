@@ -2,6 +2,7 @@
 
 # flake8: noqa
 
+from __future__ import absolute_import
 import os
 import json
 
@@ -101,7 +102,7 @@ def test_add_common_vars():
     """
     I don't know what this is
     """
-    host_groups = inv['host_groups'].keys()
+    host_groups = list(inv['host_groups'].keys())
     filter.add_sections(host_groups)
     filter.set_vars(inv)
     filter.add_ips_to_groups(host_groups, inv)
