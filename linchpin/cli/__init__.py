@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
 import os
 import ast
 import sys
@@ -18,6 +19,7 @@ from linchpin.exceptions import LinchpinError
 from linchpin.exceptions import TopologyError
 from linchpin.exceptions import ValidationError
 from linchpin.utils.dataparser import DataParser
+import six
 
 
 
@@ -139,7 +141,7 @@ class LinchpinCli(LinchpinAPI):
                         lt_data = targets[name]["inputs"]["layout_data"]
                         t_data = targets[name]["inputs"]["topology_data"]
                         c_data = {}
-                        if "cfgs" in targets[name].keys():
+                        if "cfgs" in list(targets[name].keys()):
                             c_data = targets[name]["cfgs"]["user"]
                         i_path = targets[name]["outputs"]["inventory_path"][0]
                         layout = lt_data["inventory_layout"]
@@ -268,7 +270,7 @@ class LinchpinCli(LinchpinAPI):
         roles = []
         dist_data = {}
         # get roles used
-        for target, data in run_data.iteritems():
+        for target, data in six.iteritems(run_data):
             inputs = data.get('inputs')
             topo = inputs.get('topology_data')
             res_grps = topo.get('resource_groups')
@@ -281,7 +283,7 @@ class LinchpinCli(LinchpinAPI):
             fields = {}
             outputs = data.get('outputs', {})
             resources = outputs.get('resources', [])
-            for dist_role, flds in dist_roles.iteritems():
+            for dist_role, flds in six.iteritems(dist_roles):
                 if dist_role in roles:
                     for f in flds.split(','):
                         if '.' not in f:
@@ -305,7 +307,7 @@ class LinchpinCli(LinchpinAPI):
             try:
                 for res in resources:
                     res_data = []
-                    for k, v in fields.iteritems():
+                    for k, v in six.iteritems(fields):
                         if not v:
                             res_dict = {}
                             res_dict[k] = res.get(k)
@@ -315,7 +317,7 @@ class LinchpinCli(LinchpinAPI):
                                 res_dict = {}
                                 for value in v:
                                     if isinstance(value, dict):
-                                        for key, vals in value.iteritems():
+                                        for key, vals in six.iteritems(value):
                                             subrsc = rsrc.get(key)
                                             for val in vals:
                                                 res_dict[val] = subrsc.get(val)
@@ -323,7 +325,7 @@ class LinchpinCli(LinchpinAPI):
                                         res_dict[value] = rsrc.get(value)
                                 res_data.append(res_dict)
 
-                    if target not in dist_data.keys():
+                    if target not in list(dist_data.keys()):
                         dist_data[target] = []
 
                     if len(res_data) and res_data not in dist_data[target]:
@@ -389,7 +391,7 @@ class LinchpinCli(LinchpinAPI):
                                                         tx_id=tx_id)
 
         # Distill data
-        new_tx_id = return_data.keys()[0]
+        new_tx_id = list(return_data.keys())[0]
 
         # This is what the API allows.
         # run_data = self.get_run_data(new_tx_id, ('outputs', 'inputs',
