@@ -59,6 +59,7 @@
     - ["{{ img_src_ext }}"]
     - ["{{ res_def['name_separator'] | default('_')  }}"]
     - ["{{ res_def['disk_cache'] | default('none')  }}"]
+    - ["{{ res_def['cpu_mode'] | default('host-model')  }}"]
   loop_control:
     loop_var: definition
   when:  node_exists['failed'] is defined
@@ -264,6 +265,7 @@
     - ["{{ img_src_ext }}"]
     - ["{{ res_def['name_separator'] | default('_')  }}"]
     - ["{{ res_def['disk_cache'] | default('none')  }}"]
+    - ["{{ res_def['cpu_mode'] | default('host-model')  }}"]
   loop_control:
     loop_var: definition
   when: node_exists['failed'] is defined
