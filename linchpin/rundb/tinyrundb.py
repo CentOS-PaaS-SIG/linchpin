@@ -1,9 +1,11 @@
+from __future__ import absolute_import
 from tinydb import TinyDB
 from tinydb.storages import JSONStorage
 from tinydb.operations import add
 from tinydb.operations import set as tinySet
 from tinydb.middlewares import CachingMiddleware
 from .basedb import BaseDB
+from six.moves import range
 
 
 def usedb(func):
@@ -66,7 +68,7 @@ class TinyRunDB(BaseDB):
             if len(res_list) != 0:
                 res_idx = res_list[0][0]
                 resources = res_list[0][1]
-                if "resources" in value[0].keys():
+                if "resources" in list(value[0].keys()):
                     de = resources["resources"]
                     for i in value[0]["resources"]:
                         de.append(i)
