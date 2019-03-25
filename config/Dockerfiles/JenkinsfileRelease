@@ -230,7 +230,6 @@ EOF
                         // Throw the error
                         throw e
 
-                }
                 } finally {
                     // Archive our artifacts
                     step([$class: 'ArtifactArchiver',
