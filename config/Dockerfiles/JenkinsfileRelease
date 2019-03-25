@@ -30,8 +30,8 @@ env.MASTER_BRANCH = env.MASTER_BRANCH ?: 'master'
 env.TEST_PYPI_REPO = env.TEST_PYPI_REPO ?: 'pypitest'
 env.PROD_PYPI_REPO = env.PROD_PYPI_REPO ?: 'pypi'
 
-DOCKER_HUB_USERNAME ?: 'contrainfra'
-DOCKER_HUB_IMAGE ?: 'linchpin'
+env.DOCKER_HUB_USERNAME = env.DOCKER_HUB_USERNAME ?: 'contrainfra'
+env.DOCKER_HUB_IMAGE = env.DOCKER_HUB_IMAGE ?: 'linchpin'
 
 
 OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
@@ -176,7 +176,7 @@ EOF
                                 ).trim()
                             if (tag != "v" + version) {
                                 sh "git tag v" + version
-                                sh "git push --tags origin " + env.ghprbActualCommit + ":" + TARGET_BRANCH
+                                sh "git push origin v" + version
                             }
                         }
                     }
@@ -196,11 +196,11 @@ EOF
                     }
                     stage('release-prod-version') {
                         dir(repoName) {
-                            sh "twine upload --config-file /tmp/pypirc -r " + env.PROD_PYPI_REPO + " dist/*"
+                            sh "twine upload --config-file /tmp/pypirc -r " + env.PROD_PYPI_REPO + " dist/* || echo 'Version already uploaded'"
                         }
                     }
                     stage('release-container') {
-                        dir('config/Dockerfiles/linchpin'){
+                        dir(repoName) {
                             string version= sh (
                                 script: "python setup.py --version",
                                 returnStdout: true
@@ -215,7 +215,7 @@ EOF
                     }
                     stage('push-to-master') {
                         dir(repoName) {
-                            sh "git push --tags origin " + env.ghprbActualCommit + ":" + MASTER_BRANCH
+                            sh "git push origin " + env.ghprbActualCommit + ":" + MASTER_BRANCH
                         }
                     }
                 }
