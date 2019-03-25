@@ -205,7 +205,6 @@ EOF
                                 script: "python setup.py --version",
                                 returnStdout: true
                                 ).trim()
-                            )
                             image = "docker.io/" + env.DOCKER_HUB_USERNAME + "/" + env.DOCKER_HUB_IMAGE
                             tagged_img = image + ":" + version
                             sh "buildah bud -t " + image + " ."
