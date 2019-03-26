@@ -38,6 +38,7 @@ node('master') {
                 def ghprbPullAuthorLogin = msg_content['ghprbPullAuthorLogin']
                 def ghprbActualCommit = msg_content['ghprbActualCommit']
                 env.ghprbTargetBranch = msg_content['ghprbTargetBranch']
+                env.ghprbGhRepository = msg_content['ghprbGhRepository']
                 def sha1 = msg_content['sha1']
 
                 currentBuild.displayName = "Build#: ${env.BUILD_NUMBER} - PR: ${ghprbPullId} - Author: ${ghprbPullAuthorLogin}"

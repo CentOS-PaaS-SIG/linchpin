@@ -87,6 +87,7 @@ pipeline {
                                 "ghprbActualCommit": env.ghprbActualCommit,
                                 "ghprbPullId": env.ghprbPullId,
                                 "ghprbPullAuthorLogin": env.ghprbPullAuthorLogin,
+                                "ghprbGhRepository": env.ghprbGhRepository,
                                 "ghprbTargetBranch": env.ghprbTargetBranch,
                                 "sha1": env.sha1
                             ]
