@@ -205,12 +205,10 @@ EOF
                                 script: "python setup.py --version",
                                 returnStdout: true
                                 ).trim()
-                            image = "docker.io/" + env.DOCKER_HUB_USERNAME + "/" + env.DOCKER_HUB_IMAGE
-                            tagged_img = image + ":" + version
-                            sh "buildah bud -t " + image + " ."
-                            sh "buildah push --authfile " + $docker-creds + " " + image
-                            sh "buildah tag " + image + " " + tagged_image
-                            sh "buildah push --authfile " + $docker-creds + " " + image
+                            withCredentials([file(credentialsId: 'docker_creds', variable: 'DOCKER_CREDS')]) {
+                                env.DOCKER_CREDS = DOCKER_CREDS
+                                pipelineUtils.executeInContainer(currentStage, "fedora29", "./config/Dockerfiles/buildah-push.sh "+version)
+                            }
                         }
                     }
                     stage('push-to-master') {
