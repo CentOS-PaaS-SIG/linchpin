@@ -245,9 +245,14 @@ class LinchpinHooks(object):
                 if a_b['name'] in global_hook_names:
                     t_a_b = GLOBAL_HOOKS.get(a_b['name'])
                     # update the extra_vars dict
+                    # fetch vars from linchpin.conf
+                    # and update them as context vars
+                    t_a_b["actions"][0]["extra_vars"].update(
+                        self.api.get_evar())
                     t_a_b["actions"][0]["extra_vars"].update(
                         a_b.get("extra_vars", {}))
                     a_b = t_a_b
+                # currently built-ins support only ansible
                 action_type = a_b.get('type', 'ansible')
                 ab_ctx = a_b['context'] if 'context' in a_b else False
                 if 'path' not in a_b:
