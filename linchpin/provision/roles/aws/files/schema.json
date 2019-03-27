@@ -34,6 +34,7 @@
                     "name": { "type": "string", "required": true},
                     "description": { "type": "string", "required": true},
                     "region": { "type": "string", "required": false},
+                    "vpc_id": { "type": "string", "required": false },
                     "rules": {
                         "type": "list",
                         "required": true,
