@@ -95,8 +95,8 @@ aws-sg-new:
                 proto: "tcp"
                 cidr_ip: "0.0.0.0/0"
               - rule_type: "outbound"
-                from_port: all
-                to_port: all
+                from_port: 0
+                to_port: 65535
                 proto: "all"
                 cidr_ip: "0.0.0.0/0"
             {% endif %}

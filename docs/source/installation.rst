@@ -70,7 +70,7 @@ For CentOS or RHEL the following packages should be installed:
 
     $ sudo yum install python-pip python-virtualenv libffi-devel \
     openssl-devel libyaml-devel gmp-devel libselinux-python make \
-    gcc redhat-rpm-config libxml2-python libxslt-python
+    gcc redhat-rpm-config libxml2-python libxslt-python git
 
 .. attention:: CentOS 6 (and likely RHEL 6) require special care during installation. See :doc:`centos6_install` for more detail.
 
@@ -273,8 +273,8 @@ As an alternative, LinchPin can be installed via github. This may be done in ord
 
 linchpin setup : Automatic Dependency installation:
 ---------------------------------------------------
-From version 1.6.5 linchpin includes linchpin setup commandline option to automate installations of linchpin dependencies. 
-linchpin setup uses built in ansible-playbooks to carryout the installations. 
+From version 1.6.5 linchpin includes linchpin setup commandline option to automate installations of linchpin dependencies.
+linchpin setup uses built in ansible-playbooks to carryout the installations.
 
 Install all the dependencies:
 

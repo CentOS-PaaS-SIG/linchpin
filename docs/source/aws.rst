@@ -42,7 +42,7 @@ definition, the following options are available.
 +------------------+------------+---------------+-------------------+-----------------+
 | vpc_subnet_id    | false      | string        | vpc_subnet_id     |                 |
 +------------------+------------+---------------+-------------------+-----------------+
-| assign_public_ip | false      | string        | assign_public_ip  |                 |
+| assign_public_ip | false      | boolean       | assign_public_ip  |                 |
 +------------------+------------+---------------+-------------------+-----------------+
 
 EC2 Inventory Generation
@@ -59,7 +59,7 @@ address will be provided since private EC2 DNS hostnames (e.g.
 For instances with both a public and private IP address, the public address is
 always provided instead of the private address, so as to avoid duplicate runs
 of Ansible on the same host via the generated inventory file.
- 
+
 aws_ec2_key
 -----------
 
@@ -71,8 +71,8 @@ AWS SSH keys can be added using this resource.
 .. note:: This resource will not be torn down during a :term:`destroy`
    action. This is because other resources may depend on the now existing
    resource.
- 
-aws_s3 
+
+aws_s3
 ------
 
 AWS Simple Storage Service buckets can be provisioned using this resource.
@@ -83,7 +83,7 @@ AWS Simple Storage Service buckets can be provisioned using this resource.
 .. note:: This resource will not be torn down during a :term:`destroy`
    action. This is because other resources may depend on the now existing
    resource.
- 
+
 aws_sg
 ------
 
@@ -95,7 +95,7 @@ AWS Security Groups can be provisioned using this resource.
 .. note:: This resource will not be torn down during a :term:`destroy`
    action. This is because other resources may depend on the now existing
    resource.
-  
+
 aws_ec2_eip
 -----------
 
@@ -170,7 +170,7 @@ Environment Variables
 ~~~~~~~~~~~~~~~~~~~~~
 
 LinchPin honors the AWS environment variables
- 
+
 Provisioning
 ~~~~~~~~~~~~
 
