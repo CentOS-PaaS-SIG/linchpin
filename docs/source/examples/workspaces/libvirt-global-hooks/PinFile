@@ -45,4 +45,4 @@ libvirt-builtins:
   hooks:
     postup:
       # note builtin hooks follow different structure when compared to localhooks
-      - name: ping
+      - name: port_up

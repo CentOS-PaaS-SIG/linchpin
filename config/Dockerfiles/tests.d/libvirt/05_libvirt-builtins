@@ -23,9 +23,8 @@ pushd docs/source/examples/workspaces/libvirt-global-hooks
 function clean_up {
     set +e
     linchpin -w . -v destroy ${TARGET}
-    # remove output file used to gen uhash if it exists
-    rm storage.txt || true
 }
+
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
 linchpin -w . -v up ${TARGET}
