@@ -1,0 +1,48 @@
+---
+libvirt-new:
+  topology:
+    topology_name: libvirt-new
+    resource_groups:
+      - resource_group_name: libvirt-new
+        resource_group_type: libvirt
+        resource_definitions:
+          - role: libvirt_node
+            name: checkglobalhooks
+            uri: {{ uri | default('qemu:///system') }}
+            count: 1
+            image_src: {{ image_src | default('http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz') }}
+            memory: {{ memory | default('2048') }}
+            vcpus: {{ vcpus | default('1') }}
+            arch: {{ arch |  default('x86_64') }}
+            ssh_key: {{ ssh_key | default('libvirt') }}
+            {% if networks is defined %}
+            networks:
+              {% for net in networks %}
+              - {{ net }}
+              {% endfor %}
+            {% else %}
+            networks:
+              - name: default
+              - name: default
+                dhcp: false
+            {% endif %}
+            additional_storage: {{ storage | default('2G') }}
+            storage:
+              - name: osd0
+                size: 1
+                units: G
+                disk_type: virtio_blk
+                device: vdb
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example
+  hooks:
+    postup:
+      # note builtin hooks follow different structure when compared to localhooks
+      - name: ping
