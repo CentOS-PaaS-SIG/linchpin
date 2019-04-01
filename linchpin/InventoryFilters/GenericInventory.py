@@ -18,9 +18,11 @@ class GenericInventory(InventoryFilter):
         host_data = []
         for res_grp in res_output:
             inv_filter = res_grp['resource_type']
-            data = self.filter_classes[inv_filter]()\
-                .get_host_data(res_grp, config)
-            host_data.append(data)
+            # check only when the inventory_filter exists
+            if inv_filter in list(self.filter_classes.keys()):
+                data = self.filter_classes[inv_filter]()\
+                    .get_host_data(res_grp, config)
+                host_data.append(data)
         return host_data
 
     def get_hosts_by_count(self, host_data, count):
