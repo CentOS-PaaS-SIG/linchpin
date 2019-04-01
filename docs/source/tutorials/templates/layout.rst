@@ -9,20 +9,22 @@ LinchPin can use layouts to describe what an Ansible inventory might look like a
 
 .. code:: yaml
 
-	layout:
-	  inventory_layout:
-		vars:
-		  hostname: __IP__
-	  	hosts:
-		  server:
-			count: 1
-			host_groups:
-			  - frontent
-	  host_groups:
-		all:
-		  vars:
-			ansible_user: root
-		frontend:
-		  vars:
+    ---
+    layout:
+      inventory_layout:
+        vars:
+          hostname: __IP__
+        hosts:
+          server:
+            count: 1
+            host_groups:
+              - frontent
+        host_groups:
+          all:
+            vars:
+              ansible_user: root
+            frontend:
+              vars:
+                ansible_ssh_common_args: -o StrictHostKeyChecking=no
 
 After provisioning the hosts, LinchPin will through each host type in the inventory_layout, pop :code:`count` hosts off of the list, and add them to the relevant host groups.  The :code:`host_groups` section of the layout is used to set environment variables for each of the hosts in a given host group
