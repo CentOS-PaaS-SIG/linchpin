@@ -16,6 +16,7 @@ Now that we have a PinFile, its time to add the code for a Beaker server.  Edit 
 
 .. code:: yaml
 
+    ---
     simple:
       topology:
         topology_name: simple
@@ -24,14 +25,14 @@ Now that we have a PinFile, its time to add the code for a Beaker server.  Edit 
             resource_group_type: beaker
             resource_definitions:
               - role: bkr_server
-				recipesets:
-				  - distro: RHEL-7.5
-					name: rhelsimple
-					arch: x86_64
-					variant: Server
-					count: 1
-					hostrequires:
-					  - rawxml: '<key_value key="model" op="=" value="KVM"/>'
+                recipesets:
+                  - distro: RHEL-7.5
+                    name: rhelsimple
+                    arch: x86_64
+                    variant: Server
+                    count: 1
+                    hostrequires:
+                      - rawxml: '<key_value key="model" op="=" value="KVM"/>'
 
 There are a number of other fields available for these two roles.  Information about those fields as well as the other Beaker roles can be found on the `Beaker provider page`_.
 

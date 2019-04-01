@@ -16,6 +16,7 @@ Now that we have a PinFile, its time to add the code for an AWS EC2 instance.  E
 
 .. code:: yaml
 
+    ---
     simple:
       topology:
         topology_name: simple
