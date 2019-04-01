@@ -16,6 +16,7 @@
       stat:
         path: "{{ ansible_ssh_private_key_file }}"
       register: stat_result
+      delegate_to: localhost
     - name: "search for the file in default path if not found"
       set_fact:
         ansible_ssh_private_key_file: "{{ default_ssh_key_path }}/{{ ansible_ssh_private_key_file }}"
