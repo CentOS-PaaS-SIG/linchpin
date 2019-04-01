@@ -1,0 +1,30 @@
+#!/bin/bash -xe
+
+# Verify basic provisioning with global hooks
+# distros.exclude: centos7
+# providers.include: libvirt
+# providers.exclude: none
+
+set -o pipefail
+
+DISTRO=${1}
+PROVIDER=${2}
+
+TEST_NAME="${DISTRO}/${PROVIDER}/05_libvirt-builtins"
+DESCRIPTION="Test ${PROVIDER} provider provisioning with builtin hooks"
+
+echo "Test Name: ${TEST_NAME}"
+echo "${DESCRIPTION}"
+
+TARGET="libvirt-builtins"
+
+pushd docs/source/examples/workspaces/libvirt-global-hooks
+
+function clean_up {
+    set +e
+    linchpin -w . -v destroy ${TARGET}
+}
+
+trap clean_up EXIT SIGHUP SIGINT SIGTERM
+
+linchpin -w . -v up ${TARGET}
