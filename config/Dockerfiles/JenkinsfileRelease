@@ -216,6 +216,17 @@ EOF
                             sh "git push origin " + env.ghprbActualCommit + ":" + MASTER_BRANCH
                         }
                     }
+                    stage('create GitHub release') {
+                        dir(reponame) {
+                            string version = sh (
+                                script python setup.py --version,
+                                returnStdout: true
+                            ).trim()
+                            withCredentials([string(credentialsId: 'github_api_token', variable: 'TOKEN')]) {
+                                pipelineUtils.executeInContainer(currentStage, "fedora29", "python ./config/Dockerfiles/release-notes.py "+ TOKEN + " " + version)
+                            }
+                        }
+                    }
                 }
                 catch (e) {
 

@@ -36,6 +36,7 @@ COPY init_libvirt.sh $HOME/
 
 RUN pip install -U pip; \
     pip install -U setuptools; \
+    pip install -U pygithub; \
     sed -i "/Service/a ExecStartPost=\/bin\/chmod 666 /dev/kvm" \
       /usr/lib/systemd/system/libvirtd.service
 

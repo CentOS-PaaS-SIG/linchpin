@@ -10,6 +10,7 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
 RUN yum -y install python-pip \
     && pip install -U pip \
     && pip install -U setuptools \
+    && pip install -U pygithub \
     && yum -y install curl \
     && curl -o /etc/yum.repos.d/herlo-linchpin-epel7.repo \
     https://copr.fedorainfracloud.org/coprs/herlo/linchpin-epel7/repo/epel-7/herlo-linchpin-epel7-epel-7.repo; \
