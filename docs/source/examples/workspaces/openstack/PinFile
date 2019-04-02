@@ -14,16 +14,16 @@ os-server-new:
             keypair: {{ keypair | default('ci-factory') }}
             fip_pool: {{ fip_pool | default('10.8.240.0') }}
             networks:
-              - {{ networks | default('e2e-openstack') }}
+              - {{ networks | default('provider_net_cci_6') }}
           - name: "ci-lp-cp-{{ distro | default('') }}frontend"
             role: os_server
             flavor: {{ flavor | default('m1.small') }}
-            image: {{ image | default('CentOS-7-x86_64-GenericCloud-1612') }}
+            image: {{ image | default('CentOS-7-x86_64-GenericCloud-1808') }}
             count: 1
             keypair: {{ keypair | default('ci-factory') }}
             auto_ip: no
             networks:
-              - {{ networks | default('e2e-openstack') }}
+              - {{ networks | default('provider_net_cci_6') }}
         {% if credentials is defined %}
         credentials:
           filename: {{ credentials.filename }}
