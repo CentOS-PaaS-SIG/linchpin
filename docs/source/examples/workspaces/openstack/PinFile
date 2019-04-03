@@ -12,7 +12,6 @@ os-server-new:
             image: {{ image | default('CentOS-7-x86_64-GenericCloud-1612') }}
             count: 1
             keypair: {{ keypair | default('ci-factory') }}
-            fip_pool: {{ fip_pool | default('10.8.240.0') }}
             networks:
               - {{ networks | default('e2e-openstack') }}
           - name: "ci-lp-cp-{{ distro | default('') }}frontend"
