@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
 import abc
+import six
 
 
-class InventoryFormatter:
-    __metaclass__ = abc.ABCMeta
-
+class InventoryFormatter(six.with_metaclass(abc.ABCMeta)):
     def __init__(self):
         pass
 
