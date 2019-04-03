@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
 import abc
+import six
+from six.moves import range
 
 try:
     from configparser import ConfigParser
 except ImportError:
-    from ConfigParser import ConfigParser
+    from six.moves.configparser import ConfigParser
 
 
-class InventoryFilter(object):
-    __metaclass__ = abc.ABCMeta
-
+class InventoryFilter(six.with_metaclass(abc.ABCMeta, object)):
     def __init__(self):
         self.config = ConfigParser(allow_no_value=True)
 
@@ -46,7 +47,7 @@ class InventoryFilter(object):
             self.config.add_section("all")
 
     def set_children(self, inv):
-        if 'host_groups' not in inv.keys():
+        if 'host_groups' not in list(inv.keys()):
             return
         for host_group in inv['host_groups']:
             if "children" in inv['host_groups'][host_group]:
@@ -56,7 +57,7 @@ class InventoryFilter(object):
 
 
     def set_vars(self, inv):
-        if 'host_groups' not in inv.keys():
+        if 'host_groups' not in list(inv.keys()):
             return
         for host_group in inv['host_groups']:
             if "vars" in inv['host_groups'][host_group]:
@@ -73,7 +74,7 @@ class InventoryFilter(object):
         inven_hosts.reverse()
         self.add_ips_to_host_group("all", inven_hosts)
         for host_name in layout['hosts']:
-            if 'count' in host_name.keys():
+            if 'count' in list(host_name.keys()):
                 count = host_name['count']
             else:
                 count = 1
@@ -96,9 +97,9 @@ class InventoryFilter(object):
     def add_common_vars(self, host_groups, layout):
         # defaults common_vars to [] when they doesnot exist
         host_groups.append("all")
-        common_vars = layout['vars'] if 'vars' in layout.keys() else []
+        common_vars = layout['vars'] if 'vars' in list(layout.keys()) else []
         for group in host_groups:
-            items = dict(self.config.items(group)).keys()
+            items = list(dict(self.config.items(group)).keys())
             self.config.remove_section(group)
             self.config.add_section(group)
             for item in items:
@@ -111,7 +112,7 @@ class InventoryFilter(object):
                 self.config.set(group, host_string)
 
     def get_hostname(self, data, cfgs, default_fields):
-        if '__IP__' in cfgs.keys():
+        if '__IP__' in list(cfgs.keys()):
             val = self.config_value_helper(data, cfgs['__IP__'])
             if val:
                 return (cfgs['__IP__'], val)
@@ -139,12 +140,12 @@ class InventoryFilter(object):
             # this handles errors in which the key does not exist
             if isinstance(instance, list) and key.isdigit():
                 return self.config_value_helper(instance[int(key)], rest)
-            if key not in instance.keys():
+            if key not in list(instance.keys()):
                 return ''
             return self.config_value_helper(instance[key], rest)
         else:
             if keys == '':
                 return ''
-            if keys not in instance.keys():
+            if keys not in list(instance.keys()):
                 return ''
             return instance[keys]

@@ -1,6 +1,7 @@
 """
 Inventory Providers List
 """
+from __future__ import absolute_import
 from linchpin.exceptions import LinchpinError
 
 from .AWSInventory import AWSInventory

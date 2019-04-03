@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 try:
     from StringIO import StringIO
 except ImportError:
@@ -40,14 +41,14 @@ class BeakerInventory(InventoryFilter):
         hostname_var = host[0]
         hostname = host[1]
         host_data[hostname] = {}
-        if '__IP__' not in var_data.keys():
+        if '__IP__' not in list(var_data.keys()):
             var_data['__IP__'] = hostname_var
         self.set_config_values(host_data[hostname], res, var_data)
         return host_data
 
     def get_host_ips(self, host_data):
         if host_data:
-            return host_data.keys()
+            return list(host_data.keys())
         else:
             return []
 
