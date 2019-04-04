@@ -13,7 +13,7 @@ from linchpin.validator.anyofvalidator import AnyofValidator
 
 
 class Validator(object):
-    SECTIONS = ['topology', 'layout', 'cfgs', 'hooks']
+    SECTIONS = ['topology', 'layout', 'cfgs', 'hooks', 'run_id']
 
     def __init__(self, ctx, pb_path, pb_ext):
         self.ctx = ctx
