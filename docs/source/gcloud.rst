@@ -70,6 +70,8 @@ Credentials Management
 Google Compute Engine provides several ways to provide credentials. LinchPin supports
 some of these methods for passing credentials for use with openstack resources.
 
+.. include:: credentials/gcloud.rst
+
 Environment Variables
 `````````````````````
 
