@@ -49,7 +49,7 @@
 
 - name: generate res_def_names
   set_fact:
-    res_def_names: "{{ res_def_names  + [os_resource_name + 'default_delimiter' + inst_c] }}"
+    res_def_names: "{{ res_def_names  + [os_resource_name + default_delimiter + inst_c] }}"
   with_sequence: start=0 end={{ res_def['count']|int - 1 }}
   when: res_def['count'] > 1
   loop_control:
