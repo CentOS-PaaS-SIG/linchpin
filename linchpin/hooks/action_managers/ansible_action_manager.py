@@ -56,6 +56,13 @@ class AnsibleActionManager(ActionManager):
             'type': {'type': 'string', 'allowed': ['ansible']},
             'path': {'type': 'string', 'required': False},
             'context': {'type': 'boolean', 'required': False},
+            'src': {
+                'type': 'dict',
+                'schema': {
+                    'type': {'type': 'string', 'required': True},
+                    'url': {'type': 'string', 'required': True}
+                }
+            },
             'actions': {
                 'type': 'list',
                 'schema': {
@@ -106,7 +113,6 @@ class AnsibleActionManager(ActionManager):
         """
         Executes the action_block in the PinFile
         """
-
         self.load()
         extra_vars = {}
 

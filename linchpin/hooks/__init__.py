@@ -49,6 +49,10 @@ from __future__ import absolute_import
 import os
 import ast
 import sys
+import git
+from git.exc import GitCommandError
+import glob
+import shutil
 
 from linchpin.hooks.action_managers import ACTION_MANAGERS
 from linchpin.hooks.built_ins import GLOBAL_HOOKS
@@ -326,6 +330,49 @@ class LinchpinHooks(object):
 
                     # validates the class object
                     a_b_obj.validate()
+
+                    if 'src' in a_b.keys():
+                        # fetch the src
+                        src_type = a_b['src']['type']
+                        # we can add other source types later
+                        # e.g. 'ftp', 'svn', or 'local' for hooks that exist ib
+                        # a different location on the local machine
+                        if src_type == 'git':
+                            git_remote = a_b['src']['url']
+                            # clone repository
+                            cwd = os.getcwd()
+                            try:
+                                git.Git(cwd).clone(git_remote)
+                            except GitCommandError as e:
+                                err_str = "already exists and is not an" + \
+                                          " empty directory"
+                                if err_str not in e.stderr:
+                                    raise
+                                pass
+                            # move files to relevant section of hooks dir
+                            dest_dir = "{0}/hooks/{1}/{2}".format(cwd,
+                                                                  a_b['type'],
+                                                                  a_b['name'])
+                            try:
+                                os.makedirs(dest_dir)
+                            except OSError as e:
+                                if e.errno != os.errno.EEXIST:
+                                    raise
+                                pass
+                            repo_name = git_remote.rsplit('/', 1)[-1]
+                            for filename in glob.glob(os.path.join(cwd,
+                                                                   repo_name,
+                                                                   a_b['type'],
+                                                                   a_b['name'],
+                                                                   '*.*')):
+                                if os.path.isdir(filename):
+                                    shutil.copytree(filename, dest_dir)
+                                else:
+                                    shutil.copy(filename, dest_dir)
+                            # remove old directory
+                            shutil.rmtree(os.path.join(cwd, repo_name))
+                        else:
+                            raise HookError("Invalid type for src")
 
                     # produce a partial application of update_record to limit
                     # data passed to action managers
