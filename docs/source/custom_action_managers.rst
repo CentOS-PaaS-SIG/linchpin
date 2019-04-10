@@ -210,5 +210,3 @@ Following is an example for the python interface implemented:
               print(script)
               print(path)
 
-In order to write a custom_action_manager one has to implement ActionManager class overriding the following functions:
-
