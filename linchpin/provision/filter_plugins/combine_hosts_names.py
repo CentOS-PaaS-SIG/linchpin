@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
-
 from __future__ import absolute_import
 from six.moves import range
-
+import linchpin.FilterUtils.FilterUtils as filter_utils
 
 def merge_two_dicts(x, y):
     z = x.copy()   # start with x's keys and values
@@ -29,5 +28,5 @@ class FilterModule(object):
     ''' A filter to fix network format '''
     def filters(self):
         return {
-            'combine_hosts_names': combine_hosts_names
+            'combine_hosts_names': filter_utils.combine_hosts_names
         }

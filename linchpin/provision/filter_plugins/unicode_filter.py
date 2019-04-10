@@ -2,16 +2,12 @@
 
 from __future__ import absolute_import
 import json
-
-
-def format_output(output):
-    output = json.dumps(output)
-    return output
+import linchpin.FilterUtils.FilterUtils as filter_utils
 
 
 class FilterModule(object):
-    ''' A filter to fix output format '''
+    ''' A filter to fix unicode format '''
     def filters(self):
         return {
-            'unicode_filter': format_output
+            'unicode_filter': filter_utils.format_output
         }

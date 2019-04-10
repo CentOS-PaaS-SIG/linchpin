@@ -1,29 +1,13 @@
 #!/usr/bin/env python
+
 from __future__ import absolute_import
+import linchpin.FilterUtils.FilterUtils as filter_utils
 from xml.etree.ElementTree import fromstring
 
 
-def get_libvirt_files(output):
-    files = []
-    results = output['results']
-    for result in results:
-        if len(result['stdout']) > 0:
-            stdout = result['stdout']
-            myxml = fromstring(stdout)
-            devices = myxml.findall('devices')
-            for device in devices:
-                disks = device.findall('disk')
-                for disk in disks:
-                    if disk.attrib["type"] == 'file':
-                        if len(disk.findall('source')) > 0:
-                            source = disk.findall('source')[0]
-                            files.append(source.attrib['file'])
-    return files
-
-
 class FilterModule(object):
-    ''' A filter to fix network format '''
+    ''' A filter to get libvirt files from xml '''
     def filters(self):
         return {
-            'get_libvirt_files': get_libvirt_files
+            'get_libvirt_files': filter_utils.get_libvirt_files
         }
