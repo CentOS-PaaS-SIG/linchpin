@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  tasks:
+    - name: netping
+      wait_for:
+        host: localhost # or hostvars[inventory_hostname]['ansible_default_ipv4']['address']
+        port: 8384
+        timeout: 300 # will try for 5 mins 
+        state: present

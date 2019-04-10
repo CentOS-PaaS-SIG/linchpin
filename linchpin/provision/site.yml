@@ -3,15 +3,16 @@
 
 - name:  "schema check and Pre Provisioning Activities on topology_file"
   hosts: localhost
-  gather_facts: True
+  gather_facts: False
   roles:
     - { role: 'common' }
 
 - name:  "Provisioning resources based on resource group type"
   hosts: localhost
-  gather_facts: false
+  gather_facts: False
   roles:
     - { role: 'dummy', when: dummy_res_grps | length > 0 }
+    - { role: 'nummy', when: nummy_res_grps | length > 0 }
     - { role: 'openstack', when: os_res_grps | length > 0  }
     - { role: 'aws', when: aws_res_grps | length > 0 }
     - { role: 'gcloud', when: gcloud_res_grps | length > 0 }
@@ -24,6 +25,6 @@
 
 - name: "Writing contents to file"
   hosts: localhost
-  gather_facts: True
+  gather_facts: False
   roles:
     - { role: 'gather_resources'}

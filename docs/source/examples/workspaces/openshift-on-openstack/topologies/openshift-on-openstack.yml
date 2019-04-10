@@ -1,0 +1,84 @@
+---
+topology_name: openshift-on-openstack
+resource_groups:
+  - resource_group_name: os-sg-new
+    resource_group_type: openstack
+    resource_definitions:
+      - name: "openshift_security_group"
+        role: os_sg
+        description: "Openstack Security Group with openshift access"
+        rules:
+          - rule_type: "inbound"
+            from_port: 22
+            to_port: 22
+            proto: "tcp"
+            cidr_ip: "0.0.0.0/0"
+          - rule_type: "outbound"
+            from_port: 22
+            to_port: 22
+            proto: "tcp"
+            cidr_ip: "0.0.0.0/0"
+          - rule_type: "inbound"
+            from_port: 53
+            to_port: 53
+            proto: "tcp"
+            cidr_ip: "0.0.0.0/0"
+          - rule_type: "inbound"
+            from_port: 53
+            to_port: 53
+            proto: "udp"
+            cidr_ip: "0.0.0.0/0"
+          - rule_type: "inbound"
+            from_port: 80
+            to_port: 80
+            proto: "tcp"
+            cidr_ip: "0.0.0.0/0"
+          - rule_type: "inbound"
+            from_port: 443
+            to_port: 443
+            proto: "tcp"
+            cidr_ip: "0.0.0.0/0"
+          - rule_type: "inbound"
+            from_port: 8443
+            to_port: 8443
+            proto: "tcp"
+            cidr_ip: "0.0.0.0/0"
+          - rule_type: "inbound"
+            from_port: 4789
+            to_port: 4789
+            proto: "udp"
+            cidr_ip: "0.0.0.0/0"
+          - rule_type: "inbound"
+            from_port: 8053
+            to_port: 8053
+            proto: "tcp"
+            cidr_ip: "0.0.0.0/0"
+          - rule_type: "inbound"
+            from_port: 8053
+            to_port: 8053
+            proto: "udp"
+            cidr_ip: "0.0.0.0/0"
+          - rule_type: "inbound"
+            from_port: 10250
+            to_port: 10250
+            proto: "tcp"
+            cidr_ip: "0.0.0.0/0"
+    credentials:
+      filename: clouds.yaml
+      profile: ci-rhos
+  - resource_group_name: "openshift-on-openstack"
+    resource_group_type: openstack
+    resource_definitions:
+      - role: os_server
+        name: openstack-openshift
+        flavor: m1.large.small.disk
+        image: CentOS-7-x86_64-GenericCloud-1503
+        count: 1
+        keypair: ci-factory
+        networks:
+          - e2e-openstack
+        fip_pool: 10.8.240.0
+        security_groups: openshift_security_group
+    credentials:
+      filename: clouds.yaml
+      profile: ci-rhos

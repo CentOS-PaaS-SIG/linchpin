@@ -1,0 +1,47 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+  - set_fact:
+      image_name: "{{ image_name | default('Nested_ESXi6.7u1_Appliance_Template_v1') }}"
+      images_path: "{{ images_path | default('/tmp/') }}"
+      image_source: "{{ image_source | default('https://download3.vmware.com/software/vmw-tools/nested-esxi') }}"
+      image_deploy: "{{ image_deploy | default(false) }}"
+
+  - name: "Check that {{ image_name }}.qcow2 exists"
+    stat:
+      path: "{{ images_path }}/{{ image_name }}.qcow2"
+    register: image
+
+  - name: "Build {{ image_name }} image"
+    block:
+      - name: Get ESXI OVA image
+        get_url:
+          url: "{{image_source }}/{{ image_name }}.ova"
+          dest: "/tmp/{{ image_name }}.ova"
+
+      - name: Create temporary folder
+        file:
+          path: "/tmp/{{ image_name }}/"
+          state: directory
+
+      - name: Extract disks from Image
+        unarchive:
+          src: "/tmp/{{ image_name }}.ova"
+          dest: "/tmp/{{ image_name }}/"
+          creates: "/tmp/{{ image_name }}/{{ image_name }}-disk1.vmdk"
+
+      - name: Convert disk from vmdk to qemu2
+        command: "qemu-img convert -O qcow2 {{ image_name }}-disk1.vmdk {{ image_name }}.qcow2"
+        args:
+          chdir: "/tmp/{{ image_name }}"
+          creates: "{{ image_name }}.qcow2"
+
+      - name: "Move image to {{ images_path }}"
+        copy:
+          src: "/tmp/{{ image_name }}/{{ image_name }}.qcow2"
+          dest: "{{ images_path }}/{{ image_name }}.qcow2"
+          mode: 0644
+
+    when: image.stat.exists == False 
+

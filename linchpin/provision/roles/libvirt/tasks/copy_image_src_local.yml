@@ -81,13 +81,14 @@
 - name: "cp img_src to match node name"
   copy:
     src: "{{ img_src }}"
-    dest: "{{ img_item[0] }}{{ img_item[1] }}_{{ img_item[2] }}.{{ img_item[3] }}"
+    dest: "{{ img_item[0] }}{{ img_item[1] }}{{img_item[4]}}{{ img_item[2] }}.{{ img_item[3] }}"
     remote_src: false
   with_nested:
     - ["{{ local_image_path }}"]
     - ["{{ libvirt_resource_name }}"]
-    - "{{ res_count.stdout }}"
+    - "{{ res_count }}"
     - ["{{ img_src_ext }}"]
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: img_item
   become: "{{ libvirt_become }}"

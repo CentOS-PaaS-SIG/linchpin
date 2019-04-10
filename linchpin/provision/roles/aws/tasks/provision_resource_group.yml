@@ -11,10 +11,12 @@
 
 - name: "Get creds from auth driver"
   auth_driver:
-    filename: "{{ res_grp['credentials']['filename']  }}"
+    filename: "{{ res_grp['credentials']['filename'] }}"
     cred_type: "aws"
     cred_path: "{{ creds_path | default(default_credentials_path) }}"
     driver: "file"
+    vault_enc: "{{ vault_encryption }}"
+    vault_pass: "{{ vault_pass }}"
   register: auth_variable
   ignore_errors: true
   when: res_grp['credentials'] is defined

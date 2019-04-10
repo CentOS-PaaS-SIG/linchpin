@@ -2,6 +2,7 @@ import os
 import sys
 
 from nose.tools import assert_equal
+from nose.tools import assert_false
 from nose.tools import assert_dict_equal
 from nose.tools import assert_dict_contains_subset
 from nose.tools import with_setup
@@ -20,7 +21,6 @@ def test_cli_create():
     lpc = LinchpinCli(lpctx)
 
     assert_equal(isinstance(lpc, LinchpinCli), True)
-
 
 def setup_load_config():
 
@@ -71,6 +71,36 @@ def setup_lp_api():
     lpc.workspace = os.path.realpath(mock_path)
 
     lpa = LinchpinAPI(lpc)
+
+
+def setup_lp_cli():
+
+    """
+    Perform setup of LinchpinContext, lpc.load_config, and LinchPinAPI
+    """
+
+    global lpctx
+    global lpc
+
+    global target
+    global pinfile
+
+    base_path = '{0}'.format(os.path.dirname(
+        os.path.realpath(__file__))).rstrip('/')
+    lib_path = os.path.realpath(os.path.join(base_path, os.pardir))
+
+    setup_load_config()
+
+    pinfile = 'PinFile'
+    mock_path = '{0}/{1}/{2}'.format(lib_path, 'mockdata', provider)
+
+    lpctx = LinchpinCliContext()
+    lpctx.load_config(lpconfig=config_path)
+    lpctx.load_global_evars()
+    lpctx.setup_logging()
+    lpctx.workspace = os.path.realpath(mock_path)
+
+    lpc = LinchpinCli(lpctx)
 
 
 @with_setup(setup_lp_api)
@@ -127,6 +157,27 @@ def test_get_all_evars():
     lpa_evars = lpa.get_evar()
 
     assert_dict_contains_subset(test_evars, lpa_evars)
+
+
+@with_setup(setup_lp_cli)
+def test_render_template():
+    # load data as ordereddict
+    provider = 'layouts'
+    base_path = '{0}'.format(os.path.dirname(
+    os.path.realpath(__file__))).rstrip('/')
+    lib_path = os.path.realpath(os.path.join(base_path, os.pardir))
+    mock_path = '{0}/{1}/{2}'.format(lib_path, 'mockdata', provider)
+    layout = 'render_order.yml'
+    layout_file = open(mock_path+'/'+layout, 'r')
+    layout_data = lpc.parser.parse_json_yaml(layout_file.read())
+    layout_file.close()
+
+    # render template
+    template = lpc._render_template(layout_data, '{}')
+
+    # compare two ordered dicts
+    diff = [i1 for i1, i2 in zip(layout_data.iteritems(), template.iteritems()) if i1 != i2]
+    assert_false(diff)
 
 
 @with_setup(setup_lp_api)

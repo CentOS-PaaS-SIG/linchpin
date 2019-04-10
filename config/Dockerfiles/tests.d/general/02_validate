@@ -23,17 +23,21 @@ elif [ "${PROVIDER}" == "openstack" ]; then
     TARGETS="os-server-new os-sg-new os-vol-new"
 elif [ "${PROVIDER}" == "aws" ]; then
     TARGETS="aws-ec2-new aws-sg-new aws-s3-new aws-ec2-key-new"
+elif [ "${PROVIDER}" == "gcloud" ]; then
+    TARGETS="gcloud-gce-new"
 elif [ "${PROVIDER}" == "beaker" ]; then
     TARGETS="beaker-new"
 elif [ "${PROVIDER}" == "duffy" ]; then
     TARGETS="duffy-new"
+elif [ "${PROVIDER}" == "openshift" ]; then
+    TARGETS="openshift-new"
 else
     TARGETS="dummy-new"
 fi
 
-pushd docs/source/examples/workspace
+pushd docs/source/examples/workspaces/${PROVIDER}
 
 echo "CREDS_PATH: ${CREDS_PATH}"
 for target in ${TARGETS}; do
-    linchpin -w . -p PinFile.${PROVIDER}.yml -vvvv validate ${target}
+    linchpin -w . -vvvv validate ${target}
 done

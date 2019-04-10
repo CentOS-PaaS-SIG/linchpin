@@ -11,7 +11,9 @@
                         "allowed": ["libvirt_node"]
                     },
                     "name": { "type": "string", "required": true },
+                    "name_separator": { "type": "string", "required": false },
                     "vcpus": { "type": "integer", "required": true },
+                    "cpu_mode": { "type": "string", "required": false },
                     "memory": { "type": "integer", "required": true },
                     "count": { "type": "integer", "required": false },
                     "uri": { "type": "string", "required": false },
@@ -24,8 +26,10 @@
                     "remote_user": { "type": "string", "required": false },
                     "boot_dev": { "type": "string", "required": false },
                     "additional_storage": { "type": "string", "required": false },
+                    "disk_cache": { "type": "string", "required": false },
                     "network_bridge": { "type": "string", "required": false },
                     "ssh_key": { "type": "string", "required": false },
+                    "xml": { "type": "string", "required": false },
                     "cloud_config": {
                         "type": "dict",
                         "required": false,
@@ -65,6 +69,7 @@
                             "schema": {
                                 "name": { "type": "string", "required": true },
                                 "ip": { "type": "string", "required": false },
+                                "dhcp": { "type": "boolean", "required": false },
                                 "mac": { "type": "string", "required": false }
                             }
                         }
@@ -113,12 +118,74 @@
                         "allowed": ["libvirt_network"] },
                     "name": { "type": "string", "required": true },
                     "uri": { "type": "string", "required": false },
-                    "ip": { "type": "string", "required": true },
+                    "ip": { "type": "string", "required": false },
                     "prefix": { "type": "string", "required": false },
                     "dhcp_start": { "type": "string", "required": false },
                     "dhcp_end": { "type": "string", "required": false },
                     "bridge": { "type": "string", "required": false },
-                    "domain": { "type": "string", "required": false }
+                    "domain": { "type": "string", "required": false },
+                    "forward_mode": { "type": "string", "required": false },
+                    "netmask": { "type": "string", "required": false },
+                    "forward_dev": { "type": "string", "required": false },
+                    "delete_on_destroy": { "type": "boolean", "required": false },
+                    "dns": {
+		        "type": "dict",
+		       	"required": false,
+			"schema": {
+		            "texts": {
+                                "type": "list",
+                                "required": false,
+                                "schema": {
+                                    "type": "dict",
+                                    "schema": {
+                                        "name": { "type": "string", "required": true },
+                                        "value": { "type": "string", "required": true }
+                                    }
+                                }
+                            },
+			    "forwarders": {
+                                "type": "list",
+                                "required": false,
+                                "schema": {
+                                    "type": "dict",
+                                    "schema": {
+                                        "domain": { "type": "string", "required": false },
+                                        "addr": { "type": "string", "required": false }
+                                    }
+                                }
+                            },
+			    "services": {
+                                "type": "list",
+                                "required": false,
+                                "schema": {
+                                    "type": "dict",
+                                    "schema": {
+                                        "name": { "type": "string", "required": false },
+                                        "protocol": { "type": "string", "required": false },
+                                        "domain": { "type": "string", "required": false },
+                                        "target": { "type": "string", "required": false },
+                                        "port": { "type": "number", "required": false },
+                                        "priority": { "type": "number", "required": false },
+                                        "weight": { "type": "number", "required": false }
+                                    }
+                                }
+                            },
+			    "hosts": {
+                                "type": "list",
+                                "required": false,
+                                "schema": {
+                                    "type": "dict",
+                                    "schema": {
+                                        "ip": { "type": "string", "required": false },
+                                        "hostnames": {
+					    "type": "list",
+					    "required": true
+					}
+                                    }
+                                }
+                            }
+			}
+		    }
                 }
             },
             {

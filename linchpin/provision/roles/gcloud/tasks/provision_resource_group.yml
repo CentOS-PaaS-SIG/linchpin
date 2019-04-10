@@ -10,10 +10,12 @@
 
 - name: "Get creds from auth driver"
   auth_driver:
-    filename: "{{ res_grp['credentials']['filename']  }}"
+    filename: "{{ res_grp['credentials']['filename'] }}"
     cred_type: "gcloud"
     cred_path: "{{ creds_path | default(default_credentials_path) }}"
     driver: "file"
+    vault_enc: "{{ vault_encryption }}"
+    vault_pass: "{{ vault_pass }}"
   register: auth_variable
   ignore_errors: true
   when: res_grp['credentials'] is defined
@@ -33,3 +35,70 @@
     - ["{{ res_grp['resource_group_name'] }}"]
   loop_control:
     loop_var: res_item
+  when: state == 'present'
+
+# filter resources by the role type 
+# teardown the resources by role_type
+#
+- name: "teardown gce_eip definitions of current group"
+  include: teardown_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  with_nested:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) | filter_list_by_attr_val('role', 'gcloud_gce_eip') }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
+  when: state == 'absent'
+
+- name: "teardown gcdns records definitions of current group"
+  include: teardown_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  with_nested:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) | filter_list_by_attr_val('role', 'gcloud_gcdns_record') }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
+  when: state == 'absent'
+
+- name: "teardown gce zones definitions of current group"
+  include: teardown_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  with_nested:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) | filter_list_by_attr_val('role', 'gcloud_gcdns_zone') }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
+  when: state == 'absent'
+
+- name: "teardown gcloud_gcp_compute_router definitions of current group"
+  include: teardown_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  with_nested:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) | filter_list_by_attr_val('role', 'gcloud_gcp_compute_router') }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
+  when: state == 'absent'
+
+- name: "teardown gce_net instance definitions of current group"
+  include: teardown_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  with_nested:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) | filter_list_by_attr_val('role', 'gcloud_gce_net') }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
+  when: state == 'absent'
+
+- name: "teardown gce instance definitions of current group"
+  include: teardown_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  with_nested:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) | filter_list_by_attr_val('role', 'gcloud_gce') }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
+  when: state == 'absent'
+
+- name: "teardown gce_net instance definitions of current group"
+  include: teardown_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  with_nested:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) | filter_list_by_attr_val('role', 'gcloud_gcp_compute_network') }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
+  when: state == 'absent'

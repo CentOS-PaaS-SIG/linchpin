@@ -113,3 +113,8 @@
   set_fact:
     topology_outputs_os_heat: "{{ topology_outputs_os_heat + [ res_def_output ] }}"
   when: async and state == 'present'
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_os_heat: "{{ topology_outputs_os_heat | add_res_type('os_heat_res') }}"
+  when: async and state == 'present'

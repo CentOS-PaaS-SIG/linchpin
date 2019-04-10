@@ -85,7 +85,7 @@ def main():
 
     data = None
     try:
-        data = file(log_path).read()
+        data = open(log_path).read()
         if ((module_name == 'os_server' or module_name == 'os_volume') and
                 (len(data.split("\n")) == 4)):
             data = open(log_path).readlines()

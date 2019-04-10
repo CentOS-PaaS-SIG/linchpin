@@ -42,7 +42,7 @@ definition, the following options are available.
 +------------------+------------+---------------+-------------------+-----------------+
 | vpc_subnet_id    | false      | string        | vpc_subnet_id     |                 |
 +------------------+------------+---------------+-------------------+-----------------+
-| assign_public_ip | false      | string        | assign_public_ip  |                 |
+| assign_public_ip | false      | boolean       | assign_public_ip  |                 |
 +------------------+------------+---------------+-------------------+-----------------+
 
 EC2 Inventory Generation
@@ -90,11 +90,66 @@ aws_sg
 AWS Security Groups can be provisioned using this resource.
 
 * :docs1.5:`Topology Example <workspace/topologies/aws-sg-new.yml>`
-* `ec2_group module <http://docs.ansible.com/ansible/latest/ec2_group_module.html>`_
+* `ec2_group module <http://docs.ansible.com/ansible/latest/ec2_group_module.html>`
 
 .. note:: This resource will not be torn down during a :term:`destroy`
    action. This is because other resources may depend on the now existing
    resource.
+
+aws_ec2_eip
+-----------
+
+AWS EC2 elastic ips can be provisioned using this resource.
+
+* :docs1.5:`Topology Example <workspace/topologies/aws-ec2-eip.yml>`
+* `ec2_eip module <http://docs.ansible.com/ansible/latest/ec2_eip_module.html>`
+
+aws_ec2_vpc_net
+---------------
+
+AWS VPC networks can be provisioned using this resource.
+
+* :docs1.5:`Topology Example <workspaces/topologies/aws-ec2-vpc-net.yml>`
+* `ec2_vpc_net module <http://docs.ansible.com/ansible/latest/ec2_vpc_net.html
+>`_
+
+
+aws_ec2_vpc_net
+---------------
+
+AWS VPC networks can be provisioned using this resource.
+
+* :docs1.5:`Topology Example <workspace/topologies/aws-ec2-vpc-net.yml>`
+* `ec2_vpc_net module <http://docs.ansible.com/ansible/latest/ec2_vpc_net.html>`_
+
+
+aws_ec2_vpc_subnet
+------------------
+
+AWS VPC subnets can be provisioned using this resource.
+* :docs1.5:`Topology Example <workspace/topologies/aws-ec2-vpc-subnet.yml>`
+* `ec2_vpc_subnet module <http://docs.ansible.com/ansible/latest/ec2_vpc_subnet.html>`_
+
+aws_ec2_vpc_routetable
+----------------------
+
+AWS VPC routetable can be provisioned using this resource.
+* :docs1.5:`Topology Example <workspace/topologies/aws-ec2-vpc-routetable.yml>`
+* `ec2_vpc_route_table module <https://docs.ansible.com/ansible/latest/modules/ec2_vpc_route_table_module.html#ec2-vpc-route-table-module>`_
+
+aws_ec2_vpc_endpoint
+--------------------
+
+AWS VPC endpoint can be provisioned using this resource.
+* :docs1.5:`Topology Example <workspace/topologies/aws-ec2-vpc-endpoint.yml>`
+* `ec2_vpc_endpoint module <https://docs.ansible.com/ansible/latest/modules/ec2_vpc_endpoint_module.html>`_
+
+aws_ec2_elb_lb
+--------------
+
+AWS EC2 elb lb load balancer can be provisioned using this resource.
+* :docs1.5:`Topology Example <workspace/topologies/aws-ec2-elb-lb.yml>`
+* `ec2_vpc_endpoint module <https://docs.ansible.com/ansible/latest/modules/ec2_elb_module.html>`_
 
 Additional Dependencies
 -----------------------
@@ -107,12 +162,9 @@ Credentials Management
 AWS provides several ways to provide credentials. LinchPin supports
 some of these methods for passing credentials for use with AWS resources.
 
-One method to provide AWS credentials that can be loaded by LinchPin is to use
-the INI format that the `AWS CLI tool
-<https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html>`_
-uses.
 
-.. include:: includes/aws_creds.rst
+
+.. include:: credentials/aws.rst
 
 Environment Variables
 ~~~~~~~~~~~~~~~~~~~~~

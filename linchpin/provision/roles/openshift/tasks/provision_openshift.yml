@@ -1,0 +1,75 @@
+---
+- name: create resource definition
+  k8s:
+    # if the host is not mentioned it takes value from K8S_AUTH_HOST env var
+    host: "{{ auth_var['api_endpoint'] | default(omit) }}"
+    # if the host is not mentioned it takes value from K8S_API_KEY env var
+    api_key: "{{ auth_var['api_token'] | default(omit) }}"
+    key: "{{ auth_var['key_file'] | default(omit) }}"
+    context: "{{ auth_var['context'] | default(omit) }}"
+    kubeconfig: "{{ auth_var['kubeconfig'] | default(omit) }}"
+    force: "{{ res_def['force'] | default('no') }}"
+    api_version: "{{ auth_var['api_version'] | default(omit) }}"
+    cert_file: "{{ auth_var['cert_file'] | default(omit) }}"
+    name: "{{ res_def['name'] }}"
+    namespace: "{{ res_def['namespace'] | default(omit) }}"
+    kind: "{{ res_def['kind'] | default(omit) }}"
+    state: "{{ state }}"
+    definition: "{{ res_def['definition'] | default(omit) }}"
+    src: "{{ res_def['src'] | default(omit) }}"
+    verify_ssl: "{{ auth_var['verify_ssl'] | default('no') }}"
+    password: "{{ auth_var['password'] | default(omit) }}"
+    username: "{{ auth_var['username'] | default(omit) }}"
+    ssl_ca_cert: "{{ auth_var['ssl_ca_cert'] | default(omit) }}" 
+  register: res_def_output
+
+- name: Wait for the deployment to happen
+  pause: 
+    seconds: "{{ res_def['timeout'] | default(10) }}"
+
+- name: List all the pods
+  k8s_facts:
+    host: "{{ auth_var['api_endpoint'] | default(omit) }}"
+    # if the host is not mentioned it takes value from K8S_API_KEY env var
+    api_key: "{{ auth_var['api_token'] | default(omit) }}"
+    key: "{{ auth_var['key_file'] | default(omit) }}"
+    context: "{{ auth_var['context'] | default(omit) }}"
+    kubeconfig: "{{ auth_var['kubeconfig'] | default(omit) }}"
+    ssl_ca_cert: "{{ auth_var['ssl_ca_cert'] | default(omit) }}"
+    namespace: "{{ res_def['namespace'] | default(omit) }}"
+    kind: Pod
+    verify_ssl: no
+  register: pod_list
+
+- name: setfact for pod output
+  set_fact: 
+    pod_output: "{{ pod_list | get_pod_status(res_def_output) |default('') }}"
+  when: state == "present" and res_def_output["result"]["kind"] == "Pod"
+
+- name: set default for pod output
+  set_fact:
+    pod_output: "{{ pod_output | default('') }}"
+  when: state == "present"
+
+- name: fail when pod_output is failure
+  fail:
+    msg: "Multiple pods in pending/failure state please adjust the timeout value and retry"
+  when: state == "present" and pod_output == 'Failure' 
+
+- name: add output to topology
+  set_fact:
+    topology_outputs_openshift_resources: "{{ topology_outputs_openshift_resources + [pod_output] }}"
+  when:
+    - state == "present" 
+    - res_def_output["result"]["kind"] == "Pod"
+
+- name: add output to topology
+  set_fact:
+    topology_outputs_openshift_resources: "{{ topology_outputs_openshift_resources + [res_def_output] }}"
+  when:
+    - state == "present" 
+    - res_def_output["result"]["kind"] != "Pod"
+    
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_openshift_resources: "{{ topology_outputs_openshift_resources | add_res_type('openshift_res') }}"

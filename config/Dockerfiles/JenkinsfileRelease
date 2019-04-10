@@ -18,10 +18,11 @@ env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/' + repoName
 
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
 //env.ghprbActualCommit = env.ghprbActualCommit ?: 'test_pypi_install'
+env.ghprbTargetBranch = env.ghprbTargetBranch ?: 'develop'
 
 env.ghprbPullAuthorLogin = env.ghprbPullAuthorLogin ?: ''
 
-env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop'
+env.TARGET_BRANCH = env.ghprbTargetBranch ?: 'develop'
 //env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop-testing'
 env.MASTER_BRANCH = env.MASTER_BRANCH ?: 'master'
 //env.MASTER_BRANCH = env.MASTER_BRANCH ?: 'master-testing'
@@ -29,10 +30,14 @@ env.MASTER_BRANCH = env.MASTER_BRANCH ?: 'master'
 env.TEST_PYPI_REPO = env.TEST_PYPI_REPO ?: 'pypitest'
 env.PROD_PYPI_REPO = env.PROD_PYPI_REPO ?: 'pypi'
 
+env.DOCKER_HUB_USERNAME = env.DOCKER_HUB_USERNAME ?: 'contrainfra'
+env.DOCKER_HUB_IMAGE = env.DOCKER_HUB_IMAGE ?: 'linchpin'
+
 
 OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
-env.FEDORA27_TAG = env.FEDORA27_TAG ?: 'stable'
+STABLE_LABEL = 'stable-' + env.ghprbTargetBranch
+env.FEDORA29_TAG = env.FEDORA29_TAG ?: STABLE_LABEL
 
 // Pod name to use
 jslave_podName = 'jslave-' + repoName + '_' + executionID
@@ -71,15 +76,15 @@ podTemplate(name: jslave_podName,
             // This adds the custom slave container to the pod.
             // Must be first with name 'jnlp'
             containerTemplate(name: 'jnlp',
-                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/jenkins-continuous-infra-slave:stable',
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/jenkins-continuous-infra-slave:' + STABLE_LABEL,
                 ttyEnabled: false,
                 alwaysPullImage: true,
                 args: '${computer.jnlpmac} ${computer.name}',
                 command: '',
                 workingDir: '/workDir'),
-            containerTemplate(name: 'fedora27',
+            containerTemplate(name: 'fedora29',
                 alwaysPullImage: true,
-                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora27:' + FEDORA27_TAG,
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora29:' + FEDORA29_TAG,
                 ttyEnabled: false,
                 command: '',
                 privileged: true,
@@ -171,32 +176,55 @@ EOF
                                 ).trim()
                             if (tag != "v" + version) {
                                 sh "git tag v" + version
-                                sh "git push --tags origin " + env.ghprbActualCommit + ":" + TARGET_BRANCH
+                                sh "git push origin v" + version
                             }
                         }
                     }
                     currentStage = 'test-pypi-install'
                     stage(currentStage) {
                       dir(repoName) {
-                        pipelineUtils.executeInContainer(currentStage, "fedora27", "./config/Dockerfiles/linchpin-pip-install.sh " + version)
+                        pipelineUtils.executeInContainer(currentStage, "fedora29", "./config/Dockerfiles/linchpin-pip-install.sh " + version)
                       }
                     }
                     currentStage = "test-pypi-verify"
                     stage(currentStage) {
                       dir('linchpin') {
-                        env.distro = "fedora27"
+                        env.distro = "fedora29"
                         env.PROVIDERS = "dummy"
-                        pipelineUtils.executeInContainer(currentStage, "fedora27", "./config/Dockerfiles/linchpin-tests.sh")
+                        pipelineUtils.executeInContainer(currentStage, "fedora29", "./config/Dockerfiles/linchpin-tests.sh")
                       }
                     }
                     stage('release-prod-version') {
                         dir(repoName) {
-                            sh "twine upload --config-file /tmp/pypirc -r " + env.PROD_PYPI_REPO + " dist/*"
+                            sh "twine upload --config-file /tmp/pypirc -r " + env.PROD_PYPI_REPO + " dist/* || echo 'Version already uploaded'"
+                        }
+                    }
+                    stage('release-container') {
+                        dir(repoName) {
+                            string version= sh (
+                                script: "python setup.py --version",
+                                returnStdout: true
+                                ).trim()
+                            withCredentials([file(credentialsId: 'docker_creds', variable: 'DOCKER_CREDS')]) {
+                                env.DOCKER_CREDS = DOCKER_CREDS
+                                pipelineUtils.executeInContainer(currentStage, "fedora29", "./config/Dockerfiles/buildah-push.sh "+version)
+                            }
                         }
                     }
                     stage('push-to-master') {
                         dir(repoName) {
-                            sh "git push --tags origin " + env.ghprbActualCommit + ":" + MASTER_BRANCH
+                            sh "git push origin " + env.ghprbActualCommit + ":" + MASTER_BRANCH
+                        }
+                    }
+                    stage('create GitHub release') {
+                        dir(reponame) {
+                            string version = sh (
+                                script python setup.py --version,
+                                returnStdout: true
+                            ).trim()
+                            withCredentials([string(credentialsId: 'github_api_token', variable: 'TOKEN')]) {
+                                pipelineUtils.executeInContainer(currentStage, "fedora29", "python ./config/Dockerfiles/release-notes.py "+ TOKEN + " " + version)
+                            }
                         }
                     }
                 }
@@ -211,7 +239,6 @@ EOF
                         // Throw the error
                         throw e
 
-                }
                 } finally {
                     // Archive our artifacts
                     step([$class: 'ArtifactArchiver',

@@ -9,12 +9,12 @@
 
 - name:  "Provisioning beaker resources"
   hosts: localhost
-  gather_facts: True
+  gather_facts: False
   roles:
     - { role: 'beaker' }
 
 - name: "Gather resources to the RunDB"
   hosts: localhost
-  gather_facts: True
+  gather_facts: False
   roles:
     - { role: 'gather_resources' }

@@ -1,6 +1,6 @@
 PARENT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))/../../)
 
-DISTROS := fedora27 centos7 fedora28
+DISTROS := fedora29
 
 .PHONY: all
 all:
@@ -13,4 +13,3 @@ test: all
 
 pip_install.sh: ../../requirements.txt
 	./gen_pip_install.sh
-

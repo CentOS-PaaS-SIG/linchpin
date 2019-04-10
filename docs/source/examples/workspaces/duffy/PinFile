@@ -8,10 +8,11 @@ duffy-new:
         resource_definitions:
           - role: duffy_node
             name: duffy
-            version: 7
-            arch: x86_64
+            version: {{ version | default(7) }}
+            arch: {{ arch | default('x86_64') }}
             count: 1
-    credentials: duffy.key
+        credentials: {{ credentials | default('duffy.key') }}
+        
   layout:
     inventory_layout:
       vars:

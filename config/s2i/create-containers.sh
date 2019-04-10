@@ -9,8 +9,9 @@ project="continuous-infra"
 ## List all templates to be processed
 templates="jenkins/jenkins-continuous-infra-slave-buildconfig-template.yaml \
     jenkins/jenkins-persistent-buildconfig-template.yaml \
+    jenkins/buildah-buildconfig-template.yaml \
     distros/centos7-buildconfig-template.yaml \
-    distros/fedora27-buildconfig-template.yaml \
+    distros/fedora29-buildconfig-template.yaml \
     distros/fedora28-buildconfig-template.yaml"
 
 function logerror {
@@ -94,6 +95,12 @@ if [ -z "${REPO_REF}" ] ; then
   REPO_REF_PARAM=""
 else
   REPO_REF_PARAM="-p REPO_REF=${REPO_REF}"
+fi
+##
+if [ -z "{MASTER_CONTEXT_DIR}" ]; then
+  MASTER_CONTEXT_DIR=""
+else
+  MASTER_CONTEXT_DIR="-p MASTER_CONTEXT_DIR=${MASTER_CONTEXT_DIR}"
 fi
 
 oc project "${project}" > /dev/null 2>&1

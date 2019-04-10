@@ -1,0 +1,26 @@
+#!/bin/bash -xe
+
+# Verify the openstack router provisioning
+# distros.exclude: none
+# providers.include: openstack
+# providers.exclude: none
+
+DISTRO=${1}
+PROVIDER=${2}
+
+TARGET="os-router"
+TEMPLATE_DATA="{\"distro\": \"${DISTRO}-\"}"
+TMP_FILE=$(mktemp)
+
+function clean_up {
+    set +e
+    linchpin -w . -v destroy "${TARGET}"
+}
+trap clean_up EXIT SIGHUP SIGINT SIGTERM
+
+pushd docs/source/examples/workspaces/${PROVIDER}
+
+linchpin -w . -v up "${TARGET}"
+
+# cleanup the network
+linchpin -w . -v destroy "${TARGET}"

@@ -1,14 +1,15 @@
 // Openshift project
 openshiftProject = "continuous-infra"
 DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
-STABLE_LABEL = "stable"
 
 // Defaults for SCM operations
 env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/linchpin'
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
+env.ghprbTargetBranch = env.ghprbTargetBranch ?: 'develop'
+STABLE_LABEL = "stable-" + env.ghprbTargetBranch
 
 // Add new images here
-imageList = ["fedora28", "fedora27", "centos7"]
+imageList = ["fedora28", "fedora29", "centos7"]
 imageOperations = []
 
 library identifier: "ci-pipeline@master",
@@ -17,13 +18,16 @@ library identifier: "ci-pipeline@master",
 ])
 
 properties([
-  buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '20')),
+  buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '15')),
   [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/CentOS-PaaS-SIG/linchpin/'],
   parameters(
     [
       string(defaultValue: 'develop',
              description: '',
              name: 'ghprbActualCommit'),
+      string(defaultValue: 'develop',
+             description: '',
+             name: 'ghprbTargetBranch'),
       string(defaultValue: '',
              description: '',
              name: 'sha1'),
@@ -85,7 +89,7 @@ pipeline {
                     openshift.withCluster() {
                         openshift.withProject(openshiftProject) {
                             imageOperations.each {
-                                pipelineUtils.buildStableImage(openshiftProject, it)
+                                pipelineUtils.buildStableImage(openshiftProject, it, STABLE_LABEL)
                             }
                         }
                     }

@@ -13,6 +13,7 @@
     state: present
     name: "{{ dummy_name }}"
     count: "{{ res_def['count'] | default(1) }}"
+    domain: "{{ res_def['domain'] | default('') }}"
   register: outputitem
 
 - name: "set tmp var"
@@ -22,3 +23,7 @@
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_dummy: "{{ topology_outputs_dummy + tmp }}"
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_dummy: "{{ topology_outputs_dummy | add_res_type('dummy_res') }}"

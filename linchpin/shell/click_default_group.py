@@ -114,7 +114,7 @@ class DefaultGroup(click.Group):
         not be listed
         """
 
-        return ['init', 'up', 'destroy', 'fetch', 'journal']
+        return ['init', 'up', 'destroy', 'fetch', 'journal', 'setup']
 
     def get_command(self, ctx, cmd_name):
 

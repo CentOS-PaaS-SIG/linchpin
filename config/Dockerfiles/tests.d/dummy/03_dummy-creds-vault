@@ -1,0 +1,35 @@
+#!/bin/bash -xe
+
+# Verify creds-vault on dummy provider
+# distros.exclude: none
+# providers.include: dummy
+# providers.exclude: none
+
+DISTRO=${1}
+PROVIDER=${2}
+
+PINFILE="PinFile"
+TARGET="dummy_target"
+WORKSPACE_PATH="docs/source/examples/workspaces/dummy-creds-vault"
+CREDS_PATH="credentials/"
+export VAULT_PASSWORD=testval
+
+function clean_up {
+    set +e
+    linchpin -w .  -p "${PINFILE}" -v destroy "${TARGET}"
+    D_RC=0
+    D_RC=(${?} -o ${D_RC})
+    if [ ${D_RC} -ne 0 ]; then
+        exit ${D_RC}
+    fi
+}
+trap clean_up EXIT SIGHUP SIGINT SIGTERM
+
+if [ -e /tmp/dummy.hosts ]; then
+    rm /tmp/dummy.hosts
+fi
+
+# testing creds-vault
+pushd ${WORKSPACE_PATH}
+echo "Testing creds-path on dummy provider"
+linchpin -w . --creds-path "${CREDS_PATH}" -p "${PINFILE}" -v up "${TARGET}"

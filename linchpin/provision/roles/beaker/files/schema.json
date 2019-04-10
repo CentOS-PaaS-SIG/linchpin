@@ -14,6 +14,7 @@
                 "cancel_message": { "type": "string", "required": false },
                 "max_attempts": { "type": "integer", "required": false },
                 "attempt_wait_time": { "type": "integer", "required": false },
+		"ssh_keys_path": {"type": "string", "required": false },
                 "recipesets": {
                     "type": "list",
                     "schema": {
@@ -36,6 +37,8 @@
                                 "arch": { "type": "string", "required": false },
                                 "variant": { "type": "string", "required": false },
                                 "ks_meta": { "type": "string", "required": false },
+                                "kernel_options": { "type": "string", "required": false },
+                                "kernel_options_post": { "type": "string", "required": false },
                                 "reserve_duration": { "type": "integer", "required": false },
                                 "taskparam": {
                                     "type": "list",
@@ -110,7 +113,23 @@
                                     "type": "list",
                                     "required": false,
                                     "schema": { "type": "string", "required": true }
-                                }
+                                },
+                                "ssh_key": {
+                                    "type": "list",
+                                    "required": false,
+                                    "schema": { "type": "string", "required": true }
+                                },
+				"ssh_key_file": {
+				    "type": "list",
+				    "required": false,
+				    "schema": {"type": "string", "required": true}
+				},
+                                "ks_append": {
+                                    "type": "list",
+                                    "required": false,
+                                    "schema": { "type": "string", "required": true }
+                                },
+                                "kickstart": { "type": "string", "required": false }
                              }
                          }]
                     }

@@ -1,5 +1,5 @@
 <domain type='{{ definition[1]['driver'] | default('kvm') }}'>
-  <name>{{ libvirt_resource_name }}_{{ definition[2] }}</name>
+  <name>{{ libvirt_resource_name }}{{ definition[5] }}{{ definition[2] }}</name>
   <memory unit='KiB'>{{ definition[1]['memory'] * 1024 | int }}</memory>
   <vcpu placement='static'>{{ definition[1]['vcpus'] }}</vcpu>
   <os>
@@ -11,7 +11,7 @@
     <apic/>
     <pae/>
   </features>
-  <cpu mode='host-model'>
+  <cpu mode='{{ definition[7] }}'>
     <model fallback='allow' />
   </cpu>
   <clock offset='utc'/>
@@ -28,23 +28,23 @@
 {% if virt_type == 'cloud-init' %}
     <disk type='file' device='cdrom'>
       <driver name='qemu' type='raw'/>
-      <source file='/tmp/vm-{{ libvirt_resource_name }}_{{ definition[2] }}.iso'/>
+      <source file='/tmp/vm-{{ libvirt_resource_name }}{{ definition[5] }}{{ definition[2] }}.iso'/>
       <backingStore/>
       <target dev='hda' bus='ide'/>
       <readonly/>
     </disk>
 {% endif %}
     <disk type='file' device='disk'>
-      <driver name='qemu' type='qcow2'/>
-      <source file='{{ definition[3] }}/{{ libvirt_resource_name }}_{{ definition[2] }}.{{ definition[4] }}'/>
+      <driver name='qemu' type='qcow2' cache='{{ definition[6] }}'/>
+      <source file='{{ definition[3] }}/{{ libvirt_resource_name }}{{ definition[5] }}{{ definition[2] }}.{{ definition[4] }}'/>
       <target dev='vda' bus='virtio'/>
     </disk>
     {% if definition[1]['storage'] is defined %}
       {% for storage_def in definition[1]['storage'] %}
         <disk type='file' device='disk'>
-          <driver name='qemu' type='qcow2'/>
+          <driver name='qemu' type='qcow2' cache="{{ storage_def['cache'] | default('none') }}"/>
           {% if storage_def['source'] is not defined %}
-            <source file='/var/lib/libvirt/images/linchpin/{{ libvirt_resource_name }}-{{ storage_def['name'] }}.img' />
+            <source file='{{ libvirt_image_path }}/{{ libvirt_resource_name }}{{ definition[5] }}{{ definition[2] }}{{ definition[5] }}{{ storage_def['name'] }}.qcow2' />
           {% elif storage_def['source']['file'] is defined %}
             {% if storage_def['source']['file'].startswith('/') %}
               <source file='{{ storage_def['source']['file'] }}'/>
@@ -63,7 +63,7 @@
             {% endif %}
           {% endif %}
           {% if storage_def['disk_type'] is not defined or storage_def['disk_type'] == 'virtio_blk' %}
-            target dev='{{ storage_def['device'] | default('vda') }}' bus='virtio' />
+            <target dev='{{ storage_def['device'] | default('vda') }}' bus='virtio' />
           {% else %}
             <target dev='{{ storage_def['device'] | default('vda') }}' bus='scsi' />
             <address type='drive' controller='0' />

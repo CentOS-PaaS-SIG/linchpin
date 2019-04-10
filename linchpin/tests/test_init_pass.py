@@ -179,28 +179,6 @@ def test_bind_to_hook_state():
 
 
 @with_setup(setup_lp_api)
-def test_find_playbook_path():
-
-    pb_path = lpa._find_playbook_path(provider)
-
-    assert os.path.exists(os.path.expanduser(pb_path))
-
-
-@with_setup(setup_lp_api)
-def test_validate_topology():
-
-    success = False
-    topo = provision_data.get(provider).get('topology')
-    try:
-        resources = lpa._validate_topology(topo)
-        success = len(resources)
-    except Exception:
-        pass
-
-    assert success
-
-
-@with_setup(setup_lp_api)
 def test_do_action():
 
     return_code, results = lpa.do_action(provision_data)

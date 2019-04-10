@@ -1,0 +1,73 @@
+{% set vm = definition[1] %}
+{% set count = definition[2] %}
+{% set path = definition[3] %}
+{% set image_type = definition[4] %}
+<domain type='{{ vm.driver | default('kvm') }}'>
+  <name>{{ libvirt_resource_name }}_{{ count }}</name>
+  <memory unit='KiB'>{{ vm.memory * 1024 | int }}</memory>
+  <vcpu placement='static'>{{ vm.vcpus }}</vcpu>
+  <os>
+    <type arch='{{ vm.arch | default('x86_64') }}' machine='pc-q35-2.5'>hvm</type>
+    <boot dev='{{ vm.boot_dev | default('hd') }}'/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+    <pae/>
+    <kvm>
+      <hidden state='on'/>
+    </kvm>
+  </features>
+  <cpu mode='host-model' match='exact' check='partial'>
+    <model fallback='allow'>Westmere</model>
+    <feature policy='require' name='vmx'/>
+  </cpu>
+  <clock offset='utc'/>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>destroy</on_crash>
+  <devices>
+    <disk type='file' device='cdrom'>
+      <driver name='qemu' type='raw'/>
+      <source file='/tmp/vm-{{ libvirt_resource_name }}_{{ count }}.iso'/>
+      <backingStore/>
+      <target dev='sda' bus='sata'/>
+      <address type='drive' controller='0' bus='0' target='0' unit='0'/>
+      <readonly/>
+    </disk>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file='{{ path }}/{{ libvirt_resource_name }}_{{ count }}.{{ image_type }}'/>
+      <address type='drive' controller='0' bus='0' target='0' unit='1'/>
+      <target dev='sdb' bus='sata'/>
+    </disk>
+{% for network in vm.networks %}
+    <interface type='network'>
+      <model type='virtio'/>
+      <source network='{{ network['name'] }}'/>
+      <guest dev='eth{{ loop.index0 }}'/>
+    </interface>
+{% endfor %}
+    <controller type='sata' index='0'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x1f' function='0x2'/>
+    </controller>
+    <controller type='usb' index='0'/>
+    <controller type='pci' index='0' model='pcie-root'/>
+    <serial type='pty'>
+      <target port='0'/>
+    </serial>
+    <console type='pty' tty='/dev/pts/6'>
+      <source path='/dev/pts/6'/>
+      <target type='serial' port='0'/>
+      <alias name='serial0'/>
+    </console>
+    <input type='mouse' bus='ps2'/>
+    <input type='keyboard' bus='ps2'/>
+    <graphics type='vnc' port='-1' autoport='yes' listen='127.0.0.1' keymap='en-us'>
+      <listen type='address' address='127.0.0.1'/>
+    </graphics>
+    <video>
+      <model type='cirrus' vram='16384' heads='1'/>
+    </video>
+  </devices>
+</domain>

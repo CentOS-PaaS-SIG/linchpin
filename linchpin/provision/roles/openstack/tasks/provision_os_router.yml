@@ -1,0 +1,48 @@
+---
+- name: "deprovision os_router"
+  os_router:
+    admin_state_up: "{{ res_def['admin_state_up'] | default(omit) }}"
+    api_timeout: "{{ res_def['api_timeout'] | default(omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
+    enable_snat: "{{ res_def['enable_snat'] | default(omit) }}"
+    external_fixed_ips: "{{ res_def['external_fixed_ips'] | default(omit) }}"
+    interface: "{{ res_def['interface'] | default(omit) }}"
+    interfaces: []
+    name: "{{ os_resource_name }}"
+    network: "{{ res_def['network'] | default(omit) }}"
+    key: "{{ res_def['key'] | default(omit) }}"
+    project: "{{ res_def['project'] | default(omit) }}"
+    region_name: "{{ res_def['region_name'] | default(omit) }}"
+    state: "{{ state }}"
+    timeout: "{{ res_def['timeout'] | default(600) }}"
+    verify: no
+    wait: yes
+  register: res_def_output_auth
+  no_log: "{{ not debug_mode }}"
+  when: state=='absent'
+
+- name: "provision os_router"
+  os_router:
+    admin_state_up: "{{ res_def['admin_state_up'] | default(omit) }}"
+    api_timeout: "{{ res_def['api_timeout'] | default(omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
+    enable_snat: "{{ res_def['enable_snat'] | default(omit) }}"
+    external_fixed_ips: "{{ res_def['external_fixed_ips'] | default(omit) }}"
+    interface: "{{ res_def['interface'] | default(omit) }}"
+    interfaces: "{{ res_def['interfaces'] | default(omit) }}"
+    name: "{{ os_resource_name }}"
+    network: "{{ res_def['network'] | default(omit) }}"
+    key: "{{ res_def['key'] | default(omit) }}"
+    project: "{{ res_def['project'] | default(omit) }}"
+    region_name: "{{ res_def['region_name'] | default(omit) }}"
+    state: "{{ state }}"
+    timeout: "{{ res_def['timeout'] | default(600) }}"
+    verify: no
+    wait: yes
+  register: res_def_output_auth
+  no_log: "{{ not debug_mode }}"
+  when: state=='present'
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os_network: "{{ topology_outputs_os_network + [ res_def_output_auth ] }}"

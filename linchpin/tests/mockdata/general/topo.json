@@ -12,9 +12,6 @@
                     {"version": "v6", "address": "[2001:db8:0:1]:80" },
                     {"version": "v4", "address": "11.50.197.1" }
                 ]
-            },
-            {
-                "_comment": "there should be no reported devices here for testing get_host_ips"
             }]
         }
     }],
@@ -29,17 +26,17 @@
             "_comment": "the 'private_ip' field below should be ignored by get_host_ips",
             "public_ip": "55.144.94.192",
             "private_ip": "125.254.137.163",
-            "private_ip": "asdf"
+            "private_ip": "121.22.32.224"
         },
         {
             "private_ip": "119.120.37.31"
         }]
     }],
     "os_server_res": [{
-        "openstack": [{ "accessIPv4": "204.36.91.83"}, { "accessIPv4": "93.68.5.129" }]
+        "openstack": [{ "accessIPv4": "204.36.91.83"}, { "public_v4": "93.68.5.129" }]
     },
     {
-        "openstack": { "accessIPv4": "174.82.209.133" }
+        "openstack": { "private_v4": "174.82.209.133" }
     }],
     "os_keypair_res": [],
     "aws_ec2_key_res": [],
@@ -68,6 +65,12 @@
         "failed": false,
         "changed": true,
         "hosts": ["web-b3a49a-0.example.net", "web-b3a49a-1.example.net", "web-b3a49a-2.example.net"],
+        "dummy_file": "/tmp/dummy.hosts"
+    },
+    "nummy_res": [{
+        "failed": false,
+        "changed": true,
+        "hosts": ["web-c3a49a-0.example.net", "web-c3a49a-1.example.net", "web-c3a49a-2.example.net"],
         "dummy_file": "/tmp/dummy.hosts"
     },
     {

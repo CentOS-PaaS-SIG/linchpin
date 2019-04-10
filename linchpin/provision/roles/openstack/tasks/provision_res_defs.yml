@@ -12,11 +12,12 @@
 - name: "Get the resource name"
   set_fact:
     os_resource_name: "{{ res_def['name'] }}"
+    unique_name: "{{ res_def['unique'] | default(enable_uhash) }}"
 
 - name: "Create name using uhash value"
   set_fact:
     os_resource_name: "{{ os_resource_name + '-' + uhash + '-' }}"
-  when: enable_uhash
+  when:  unique_name
 
 - name: "provision/teardown resources }}"
   include: "provision_{{ res_def['role'] }}.yml"
@@ -24,4 +25,4 @@
 
 - name: "provision/teardown resources }}"
   include: "provision_os_server.yml"
-  when: res_def['role'] == 'os_server' 
+  when: res_def['role'] == 'os_server'

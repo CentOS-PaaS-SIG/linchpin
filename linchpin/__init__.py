@@ -2,6 +2,7 @@
 
 import os
 import ast
+import sys
 import json
 import time
 import errno
@@ -9,6 +10,7 @@ import hashlib
 
 from uuid import getnode as get_mac
 from collections import OrderedDict
+from six import text_type
 
 from linchpin.ansible_runner import ansible_runner
 
@@ -21,11 +23,9 @@ from linchpin.rundb.drivers import DB_DRIVERS
 from linchpin.exceptions import ActionError
 from linchpin.exceptions import LinchpinError
 from linchpin.exceptions import SchemaError
-from linchpin.exceptions import TopologyError
 from linchpin.exceptions import ValidationError
-from linchpin.exceptions import ValidationErrorHandler
 
-from linchpin.utils.validator import AnyofValidator
+from linchpin.validator import Validator
 
 from linchpin.InventoryFilters import GenericInventory
 
@@ -329,57 +329,6 @@ class LinchpinAPI(object):
             return res_grp
 
 
-    def _convert_topology(self, topology):
-        """
-        For backward compatiblity, convert the old topology format
-        into the new format. Should be pretty straightforward and simple.
-
-        ;param topology: topology dictionary
-        """
-        try:
-            res_grps = topology.get('resource_groups')
-            if res_grps:
-                for res_grp in res_grps:
-                    if 'res_group_type' in res_grp.keys():
-                        res_grp['resource_group_type'] = (
-                            res_grp.pop('res_group_type'))
-
-                    if 'res_defs' in res_grp.keys():
-                        res_grp['resource_definitions'] = (
-                            res_grp.pop('res_defs'))
-
-                    res_defs = res_grp.get('resource_definitions')
-                    if not res_defs:
-                        # this means it's either a beaker or openshift topology
-                        res_grp_type = res_grp.get('resource_group_type')
-
-                        res_group = self._fix_broken_topologies(res_grp,
-                                                                res_grp_type)
-                        res_defs = res_group.get('resource_definitions')
-                        res_grp['resource_definitions'] = res_defs
-
-                    if res_defs:
-                        for res_def in res_defs:
-                            if 'res_name' in res_def.keys():
-                                res_def['name'] = res_def.pop('res_name')
-                            if 'type' in res_def.keys():
-                                res_def['role'] = res_def.pop('type')
-                            if 'res_type' in res_def.keys():
-                                res_def['role'] = res_def.pop('res_type')
-                            if 'count' in res_def.keys():
-                                res_def['count'] = int(res_def.pop('count'))
-                    else:
-                        raise TopologyError("'resource_definitions' do not"
-                                            " validate in topology"
-                                            " ({0})".format(topology))
-            else:
-                raise TopologyError("'resource_groups' do not validate"
-                                    " in topology ({0})".format(topology))
-
-        except Exception:
-            raise LinchpinError("Unknown error converting schema. Check"
-                                " template data")
-
     def _convert_layout(self, layout_data):
         """
         Convert the layout to retain order of the layout hosts
@@ -398,106 +347,11 @@ class LinchpinAPI(object):
         return layout_json
 
 
-    def _validate_topology(self, topology):
-        """
-        Validate the provided topology against the schema
-
-        ;param topology: topology dictionary
-        """
-
-        res_grps = topology.get('resource_groups')
-        resources = []
-
-        for group in res_grps:
-            res_grp_type = (group.get('resource_group_type') or
-                            group.get('res_group_type'))
-
-            pb_path = self._find_playbook_path(res_grp_type)
-
-            try:
-                sp = "{0}/roles/{1}/files/schema.json".format(pb_path,
-                                                              res_grp_type)
-                schema = json.load(open(sp))
-            except Exception as e:
-                raise LinchpinError("Error with schema: '{0}'"
-                                    " {1}".format(sp, e))
-
-            res_defs = group.get('resource_definitions')
-
-
-            # preload this so it will validate against the schema
-            document = {'res_defs': res_defs}
-            v = AnyofValidator(schema,
-                               error_handler=ValidationErrorHandler)
-
-            if not v.validate(document):
-                try:
-                    err = self._gen_error_msg("", "", v.errors)
-                    raise SchemaError(err)
-                except NotImplementedError as e:
-                    # we shouldn't have this issue using cerberus >= 1.2, but
-                    # this is here just in case an older version has to be used
-                    print("There was an error validating your schema, but we\
-                          can't seem to format it for you")
-                    print("Here's the raw error data in case you want to go\
-                          through it by hand:")
-                    print(v._errors)
-
-            resources.append(group)
-
-        return resources
-
-
-    def _gen_error_msg(self, prefix, section, error):
-        # set the prefix for this subtree
-        if section != "":
-            if prefix != "":
-                prefix += "[" + str(section) + "]"
-            else:
-                prefix = str(section)
-
-        if isinstance(error, str):
-            if prefix == "":
-                return error
-            return prefix + ": " + error + os.linesep
-        elif isinstance(error, list):
-            msg = ""
-            for i, e in enumerate(error):
-                # we don't need to change the Vprefix here
-                msg += self._gen_error_msg(prefix, "", e)
-            return msg
-        else:  # in this case, error is a dict
-            msg = ""
-            for key, val in error.iteritems():
-                msg += self._gen_error_msg(prefix, key, val)
-            return msg
-
-
-    def _validate_layout(self, layout):
-        """
-        Validate the provided layout against the schema
-
-        :param layout: layout dictionary
-        """
-
-        pb_path = self._find_playbook_path("layout")
-        try:
-            sp = "{0}/roles/common/files/schema.json".format(pb_path)
-
-            schema = json.load(open(sp))
-        except Exception as e:
-            raise LinchpinError("Error with schema: '{0]' {1}".format(sp, e))
-
-        v = AnyofValidator(schema)
-
-        if not v.validate(layout):
-            raise SchemaError('Schema validation failed: {0}'.format(v.errors))
-
-
     def generate_inventory(self, resource_data, layout, inv_format="cfg",
-                           topology_data={}):
+                           topology_data={}, config_data={}):
         inv = GenericInventory.GenericInventory(inv_format=inv_format)
-        inventory = inv.get_inventory(resource_data, layout, topology_data)
+        inventory = inv.get_inventory(resource_data, layout, topology_data,
+                                      config_data)
         return inventory
 
     def get_pf_data_from_rundb(self, targets, run_id=None, tx_id=None):
@@ -604,6 +458,12 @@ class LinchpinAPI(object):
 
 
         return_code = 99
+        vault_pass = self.get_evar('vault_pass')
+        if vault_pass == '':
+            self.set_evar('vault_pass',
+                          self.ctx.get_cfg('evars',
+                                           'vault_pass',
+                                           default=''))
 
         for target in provision_data.keys():
             if not isinstance(provision_data[target], dict):
@@ -615,6 +475,8 @@ class LinchpinAPI(object):
             raise LinchpinError("Target 'linchpin' is not allowed.")
 
         for target in provision_data.keys():
+            if target == 'cfgs':
+                continue
 
             self.ctx.log_debug("Processing target: {0}".format(target))
 
@@ -645,9 +507,11 @@ class LinchpinAPI(object):
             uhash_length = self.get_cfg('lp', 'rundb_uhash_length')
             uhash_len = int(uhash_length)
             if not run_id:
-                uh = hashlib.new(self.rundb_hash,
-                                 ':'.join([target, str(tx_id),
-                                          str(rundb_id), str(st_uhash)]))
+                hash_str = ':'.join([target, str(tx_id), str(rundb_id),
+                                     str(st_uhash)])
+                if isinstance(hash_str, text_type):
+                    hash_str = hash_str.encode('utf-8')
+                uh = hashlib.new(self.rundb_hash, hash_str)
                 uhash = uh.hexdigest()[:uhash_len]
 
             if action == 'destroy' or run_id:
@@ -680,22 +544,15 @@ class LinchpinAPI(object):
             self.set_evar('rundb_id', rundb_id)
             self.set_evar('uhash', uhash)
 
-            topology_data = provision_data[target].get('topology')
-
-            # if validation fails the first time, convert topo from old -> new
             try:
-                resources = self._validate_topology(topology_data)
-            except (SchemaError, KeyError):
-                # if topology fails, try converting from old to new style
-                try:
-                    self._convert_topology(topology_data)
-                    resources = self._validate_topology(topology_data)
-                except SchemaError:
-                    raise ValidationError("Topology '{0}' does not validate."
-                                          "For more information run `linchpin"
-                                          "validate`".format(topology_data))
+                validator = Validator(self.ctx, self.pb_path, self.pb_ext)
+                resources = validator.validate(provision_data[target])
+            except SchemaError:
+                raise ValidationError("Target '{0}' does not validate.  For"
+                                      " more information run `linchpin "
+                                      "validate`".format(target))
 
-
+            topology_data = provision_data[target].get('topology')
             self.set_evar('topo_data', topology_data)
 
             rundb.update_record(target,
@@ -708,12 +565,6 @@ class LinchpinAPI(object):
 
             if provision_data[target].get('layout', None):
                 l_data = provision_data[target]['layout']
-                try:
-                    self._validate_layout(l_data)
-                except SchemaError:
-                    raise ValidationError("Layout '{0}' does not"
-                                          " validate".format(l_data))
-
                 provision_data[target]['layout'] = self._convert_layout(l_data)
                 self.set_evar('layout_data', provision_data[target]['layout'])
 
@@ -736,7 +587,7 @@ class LinchpinAPI(object):
                                          provision_data[target]['hooks']}
                                     ])
 
-            if provision_data[target].get('cfgs', None):
+            if provision_data.get('cfgs', None):
                 vars_data = provision_data[target].get('cfgs')
                 self.set_evar('cfgs_data', vars_data)
                 rundb.update_record(target,
@@ -744,7 +595,7 @@ class LinchpinAPI(object):
                                     'cfgs',
                                     [
                                         {'user':
-                                         provision_data[target]['cfgs']}
+                                         provision_data['cfgs']}
                                     ])
 
             # note : changing the state triggers the hooks
@@ -763,6 +614,12 @@ class LinchpinAPI(object):
                 self._invoke_playbooks(resources, action=action,
                                        console=ansible_console)
             )
+
+            # logs the return_code back to console and quits
+            # quits if return_code > 0
+            self.ctx.log("Playbook Return code {0}".format(str(return_code)))
+            if return_code > 0 and action == "up":
+                sys.exit(return_code)
 
             if not return_code:
                 self.ctx.log_state("Action '{0}' on Target '{1}' is "
@@ -841,69 +698,20 @@ class LinchpinAPI(object):
             raise LinchpinError("Target 'linchpin' is not allowed.")
 
         for target in provision_data.keys():
+            if target == 'cfgs':
+                continue
+
             self.ctx.log_debug("Processing target: {0}".format(target))
 
             results[target] = {}
             self.set_evar('target', target)
 
-            # validate topology
-            topology_data = provision_data[target].get('topology')
-
-            try:
-                self._validate_topology(topology_data)
-            except (SchemaError, KeyError) as e:
-                # try to validate against old schema
-                try:
-                    self._convert_topology(topology_data)
-                    self._validate_topology(topology_data)
-                except SchemaError as s:
-                    error = "[ERROR]"
-                    error += """Topology for target '{0}' does not validate
-topology: '{1}'
-errors:
-""".format(target, topology_data)
-                    if old_schema:
-                        # there's an inline way of doing this with join() but
-                        # this looks cleaner
-                        for line in iter(str(s).splitlines(True)):
-                            error += "\t" + line
-                    else:
-                        if type(e) == KeyError:
-                            error += "\tfield res_defs['type'] is no longer"\
-                                     "Please use 'role' instead"
-                        else:
-                            for line in iter(str(e).splitlines(True)):
-                                error += "\t" + line
-
-                    results[target] = error
-                    return_code += 1
-                else:
-                    results[target] = "topology valid with old schema"
-
-
-            else:
-                results[target] = "topology valid"
-
-            # validate layout
-            if provision_data[target].get('layout', None):
-                l_data = provision_data[target]['layout']
-
-                try:
-                    self._validate_layout(l_data)
-                except SchemaError as e:
-                    error = """
-Layout for target '{0}' does  not validate
-layout: '{1}'
-errors:
-""".format(target, l_data)
-                    for line in iter(str(e).splitlines(True)):
-                        error += "\t" + line
-
-                    results[target] += "\n" + error + "\n"
-
-                else:
-                    results[target] += "\nlayout valid"
-
+            validator = Validator(self.ctx, self.pb_path, self.pb_ext)
+            target_dict = provision_data[target]
+            ret, results[target] = validator.validate_pretty(target_dict,
+                                                             target,
+                                                             old_schema)
+            return_code += ret
 
         return return_code, results
 
@@ -985,14 +793,16 @@ errors:
             latest_run_data = rundb.get_records('linchpin', count=1)
             run_data = self.get_run_data(latest_run_data.keys()[0],
                                          ('outputs',
-                                          'inputs'))
+                                          'inputs',
+                                          'cfgs'))
         else:
             latest_run_data = rundb.get_records('linchpin',
                                                 count='all')
             latest_run_data = {tx_id: latest_run_data.get(tx_id)}
             run_data = self.get_run_data(tx_id,
                                          ('outputs',
-                                          'inputs'))
+                                          'inputs',
+                                          'cfgs'))
         for k in latest_run_data:
             v = latest_run_data[k]
             target_group = v.get("targets", [])
@@ -1009,9 +819,29 @@ errors:
             latest_run_data[k]["targets"] = [target_group]
         return latest_run_data
 
+    def _get_module_path(self):
+        module_paths = []
+        module_folder = self.get_cfg('lp',
+                                     'module_folder',
+                                     default='library')
+        for path in reversed(self.pb_path):
+            module_paths.append('{0}/{1}/'.format(path, module_folder))
+        return module_paths
 
+    def _find_n_run_pb(self, pb_name, inv_src, console=True):
+        pb_path = self._find_playbook_path(pb_name)
+        playbook_path = '{0}/{1}{2}'.format(pb_path, pb_name, self.pb_ext)
+        extra_vars = self.get_evar()
+        return_code, res = ansible_runner(playbook_path,
+                                          self._get_module_path(),
+                                          extra_vars,
+                                          inventory_src=inv_src,
+                                          verbosity=self.ctx.verbosity,
+                                          console=console)
+        return return_code, res
 
-    def _invoke_playbooks(self, resources, action='up', console=True):
+    def _invoke_playbooks(self, resources={}, action='up', console=True,
+                          providers=[]):
         """
         Uses the Ansible API code to invoke the specified linchpin playbook
 
@@ -1026,37 +856,43 @@ errors:
         self.set_evar('_action', action)
         self.set_evar('state', 'present')
 
+        if action == 'setup' or action == 'ask_sudo_setup':
+            self.set_evar('setup_providers', providers)
+            return_code, res = self._find_n_run_pb(action,
+                                                   "localhost",
+                                                   console=console)
+            if res:
+                results.append(res)
+            if not len(results):
+                results = None
+            return (return_code, results)
+
         if action == 'destroy':
             self.set_evar('state', 'absent')
+
+        inventory_src = '{0}/localhost'.format(self.workspace)
 
         for resource in resources:
             self.set_evar('resources', resource)
             playbook = resource.get('resource_group_type')
-            pb_path = self._find_playbook_path(playbook)
-            playbook_path = '{0}/{1}{2}'.format(pb_path, playbook, self.pb_ext)
-
-            module_paths = []
-            module_folder = self.get_cfg('lp',
-                                         'module_folder',
-                                         default='library')
-
-            for path in reversed(self.pb_path):
-                module_paths.append('{0}/{1}/'.format(path, module_folder))
-
-            extra_vars = self.get_evar()
-            inventory_src = '{0}/localhost'.format(self.workspace)
-
-            verbosity = self.ctx.verbosity
-            return_code, res = ansible_runner(playbook_path,
-                                              module_paths,
-                                              extra_vars,
-                                              inventory_src=inventory_src,
-                                              verbosity=verbosity,
-                                              console=console)
+            return_code, res = self._find_n_run_pb(playbook,
+                                                   inventory_src,
+                                                   console=console)
+            if action == "up" and return_code > 0:
+                if self.ctx.verbosity > 0:
+                    raise LinchpinError("Unsuccessful provision of resource")
+                else:
+                    res_grp_name = resource['resource_group_name']
+                    msg = res['failed'][0]._result['msg']
+                    task = res['failed'][0].task_name
+                    raise LinchpinError("Unable to provision resource group "
+                                        "'{0}' due to '{1}' at task "
+                                        " '{2}'".format(res_grp_name,
+                                                        msg, task))
+                sys.exit(return_code)
 
             if res:
                 results.append(res)
-
 
         if not len(results):
             results = None

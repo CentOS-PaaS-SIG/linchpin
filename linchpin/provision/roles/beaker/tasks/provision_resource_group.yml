@@ -1,22 +1,30 @@
 ---
-- name: "provision beaker systems"
-  bkr_server:
-    recipesets: "{{ res.recipesets }}"
-    state: present
-    # these values have defaults set in the bkr_server module
-    # if omitted, or they are not required
-    whiteboard: "{{ res.whiteboard | default('Provisioned by LinchPin') }}"
-    job_group: "{{ res.job_group | default(omit) }}"
-    cancel_message: "{{ res.cancel_message | default(omit) }}"
-    max_attempts: "{{ res.max_attempts | default(omit) }}"
-    attempt_wait_time: "{{ attempt_wait_time | default(omit) }}"
-  with_items: "{{ res_defs['resource_definitions'] }}"
-  # loop over res_defs even though there should be only one for beaker
-  loop_control:
-    loop_var: res
-  register: bkr
-  ignore_errors: true
+- name: Set default ssh keys path
+  set_fact:
+    default_ssh_keys_path: "{{ creds_path | default(default_credentials_path) }}"
 
+- name: Provision beaker systems
+  block:
+  - name: "provision beaker systems"
+    bkr_server:
+      recipesets: "{{ res.recipesets }}"
+      state: present
+      # these values have defaults set in the bkr_server module
+      # if omitted, or they are not required
+      whiteboard: "{{ res.whiteboard | default('Provisioned by LinchPin') }}"
+      job_group: "{{ res.job_group | default(omit) }}"
+      cancel_message: "{{ res.cancel_message | default(omit) }}"
+      max_attempts: "{{ res.max_attempts | default(omit) }}"
+      attempt_wait_time: "{{ attempt_wait_time | default(omit) }}"
+      ssh_keys_path: "{{ res.ssh_keys_path | default(default_ssh_keys_path) }}"
+    with_items: "{{ res_defs['resource_definitions'] }}"
+    # loop over res_defs even though there should be only one for beaker
+    loop_control:
+      loop_var: res
+    register: bkr
+  rescue:
+  - fail:
+      msg: 'Error caught in beaker module execution. Might be because of unresolved beaker dependencies. Please run `linchpin setup beaker` or pip install linchpin[beaker] to install beaker dependencies'
 
 - name: "set bkr_rsets"
   set_fact:
@@ -114,3 +122,7 @@
       topology_outputs_beaker_server: "{{ tmp_bkr.results | map_results('ansible_facts', 'tmp_topo_bkr_srvc') }}"
     when:
       - state == 'present'
+
+  - name: "Add type to resource"
+    set_fact:
+      topology_outputs_beaker_server: "{{ topology_outputs_beaker_server | add_res_type('beaker_res') }}"

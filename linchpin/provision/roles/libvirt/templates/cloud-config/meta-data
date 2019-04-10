@@ -1,2 +1,2 @@
-instance-id: {{ definition[0] }}_{{ definition[1] }}
-local-hostname: {{ definition[0] }}_{{ definition[1] }}.example.com
+instance-id: {{ definition[0] }}{{ definition[2] }}{{ definition[1] }}
+local-hostname: {{ definition[0] }}{{ definition[2] }}{{ definition[1] }}.example.com

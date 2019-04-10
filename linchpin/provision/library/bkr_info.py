@@ -51,11 +51,14 @@ class BeakerTargets(object):
                     if result == 'Pass':
                         pass_count += 1
                     elif result in ['Fail', 'Warn', 'Panic', 'Completed']:
+                        self._cancel_jobs()
                         raise Exception("System failed with state"
                                         " '{0}'".format(result))
                 elif status == 'Aborted':
+                    self._cancel_jobs()
                     raise Exception("System aborted")
                 elif status == 'Cancelled':
+                    self._cancel_jobs()
                     raise Exception("System canceled")
             attempts += 1
             if pass_count == all_count:
@@ -63,9 +66,7 @@ class BeakerTargets(object):
             sleep(self.wait_time)
 
         # max attempts exceeded, cancel jobs and fail
-        for job_id in _jprefix(self.ids):
-            self.hub.taskactions.stop(job_id, 'cancel',
-                                      'Provision request timed out')
+        self._cancel_jobs('Provision request timed out')
         # Fail with error msg, include results from last attempt to include
         # in topology outputs even if provisioning failed so a destroy still
         # cancels jobs
@@ -99,6 +100,9 @@ class BeakerTargets(object):
                                   'id': recipe.get('job_id')})
         return resources, len(resources)
 
+    def _cancel_jobs(self, msg='Unabled to provision system(s)'):
+        for job_id in _jprefix(self.ids):
+            self.hub.taskactions.stop(job_id, 'cancel', msg)
 
 def main():
     mod = AnsibleModule(argument_spec={

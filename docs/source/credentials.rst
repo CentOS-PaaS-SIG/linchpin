@@ -12,7 +12,7 @@ to tell LinchPin which credentials to use, and where they credentials data
 resides. In every case, LinchPin tries to use the data similarly to the way
 the provider might.
 
-.. include:: includes/aws_creds.rst
+.. include:: credentials/aws.rst
 
 
 

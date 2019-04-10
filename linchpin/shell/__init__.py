@@ -127,9 +127,11 @@ def _handle_results(ctx, results, return_code):
 @click.option('--creds-path', type=click.Path(), envvar='CREDS_PATH',
               help='Use the specified credentials path. Also works'
                    ' if CREDS_PATH environment variable is set')
+@click.option('--ask-vault-pass', is_flag=True, default=False,
+              help='Prompts for vault password')
 @pass_context
 def runcli(ctx, config, pinfile, template_data, outfile,
-           workspace, verbose, version, creds_path):
+           workspace, verbose, version, creds_path, ask_vault_pass):
     """linchpin: hybrid cloud orchestration"""
 
     ctx.load_config(lpconfig=config)
@@ -162,6 +164,9 @@ def runcli(ctx, config, pinfile, template_data, outfile,
         ctx.workspace = os.path.realpath(os.path.expanduser(workspace))
         ctx.log_debug("ctx.workspace: {0}".format(ctx.workspace))
 
+    ctx.ask_vault_pass = ask_vault_pass
+
+
     # global LinchpinCli placeholder
     global lpcli
     lpcli = LinchpinCli(ctx)
@@ -178,20 +183,41 @@ def help(ctx):
 
 
 @runcli.command('init', short_help='Initializes a linchpin project.')
+@click.argument('provider', metavar='PROVIDER', required=False, nargs=1)
 @pass_context
-def init(ctx):
+def init(ctx, provider):
     """
     Initializes a linchpin project, which generates an example PinFile, and
     creates the necessary directory structure for topologies and layouts.
 
+    Utilizes lp_fetch with the following parameters:
+
+    remote:         git://github.com/CentOS-PaaS-SIG/linchpin
+    root:           workspaces
+    fetch_type:     workspace
+    fetch_protocol: FetchGit
+    fetch_ref:      master
+    dest_ws:        Unused, will use workspace/provider
+    nocache:        True
+
+
     """
 
-    # add a providers option someday
-    providers = None
+    remote = ctx.get_cfg('init', 'remote',
+                         default='git://github.com/CentOS-PaaS-SIG/linchpin')
+    root = ctx.get_cfg('init', 'root', default='workspaces/dummy')
+    fetch_type = ctx.get_cfg('init', 'fetch_type', default='workspace')
+    fetch_proto = 'FetchGit'
+    fetch_ref = ctx.get_cfg('init', 'fetch_ref', default='master')
+    nocache = ast.literal_eval(ctx.get_cfg('init', 'nocache', default='True'))
+
+    if provider:
+        root = 'workspaces/{0}'.format(provider)
 
     try:
-        # lpcli.lp_init(pf_w_path, targets) # TODO implement targets option
-        lpcli.lp_init(providers=providers)
+        lpcli.lp_fetch(remote, root=root, fetch_type=fetch_type,
+                       fetch_protocol=fetch_proto, fetch_ref=fetch_ref,
+                       dest_ws=None, nocache=nocache)
     except LinchpinError as e:
         ctx.log_state(e)
         sys.exit(1)
@@ -206,14 +232,16 @@ def init(ctx):
 @click.option('-t', '--tx-id', metavar='tx_id', type=int,
               help='Provision resources using the Transaction ID (tx-id)',
               cls=MutuallyExclusiveOption, mutually_exclusive=["run_id"])
-@click.option('--inventory-format', '--if', default="cfg",
+@click.option('--inventory-format', '--if', 'inventory_format', default="cfg",
               metavar='INVENTORY_FORMAT', help="Inventory format cfg/json")
-@click.option('--ifh', '--ignore-failed-hooks', is_flag=True, default=None,
+@click.option('--ignore-failed-hooks', '--ifh', 'ignore_failed_hooks',
+              is_flag=True, default=False, metavar='IGNORE_FAILED_HOOKS',
               help='Ignores failed hooks')
-@click.option('--nh', '--no-hooks', is_flag=True, default=None,
-              help='Do not run hooks')
+@click.option('--no-hooks', '--nh', 'no_hooks', is_flag=True, default=None,
+              metavar='NO_HOOKS', help='Do not run hooks')
 @pass_context
-def up(ctx, targets, run_id, tx_id, inventory_format, ifh, nh):
+def up(ctx, targets, run_id, tx_id, inventory_format, ignore_failed_hooks,
+       no_hooks):
     """
     Provisions nodes from the given target(s) in the given PinFile.
 
@@ -230,11 +258,17 @@ def up(ctx, targets, run_id, tx_id, inventory_format, ifh, nh):
 
     run-id:     Use the data from the provided run_id value
     """
+    vault_pass = os.environ.get('VAULT_PASSWORD', '')
 
-    if ifh:
-        ctx.set_cfg("hook_flags", "ignore_failed_hooks", ifh)
-    if nh:
-        ctx.set_cfg("hook_flags", "no_hooks", nh)
+    if ctx.ask_vault_pass:
+        vault_pass = click.prompt("enter vault password", hide_input=True)
+
+    ctx.set_evar('vault_pass', vault_pass)
+
+    if ignore_failed_hooks:
+        ctx.set_cfg("hook_flags", "ignore_failed_hooks", ignore_failed_hooks)
+    if no_hooks:
+        ctx.set_cfg("hook_flags", "no_hooks", no_hooks)
 
     if tx_id:
         try:
@@ -276,11 +310,13 @@ def up(ctx, targets, run_id, tx_id, inventory_format, ifh, nh):
 @click.option('-t', '--tx-id', metavar='tx_id', type=int,
               help='Destroy resources using the transaction ID (tx-id)',
               cls=MutuallyExclusiveOption, mutually_exclusive=["run_id"])
-@click.option('--ifh', '--ignore-failed-hooks', is_flag=True,
+@click.option('--ignore-failed-hooks', '--ifh', 'ignore_failed_hooks',
+              metavar='ignore_failed_hooks', is_flag=True, default=False,
               help='Ignores failed hooks')
-@click.option('--nh', '--no-hooks', is_flag=True, help='Do not run hooks')
+@click.option('--no-hooks', '--nh', 'no_hooks', metavar='NO_HOOKS',
+              is_flag=True, help='Do not run hooks')
 @pass_context
-def destroy(ctx, targets, run_id, tx_id, ifh, nh):
+def destroy(ctx, targets, run_id, tx_id, ignore_failed_hooks, no_hooks):
     """
     Destroys resources using either the run_id or tx_id (mutually exclusive).
 
@@ -294,11 +330,16 @@ def destroy(ctx, targets, run_id, tx_id, ifh, nh):
     the appropriate PinFile will be destroyed.
 
     """
+    vault_pass = os.environ.get('VAULT_PASSWORD', '')
+    if ctx.ask_vault_pass:
+        vault_pass = click.prompt("enter vault password", hide_input=True)
 
-    if ifh:
-        ctx.set_cfg("hook_flags", "ignore_failed_hooks", ifh)
-    if nh:
-        ctx.set_cfg("hook_flags", "no_hooks", nh)
+    ctx.set_evar('vault_pass', vault_pass)
+
+    if ignore_failed_hooks:
+        ctx.set_cfg("hook_flags", "ignore_failed_hooks", ignore_failed_hooks)
+    if no_hooks:
+        ctx.set_cfg("hook_flags", "no_hooks", no_hooks)
 
 
     if tx_id:
@@ -338,9 +379,10 @@ def destroy(ctx, targets, run_id, tx_id, ifh, nh):
 @click.option('--branch', 'fetch_ref', metavar='REF', default=None,
               help='Specify the git branch. Used only with'
                    ' git protocol (eg. master).')
-@click.option('--protocol', 'fetch_protocol', default='git',
-              type=click.Choice(['git', 'http', 'local']),
-              help='Specify a protocol. (Default: git)')
+@click.option('--git', 'fetch_protocol', flag_value='FetchGit', default=True,
+              help='Remote is a git repository (default)')
+@click.option('--web', 'fetch_protocol', flag_value='FetchHttp',
+              help='Remote is a web directory')
 @click.option('--nocache', is_flag=True,
               help='Do not check the cached time, just copy the data to the'
                    ' destination')
@@ -352,14 +394,12 @@ def fetch(ctx, remote, fetch_type, root, dest_ws,
 
     """
 
-    fetch_proto = 'Fetch{0}'.format(fetch_protocol.title())
-
     if not fetch_type:
         fetch_type = 'workspace'
 
     try:
         lpcli.lp_fetch(remote, root=root, fetch_type=fetch_type,
-                       fetch_protocol=fetch_proto, fetch_ref=fetch_ref,
+                       fetch_protocol=fetch_protocol, fetch_ref=fetch_ref,
                        dest_ws=dest_ws, nocache=nocache)
     except LinchpinError as e:
         ctx.log_state(e)
@@ -561,16 +601,15 @@ def validate(ctx, targets, old_schema):
         old_schema = False
         return_code, results = lpcli.lp_validate(targets=targets,
                                                  old_schema=old_schema)
-        for target, result in results.iteritems():
-            if result == "valid":
-                result = "[SUCCESS] Topology for target '{0}' is "\
-                         "valid".format(target)
-            elif result == "valid with old schema":
-                old_schema = True
-                result = "[SUCCESS] Topology for target '{0}' is valid under "\
-                         "old schema".format(target)
-            else:
-                result = "[ERROR] " + result
+        for target, item in results.iteritems():
+            result = ""
+            for kind, outcome in item.iteritems():
+                if outcome == "valid" or outcome == "valid under old schema":
+                    result += "[SUCCESS] {0} for target '{1}' is "\
+                        "{2}\n".format(kind, target, outcome)
+                else:
+                    result += "[ERROR] {0} for target '{1}' does not "\
+                              "validate\n{2}".format(kind, target, outcome)
             ctx.log_state(result)
 
         if old_schema:
@@ -587,6 +626,24 @@ It is suggested to update any of the following:
     except LinchpinError as e:
         ctx.log_state(e)
         sys.exit(1)
+
+
+@runcli.command()
+@click.argument('providers', metavar='PROVIDERS', required=False,
+                nargs=-1)
+@click.option('--ask-sudo-pass', is_flag=True, default=False,
+              help='Prompts for sudo password for package installations')
+@pass_context
+def setup(ctx, providers, ask_sudo_pass):
+    """
+    Install the dependencies needed for the given provider(s).
+
+    providers:    Setup ONLY the providers listed. If omitted, it installs
+    the dependencies for ALL providers.
+    """
+    lpcli.ctx.set_evar("ask_sudo_pass", ask_sudo_pass)
+    return_code, output = lpcli.lp_setup(providers)
+    return sys.exit(return_code)
 
 
 def main():

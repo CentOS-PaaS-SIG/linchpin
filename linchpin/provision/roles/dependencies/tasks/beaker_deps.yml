@@ -1,0 +1,9 @@
+- name: Install pypi dependencies of beaker
+  pip:
+    name: "{{ bkr_pkg }}"
+  with_items:
+    - 'beaker-client>=23.3'
+    - 'python-krbV'
+    - 'bottle'
+  loop_control:
+    loop_var: bkr_pkg

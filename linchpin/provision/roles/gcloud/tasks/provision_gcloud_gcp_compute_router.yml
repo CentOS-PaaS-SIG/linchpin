@@ -1,0 +1,33 @@
+- name: "Fetch network facts"
+  gcp_compute_network_facts:
+    filters:
+      - "name = {{ res_def['network_name'] }}"
+    project: "{{ auth_var['output']['project_id'] | default(omit) }}"
+    auth_kind: "{{ auth_var['output']['auth_kind'] | default('serviceaccount')  }}"
+    scopes: "{{ res_def['scopes'] | default(['https://www.googleapis.com/auth/compute']) }}"
+    service_account_file: "{{ auth_var['path'] }}/{{ auth_var['params']['filename'] | default(omit) }}" 
+  register: network_facts_fetched
+
+- name: "Provision/Teardown gcloud_gcp_compute_router"
+  gcp_compute_router:
+    name: "{{ res_def['name'] }}"
+    network: "{{ network_facts_fetched['items'][0] }}"
+    bgp: "{{ res_def['bgp'] }}"
+    region: "{{ res_def['region'] }}"
+    scopes: "{{ res_def['scopes'] | default(['https://www.googleapis.com/auth/compute']) }}"
+    service_account_email: "{{ auth_var['output']['service_account_email'] | default(omit) }}"
+    project: "{{ auth_var['output']['project_id'] | default(omit) }}"
+    auth_kind: "{{ auth_var['output']['auth_kind'] | default('serviceaccount') }}"
+    service_account_file: "{{ auth_var['path'] }}/{{ auth_var['params']['filename'] | default(omit) }}"
+    state: "{{ state }}"
+  register: res_def_output
+  no_log: "{{ not debug_mode }}"
+
+- name: "Appending outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce + [res_def_output] }}"
+  when: not async
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce | add_res_type('gcloud_gcp_compute_network') }}"

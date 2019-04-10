@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 
-import StringIO
+try:
+    from StrinIO import StringIO
+except ImportError:
+    from io import StringIO
+
 import collections
 
-from InventoryFormatter import InventoryFormatter
+from .InventoryFormatter import InventoryFormatter
 
 try:
     from configparser import ConfigParser
@@ -44,10 +48,11 @@ class CFGInventoryFormatter(InventoryFormatter):
                     grp_vars = str(grp_vars)
                     self.config.set(host_group + ":" + "vars", var, grp_vars)
 
+
     def add_ips_to_groups(self, inven_hosts, layout):
         # create a ip to host mapping based on count
-        ip_to_host = collections.OrderedDict()
         inven_hosts.reverse()
+        self.add_ips_to_host_group("all", inven_hosts)
         for host_name in layout['hosts']:
             if 'count' in host_name.keys():
                 count = host_name['count']
@@ -59,16 +64,17 @@ class CFGInventoryFormatter(InventoryFormatter):
             for i in range(count, 0, -1):
                 item = inven_hosts.pop()
                 host_list.append(item)
-            ip_to_host[host_name["name"]] = host_list
-        # add ips to the respective host groups in inventory
-        for host_name in layout['hosts']:
-            host_ips = ip_to_host[host_name["name"]]
-            for ip in host_ips:
-                for host_group in host_name['host_groups']:
-                    self.config.set(host_group, ip)
-                    self.config.set("all", ip)
+            for host_group in host_name['host_groups']:
+                self.add_ips_to_host_group(host_group, host_list)
+        return True
 
-    def add_common_vars(self, host_groups, layout):
+
+    def add_ips_to_host_group(self, host_group, hosts):
+        for ip in hosts:
+            self.config.set(host_group, ip)
+
+
+    def add_common_vars(self, host_groups, layout, config):
         # defaults common_vars to [] when they doesnot exist
         host_groups.append("all")
         common_vars = layout['vars'] if 'vars' in layout.keys() else []
@@ -79,13 +85,19 @@ class CFGInventoryFormatter(InventoryFormatter):
             for item in items:
                 host_string = item
                 for var in common_vars:
-                    if common_vars[var] == "__IP__":
-                        host_string += " " + var + "=" + item
-                    else:
-                        host_string += " " + var + "=" + common_vars[var]
+                    for cfg_item in config:
+                        if item not in cfg_item.keys():
+                            continue
+                        if common_vars[var] in cfg_item[item].keys():
+                            value = common_vars[var]
+                            host_string += " " + var + "=" +\
+                                           str(cfg_item[item][value])
+                        else:
+                            host_string += " " + var + "=" +\
+                                           str(common_vars[var])
                 self.config.set(group, host_string)
 
     def generate_inventory(self):
-        output = StringIO.StringIO()
+        output = StringIO()
         self.config.write(output)
         return output.getvalue()

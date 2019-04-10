@@ -3,18 +3,18 @@
 
 - name:  "schema check and Pre Provisioning Activities on topology_file"
   hosts: localhost
-  gather_facts: True
+  gather_facts: False
   roles:
     - { role: 'common' }
 
-- name:  "Provisioning openstack resources"
+- name:  "Provisioning AWS resources"
   hosts: localhost
-  gather_facts: True
+  gather_facts: False
   roles:
     - { role: 'aws' }
 
 - name: "Writing contents to file"
   hosts: localhost
-  gather_facts: True
+  gather_facts: False
   roles:
     - { role: 'gather_resources' }

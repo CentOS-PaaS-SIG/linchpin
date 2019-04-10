@@ -16,6 +16,7 @@ env.MSG_PROVIDER = 'fedora-fedmsg'
 // Defaults for SCM operations
 env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/linchpin'
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
+env.ghprbTargetBranch = env.ghprbTargetBranch ?: 'develop'
 
 library identifier: "ci-pipeline@master",
         retriever: modernSCM([$class: 'GitSCMSource',
@@ -26,7 +27,7 @@ library identifier: "cico-pipeline-library@master",
                               remote: "https://github.com/CentOS/cico-pipeline-library"])
 
 properties([
-  buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '20')),
+  buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '15')),
   [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/CentOS-PaaS-SIG/linchpin/'],
   [$class: 'org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty', triggers:[
     [
@@ -60,17 +61,14 @@ pipeline {
                 node('master') {
                     script {
                         mTopic = "${topic}.ci.linchpin.pr.queued"
-                        mProperties = "topic=${topic}.ci.linchpin.pr.queued\n" +
-                            "ghprbActualCommit=${env.ghprbActualCommit}\n" +
-                            "ghprbPullId=${env.ghprbPullId}\n" +
-                            "ghprbPullAuthorLogin=${env.ghprbPullAuthorLogin}\n" +
-                            "sha1=${env.sha1}"
+                        mProperties = ''
                         mContent = [
                             "topic": "${topic}.ci.linchpin.pr.queued",
                             "ghprbActualCommit": env.ghprbActualCommit,
                             "ghprbPullId": env.ghprbPullId,
                             "ghprbPullAuthorLogin": env.ghprbPullAuthorLogin,
                             "ghprbGhRepository": env.ghprbGhRepository,
+                            "ghprbTargetBranch": env.ghprbTargetBranch,
                             "sha1": env.sha1
                         ]
                         mContentString = JsonOutput.toJson(mContent)

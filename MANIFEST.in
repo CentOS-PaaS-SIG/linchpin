@@ -15,6 +15,10 @@ prune linchpin/tests/**/__pycache__
 recursive-include linchpin/provision *
 recursive-exclude linchpin/provision *.pyc
 
+graft linchpin/hooks
+recursive-include linchpin/hooks *
+recursive-exclude linchpin/hooks *.pyc
+
 prune config
 prune vars
 prune dev_setup

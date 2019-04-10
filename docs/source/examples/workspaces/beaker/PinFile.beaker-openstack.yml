@@ -11,12 +11,16 @@ beaker-openstack:
               attempt_wait_time: 60
               cancel_message: Job cancelled on account of rain
               recipesets:
-                - distro: "Fedora-28"
-                  name: kusc_fedora28
+                - family: RedHatEnterpriseLinux7
+                  tags:
+                    - released
                   arch: x86_64
-                  variant: Server
                   count: 1
-                  ks_meta: harness=restraint-rhts
+                  name: kusc_rhel7
+                  variant: Server
+                  hostrequires:
+                    - rawxml: '<key_value key="model" op="=" value="KVM"/>'
+
       - resource_group_name: openstack-topology
         resource_group_type: openstack
         resource_definitions:

@@ -6,6 +6,7 @@ import os
 import json
 
 from nose.tools import *
+from six import iteritems
 
 import logging
 from unittest import TestCase
@@ -83,7 +84,7 @@ def test_set_vars():
     filter.set_vars(inv)
 
     host_group='OSEv3'
-    for key, val in inv['host_groups'][host_group]['vars'].iteritems():
+    for key, val in iteritems(inv['host_groups'][host_group]['vars']):
         var = filter.config.get("{0}:vars".format(host_group), key)
         assert_equal(var, str(val))
 

@@ -21,7 +21,8 @@ simpler, and includes some tooling to make the workflow smooth.
                                    -w/--workspace)
       --branch REF                 Specify the git branch. Used only with git
                                    protocol (eg. master).
-      --protocol [git|http|local]  Specify a protocol. (Default: git)
+      --git                        Remote is a Git repository (default)
+      --web                        Remote is a web directory
       --nocache                    Do not check the cached time, just copy the
                                    data to the destination
       -h, --help                   Show this message and exit.

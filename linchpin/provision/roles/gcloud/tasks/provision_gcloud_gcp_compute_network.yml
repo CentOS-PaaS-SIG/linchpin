@@ -1,0 +1,23 @@
+- name: "Provision/Teardown gcloud_gcp_compute_network"
+  gcp_compute_network:
+    name: "{{ gce_resource_name }}"
+    auth_kind: "{{ res_def['auth_kind'] | default('serviceaccount') }}"
+    auto_create_subnetworks: "{{ res_def['auto_create_subnetworks'] | default('no') }}"
+    description: "{{ res_def['description'] | default(gce_resource_name) }}"
+    gateway_ipv4: "{{ res_def['gateway_ipv4'] | default(omit) }}"
+    ipv4_range: "{{ res_def['ipv4_range'] | default(omit) }}"
+    project: "{{ auth_var['output']['project_id'] | default(omit) }}"
+    scopes: "{{ res_def['scopes'] | default(['https://www.googleapis.com/auth/compute']) }}"
+    service_account_file: "{{ auth_var['path'] }}/{{ auth_var['params']['filename'] | default(omit) }}"
+    state: "{{ state }}"
+  register: res_def_output
+  no_log: "{{ not debug_mode }}"
+
+- name: "Appending outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce + [res_def_output] }}"
+  when: not async
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce | add_res_type('gcloud_gcp_compute_network') }}"

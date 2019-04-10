@@ -1,0 +1,106 @@
+#!/bin/bash -xe
+
+# Verify --no-hooks and --ignore-failed-hooks on dummy provider
+# distros.exclude: fedora28 centos7
+# providers.include: dummy
+# providers.exclude: none
+
+DISTRO=${1}
+PROVIDER=${2}
+
+PINFILE="PinFile"
+WORKSPACE_PATH="docs/source/examples/workspaces/host-group-order"
+TARGET="host-group-order"
+TMP_FILE=$(mktemp)
+CONFIG_FILE="../linchpin.conf"
+
+function clean_up {
+    set +e
+    linchpin -w . -p "${PINFILE}" -v destroy "${TARGET}"
+    D_RC=0
+    D_RC=(${?} -o ${D_RC})
+    if [ ${D_RC} -ne 0 ]; then
+        exit ${D_RC}
+    fi
+}
+trap clean_up EXIT SIGHUP SIGINT SIGTERM
+
+if [ -e /tmp/dummy.hosts ]; then
+    rm /tmp/dummy.hosts
+fi
+
+pushd ${WORKSPACE_PATH}
+pwd
+
+linchpin -w . -p "${PINFILE}" -c ${CONFIG_FILE} -v up --if json "${TARGET}" 2>&1 | tee -a ${TMP_FILE}
+RC0=${?}
+
+sed -i '$ d' ${TMP_FILE}
+uhash=$(tail -n 1 ${TMP_FILE} | awk '{ print $3 }' )
+echo ${uhash}
+
+INVENTORY_FILE="./inventories/${TARGET}-${uhash}.inventory"
+ls -l ./inventories
+ls -l ${INVENTORY_FILE}
+
+# check fedora-hosts host group
+DIFF1=0
+FEDORA_HOSTS=$(cat ${INVENTORY_FILE} | jq .'fedora_hosts'.'hosts'[] | awk '{ print substr($1, 9, 6)}')
+LC1=$(echo $FEDORA_HOSTS | wc -w)
+for line in $FEDORA_HOSTS; do
+    if [ "$line" != "fedora" ]; then
+        DIFF1=$((DIFF1+1))
+    fi
+done
+
+# check centos-hosts host group
+DIFF2=0
+CENTOS_HOSTS=$(cat ${INVENTORY_FILE} | jq .'centos_hosts'.'hosts'[] | awk '{ print substr($1, 9, 6)}')
+LC2=$(echo $CENTOS_HOSTS | wc -w)
+for line in $CENTOS_HOSTS; do
+    if [ "$line" != "centos" ]; then
+        DIFF2=$((DIFF2+1))
+    fi
+done
+
+# check fedora-user-layout host group
+DIFF3=0
+FEDORA_USERS=$(cat ${INVENTORY_FILE} | jq .'fedora_user_layout'.'hosts'[] | awk '{ print substr($1, 16, 6)}')
+LC3=$(echo $FEDORA_USERS | wc -w)
+for line in $FEDORA_USERS; do
+    if [ "$line" != "fedora" ]; then
+        DIFF3=$((DIFF3+1))
+    fi
+done
+
+# check root-user-layout host group
+DIFF4=0
+ROOT_USERS=$(cat ${INVENTORY_FILE} | jq .'root_user_layout'.'hosts'[] | awk '{ print substr($1, 16, 4)}')
+LC4=$(echo $ROOT_USERS | wc -w)
+for line in $ROOT_USERS; do
+    if [ "$line" != "root" ]; then
+        DIFF4=$((DIFF4+1))
+    fi
+done
+
+# check cloud-user-layout host group
+DIFF5=0
+CLOUD_USERS=$(cat ${INVENTORY_FILE} | jq .'cloud_user_layout'.'hosts'[] | awk '{ print substr($1, 16, 5)}')
+LC5=$(echo $CLOUD_USERS | wc -w)
+for line in $CLOUD_USERS; do
+    if [ "$line" != "cloud" ]; then
+        DIFF5=$((DIFF5+1))
+    fi
+done
+
+
+
+if [ ${RC0} -ne 0 ]; then
+    exit 1
+elif [ ${DIFF1} -ne 0 ] || [ ${DIFF2} -ne 0 ] || [ ${DIFF3} -ne 0 ] || [ ${DIFF4} -ne 0 ] || [ ${DIFF5} -ne 0 ]; then
+    exit 1
+elif [ ${LC1} -ne 2 ] || [ ${LC2} -ne 2 ] || [ ${LC3} -ne 1 ] || [ ${LC4} -ne 2 ] || [ ${LC5} -ne 1 ]; then
+    exit 1
+else
+    exit 0
+fi

@@ -3,27 +3,28 @@ Inventory Providers List
 """
 from linchpin.exceptions import LinchpinError
 
-from AWSInventory import AWSInventory
-from BeakerInventory import BeakerInventory
-from DuffyInventory import DuffyInventory
-from DummyInventory import DummyInventory
-from GCloudInventory import GCloudInventory
-from LibvirtInventory import LibvirtInventory
-from OpenstackInventory import OpenstackInventory
-from OvirtInventory import OvirtInventory
+from .AWSInventory import AWSInventory
+from .BeakerInventory import BeakerInventory
+from .DuffyInventory import DuffyInventory
+from .DummyInventory import DummyInventory
+from .GCloudInventory import GCloudInventory
+from .LibvirtInventory import LibvirtInventory
+from .OpenstackInventory import OpenstackInventory
+from .OvirtInventory import OvirtInventory
 
-from CFGInventoryFormatter import CFGInventoryFormatter
-from JSONInventoryFormatter import JSONInventoryFormatter
+from .CFGInventoryFormatter import CFGInventoryFormatter
+from .JSONInventoryFormatter import JSONInventoryFormatter
 
 filter_classes = {
-    "aws": AWSInventory,
-    "beaker": BeakerInventory,
-    "duffy": DuffyInventory,
-    "dummy": DummyInventory,
-    "gcloud": GCloudInventory,
-    "libvirt": LibvirtInventory,
-    "openstack": OpenstackInventory,
-    "ovirt": OvirtInventory,
+    "aws_ec2_res": AWSInventory,
+    "beaker_res": BeakerInventory,
+    "duffy_res": DuffyInventory,
+    "dummy_res": DummyInventory,
+    "nummy_res": DummyInventory,
+    "gcloud_gce_res": GCloudInventory,
+    "libvirt_res": LibvirtInventory,
+    "os_server_res": OpenstackInventory,
+    "ovirt_vms_res": OvirtInventory,
 }
 
 formatter_classes = {

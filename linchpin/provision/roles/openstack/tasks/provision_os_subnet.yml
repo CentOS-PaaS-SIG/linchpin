@@ -1,0 +1,34 @@
+---
+- name: "provision/deprovision os_subnet"
+  os_subnet:
+    allocation_pool_end:  "{{ res_def['allocation_pool_end'] | default(omit) }}"
+    allocation_pool_start:  "{{ res_def['allocation_pool_start'] | default(omit) }}"
+    api_timeout: "{{ res_def['api_timeout'] | default(omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
+    cidr:  "{{ res_def['cidr'] | default(omit) }}"
+    dns_nameservers:  "{{ res_def['dns_nameservers'] | default(omit) }}"
+    enable_dhcp: "{{ res_def['enable_dhcp'] | default(omit) }}"
+    extra_specs: "{{ res_def['extra_specs'] | default(omit) }}"
+    gateway_ip:  "{{ res_def['gateway_ip'] | default(omit) }}"
+    host_routes:  "{{ res_def['host_routes'] | default(omit) }}"
+    ip_version:  "{{ res_def['ip_version'] | default(omit) }}"
+    ipv6_address_mode:  "{{ res_def['ipv6_address_mode'] | default(omit) }}"
+    ipv6_ra_mode:  "{{ res_def['ipv6_ra_mode'] | default(omit) }}"
+    network_name:  "{{ res_def['network_name'] | default(omit) }}"
+    no_gateway_ip:  "{{ res_def['no_gateway_ip'] | default(omit) }}"
+    use_default_subnetpool:  "{{ res_def['use_default_subnetpool'] | default(omit) }}"
+    interface: "{{ res_def['interface'] | default(omit) }}"
+    name: "{{ os_resource_name }}"
+    key: "{{ res_def['key'] | default(omit) }}"
+    project: "{{ res_def['project'] | default(omit) }}"
+    region_name: "{{ res_def['region_name'] | default(omit) }}"
+    state: "{{ state }}"
+    timeout: "{{ res_def['timeout'] | default(600) }}"
+    verify: no
+    wait: yes
+  register: res_def_output_auth
+  no_log: "{{ not debug_mode }}"
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os_network: "{{ topology_outputs_os_network + [ res_def_output_auth ] }}"

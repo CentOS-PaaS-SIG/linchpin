@@ -1,0 +1,25 @@
+---
+- name: "provision/deprovision os_network"
+  os_network:
+    admin_state_up: "{{ res_def['admin_state_up'] | default(omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
+    external: "{{ res_def['external'] | default(omit) }}"
+    interface: "{{ res_def['interface'] | default(omit) }}"
+    key: "{{ res_def['key'] | default(omit) }}"
+    name: "{{ os_resource_name }}"
+    project: "{{ res_def['project'] | default(omit) }}"
+    provider_network_type: "{{ res_def['provider_network_type'] | default(omit) }}"
+    provider_physical_network: "{{ res_def['provider_physical_network'] | default(omit) }}"
+    provider_segmentation_id: "{{ res_def['provider_segmentation_id'] | default(omit) }}"
+    region_name: "{{ res_def['region_name'] | default(omit) }}"
+    shared: "{{ res_def['shared'] | default(omit) }}"
+    state: "{{ state }}"
+    timeout: "{{ res_def['timeout'] | default(600) }}"
+    verify: no
+    wait: yes
+  register: res_def_output
+  no_log: "{{ not debug_mode }}"
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os_network: "{{ topology_outputs_os_network + [ res_def_output ] }}"

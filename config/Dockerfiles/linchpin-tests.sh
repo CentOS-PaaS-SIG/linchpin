@@ -62,11 +62,11 @@ function set_providers () {
     prov_exc=''
     if [ -z "${prov_inc}" ]; then
         providers=${PROVIDERS}
-        prov_exc=$(grep '^#.*providers.exclude' ${test} | grep -v 'none' | awk -F':' '{ print $2 }')
+	prov_exc=$(grep '^#.*providers.exclude' ${test} | grep -v 'none' | awk -F':' '{ print $2 }'; echo "__RELEASE__")
         if [ ! -z "${prov_exc}" ]; then
-            for p in ${prov_exc}; do
-                p="${p##+([[:space:]])}"
-                providers="${providers//${p}/}"
+             for p in ${prov_exc}; do
+                 p="${p##+([[:space:]])}"
+                 providers="${providers//${p}/}"
             done
         fi
     fi

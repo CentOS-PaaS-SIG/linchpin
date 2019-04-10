@@ -1,0 +1,10 @@
+- name: Install pypi dependencies of linchpin tests
+  pip:
+    name: "{{ test_pkg }}"
+  with_items:
+    - "nose"
+    - "mock"
+    - "coverage" 
+    - "flake8"
+  loop_control:
+    loop_var: test_pkg

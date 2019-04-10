@@ -1,0 +1,165 @@
+---
+gcloud-gce-new:
+  topology:
+    topology_name: gce-new
+    resource_groups:
+      - resource_group_name: gcloud
+        resource_group_type: gcloud
+        resource_definitions:
+          - name: gce-webserver
+            role: gcloud_gce
+            flavor: {{ flavor | default('f1-micro') }}
+            region: {{ region | default('us-central1-a') }}
+            image: {{ image | default('centos-7') }}
+            count: 1
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+        {% else %}
+        credentials:
+          filename: gcloud.key
+        {% endif %}
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example
+
+gcloud-template-inventory:
+  topology:
+    topology_name: gcloud
+    resource_groups:
+      - resource_group_name: gcloud
+        resource_group_type: gcloud
+        resource_definitions:
+          - name: webserver
+            type: gcloud_gce
+            flavor: {{ flavor | default('f1-micro') }}
+            region: {{ region | default('us-central1-a') }}
+            image: {{ image | default('centos-7') }}
+            count: 1
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+        {% else %}
+        credentials:
+          filename: gcloud.key
+        {% endif %}
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example
+
+gcloud-gce-eip:
+  topology:
+    topology_name: gcloud
+    resource_groups:
+      - resource_group_name: "gcloud"
+        resource_group_type: "gcloud"
+        resource_definitions:
+          - name: "testgcloudeiplinchpin"
+            role: gcloud_gce_eip
+            region: us-east1
+        credentials:
+          filename: gcloud.key
+
+gcloud-gce-net:
+  topology:
+    topology_name: gcloud
+    resource_groups:
+      - resource_group_name: "gcloud"
+        resource_group_type: "gcloud"
+        resource_definitions:
+          - name: "testgcloudlinchpinautonet"
+            role: gcloud_gce_net
+            mode: auto
+        credentials:
+          filename: gcloud.key
+
+gcloud-gcdns-zone:
+  topology:
+    topology_name: gcloud
+    resource_groups:
+      - resource_group_name: "gcloud"
+        resource_group_type: "gcloud"
+        resource_definitions:
+          - zone: "testlpgcdnszone.com"
+            name: "testlpgcdnszonecom"
+            role: gcloud_gcdns_zone
+            description: test
+        credentials:
+          filename: gcloud.key
+
+gcloud-gcdns-zone-record:
+  topology:
+    topology_name: gcloud
+    resource_groups:
+      - resource_group_name: "gcloud"
+        resource_group_type: "gcloud"
+        resource_definitions:
+          - zone: "testlpgcdnszone.com"
+            name: "testlpgcdnszonecom"
+            role: gcloud_gcdns_zone
+            description: test
+          - zone: "testlpgcdnszone.com"
+            name: "testlsomerecord"
+            role: gcloud_gcdns_record
+            record: www1.testlpgcdnszone.com
+            type: A
+            record_data:           # NOTE: All of the values must match exactly
+            - '192.0.2.23'
+            - '192.0.2.42'
+            - '198.51.100.5'
+            - '203.0.113.10'
+        credentials:
+          filename: gcloud.key
+
+gcloud-gcp-compute-network:
+  topology:
+    topology_name: gcloud
+    resource_groups:
+      - resource_group_name: "gcloud"
+        resource_group_type: "gcloud"
+        resource_definitions:
+          - name: "testgcpcomputenetwork"
+            role: gcloud_gcp_compute_network
+            description: test_gcp_compute_network_linchpin
+        credentials:
+          filename: gcloud.key
+
+gcloud-gcp-compute-router:
+  topology:
+    topology_name: gcloud
+    resource_groups:
+      - resource_group_name: "gcloud"
+        resource_group_type: "gcloud"
+        resource_definitions:
+          # since network names cannot be propagated to subsequent 
+          # resource definitions make sure you set enable_uhash = False
+          # in linchpin.conf
+          - name: "tcomputenetwork"
+            role: gcloud_gcp_compute_network
+            description: test_gcp_compute_network_linchpin
+          - name: "tcomputerouter"
+            role: gcloud_gcp_compute_router
+            bgp:
+              asn: 64514
+              advertise_mode: CUSTOM
+              advertised_groups:
+              - ALL_SUBNETS
+              advertised_ip_ranges:
+              - range: 1.2.3.4
+              - range: 6.7.0.0/16
+            network_name: tcomputenetwork
+            region: us-central1
+        credentials:
+          filename: gcloud.key

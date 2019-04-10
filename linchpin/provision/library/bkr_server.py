@@ -49,6 +49,7 @@ class BkrFactory(BkrConn):
         debug = kwargs.get("debug", False)
         dryrun = kwargs.get("dryrun", False)
         recipesets = kwargs.get("recipesets", [])
+        keys_path = kwargs.get('ssh_keys_path', '')
 
         # Create Job
         job = BeakerJob(*args, **kwargs)
@@ -84,6 +85,27 @@ class BkrFactory(BkrConn):
                     baseurls.append(repo.get("baseurl"))
             else:
                 kwargs.update({"repo": baseurls})
+            ks_append = kwargs.get("ks_append", [])
+            ssh_key = kwargs.get("ssh_key", [])
+
+            for key_file in kwargs.get("ssh_key_file", []):
+                file_path = os.path.join(keys_path, key_file)
+                try:
+                    with open(file_path, "r") as f:
+                        ssh_key.append(f.read())
+                except:
+                    LOG.info("Unable to read from ssh key file: %s" % file_path)
+
+            if ssh_key:
+                ks_append.append("""%%post
+mkdir -p /root/.ssh
+cat >>/root/.ssh/authorized_keys << "__EOF__"
+%s
+__EOF__
+restorecon -R /root/.ssh
+chmod go-w /root /root/.ssh /root/.ssh/authorized_keys
+%%end""" % '\n'.join(ssh_key))
+                kwargs.update({"ks_append": ks_append})
 
             requested_tasks = []
 
@@ -104,6 +126,8 @@ class BkrFactory(BkrConn):
             else:
                 requested_tasks.append({'arches': [],
                                         'name': '/distribution/reservesys'})
+                if reserve_duration:
+                    task_params.append("RESERVETIME=%s" % reserve_duration)
 
             # Update defaults
             kwargs.update({"suppress_install_task": True})
@@ -263,6 +287,7 @@ def main():
         'cancel_message': {'default': 'Job canceled by LinchPin'},
         'max_attempts': {'default': 60, 'type': 'int'},
         'attempt_wait_time': {'default': 60, 'type': 'int'},
+        'ssh_keys_path': {'required': False, 'type': 'str'},
     })
     params = type('Args', (object,), module.params)
     factory = BkrFactory()
@@ -275,6 +300,7 @@ def main():
         extra_params = {}
         if params.job_group:
             extra_params['job_group'] = params.job_group
+        extra_params['ssh_keys_path'] = params.ssh_keys_path
         # Make provision
         try:
             job_ids = factory.provision(debug=True,

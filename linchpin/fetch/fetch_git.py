@@ -2,7 +2,7 @@ import os
 import subprocess
 import tempfile
 
-from fetch import Fetch
+from .fetch import Fetch
 from linchpin.exceptions import LinchpinError
 
 
@@ -44,13 +44,16 @@ class FetchGit(Fetch):
     def call_clone(self, fetch_dir=None):
 
         ref = None
+        src = self.src
         if self.ref:
             ref = self.ref
+            src = '{0}@{1}'.format(self.src, ref)
 
         if fetch_dir and os.path.exists(fetch_dir):
-            cmd = ['git', '-C', fetch_dir, 'pull', '--quiet']
+            cmd = ['git', 'pull', '--quiet']
             retval = subprocess.call(cmd, stdout=subprocess.PIPE,
-                                     stderr=subprocess.PIPE)
+                                     stderr=subprocess.PIPE,
+                                     cwd=fetch_dir)
         else:
             if not fetch_dir:
                 fetch_dir = tempfile.mkdtemp(prefix="git_", dir=self.cache_dir)
@@ -58,11 +61,12 @@ class FetchGit(Fetch):
             cmd = ['git', 'clone', '--quiet', self.src]
             if ref:
                 cmd.extend(['-b', ref])
+
             cmd.append(fetch_dir)
 
             retval = subprocess.call(cmd, stdout=subprocess.PIPE,
                                      stderr=subprocess.PIPE)
 
         if retval != 0:
-            raise LinchpinError("Unable to clone {0}".format(self.src))
+            raise LinchpinError("Unable to clone {0}".format(src))
         return fetch_dir

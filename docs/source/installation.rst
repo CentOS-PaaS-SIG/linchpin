@@ -1,7 +1,44 @@
+.. _installation:
+
 Installation
 ============
 
-Currently, LinchPin can be run from any machine with Python 2.6+ (Python 3.x is currently experimental), and requires Ansible 2.3.1 or newer.
+LinchPin can be run either as a container or as a bare-metal application
+
+.. _docker_installation:
+
+Docker Installation
+-------------------
+
+The LinchPin container is built using the latest Fedora image.  The image exists in the docker hub as contrainfra/linchpin and is updated with each release.  The image can also be build manually.
+
+From within the config/Dockerfiles/linchpin directory:
+
+.. code::
+
+   $ sudo buildah bud -t linchpin .
+
+Finally, to run the linchpin container:
+
+.. code::
+
+   $ sudo buildah run linchpin -v /path/to/workspace:/workdir -- linchpin -w /wordir up
+   $ sudo buildah run linchpin -v /path/to/workspace:/workdir -- linchpin -w /workdir -vv destroy
+
+.. note::
+   Setting the CREDS_PATH environment variable pointing the /workdir is recommended.
+   AWS credentials can also be passed as evironment variables when the container is run, named  AWS_SECRET_ACCESS_KEY and AWS_ACCESS_KEY_ID
+
+.. note::
+   Beaker uses kinit, which is installed in the container but must be run within the container after it starts
+   The default /etc/krb5.conf for kerberos requires privilege escalation.  The linchpin Dockerfile replaces it with a version that eliminates this need
+
+
+.. bare_metal_installation
+
+Bare Metal Installation
+-----------------------
+Currently, LinchPin can be run from any machine with Python 2.6+ (Python 3.x is currently experimental), and requires Ansible 2.7.1 or newer.
 
 .. note:: Some providers have additional dependencies. Additional software requirements can be found in the :doc:`providers` documentation.
 
@@ -33,7 +70,7 @@ For CentOS or RHEL the following packages should be installed:
 
     $ sudo yum install python-pip python-virtualenv libffi-devel \
     openssl-devel libyaml-devel gmp-devel libselinux-python make \
-    gcc redhat-rpm-config libxml2-python libxslt-python
+    gcc redhat-rpm-config libxml2-python libxslt-python git
 
 .. attention:: CentOS 6 (and likely RHEL 6) require special care during installation. See :doc:`centos6_install` for more detail.
 
@@ -70,7 +107,7 @@ Using mkvirtualenv with Python 3 (now default on some Linux systems) will attemp
     (linchpin) $ pip install linchpin
     ..snip..
 
-.. note:: mkvirtualenv is optional dependency you can install from `here <http://virtualenvwrapper.readthedocs.io/en/latest/install.html>`_. An alternative, virtualenv, also exists. Please refer to the `Virtualenv documentation <https://virtualenv.pypa.io/en/stable/>`_ for more details.
+.. note:: mkvirtualenv is optional dependency you can install from `here <http://virtualenvwrapper.readthedocs.io/en/latest/install.html>`_. An alternative, virtualenv, also exists. Please refer to the `virtualenv documentation <https://virtualenv.pypa.io/en/stable/>`_ for more details.
 
 
 To deactivate the virtualenv
@@ -110,7 +147,7 @@ When using a virtualenv with SELinux enabled, LinchPin may fail due to an error 
     (linchpin) $ ln -s ${LIBSELINUX_PATH}/selinux ${VIRTUAL_ENV}/${VENV_LIB_PATH}
     (linchpin) $ ln -s ${LIBSELINUX_PATH}/_selinux.so ${VIRTUAL_ENV}/${VENV_LIB_PATH}
 
-.. note:: A script is provided to do this work at :code1.5:`<scripts/install_selinux_venv.sh>`
+.. note:: A script is provided to do this work at :code1.5:`scripts/install_selinux_venv.sh`
 
 Installing on Fedora 26
 -----------------------
@@ -234,3 +271,25 @@ As an alternative, LinchPin can be installed via github. This may be done in ord
     ..snip..
     (linchpin) $ pip install file://$PWD/linchpin
 
+linchpin setup : Automatic Dependency installation:
+---------------------------------------------------
+From version 1.6.5 linchpin includes linchpin setup commandline option to automate installations of linchpin dependencies.
+linchpin setup uses built in ansible-playbooks to carryout the installations.
+
+Install all the dependencies:
+
+.. code-block:: bash
+
+    $ linchpin setup
+
+To install only a subset of dependencies, pass as arguments list:
+
+.. code-block:: bash
+
+    $ linchpin setup beaker docs
+
+It also supports ask-sudo-pass parameter when installing dnf related dependencies:
+
+.. code-block:: bash
+
+   $ linchpin setup libvirt --ask-sudo-pass

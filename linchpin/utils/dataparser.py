@@ -41,7 +41,6 @@ class DataParser(object):
             file_w_path
 
         """
-
         if not data:
             data = '{}'
 
@@ -53,7 +52,7 @@ class DataParser(object):
                     data = strm.read()
 
             try:
-                file_data = self.render(file_data, data, ordered=False)
+                file_data = self.render(file_data, data)
                 return self.parse_json_yaml(file_data)
             except TypeError:
                 error_txt = "Error attempting to parse PinFile data file."
@@ -78,9 +77,13 @@ class DataParser(object):
             A dictionary of variables to be rendered againt the template
         """
 
-        c = self.parse_json_yaml(context, ordered=ordered)
-        t = Environment(loader=BaseLoader).from_string(template)
+        # setting ordered=False may be problematic, but it is required until
+        # ansible supports OrderedDict in templates, which can't happen until
+        # it stops supporting python 2.6
+        c = self.parse_json_yaml(context, ordered=False)
+        t = Environment(loader=BaseLoader).from_string(str(template))
         return t.render(c)
+
 
     def parse_json_yaml(self, data, ordered=True):
 

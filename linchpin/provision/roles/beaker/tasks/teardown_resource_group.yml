@@ -38,17 +38,22 @@
 
 - name: "set topo_output_resources fact"
   set_fact:
-    topo_output_resources: "{{ topo_output.output['content']['beaker_res'] }}"
+    topo_output_resources: "{{ topo_output.output['content'] }}"
   when: generate_resources
 
 - name: "init job_ids"
   set_fact:
     job_ids: []
 
+- name: "print beaker res"
+  debug:
+    msg: "{{ topo_output_resources[0] }}"
+
 - name: "build job_id list"
   set_fact:
     job_ids: "{{ job_ids + [ 'J:' + fact_item['id'] ] }}"
-  with_items: "{{ topo_output_resources['beaker_res'] | default([]) }}"
+  with_items: "{{ topo_output_resources | default([]) }}"
+  when: fact_item[ 'resource_type' ] == 'beaker_res'
   loop_control:
     loop_var: fact_item
 

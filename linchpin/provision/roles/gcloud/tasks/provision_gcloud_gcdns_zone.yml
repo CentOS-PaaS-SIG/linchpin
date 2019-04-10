@@ -1,0 +1,24 @@
+- name: "Provision/Teardown gcloud_gcdns_zone"
+  gcdns_zone:
+    zone: "{{ res_def['zone'] | default(res_def['name']) }}"
+    pem_file:  "{{ auth_var['output']['pem_file'] | default(omit) }}"
+    project_id: "{{ auth_var['output']['project_id'] | default(omit) }}"
+    credentials_file: "{{ auth_var['path'] }}/{{ auth_var['params']['filename'] | default(omit) }}"
+    state: "{{ state }}"
+    service_account_email: "{{ auth_var['output']['client_email'] | default(omit) }}"
+    state: "{{ state }}"
+    description: "{{ res_def['description'] | default(omit) }}"
+  register: res_def_output
+  no_log: "{{ not debug_mode }}"
+
+- debug:
+    msg: "{{ res_def_output }}"
+
+- name: "Appending outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce + [res_def_output] }}"
+  when: not async
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce | add_res_type('gcloud_gce_net') }}"

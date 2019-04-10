@@ -11,6 +11,7 @@
                         "allowed": ["os_server"]
                     },
                     "name": { "type": "string", "required": true },
+                    "unique": { "type": "boolean", "required": false },
                     "flavor": { "type": "string", "required": true },
                     "image": { "type": "string", "required": false },
                     "count": { "type": "integer", "required": false },
@@ -78,11 +79,13 @@
                     "verify": { "type": "string", "required": false },
                     "tag": { "type": "string", "required": false },
                     "environment": {
-			    "type": "list", "required": false
-		    },
-		    "parameters": {
-                            "type": "list", "required": false
-                    }
+			                  "type": "list", "required": false
+		                },
+		                "parameters": {
+                        "type": "list", "required": false
+                    },
+                    "unique": { "type": "boolean", "required": false },
+                    "template_path": { "type": "string", "required": true }
                 }
             },
             {
@@ -93,6 +96,7 @@
                         "required": true,
                         "allowed": ["os_volume"] },
                     "name": { "type": "string", "required": true },
+                    "unique": { "type": "boolean", "required": false },
                     "count": { "type": "integer", "required": false },
                     "size": { "type": "integer", "required": true }
                 }
@@ -105,6 +109,7 @@
                         "required": true,
                         "allowed": ["os_object"] },
                     "name": { "type": "string", "required": true },
+                    "unique": { "type": "boolean", "required": false },
                     "count": { "type": "integer", "required": false },
                     "access": { "type": "string", "required": false }
                 }
@@ -117,6 +122,7 @@
                         "required": true,
                         "allowed": ["os_sg"] },
                     "name": { "type": "string", "required": true},
+                    "unique": { "type": "boolean", "required": false },
                     "description": { "type": "string", "required": false},
                     "region": { "type": "string", "required": false},
                     "rules": {
@@ -143,10 +149,109 @@
                         "required": true,
                         "allowed": ["os_keypair"] },
                     "name": { "type": "string", "required": true},
+                    "unique": { "type": "boolean", "required": false },
                     "public_key_path": { "type": "string", "required": false}
                 }
-            }]
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["os_network"] },
+                    "admin_state_up": { "type": "boolean", "required": false},
+                    "external": { "type": "boolean", "required": false},
+                    "interface": { "type": "string", "required": false, "allowed": ["public", "internal", "admin"] },
+                    "key": { "type": "string", "required": false },
+                    "name": { "type": "string", "required": true},
+                    "unique": { "type": "boolean", "required": false},
+                    "project": { "type": "string", "required": false},
+                    "provider_network_type": { "type": "string", "required": false},
+                    "provider_physical_network": { "type": "string", "required": false},
+                    "provider_segmentation_id": { "type": "string", "required": false},
+                    "region_name": { "type": "string", "required": false},
+                    "shared": { "type": "boolean", "required": false},
+                    "timeout": { "type": "number", "required": false }
+                }
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["os_router"] },
+                    "admin_state_up": { "type": "boolean", "required": false},
+                    "api_timeout": { "type": "number", "required": false},
+		    "external_fixed_ips": {
+                        "type": "list",
+                        "required": false,
+                        "schema": { "type": "string", "required": true }
+                    },
+		    "interfaces": {
+                        "type": "list",
+                        "required": false,
+                        "schema": { "type": "string", "required": true }
+                    },
+                    "network": { "type": "string", "required": false },
+                    "enable_snat": { "type": "boolean", "required": false},
+                    "external": { "type": "boolean", "required": false},
+                    "interface": { "type": "string", "required": false, "allowed": ["public", "internal", "admin"] },
+                    "key": { "type": "string", "required": false },
+                    "name": { "type": "string", "required": true},
+                    "unique": { "type": "boolean", "required": false },
+                    "project": { "type": "string", "required": false},
+                    "region_name": { "type": "string", "required": false},
+                    "timeout": { "type": "number", "required": false }
+                }
+            },
+	    {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["os_subnet"] },
+                    "allocation_pool_end": { "type": "string", "required": false },
+                    "allocation_pool_start": { "type": "string", "required": false },
+                    "api_timeout": { "type": "string", "required": false },
+                    "cidr": { "type": "string", "required": false },
+                    "dns_nameservers": {
+                        "type": "list",
+                        "required": false,
+                        "schema": { "type": "string", "required": true }
+                    },
+                    "enable_dhcp": { "type": "boolean", "required": false},
+		     "extra_specs": {
+                        "type": "dict",
+                        "required": false
+                    },
+                    "gateway_ip": { "type": "string", "required": false },
+                    "host_routes": {
+                        "type": "dict",
+                        "required": false,
+                        "schema": {
+                            "destination": { "type": "string", "required": false },
+                            "nexthop": { "type": "string", "required": false }
+                        }
+                    },
+                    "interface": { "type": "string", "required": false, "allowed": ["public", "internal", "admin"] },
+                    "ip_version": { "type": "number", "required": false },
+                    "ipv6_address_mode": { "type": "string", "required": false, "allowed": ["dhcpv6-stateful", "dhcpv6-stateless", "slaac"] },
+                    "ipv6_ra_mode": { "type": "string", "required": false, "allowed": ["dhcpv6-stateful", "dhcpv6-stateless", "slaac"] },
+                    "key": { "type": "string", "required": false },
+                    "name": { "type": "string", "required": true },
+                    "unique": { "type": "boolean", "required": false },
+                    "network_name": { "type": "string", "required": true },
+                    "no_gateway_ip": { "type": "boolean", "required": false},
+                    "use_default_subnetpool": { "type": "boolean", "required": false},
+                    "project": { "type": "string", "required": false},
+                    "region_name": { "type": "string", "required": false},
+                    "timeout": { "type": "number", "required": false }
+                }
+            }
+	    ]
         }
     }
 }
-

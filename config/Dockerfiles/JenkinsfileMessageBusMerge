@@ -2,14 +2,24 @@ import groovy.json.*
 
 properties(
         [
-                buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '50', daysToKeepStr: '', numToKeepStr: '100')),
+                buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '50', daysToKeepStr: '', numToKeepStr: '15')),
                 parameters(
                     [
                         string(description: 'fedmsg msg', name: 'CI_MESSAGE'),
                     ]
                 ),
                 pipelineTriggers(
-                        [[$class: 'CIBuildTrigger', checks: [],  overrides: [topic: 'org.centos.prod'], providerName: 'fedora-fedmsg', selector: 'topic = "org.centos.prod.ci.linchpin.pr_merge.queued"']]
+                        [[$class: 'CIBuildTrigger',
+                          noSquash: true,
+                          providerData: [
+                              $class: 'FedMsgSubscriberProviderData',
+                              name: 'fedora-fedmsg',
+                              overrides: [
+                                  topic: 'org.centos.prod.ci.linchpin.pr_merge.queued'
+                              ],
+                              checks: []
+                          ]
+                        ]]
                 )
         ]
 )
@@ -22,13 +32,13 @@ node('master') {
                 echo "CI_MESSAGE: ${env.CI_MESSAGE}"
 
                 // parse CI_MESSAGE json
-                def json_msg = readJSON text: CI_MESSAGE
-                // parse message-content json
-                def msg_content = readJSON text: json_msg['message-content']
+                def msg_content = readJSON text: CI_MESSAGE
 
                 def ghprbPullId = msg_content['ghprbPullId']
                 def ghprbPullAuthorLogin = msg_content['ghprbPullAuthorLogin']
                 def ghprbActualCommit = msg_content['ghprbActualCommit']
+                env.ghprbTargetBranch = msg_content['ghprbTargetBranch']
+                env.ghprbGhRepository = msg_content['ghprbGhRepository']
                 def sha1 = msg_content['sha1']
 
                 currentBuild.displayName = "Build#: ${env.BUILD_NUMBER} - PR: ${ghprbPullId} - Author: ${ghprbPullAuthorLogin}"
@@ -46,6 +56,8 @@ node('master') {
                            value: "${env.ghprbGhRepository}"),
                     string(name: 'ghprbPullAuthorLogin',
                            value: "${ghprbPullAuthorLogin}"),
+                    string(name: 'ghprbTargetBranch',
+                           value: "${env.ghprbTargetBranch}"),
                     string(name: 'sha1',
                            value: "${sha1}")
                   ],

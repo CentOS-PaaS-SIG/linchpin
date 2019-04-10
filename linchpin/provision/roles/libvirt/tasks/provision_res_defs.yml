@@ -15,6 +15,14 @@
     - resource_type == "libvirt_network"
     - state == "present"
 
+- name: "teardown libvirt network"
+  include: teardown_libvirt_network.yml
+  when:
+    - resource_type == "libvirt_network"
+    - state == "absent"
+    - res_def['delete_on_destroy'] is defined
+    - res_def['delete_on_destroy'] == True
+
 - name: "Set the resource node name"
   set_fact:
     libvirt_resource_name: "{{ res_def['name'] }}"

@@ -1,0 +1,53 @@
+---
+- name: "Fetch vpc details when vpc_name is defined"
+  ec2_vpc_net_facts:
+    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
+    region: "{{ res_def['region'] }}"
+    filters:
+      "tag:Name": "{{ res_def['vpc_name'] }}"
+  register: vpc_net_details
+  when: res_def['vpc_name'] is defined
+
+- name: "Fetch vpc details when vpc_name is defined"
+  set_fact:
+    vpc_id_fetched: "{{ vpc_net_details['vpcs'] | first | default({}) | fetch_attr('vpc_id', '')}}"
+  when: res_def['vpc_name'] is defined
+
+- name: "Add tags to subnet"
+  set_fact:
+    subnet_tags: "{{ res_def['tags'] | default({}) }}"
+
+- name: "Add name to subnet"
+  set_fact:
+    subnet_tags: "{{ subnet_tags | combine({subnetkey.key: subnetkey.value}) }}"
+  with_items:
+    - { key: 'Name', value: "{{ res_def['name'] }}" }
+  loop_control:
+    loop_var: subnetkey
+
+- name: "Provision/teardown AWS_EC2_VPC_SUBNET"
+  ec2_vpc_subnet:
+    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
+    # either vpc_id or vpc_name needs to be mentioned in topology
+    vpc_id: "{{ res_def['vpc_id'] | default(vpc_id_fetched) }}" 
+    az: "{{ res_def['az'] | default(omit) }}"
+    cidr: "{{ res_def['cidr'] | default(omit) }}"
+    ec2_url: "{{ res_def['ec2_url'] | default(omit) }}"
+    ipv6_cidr: "{{ res_def['ipv6_cidr'] | default(omit) }}"
+    map_public: "{{ res_def['map_public'] | default(omit) }}"
+    purge_tags: "{{ res_def['purge_tags'] | default(omit) }}"
+    region: "{{ res_def['region'] }}"
+    tags: "{{ subnet_tags | default(omit) }}"
+    validate_certs: "{{ res_def['validate_certs'] | default('no') }}"
+    state: "{{ state }}"
+  register: res_def_output
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_aws_net: "{{ topology_outputs_aws_net + [res_def_output] }}"
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_aws_ec2: "{{ topology_outputs_aws_net | add_res_type('aws_ec2_vpc_subnet') }}"

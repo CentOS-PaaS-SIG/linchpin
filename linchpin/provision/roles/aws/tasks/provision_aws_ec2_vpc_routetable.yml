@@ -1,0 +1,50 @@
+---
+- name: "Fetch vpc details when vpc_name is defined"
+  ec2_vpc_net_facts:
+    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
+    region: "{{ res_def['region'] }}"
+    filters:
+      "tag:Name": "{{ res_def['vpc_name'] }}"
+  register: vpc_net_details
+  when: res_def['vpc_name'] is defined
+
+- name: "Fetch vpc details when vpc_name is defined"
+  set_fact:
+    vpc_id_fetched: "{{ vpc_net_details['vpcs'] | first | default({}) | fetch_attr('vpc_id', '')}}"
+  when: res_def['vpc_name'] is defined
+
+- name: "Add tags to route table"
+  set_fact:
+    routetable_tags: "{{ res_def['tags'] | default({}) }}"
+
+- name: Append  name to tags
+  set_fact:
+    routetable_tags: "{{ routetable_tags | combine({routekey.key: routekey.value}) }}"
+  with_items:
+    - { key: 'Name', value: "{{ res_def['name'] }}" }
+  loop_control:
+    loop_var: routekey
+
+- name: "Provision/teardown AWS_EC2_VPC_ROUTETABLE"
+  ec2_vpc_route_table:
+    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
+    # either vpc_id or vpc_name needs to be mentioned in topology
+    vpc_id: "{{ res_def['vpc_id'] | default(vpc_id_fetched) }}" 
+    region: "{{ res_def['region'] }}"
+    route_table_id: "{{ res_def['route_table_id'] | default(omit) }}"
+    routes: "{{ res_def['routes'] | default(omit) }}"
+    state: "{{ state }}"
+    subnets: "{{ res_def['subnets'] | default(omit) }}"
+    tags: "{{ routetable_tags | default(omit) }}"
+    validate_certs: "{{ res_def['validate_certs'] | default('no') }}"
+  register: res_def_output
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_aws_net: "{{ topology_outputs_aws_net + [res_def_output] }}"
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_aws_ec2: "{{ topology_outputs_aws_net | add_res_type('aws_ec2_vpc_routetable') }}"

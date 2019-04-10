@@ -1,0 +1,49 @@
+---
+- name: "get network name"
+  set_fact:
+    net_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+
+- name: "filter vms using other networks"
+  set_fact:
+    vm_list: "{{ net_name | get_network_domains(res_def['uri']) }}"
+
+- name: "list vms"
+  debug:
+    msg: "{{ vm_list }}"
+    
+  
+- name: "destroy machines using the network"
+  virt:
+    name: "{{ vm }}"
+    state:  destroyed
+    uri: "{{ res_def['uri'] }}"
+  loop: "{{ vm_list }}"
+  loop_control:
+    loop_var: vm
+  delegate_to: "{{ uri_hostname }}"
+  ignore_errors: yes
+
+- name: "undefine machines using the network"
+  virt:
+    name: "{{ vm }}"
+    command:  undefine
+    uri: "{{ res_def['uri'] }}"
+  loop: "{{ vm_list }}"
+  loop_control:
+    loop_var: vm
+  delegate_to: "{{ uri_hostname }}"
+  ignore_errors: yes
+
+- name: "destroy network"
+  virt_net:
+    name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+    command: destroy
+    uri: "{{ res_def['uri'] | default('qemu:///system') }}"
+  ignore_errors: yes
+
+- name: "undefine network"
+  virt_net:
+    name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+    command: undefine
+    uri: "{{ res_def['uri'] | default('qemu:///system') }}"
+  ignore_errors: yes

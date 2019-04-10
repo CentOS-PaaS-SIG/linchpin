@@ -1,9 +1,9 @@
 #!/bin/bash -xe
 
 # Verify basic provisioning for all supplied providers
-# distros.exclude: none
+# distros.exclude: centos7 fedora28
 # providers.include: none
-# providers.exclude: libvirt
+# providers.exclude: gcloud
 
 DISTRO=${1}
 PROVIDER=${2}
@@ -11,6 +11,7 @@ PROVIDER=${2}
 TARGETS="${PROVIDER}-new"
 TEST_NAME="${DISTRO}/${PROVIDER}/01_general"
 DESCRIPTION="Test ${PROVIDER} provider with a simple up/destroy"
+TEMPLATE_DATA="{\"distro\": \"${DISTRO}-\"}"
 
 echo "Test Name: ${TEST_NAME}"
 echo "${DESCRIPTION}"
@@ -23,21 +24,25 @@ elif [ "${PROVIDER}" == "openstack" ]; then
     TARGETS="os-server-new os-sg-new" #os-vol-new 
 elif [ "${PROVIDER}" == "aws" ]; then
     TARGETS="aws-ec2-new" #aws-sg-new aws-s3-new aws-ec2-key-new
+elif [ "${PROVIDER}" == "gcloud" ]; then
+    TARGETS="gcloud-gce-new"
 elif [ "${PROVIDER}" == "beaker" ]; then
     TARGETS="beaker-new"
 elif [ "${PROVIDER}" == "duffy" ]; then
     TARGETS="duffy-new"
+elif [ "${PROVIDER}" == "openshift" ]; then
+    TARGETS="openshift-new"
 else
     TARGETS="dummy-new"
 fi
 
-pushd docs/source/examples/workspace
+pushd docs/source/examples/workspaces/${PROVIDER}
 
 function clean_up {
     set +e
     D_RC=0
     for target in ${TARGETS}; do
-        linchpin -w . -p PinFile.${PROVIDER}.yml -v destroy ${target}
+        linchpin -w . -v destroy ${target}
         D_RC=(${?} -o ${D_RC})
     done
     if [ ${D_RC} -ne 0 ]; then
@@ -48,5 +53,5 @@ trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
 echo "CREDS_PATH: ${CREDS_PATH}"
 for target in ${TARGETS}; do
-    linchpin -w . -p PinFile.${PROVIDER}.yml -vvvv up ${target}
+    linchpin -w . --template-data "${TEMPLATE_DATA}"  -vvvv up ${target}
 done

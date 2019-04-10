@@ -3,29 +3,22 @@
 #chpasswd: {expire: False}
 #ssh_pwauth: True
 ssh_authorized_keys:
-  - "{{ pubkey["stdout"] }}"
+  - "{% if pubkey_remote.stdout is defined %}{{ pubkey_remote['stdout'] }}{% else %}{{ pubkey_local['stdout'] }}{% endif %}"
 
 # Add users to the system. Users are added after groups are added.
+{% if 'cloud_config' in res_def %}
 users:
-{% for item in cloud_configusers %}
-  - {{ item.name | default('admin') }}
-    {{ item.gecos | default('Admin User') }}
-    {{ item.groups | default('wheel') }}
-    {{ item.sudo | default('ALL=(ALL) NOPASSWD:ALL')}}
-    {{ item.ssh_import_id | default('None') }}
-    {{ item.lock_passwd | default('true') }}
-    ssh_authorized_keys:
-      - {{ pubkey["stdout"] }}
+{% for item in res_def['cloud_config']['users'] %}
+  - name: {{ item['name'] | default('admin') }}
+    gecos: {{ item['gecos'] | default('Admin User') }}
+    groups: {{ item['groups'] | default('wheel') }}
+    sudo: {{ item['sudo'] | default('ALL=(ALL) NOPASSWD:ALL')}}
+    ssh_import_id: {{ item['ssh_import_id'] | default('None') }}
+    lock_passwd: {{ item['lock_passwd'] | default('true') }}
+    ssh-authorized-keys:
+      - {% if pubkey_remote.stdout is defined %}{{ pubkey_remote['stdout'] }}{% else %}{{ pubkey_local['stdout'] }}{% endif %}
 {% endfor %}
-#users:
-#  - name: "{{   }}"
-#    gecos: Admin User
-#    groups: wheel
-#    sudo: ALL=(ALL) NOPASSWD:ALL
-#    ssh_import_id: None
-#    lock_passwd: true
-#    ssh_authorized_keys:
-#      - {{ pubkey["stdout"] }}
+{% endif %}
 
 timezone: UTC
 

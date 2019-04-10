@@ -19,7 +19,8 @@
                     "security_group": { "type": ["list", "string"], "required": false },
                     "vpc_subnet_id": { "type": "string", "required": false },
                     "assign_public_ip": { "type": "boolean", "required": false },
-                    "instance_tags": { "type": "dict", "required": false }
+                    "instance_tags": { "type": "dict", "required": false },
+                    "wait_timeout": { "type": "integer", "required": false }
                 }
             },
             {
@@ -33,6 +34,7 @@
                     "name": { "type": "string", "required": true},
                     "description": { "type": "string", "required": true},
                     "region": { "type": "string", "required": false},
+                    "vpc_id": { "type": "string", "required": false },
                     "rules": {
                         "type": "list",
                         "required": true,
@@ -84,8 +86,166 @@
                     "region": { "type": "string", "required": true },
                     "template_path": { "type": "string", "required": true }
                 }
-            }]
+            },
+	    {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["aws_ec2_eip"] },
+                    "allow_reassociation": { "type": "string", "required": false },
+                    "name": { "type": "string", "required": true },
+                    "device_id": { "type": "string", "required": false },
+                    "ec2_url": { "type": "string", "required": false },
+                    "in_vpc": { "type": "string", "required":false },
+                    "private_ip_address": { "type": "string", "required": false },
+                    "public_ip": { "type": "string", "required": false },
+                    "region": { "type": "string", "required": true },
+                    "release_on_disassociation": { "type": "string", "required": false },
+                    "reuse_existing_ip_allowed": { "type": "string", "required": false }
+                }
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["aws_ec2_vpc_net"] },
+                    "name": { "type": "string", "required": true },
+                    "region": { "type": "string", "required": true },
+		    "cidr_block": { "type": "string", "required": true },
+		    "dhcp_opts_id": { "type": "string", "required": false },
+		    "dns_hostnames": { "type": "boolean", "required": false },
+		    "dns_support": { "type": "boolean", "required": false },
+		    "ec2_url": { "type": "string", "required": false },
+		    "multi_ok": { "type": "boolean", "required": false },
+		    "purge_cidrs": { "type": "boolean", "required": false },
+                    "tags": { "type": "dict", "required": false },
+		    "tenancy": { "type": "string", "required": false },
+		    "validate_certs": { "type": "boolean", "required": false }
+                }
+            },
+	    {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["aws_ec2_vpc_subnet"] },
+                    "name": { "type": "string", "required": true },
+                    "assign_instances_ipv6": { "type": "boolean", "required": false },
+                    "vpc_name": { "type": "string", "required": false },
+                    "vpc_id": { "type": "string", "required": false },
+                    "az": { "type": "string", "required": false },
+                    "cidr": { "type": "string", "required": false },
+                    "ec2_url": { "type": "string", "required": false },
+                    "ipv6_cidr": { "type": "string", "required": false },
+                    "map_public": { "type": "boolean", "required": false },
+                    "purge_tags": { "type": "boolean", "required": false },
+                    "region": { "type": "string", "required": true },
+                    "tags": { "type": "dict", "required": false },
+                    "validate_certs": { "type": "boolean", "required": false }
+                }
+            },
+	    {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["aws_ec2_vpc_routetable"] },
+                    "name": { "type": "string", "required": true },
+                    "propagating_vgw_ids": { "type": "string", "required": false },
+                    "purge_routes": { "type": "boolean", "required": false },
+                    "purge_subnets": { "type": "boolean", "required": false },
+                    "purge_tags": { "type": "boolean", "required": false },
+                    "region": { "type": "string", "required": true },
+                    "route_table_id": { "type": "string", "required": false },
+                    "routes": {
+                        "type": "list",
+                        "required": false,
+                        "schema": {
+                            "type": "dict",
+                            "schema": {
+                                "dest": { "type": "string", "required": false },
+                                "gateway_id": { "type": "string", "required": false }
+                            }
+                        }
+                    },
+                    "subnets": { "type": ["list", "string"], "required": false },
+                    "tags": { "type": "dict", "required": false },
+                    "vpc_id": { "type": "string", "required": false },
+                    "vpc_name": { "type": "string", "required": false },
+                    "validate_certs": { "type": "boolean", "required": false }
+                }
+            },
+	    {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["aws_ec2_vpc_endpoint"] },
+                    "name": { "type": "string", "required": true },
+                    "service": { "type": "string", "required": false },
+                    "vpc_endpoint_id": { "type": "string", "required": false },
+                    "vpc_id": { "type": "string", "required": false },
+                    "policy": { "type": "string", "required": false },
+                    "policy_file": { "type": "string", "required": false },
+                    "region": { "type": "string", "required": true },
+                    "route_table_ids": {
+                        "type": "list",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "route_table_name": { "type": "string", "required": false },
+                    "vpc_id": { "type": "string", "required": false },
+                    "vpc_name": { "type": "string", "required": false },
+                    "validate_certs": { "type": "boolean", "required": false }
+                }
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["aws_ec2_elb_lb"] },
+                    "access_logs": { "type": "dict", "required": false },
+                    "region": { "type": "string", "required": true },
+                    "name": { "type": "string", "required": true },
+                    "connection_draining_timeout": { "type": ["string", "number"], "required": false },
+                    "cross_az_load_balancing": { "type": "boolean", "required": false },
+                    "ec2_url": { "type": "string", "required": false },
+                    "health_check": { "type": "dict", "required": false },
+                    "tags": { "type": "dict", "required": false },
+                    "zones": { "type": "list", "required": false },
+                    "subnets": { "type": "list", "required": false },
+                    "idle_timeout": { "type": ["string", "number"], "required": false },
+                    "instance_ids": { "type": "list", "required": false },
+                    "stickiness": { "type": "dict", "required": false },
+                    "security_token": { "type": "string", "required": false },
+                    "security_group_ids": { "type": "list", "required": false },
+                    "security_group_names": { "type": "list", "required": false },
+                    "listeners": {
+                        "type": "list",
+                        "required": false,
+                        "schema": {
+                            "type": "dict"
+                        }
+                    },
+                    "purge_instance_ids": { "type": "boolean", "required": false },
+                    "purge_listeners": { "type": "boolean", "required": false },
+                    "purge_subnets": { "type": "boolean", "required": false },
+                    "purge_zones": { "type": "boolean", "required": false },
+		    "scheme": { "type": "string", "required": false, "allowed": ["internal", "internet-facing"] }
+                }
+            }
+	    ]
         }
     }
 }
-

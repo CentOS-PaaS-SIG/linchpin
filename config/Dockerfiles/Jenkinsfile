@@ -2,16 +2,17 @@ import com.cloudbees.plugins.credentials.Credentials
 
 env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/linchpin'
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
+env.ghprbTargetBranch = env.ghprbTargetBranch ?: 'develop'
 env.ghprbPullAuthorLogin = env.ghprbPullAuthorLogin ?: ''
 env.ghprbPullId = env.ghprbPullId ?: ''
 
-env.TARGET_BRANCH = env.TARGET_BRANCH ?: 'develop'
+env.TARGET_BRANCH = env.ghprbTargetBranch ?: 'develop'
 
 // Needed for podTemplate()
-env.SLAVE_TAG = env.SLAVE_TAG ?: 'stable'
-env.FEDORA28_TAG = env.FEDORA28_TAG ?: 'stable'
-env.FEDORA27_TAG = env.FEDORA27_TAG ?: 'stable'
-env.CENTOS7_TAG = env.CENTOS7_TAG ?: 'stable'
+env.SLAVE_TAG = env.SLAVE_TAG ?: 'stable-' + env.ghprbTargetBranch
+env.FEDORA28_TAG = env.FEDORA28_TAG ?: 'stable-' + env.ghprbTargetBranch
+env.FEDORA29_TAG = env.FEDORA29_TAG ?: 'stable-' + env.ghprbTargetBranch
+env.CENTOS7_TAG = env.CENTOS7_TAG ?: 'stable-' + env.ghprbTargetBranch
 
 DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 // if LINCHPIN_PROVIDERS is defined in jenkins global
@@ -19,10 +20,10 @@ DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 // if it's not defined you will get all the possible providers
 // listed here.
 
-LPROVIDERS = env.LINCHPIN_PROVIDERS ?: 'dummy duffy libvirt aws'
+LPROVIDERS = env.LINCHPIN_PROVIDERS ?: '__RELEASE__ dummy duffy libvirt aws gcloud'
 PPROVIDERS = LPROVIDERS.tokenize()
 
-TEST_PROVIDERS = env.TEST_PROVIDERS ?: 'dummy duffy libvirt aws beaker openstack'
+TEST_PROVIDERS = env.TEST_PROVIDERS ?: '__RELEASE__ dummy duffy libvirt aws beaker openstack openshift gcloud'
 TPROVIDERS = TEST_PROVIDERS.tokenize()
 
 env.PROVIDERS = TPROVIDERS.intersect( PPROVIDERS ).join(" ")
@@ -36,7 +37,7 @@ executionID = UUID.randomUUID().toString()
 // Pod name to use
 c7podName = 'lp_centos7-' + executionID
 f28podName = 'lp_fedora28-' + executionID
-f27podName = 'lp_fedora27-' + executionID
+f29podName = 'lp_fedora29-' + executionID
 
 def libraries = ['cico-pipeline' : ['master', 'https://github.com/CentOS/cico-pipeline-library.git'],
                  'ci-pipeline'   : ['master', 'https://github.com/CentOS-PaaS-SIG/ci-pipeline.git']]
@@ -49,7 +50,7 @@ libraries.each { name, repo ->
 
 properties(
     [
-        buildDiscarder(logRotator(artifactDaysToKeepStr: '30', artifactNumToKeepStr: '15', daysToKeepStr: '90', numToKeepStr: '30')),
+        buildDiscarder(logRotator(artifactDaysToKeepStr: '30', artifactNumToKeepStr: '15', daysToKeepStr: '90', numToKeepStr: '15')),
         [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/CentOS-PaaS-SIG/linchpin/'],
         disableConcurrentBuilds(),
         parameters(
@@ -69,16 +70,16 @@ properties(
                 string(defaultValue: '',
                        description: 'Git Hub Repository',
                        name: 'ghprbGhRepository'),
-                string(defaultValue: 'stable',
+                string(defaultValue: 'stable-' + env.ghprbTargetBranch,
                        description: 'Tag for slave image',
                        name: 'SLAVE_TAG'),
-                string(defaultValue: 'stable',
+                string(defaultValue: 'stable-' + env.ghprbTargetBranch,
                        description: 'Tag for fedora28 image',
                        name: 'FEDORA28_TAG'),
-                string(defaultValue: 'stable',
-                       description: 'Tag for fedora27 image',
-                       name: 'FEDORA27_TAG'),
-                string(defaultValue: 'stable',
+                string(defaultValue: 'stable-' + env.ghprbTargetBranch,
+                       description: 'Tag for fedora29 image',
+                       name: 'FEDORA29_TAG'),
+                string(defaultValue: 'stable-' + env.ghprbTargetBranch,
                        description: 'Tag for centos7 image',
                        name: 'CENTOS7_TAG'),
                 string(description: 'Providers to be tested',
@@ -150,7 +151,7 @@ stage('Tests') {
                                 alwaysPullImage: true,
                                 image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora28:' + FEDORA28_TAG,
                                 ttyEnabled: false,
-                                command: '',
+                                command: '/root/init_libvirt.sh',
                                 privileged: true,
                                 workingDir: '/workDir')
                         ],
@@ -161,10 +162,10 @@ stage('Tests') {
                 {
                     execute_test(f28podName, "fedora28")
                 }
-            }, fedora27: {
+            }, fedora29: {
                 pipelineUtils.clearTemplateNames()
-                podTemplate(name: f27podName,
-                            label: f27podName,
+                podTemplate(name: f29podName,
+                            label: f29podName,
                             cloud: 'openshift',
                             serviceAccount: OPENSHIFT_SERVICE_ACCOUNT,
                             idleMinutes: 0,
@@ -179,11 +180,11 @@ stage('Tests') {
                                 args: '${computer.jnlpmac} ${computer.name}',
                                 command: '',
                                 workingDir: '/workDir'),
-                            containerTemplate(name: 'fedora27',
+                            containerTemplate(name: 'fedora29',
                                 alwaysPullImage: true,
-                                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora27:' + FEDORA27_TAG,
+                                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora29:' + FEDORA29_TAG,
                                 ttyEnabled: false,
-                                command: '',
+                                command: '/root/init_libvirt.sh',
                                 privileged: true,
                                 workingDir: '/workDir')
                         ],
@@ -192,7 +193,7 @@ stage('Tests') {
                         ]
                 )
                 {
-                    execute_test(f27podName, "fedora27")
+                    execute_test(f29podName, "fedora29")
                 }
             },
             failFast: true
@@ -280,7 +281,7 @@ def execute_test(String podname, String container) {
             // Archive our artifacts
             step([$class: 'ArtifactArchiver',
                   allowEmptyArchive: true,
-                  artifacts: '**/*_logs/**,*.txt,*.groovy,**/job.*,**/*.groovy,**/inventory.*',
+                  artifacts: '**/*_logs/**,*.txt,*.groovy,**/job.*,**/*.groovy,**/inventory.*,**/linchpin.latest',
                   excludes: '**/job.props,**/job.props.groovy,**/*.example',
                   fingerprint: true])
         }

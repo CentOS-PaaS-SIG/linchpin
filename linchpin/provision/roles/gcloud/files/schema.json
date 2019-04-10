@@ -2,20 +2,123 @@
     "res_defs": {
         "type": "list",
         "schema": {
-            "type": "dict",
-            "schema": {
-               "role": {
-                   "type": "string",
-                   "required": true,
-                   "allowed": ["gcloud_gce"]
-               },
-               "name": { "type": "string", "required": true },
-               "flavor": { "type": "string", "required": true },
-               "region": { "type": "string", "required": true },
-               "image": { "type": "string", "required": true },
-               "count": { "type": "integer", "required": false }
+            "anyof": [{
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["gcloud_gce"]
+                    },
+		    "name": { "type": "string", "required": true },
+                    "flavor": { "type": "string", "required": true },
+                    "region": { "type": "string", "required": true },
+                    "image": { "type": "string", "required": true },
+                    "count": { "type": "integer", "required": false }
+		}
+	    },
+	    {
+		"type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["gcloud_gce_eip"]
+                    },
+                    "name": { "type": "string", "required": true },
+                    "region": { "type": "string", "required": true }
+                }
+            },
+  	    {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["gcloud_gce_net"]
+                    },
+                    "name": { "type": "string", "required": true },
+                    "allowed": { "type": "string", "required": false },
+                    "fwname": { "type": "string", "required": false },
+                    "ipv4_range": { "type": "string", "required": false },
+                    "mode": { "type": "string", "required": false },
+                    "src_range": { "type": "list", "required": false },
+                    "src_tags": { "type": "list", "required": false },
+                    "subnet_desc": { "type": "string", "required": false },
+		    "subnet_name": { "type": "string", "required": false },
+                    "subnet_region": { "type": "string", "required": false },
+                    "target_tags": { "type": "list", "required": false }
+                }
+            },
+	    {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["gcloud_gcdns_zone"]
+                    },
+                    "zone": { "type": "string", "required": true },
+                    "name": { "type": "string", "required": true },
+                    "description": { "type": "string", "required": false }
+                }
+            },
+	    {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["gcloud_gcdns_record"]
+                    },
+                    "overwrite": { "type": "boolean", "required": false },
+                    "name": { "type": "string", "required": true },
+                    "zone": { "type": "string", "required": false },
+                    "record": { "type": "string", "required": true },
+		    "record_data": {
+                        "type": "list",
+                        "required": false,
+                        "schema": { "type": "string", "required": true }
+                    },
+                    "ttl": { "type": "number", "required": false },
+                    "type": { "type": "string", "required": false },
+                    "zone_id": { "type": "string", "required": false },
+                    "value": { "type": "string", "required": false }
+                }
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["gcloud_gcp_compute_network"]
+                    },
+                    "auto_create_subnetworks": { "type": "boolean", "required": false },
+                    "description": { "type": "string", "required": false },
+                    "gateway_ipv4": { "type": "string", "required": false },
+                    "gateway_ipv4": { "type": "string", "required": false },
+                    "name": { "type": "string", "required": true }
+                }
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["gcloud_gcp_compute_router"]
+                    },
+                    "bgp": { "type": "dict", "required": true },
+                    "description": { "type": "string", "required": false },
+                    "name": { "type": "string", "required": true },
+                    "region": { "type": "string", "required": true },
+                    "network_name": { "type": "string", "required": true },
+                    "scopes": { "type": "list", "required": false }
+                }
             }
-        }
+	    ]
+	 }
     }
 }
 

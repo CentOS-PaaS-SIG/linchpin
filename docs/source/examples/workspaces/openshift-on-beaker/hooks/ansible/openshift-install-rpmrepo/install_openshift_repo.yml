@@ -1,0 +1,33 @@
+---
+- name: Install Openshift repo
+  hosts: all
+  gather_facts: false
+  tasks:
+          - name: Upgrade Packages
+            yum:
+                name: "*"
+                state: latest
+          - name: restart system
+            command: shutdown -r +1 "Ansible updates triggered"
+            async: 1
+            poll: 0
+            ignore_errors: True
+          - name: Wait for the server to finish rebooting
+            wait_for:
+                host: "{{ inventory_hostname }}"
+                search_regex: OpenSSH
+                port: 22
+                delay: 65
+                timeout: 900
+            delegate_to: localhost
+          - name: Install openshift
+            yum:
+                name:
+                   - centos-release-openshift-origin39
+                   - NetworkManager
+                state: installed
+          - name: Enable NetworkManager
+            service:
+                name: NetworkManager
+                enabled: True
+                state: started

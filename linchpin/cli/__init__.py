@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import os
-import re
 import ast
 import sys
 import json
@@ -11,14 +10,15 @@ import hashlib
 from random import randint
 from distutils import dir_util
 from collections import OrderedDict
-from jinja2 import Environment
 
 from linchpin import LinchpinAPI
 from linchpin.fetch import FETCH_CLASS
 from linchpin.exceptions import ActionError
 from linchpin.exceptions import LinchpinError
 from linchpin.exceptions import TopologyError
+from linchpin.exceptions import ValidationError
 from linchpin.utils.dataparser import DataParser
+
 
 
 class LinchpinCli(LinchpinAPI):
@@ -138,23 +138,12 @@ class LinchpinCli(LinchpinAPI):
                     if "layout_data" in targets[name]["inputs"]:
                         lt_data = targets[name]["inputs"]["layout_data"]
                         t_data = targets[name]["inputs"]["topology_data"]
+                        c_data = {}
+                        if "cfgs" in targets[name].keys():
+                            c_data = targets[name]["cfgs"]["user"]
+                        i_path = targets[name]["outputs"]["inventory_path"][0]
                         layout = lt_data["inventory_layout"]
                         # check whether inventory_file is mentioned in layout
-                        if layout.get("inventory_file", None):
-                            i_path = layout["inventory_file"]
-                            # if its not absolute path make path
-                            # relative to workspace
-                            if not os.path.isabs(i_path):
-                                # get default variable for inventories_path
-                                d_p = self.ctx.get_evar("default_inventories"
-                                                        "_path")
-                                d_p = Environment().from_string(d_p).render(
-                                    workspace=self.ctx.get_cfg('evars',
-                                                               'workspace'))
-                                i_path = "{0}/{1}".format(d_p, i_path)
-                        else:
-                            i_path = targets[name]["outputs"]
-                            i_path = i_path["inventory_path"][0]
 
                         if not os.path.exists(os.path.dirname(i_path)):
                             os.makedirs(os.path.dirname(i_path))
@@ -162,10 +151,14 @@ class LinchpinCli(LinchpinAPI):
                             i_path = inv_path + str(inv_file_count)
                         # r_o -> resources_outputs
                         r_o = targets[name]["outputs"]["resources"]
+                        # TODO: in the future we should render templates in
+                        # layout and cfgs here so that we can use data from the
+                        # most recent run
                         inv = self.generate_inventory(r_o,
                                                       layout,
                                                       inv_format=inv_format,
-                                                      topology_data=t_data)
+                                                      topology_data=t_data,
+                                                      config_data=c_data)
                         # if inv_path is explicitly mentioned it is used
                         if inv_path:
                             i_path = inv_path
@@ -288,10 +281,6 @@ class LinchpinCli(LinchpinAPI):
             fields = {}
             outputs = data.get('outputs', {})
             resources = outputs.get('resources', [])
-            format_resources = []
-            for provider in resources:
-                format_resources.extend(resources[provider])
-            resources = format_resources
             for dist_role, flds in dist_roles.iteritems():
                 if dist_role in roles:
                     for f in flds.split(','):
@@ -435,7 +424,6 @@ class LinchpinCli(LinchpinAPI):
         return (return_code, return_data)
 
 
-
     def lp_validate(self, targets=(), old_schema=False):
         """
         This function takes a list of targets, and validates their topology.
@@ -476,6 +464,24 @@ class LinchpinCli(LinchpinAPI):
         return self.do_validation(prov_data, old_schema=old_schema)
 
 
+    def lp_setup(self, providers=("all")):
+        """
+        This function takes a list of providers, and setsup the dependencies
+        :param providers:
+            A tuple of providers to install dependencies
+        """
+        if self.ctx.get_evar("ask_sudo_pass"):
+            output = self._invoke_playbooks(providers=providers,
+                                            action="ask_sudo_setup")
+        else:
+            output = self._invoke_playbooks(providers=providers,
+                                            action="setup")
+
+        return output
+
+
+
+
     def lp_destroy(self, targets=(), run_id=None, tx_id=None):
 
         """
@@ -508,7 +514,6 @@ class LinchpinCli(LinchpinAPI):
         return outputs
 
 
-
     def _execute_action(self, action, targets=(), run_id=None, tx_id=None):
         """
         This function takes a list of targets, and performs a destructive
@@ -525,7 +530,6 @@ class LinchpinCli(LinchpinAPI):
         :param tx_id:
             An optional tx_id to use
         """
-
         use_pinfile = True
         pf = None
 
@@ -558,7 +562,6 @@ class LinchpinCli(LinchpinAPI):
             else:
                 pf = self.parser.process(pf_w_path,
                                          data='@{0}'.format(pf_data_path))
-
             if pf:
                 provision_data = self._build(pf, pf_data=self.pf_data)
 
@@ -602,10 +605,11 @@ class LinchpinCli(LinchpinAPI):
             (default: topology)
 
         """
-
         folder = self.get_evar('topologies_folder', 'topologies')
         if ftype == 'layout':
             folder = self.get_evar('layouts_folder', 'layouts')
+        elif ftype == 'hooks':
+            folder = self.get_evar('hooks_folder', 'hooks')
 
         path = os.path.realpath('{0}/{1}'.format(self.workspace, folder))
         files = os.listdir(path)
@@ -631,6 +635,27 @@ class LinchpinCli(LinchpinAPI):
 
         return data
 
+    def _render_template(self, template, data):
+        if data is None:
+            return template
+
+        if data.startswith('@'):
+            with open(data[1:], 'r') as strm:
+                data = strm.read()
+
+        try:
+            template = json.dumps(template)
+            render = self.parser.render(template, data)
+        except TypeError:
+            error_txt = "Error attempting to parse PinFile data file."
+            error_txt += "\nTemplate-data files require a prepended '@'"
+            error_txt += " (eg. '@/path/to/template-data.yml')"
+            error_txt += "\nPerhaps the path to the PinFile or"
+            error_txt += " template-data is missing or the incorrect path?."
+            raise ValidationError(error_txt)
+
+        return json.JSONDecoder(object_pairs_hook=OrderedDict).decode(render)
+
 
     def _build(self, pf, pf_data=None):
         """
@@ -641,16 +666,21 @@ class LinchpinCli(LinchpinAPI):
 
         """
 
-        provision_data = {}
+        provision_data = OrderedDict()
 
         for target in pf.keys():
+            if target == 'cfgs':
+                provision_data['cfgs'] = pf['cfgs']
+                continue
 
-            provision_data[target] = {}
+            provision_data[target] = OrderedDict()
 
-            if not isinstance(pf[target]['topology'], dict):
+            if isinstance(pf[target]['topology'], str):
                 topology_path = self.find_include(pf[target]["topology"])
                 topology_data = self.parser.process(topology_path,
                                                     data=self.pf_data)
+                topology_data = self._render_template(topology_data,
+                                                      self.pf_data)
             else:
                 topology_data = pf[target]['topology']
 
@@ -665,17 +695,25 @@ class LinchpinCli(LinchpinAPI):
 
                     layout_data = self.parser.process(layout_path,
                                                       data=self.pf_data)
+                    layout_data = self._render_template(layout_data,
+                                                        self.pf_data)
                     layout_data = self._make_layout_integers(layout_data)
-                    provision_data[target]['layout'] = layout_data
                 else:
                     layout_data = pf[target]['layout']
-                    provision_data[target]['layout'] = layout_data
+                provision_data[target]['layout'] = layout_data
+
 
             if 'hooks' in pf[target]:
-                provision_data[target]['hooks'] = pf[target]['hooks']
+                if isinstance(pf[target]['hooks'], str):
+                    hook_path = self.find_include(pf[target]['hooks'],
+                                                  ftype='hooks')
+                    hook_data = self.parser.process(hook_path,
+                                                    data=self.pf_data)
+                    provision_data[target]['hooks'] = hook_data
+                else:
+                    hook_data = pf[target]['hooks']
+                    provision_data[target]['hooks'] = hook_data
             # grab target specific vars
-            if 'cfgs' in pf[target]:
-                provision_data[target]['cfgs'] = pf[target]['cfgs']
 
         return provision_data
 
@@ -714,7 +752,7 @@ class LinchpinCli(LinchpinAPI):
 
 
     def lp_fetch(self, src, root='', fetch_type='workspace',
-                 fetch_protocol=None, fetch_ref=None, dest_ws=None,
+                 fetch_protocol='FetchGit', fetch_ref=None, dest_ws=None,
                  nocache=False):
         """
         Fetch a workspace from git, http(s), or a local directory, and
@@ -800,28 +838,10 @@ class LinchpinCli(LinchpinAPI):
         if not os.path.exists(cache_path):
             os.makedirs(cache_path)
 
-        protocol = fetch_protocol
-        if protocol is None:
-            protocol_regex = OrderedDict([
-                ('((git|ssh|http(s)?)|(git@[\w\.]+))'
-                    '(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?',
-                    'FetchGit'),
-                ('^(http|https)://', 'FetchHttp'),
-                ('^(file)://', 'FetchLocal')
-            ])
-            for regex, obj in protocol_regex.items():
-                if re.match(regex, src):
-                    fetch_protocol = obj
-                    break
-
-        if protocol is None:  # assume fetch_protocol is git if None
-            protocol = 'FetchGit'
-
-
-        fetch_class = FETCH_CLASS[protocol](self.ctx, fetch_type, src,
-                                            dest, cache_path, root=root,
-                                            root_ws=root_ws,
-                                            ref=fetch_ref)
+        fetch_class = FETCH_CLASS[fetch_protocol](self.ctx, fetch_type, src,
+                                                  dest, cache_path, root=root,
+                                                  root_ws=root_ws,
+                                                  ref=fetch_ref)
         fetch_class.fetch_files()
 
         if nocache:

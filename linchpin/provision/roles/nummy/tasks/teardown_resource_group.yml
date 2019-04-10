@@ -1,0 +1,12 @@
+---
+#- name: debug res_grp
+#  debug:
+#    var: res_grp
+
+- name: "Teardown resource definitions of current group"
+  include: teardown_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  with_nested:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item

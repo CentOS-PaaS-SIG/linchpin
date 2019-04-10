@@ -1,0 +1,29 @@
+---
+- name: "Provision/Teardown AWS_EC2_VPC_NET"
+  ec2_vpc_net:
+    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
+    name: "{{ res_def['name'] }}"
+    cidr_block: "{{ res_def['cidr_block'] | default(omit) }}"
+    dhcp_opts_id: "{{ res_def['dhcp_opts_id'] | default(omit) }}"
+    dns_hostnames: "{{ res_def['dns_hostnames'] | default(omit) }}"
+    dns_support: "{{ res_def['dns_support'] | default(omit) }}"
+    ec2_url: "{{ res_def['ec2_url'] | default(omit) }}"
+    multi_ok: "{{ res_def['multi_ok'] | default(omit) }}"
+    purge_cidrs: "{{ res_def['purge_cidrs'] | default(omit) }}"
+    region: "{{ res_def['region'] }}"
+    security_token: "{{ res_def['security_token'] | default(omit) }}"
+    tags: "{{ res_def['tags'] | default(omit) }}"
+    tenancy: "{{ res_def['tenancy'] | default(omit) }}"
+    state: "{{ state }}"
+    validate_certs: no
+  register: res_def_output
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_aws_net: "{{ topology_outputs_aws_net + [res_def_output] }}"
+  when: res_def_output['changed'] == true
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_aws_ec2: "{{ topology_outputs_aws_net | add_res_type( 'aws_ec2_eip') }}"
