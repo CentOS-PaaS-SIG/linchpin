@@ -1,0 +1,8 @@
+topology:
+  topology_name: os-server-keypair
+  resource_groups:
+    - resource_group_name: os-server-test-lp
+      resource_group_type: openstack
+      resource_definitions:
+        - name: linchpintestkey
+          role: os_keypair
