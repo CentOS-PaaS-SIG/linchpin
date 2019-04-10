@@ -10,4 +10,4 @@ resources:
       flavor: m1.small
       key_name: ci-factory
       networks:
-        - network: e2e-openstack
+        - network: provider_net_cci_6 
