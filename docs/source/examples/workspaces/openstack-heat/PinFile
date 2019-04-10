@@ -12,4 +12,4 @@ os_heat_target:
             tag: "testtag"
         credentials:
           filename: clouds.yaml
-          profile: default
+          profile: ci-rhos
