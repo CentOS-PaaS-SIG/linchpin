@@ -1,0 +1,6 @@
+---
+- name: "Wait on jobs"
+  include: wait_on_vmware_guest.yml
+  vars:
+    vmware_guest_group: "{{ item }}"
+  with_items:  "{{ async_outputs_vmware_guest }}"

@@ -11,6 +11,7 @@ from .GCloudInventory import GCloudInventory
 from .LibvirtInventory import LibvirtInventory
 from .OpenstackInventory import OpenstackInventory
 from .OvirtInventory import OvirtInventory
+from .VMwareInventory import VMwareInventory
 
 from .CFGInventoryFormatter import CFGInventoryFormatter
 from .JSONInventoryFormatter import JSONInventoryFormatter
@@ -25,6 +26,7 @@ filter_classes = {
     "libvirt_res": LibvirtInventory,
     "os_server_res": OpenstackInventory,
     "ovirt_vms_res": OvirtInventory,
+    "vmware_guest_res": VMwareInventory,
 }
 
 formatter_classes = {

@@ -1,0 +1,38 @@
+---
+simple:
+  topology:
+    topology_name: simple
+    resource_groups:
+      - resource_group_name: simple
+        resource_group_type: vmware
+        resource_definitions:
+          - role: vmware_guest
+            name: simple
+            cdrom:
+              type: iso
+              iso_path: "[ha-datacenter] tc_vmware4.iso"
+            folder: /
+            datastore: ha-datacenter
+            disk:
+              - size_mb: 10
+                type: thin
+            hardware:
+              num_cpus: 1
+              memory_mb: 256
+            networks:
+              - name: VM Network
+            wait_for_ip_address: yes
+        credentials:
+          filename: vmware.yml
+          profile: default
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example
+
+

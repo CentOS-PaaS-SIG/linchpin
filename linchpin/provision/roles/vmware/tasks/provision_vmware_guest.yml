@@ -1,0 +1,103 @@
+---
+- set_fact:
+    state: poweredon
+    force: false
+  when: state == "present"
+
+- set_fact:
+    force: true
+  when: state == "absent"
+
+- name: "Sync Provisioning VMware guest"
+  vmware_guest:
+    name: "{{ res_def['res_name'] | default(res_def['name']) }}" 
+    name_match: "{{ res_def['res_name_match'] | default(omit) }}" 
+    annotation: "{{ res_def['annotation'] | default(omit) }}"
+    hostname: "{{ auth_var['hostname'] | default(omit) }}"
+    username: "{{ auth_var['username'] | default(omit) }}"
+    password: "{{ auth_var['password'] | default(omit) }}"
+    port: "{{ auth_var['port'] | default(omit) }}"
+    validate_certs: "{{ auth_var['validate_certs'] | default(false) }}"
+    esxi_hostname: "{{ res_def['esxi_hostname'] | default(omit) }}"
+    cluster: "{{ res_def['cluster'] | default(omit) }}"
+    resource_pool: "{{ res_def['resource_pool'] | default(omit) }}"
+    datacenter: "{{ res_def['datacenter'] | default(omit) }}"
+    datastore: "{{ res_def['datastore'] | default(omit) }}"
+    folder: "{{ res_def['folder'] | default(omit) }}"
+    state: "{{ res_def['state'] | default(state) }}"
+    guest_id: "{{ res_def['guest_id'] | default('otherLinuxGuest') }}"
+    template: "{{ res_def['template'] | default(omit) }}"
+    disk: "{{ res_def['disk'] | default(omit) }}"
+    hardware: "{{ res_def['hardware'] | default(omit) }}"
+    customization: "{{ res_def['customization'] | default(omit) }}"
+    customization_spec: "{{ res_def['customization_spec'] | default(omit) }}"
+    customvalues: "{{ res_def['customvalues'] | default(omit) }}"
+    cdrom: "{{ res_def['cdrom'] | default(omit) }}"
+    networks: "{{ res_def['networks'] | default(omit) }}"
+    is_template: "{{ res_def['is_template'] | default(omit) }}"
+    linked_clone: "{{ res_def['linked_clone'] | default(omit) }}"
+    snapshot_src: "{{ res_def['snapshot_src'] | default(omit) }}"
+    wait_for_ip_address: "{{ res_def['wait_for_ip_address'] | default(true) }}"
+    force: "{{ res_def['force'] | default(force) }}"
+  register: res_def_output
+  no_log: "{{ not debug_mode }}"
+  when: not async
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_vmware_guest: "{{ topology_outputs_vmware_guest + [res_def_output] }}"
+  when: res_def_output['changed'] == true and not async
+
+
+- name: "Async Provisioning VMware guest"
+  vmware_guest:
+    name: "{{ res_def['res_name'] | default(res_def['name']) }}" 
+    name_match: "{{ res_def['res_name_match'] | default(omit) }}" 
+    annotation: "{{ res_def['annotation'] | default(omit) }}"
+    hostname: "{{ auth_var['hostname'] | default(omit) }}"
+    username: "{{ auth_var['username'] | default(omit) }}"
+    password: "{{ auth_var['password'] | default(omit) }}"
+    port: "{{ auth_var['port'] | default(omit) }}"
+    validate_certs: "{{ auth_var['validate_certs'] | default(false) }}"
+    esxi_hostname: "{{ res_def['esxi_hostname'] | default(omit) }}"
+    cluster: "{{ res_def['cluster'] | default(omit) }}"
+    resource_pool: "{{ res_def['resource_pool'] | default(omit) }}"
+    datacenter: "{{ res_def['datacenter'] | default(omit) }}"
+    datastore: "{{ res_def['datastore'] | default(omit) }}"
+    folder: "{{ res_def['folder'] | default(omit) }}"
+    state: "{{ res_def['state'] | default(state) }}"
+    guest_id: "{{ res_def['guest_id'] | default('otherLinuxGuest') }}"
+    template: "{{ res_def['template'] | default(omit) }}"
+    disk: "{{ res_def['disk'] | default(omit) }}"
+    hardware: "{{ res_def['hardware'] | default(omit) }}"
+    customization: "{{ res_def['customization'] | default(omit) }}"
+    customization_spec: "{{ res_def['customization_spec'] | default(omit) }}"
+    customvalues: "{{ res_def['customvalues'] | default(omit) }}"
+    cdrom: "{{ res_def['cdrom'] | default(omit) }}"
+    networks: "{{ res_def['networks'] | default(omit) }}"
+    is_template: "{{ res_def['is_template'] | default(omit) }}"
+    linked_clone: "{{ res_def['linked_clone'] | default(omit) }}"
+    snapshot_src: "{{ res_def['snapshot_src'] | default(omit) }}"
+    wait_for_ip_address: "{{ res_def['wait_for_ip_address'] | default(true) }}"
+    force: "{{ res_def['force'] | default(force) }}"
+  register: res_def_output
+  no_log: "{{ not debug_mode }}"
+  async: "{{ async_timeout | default(1000) }}"
+  poll: 0
+  when: async
+
+- name: "Async Append outputitem to topology_outputs"
+  set_fact:
+    async_outputs_vmware_guest: "{{ topology_outputs_vmware_guest + [res_def_output] }}"
+  when: async
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_vmware_guest: "{{ topology_outputs_vmware_guest | add_res_type('vmware_guest_res') }}"
+
+- name: "Async Add type to resource"
+  set_fact:
+    async_outputs_vmware_guest: "{{ async_outputs_vmware_guest | add_res_type('vmware_guest_res') }}"
+  when: async
+
+

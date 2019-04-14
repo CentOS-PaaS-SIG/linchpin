@@ -94,7 +94,7 @@ def test_get_host_data():
         for host in data:
             assert_true('__IP__' in data[host].keys())
             hosts.append(data[host]['__IP__'])
-    expected_hosts = ['10.179.254.83', 'hp-dl380pgen8-02-vm-15.lab.bos.redhat.com', 'dummy-744068-0', 'dummy-744068-1', 'dummy-744068-2', '192.168.122.219', '172.16.100.11', '155.132.55.17', '11.50.197.1', '109.254.93.117', '180.20.194.96', '194.231.24.112', '171.109.242.199', 'test.example.com']
+    expected_hosts = ['10.179.254.83', 'hp-dl380pgen8-02-vm-15.lab.bos.redhat.com', 'dummy-744068-0', 'dummy-744068-1', 'dummy-744068-2', '192.168.122.219', '172.16.100.11', '155.132.55.17', '11.50.197.1', '109.254.93.117', '180.20.194.96', '194.231.24.112', '171.109.242.199', 'test.example.com', '192.168.122.210']
     assert_equal(set(hosts), set(expected_hosts))
 
 
