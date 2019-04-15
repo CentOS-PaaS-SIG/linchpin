@@ -32,7 +32,9 @@ def setup_json_inventory_formatter():
     template = 'parsed-layout.json'
     template_file = open(mock_path+'/'+template)
     inv = json.load(template_file)
-
+    # this converts everything from unicode to str.  Can be deleted
+    # once python2 support is dropped
+    # inv = json.dumps(json.loads(inv))
 
 def setup_cfg_config():
     global config
@@ -98,8 +100,10 @@ def test_set_vars():
 def test_add_ips_to_groups():
     """
     """
-    inven_hosts = inv['hosts']
-    formatter.add_sections(list(inv['host_groups'].keys()))
+    inven_hosts = []
+    for host in inv['hosts']:
+        inven_hosts.append(host['name'])
+    formatter.add_sections(inv['host_groups']['OSEv3']['children'])
     formatter.add_ips_to_groups(inven_hosts, inv)
  
 
