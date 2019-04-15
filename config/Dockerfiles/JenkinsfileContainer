@@ -11,7 +11,7 @@ openshiftProject = "continuous-infra"
 DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 
 // Defaults for SCM operations
-env.ghOrg = 'herlo'
+env.ghOrg = '14rcole'
 env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/linchpin'
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
 env.ghprbTargetBranch = env.ghprbTargetBranch ?: 'develop'

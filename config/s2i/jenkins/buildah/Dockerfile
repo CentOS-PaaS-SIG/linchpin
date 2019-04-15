@@ -1,6 +1,6 @@
 FROM fedora:28
 LABEL name="contrainfra/buildah" \
-      maintainer="herlo@redhat.com" \
+      maintainer="srallaba@redhat.com" \
       version="0.0.1" \
       description="Container to build and release docker images used by contra-infra tools"
 
