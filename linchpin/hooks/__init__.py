@@ -279,8 +279,10 @@ class LinchpinHooks(object):
                     # add path to python path
                     sys.path.append(a_b['path'])
                     # get the module path
-                    module_path = '{0}/{1}'.format(a_b['path'],
-                                                   a_b['action_manager'])
+                    module_path = '{0}{1}'.format(a_b['path'],
+                                                  a_b['action_manager'])
+                    if os.path.exists(a_b['action_manager']):
+                        module_path = a_b['action_manager']
                     # get module src
                     module_src = open(module_path, 'r').read()
                     # strip .py ext from module path
