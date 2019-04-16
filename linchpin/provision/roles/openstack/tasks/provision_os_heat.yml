@@ -20,7 +20,7 @@
     cert: "{{ res_def['cert'] | default(omit) }}"
   register: res_def_output
   when: not async and auth_var != ""
-  no_log: "{{ not debug_mode }}"
+  #  no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
@@ -47,7 +47,7 @@
     cert: "{{ res_def['cert'] | default(omit) }}"
   register: res_def_output
   when: not async and auth_var == ""
-  no_log: "{{ not debug_mode }}"
+  #  no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
