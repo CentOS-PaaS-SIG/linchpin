@@ -166,3 +166,12 @@ os-keypair:
         resource_definitions:
           - name: linchpintestkey
             role: os_keypair
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos
+        {% endif %}
