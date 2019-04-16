@@ -12,6 +12,8 @@ PINFILE="PinFile"
 TARGET="os_heat_target"
 WORKSPACE_PATH="docs/source/examples/workspaces/openstack-heat/"
 
+find / -name "*os_stack.yml"
+
 function clean_up {
     set +e
     linchpin -w "${WORKSPACE_PATH}" -p "${PINFILE}" -v destroy "${TARGET}"
