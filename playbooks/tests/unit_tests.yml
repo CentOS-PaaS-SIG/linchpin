@@ -1,6 +1,7 @@
 ---
 - name: Unit tests for Linchpin
   hosts: localhost
+  any_errors_fatal: true
   gather_facts: False
   tasks:
           - name: Install Test Reqs
