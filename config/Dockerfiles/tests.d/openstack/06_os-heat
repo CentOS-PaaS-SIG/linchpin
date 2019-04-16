@@ -1,7 +1,7 @@
 #!/bin/bash -xe
 
 # Verify openstack heat provisioning
-# distros.exclude: none
+# distros.exclude: fedora28 fedora29
 # providers.include: openstack
 # providers.exclude: none
 
@@ -11,8 +11,6 @@ PROVIDER=${2}
 PINFILE="PinFile"
 TARGET="os_heat_target"
 WORKSPACE_PATH="docs/source/examples/workspaces/openstack-heat/"
-
-find / -name "*os_stack.yml"
 
 function clean_up {
     set +e
