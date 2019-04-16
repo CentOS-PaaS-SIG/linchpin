@@ -1,0 +1,36 @@
+{
+    "topology": {
+        "type": ["dict", "string"],
+        "schema": {
+            "topology_name": {
+                "type": "string",
+                "required": true
+            },
+            "resource_groups": {
+                "type": "list",
+                "required": true,
+                "schema": {
+                    "type": "dict",
+                    "schema": {
+                        "resource_group_name": {
+                            "type": "string",
+                            "required": true
+                        },
+                        "resource_group_type": {
+                            "type": "string",
+                            "required": true
+                        },
+                        "resource_definitions": {
+                            "type": "list",
+                            "required": true
+                        },
+                        "credentials": {
+                            "type": ["string", "dict"],
+                            "required": false
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

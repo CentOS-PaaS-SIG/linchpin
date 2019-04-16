@@ -1,0 +1,5 @@
+---
+dummy_target:
+  topology: dummy-topology.yml
+  layout: dummy-layout.yml
+  hooks: dummy-hooks.yml

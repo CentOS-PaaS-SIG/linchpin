@@ -1,0 +1,14 @@
+---
+- hosts: esxi
+  gather_facts: no
+  tasks:
+    - vmware_host_facts:
+        hostname: '{{ hostname }}'
+        username: 'root'
+        password: 'VMware1!'
+        validate_certs: no
+      register: host_facts
+      delegate_to: localhost
+
+    - debug:
+        var: host_facts

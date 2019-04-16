@@ -1,0 +1,34 @@
+---
+simple:
+  topology:
+    topology_name: simple
+    resource_groups:
+      - resource_group_name: aws
+        resource_group_type: aws
+        resource_definitions:
+          - name: simple
+            flavor: {{ flavor | default('t2.nano') }}
+            role: aws_ec2
+            region: {{ region | default('us-east-1') }}
+            image: {{ image | default('ami-9887c6e7') }}
+            {% if security_groups is defined %}
+            security_group:
+              {% for group in security_groups %}
+              - {{ group }}
+              {% endfor %}
+            {% endif %}
+            count: 1
+            {% if assign_public_ip is defined %}
+            assign_public_ip: {{ assign_public_ip }}
+            {% endif %}
+            keypair: {{ keypair | default('ec2_keypair') }}
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+        ansible_ssh_private_key_file: {{ keypath | default('~/.ssh/id_rsa') }}
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example

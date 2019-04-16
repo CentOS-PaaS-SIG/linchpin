@@ -1,0 +1,45 @@
+---
+testinfra:
+  topology:
+    topology_name: testinfra
+    resource_groups:
+      - resource_group_name: testinfra
+        resource_group_type: openstack
+        resource_definitions:
+          - name: testinfra
+            role: os_server
+            flavor: {{ flavor | default('m1.small') }}
+            image: {{ image | default('CentOS-7-x86_64-GenericCloud-1612') }}
+            count: 1
+            keypair: {{ keypair | default('ci-factory') }}
+            fip_pool: {{ fip_pool | default('10.8.240.0') }}
+            security_groups: default
+            networks:
+              - {{ networks | default('e2e-openstack') }}
+        credentials:
+          filename: clouds.yml
+          profile: cirhos
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+        ansible_ssh_private_key_file: {{ keypair | default('ci-ops-central') }}
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example
+  hooks:
+    postup:
+      - name: python
+        type: ansible
+        context: true
+        path: hooks/testinfra
+        actions:
+          - playbook: python.yml
+      - name: test
+        type: shell
+        context: true
+        path: hooks/testinfra
+        actions:
+          - 'test.sh'

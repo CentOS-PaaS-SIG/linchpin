@@ -1,0 +1,21 @@
+
+topology:
+  topology_name: ec2elblb
+  resource_groups:
+    - resource_group_name: "awsec2elblbdemo"
+      resource_group_type: "aws"
+      resource_definitions:
+        - name: demoec2elblb
+          role: aws_ec2_elb_lb
+          region: us-east-1
+          zones:
+          - us-east-1a
+          - us-east-1d
+          listeners:
+          - protocol: http # options are http, https, ssl, tcp
+            load_balancer_port: 80
+            instance_port: 80
+            proxy_protocol: True
+      credentials:
+        filename: aws.key
+        profile: default

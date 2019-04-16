@@ -1,0 +1,60 @@
+---
+dummy-new:
+  topology:
+    topology_name: "dummy_cluster" # topology name
+    resource_groups:
+      - resource_group_name: "dummy"
+        resource_group_type: "dummy"
+        resource_definitions:
+          - name: "{{ distro | default('') }}web"
+            role: "dummy_node"
+            count: 3
+          - name: "{{ distro | default('') }}test"
+            role: "dummy_node"
+            count: 1
+  layout:
+    inventory_layout:
+      inventory_file: "{% raw -%}{{ workspace }}/inventories/dummy-new-{{ uhash }}.inventory{%- endraw %}"
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 3
+          host_groups:
+            - example
+        test-node:
+          count: 1
+          host_groups:
+            - test
+      host_groups:
+        all:
+          vars:
+            ansible_user: root
+            ansible_private_key_file: "{% raw -%}{{ lookup('env', 'TESTLP') | default('/tmp', true) }}/CSS/keystore/css-central{%- endraw %}"
+
+dummy-topo:
+  topology:
+    topology_name: "dummy_cluster" # topology name
+    resource_groups:
+      - resource_group_name: "dummy"
+        resource_group_type: "dummy"
+        resource_definitions:
+          - name: "{{ distro | default('') }}web"
+            role: "dummy_node"
+            count: 3
+          - name: "{{ distro | default('') }}test"
+            role: "dummy_node"
+            count: 1
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 3
+          host_groups:
+            - example
+        test-node:
+          count: 1
+          host_groups:
+            - test

@@ -1,0 +1,27 @@
+---
+simple:
+  topology:
+    topology_name: simple
+    resource_groups:
+      - resource_group_name: os-server-new
+        resource_group_type: openstack
+        resource_definitions:
+          - name: {{ name | default('database') }}
+            role: os_server
+            flavor: {{ flavor | default('m1.small') }}
+            image: {{ image | default('CentOS-7-x86_64-GenericCloud-1612') }}
+            count: 1
+            keypair: {{ keypair | default('ci-factory') }}
+            fip_pool: {{ fip_pool | default('10.8.240.0') }}
+            networks:
+              - {{ networks | default('e2e-openstack') }}
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+        ansible_ssh_private_key_file: {{ keypath | default('~/.ssh/id_rsa') }}
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example

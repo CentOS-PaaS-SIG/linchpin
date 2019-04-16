@@ -1,0 +1,81 @@
+- name: set fact for image path
+  set_fact:
+    cloud_config: "{{ res_def['cloud_config'] }}"
+
+- name: Jinja template test
+  template:
+    src: virt_customize_user_creation.sh.j2
+    dest: /tmp/user_creation.sh
+
+- name: set_fact for cloud_config
+  set_fact:
+    cloud_config: "{{ res_def['cloud_config'] }}"
+    virt_args: ""
+    ssh_args: ""
+
+- name: set run_commands in virt_args
+  set_fact:
+    virt_args: "{{ virt_args }} --run-command '{{ cmd }}'"
+  loop: "{{ cloud_config['run_commands'] | default([]) }}"
+  loop_control:
+    loop_var: cmd
+
+- name: set run_script in virt_args
+  set_fact:
+    virt_args: "{{ virt_args }} --run {{ cloud_config['run_script'] }}"
+  when : cloud_config['run_script'] is defined
+
+- name: set root_password in virt_args
+  set_fact:
+    virt_args: "{{ virt_args }} --root-password password:'{{ cloud_config['root_password'] }}'"
+  when : cloud_config['root_password'] is defined
+
+- name: set root_password in virt_args
+  set_fact:
+    virt_args: "{{ virt_args }} --run /tmp/user_creation.sh"
+  when : cloud_config['users'] is defined
+
+- name: "set_fact for users with inject_ssh_keys"
+  set_fact:
+    ssh_key_users: "{{ cloud_config.users | selectattr('inject_ssh_keys', 'defined') | selectattr('inject_ssh_keys', 'equalto', true) |  map(attribute='name') | list }}"
+  when: cloud_config['users'] is defined
+
+- name: set ssh_args
+  set_fact:
+    ssh_args: "{{ ssh_args | prepare_ssh_args(ssh_key_users, pubkey_local['stdout']) }}"
+  when: cloud_config['users'] is defined
+
+- name: set ssh-inject to virt_args
+  set_fact:
+    virt_args: "{{ virt_args }} {{ ssh_args }}"
+  when: cloud_config['users'] is defined
+
+- name: set_fact for pkgs
+  set_fact:
+    pkgs: "{{ cloud_config['packages'] | join(',') }}"
+
+- name: set  packages in virt_args
+  set_fact:
+    virt_args: "{{ virt_args }} --update --install {{ pkgs }} "
+  when : cloud_config['packages'] is defined
+
+- name: add selinux-relabel
+  set_fact:
+    virt_args: "{{ virt_args }} --selinux-relabel "
+
+- name: Run prepared virt-customized commands 
+  block:
+  - name: "Run virt-customize commands"
+    command: "virt-customize -v -x -a {{ definition[1] }}/{{ definition[0] }}_{{ definition[4] }}.{{ definition[2] }} {{ definition[3] }}"
+    with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ libvirt_image_path | expanduser }}"]
+    - ["{{ img_src_ext }}"]
+    - ["{{ virt_args }}"]
+    - "{{ res_count }}"
+    loop_control:
+      loop_var: definition
+    become: "{{ libvirt_become }}"
+  rescue:
+  - fail:
+      msg: 'Error running command virt-customize. Please make sure the dependencies are installed correctly . Try running `linchpin setup libvirt` to reinstall dependencies'

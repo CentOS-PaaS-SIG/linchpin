@@ -1,0 +1,44 @@
+---
+cfgs:
+  libvirt:
+    __IP__: name
+    __ADDRESS__: ip
+
+
+libvirt-no-dhcp:
+  topology:
+    topology_name: libvirt-no-dhcp
+    resource_groups:
+      - resource_group_name: libvirt-no-dhcp
+        resource_group_type: libvirt
+        resource_definitions:
+          - name: no-dhcp-net
+            role: libvirt_network
+            uri: qemu:///system
+            bridge: no-dhcp
+            delete_on_destroy: yes
+          - role: libvirt_node
+            name: no-dhcp-node
+            uri: qemu:///system
+            count: 1
+            image_src: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2
+            memory: 4086
+            vcpus: 1
+            arch: x86_64
+            ssh_key: id_rsa
+            additional_storage: 5G
+            networks:
+              - name: default
+              - name: no-dhcp-net
+                dhcp: false
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+        ansible_ssh_host: __ADDRESS__
+        ansible_ssh_user: centos
+      hosts:
+        example:
+          count: 1
+          host_groups:
+            - examples

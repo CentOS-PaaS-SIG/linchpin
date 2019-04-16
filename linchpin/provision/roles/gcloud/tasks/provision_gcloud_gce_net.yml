@@ -1,0 +1,34 @@
+- name: "Provision/Teardown gcloud_gce_net"
+  gce_net:
+    name: "{{ gce_resource_name }}"
+    allowed: "{{ res_def['allowed'] | default(omit) }}"
+    fwname: "{{ res_def['fwname'] | default(omit) }}"
+    ipv4_range: "{{ res_def['ipv4_range'] | default(omit) }}"
+    mode: "{{ res_def['mode'] | default(omit) }}"
+    pem_file:  "{{ auth_var['output']['pem_file'] | default(omit) }}"
+    project_id: "{{ auth_var['output']['project_id'] | default(omit) }}"
+    credentials_file: "{{ auth_var['path'] }}/{{ auth_var['params']['filename'] | default(omit) }}"
+    state: "{{ state }}"
+    subnet_region: "{{ res_def['subent_region'] | default(omit) }}"
+    service_account_email: "{{ auth_var['output']['client_email'] | default(omit) }}"
+    src_range: "{{ res_def['src_range'] | default(omit) }}"
+    src_tags: "{{ res_def['src_tags'] | default(omit) }}"
+    state: "{{ state }}"
+    subnet_desc: "{{ res_def['subnet_desc'] | default(omit) }}"
+    subnet_name: "{{ res_def['subnet_name'] | default(omit) }}"
+    subnet_region: "{{ res_def['subnet_region'] | default(omit) }}"
+    target_tags: "{{ res_def['target_tags'] | default(omit) }}"
+  register: res_def_output
+  no_log: "{{ not debug_mode }}"
+
+- debug:
+    msg: "{{ res_def_output }}"
+
+- name: "Appending outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce + [res_def_output] }}"
+  when: not async
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce | add_res_type('gcloud_gce_net') }}"

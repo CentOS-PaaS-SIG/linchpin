@@ -1,0 +1,34 @@
+---
+os-server-addl-vols:
+  topology:
+    topology_name: os-server-addl-vols
+    resource_groups:
+      - resource_group_name: os-server-addl-vols
+        resource_group_type: openstack
+        resource_definitions:
+          - name: "hello"
+            role: os_server
+            flavor: m1.small
+            image: CentOS-7-x86_64-GenericCloud-1612
+            count: 2
+            keypair: ci-factory
+            fip_pool: 10.8.240.0
+            additional_volumes:
+              - name: "volume"
+                size: 1
+                device_name: "/dev/vdb"
+            networks:
+              - e2e-openstack
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        addl-vols-node:
+          count: 2
+          host_groups:
+            - hello
+

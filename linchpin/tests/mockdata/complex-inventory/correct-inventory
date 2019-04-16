@@ -1,0 +1,35 @@
+[dummy:children]
+dummy-layout
+dummy-master
+
+[dummy:vars]
+ansible_ssh_common_args = -o StrictHostKeyChecking=no -4
+
+[all:vars]
+ansible_ssh_common_args = -o StrictHostKeyChecking=no
+ansible_python_interpreter = /usr/bin/python3
+ansible_user = root
+
+[aws-layout]
+10.138.166.226 hostname=10.138.166.226
+
+[beaker-layout]
+intel-sugarbay-dh-02.ml3.eng.bos.redhat.com hostname=intel-sugarbay-dh-02.ml3.eng.bos.redhat.com
+nec-em9.rhts.eng.bos.redhat.com hostname=nec-em9.rhts.eng.bos.redhat.com
+
+[dummy-master]
+test-79b201-1 hostname=test-79b201-1
+
+[dummy-layout]
+test-79b201-2 hostname=test-79b201-2
+test-79b201-0 hostname=test-79b201-0
+test-79b201-1 hostname=test-79b201-1
+
+[all]
+test-79b201-2 hostname=test-79b201-2
+test-79b201-0 hostname=test-79b201-0
+test-79b201-1 hostname=test-79b201-1
+10.138.166.226 hostname=10.138.166.226
+intel-sugarbay-dh-02.ml3.eng.bos.redhat.com hostname=intel-sugarbay-dh-02.ml3.eng.bos.redhat.com
+nec-em9.rhts.eng.bos.redhat.com hostname=nec-em9.rhts.eng.bos.redhat.com
+

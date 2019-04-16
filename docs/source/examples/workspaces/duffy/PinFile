@@ -1,0 +1,24 @@
+---
+duffy-new:
+  topology:
+    topology_name: duffy-new
+    resource_groups:
+      - resource_group_name: duffy-new
+        resource_group_type: duffy
+        resource_definitions:
+          - role: duffy_node
+            name: duffy
+            version: {{ version | default(7) }}
+            arch: {{ arch | default('x86_64') }}
+            count: 1
+        credentials: {{ credentials | default('duffy.key') }}
+        
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example

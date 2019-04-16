@@ -1,0 +1,58 @@
+---
+libvirt-template-inventory:
+  topology: libvirt-template-inventory.yml
+  layout: template-inventory.yml
+
+aws-template-inventory:
+  topology: aws-ec2-template-inventory.yml
+  layout: template-inventory.yml
+
+aws-ec2-template:
+  topology:
+    topology_name: aws-template-inventory
+    resource_groups:
+      - resource_group_name: "aws-template-inventory"
+        resource_group_type: "aws"
+        resource_definitions:
+        - name: "template-inventory{{ distro }}"
+          flavor: m1.small
+          role: aws_ec2
+          region: us-east-1
+          image: ami-984189e2
+          count: 1
+          instance_tags:
+            color: blue
+            shape: oval
+            distro: "{{ distro }}"
+          security_group:
+          - default
+          - public
+        credentials:
+          filename: aws.key
+          profile: default
+  layout: template-inventory.yml
+
+gcloud-template-inventory:
+  topology:
+    topology_name: gcloud
+    resource_groups:
+      - resource_group_name: "gcloud"
+        resource_group_type: "gcloud"
+        resource_definitions:
+          - name: "webserver"
+            flavor: "f1-micro"
+            type: "gcloud_gce"
+            region: "us-central1-a"
+            image: "centos-7"
+            count: 1
+        credentials:
+          filename: gcloud.key
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example

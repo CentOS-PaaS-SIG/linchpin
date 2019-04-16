@@ -1,0 +1,29 @@
+---
+- name: "Get the resource name"
+  set_fact:
+    nummy_name: "{{ res_def['name'] }}"
+
+- name: "Assign nummy name using uhash value"
+  set_fact:
+    nummy_name: "{{ nummy_name + '-' + uhash }}"
+  when: enable_uhash
+
+- name: "Provision nummy resources by looping on count"
+  dummy:
+    state: present
+    name: "{{ nummy_name }}"
+    count: "{{ res_def['count'] | default(1) }}"
+    domain: "{{ res_def['domain'] | default('') }}"
+  register: outputitem
+
+- name: "set tmp var"
+  set_fact:
+    tmp: ["{{ outputitem }}"]
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_nummy: "{{ topology_outputs_nummy + tmp }}"
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_nummy: "{{ topology_outputs_nummy | add_res_type('nummy_res') }}"

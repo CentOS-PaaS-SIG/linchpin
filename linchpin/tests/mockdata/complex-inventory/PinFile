@@ -1,0 +1,95 @@
+---
+complex-inventory:
+  topology:
+    topology_name: dummy-aws
+    resource_groups:
+      - resource_group_name: dummy-topology
+        resource_group_type: dummy
+        resource_definitions:
+          - name: "{{ distro | default('') }}test"
+            role: "dummy_node"
+            count: 3
+      - resource_group_name: aws-topology
+        resource_group_type: aws
+        resource_definitions:
+          - name: demo-day
+            flavor: m1.small
+            role: aws_ec2
+            region: us-east-1
+            image: ami-984189e2
+            count: 1
+            instance_tags:
+              color: blue
+              shape: oval
+            security_group:
+              - default
+              - public
+        credentials:
+          filename: aws.key
+          profile: default
+      - resource_group_name: beaker-topology
+        resource_group_type: beaker
+        resource_definitions:
+          - role: bkr_server
+            whiteboard: Provisioned with linchpin
+            max_attempts: 240
+            attempt_wait_time: 60
+            cancel_message: Job cancelled on account of rain
+            recipesets:
+              - distro: RHEL-7.4
+                arch: x86_64
+                variant: Server
+                count: 1
+                name: rhel75-1
+                keyvalue:
+                  - DISKSPACE>=100000
+                bkr_data: lvm-on
+                hostrequires:
+                  - tag: arch
+                    op: "="
+                    value: "X86_64"
+                  - tag: memory
+                    op: ">="
+                    value: "1000"
+              - distro: RHEL-7.5
+                arch: x86_64
+                variant: Server
+                count: 1
+                name: rhel75-2
+                keyvalue:
+                  - DISKSPACE>=100000
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        dummy-node:
+          count: 2
+          host_groups:
+            - dummy-layout
+        dummy-master:
+          count: 1
+          host_groups:
+            - dummy-layout
+            - dummy-master
+        aws-node:
+          count: 1
+          host_groups:
+            - aws-layout
+        beaker-node:
+          count: 2
+          host_groups:
+            - beaker-layout
+      host_groups:
+        all:
+          vars:
+            ansible_python_interpreter: /usr/bin/python3
+            ansible_user: root
+            ansible_ssh_common_args: -o StrictHostKeyChecking=no
+        dummy:
+          children:
+            - dummy-layout
+            - dummy-master
+          vars:
+            ansible_ssh_common_args: -o StrictHostKeyChecking=no -4
+

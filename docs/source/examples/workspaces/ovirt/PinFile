@@ -1,0 +1,25 @@
+---
+ovirt-new:
+  topology:
+    topology_name: ovirt-new
+    resource_groups:
+      - resource_group_name: ovirt-new
+        resource_group_type: ovirt
+        resource_definitions:
+          - name: golden
+            role: ovirt_vms
+            template: {{ template | default('golden_mixed_virtio_template') }}
+            cluster: {{ cluster | default('golden_env_mixed_1') }}
+          - name: virtio_1_1
+            role: ovirt_vms
+            template: {{ template | default('golden_mixed_virtio_template') }}
+            cluster: {{ cluster | default('golden_env_mixed_1') }}
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
+        credentials:
+          filename: ex_ovirt_creds.yml
+          profile: ge2
+        {% endif %}

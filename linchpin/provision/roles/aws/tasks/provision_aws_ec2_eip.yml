@@ -1,0 +1,28 @@
+---
+- name: "Provisioning AWS_EC2_EIP"
+  ec2_eip:
+    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
+    allow_reassociation: "{{ res_def['allow_reassociation'] | default(omit) }}"
+    device_id: "{{ res_def['device_id'] | default(omit) }}"
+    ec2_url: "{{ res_def['ec2_url'] | default(omit) }}"
+    in_vpc: "{{ res_def['in_vpc'] | default(omit) }}"
+    private_ip_address: "{{ res_def['private_ip_address'] | default(omit) }}"
+    public_ip: "{{ res_def['public_ip'] | default(omit) }}"
+    region: "{{ res_def['region'] | default(omit) }}"
+    release_on_disassociation: "{{ res_def['release_on_disassociation'] | default(omit) }}"
+    reuse_existing_ip_allowed: "{{ res_def['reuse_existing_ip_allowed'] | default(omit) }}"
+    security_token: "{{ res_def['security_token'] | default(omit) }}"
+    state: "{{ state }}"
+    validate_certs: no
+  register: res_def_output
+  no_log: "{{ not debug_mode }}"
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_aws_net: "{{ topology_outputs_aws_net + [res_def_output] }}"
+  when: res_def_output['changed'] == true
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_aws_ec2: "{{ topology_outputs_aws_net | add_res_type( 'aws_ec2_eip') }}"

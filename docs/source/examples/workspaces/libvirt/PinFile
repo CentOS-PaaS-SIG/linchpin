@@ -1,0 +1,284 @@
+---
+libvirt-new:
+  topology:
+    topology_name: libvirt-new
+    resource_groups:
+      - resource_group_name: libvirt-new
+        resource_group_type: libvirt
+        resource_definitions:
+          - role: libvirt_node
+            name: centos71
+            uri: {{ uri | default('qemu:///system') }}
+            count: 1
+            image_src: {{ image_src | default('http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz') }}
+            memory: {{ memory | default('2048') }}
+            vcpus: {{ vcpus | default('1') }}
+            arch: {{ arch |  default('x86_64') }}
+            ssh_key: {{ ssh_key | default('libvirt') }}
+            {% if networks is defined %}
+            networks:
+              {% for net in networks %}
+              - {{ net }}
+              {% endfor %}
+            {% else %}
+            networks:
+              - name: default
+              - name: default
+                dhcp: false
+            {% endif %}
+            additional_storage: {{ storage | default('10G') }}
+            {% if user is defined %}
+            cloud_config:
+              users:
+                - name: {{ user.name | default('admin') }}
+                  gecos: {{ user.gecos | default('Admin User') }}
+                  groups: {{ user.groups | default('wheel') }}
+                  sudo: {{ user.sudo | default('ALL=(ALL) NOPASSWD:ALL') }}
+                  ssh_import_id: {{ user.ssh_id | default('gh:admin') }}
+                  lock_passwd: {{ user.lock | default(true) }}
+            {% else %}
+            cloud_config:
+              users:
+                - name: admin
+                  gecos: Admin User
+                  groups: wheel
+                  sudo: 'ALL=(ALL) NOPASSWD:ALL'
+                  ssh_import_id: gh:admin
+                  lock_passwd: true
+            {% endif %}
+            storage:
+              - name: osd0
+                size: 1
+                units: G
+                disk_type: virtio_blk
+                device: vdb
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example
+
+libvirt-custom-xml:
+  topology:
+    topology_name: libvirt-custom-xml
+    resource_groups:
+      - resource_group_name: libvirt-custom-xml
+        resource_group_type: libvirt
+        resource_definitions:
+          - role: libvirt_node
+            name: centos71
+            count: 1
+            uri: {{ uri | default('qemu:///system') }}
+            image_src: {{ image_src | default('http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz') }}
+            memory: {{ memory | default('2048') }}
+            vcpus: {{ vcpus | default('1') }}
+            arch: {{ arch |  default('x86_64') }}
+            xml: {{ xml | default('custom.xml') }}
+            {% if networks is defined %}
+            networks:
+              {% for net in networks %}
+              - {{ net }}
+              {% endfor %}
+            {% else %}
+            networks:
+              - name: default
+            {% endif %}
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example
+
+libvirt-network:
+  topology:
+    topology_name: "libvirt_network"
+    resource_groups:
+      - resource_group_name: "libvirt_network"
+        resource_group_type: "libvirt"
+        resource_definitions:
+          - name: linchpin-centos74
+            role: libvirt_network
+            uri: {{ uri | default('qemu:///system') }}
+            ip: {{ ip | default('192.168.74.100') }}
+            dhcp_start: {{ dhcp_start | default('192.168.74.101') }}
+            forward_mode: {{ forward_mode | default('nat') }}
+            dhcp_end: {{ dhcp_end | default('192.168.74.112') }}
+            domain: {{ domain | default('linchpin.net') }}
+            netmask: {{ netmask | default('255.255.255.0') }}
+            delete_on_destroy: {{ delete | default('True') }}
+
+libvirt-storage:
+  topology:
+    topology_name: libvirt-storage
+    resource_groups:
+      - resource_group_name: libvirt-storage
+        resource_group_type: libvirt
+        resource_definitions:
+          - role: libvirt_node
+            name: centos71
+            uri: {{ uri | default('qemu:///system') }}
+            count: 1
+            image_src: {{ image_src | default('http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz') }}
+            memory: {{ memory | default('2048') }}
+            vcpus: {{ vcpus | default('2') }}
+            arch: {{ arch |  default('x86_64') }}
+            ssh_key: {{ ssh_key | default('libvirt') }}
+            {% if networks is defined %}
+            networks:
+              {% for net in networks %}
+              - {{ net }}
+              {% endfor %}
+            {% else %}
+            networks:
+              - name: default
+            {% endif %}
+            disk_cache: none
+            {% if add_storage is defined %}
+            additional_storage: {{ storage }}
+            {% else %}
+            additional_storage: 10G
+            {% endif %}
+            {% if storage is defined %}
+            storage:
+              - name: {{ storage.name | default('myscsi') }}
+                size: {{ storage.size | default('1') }}
+                cache: none
+                units: {{ storage.units| default('G') }}
+                disk_type: {{ storage.type | default('virtio_scsi') }} # can also be virtio_blk
+                device: {{ storage.dev | default('sda') }}
+            {% else %}
+            storage:
+              - name: myscsi
+                size: 1
+                units: G
+                disk_type: virtio_scsi # can also be virtio_blk
+                device: sda
+            {% endif %}
+
+libvirt-custom-img:
+  topology:
+    topology_name: libvirt-custom-img
+    resource_groups:
+      - resource_group_name: libvirt-custom-img
+        resource_group_type: libvirt
+        resource_definitions:
+          - role: libvirt_node
+            name: lci-centos7
+            uri: {{ uri | default('qemu:///system') }}
+            count: 1
+            image_src: {{ image_src | default('http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz') }}
+            memory: {{ memory | default('2048') }}
+            arch: {{ arch |  default('x86_64') }}
+            vcpus: {{ vcpus | default('1') }}
+            {% if networks is defined %}
+            networks:
+              {% for net in networks %}
+              - {{ net }}
+              {% endfor %}
+            {% else %}
+            networks:
+              - name: default
+            {% endif %}
+            ssh_key: {{ ssh_key | default('libvirt') }}
+            {% if storage is defined %}
+            additional_storage: {{ storage }}
+            {% else %}
+            additional_storage: 10G
+            {% endif %}
+            cloud_config:
+              virt_type: virt-customize
+              root_password: {{ password | default("testrootpwd") }} # insecure plaintext password
+              {% if user is defined %}
+              users:
+                - name: {{ user.name | default('admin') }}
+                  groups: {{ user.groups | default('wheel') }}
+                  inject_ssh_keys: {{ user.inject | default(true) }}  # by default linchpin generated libvirt key is injected.
+              {% else %}
+              users:
+                - name: admin
+                  groups: wheel
+                  inject_ssh_keys: true  # by default linchpin generated libvirt key is injected.
+              {% endif %}
+              {% if commands is defined %}
+              run_commands:
+                {% for command in commands %}
+                - {{ command }}
+                {% endfor %}
+              {% else %}
+              run_commands:
+                - "yum install -y epel-release"
+              {% endif %}
+              {% if pacakges is defined %}
+              packages:
+                {% for package in packages %}
+                - {{ package }}
+                {% endfor %}
+              {% else %}
+              packages:
+                - nginx
+              {% endif %}
+
+libvirt-network-dns:
+  topology:
+    topology_name: "libvirt_network"
+    resource_groups:
+      - resource_group_name: "libvirt_network"
+        resource_group_type: "libvirt"
+        resource_definitions:
+          - name: testnetworkdns
+            role: libvirt_network
+            uri: qemu:///system
+            ip: 192.168.123.2
+            dhcp_start: 192.168.123.22
+            dhcp_end: 192.168.123.44
+            domain: redhat.local
+            bridge: "testdnslinchpin"
+            netmask: 255.255.255.0
+            dns:
+              texts:
+              - name: example
+                value: examplevalue
+              - name: example2
+                value: examplevalue2
+              forwarders:
+              - domain: example.com
+                addr: 8.8.4.4
+              - domain: example.com
+              services:
+              - name: testservice
+                protocol: tcp
+                domain: test.domain.com
+                target: .
+                port: 1024
+                priority: 10
+                weight: 10
+              - name: someservice
+                protocol: udp
+                domain: some.domain.com
+                target: .
+                port: 1024
+                weight: 10
+              - name: anoservice
+                protocol: icmp
+                domain: ano.domain.com
+                target: .
+                port: 1022
+                weight: 1
+              hosts:
+              - ip: 192.168.122.2
+                hostnames:
+                - myhost
+                - myhostalias
+              - ip: 192.168.188.6
+                hostnames:
+                - testhost
+                - testhostalias
+

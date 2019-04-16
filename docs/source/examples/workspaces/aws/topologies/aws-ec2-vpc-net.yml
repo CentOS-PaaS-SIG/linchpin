@@ -1,0 +1,18 @@
+---
+topology_name: ec2-vpc-net
+topology_name: ec2vpc
+resource_groups:
+  - resource_group_name: "awsvpc"
+    resource_group_type: "aws"
+    resource_definitions:
+      - name: demodayvpc
+        role: aws_ec2_vpc_net
+        region: us-east-1
+        cidr_block: 10.10.0.0/16
+        tags:
+          module: aws_ec2_vpc_net
+          this: works
+        tenancy: dedicated
+    credentials:
+      filename: aws.yaml
+      profile: default

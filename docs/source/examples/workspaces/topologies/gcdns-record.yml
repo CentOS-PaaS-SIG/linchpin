@@ -1,0 +1,47 @@
+---
+topology:
+  topology_name: gcloud
+  resource_groups:
+    - resource_group_name: "gcloud"
+      resource_group_type: "gcloud"
+      resource_definitions:
+        - zone: "testlpgcdnszone.com"
+          name: "testlpgcdnszonecom"
+          role: gcloud_gcdns_zone
+          description: test
+        - zone: "testlpgcdnszone.com"
+          name: "testlsomerecord"
+          role: gcloud_gcdns_record
+          record: www1.testlpgcdnszone.com
+          type: A
+          record_data:           # NOTE: All of the values must match exactly
+          - '192.0.2.23'
+          - '192.0.2.42'
+          - '198.51.100.5'
+          - '203.0.113.10'
+      credentials:
+        filename: gcloud.key
+
+gcloud-gcdns-zone-record:
+  topology:
+    topology_name: gcloud
+    resource_groups:
+      - resource_group_name: "gcloud"
+        resource_group_type: "gcloud"
+        resource_definitions:
+          - zone: "testlpgcdnszone.com"
+            name: "testlpgcdnszonecom"
+            role: gcloud_gcdns_zone
+            description: test
+          - zone: "testlpgcdnszone.com"
+            name: "testlsomerecord"
+            role: gcloud_gcdns_record
+            record: www1.testlpgcdnszone.com
+            type: A
+            record_data:           # NOTE: All of the values must match exactly
+            - '192.0.2.23'
+            - '192.0.2.42'
+            - '198.51.100.5'
+            - '203.0.113.10'
+        credentials:
+          filename: gcloud.key

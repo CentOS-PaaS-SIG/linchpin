@@ -1,0 +1,54 @@
+---
+host-group-order:
+  topology:
+    topology_name: "host-group-order" # topology name
+    resource_groups:
+      - resource_group_name: "dummy1-fedora"
+        resource_group_type: "dummy"
+        resource_definitions:
+          - name: "dummy1-fedora-root"
+            role: "dummy_node"
+            count: 1
+      - resource_group_name: "dummy1-centos"
+        resource_group_type: "dummy"
+        resource_definitions:
+          - name: "dummy1-centos-root"
+            role: "dummy_node"
+            count: 1
+      - resource_group_name: "dummy2-fedora"
+        resource_group_type: "dummy"
+        resource_definitions:
+          - name: "dummy2-fedora-fedora"
+            role: "dummy_node"
+            count: 1
+      - resource_group_name: "dummy2-centos"
+        resource_group_type: "dummy"
+        resource_definitions:
+          - name: "dummy2-centos-cloud"
+            role: "dummy_node"
+            count: 1
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        dummy1-fedora-node:
+          count: 1
+          host_groups:
+            - root_user_layout
+            - fedora_hosts
+        dummy1-centos-node:
+          count: 1
+          host_groups:
+            - root_user_layout
+            - centos_hosts
+        dummy2-fedora-node:
+          count: 1
+          host_groups:
+            - fedora_user_layout
+            - fedora_hosts
+        dummy2-centos-node:
+          count: 1
+          host_groups:
+            - cloud_user_layout
+            - centos_hosts

@@ -1,0 +1,96 @@
+{
+    "ovirt_vms_res": [{
+        "vm": {
+            "reported_devices": [{
+                "ips": [
+                    {"version": "v4", "address": "155.132.55.17" },
+                    {"version": "v4", "address": "192.168.0.1"}
+                ]
+            },
+            {
+                "ips": [
+                    {"version": "v6", "address": "[2001:db8:0:1]:80" },
+                    {"version": "v4", "address": "11.50.197.1" }
+                ]
+            }]
+        }
+    }],
+    "rax_server_res": [],
+    "aws_ec2_res": [{
+        "instances": [{
+            "_comment": "the 'public_ip' field below should be ignored by get_host_ips",
+            "public_dns_name": "54.123.12.15.compute-1.amazonaws.com",
+            "public_ip": "54.123.12.15"
+        },
+        {
+            "_comment": "the 'private_ip' field below should be ignored by get_host_ips",
+            "public_ip": "55.144.94.192",
+            "private_ip": "125.254.137.163",
+            "private_ip": "121.22.32.224"
+        },
+        {
+            "private_ip": "119.120.37.31"
+        }]
+    }],
+    "os_server_res": [{
+        "openstack": [{ "accessIPv4": "204.36.91.83"}, { "public_v4": "93.68.5.129" }]
+    },
+    {
+        "openstack": { "private_v4": "174.82.209.133" }
+    }],
+    "os_keypair_res": [],
+    "aws_ec2_key_res": [],
+    "gcloud_gce_res": [{
+        "instance_data": [{
+            "public_ip": "194.231.24.112"
+        },
+        {
+            "public_ip": "180.20.194.96"
+        }]
+    },
+    {
+        "instance_data": [{
+            "public_ip": "81.190.60.136"
+        }]
+    }],
+    "aws_s3_res": [],
+    "duffy_res": [{
+        "hosts": ["109.254.93.117", "test.example.com"]
+    },
+    {
+        "hosts": ["171.109.242.199"]
+    }],
+    "os_sg_res": [],
+    "dummy_res": [{
+        "failed": false,
+        "changed": true,
+        "hosts": ["web-b3a49a-0.example.net", "web-b3a49a-1.example.net", "web-b3a49a-2.example.net"],
+        "dummy_file": "/tmp/dummy.hosts"
+    },
+    "nummy_res": [{
+        "failed": false,
+        "changed": true,
+        "hosts": ["web-c3a49a-0.example.net", "web-c3a49a-1.example.net", "web-c3a49a-2.example.net"],
+        "dummy_file": "/tmp/dummy.hosts"
+    },
+    {
+        "failed": false,
+        "changed": true,
+        "hosts": ["test-b3a49a-0.example.net"],
+        "dummy_file": "/tmp/dummy.hosts"
+    }],
+    "beaker_res": [{
+        "system": "25.23.79.188"
+    },
+    {
+        "system": "207.49.135.104"
+    }],
+    "aws_cfn_res": [],
+    "os_heat_res": [],
+    "os_obj_res": [],
+    "libvirt_res": [{
+        "ip": "192.168.122.212",
+        "name": "centos71-75f0f4_0"
+    }],
+    "os_volume_res": []
+}

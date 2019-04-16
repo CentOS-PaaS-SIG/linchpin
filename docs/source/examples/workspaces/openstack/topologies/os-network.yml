@@ -1,0 +1,13 @@
+---
+topology:
+  topology_name: simplenetwork
+  resource_groups:
+    - resource_group_name: simplenetwork
+      resource_group_type: openstack
+      resource_definitions:
+        - name: testnet_example
+          role: os_network
+          unique: true
+      credentials:
+        filename: clouds.yaml
+        profile: ci-rhos

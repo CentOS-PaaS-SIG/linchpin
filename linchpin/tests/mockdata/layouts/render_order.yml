@@ -1,0 +1,125 @@
+---
+# openshift_node_group_name documentation
+# https://github.com/openshift/openshift-ansible/blob/master/README.md#node-group-definition-and-mapping
+inventory_layout:
+  vars:
+    hostname: __IP__
+  hosts:
+    "cnv-executor-kbidarka2-master":
+      count: 1
+      host_groups:
+        - masters
+        - etcd
+        - nodes
+        - glusterfs
+    "cnv-executor-kbidarka2-node":
+      count: 2
+      host_groups:
+        - nodes
+        - glusterfs
+        - nodelabelcompute
+  host_groups:
+    masters:
+      vars:
+        openshift_node_group_name: node-config-master-infra-crio
+    nodelabelcompute:
+      vars:
+        openshift_node_group_name: node-config-compute-crio
+    OSEv3:
+      children:
+        - masters
+        - nodes
+        - etcd
+        - glusterfs
+      vars:
+        ansible_ssh_user: cloud_user
+        ansible_become: yes
+        ansible_become_user: root
+
+        openshift_deployment_type: openshift-enterprise
+        openshift_master_identity_providers:
+          -
+            name: 'allow_all_auth'
+            login: 'true'
+            challenge: 'true'
+            kind: 'AllowAllPasswordIdentityProvider'
+        openshift_disable_check: "memory_availability,disk_availability"
+        openshift_enable_excluders: false
+        openshift_install_examples: false
+        openshift_master_default_subdomain: "cloudapps.example"
+        os_sdn_network_plugin_name: "redhat/openshift-ovs-networkpolicy"
+
+        # Following option is here becasue of:
+        # https://www.kubevirt.io/user-guide/#/installation/api-validation?id=kubevirt-api-validation
+        openshift_master_admission_plugin_config:
+          ValidatingAdmissionWebhook:
+            configuration:
+              kind: "DefaultAdmissionConfig"
+              apiVersion: "v1"
+              disable: false
+          MutatingAdmissionWebhook:
+            configuration:
+              kind: "DefaultAdmissionConfig"
+              apiVersion: "v1"
+              disable: false
+
+        ansible_service_broker_local_registry_whitelist: "[\".*-apb$\"]"
+
+        # Local storage
+        local_storage_classes_mapping: "[{'name': 'hdd', 'device': '/dev/vdc', 'fs': 'ext4', 'num_of_disks': '3', 'device_size': 20}]"
+
+        # asb
+        ansible_service_broker_registry_type: "openshift"
+        ansible_service_broker_registry_name: "brew"
+        ansible_service_broker_registry_url: "http://brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888"
+        ansible_service_broker_registry_whitelist: "['.*-apb$']"
+        # NOTE: following two options work only with https://github.com/openshift/openshift-ansible/pull/10145
+        ansible_service_broker_registry_skip_verify_tls: "true"
+        ansible_service_broker_local_registry_whitelist: "['.*-apb$']"
+
+        # cri-o
+        openshift_use_crio: true
+        openshift_service_catalog_retries: 150
+
+        # cns
+        glusterfs_devices: "['/dev/vdb']"
+        openshift_storage_glusterfs_timeout: 900
+        openshift_storageclass_default: false
+        openshift_storage_glusterfs_storageclass_default: true
+
+        # metrics
+        openshift_metrics_install_metrics: true
+        openshift_metrics_cassanda_pvc_storage_class_name: "glusterfs-storage"
+        openshift_metrics_image_prefix: "brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/openshift3/"
+
+        # Internal registry
+        oreg_url: "brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/openshift3/ose-${component}:${version}"
+        system_images_registry: "brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888"
+        openshift_docker_additional_registries: "brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888"
+        openshift_docker_insecure_registries: "brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888"
+        ansible_service_broker_image_prefix: "brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/openshift3/ose-"
+        openshift_service_catalog_image_prefix: "brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/openshift3/ose-"
+        template_service_broker_prefix: "brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/openshift3/ose-"
+        openshift_cockpit_deployer_prefix: "brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/openshift3/"
+        osm_api_server_args:
+          feature-gates:
+            - BlockVolume=true
+        osm_controller_args:
+          feature-gates:
+            - BlockVolume=true
+        openshift_node_group_edits_crio:
+          - key: kubeletArguments.feature-gates
+            value:
+              - RotateKubeletClientCertificate=true,RotateKubeletServerCertificate=true,BlockVolume=true
+          - key: kubeletArguments.container-runtime
+            value:
+              - "remote"
+          - key: kubeletArguments.container-runtime-endpoint
+            value:
+              - "/var/run/crio/crio.sock"
+          - key: kubeletArguments.image-service-endpoint
+            value:
+              - "/var/run/crio/crio.sock"
+          - key: kubeletArguments.runtime-request-timeout
+            value:
+              - "10m"

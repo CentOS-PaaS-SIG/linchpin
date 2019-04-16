@@ -1,0 +1,21 @@
+- name: Install dependencies
+  block:
+    - name: Install package dependencies
+      package:
+        name:
+          - python2-dnf 
+          - libvirt-devel
+          - libguestfs-tools 
+          - python-libguestfs
+      become: true
+    - name: Install pypi dependencies of libvirt
+      pip:
+        name: "{{ libvirt_pypi }}"
+      with_items:
+      - "libvirt-python>=3.0.0"
+      - "lxml"
+      loop_control: 
+        loop_var: libvirt_pypi
+  rescue:
+    - fail:
+        msg: 'Error installing the package dependencies! Please try adding password less priviledged sudo user or with --ask-sudo-pass'

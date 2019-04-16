@@ -1,0 +1,32 @@
+---
+inventory_layout:
+  vars:
+    hostname: __IP__
+  hosts:
+    openshift-layout:
+      count: 1
+      host_groups:
+        - masters
+        - nodes
+        - etcd
+  host_groups:
+    OSEv3:
+      children:
+        - masters
+        - nodes
+        - etcd
+      vars:
+        openshift_deployment_type: origin
+        openshift_release: 3.9
+        osm_cluster_network_cidr: 10.128.0.0/14
+        openshift_portal_net: 172.30.0.0/16
+        osm_host_subnet_length: 9
+        # localhost likely doesn't meet the minimum requirements
+        openshift_disable_check: disk_availability,memory_availability
+        ansible_ssh_user: "{{ ansible_ssh_user | default('root') }}"
+        ansible_ssh_common_args: -o StrictHostKeyChecking=no
+        ansible_become: True
+    nodes:
+      vars:
+        openshift_schedulable: true
+        openshift_node_labels: "{'region': 'infra', 'zone': 'default'}"

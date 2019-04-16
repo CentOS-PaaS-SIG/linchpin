@@ -1,0 +1,21 @@
+---
+inventory_layout:
+  inventory_file: "{% raw -%}{{ workspace }}/inventories/dummy-new-{{ uhash }}.inventory{%- endraw %}"
+  vars:
+    hostname: __IP__
+  hosts:
+    example-node:
+      count: 3
+      host_groups:
+        - example
+    test-node:
+      count: 1
+      host_groups:
+        - test
+  host_groups:
+    all:
+      vars:
+        ansible_user: root
+        ansible_private_key_file: |
+            "{% raw -%}{{ lookup('env', 'TESTLP') | default('/tmp', true) }}/CSS/keystore/css-central{%- endraw %}"
+

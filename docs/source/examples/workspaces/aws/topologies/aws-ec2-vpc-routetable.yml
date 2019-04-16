@@ -1,0 +1,34 @@
+topology:
+  topology_name: ec2vpcroutetabledemo
+  resource_groups:
+    - resource_group_name: "awsroutetabledemo"
+      resource_group_type: "aws"
+      resource_definitions:
+        - name: demo_vpc_net_r
+          role: aws_ec2_vpc_net
+          region: us-east-1
+          cidr_block: 15.0.0.0/16
+          tags:
+            module: aws_ec2_vpc_net
+            this: alsoworks
+          tenancy: dedicated
+        - name: demo_vpc_subnet_r
+          role: aws_ec2_vpc_subnet
+          region: us-east-1
+          vpc_name: demo_vpc_net_r
+          cidr: 15.0.1.0/24
+          tags:
+            module: aws_ec2_vpc_subnet
+            this: alsoworks
+        - name: demo_routetable
+          role: aws_ec2_vpc_routetable
+          region: us-east-1
+          vpc_name: demo_vpc_net_r
+          tags:
+            module: aws_ec2_vpc_routetable
+            this: alsoworks
+          subnets:
+            - 'demo_vpc_subnet_r'
+      credentials:
+        filename: aws.yaml
+        profile: default

@@ -1,0 +1,31 @@
+---
+rax-new:
+  topology:
+    topology_name: rax-new
+    resource_groups:
+      - resource_group_name: "testgroup1"
+        resource_group_type: "rackspace"
+        resource_definitions:
+      - role: rax_server
+        name: server
+        flavor: {{ flavor | default('2') }}
+        image: {{ image| default('b7486124-ea63-4247-9f24-e4c089dd3e97') }}
+        region: {{ region | default('DFW' }}
+        count: 1
+        {% if networks is defined %}
+        networks:
+          {% for net in networks %}
+          - {{ net }}
+          {% endfor %}
+        {% else %}
+        networks:
+          - public
+          - private
+        {% endif %}
+    {% if credentials is defined %}
+    credentials:
+      filename: {{ credentials.filename }}
+    {% else %}
+    credentials:
+      filename: auth.json
+    {% endif %}

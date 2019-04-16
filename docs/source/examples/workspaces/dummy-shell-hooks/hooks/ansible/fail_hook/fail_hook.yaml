@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  tasks:
+    - fail:
+        msg: "you failed this playbook"
+    - name: ping task
+      ping:

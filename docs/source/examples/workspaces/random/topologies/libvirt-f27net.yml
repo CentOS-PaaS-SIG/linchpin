@@ -1,0 +1,31 @@
+---
+topology_name: "libvirt_fedora27"
+resource_groups:
+  - resource_group_name: "libvirt_fedora27"
+    resource_group_type: "libvirt"
+    resource_definitions:
+      - name: linchpin-fedora27
+        role: libvirt_network
+        uri: qemu:///system
+        ip: 192.168.27.100
+        dhcp_start: 192.168.27.101
+        dhcp_end: 192.168.27.112
+      - name: fedora27
+        role: libvirt_node
+        uri: qemu:///system
+        image_src: https://download.fedoraproject.org/pub/fedora/linux/releases/27/CloudImages/x86_64/images/Fedora-Cloud-Base-27-1.6.x86_64.qcow2
+        count: 1
+        memory: 1024
+        vcpus: 1
+        networks:
+          - name: linchpin-fedora27
+        additional_storage: 10G
+        cloud_config:
+          users:
+            - name: herlo
+              gecos: Clint Savage
+              groups: wheel
+              sudo: ALL=(ALL) NOPASSWD:ALL
+              ssh-import-id: gh:herlo
+              lock_passwd: true
+

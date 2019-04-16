@@ -1,0 +1,18 @@
+---
+dummy_target:
+  topology: dummy-topology.yml
+  layout: dummy-layout.yml
+  hooks:
+    postup:
+      - name: shell_hook_pass
+        type: shell
+        context: True
+        actions:
+          - 'echo hello, world'
+          - 'touch /tmp/test.txt'
+      - name: shell_hook_fail
+        type: shell
+        context: True
+        actions:
+          - 'echo hello, world'
+          - 'touch /root/test.txt'
