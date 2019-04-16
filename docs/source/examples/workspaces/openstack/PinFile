@@ -156,3 +156,22 @@ os-subnet:
           filename: clouds.yaml
           profile: ci-rhos
         {% endif %}
+
+os-keypair:
+  topology:
+    topology_name: os-server-keypair
+    resource_groups:
+      - resource_group_name: os-server-test-lp
+        resource_group_type: openstack
+        resource_definitions:
+          - name: linchpintestkey
+            role: os_keypair
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos
+        {% endif %}
