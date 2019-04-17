@@ -2,8 +2,12 @@
 # Install minishift
 
 - name: Query for minishift compressed binary
-  shell: curl -s https://github.com/minishift/minishift/releases/ | grep 'minishift.*-linux-amd64.*' | head -1 | sed 's/.*<a href="\(.*\)" .*/https:\/\/github.com\1/'
+  shell: curl -s https://github.com/minishift/minishift/releases/ | sed 's/"/ /g' | gawk 'match($0,/minishift.*-linux-amd64.*/){print "https://github.com/" $3}' | head -1
   register: release
+
+- name: debug
+  debug:
+    msg: "|{{ release.stdout }}|"
 
 - name: "Pull down and extract minishift binary to {{ ansible_env.HOME }}"
   unarchive:
