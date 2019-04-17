@@ -45,7 +45,7 @@
     nics: "{{ res_def['nics'] | default(omit) }}"
     fetch_nested: true
     nested_attributes: ips
-  when: not async
+  when: not _async
 
 # If the machine isn't powered on and the guest agent has not reported the
 # IP address fetch_nested will not be able to retrieve the nested_attributes: ips
@@ -58,7 +58,7 @@
     state: "running"
     auth: "{{ ovirt_auth }}"
     name: "{{ ovirt_resource_name }}"
-  when: not async
+  when: not _async
   
 - name: Wait for IPv4 address
   ovirt_nics_facts:
@@ -66,7 +66,7 @@
     vm: "{{ ovirt_resource_name }}"
     name: "nic1"
   register: nics
-  when: not async
+  when: not _async
   until: 
     - ovirt_nics | length > 0
     - ovirt_nics[0].reported_devices | length > 0
@@ -81,13 +81,13 @@
     name: "{{ ovirt_resource_name }}"
     fetch_nested: true
     nested_attributes: ips
-  when: not async
+  when: not _async
   register: res_def_output
     
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_ovirt_vms: "{{ topology_outputs_ovirt_vms + [ res_def_output ] }}"
-  when: not async
+  when: not _async
 
 - name: "Provision/deprovision ovirt_vms resources"
   ovirt_vms:
@@ -111,7 +111,7 @@
     nics: "{{ res_def['nics'] | default(omit) }}"
     fetch_nested: true
     nested_attributes: ips
-  when: async
+  when: _async
   async: "{{ async_timeout | default(1000) }}"
   poll: 0
   register: res_def_output
@@ -120,7 +120,7 @@
 - name: "Async:: save the job id"
   set_fact:
     topology_outputs_ovirt_vms: "{{ topology_outputs_ovirt_vms + [ res_def_output ] }}"
-  when: async
+  when: _async
 
 - name: "Add type to resource"
   set_fact:

@@ -96,7 +96,7 @@
   register: res_def_output
   loop: "{{ res_def_names }}"
   when:
-    - not async
+    - not _async
   no_log: "{{ not debug_mode }}"
   loop_control:
     loop_var: prov_inst
@@ -116,13 +116,13 @@
 - name: "Transform outputs to match the distiller format"
   set_fact:
     res_def_output: "{{ res_def_output | transform_os_server_output  }}"
-  when: not async
+  when: not _async
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_server: "{{ topology_outputs_os_server }} + [  {{ res_def_output }} ]"
   when: 
-    - not async
+    - not _async
     - res_def_output['skipped'] is not defined
 
 - name: "Async:: provision/teardown os_server resources"
@@ -162,7 +162,7 @@
   loop: "{{ res_def_names }}"
   no_log: "{{ not debug_mode }}"
   when:
-    - async
+    - _async
   loop_control:
     loop_var: prov_inst
   async: "{{ async_timeout | default(1000) }}"
@@ -172,11 +172,11 @@
   set_fact:
     topology_outputs_os_server: "{{ topology_outputs_os_server }} + [ {{ res_def_output }} ]"
   when:
-    - async
+    - _async
     - res_def_output['skipped'] is not defined
 
 - name: "Add type to resource"
   set_fact:
     topology_outputs_os_server: "{{ topology_outputs_os_server | add_res_type('os_server_res') }}"
   when:
-    - not async
+    - not _async

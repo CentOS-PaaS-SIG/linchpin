@@ -3,4 +3,4 @@
   include: wait_on_os_heat.yml
   vars:
     os_heat_group: "{{ item }}"
-  with_items:  "{{ topology_outputs_os_heat }}"
+  with_items:  "{{ topology_outputs_os_heat | default([]) }}"

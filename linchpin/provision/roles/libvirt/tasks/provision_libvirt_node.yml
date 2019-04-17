@@ -361,7 +361,7 @@
     - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: data
-  when: not async
+  when: not _async
   register: node_data
 
 - set_fact:
@@ -433,7 +433,7 @@
   loop_control:
     loop_var: data
   when:
-    - not async and uri_hostname == 'localhost'
+    - not _async and uri_hostname == 'localhost'
     - extract_ip_address_result is defined and extract_ip_address_result.changed == true
 
 - name: "remote: Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
@@ -446,7 +446,7 @@
   loop_control:
     loop_var: data
   when:
-    - not async and uri_hostname != 'localhost'
+    - not _async and uri_hostname != 'localhost'
     - extract_ip_address_result_remote is defined and extract_ip_address_result_remote.changed == true
 
 - name: "Append to topology_outputs_libvirt_nodes"

@@ -1,14 +1,14 @@
 ---
 - name: "assign async value"
   set_fact:
-    async: "{{ _async }}"
-  when: async is not defined
+    _async: "{{ _async | default(false) }}"
+  when: _async is not defined
 
 - name: "declare async_types array"
   set_fact:
     async_types: []
     vault_encryption: "{{ vault_encryption | default(false) }}"
-  when: async
+  when: _async
 
 - name: "output vars"
   set_fact:

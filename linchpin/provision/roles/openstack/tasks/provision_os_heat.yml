@@ -19,13 +19,13 @@
     cacert: "{{ res_def['cacert'] | default(omit) }}"
     cert: "{{ res_def['cert'] | default(omit) }}"
   register: res_def_output
-  when: not async
+  when: not _async
   no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_heat: "{{ topology_outputs_os_heat + [ res_def_output ] }}"
-  when: not async and state == 'present'
+  when: not _async and state == 'present'
 
 - name: "provision/deprovision os_heat stack"
   os_stack:
@@ -49,15 +49,15 @@
   async: "{{ async_timeout }}"
   poll: 0
   register: res_def_output
-  when: async
+  when: _async
   no_log: "{{ not debug_mode }}"
 
 - name: "Async:: save the job id"
   set_fact:
     topology_outputs_os_heat: "{{ topology_outputs_os_heat + [ res_def_output ] }}"
-  when: async and state == 'present'
+  when: _async and state == 'present'
 
 - name: "Add type to resource"
   set_fact:
     topology_outputs_os_heat: "{{ topology_outputs_os_heat | add_res_type('os_heat_res') }}"
-  when: async and state == 'present'
+  when: _async and state == 'present'

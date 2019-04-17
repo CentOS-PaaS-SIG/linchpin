@@ -16,7 +16,7 @@
   register: res_def_output
   ignore_errors: yes
   delegate_to: "{{ uri_hostname }}"
-  when: not async
+  when: not _async
 
 - name: "get XML definition of vm"
   command: "virsh -c {{ instance[1]  }} dumpxml {{ instance[0] }}{{ instance[3] }}{{ instance[2] }}"
@@ -27,7 +27,7 @@
     - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: instance
-  when: not async
+  when: not _async
   register: vm_xml_dump
   ignore_errors: yes
 
@@ -43,7 +43,7 @@
   loop_control:
     loop_var: instance
   register: res_def_output
-  when: not async
+  when: not _async
   ignore_errors: yes
 
 - name: "Delete associated image files"
@@ -56,4 +56,4 @@
   ignore_errors: yes
   become: "{{ libvirt_become }}"
   delegate_to: "{{ uri_hostname }}"
-  when: not async
+  when: not _async
