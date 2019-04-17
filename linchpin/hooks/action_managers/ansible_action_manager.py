@@ -12,7 +12,7 @@ from linchpin.hooks.action_managers.action_manager import ActionManager
 
 class AnsibleActionManager(ActionManager):
 
-    def __init__(self, name, action_data, target_data, **kwargs):
+    def __init__(self, name, action_data, target_data, state, **kwargs):
 
         """
         AnsibleActionManager constructor
@@ -34,6 +34,7 @@ class AnsibleActionManager(ActionManager):
         self.action_data = action_data
         self.target_data = target_data
         self.context = kwargs.get("context", True)
+        self.state = state
         self.kwargs = kwargs
 
 
@@ -100,7 +101,7 @@ class AnsibleActionManager(ActionManager):
         return ctx_params
 
 
-    def execute(self):
+    def execute(self, results):
 
         """
         Executes the action_block in the PinFile
@@ -108,9 +109,9 @@ class AnsibleActionManager(ActionManager):
 
         self.load()
         extra_vars = {}
-        runners = []
 
         for action in self.action_data["actions"]:
+            result = {}
             path = self.action_data["path"]
             playbook = action.get("playbook")
 
@@ -129,21 +130,32 @@ class AnsibleActionManager(ActionManager):
 
             e_vars = action.get("extra_vars", {})
             extra_vars.update(e_vars)
+            extra_vars['hook_data'] = results
             verbosity = self.kwargs.get('verbosity', 1)
 
             if self.context:
                 extra_vars.update(self.get_ctx_params())
             if 'inventory_file' in self.target_data and self.context:
                 inv_file = self.target_data["inventory_file"]
-                runners.append(ansible_runner(playbook,
-                                              "",
-                                              extra_vars,
-                                              inventory_src=inv_file,
-                                              verbosity=verbosity))
+                runner = ansible_runner(playbook,
+                                        "",
+                                        extra_vars,
+                                        inventory_src=inv_file,
+                                        verbosity=verbosity)
+
+                result['state'] = str(self.state)
+                result['return_code'] = runner[0]
+                result['data'] = runner[1]
             else:
-                runners.append(ansible_runner(playbook,
-                                              "",
-                                              extra_vars,
-                                              inventory_src="localhost",
-                                              verbosity=verbosity))
-        return runners
+                # runner : the data from the ansible runner, which will be
+                # associated with that state
+                runner = ansible_runner(playbook,
+                                        "",
+                                        extra_vars,
+                                        inventory_src="localhost",
+                                        verbosity=verbosity)
+                result['state'] = str(self.state)
+                result['return_code'] = runner[0]
+                result['data'] = runner[1]
+            results.append(result)
+        return results

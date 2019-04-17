@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 from .action_manager import ActionManager
 import sys
+import json
 import subprocess
 from cerberus import Validator
 
@@ -10,7 +11,7 @@ from linchpin.exceptions import HookError
 
 class PythonActionManager(ActionManager):
 
-    def __init__(self, name, action_data, target_data, **kwargs):
+    def __init__(self, name, action_data, target_data, state, **kwargs):
 
         """
         PythonActionManager constructor
@@ -31,6 +32,7 @@ class PythonActionManager(ActionManager):
         self.action_data = action_data
         self.target_data = target_data
         self.context = kwargs.get('context', True)
+        self.state = state
         self.kwargs = kwargs
 
 
@@ -59,7 +61,7 @@ class PythonActionManager(ActionManager):
             return status
 
 
-    def add_ctx_params(self, file_path, context=True):
+    def add_ctx_params(self, file_path, results, context=True):
 
         """
         Adds ctx params to the action_block run when context is true
@@ -68,29 +70,48 @@ class PythonActionManager(ActionManager):
         """
 
         if not context:
-            return "{0} {1}".format(sys.executable,
-                                    file_path)
+            return "{0} {1} -- '{2}'".format(sys.executable,
+                                             file_path,
+                                             results)
         params = ""
         for key in self.target_data:
             params += " {0}={1} ".format(key, self.target_data[key])
+        params += '{0}'.format(results)
         return "{0} {1} {2}".format(sys.executable,
                                     file_path,
                                     params)
 
 
-    def execute(self):
+    def execute(self, results):
 
         """
         Executes the action_block in the PinFile
         """
 
         for action in self.action_data["actions"]:
+            result = {}
+
             context = self.action_data.get("context", True)
             path = self.action_data["path"]
             file_path = "{0}/{1}".format(path, action)
-            command = self.add_ctx_params(file_path, context)
-            proc = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+            res_str = json.dumps(results, separators=(',', ':'))
+            command = self.add_ctx_params(file_path, res_str, context)
+            proc = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE)
             proc.wait()
 
             for line in proc.stdout:
                 print(line)
+
+            data = proc.stderr.read()
+            try:
+                if data:
+                    result['data'] = json.loads(data)
+            except ValueError:
+                print("Warning: '{0}' is not a valid JSON object.  "
+                      "Data from this hook will be discarded".format(data))
+            result['return_code'] = proc.returncode
+            result['state'] = str(self.state)
+
+            results.append(result)
+        return results

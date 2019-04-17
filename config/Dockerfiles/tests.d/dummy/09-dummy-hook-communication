@@ -1,0 +1,32 @@
+#!/bin/bash -xe
+
+# Verify that inter-hook communication works
+# distros.exclude: none
+# providers.include: dummy
+# providers.exclude: none
+
+DISTRO=${1}
+PROVIDER=${2}
+
+PINFILE="PinFile"
+WORKSPACE_PATH="docs/source/examples/workspaces/dummy-python-hook"
+TARGET="dummy_target"
+
+function clean_up {
+    linchpin -w . -p "${PINFILE}" -v destroy "${TARGET}"
+    if [ $? -ne 0 ]; then
+        exit ${?}
+    fi
+}
+trap clean_up EXIT SIGHUP SIGINT SIGTERM 
+
+if [ -e /tmp/dummy.hosts ]; then
+    rm /tmp/dummy.hosts
+fi
+
+pushd ${WORKSPACE_PATH}
+pwd
+# testing no-hooks flag
+echo "Testing --no-hooks flag"
+linchpin -w . -p "${PINFILE}" -v up "${TARGET}"
+

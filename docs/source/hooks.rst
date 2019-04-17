@@ -257,6 +257,18 @@ Builtin hooks Example:
           - 22
           - 8080
 
+**************************
+Hook Communication:
+**************************
+
+Hooks can read data from other hooks run in the same target.  Hook data is not shared between a provisioning and corresponding teardown task, but is shared between pre- and post- provisioning as well as between action managers.
+
+With the exception of the Ansible action manager, hook data is passed as the last argument to the hook.  The data is formatted as a JSON array.  Each item in the array is an object with three fields: :term:`return_code`. :term:`data`, and :term:`state` (e.g. preup).  In order for a hook to share data, it should output it as json to stderr.  This will be saved to the :term:`data` field of the hook data object.  If the stderr output is not valid json, it will be ignored.
+
+The ansible action manager handles data somewhat differently.  The results array is passed as a variable called :term:`hook_results` to Ansible's extra vars.  Data from Ansible will be sent back to LinchPin using the :term:`PlaybookCallback` class.
+
+
+
 Note: For more examples please refer hooks examples section.
 
 .. toctree::

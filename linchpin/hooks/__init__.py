@@ -207,7 +207,7 @@ class LinchpinHooks(object):
 
             # current target data extravars are fetched
             tgt_data = self.api.target_data.get('extra_vars', None)
-            self.run_actions(state_data, tgt_data)
+            self.run_actions(state, state_data, tgt_data)
 
 
     def run_inventory_gen(self, data):
@@ -219,7 +219,7 @@ class LinchpinHooks(object):
         pass
 
 
-    def run_actions(self, action_blocks, tgt_data, is_global=False):
+    def run_actions(self, state, action_blocks, tgt_data, is_global=False):
         """
         Runs actions inside each action block of each target
 
@@ -308,12 +308,14 @@ class LinchpinHooks(object):
                                      a_b,
                                      tgt_data,
                                      context=ab_ctx,
+                                     state=state,
                                      verbosity=self.verbosity)
                 else:
                     a_b_obj = ActionBlockRouter(action_type,
                                                 a_b,
                                                 tgt_data,
                                                 context=ab_ctx,
+                                                state=state,
                                                 verbosity=self.verbosity)
                 try:
                     self.api.ctx.log_state('-------\n'
@@ -325,15 +327,24 @@ class LinchpinHooks(object):
                     # validates the class object
                     a_b_obj.validate()
 
+                    # produce a partial application of update_record to limit
+                    # data passed to action managers
+                    # get past results from rundb
+                    target = self.api.get_evar('target', default=None)
+                    action = 'hooks'
+                    record = self._rundb.get_record(target,
+                                                    action,
+                                                    self._rundb_id)
                     # executes the hook
-                    hook_result = a_b_obj.execute()
-                    if type(hook_result) is list:
-                        for result in hook_result:
-                            if result[0] > 0:
-                                raise HookError("Error in executing hook")
-                    else:
-                        # for other types of hooks
-                        if hook_result > 0:
+                    hook_record = dict(record[0])['hooks']
+                    hook_result = a_b_obj.execute(hook_record)
+                    self._rundb.update_record(target,
+                                              self._rundb_id,
+                                              'hooks',
+                                              hook_result)
+                    # write results to rundb
+                    for result in hook_result:
+                        if result['return_code'] > 0:
                             raise HookError("Error in executing hook")
 
                     # intentionally using print here

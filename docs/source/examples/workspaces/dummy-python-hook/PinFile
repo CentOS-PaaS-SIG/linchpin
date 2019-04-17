@@ -1,0 +1,12 @@
+---
+dummy_target:
+  topology: dummy-topology.yml
+  layout: dummy-layout.yml
+  hooks:
+    postup:
+      - name: ex_hook
+        type: python
+        context: False
+        actions:
+          - list_files.py
+          - find_pinfile.py

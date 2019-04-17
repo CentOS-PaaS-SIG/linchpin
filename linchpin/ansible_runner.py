@@ -80,7 +80,7 @@ def ansible_runner_24x(playbook_path,
 
     loader = DataLoader()
     variable_manager = VariableManager(loader=loader)
-    variable_manager.extra_vars = extra_vars
+    variable_manager._extra_vars = extra_vars
     inventory = Inventory(loader=loader, sources=[inventory_src])
     variable_manager.set_inventory(inventory)
     passwords = {}
