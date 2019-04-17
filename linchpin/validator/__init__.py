@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
 import os
 import json
 
@@ -10,6 +11,7 @@ from linchpin.exceptions import LinchpinError
 from linchpin.exceptions import TopologyError
 
 from linchpin.validator.anyofvalidator import AnyofValidator
+import six
 
 
 class Validator(object):
@@ -39,7 +41,7 @@ class Validator(object):
                                       "PinFile section. valid sections "
                                       "are '{1}'".format(target,
                                                          Validator.SECTIONS))
-        if 'topology' not in target.keys():
+        if 'topology' not in list(target.keys()):
             raise ValidationError("Each target must have a topology")
 
         topo_data = target['topology']
@@ -49,9 +51,9 @@ class Validator(object):
             # if topology fails, try converting from old to new style
             self._convert_topology(topo_data)
             resources = self.validate_topology(topo_data)
-        if 'layout' in target.keys():
+        if 'layout' in list(target.keys()):
             self.validate_layout(target['layout'])
-        if 'cfgs' in target.keys():
+        if 'cfgs' in list(target.keys()):
             self.validate_cfgs(target['cfgs'])
 
         return resources
@@ -67,7 +69,7 @@ class Validator(object):
                                       "PinFile section. valid sections "
                                       "are '{1}'".format(target,
                                                          Validator.SECTIONS))
-        if 'topology' not in target.keys():
+        if 'topology' not in list(target.keys()):
             results['topology'] = "Each target must have a topology"
 
         err_prefix = "errors:\n"
@@ -102,7 +104,7 @@ class Validator(object):
         else:
             results['topology'] = "valid"
 
-        if 'layout' in target.keys():
+        if 'layout' in list(target.keys()):
             layout_data = target['layout']
             try:
                 self.validate_layout(layout_data)
@@ -112,7 +114,7 @@ class Validator(object):
             else:
                 results['layout'] = "valid"
 
-        if 'cfgs' in target.keys():
+        if 'cfgs' in list(target.keys()):
             cfgs_data = target['cfgs']
             try:
                 self.validate_cfgs(cfgs_data)
@@ -301,7 +303,7 @@ class Validator(object):
         else:
             # in this case, error is a dict
             msg = ""
-            for key, val in error.iteritems():
+            for key, val in six.iteritems(error):
                 msg += self._gen_error_msg(prefix, key, val)
             return msg
 
@@ -317,11 +319,11 @@ class Validator(object):
             res_grps = topology.get('resource_groups')
             if res_grps:
                 for res_grp in res_grps:
-                    if 'res_group_type' in res_grp.keys():
+                    if 'res_group_type' in list(res_grp.keys()):
                         res_grp['resource_group_type'] = (
                             res_grp.pop('res_group_type'))
 
-                    if 'res_defs' in res_grp.keys():
+                    if 'res_defs' in list(res_grp.keys()):
                         res_grp['resource_definitions'] = (
                             res_grp.pop('res_defs'))
 
@@ -337,13 +339,13 @@ class Validator(object):
 
                     if res_defs:
                         for res_def in res_defs:
-                            if 'res_name' in res_def.keys():
+                            if 'res_name' in list(res_def.keys()):
                                 res_def['name'] = res_def.pop('res_name')
-                            if 'type' in res_def.keys():
+                            if 'type' in list(res_def.keys()):
                                 res_def['role'] = res_def.pop('type')
-                            if 'res_type' in res_def.keys():
+                            if 'res_type' in list(res_def.keys()):
                                 res_def['role'] = res_def.pop('res_type')
-                            if 'count' in res_def.keys():
+                            if 'count' in list(res_def.keys()):
                                 res_def['count'] = int(res_def.pop('count'))
                     else:
                         raise TopologyError("'resource_definitions' do not"

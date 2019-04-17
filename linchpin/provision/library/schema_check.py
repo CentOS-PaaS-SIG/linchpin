@@ -5,6 +5,7 @@
 #
 # Topology validator for Ansible based infra provsioning tool linch-pin
 
+from __future__ import absolute_import
 import os
 import json
 import yaml
@@ -87,7 +88,7 @@ def check_file_paths(module, *args):
 
 def validate_grp_names(data):
     res_grps = data['resource_groups']
-    if 'resource_group_vars' in data.keys():
+    if 'resource_group_vars' in list(data.keys()):
         res_grp_vars = data['resource_group_vars']
     else:
         res_grp_vars = []

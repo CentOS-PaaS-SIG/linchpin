@@ -42,7 +42,7 @@ class State(object):
         :param state: state name
         """
 
-        VALID_STATES = self.ctx.cfgs["states"].keys()
+        VALID_STATES = list(self.ctx.cfgs["states"].keys())
         return state in VALID_STATES
 
     def _validate_sub_state(self, sub_state):

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
 try:
     from StringIO import StringIO
 except ImportError:
@@ -18,16 +19,16 @@ class OpenstackInventory(InventoryFilter):
         if var_data is None:
             var_data = {}
 
-        if 'results' in res.keys():
+        if 'results' in list(res.keys()):
             for result in res.get('results', []):
-                if 'openstack' in result.keys():
+                if 'openstack' in list(result.keys()):
                     os_vars = result.get('openstack', [])
                     host = self.get_hostname(os_vars, var_data,
                                              self.DEFAULT_HOSTNAMES)
                     hostname_var = host[0]
                     hostname = host[1]
                     host_data[hostname] = {}
-                    if '__IP__' not in var_data.keys():
+                    if '__IP__' not in list(var_data.keys()):
                         var_data['__IP__'] = hostname_var
                         host_data[hostname] = {}
                     self.set_config_values(host_data[hostname], os_vars,
@@ -43,7 +44,7 @@ class OpenstackInventory(InventoryFilter):
                     hostname_var = host[0]
                     hostname = host[1]
                     host_data[hostname] = {}
-                    if '__IP__' not in var_data.keys():
+                    if '__IP__' not in list(var_data.keys()):
                         var_data['__IP__'] = hostname_var
                         host_data[hostname] = {}
                     host_data[hostname] = {}
@@ -55,7 +56,7 @@ class OpenstackInventory(InventoryFilter):
                 hostname_var = host[0]
                 hostname = host[1]
                 host_data[hostname] = {}
-                if '__IP__' not in var_data.keys():
+                if '__IP__' not in list(var_data.keys()):
                     var_data['__IP__'] = hostname_var
                     host_data[hostname] = {}
                 host_data[hostname] = {}
@@ -64,7 +65,7 @@ class OpenstackInventory(InventoryFilter):
 
 
     def get_host_ips(self, host_data):
-        return host_data.keys()
+        return list(host_data.keys())
 
     def get_inventory(self, topo, layout, config):
         host_data = []

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
 try:
     from StringIO import StringIO
 except ImportError:
@@ -48,7 +49,7 @@ class AWSInventory(InventoryFilter):
                                      self.DEFAULT_HOSTNAMES)
             hostname_var = host[0]
             hostname = host[1]
-            if '__IP__' not in var_data.keys():
+            if '__IP__' not in list(var_data.keys()):
                 var_data['__IP__'] = hostname_var
             host_data[hostname] = {}
             self.set_config_values(host_data[hostname], instance, var_data)
@@ -56,7 +57,7 @@ class AWSInventory(InventoryFilter):
 
     def get_host_ips(self, host_data):
         if host_data:
-            return host_data.keys()
+            return list(host_data.keys())
         else:
             return []
 

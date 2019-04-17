@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
 try:
     from StringIO import StringIO
 except ImportError:
@@ -34,7 +35,7 @@ class DummyInventory(InventoryFilter):
         return host_data
 
     def get_host_ips(self, host_data):
-        return host_data.keys()
+        return list(host_data.keys())
 
     def get_inventory(self, topo, layout, config):
         host_data = self.get_host_data(topo, config)
@@ -58,7 +59,7 @@ class DummyInventory(InventoryFilter):
         """
         if cfgs is None:
             return
-        if 'hostname' not in cfgs.keys():
+        if 'hostname' not in list(cfgs.keys()):
             cfgs['hostname'] = '__IP__'
         for var in cfgs.keys():
             if var == 'hostname' and cfgs[var] == '__IP__':

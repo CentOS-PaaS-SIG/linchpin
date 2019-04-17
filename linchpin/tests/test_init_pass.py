@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from __future__ import print_function
 import os
 import sys
 
@@ -13,6 +15,7 @@ from linchpin.context import LinchpinContext
 from linchpin.rundb import RunDB
 
 from linchpin.tests.mockdata.contextdata import ContextData
+import six
 
 
 def test_api_create():
@@ -186,7 +189,7 @@ def test_do_action():
     failed = False
     if return_code:
         failed = True
-        for target, data in results.iteritems():
+        for target, data in six.iteritems(results):
             task_results = data['task_results'][0]
 
             if not isinstance(task_results, int):
@@ -196,10 +199,10 @@ def test_do_action():
                     tr = trs[0]
                     if tr.is_failed():
                         msg = tr._check_key('msg')
-                        print("Target '{0}': {1} failed with"
+                        print(("Target '{0}': {1} failed with"
                               " error '{2}'".format(target,
                                                     tr._task,
-                                                    msg))
+                                                    msg)))
             else:
                 if task_results:
                     return_code = task_results
@@ -213,10 +216,10 @@ def test_do_validation():
     failed = False
     if return_code:
         failed = True
-        for target, data in results.iteritems():
+        for target, data in six.iteritems(results):
             if not data.startswith("valid"):
-                print("Validation for target '{0}': has failed with"
-                      " error '{1}'".format(target, msg))
+                print(("Validation for target '{0}': has failed with"
+                      " error '{1}'".format(target, msg)))
 
     assert not failed
 

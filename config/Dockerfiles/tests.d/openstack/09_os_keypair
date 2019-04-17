@@ -11,6 +11,8 @@ PROVIDER=${2}
 TARGET="os-keypair"
 TMP_FILE=$(mktemp)
 
+mkdir -p /root/.ssh
+
 function clean_up {
     set +e
     linchpin -w . -v destroy "${TARGET}"
