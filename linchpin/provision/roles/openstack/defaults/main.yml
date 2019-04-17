@@ -1,0 +1,17 @@
+---
+# These should have default out-of-the-box values and these can be overriden via the cli args
+
+# Section: General needed defaults
+topology_name: ""
+resource_definition_name: ""
+resource_definition_role: ""
+resource_definition_flavor: ""
+resource_definition_image: ""
+resource_definition_network: ""
+credentials_filename: ""
+tenant_profile: ""
+
+# Section: layout values
+layout_hosts_name: ""
+layout_count: ""
+host_groups_name: ""

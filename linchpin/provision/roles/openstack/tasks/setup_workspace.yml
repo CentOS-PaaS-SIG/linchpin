@@ -1,0 +1,10 @@
+ name: Placeholder for the creating the PinFile for OpenStack Deployments
+  hosts: localhost
+  gather_facts: yes
+  any_errors_fatal: true
+  tasks:
+       - name: Create PinFile from the jinja templates
+         template:
+           src: openstack_PinFile.j2
+           dest: ~/openstack_PinFile
+           mode: 0755                                                           #TODO(skatlapa): Change to 777 if needed
