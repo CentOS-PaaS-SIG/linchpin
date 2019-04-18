@@ -1,18 +1,18 @@
 ---
-simple:
+vmware-new:
   topology:
-    topology_name: simple
+    topology_name: vmware-new
     resource_groups:
-      - resource_group_name: simple
+      - resource_group_name: vmware-new
         resource_group_type: vmware
         resource_definitions:
           - role: vmware_guest
-            name: simple
+            name: vmware-node
             cdrom:
               type: iso
-              iso_path: "[ha-datacenter] tc_vmware4.iso"
+              iso_path: [{{ datastore | default('ha-datacenter') }}] {{ iso_path | default('tc_vmware4.iso') }}
             folder: /
-            datastore: ha-datacenter
+            datastore: {{ datastore | default('ha-datacenter') }}
             disk:
               - size_mb: 10
                 type: thin
@@ -20,11 +20,17 @@ simple:
               num_cpus: 1
               memory_mb: 256
             networks:
-              - name: VM Network
+              - name: {{ network | default('VM Network') }}
             wait_for_ip_address: yes
+        {% if credentials is defined %}
         credentials:
-          filename: vmware.yml
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
+        credentials:
+          filename: vmware.key
           profile: default
+        {% endif %}
   layout:
     inventory_layout:
       vars:
