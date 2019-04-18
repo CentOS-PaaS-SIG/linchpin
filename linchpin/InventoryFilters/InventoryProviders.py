@@ -40,8 +40,8 @@ formatter_classes = {
 def get_driver(provider):
 
     if provider not in filter_classes:
-            raise LinchpinError("Key {0} not found in"
-                                " inventory provider dict".format(provider))
+        raise LinchpinError("Key {0} not found in"
+                            " inventory provider dict".format(provider))
 
     return filter_classes[provider]
 
@@ -52,8 +52,8 @@ def get_all_drivers():
 
 def get_inv_formatter(inv_type):
     if inv_type not in formatter_classes:
-            raise LinchpinError("Key {0} not found in"
-                                " formatters".format(inv_type))
+        raise LinchpinError("Key {0} not found in"
+                            " formatters".format(inv_type))
     return formatter_classes[inv_type]
 
 

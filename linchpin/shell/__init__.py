@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
-
 from __future__ import absolute_import
+
 import os
 import sys
 import ast
@@ -483,7 +483,8 @@ def journal(ctx, targets, fields, count, view,
             ctx.log_state(e)
             sys.exit(1)
 
-        all_fields = list(json.loads(lpcli.get_cfg('lp', 'rundb_schema')).keys())
+        lpcli_cfg = lpcli.get_cfg('lp', 'rundb_schema')
+        all_fields = list(json.loads(lpcli_cfg.keys()))
 
         if not fields:
             fields = ['action', 'uhash', 'rc']
@@ -577,8 +578,8 @@ def journal(ctx, targets, fields, count, view,
                     output += '==========\n'
 
         else:
-                output += '\n==================NO TRANSACTIONS======'
-                output += '==========\n'
+            output += '\n==================NO TRANSACTIONS======'
+            output += '==========\n'
 
         ctx.log_state(output)
 

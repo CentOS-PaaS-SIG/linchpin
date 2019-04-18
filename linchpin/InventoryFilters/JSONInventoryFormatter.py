@@ -75,25 +75,25 @@ class JSONInventoryFormatter(InventoryFormatter):
                         self.config["all"]["hosts"].append(ip)
         return True
 
-    def add_ips_to_groups(self, inven_hosts, layout):
-        ip_to_host = {}
-        inven_hosts.reverse()
-        self.add_ips_to_host_group("all", inven_hosts)
-        for host_name in layout['hosts']:
-            if 'count' in list(host_name.keys()):
-                count = host_name['count']
-            else:
-                count = 1
-            host_list = []
-            if count > len(inven_hosts):
-                count = len(inven_hosts)
-            for i in range(count, 0, -1):
-                item = inven_hosts.pop()
-                host_list.append(item)
-            ip_to_host[host_name["name"]] = host_list
-            for host_group in host_name['host_groups']:
-                self.add_ips_to_host_group(host_group, host_list)
-        return True
+    # def add_ips_to_groups(self, inven_hosts, layout):
+    #     ip_to_host = {}
+    #     inven_hosts.reverse()
+    #     self.add_ips_to_host_group("all", inven_hosts)
+    #     for host_name in layout['hosts']:
+    #         if 'count' in list(host_name.keys()):
+    #             count = host_name['count']
+    #         else:
+    #             count = 1
+    #         host_list = []
+    #         if count > len(inven_hosts):
+    #             count = len(inven_hosts)
+    #         for i in range(count, 0, -1):
+    #             item = inven_hosts.pop()
+    #             host_list.append(item)
+    #         ip_to_host[host_name["name"]] = host_list
+    #         for host_group in host_name['host_groups']:
+    #             self.add_ips_to_host_group(host_group, host_list)
+    #    return True
 
 
     def add_ips_to_host_group(self, host_group, hosts):

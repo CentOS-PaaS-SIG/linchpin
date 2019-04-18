@@ -96,7 +96,7 @@ class BkrFactory(BkrConn):
                 try:
                     with open(file_path, "r") as f:
                         ssh_key.append(f.read())
-                except:
+                except (OSError, IOError):
                     LOG.info("Unable to read from ssh key file: %s" % file_path)
 
             if ssh_key:

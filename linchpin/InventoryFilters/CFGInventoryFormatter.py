@@ -81,7 +81,8 @@ class CFGInventoryFormatter(InventoryFormatter):
         host_groups.append("all")
         common_vars = layout['vars'] if 'vars' in list(layout.keys()) else []
         for group in host_groups:
-            items = list(collections.OrderedDict(self.config.items(group)).keys())
+            items = list(collections.OrderedDict(self.config.items(group))
+                                    .keys())
             self.config.remove_section(group)
             self.config.add_section(group)
             for item in items:
