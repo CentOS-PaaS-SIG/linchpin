@@ -60,6 +60,7 @@
     - ["{{ res_def['name_separator'] | default('_')  }}"]
     - ["{{ res_def['disk_cache'] | default('none')  }}"]
     - ["{{ res_def['cpu_mode'] | default('host-model')  }}"]
+    - ["{{ res_def['disk_type'] | default('virtio_blk')  }}"]
   loop_control:
     loop_var: definition
   when:  node_exists['failed'] is defined
@@ -266,6 +267,7 @@
     - ["{{ res_def['name_separator'] | default('_')  }}"]
     - ["{{ res_def['disk_cache'] | default('none')  }}"]
     - ["{{ res_def['cpu_mode'] | default('host-model')  }}"]
+    - ["{{ res_def['disk_type'] | default('virtio_blk')  }}"]
   loop_control:
     loop_var: definition
   when: node_exists['failed'] is defined
