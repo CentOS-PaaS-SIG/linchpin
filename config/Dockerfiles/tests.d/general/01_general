@@ -3,7 +3,7 @@
 # Verify basic provisioning for all supplied providers
 # distros.exclude: centos7 fedora28
 # providers.include: none
-# providers.exclude: gcloud
+providers.exclude: vmware
 
 DISTRO=${1}
 PROVIDER=${2}
@@ -32,6 +32,8 @@ elif [ "${PROVIDER}" == "duffy" ]; then
     TARGETS="duffy-new"
 elif [ "${PROVIDER}" == "openshift" ]; then
     TARGETS="openshift-new"
+elif [ "${PROVIDER}" == "vmware" ]; then
+    TARGETS="vmware-new"
 else
     TARGETS="dummy-new"
 fi

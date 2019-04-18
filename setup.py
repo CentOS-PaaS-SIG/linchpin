@@ -42,6 +42,7 @@ setup(
         'docs': ["docutils", "sphinx", "sphinx_rtd_theme"],
         'tests': ["nose", "mock", "coverage", "flake8"],
         'libvirt': ["libvirt-python>=3.0.0", "lxml"],
+        'vmware': ["PyVmomi>=6.7.1"]
     },
     zip_safe=False,
     packages=find_packages(),
