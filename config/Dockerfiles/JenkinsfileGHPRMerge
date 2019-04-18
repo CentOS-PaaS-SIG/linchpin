@@ -29,6 +29,8 @@ library identifier: "cico-pipeline-library@master",
 @Library('contra-lib')
 import org.centos.contra.pipeline.GitHubAPI
 
+import org.centos.pipeline.LinchpinPipelineUtils
+
 properties([
   buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '15')),
   [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/CentOS-PaaS-SIG/linchpin/'],
@@ -132,7 +134,7 @@ pipeline {
                                  url: "https://github.com/${env.ghprbGhRepository}"]]
                         ])
                         script {
-                            if (getChangedFile('linchpin/version.py')) {
+                            if (linchpinPipelineUtils.getChangedFile('linchpin/version.py')) {
 
                                 string pre_release = sh (
                                     script: "grep __version__ linchpin/version.py | grep -E '([[:digit:]]\\.){2}[[:digit:]][[:alpha:]][[:digit:]]' | awk -F\"= \" '{print \$2}'",
@@ -163,27 +165,4 @@ pipeline {
             }
         }
     }
-}
-
-
-// check the filePath against changed files
-// return file.path if there's a match, else false
-def getChangedFile(String filePath) {
-
-    def changeLogSets = currentBuild.changeSets
-    sz = changeLogSets.size()
-    for (int i = 0; i < sz; i++) {
-        def entries = changeLogSets[i].items
-        for (int j = 0; j < entries.length; j++) {
-            def entry = entries[j]
-            def files = new ArrayList(entry.affectedFiles)
-            for (int k = 0; k <files.size(); k++) {
-                def file = files[k]
-                if (file.path == filePath) {
-                    return file.path
-                }
-            }
-        }
-    }
-    return false
 }
