@@ -18,7 +18,7 @@
     auth: "{{ auth_var | omit_filter(omit) }}"
     state: "{{ vol.3 }}"
     size: "{{ vol.2 }}"
-    display_name: "{{ vol.1 }}_{{ vol.4 }}"
+    display_name: "{{ vol.1 }}{{ default_delimiter }}{{ vol.4 }}"
   with_nested:
     - ["{{ auth_var | default(omit) }}"]
     - ["{{ res_def['res_name'] | default(res_def['name']) }}"]
@@ -41,7 +41,7 @@
     auth: "{{ auth_var | omit_filter(omit) }}"
     state: "{{ vol.3 }}"
     size: "{{ vol.2 }}"
-    display_name: "{{ vol.1 }}_{{ vol.4 }}"
+    display_name: "{{ vol.1 }}{{ default_delimiter }}{{ vol.4 }}"
   with_nested:
     - ["{{ auth_var | default(omit) }}"]
     - ["{{ res_def['res_name'] | default(res_def['name']) }}"]

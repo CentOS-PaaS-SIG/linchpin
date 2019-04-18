@@ -58,6 +58,8 @@ class LinchpinAPI(object):
 
         self.target_data = {}
 
+        default_delimiter = self.get_cfg(section='evars', key='default_delimiter', default='_')
+
         base_path = '/'.join(os.path.dirname(__file__).split('/')[0:-1])
         pkg = self.get_cfg(section='lp', key='pkg', default='linchpin')
         lp_path = '{0}/{1}'.format(base_path, pkg)
@@ -76,6 +78,7 @@ class LinchpinAPI(object):
         for path in xp_path:
             self.pb_path.append(os.path.expanduser(path))
 
+        self.set_evar('default_delimiter', default_delimiter)
         self.set_evar('lp_path', lp_path)
         self.set_evar('pb_path', self.pb_path)
         self.set_evar('from_api', True)
