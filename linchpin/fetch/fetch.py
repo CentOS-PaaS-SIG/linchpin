@@ -7,7 +7,7 @@ import six
 try:
     import configparser
 except ImportError:
-        import six.moves.configparser as configparser
+    import six.moves.configparser as configparser
 
 
 from abc import ABCMeta, abstractmethod

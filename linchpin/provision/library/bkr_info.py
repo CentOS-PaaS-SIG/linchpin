@@ -106,6 +106,7 @@ class BeakerTargets(object):
         for job_id in _jprefix(self.ids):
             self.hub.taskactions.stop(job_id, 'cancel', msg)
 
+
 def main():
     mod = AnsibleModule(argument_spec={
         'ids': {'type': 'dict'},

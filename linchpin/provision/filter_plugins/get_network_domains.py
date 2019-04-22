@@ -4,11 +4,12 @@ from __future__ import absolute_import
 import libvirt
 from xml.dom import minidom
 
+
 def get_network_domains(network, uri):
     network_hosts = []
-    #conn = libvirt.openReadOnly(uri)
+    # conn = libvirt.openReadOnly(uri)
     conn = libvirt.open(uri)
-    if conn == None:
+    if conn is None:
         return network_hosts
 
     hosts = conn.listDomainsID()
@@ -24,6 +25,7 @@ def get_network_domains(network, uri):
         if usesNetwork:
             network_hosts.append(dom.name())
 
+    conn.close()
     return network_hosts
 
 
@@ -45,12 +47,6 @@ def iterate_interfaces(interface, network):
         if node.attributes['network'].nodeValue == network:
             return True
         return False
-
-
-        raw_xml = dom.XMLDesc
-
-    conn.close()
-    return net_hosts
 
 
 class FilterModule(object):
