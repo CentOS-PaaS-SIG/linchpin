@@ -261,7 +261,7 @@ class LinchpinCli(LinchpinAPI):
             self.get_evar('default_resources_path'))
 
         if (os.path.isabs(resources_path)):
-                context_path = resources_path
+            context_path = resources_path
         if not os.path.exists(context_path):
             os.makedirs(context_path)
 
@@ -413,7 +413,7 @@ class LinchpinCli(LinchpinAPI):
                 if ast.literal_eval(distill_on_error.title()):
                     self._write_distilled_context(run_data)
             else:
-                    self._write_distilled_context(run_data)
+                self._write_distilled_context(run_data)
         self._write_latest_run()
         self._write_to_inventory(inv_format=inv_f)
 

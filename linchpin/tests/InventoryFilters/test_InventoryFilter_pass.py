@@ -27,7 +27,25 @@ def setup_inventory_filter():
 
     template = 'parsed-layout.json'
     template_file = open(mock_path+'/'+template)
-    inv = json.load(template_file)
+    # object hook can be removed once python 2 is no longer supported
+    inv = json.load(template_file, object_hook=_byteify)
+
+def _byteify(data, ignore_dicts = False):
+    # if this is a unicode string, return its string representation
+    if isinstance(data, unicode):
+        return data.encode('utf-8')
+    # if this is a list of values, return list of byteified values
+    if isinstance(data, list):
+        return [ _byteify(item, ignore_dicts=True) for item in data ]
+    # if this is a dictionary, return dictionary of byteified keys and values
+    # but only if we haven't already byteified it
+    if isinstance(data, dict) and not ignore_dicts:
+        return {
+            _byteify(key, ignore_dicts=True): _byteify(value, ignore_dicts=True)
+            for key, value in data.iteritems()
+        }
+    # if it's anything else, return it in its original form
+    return data
 
 @with_setup(setup_inventory_filter)
 def test_get_layout_hosts():
@@ -94,7 +112,10 @@ def test_add_ips_to_groups():
     """
     I don't know what this is
     """
-    inven_hosts = inv['hosts']
+    inven_hosts = []
+    for host in inv["hosts"]:
+        inven_hosts.append(host['name'])
+    filter.add_sections(inv['host_groups']['OSEv3']['children'])
     filter.add_ips_to_groups(inven_hosts, inv)
 
 @with_setup(setup_inventory_filter)

@@ -75,7 +75,7 @@ def test_add_ips_to_groups():
     """
     """
     inven_hosts = inv['hosts']
-    formatter.add_sections(list(inv['host_groups'].keys()))
+    formatter.add_sections(list(inv['host_groups']['OSEv3']['children']))
     formatter.add_ips_to_groups(inven_hosts, inv)
  
 
@@ -87,7 +87,7 @@ def test_add_common_vars():
     formatter.add_sections(host_groups)
     formatter.set_vars(inv)
     formatter.add_ips_to_groups(host_groups, inv)
-    formatter.add_common_vars(host_groups, inv)
+    formatter.add_common_vars(host_groups, inv, {})
 
 
 @with_setup(setup_json_inventory_formatter)

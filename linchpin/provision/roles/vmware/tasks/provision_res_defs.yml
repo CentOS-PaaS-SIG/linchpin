@@ -1,0 +1,26 @@
+---
+- name: "Set vmware_res_type value"
+  set_fact:
+    vmware_res_type: "{{ res_def['role'] }}"
+  when: async
+
+- name: "Add resource type to async_types"
+  set_fact:
+    async_types: "{{ async_types + [vmware_res_type] }}"
+  when: async
+
+- name: "declaring async vars"
+  set_fact:
+    async_outputs_vmware_guest: []
+  when: async
+
+- name: "Get the resource name"
+  set_fact:
+    rsrc_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+
+- name: "Create name using uhash value"
+  set_fact:
+    vmware_resource_name: "{{ rsrc_name + '-' + uhash + '-' }}"
+
+- name: "provision resource type : {{ res_def['role'] }}"
+  include: "provision_{{ res_def['role'] }}.yml"

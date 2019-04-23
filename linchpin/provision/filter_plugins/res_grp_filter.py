@@ -8,7 +8,7 @@ def filter_groups(resource_group_types, resource_groups, *args):
         for group in resource_groups:
             for arg in args:
                 if (arg in group) and (group[arg] == group_type):
-                        output[group_type].append(group)
+                    output[group_type].append(group)
     return output
 
 

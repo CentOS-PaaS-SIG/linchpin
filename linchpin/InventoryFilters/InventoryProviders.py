@@ -12,6 +12,7 @@ from .GCloudInventory import GCloudInventory
 from .LibvirtInventory import LibvirtInventory
 from .OpenstackInventory import OpenstackInventory
 from .OvirtInventory import OvirtInventory
+from .VMwareInventory import VMwareInventory
 
 from .CFGInventoryFormatter import CFGInventoryFormatter
 from .JSONInventoryFormatter import JSONInventoryFormatter
@@ -26,6 +27,7 @@ filter_classes = {
     "libvirt_res": LibvirtInventory,
     "os_server_res": OpenstackInventory,
     "ovirt_vms_res": OvirtInventory,
+    "vmware_guest_res": VMwareInventory,
 }
 
 formatter_classes = {
@@ -38,8 +40,8 @@ formatter_classes = {
 def get_driver(provider):
 
     if provider not in filter_classes:
-            raise LinchpinError("Key {0} not found in"
-                                " inventory provider dict".format(provider))
+        raise LinchpinError("Key {0} not found in"
+                            " inventory provider dict".format(provider))
 
     return filter_classes[provider]
 
@@ -50,8 +52,8 @@ def get_all_drivers():
 
 def get_inv_formatter(inv_type):
     if inv_type not in formatter_classes:
-            raise LinchpinError("Key {0} not found in"
-                                " formatters".format(inv_type))
+        raise LinchpinError("Key {0} not found in"
+                            " formatters".format(inv_type))
     return formatter_classes[inv_type]
 
 

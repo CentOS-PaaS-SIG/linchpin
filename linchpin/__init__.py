@@ -58,7 +58,12 @@ class LinchpinAPI(object):
 
         self.target_data = {}
 
-        base_path = '/'.join(os.path.dirname(__file__).split('/')[0:-1])
+        default_delimiter = self.get_cfg(section='evars',
+                                         key='default_delimiter',
+                                         default='_')
+
+        base_path = '/'.join(os.path.dirname(__file__)
+                                    .split('/')[0:-1])
         pkg = self.get_cfg(section='lp', key='pkg', default='linchpin')
         lp_path = '{0}/{1}'.format(base_path, pkg)
         self.pb_ext = self.get_cfg('extensions', 'playbooks', default='.yml')
@@ -76,6 +81,7 @@ class LinchpinAPI(object):
         for path in xp_path:
             self.pb_path.append(os.path.expanduser(path))
 
+        self.set_evar('default_delimiter', default_delimiter)
         self.set_evar('lp_path', lp_path)
         self.set_evar('pb_path', self.pb_path)
         self.set_evar('from_api', True)
@@ -390,13 +396,13 @@ class LinchpinAPI(object):
 
             if len(targets):
                 for tgts in record['targets']:
-                        for tgt, data in tgts.items():
-                            run_id = int(list(data.keys())[0])
-                            if tgt in targets:
-                                tgt_data = (rundb.get_record(tgt,
-                                            action=record['action'],
-                                            run_id=run_id))
-                                pf_data[tgt] = tgt_data
+                    for tgt, data in tgts.items():
+                        run_id = int(list(data.keys())[0])
+                        if tgt in targets:
+                            tgt_data = (rundb.get_record(tgt,
+                                        action=record['action'],
+                                        run_id=run_id))
+                            pf_data[tgt] = tgt_data
             else:
                 for tgts in record['targets']:
                     for tgt, data in tgts.items():
@@ -743,9 +749,9 @@ class LinchpinAPI(object):
         # get run_ids to query
         if len(targets):
             for tgts in record['targets']:
-                    for tgt, data in tgts.items():
-                        if tgt in targets:
-                            tgt_run_ids[tgt] = int(list(data.keys())[0])
+                for tgt, data in tgts.items():
+                    if tgt in targets:
+                        tgt_run_ids[tgt] = int(list(data.keys())[0])
         else:
             for tgts in record['targets']:
                 for tgt, data in tgts.items():

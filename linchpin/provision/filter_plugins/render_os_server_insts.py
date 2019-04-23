@@ -3,6 +3,8 @@
 
 from __future__ import absolute_import
 from six.moves import range
+
+
 def render_os_server_insts(res_def, os_resource_name):
 
     output = []

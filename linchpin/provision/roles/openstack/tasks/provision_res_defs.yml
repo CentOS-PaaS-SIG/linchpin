@@ -16,7 +16,7 @@
 
 - name: "Create name using uhash value"
   set_fact:
-    os_resource_name: "{{ os_resource_name + '-' + uhash + '-' }}"
+    os_resource_name: "{{ os_resource_name + default_delimiter + uhash }}"
   when:  unique_name
 
 - name: "provision/teardown resources "

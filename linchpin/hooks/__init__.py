@@ -187,7 +187,7 @@ class LinchpinHooks(object):
 
         # this will replace the above target_data and pull from the rundb
         # run_data = self.prepare_inv_params()
-        if str(state) is 'postinv':
+        if str(state) == 'postinv':
             run_data = self.prepare_inv_params()
             return self.run_inventory_gen(run_data)
 
@@ -334,7 +334,7 @@ class LinchpinHooks(object):
                     else:
                         # for other types of hooks
                         if hook_result > 0:
-                                raise HookError("Error in executing hook")
+                            raise HookError("Error in executing hook")
 
                     # intentionally using print here
                     self.api.ctx.log_state('end hook {0}:{1}\n-------'.format(

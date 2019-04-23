@@ -96,7 +96,7 @@ class BkrFactory(BkrConn):
                 try:
                     with open(file_path, "r") as f:
                         ssh_key.append(f.read())
-                except:
+                except (OSError, IOError):
                     LOG.info("Unable to read from ssh key file: %s" % file_path)
 
             if ssh_key:
@@ -182,6 +182,8 @@ chmod go-w /root /root/.ssh /root/.ssh/authorized_keys
 
             # Add Distro Requirements
             recipe_template.addBaseRequires(*args, **kwargs)
+            for partition in kwargs.get("partitions", []):
+                recipe_template.addPartition(**partition)
             arch_node = self.doc.createElement('distro_arch')
             arch_node.setAttribute('op', '=')
             arch_node.setAttribute('value', arch)

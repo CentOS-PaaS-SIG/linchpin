@@ -119,6 +119,12 @@
     topology_outputs: "{{ topology_outputs_openshift_resources }}"
   when: topology_outputs_openshift_resources is defined
 
+- name: "Add vmware_guest_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs_vmware_guest }}"
+  when: topology_outputs_vmware_guest is defined
+
+
 - name: "set value"
   set_fact:
     value: "[{{ {'resources': topology_outputs } }}]"

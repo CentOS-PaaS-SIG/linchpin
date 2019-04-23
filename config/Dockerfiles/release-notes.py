@@ -3,12 +3,13 @@
 from github import Github
 import sys
 
-REPO="CentOS-PaaS-SIG/linchpin"
+REPO = "CentOS-PaaS-SIG/linchpin"
+
 
 def get_doc_fixes(pulls):
     doc_fixes = []
     # iterate over pulls backward so that list can be removed in place
-    for i in xrange(len(pulls) -1, -1, -1):
+    for i in xrange(len(pulls) - 1, -1, -1):
         labels = pulls[i].get_labels()
         for label in labels:
             if label.name == "documentation":
@@ -21,7 +22,7 @@ def get_doc_fixes(pulls):
 def get_bug_fixes(pulls):
     bug_fixes = []
     # iterate over pulls backward so that list can be removed in place
-    for i in xrange(len(pulls) -1, -1, -1):
+    for i in xrange(len(pulls) - 1, -1, -1):
         labels = pulls[i].get_labels()
         for label in labels:
             if label.name == "bug":
@@ -34,7 +35,7 @@ def get_bug_fixes(pulls):
 def get_enhancements(pulls):
     enhancements = []
     # iterate over pulls backward so that list can be removed in place
-    for i in xrange(len(pulls) -1, -1, -1):
+    for i in xrange(len(pulls) - 1, -1, -1):
         labels = pulls[i].get_labels()
         for label in labels:
             if label.name == "rfe":
@@ -47,7 +48,7 @@ def get_enhancements(pulls):
 def get_test_enhancements(pulls):
     test_enhancements = []
     # iterate over pulls backward so that list can be removed in place
-    for i in xrange(len(pulls) -1, -1, -1):
+    for i in xrange(len(pulls) - 1, -1, -1):
         labels = pulls[i].get_labels()
         for label in labels:
             if label.name == "ci" or "testing":
@@ -57,11 +58,28 @@ def get_test_enhancements(pulls):
     return test_enhancements
 
 
+# get all issues in the milestone that are not the release PR
+def get_remaining_changes(pulls):
+    changes = []
+    # iterate over pulls backward so that list can be removed in place
+    for i in xrange(len(pulls) - 1, -1, -1):
+        skip = False
+        labels = pulls[i].get_labels()
+        for label in labels:
+            if label.name == "release":
+                skip = True
+                break
+        if not skip:
+            changes.append(pulls[i])
+            pulls.pop(i)
+    return changes
+
+
 def get_pulls(milestone):
     pulls = []
     issues = repo.get_issues(milestone=milestone, state='closed')
     for i in issues:
-        if not i.pull_request == None:
+        if i.pull_request is not None:
             pulls.append(i.as_pull_request())
     return pulls
 
@@ -82,11 +100,11 @@ def get_repo(token, name):
 def format_body(tasks):
     body = {}
     body_str = "This release contains the following updates:\n\n"
-    body['Documentation']= get_doc_fixes(tasks)
+    body['Documentation'] = get_doc_fixes(tasks)
     body['Bug Fixes'] = get_bug_fixes(tasks)
     body['Enhancements'] = get_enhancements(tasks)
     body['CI, Test Enhancements'] = get_test_enhancements(tasks)
-    body['Other Changes'] = tasks
+    body['Other Changes'] = get_remaining_changes(tasks)
 
     for title, items in body.items():
         if len(items) == 0:
@@ -94,7 +112,7 @@ def format_body(tasks):
         body_str += title + "\n"
         for item in items:
             body_str += "* {0} #{1} by {2}\n".format(item.title, item.number,
-                                                   item.user.login)
+                                                     item.user.login)
         body_str += "\n"
     return body_str
 
@@ -111,4 +129,5 @@ tasks = get_milestone_tasks(repo, milestone)
 release_body = format_body(tasks)
 release_name = milestone
 
-repo.create_git_release(milestone, release_name, release_body, target_commitish="master")
+repo.create_git_release(milestone, release_name, release_body,
+                        target_commitish="master")
