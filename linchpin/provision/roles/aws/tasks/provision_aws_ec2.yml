@@ -25,13 +25,13 @@
     assign_public_ip: "{{ res_def['assign_public_ip']| default(omit) }}"
     instance_tags: "{{ instance_tags }}"
   register: res_def_output
-  when: not async
+  when: not _async
   no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_aws_ec2: "{{ topology_outputs_aws_ec2 + [res_def_output] }}"
-  when: res_def_output['changed'] == true and not async
+  when: res_def_output['changed'] == true and not _async
 
 - name: "Async:: Provisioning AWS_EC2 Resource"
   ec2:
@@ -51,13 +51,13 @@
   async: "{{ async_timeout }}"
   poll: 0
   register: res_def_output
-  when: async
+  when: _async
   no_log: "{{ not debug_mode }}"
 
 - name: "Async:: Append outputitem to topology_outputs"
   set_fact:
     async_outputs_aws_ec2: "{{ async_outputs_aws_ec2 + [res_def_output] }}"
-  when: async
+  when: _async
 
 - name: "Add type to resource"
   set_fact:
@@ -66,4 +66,4 @@
 - name: "Async:: Add type to resource"
   set_fact:
     async_outputs_aws_ec2: "{{ async_outputs_aws_ec2 | add_res_type( 'aws_ec2_res') }}"
-  when: async
+  when: _async

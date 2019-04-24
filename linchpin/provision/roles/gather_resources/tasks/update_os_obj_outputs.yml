@@ -3,4 +3,4 @@
   include: wait_on_os_obj.yml
   vars:
     os_obj_group: "{{ item }}"
-  with_items:  "{{ topology_outputs_os_object }}"
+  with_items:  "{{ topology_outputs_os_object | default([]) }}"

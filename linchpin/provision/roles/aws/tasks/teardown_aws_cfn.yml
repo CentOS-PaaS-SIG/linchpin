@@ -23,7 +23,7 @@
     tags:
       Stack: "{{ res_def['res_name'] | default(res_def['name']) }}"
   register: output
-  when: not async
+  when: not _async
 
 
 - name: "Async:: Teardown cloud formation stack"
@@ -41,10 +41,10 @@
   async: "{{ async_timeout }}"
   poll: 0
   register: output
-  when: async
+  when: _async
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_aws_cfn: "{{ topology_outputs_aws_cfn + [output] }}"
-  when: async
+  when: _async
 

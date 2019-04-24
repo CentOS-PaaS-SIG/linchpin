@@ -1,7 +1,7 @@
 ---
 - name: "wait and update outputs using jobids"
   include: update_async_outputs.yml
-  when: async
+  when: _async
 
 # NOTE: If there's async or not, lets just use topology_outputs_<resource> values
 # and do the updating after all data collection is complete.
