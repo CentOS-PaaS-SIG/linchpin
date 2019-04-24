@@ -1,0 +1,35 @@
+app: Linchpin
+ingredients:
+  dist: trusty
+  sources:
+    - deb http://us.archive.ubuntu.com/ubuntu/ disco trusty-updates disco-security main universe
+    - deb http://us.archive.ubuntu.com/ubuntu/ disco-updates main universe
+    - deb http://us.archive.ubuntu.com/ubuntu/ disco-security main universe
+  packages:
+    - virtualenv
+
+script:
+  - virtualenv -p /usr/bin/python2.7 usr
+  - ./usr/bin/pip2 install linchpin
+  - ./usr/bin/pip2 install linchpin[libvirt]
+  - usr/bin/pip2 freeze | grep "linchpin" | cut -d "=" -f 3 > ../VERSION
+  - virtualenv  --relocatable usr
+  - cat > linchpin.desktop <<\EOF
+  - [Desktop Entry]
+  - Type=Application
+  - Name=Linchpin
+  - Comment=Provisioning
+  - Icon=linchpin
+  - Exec=linchpin
+  - Terminal=true
+  - Categories=Application;Development;
+  - StartupWMClass=linchpin
+  - MimeType=text/x-python3;text/x-python3;
+  - EOF
+  - cat > AppRun <<\EOF
+  - #!/bin/bash
+  - HERE="$(dirname "$(readlink -f "${0}")")"
+  - exec "${HERE}/usr/bin/python2" "${HERE}/usr/bin/linchpin" "$@"
+  - EOF
+  - chmod a+x ./AppRun
+  - wget -nc -q -O linchpin.png https://linchpinjobs.com/img/linchpinjobs_logo.png
