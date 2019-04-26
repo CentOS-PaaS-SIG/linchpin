@@ -18,4 +18,3 @@ jinja2>=2.10
 configparser>=3.5.0
 openshift>=0.8.6
 pyasn1>=0.1.9
-pycrypto>=2.6.1
