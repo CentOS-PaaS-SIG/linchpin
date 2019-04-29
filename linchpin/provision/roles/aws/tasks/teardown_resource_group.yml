@@ -35,11 +35,6 @@
     topo_output_resources: "{{ topo_output.output['content'] }}"
   when: generate_resources
 
-# patch for role to type translation
-- name: "Add attribute role to res_grp resource_definitions"
-  set_fact:
-    resource_definitions: "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) | duplicateattr('role', 'role') }}"
-
 - name: "Get topology output data from RunDB"
   rundb:
     conn_str: "{{ rundb_conn }}"
