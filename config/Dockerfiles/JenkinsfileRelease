@@ -217,8 +217,8 @@ EOF
                     }
                     stage('create GitHub release') {
                         dir(reponame) {
-                            string version = sh (
-                                script python setup.py --version,
+                            string: version = sh (
+                                script: "python setup.py --version",
                                 returnStdout: true
                             ).trim()
                             withCredentials([string(credentialsId: 'github_api_token', variable: 'TOKEN')]) {
@@ -227,6 +227,7 @@ EOF
                         }
                     }
                 }
+              
                 catch (e) {
 
                         // Set build result
