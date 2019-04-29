@@ -216,7 +216,7 @@ EOF
                         }
                     }
                     stage('create GitHub release') {
-                        dir(reponame) {
+                        dir(repoName) {
                             string: version = sh (
                                 script: "python setup.py --version",
                                 returnStdout: true
