@@ -39,7 +39,7 @@ def setup_validator():
 
     pf_name = 'PinFile-complete.yml'
     pf_file = '{0}/{1}/{2}'.format(lib_path, 'mockdata/dummy', pf_name)
-    pinfile = yaml.load(open(pf_file))
+    pinfile = yaml.load(open(pf_file), Loader=yaml.FullLoader)
 
 
 def setup_old_topology():
@@ -50,7 +50,7 @@ def setup_old_topology():
         .rstrip('/')
     lib_path = os.path.realpath(os.path.join(base_path, os.pardir))
     pf_file = '{0}/{1}/{2}'.format(lib_path, 'mockdata/dummy', pf_name)
-    old_topology = yaml.load(open(pf_file))['dummy-new']['topology']
+    old_topology = yaml.load(open(pf_file), Loader=yaml.FullLoader)['dummy-new']['topology']
 
 
 @with_setup(setup_validator)

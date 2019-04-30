@@ -96,7 +96,7 @@ class DataParser(object):
             if ordered:
                 data = yaml.load(data, Loader=yamlordereddictloader.Loader)
             else:
-                data = yaml.load(data)
+                data = yaml.load(data, Loader=yaml.FullLoader)
         except Exception as e:
             raise LinchpinError('YAML parsing error: {}'.format(e))
 
