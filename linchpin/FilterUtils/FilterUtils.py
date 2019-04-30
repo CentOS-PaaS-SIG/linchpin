@@ -1,4 +1,7 @@
+from __future__ import absolute_import
+from __future__ import print_function
 import json
+from six.moves import range
 
 try:
     import libvirt
@@ -168,15 +171,6 @@ def translate_ruletype(ruletype):
     else:
         return "invalid ruletype "
 
-def duplicateattr(output, attr, dattr):
-    new_output = []
-    for group in output:
-        if attr in group:
-            new_group = group
-            new_group[dattr] = group[attr]
-            new_output.append(new_group)
-    return output
-
 def filter_list_by_attr_val(output, attr, val):
     new_output = []
     for ele in output:
@@ -187,7 +181,6 @@ def filter_list_by_attr_val(output, attr, val):
 
 def get_network_domains(network, uri):
     network_hosts = []
-    #conn = libvirt.openReadOnly(uri)
     conn = libvirt.open(uri)
     if conn == None:
         return network_hosts
@@ -219,7 +212,7 @@ def iterate_interfaces(interface, network):
     for node in interfaceNodes:
         if node.nodeName != 'source':
             continue
-        if 'network' not in node.attributes.keys():
+        if 'network' not in list(node.attributes.keys()):
             return False
         if node.attributes['network'].nodeValue == network:
             return True
