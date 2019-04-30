@@ -484,7 +484,7 @@ def journal(ctx, targets, fields, count, view,
             sys.exit(1)
 
         lpcli_cfg = lpcli.get_cfg('lp', 'rundb_schema')
-        all_fields = list(json.loads(lpcli_cfg.keys()))
+        all_fields = list(json.loads(lpcli_cfg).keys())
 
         if not fields:
             fields = ['action', 'uhash', 'rc']

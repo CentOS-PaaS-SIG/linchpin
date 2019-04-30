@@ -1,0 +1,45 @@
+#!/bin/bash -xe
+
+# Verify --no-hooks and --ignore-failed-hooks on dummy provider
+# distros.exclude: none
+# providers.include: dummy
+# providers.exclude: none
+
+DISTRO=${1}
+PROVIDER=${2}
+
+PINFILE="PinFile"
+WORKSPACE_PATH="docs/source/examples/workspaces/dummy-shell-hooks"
+TARGET="dummy_target"
+
+function clean_up {
+    set +e
+    if [ -e /tmp/dummy.out ]; then
+        rm /tmp/dummy.out
+    fi
+    if [ -e /tmp/dummy.journal ]; then
+        rm /tmp/dummy.journal
+    fi
+    linchpin -w . -p "${PINFILE}" -v destroy "${TARGET}"
+    if [ $? -ne 0 ]; then
+        exit ${?}
+    fi
+}
+trap clean_up EXIT SIGHUP SIGINT SIGTERM 
+
+if [ -e /tmp/dummy.hosts ]; then
+    rm /tmp/dummy.hosts
+fi
+
+pushd ${WORKSPACE_PATH}
+pwd
+# testing no-hooks flag
+echo "Testing --no-hooks flag"
+linchpin -w . -p "${PINFILE}" -v up "${TARGET}" --no-hooks 2> /tmp/dummy.out
+ID=$(cat /tmp/dummy.out | grep ID: | cut -d ' ' -f 2)
+echo $ID
+
+# testing journal command
+linchpin --workspace . journal --view tx 2> /tmp/dummy.journal
+cat /tmp/dummy.journal
+grep $ID /tmp/dummy.journal
