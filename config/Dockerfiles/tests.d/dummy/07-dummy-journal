@@ -21,10 +21,8 @@ function clean_up {
         rm /tmp/dummy.journal
     fi
     linchpin -w . -p "${PINFILE}" -v destroy "${TARGET}"
-    D_RC=0
-    D_RC=(${?} -o ${D_RC})
-    if [ ${D_RC} -ne 0 ]; then
-        exit ${D_RC}
+    if [ $? -ne 0 ]; then
+        exit ${?}
     fi
 }
 trap clean_up EXIT SIGHUP SIGINT SIGTERM 
