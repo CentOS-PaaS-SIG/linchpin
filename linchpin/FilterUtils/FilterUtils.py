@@ -3,12 +3,14 @@ from __future__ import print_function
 import json
 from six.moves import range
 
+
 try:
     import libvirt
     from xml.dom import minidom
     from xml.etree.ElementTree import fromstring
 except Exception as e:
     print(e)
+
 
 def add_res_type(hosts, res_type):
     new_hosts = []
@@ -17,8 +19,10 @@ def add_res_type(hosts, res_type):
         new_hosts.append(host)
     return new_hosts
 
+
 def fetch_attr(output_dict, attr, default):
     return output_dict.get(attr, default)
+
 
 def get_pod_status(pod_list, res_def_out):
     # this filter runs only when the kind is "Pod"
@@ -38,10 +42,12 @@ def get_pod_status(pod_list, res_def_out):
             return "Failure"
     return pod_stats
 
-def format_output(output, omit):
+
+def omit_filter(output, omit):
     if output == "":
         return omit
     return output
+
 
 def provide_default(fetched, default):
     if fetched == "":
@@ -49,9 +55,11 @@ def provide_default(fetched, default):
     else:
         return fetched
 
-def format_output(output):
+
+def unicode_filter(output):
     output = json.dumps(output)
     return output
+
 
 def format_rules(rules, rule_type):
     rules_output = []
@@ -65,12 +73,14 @@ def format_rules(rules, rule_type):
             rules_output.append(rule_output)
     return rules_output
 
+
 def fetch_list_by_attr(output, attr):
     new_output = []
     for ele in output:
         if attr in ele:
             new_output.append(ele[attr])
     return new_output
+
 
 def get_host_from_uri(uri):
     """
@@ -83,12 +93,14 @@ def get_host_from_uri(uri):
         return 'localhost'
     return uri
 
+
 def get_provider_resources(topo_output, res_type):
     provider_resources = []
     for host in topo_output:
         if host['resource_type'] == res_type:
             provider_resources.append(host)
     return provider_resources
+
 
 def format_networks(networks):
     # "net-name=atomic-e2e-jenkins-test,net-name=atomic-e2e-jenkins-test2"
@@ -98,6 +110,7 @@ def format_networks(networks):
         nics = ",".join(nics)
 
     return nics
+
 
 def render_os_server_insts(res_def, os_resource_name):
 
@@ -121,10 +134,12 @@ def render_os_server_insts(res_def, os_resource_name):
         return res_def
     return output
 
+
 def merge_two_dicts(x, y):
     z = x.copy()   # start with x's keys and values
     z.update(y)    # modifies z with y's keys and values & returns None
     return z
+
 
 def combine_hosts_names(hosts, names):
     result = []
@@ -139,12 +154,14 @@ def combine_hosts_names(hosts, names):
             result.append(names[i])
     return result
 
+
 def filter_list_by_attr(output, attr):
     new_output = []
     for ele in output:
         if attr in ele:
             new_output.append(ele)
     return new_output
+
 
 def get_libvirt_files(output):
     files = []
@@ -163,6 +180,7 @@ def get_libvirt_files(output):
                             files.append(source.attrib['file'])
     return files
 
+
 def translate_ruletype(ruletype):
     if ruletype == "inbound":
         return "ingress"
@@ -171,18 +189,20 @@ def translate_ruletype(ruletype):
     else:
         return "invalid ruletype "
 
+
 def filter_list_by_attr_val(output, attr, val):
     new_output = []
     for ele in output:
         if attr in ele:
             if ele[attr] == val:
-              new_output.append(ele)
+                new_output.append(ele)
     return new_output
+
 
 def get_network_domains(network, uri):
     network_hosts = []
     conn = libvirt.open(uri)
-    if conn == None:
+    if conn is None:
         return network_hosts
 
     hosts = conn.listDomainsID()
@@ -200,10 +220,10 @@ def get_network_domains(network, uri):
 
     return network_hosts
 
+
 def iterate_interfaces(interface, network):
     """
     Returns true if the interface uses the given network
-
     Otherwise returns false
     """
     if interface.getAttribute('type') != 'network':
@@ -218,10 +238,6 @@ def iterate_interfaces(interface, network):
             return True
         return False
 
-        raw_xml = dom.XMLDesc
-
-    conn.close()
-    return net_hosts
 
 def map_results(results, attr, subattr):
     output = []
@@ -229,12 +245,14 @@ def map_results(results, attr, subattr):
         output.append(task_result[attr][subattr])
     return output
 
+
 def prepare_ssh_args(ssh_args, users, sshkey):
     # "{{ ssh_args }} --ssh-inject \
     # {{ item.0}}:string:'{{ pubkey_local.stdout }}'"
     for user in users:
         ssh_args += "--ssh-inject " + user + ":string:'" + sshkey + "' "
     return ssh_args
+
 
 def transform_os_server_output(res_def_out):
     res_def_out = res_def_out.get("results", [])

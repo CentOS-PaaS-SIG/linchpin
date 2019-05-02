@@ -2,7 +2,6 @@
 
 from __future__ import absolute_import
 import linchpin.FilterUtils.FilterUtils as filter_utils
-from xml.etree.ElementTree import fromstring
 
 
 class FilterModule(object):

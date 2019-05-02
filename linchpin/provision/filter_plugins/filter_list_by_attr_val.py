@@ -3,6 +3,7 @@
 
 import linchpin.FilterUtils.FilterUtils as filter_utils
 
+
 def filter_list_by_attr_val(output, attr, val):
     new_output = []
     for ele in output:

@@ -2,7 +2,6 @@
 
 
 from __future__ import absolute_import
-from six.moves import range
 import linchpin.FilterUtils.FilterUtils as filter_utils
 
 

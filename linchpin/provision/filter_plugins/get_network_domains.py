@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 from __future__ import absolute_import
-import libvirt
-from xml.dom import minidom
 import linchpin.FilterUtils.FilterUtils as filter_utils
 
 
