@@ -68,12 +68,11 @@ def get_remaining_changes(pulls):
         for label in labels:
             if label.name == "release":
                 skip = True
-                break
-        if not skip:
+                continue
             changes.append(pulls[i])
             pulls.pop(i)
+            break
     return changes
-
 
 def get_pulls(milestone):
     pulls = []
