@@ -8,6 +8,7 @@ If you are curious about LinchPin and its features, please read the ":ref:`index
 This getting started guide will use LinchPin with the `dummy` provider. LinchPin can work with many other providers and use cases. After following this tutorial, check out some other :ref:`providers and use cases <providers-use-cases>`.
 
 Before starting, please :ref:`install the latest version of LinchPin <installation>`.
+Test
 
 
 .. toctree::
@@ -20,6 +21,9 @@ Before starting, please :ref:`install the latest version of LinchPin <installati
    simple_pinfile
    simple_up
    hooks
+   hooks_cli_options
+   hooks_examples
+   custom_action_managers
    inventory
    destroy
    tutorials

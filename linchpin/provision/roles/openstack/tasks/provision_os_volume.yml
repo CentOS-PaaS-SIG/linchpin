@@ -18,7 +18,7 @@
     auth: "{{ auth_var | omit_filter(omit) }}"
     state: "{{ vol.3 }}"
     size: "{{ vol.2 }}"
-    display_name: "{{ vol.1 }}_{{ vol.4 }}"
+    display_name: "{{ vol.1 }}{{ default_delimiter }}{{ vol.4 }}"
   with_nested:
     - ["{{ auth_var | default(omit) }}"]
     - ["{{ res_def['res_name'] | default(res_def['name']) }}"]
@@ -28,20 +28,20 @@
   loop_control:
     loop_var: vol
   register: res_def_output
-  when: res_def['count'] is defined and not async
+  when: res_def['count'] is defined and not _async
   no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_volume: "{{ topology_outputs_os_volume + res_def_output.results }}"
-  when: not async
+  when: not _async
 
 - name: "Async:: provision/deprovision cinder volumes when count specified"
   os_volume:
     auth: "{{ auth_var | omit_filter(omit) }}"
     state: "{{ vol.3 }}"
     size: "{{ vol.2 }}"
-    display_name: "{{ vol.1 }}_{{ vol.4 }}"
+    display_name: "{{ vol.1 }}{{ default_delimiter }}{{ vol.4 }}"
   with_nested:
     - ["{{ auth_var | default(omit) }}"]
     - ["{{ res_def['res_name'] | default(res_def['name']) }}"]
@@ -53,10 +53,10 @@
   async: "{{ async_timeout }}"
   poll: 0
   register: res_def_output
-  when: res_def['count'] is defined and async
+  when: res_def['count'] is defined and _async
   no_log: "{{ not debug_mode }}"
 
 - name: "Async:: save the job id"
   set_fact:
     topology_outputs_os_volume: "{{ topology_outputs_os_volume + [ res_def_output ] }}"
-  when: async
+  when: _async

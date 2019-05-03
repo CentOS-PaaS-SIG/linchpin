@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import os
 import sys
 import logging
@@ -11,6 +12,8 @@ from bkr.common.hub import HubProxy
 from bkr.common.pyconfig import PyConfigParser
 
 from ansible.module_utils.basic import AnsibleModule
+import six
+from six.moves import range
 
 # WANT_JSON
 # We want JSON input from Ansible. Please give it to us
@@ -93,7 +96,7 @@ class BkrFactory(BkrConn):
                 try:
                     with open(file_path, "r") as f:
                         ssh_key.append(f.read())
-                except:
+                except (OSError, IOError):
                     LOG.info("Unable to read from ssh key file: %s" % file_path)
 
             if ssh_key:
@@ -111,7 +114,7 @@ chmod go-w /root /root/.ssh /root/.ssh/authorized_keys
 
             # adding arches=[] to every task definition
             for task in tasks:
-                if not('arches' in task.keys()):
+                if not('arches' in list(task.keys())):
                     task['arches'] = []
                 requested_tasks.append(task)
 
@@ -179,6 +182,8 @@ chmod go-w /root /root/.ssh /root/.ssh/authorized_keys
 
             # Add Distro Requirements
             recipe_template.addBaseRequires(*args, **kwargs)
+            for partition in kwargs.get("partitions", []):
+                recipe_template.addPartition(**partition)
             arch_node = self.doc.createElement('distro_arch')
             arch_node.setAttribute('op', '=')
             arch_node.setAttribute('value', arch)
@@ -224,7 +229,7 @@ chmod go-w /root /root/.ssh /root/.ssh/authorized_keys
 
     def create_recipesets(self, recipeset, **kwargs):
         kwargs = {}
-        for key, values in recipeset.iteritems():
+        for key, values in six.iteritems(recipeset):
             kwargs.update({key: values})
         return kwargs
 

@@ -5,6 +5,7 @@
 #
 # Auth driver  for Ansible based infra provsioning tool, linch-pin
 
+from __future__ import absolute_import
 import os
 import yaml
 import json
@@ -21,7 +22,7 @@ except ImportError:
 try:
     import configparser as ConfigParser
 except ImportError:
-    import ConfigParser as ConfigParser
+    import six.moves.configparser as ConfigParser
 
 
 _ansible_ver = float('.'.join(ansible.__version__.split('.')[:2]))

@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
 import json
 
 from .InventoryFormatter import InventoryFormatter
+from six.moves import range
 
 
 class JSONInventoryFormatter(InventoryFormatter):
@@ -15,11 +17,11 @@ class JSONInventoryFormatter(InventoryFormatter):
         for section in section_list:
             self.config[section] = {}
         # adding a default section all
-        if "all" not in self.config.keys():
+        if "all" not in list(self.config.keys()):
             self.config["all"] = {}
 
     def set_children(self, inv):
-        if 'host_groups' not in inv.keys():
+        if 'host_groups' not in list(inv.keys()):
             return
         for host_group in inv['host_groups']:
             if "children" in inv['host_groups'][host_group]:
@@ -30,7 +32,7 @@ class JSONInventoryFormatter(InventoryFormatter):
                     self.config[host_group]["children"].append(child)
 
     def set_vars(self, inv):
-        if 'host_groups' not in inv.keys():
+        if 'host_groups' not in list(inv.keys()):
             return
         for host_group in inv['host_groups']:
             if "vars" in inv['host_groups'][host_group]:
@@ -48,7 +50,7 @@ class JSONInventoryFormatter(InventoryFormatter):
         ip_to_host = {}
         inven_hosts.reverse()
         for host_name in layout['hosts']:
-            if 'count' in host_name.keys():
+            if 'count' in list(host_name.keys()):
                 count = host_name['count']
             else:
                 count = 1
@@ -73,25 +75,25 @@ class JSONInventoryFormatter(InventoryFormatter):
                         self.config["all"]["hosts"].append(ip)
         return True
 
-    def add_ips_to_groups(self, inven_hosts, layout):
-        ip_to_host = {}
-        inven_hosts.reverse()
-        self.add_ips_to_host_group("all", inven_hosts)
-        for host_name in layout['hosts']:
-            if 'count' in host_name.keys():
-                count = host_name['count']
-            else:
-                count = 1
-            host_list = []
-            if count > len(inven_hosts):
-                count = len(inven_hosts)
-            for i in range(count, 0, -1):
-                item = inven_hosts.pop()
-                host_list.append(item)
-            ip_to_host[host_name["name"]] = host_list
-            for host_group in host_name['host_groups']:
-                self.add_ips_to_host_group(host_group, host_list)
-        return True
+    # def add_ips_to_groups(self, inven_hosts, layout):
+    #     ip_to_host = {}
+    #     inven_hosts.reverse()
+    #     self.add_ips_to_host_group("all", inven_hosts)
+    #     for host_name in layout['hosts']:
+    #         if 'count' in list(host_name.keys()):
+    #             count = host_name['count']
+    #         else:
+    #             count = 1
+    #         host_list = []
+    #         if count > len(inven_hosts):
+    #             count = len(inven_hosts)
+    #         for i in range(count, 0, -1):
+    #             item = inven_hosts.pop()
+    #             host_list.append(item)
+    #         ip_to_host[host_name["name"]] = host_list
+    #         for host_group in host_name['host_groups']:
+    #             self.add_ips_to_host_group(host_group, host_list)
+    #    return True
 
 
     def add_ips_to_host_group(self, host_group, hosts):
@@ -105,7 +107,7 @@ class JSONInventoryFormatter(InventoryFormatter):
         # defaults cvrs to [] when they doesnot exist
         # cvrs --> common_vars
         host_groups.append("all")
-        cvrs = layout["vars"] if "vars" in layout.keys() else []
+        cvrs = layout["vars"] if "vars" in list(layout.keys()) else []
         for group in host_groups:
             items = self.config[group]["hosts"]
             if not("_meta" in self.config):
@@ -114,9 +116,9 @@ class JSONInventoryFormatter(InventoryFormatter):
             for item in items:
                 for var in cvrs:
                     for cfg_item in config:
-                        if item not in cfg_item.keys():
+                        if item not in list(cfg_item.keys()):
                             continue
-                        if cvrs[var] in cfg_item[item].keys():
+                        if cvrs[var] in list(cfg_item[item].keys()):
                             value = cvrs[var]
                             self.config["_meta"]["hostvars"][item] = \
                                 cfg_item[item][value]

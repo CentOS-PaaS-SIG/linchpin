@@ -70,6 +70,20 @@
                         "required": true,
                         "allowed": ["os_heat"] },
                     "name": { "type": "string", "required": true },
+                    "template_path": { "type": "string", "required": true },
+                    "interface": { "type": "string", "required": false },
+                    "key": { "type": "string", "required": false },
+                    "cacert": { "type": "string", "required": false },
+                    "cert": { "type": "string", "required": false },
+                    "rollback": { "type": "string", "required": false },
+                    "verify": { "type": "string", "required": false },
+                    "tag": { "type": "string", "required": false },
+                    "environment": {
+			                  "type": "list", "required": false
+		                },
+		                "parameters": {
+                        "type": "list", "required": false
+                    },
                     "unique": { "type": "boolean", "required": false },
                     "template_path": { "type": "string", "required": true }
                 }

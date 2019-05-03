@@ -1,9 +1,9 @@
+from __future__ import absolute_import
 from abc import ABCMeta, abstractmethod
+import six
 
 
-class RunDB(object):
-
-    __metaclass__ = ABCMeta
+class RunDB(six.with_metaclass(ABCMeta, object)):
 
     @abstractmethod
     def init_table(self, table):

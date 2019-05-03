@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
 
+from __future__ import print_function
+
+
 def map_results(results, attr, subattr):
     output = []
     print("Inside filter")

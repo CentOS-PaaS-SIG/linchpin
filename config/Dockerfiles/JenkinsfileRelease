@@ -14,7 +14,6 @@ repoName = 'linchpin'
 DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 
 env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/' + repoName
-//env.ghprbGhRepository = env.ghprbGhRepository ?: 'herlo/' + repoName
 
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
 //env.ghprbActualCommit = env.ghprbActualCommit ?: 'test_pypi_install'
@@ -217,9 +216,9 @@ EOF
                         }
                     }
                     stage('create GitHub release') {
-                        dir(reponame) {
-                            string version = sh (
-                                script python setup.py --version,
+                        dir(repoName) {
+                            string version = "v" + sh (
+                                script: "python setup.py --version",
                                 returnStdout: true
                             ).trim()
                             withCredentials([string(credentialsId: 'github_api_token', variable: 'TOKEN')]) {
@@ -228,6 +227,7 @@ EOF
                         }
                     }
                 }
+              
                 catch (e) {
 
                         // Set build result

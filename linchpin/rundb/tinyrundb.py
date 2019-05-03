@@ -1,9 +1,11 @@
+from __future__ import absolute_import
 from tinydb import TinyDB
 from tinydb.storages import JSONStorage
 from tinydb.operations import add
 from tinydb.operations import set as tinySet
 from tinydb.middlewares import CachingMiddleware
 from .basedb import BaseDB
+from six.moves import range
 
 
 def usedb(func):
@@ -57,7 +59,7 @@ class TinyRunDB(BaseDB):
     def update_record(self, table, run_id, key, value):
         t = self.db.table(name=table)
         # get transaction record
-        tx_rec = t.get(eid=run_id).get("outputs", [])
+        tx_rec = t.get(doc_id=run_id).get("outputs", [])
         if len(tx_rec) > 0 and isinstance(value, list):
             # fetch the resources dict, index
             # by filtering them from outputs list
@@ -66,22 +68,22 @@ class TinyRunDB(BaseDB):
             if len(res_list) != 0:
                 res_idx = res_list[0][0]
                 resources = res_list[0][1]
-                if "resources" in value[0].keys():
+                if "resources" in list(value[0].keys()):
                     de = resources["resources"]
                     for i in value[0]["resources"]:
                         de.append(i)
                     de = {"resources": de}
                     tx_rec[res_idx] = de
-                    res = t.update(tinySet(key, [de]), eids=[run_id])
+                    res = t.update(tinySet(key, [de]), doc_ids=[run_id])
                     return res
-        return t.update(add(key, value), eids=[run_id])
+        return t.update(add(key, value), doc_ids=[run_id])
 
 
     @usedb
     def get_tx_record(self, tx_id):
 
         t = self.db.table(name='linchpin')
-        return t.get(eid=tx_id)
+        return t.get(doc_id=tx_id)
 
 
     @usedb
@@ -90,7 +92,7 @@ class TinyRunDB(BaseDB):
         txs = {}
         t = self.db.table(name='linchpin')
         for tx_id in tx_ids:
-            txs[tx_id] = t.get(eid=tx_id)
+            txs[tx_id] = t.get(doc_id=tx_id)
 
         return txs
 

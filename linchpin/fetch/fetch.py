@@ -1,20 +1,20 @@
+from __future__ import absolute_import
 import os
 import ast
 import shutil
+import six
 
 try:
     import configparser
 except ImportError:
-        import ConfigParser as configparser
+    import six.moves.configparser as configparser
 
 
 from abc import ABCMeta, abstractmethod
 from linchpin.exceptions import LinchpinError
 
 
-class Fetch(object):
-    __metaclass__ = ABCMeta
-
+class Fetch(six.with_metaclass(ABCMeta, object)):
     def __init__(self, ctx, fetch_type, dest, root='', root_ws='', ref=None):
         """
         """

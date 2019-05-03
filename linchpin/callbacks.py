@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from ansible.plugins.callback import CallbackBase
 
 
