@@ -239,6 +239,12 @@ def init(ctx, provider):
               help='Ignores failed hooks')
 @click.option('--no-hooks', '--nh', 'no_hooks', is_flag=True, default=None,
               metavar='NO_HOOKS', help='Do not run hooks')
+@click.option('--setup-workspace', 'setup_workspace', is_flag=True,
+              default=False, metavar='IGNORE_FAILED_HOOKS',
+              help='Sets up workspce directory with defaults')
+@click.option('--provider-type', 'provider_type', is_flag=True,
+              default=None, metavar='PROVIDER_TYPE',
+              help='Provider to work with')
 @pass_context
 def up(ctx, targets, run_id, tx_id, inventory_format, ignore_failed_hooks,
        no_hooks):
@@ -264,6 +270,8 @@ def up(ctx, targets, run_id, tx_id, inventory_format, ignore_failed_hooks,
         vault_pass = click.prompt("enter vault password", hide_input=True)
 
     ctx.set_evar('vault_pass', vault_pass)
+    ctx.set_evar('setup_workspace')                 # add default in lp constants
+    ctx.set_evar('provider_type')                   # add default in lp constants
 
     if ignore_failed_hooks:
         ctx.set_cfg("hook_flags", "ignore_failed_hooks", ignore_failed_hooks)
