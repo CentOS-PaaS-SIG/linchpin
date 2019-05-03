@@ -2,17 +2,17 @@
 - name: "Set gce_res_type value"
   set_fact:
     gce_res_type: "{{ res_def['role'] }}"
-  when: async
+  when: _async
 
 - name: "Add resource type to async_types"
   set_fact:
     async_types: "{{ async_types + [gce_res_type] }}"
-  when: async
+  when: _async
 
 - name: "declaring async vars"
   set_fact:
     async_outputs_gcloud_gce: []
-  when: async
+  when: _async
 
 - name: "Get the resource name"
   set_fact:

@@ -45,6 +45,7 @@
 #               extra_vars: { 'testvar': 'world'}
 #
 # """
+from __future__ import absolute_import
 import os
 import ast
 import sys
@@ -186,7 +187,7 @@ class LinchpinHooks(object):
 
         # this will replace the above target_data and pull from the rundb
         # run_data = self.prepare_inv_params()
-        if str(state) is 'postinv':
+        if str(state) == 'postinv':
             run_data = self.prepare_inv_params()
             return self.run_inventory_gen(run_data)
 
@@ -279,8 +280,10 @@ class LinchpinHooks(object):
                     # add path to python path
                     sys.path.append(a_b['path'])
                     # get the module path
-                    module_path = '{0}/{1}'.format(a_b['path'],
-                                                   a_b['action_manager'])
+                    module_path = '{0}{1}'.format(a_b['path'],
+                                                  a_b['action_manager'])
+                    if os.path.exists(a_b['action_manager']):
+                        module_path = a_b['action_manager']
                     # get module src
                     module_src = open(module_path, 'r').read()
                     # strip .py ext from module path
@@ -331,7 +334,7 @@ class LinchpinHooks(object):
                     else:
                         # for other types of hooks
                         if hook_result > 0:
-                                raise HookError("Error in executing hook")
+                            raise HookError("Error in executing hook")
 
                     # intentionally using print here
                     self.api.ctx.log_state('end hook {0}:{1}\n-------'.format(

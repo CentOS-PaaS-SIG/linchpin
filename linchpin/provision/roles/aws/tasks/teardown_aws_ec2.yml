@@ -16,7 +16,7 @@
     - "{{ tp_out['tags']['resource_group_name'] }}"
     - "{{ res_grp_name }}"
     - "{{ res_def['role'] }}"
-    - "{{ async }}"
+    - "{{ _async }}"
   loop_control:
     loop_var: res_def_item
   register: output_item

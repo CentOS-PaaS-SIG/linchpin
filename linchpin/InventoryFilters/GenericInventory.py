@@ -34,7 +34,7 @@ class GenericInventory(InventoryFilter):
 
         all_hosts = []
         for host in host_data:
-            all_hosts.extend(host.keys())
+            all_hosts.extend(list(host.keys()))
         return all_hosts[:count]
 
     def populate_config(self, host_dict, res_output, config):

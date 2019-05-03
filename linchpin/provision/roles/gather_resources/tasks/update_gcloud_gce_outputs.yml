@@ -3,4 +3,4 @@
   include: wait_on_gcloud_gce.yml
   vars:
     gcloud_gce_group: "{{ item }}"
-  with_items:  "{{ async_outputs_gcloud_gce }}"
+  with_items:  "{{ async_outputs_gcloud_gce | default([]) }}"

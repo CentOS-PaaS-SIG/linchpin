@@ -37,8 +37,15 @@
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2' cache='{{ definition[6] }}'/>
       <source file='{{ definition[3] }}/{{ libvirt_resource_name }}{{ definition[5] }}{{ definition[2] }}.{{ definition[4] }}'/>
+      {% if definition[8] == 'virtio_blk' %}
       <target dev='vda' bus='virtio'/>
+      {% else %}
+      <target dev='sda' bus='scsi'/>
+      {% endif %}
     </disk>
+    {% if definition[8] == 'virtio_scsi' %}
+      <controller type='scsi' model='virtio-scsi' />
+    {% endif %}
     {% if definition[1]['storage'] is defined %}
       {% for storage_def in definition[1]['storage'] %}
         <disk type='file' device='disk'>
@@ -66,13 +73,12 @@
             <target dev='{{ storage_def['device'] | default('vda') }}' bus='virtio' />
           {% else %}
             <target dev='{{ storage_def['device'] | default('vda') }}' bus='scsi' />
-            <address type='drive' controller='0' />
           {% endif %}
           {% if storage_def['shareable'] is defined %}
             <shareable />
           {% endif %}
         </disk>
-        {% if storage_def['disk_type'] is defined and storage_def['disk_type'] == 'virtio_scsi' %}
+        {% if storage_def['disk_type'] is defined and storage_def['disk_type'] == 'virtio_scsi' and definition[8] != 'virtio_scsi' %}
           <controller type='scsi' model='virtio-scsi' />
         {% endif %}
       {% endfor %}

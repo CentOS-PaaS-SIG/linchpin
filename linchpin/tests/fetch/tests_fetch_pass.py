@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from __future__ import print_function
 import os
 import sys
 import time
@@ -61,7 +63,7 @@ def setup_lp_fetch_env():
     lpc.setup_logging()
 
     lpc.workspace = tempfile.mkdtemp(prefix='fetch_')
-    print('workspace: {0}'.format(lpc.workspace))
+    print(('workspace: {0}'.format(lpc.workspace)))
 
     lpcli = LinchpinCli(lpc)
 

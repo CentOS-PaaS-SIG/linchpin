@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
+from six.moves import range
 try:
     from StrinIO import StringIO
 except ImportError:
@@ -12,7 +14,7 @@ from .InventoryFormatter import InventoryFormatter
 try:
     from configparser import ConfigParser
 except ImportError:
-    from ConfigParser import ConfigParser
+    from six.moves.configparser import ConfigParser
 
 
 class CFGInventoryFormatter(InventoryFormatter):
@@ -29,7 +31,7 @@ class CFGInventoryFormatter(InventoryFormatter):
             self.config.add_section("all")
 
     def set_children(self, inv):
-        if 'host_groups' not in inv.keys():
+        if 'host_groups' not in list(inv.keys()):
             return
         for host_group in inv['host_groups']:
             if "children" in inv['host_groups'][host_group]:
@@ -38,7 +40,7 @@ class CFGInventoryFormatter(InventoryFormatter):
                     self.config.set("{0}:children".format(host_group), child)
 
     def set_vars(self, inv):
-        if 'host_groups' not in inv.keys():
+        if 'host_groups' not in list(inv.keys()):
             return
         for host_group in inv['host_groups']:
             if "vars" in inv['host_groups'][host_group]:
@@ -54,7 +56,7 @@ class CFGInventoryFormatter(InventoryFormatter):
         inven_hosts.reverse()
         self.add_ips_to_host_group("all", inven_hosts)
         for host_name in layout['hosts']:
-            if 'count' in host_name.keys():
+            if 'count' in list(host_name.keys()):
                 count = host_name['count']
             else:
                 count = 1
@@ -77,18 +79,19 @@ class CFGInventoryFormatter(InventoryFormatter):
     def add_common_vars(self, host_groups, layout, config):
         # defaults common_vars to [] when they doesnot exist
         host_groups.append("all")
-        common_vars = layout['vars'] if 'vars' in layout.keys() else []
+        common_vars = layout['vars'] if 'vars' in list(layout.keys()) else []
         for group in host_groups:
-            items = collections.OrderedDict(self.config.items(group)).keys()
+            items = list(collections.OrderedDict(self.config.items(group))
+                                    .keys())
             self.config.remove_section(group)
             self.config.add_section(group)
             for item in items:
                 host_string = item
                 for var in common_vars:
                     for cfg_item in config:
-                        if item not in cfg_item.keys():
+                        if item not in list(cfg_item.keys()):
                             continue
-                        if common_vars[var] in cfg_item[item].keys():
+                        if common_vars[var] in list(cfg_item[item].keys()):
                             value = common_vars[var]
                             host_string += " " + var + "=" +\
                                            str(cfg_item[item][value])

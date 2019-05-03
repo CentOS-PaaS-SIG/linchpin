@@ -18,10 +18,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
 #
+from __future__ import absolute_import
 import os
 import json
 
 from ansible.module_utils.basic import AnsibleModule
+import six
 DOCUMENTATION = '''
 ---
 module: async_status
@@ -113,7 +115,7 @@ def main():
         data['finished'] = 0
 
     # Fix error: TypeError: exit_json() keywords must be strings
-    data = dict([(str(k), v) for k, v in data.iteritems()])
+    data = dict([(str(k), v) for k, v in six.iteritems(data)])
 
     module.exit_json(**data)
 

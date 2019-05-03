@@ -1,0 +1,117 @@
+{
+  "res_defs": {
+    "type": "list",
+    "schema": {
+      "anyof": [
+        {
+          "type": "dict",
+          "schema": {
+            "role": { "type": "string", "required": true, "allowed": ["vmware_guest"]},
+            "name": { "type": "string", "required": true },
+            "name_match": { "type": "string", "required": false, "allowed": ["first", "last"] },
+            "annotation": { "type": "string", "required": false },
+            "hostname": { "type": "string", "required": false },
+            "password": { "type": "string", "required": false },
+            "username": { "type": "string", "required": false },
+            "port": { "type": "integer", "required": false },
+            "validate_certs": { "type": "boolean", "required": false },
+            "esxi_hostname": { "type": "string", "required": false },
+            "cluster": { "type": "string", "required": false },
+            "resource_pool": { "type": "string", "required": false },
+            "datacenter": { "type": "string", "required": false },
+            "datastore": { "type": "string", "required": false },
+            "folder": { "type": "string", "required": true },
+            "state": { "type": "string", "required": false, "allowed": ["present", "absent", "poweredon", "poweredoff", "restarted", "suspended", "shutdownguest", "rebootguest"]},
+            "guest_id": { "type": "string", "required": false },
+            "template": { "type": "string", "required": false },
+            "is_template": { "type": "boolean", "required": false },
+            "linked_clone": { "type": "boolean", "required": false },
+            "snapshot_src": { "type": "string", "required": false },
+            "wait_for_ip_address": { "type": "boolean", "required": false },
+            "force": { "type": "boolean", "required": false },
+            "disk": { "type": "list", "required": false, "schema": { "type": "dict", "schema": {
+                "size_tb": { "type": "integer", "required": false },
+                "size_gb": { "type": "integer", "required": false },
+                "size_mb": { "type": "integer", "required": false },
+                "size_kb": { "type": "integer", "required": false },
+                "type": { "type": "string", "required": false, "allowed": ["thin", "eagerzeroedthick"] },
+                "autoselect_datastore": { "type": "boolean", "required": false },
+                "disk_mode": { "type": "string", "required": false, "allowed": ["persistent", "independent_persistent", "independent_nonpersistent"] }
+                }
+              }
+            },
+            "hardware": { "type": "dict", "required": true, "schema": {
+              "hotadd_cpu": { "type": "boolean", "required": false },
+              "hotremove_cpu": { "type": "boolean", "required": false },
+              "hotadd_memory": { "type": "boolean", "required": false },
+              "memory_mb": { "type": "integer", "required": false },
+              "nested_virt": { "type": "boolean", "required": false },
+              "num_cpus": { "type": "integer", "required": true },
+              "num_cpu_cores_per_socket": { "type": "integer", "required": false },
+              "scsi": { "type": "string", "required": false, "allowed": ["buslogic", "lsilogic", "lsilogicsas", "paravirtual"]},
+              "memory_reservation": { "type": "integer", "required": false },
+              "memory_reservation_lock": { "type": "boolean", "required": false },
+              "max_connections": { "type": "integer", "required": false },
+              "mem_limit": { "type": "integer", "required": false },
+              "mem_reservation": { "type": "integer", "required": false },
+              "cpu_limit": { "type": "integer", "required": false },
+              "cpu_reservation": { "type": "integer", "required": false },
+              "version": { "type": "integer", "required": false },
+              "boot_firmware": { "type": "string", "required": false }
+              }
+            },
+            "customization": { "type": "dict", "required": false, "schema": {
+              "dns_servers": { "type": "list", "required": false, "schema": { "type": "string", "required": false }},
+              "dns_suffix": { "type": "list", "required": false, "schema": { "type": "string", "required": false }},
+              "domain": { "type": "string", "required": false },
+              "hostname": { "type": "string", "required": false },
+              "autologon": { "type": "boolean", "required": false },
+              "autologoncount": { "type": "integer", "required": false },
+              "domainadmin": { "type": "string", "required": false },
+              "domainadminpassword": { "type": "string", "required": false },
+              "fullname": { "type": "string", "required": false },
+              "joindomain": { "type": "string", "required": false },
+              "joinworkgroup": { "type": "string", "required": false },
+              "orgname": { "type": "string", "required": false },
+              "password": { "type": "string", "required": false },
+              "productid": { "type": "string", "required": false },
+              "runonce": { "type": "list", "required": false, "schema": { "type": "string", "required": false }},
+              "timezone": { "type": "integer", "required": false }
+              }
+            },
+            "customization_spec": { "type": "string", "required": false },
+            "customvalues": { "type": "list", "required": false, "schema": { "type": "dict", "schema": {
+                "key": { "type": "string", "required": true },
+                "value": { "type": "string", "required": true }
+                }
+              }
+            },
+            "cdrom": { "type": "dict", "required": false, "schema": {
+              "type": { "type": "string", "required": true, "allowed": ["none", "client", "iso"] },
+              "iso_path": { "type": "string", "required": false }
+              }
+            },
+            "networks": { "type": "list", "required": false, "schema": { "type": "dict", "schema": {
+                "name": { "type": "string", "required": false },
+                "vlan": { "type": "integer", "required": false },
+                "device_type": { "type": "string", "required": false, "allowed": ["e1000", "e1000e", "pcnet32", "vmxnet2", "vmxnet3", "sriov"]},
+                "mac": { "type": "string", "required": false },
+                "dvswitch_name": { "type": "string", "required": false },
+                "type": { "type": "string", "required": false, "allowed": ["dhcp", "static"] },
+                "ip": { "type": "string", "required": false },
+                "netmask": { "type": "string", "required": false },
+                "gateway": { "type": "string", "required": false },
+                "dns_servers": { "type": "string", "required": false },
+                "domain": { "type": "string", "required": false },
+                "wake_on_lan": { "type": "boolean", "required": false },
+                "start_connected": { "type": "boolean", "required": false },
+                "allow_guest_control": { "type": "boolean", "required": false }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

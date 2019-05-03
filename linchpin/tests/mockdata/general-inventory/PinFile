@@ -120,6 +120,28 @@ general-inventory:
         credentials:
           filename: clouds.yaml
           profile: ci-rhos
+      - resource_group_name: simple
+        resource_group_type: vmware
+        resource_definitions:
+          - role: vmware_guest
+            name: vmware-node
+            cdrom:
+              type: iso
+              iso_path: "[ha-datacenter] tc_vmware4.iso"
+            folder: /
+            datastore: ha-datacenter
+            disk:
+              - size_mb: 10
+                type: thin
+            hardware:
+              num_cpus: 1
+              memory_mb: 256
+            networks:
+              - name: VM Network
+            wait_for_ip_address: yes
+        credentials:
+          filename: vmware.yml
+          profile: default
 #      - resource_group_name: ovirt-new
 #        resource_group_type: ovirt
 #        resource_definitions:
@@ -149,6 +171,10 @@ general-inventory:
       vars:
         hostname: __IP__
       hosts:
+        vmware-node:
+          count: 1
+          host_groups:
+            - vmware-group
         aws-node:
           count: 1
           host_groups:
@@ -203,3 +229,5 @@ general-inventory:
       __ZONE__: zone
     ovirt:
       __IP__: ips.address_v4
+    vmware:
+      __IP__: ipv4
