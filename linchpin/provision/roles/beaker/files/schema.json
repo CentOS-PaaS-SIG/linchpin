@@ -14,7 +14,7 @@
                 "cancel_message": { "type": "string", "required": false },
                 "max_attempts": { "type": "integer", "required": false },
                 "attempt_wait_time": { "type": "integer", "required": false },
-		"ssh_keys_path": {"type": "string", "required": false },
+                "ssh_keys_path": {"type": "string", "required": false },
                 "recipesets": {
                     "type": "list",
                     "schema": {
@@ -100,12 +100,12 @@
                                             }
                                         }]
                                     }
-				},
+                                },
                                 "install": {
                                     "type": "list",
                                     "required": false,
                                     "schema": { "type": "string", "required": true }
-				},
+                                },
                                 "bkr_data": { "type": "string", "required": false },
                                 "name": { "type": "string", "required": false },
                                 "count": { "type": "integer", "required": false },
@@ -119,17 +119,35 @@
                                     "required": false,
                                     "schema": { "type": "string", "required": true }
                                 },
-				"ssh_key_file": {
-				    "type": "list",
-				    "required": false,
-				    "schema": {"type": "string", "required": true}
-				},
+                                "ssh_key_file": {
+                                    "type": "list",
+                                    "required": false,
+                                    "schema": {"type": "string", "required": true}
+                                },
                                 "ks_append": {
                                     "type": "list",
                                     "required": false,
                                     "schema": { "type": "string", "required": true }
                                 },
-                                "kickstart": { "type": "string", "required": false }
+                                "kickstart": { 
+                                    "type": "string",
+                                    "required": false
+                                },
+                                "partitions": {
+                                    "type": "list",
+                                    "required": false,
+                                    "schema": {
+                                        "anyof": [{
+                                            "type": "dict",
+                                            "schema": {
+                                                "name": { "type": "string", "required": true  },
+                                                "size": { "type": "integer", "required": true  },
+                                                "fs":   { "type": "string", "required": false },
+                                                "type": { "type": "string", "required": false }
+                                            }
+                                        }]
+                                    }
+                                }
                              }
                          }]
                     }

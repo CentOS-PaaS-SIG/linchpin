@@ -61,6 +61,8 @@ default_credentials_path = %(default_config_path)s
 
 default_resources_path = {{ workspace }}/%(resources_folder)s
 
+default_delimiter = _
+
 # for 1.0.x compatibility
 enable_uhash = False
 generate_resources = True

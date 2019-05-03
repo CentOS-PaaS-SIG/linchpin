@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
+from __future__ import print_function
 import os
 
 from time import sleep
@@ -46,7 +48,7 @@ class BeakerTargets(object):
             for resource in job_results:
                 result = resource['result']
                 status = resource['status']
-                print >> stderr, "status: %s, result: %s" % (status, result)
+                print("status: %s, result: %s" % (status, result), file=stderr)
                 if status not in ['Cancelled', 'Aborted']:
                     if result == 'Pass':
                         pass_count += 1
@@ -103,6 +105,7 @@ class BeakerTargets(object):
     def _cancel_jobs(self, msg='Unabled to provision system(s)'):
         for job_id in _jprefix(self.ids):
             self.hub.taskactions.stop(job_id, 'cancel', msg)
+
 
 def main():
     mod = AnsibleModule(argument_spec={

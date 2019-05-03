@@ -1,5 +1,6 @@
 #!/user/bin/env python
 
+from __future__ import absolute_import
 import os
 import json
 
@@ -60,7 +61,7 @@ def test_set_vars():
     empty_inv = dict()
     formatter.set_vars(empty_inv)
 
-    formatter.add_sections(inv['host_groups'].keys())
+    formatter.add_sections(list(inv['host_groups'].keys()))
     formatter.set_vars(inv)
 
     host_group='OSEv3'
@@ -74,7 +75,7 @@ def test_add_ips_to_groups():
     """
     """
     inven_hosts = inv['hosts']
-    formatter.add_sections(inv['host_groups'].keys())
+    formatter.add_sections(list(inv['host_groups']['OSEv3']['children']))
     formatter.add_ips_to_groups(inven_hosts, inv)
  
 
@@ -82,11 +83,11 @@ def test_add_ips_to_groups():
 def test_add_common_vars():
     """
     """
-    host_groups = inv['host_groups'].keys()
+    host_groups = list(inv['host_groups'].keys())
     formatter.add_sections(host_groups)
     formatter.set_vars(inv)
     formatter.add_ips_to_groups(host_groups, inv)
-    formatter.add_common_vars(host_groups, inv)
+    formatter.add_common_vars(host_groups, inv, {})
 
 
 @with_setup(setup_json_inventory_formatter)

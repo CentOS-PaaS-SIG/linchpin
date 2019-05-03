@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from __future__ import print_function
 import os
 import json
 import yaml
@@ -10,6 +12,7 @@ from linchpin import LinchpinAPI
 from linchpin.context import LinchpinContext
 
 from linchpin.validator import Validator
+import six
 
 
 def setup_validator():
@@ -103,7 +106,7 @@ def test_find_playbook_path():
 
 
 def test_gen_error_msg():
-    error = {'res_defs': [{0: [{u'name': ["field 'name' is required"]}]}]}
+    error = {'res_defs': [{0: [{six.u('name'): ["field 'name' is required"]}]}]}
 
     error_msg = validator._gen_error_msg('', '', error)
     expected_msg = "res_defs[0][name]: field 'name' is required\n"
@@ -113,6 +116,6 @@ def test_gen_error_msg():
 @with_setup(setup_validator)
 @with_setup(setup_old_topology)
 def test_convert_topology():
-    print old_topology
+    print(old_topology)
     validator._convert_topology(old_topology)
     assert_equal(old_topology, pinfile['dummy-new']['topology'])

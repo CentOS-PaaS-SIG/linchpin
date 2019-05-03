@@ -65,7 +65,7 @@ os_obj
 
 OpenStack Object Storage can be provisioned using this resource.
 
-* :docs1.5:`Topology Example <workspace/topologies/os-obj-new.yml>`
+* :docs1.5:`Topology Example <workspaces/topologies/os-obj-new.yml>`
 * `Ansible module <http://docs.ansible.com/ansible/latest/os_object_module.html>`_
 
 os_vol
@@ -73,7 +73,7 @@ os_vol
 
 OpenStack Cinder Volumes can be provisioned using this resource.
 
-* :docs1.5:`Topology Example <workspace/topologies/os-vol-new.yml>`
+* :docs1.5:`Topology Example <workspaces/topologies/os-vol-new.yml>`
 * `Ansible module <http://docs.ansible.com/ansible/latest/os_volume_module.html>`_
 
 os_sg
@@ -81,7 +81,7 @@ os_sg
 
 OpenStack Security Groups can be provisioned using this resource.
 
-* :docs1.5:`Topology Example <workspace/topologies/os-sg-new.yml>`
+* :docs1.5:`Topology Example <workspaces/topologies/os-sg-new.yml>`
 * `Ansible Security Group module <http://docs.ansible.com/ansible/latest/os_security_group_module.html>`_
 * `Ansible Security Group Rule module <http://docs.ansible.com/ansible/latest/os_security_group_rule_module.html>`_
 
@@ -90,7 +90,7 @@ os_network
 
 OpenStack networks can be provisioned using this resource.
 
-* :docs1.5:`Topology Example <workspace/topologies/os-network.yml>`
+* :docs1.5:`Topology Example <workspaces/topologies/os-network.yml>`
 * `Ansible os_network module <https://docs.ansible.com/ansible/2.5/modules/os_network_module.html>`_
 
 os_router
@@ -98,7 +98,7 @@ os_router
 
 OpenStack routers can be provisioned using this resource.
 
-* :docs1.5:`Topology Example <workspace/topologies/os-router.yml>`
+* :docs1.5:`Topology Example <workspaces/topologies/os-router.yml>`
 * `Ansible os_router module <https://docs.ansible.com/ansible/latest/modules/os_router_module.html>`_
 
 os_subnet
@@ -106,8 +106,18 @@ os_subnet
 
 OpenStack subnets can be provisioned using this resource.
 
-* :docs1.5:`Topology Example <workspace/topologies/os-subnet.yml>`
+* :docs1.5:`Topology Example <workspaces/topologies/os-subnet.yml>`
 * `Ansible os_router module <https://docs.ansible.com/ansible/latest/modules/os_subnet_module.html>`_
+
+
+os_keypair
+----------
+
+OpenStack keypairs can be provisioned using this resource.
+
+* :docs1.5:`Topology Example <workspaces/topologies/os-keypair.yml>`
+* `Ansible os_keypair module <https://docs.ansible.com/ansible/latest/modules/os_keypair_module.html>`_
+
 
 
 Additional Dependencies

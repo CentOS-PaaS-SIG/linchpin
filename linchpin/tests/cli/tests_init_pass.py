@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import os
 import sys
 
@@ -11,6 +12,8 @@ from linchpin import LinchpinAPI
 from linchpin.cli import LinchpinCli
 from linchpin.cli.context import LinchpinCliContext
 from linchpin.tests.mockdata.contextdata import ContextData
+import six
+from six.moves import zip
 
 
 def test_cli_create():
@@ -176,7 +179,7 @@ def test_render_template():
     template = lpc._render_template(layout_data, '{}')
 
     # compare two ordered dicts
-    diff = [i1 for i1, i2 in zip(layout_data.iteritems(), template.iteritems()) if i1 != i2]
+    diff = [i1 for i1, i2 in zip(six.iteritems(layout_data), six.iteritems(template)) if i1 != i2]
     assert_false(diff)
 
 

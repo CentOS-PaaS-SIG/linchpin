@@ -2,6 +2,7 @@
 
 # flake8: noqa
 
+from __future__ import absolute_import
 from nose.tools import assert_equal
 
 import linchpin.InventoryFilters
@@ -15,6 +16,7 @@ from linchpin.InventoryFilters.GCloudInventory import GCloudInventory
 from linchpin.InventoryFilters.LibvirtInventory import LibvirtInventory
 from linchpin.InventoryFilters.OpenstackInventory import OpenstackInventory
 from linchpin.InventoryFilters.OvirtInventory import OvirtInventory
+from linchpin.InventoryFilters.VMwareInventory import VMwareInventory
 
 def test_get_driver():
     driver = InventoryProviders.get_driver("aws_ec2_res")
@@ -31,6 +33,7 @@ def test_get_all_drivers():
         "libvirt_res": LibvirtInventory,
         "os_server_res": OpenstackInventory,
         "ovirt_vms_res": OvirtInventory,
+        "vmware_guest_res": VMwareInventory,
     }
     if_drivers = InventoryProviders.get_all_drivers()
     assert_equal(drivers,if_drivers)

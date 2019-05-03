@@ -113,6 +113,13 @@ describes the available recipesets options.
 +---------------------+------------+----------+-----------------------------------------+
 | kickstart           | false      | string   | absolute path to a kickstart template   |
 +---------------------+------------+----------+-----------------------------------------+
+| partitions          | false      | list     | **param** | **required** | **type**     |
++                     +            +          +-----------+--------------+--------------+
+|                     |            |          | name      | true         | string       |
+|                     |            |          | size      | true         | integer      |
+|                     |            |          | fs        | false        | string       |
+|                     |            |          | type      | false        | string       |
++---------------------+------------+----------+-----------------------------------------+
 
 Additional Dependencies
 -----------------------

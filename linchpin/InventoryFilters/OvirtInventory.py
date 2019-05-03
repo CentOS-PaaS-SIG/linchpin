@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
 try:
     from StringIO import StringIO
 except ImportError:
@@ -45,14 +46,14 @@ class OvirtInventory(InventoryFilter):
                 hostname_var = host[0]
                 hostname = host[1]
                 host_data[hostname] = {}
-                if '__IP__' not in var_data.keys():
+                if '__IP__' not in list(var_data.keys()):
                     var_data['__IP__'] = hostname_var
                     host_data[hostname] = {}
                 self.set_config_values(host_data[hostname], dev, var_data)
         return host_data
 
     def get_host_ips(self, host_data):
-        return host_data.keys()
+        return list(host_data.keys())
 
 
     def config_value_helper(self, instance, keys):
@@ -61,7 +62,7 @@ class OvirtInventory(InventoryFilter):
             # this handles errors in which the key does not exist
             if isinstance(instance, list) and key.isdigit():
                 return self.config_value_helper(instance[int(key)], rest)
-            if key not in instance.keys():
+            if key not in list(instance.keys()):
                 return ''
             return self.config_value_helper(instance[key], rest)
         else:
@@ -75,13 +76,13 @@ class OvirtInventory(InventoryFilter):
                 for addr in instance:
                     if addr['version'] == 'v6':
                         return addr['address']
-            elif keys not in instance.keys():
+            elif keys not in list(instance.keys()):
                 return ''
             return instance[keys]
 
 
     def get_hostname(self, data, cfgs, default_fields):
-        if '__IP__' in cfgs.keys():
+        if '__IP__' in list(cfgs.keys()):
             val = self.config_value_helper(data, cfgs['__IP__'])
             if val:
                 return (cfgs['__IP__'], val)

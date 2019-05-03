@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
 import os
 import logging
 
@@ -13,7 +14,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 try:
     import configparser as ConfigParser
 except ImportError:
-    import ConfigParser as ConfigParser
+    import configparser as ConfigParser
 
 
 class LinchpinContext(object):
