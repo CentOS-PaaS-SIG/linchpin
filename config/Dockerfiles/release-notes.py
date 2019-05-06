@@ -66,12 +66,12 @@ def get_remaining_changes(pulls):
     for i in xrange(len(pulls) - 1, -1, -1):
         labels = pulls[i].get_labels()
         for label in labels:
-            if not label.name == "release":
+            if label.name == "release":
+                continue
+            else:
                 changes.append(pulls[i])
                 pulls.pop(i)
-    if not changes:
-        return dummy_tag
-    # We add dummy tag here so that we do not append empty value to body dict below
+                break
     return changes
 
 
@@ -107,9 +107,9 @@ def format_body(tasks):
     body['Other Changes'] = get_remaining_changes(tasks)
 
     for title, items in body.items():
-        if len(items) == 0 or "#" in items:
+        if not items:
             continue
-        # we could do if not items to skip over empty lists from above functions
+
         body_str += title + "\n"
         for item in items:
             body_str += "* {0} #{1} by {2}\n".format(item.title, item.number,
