@@ -63,15 +63,14 @@ def get_remaining_changes(pulls):
     changes = []
     # iterate over pulls backward so that list can be removed in place
     for i in xrange(len(pulls) - 1, -1, -1):
-        skip = False
         labels = pulls[i].get_labels()
         for label in labels:
             if label.name == "release":
-                skip = True
+                continue
+            else:
+                changes.append(pulls[i])
+                pulls.pop(i)
                 break
-        if not skip:
-            changes.append(pulls[i])
-            pulls.pop(i)
     return changes
 
 
@@ -107,8 +106,9 @@ def format_body(tasks):
     body['Other Changes'] = get_remaining_changes(tasks)
 
     for title, items in body.items():
-        if len(items) == 0:
+        if not items:
             continue
+
         body_str += title + "\n"
         for item in items:
             body_str += "* {0} #{1} by {2}\n".format(item.title, item.number,
