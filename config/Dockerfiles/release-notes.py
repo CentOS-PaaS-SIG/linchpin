@@ -61,6 +61,7 @@ def get_test_enhancements(pulls):
 # get all issues in the milestone that are not the release PR
 def get_remaining_changes(pulls):
     changes = []
+    dummy_tag = "#"
     # iterate over pulls backward so that list can be removed in place
     for i in xrange(len(pulls) - 1, -1, -1):
         labels = pulls[i].get_labels()
@@ -69,7 +70,8 @@ def get_remaining_changes(pulls):
                 changes.append(pulls[i])
                 pulls.pop(i)
     if not changes:
-        return                                                          # Returns None here by default
+        return dummy_tag
+    # We add dummy tag here so that we do not append empty value to body dict below
     return changes
 
 
