@@ -107,8 +107,9 @@ def format_body(tasks):
     body['Other Changes'] = get_remaining_changes(tasks)
 
     for title, items in body.items():
-        if len(items) == 0:
+        if len(items) == 0 or "#" in items:
             continue
+        # we could do if not items to skip over empty lists from above functions
         body_str += title + "\n"
         for item in items:
             body_str += "* {0} #{1} by {2}\n".format(item.title, item.number,
