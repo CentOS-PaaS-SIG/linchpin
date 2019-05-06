@@ -68,7 +68,8 @@ def get_remaining_changes(pulls):
             if not label.name == "release":
                 changes.append(pulls[i])
                 pulls.pop(i)
-                break
+    if not changes:
+        return                                                          # Returns None here by default
     return changes
 
 
