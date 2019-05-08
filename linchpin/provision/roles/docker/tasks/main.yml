@@ -1,0 +1,17 @@
+---
+- name: "declaring output vars"
+  set_fact:
+    topology_outputs_docker_container: []
+    topology_outputs_docker_image: []
+
+- name: "Initiating Provisioning of docker resource group"
+  include: provision_resource_group.yml res_grp={{ item }}
+  with_items:
+    - "{{ resources }}"
+  when: state == "present"
+
+- name: "Initiating Teardown of docker resource group"
+  include: teardown_resource_group.yml res_grp={{ item }}
+  with_items:
+    - "{{ resources }}"
+  when: state == "absent"

@@ -92,3 +92,9 @@ VMware
 Provision virtual machines on ESXi hosts.
 
 Reference: https://docs.ansible.com/ansible/latest/modules/vmware_guest_module.html
+
+Docker
+======
+Provisions Docker containers and resources. See http://www.docker.com/ for more detail about Docker.
+
+Reference: https://docs.ansible.com/ansible/latest/scenario_guides/guide_docker.html

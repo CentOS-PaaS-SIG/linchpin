@@ -1,0 +1,10 @@
+---
+# Destroy a docker container
+
+- name: Teardown Docker container
+  docker_image:
+    docker_host: "{{ output_res['resource_definition']['docker_host'] | default(omit) }}"
+    name: "{{ output_res['resource_definition']['name'] }}"
+    force: "{{ output_res['resource_definition']['force'] | default(omit) }}"
+    tag: "{{ output_res['resource_definition']['tag'] | default(omit) }}"
+    state: absent

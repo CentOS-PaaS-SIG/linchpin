@@ -1,0 +1,21 @@
+#!/bin/bash -xe
+
+# Verify linchpin setup docker. Other tests depend this installing docker right.
+# distros.exclude: none
+# providers.include: docker
+# providers.exclude: none
+
+DISTRO=${1}
+
+PROVIDER=${2}
+
+TEST_NAME="${DISTRO}/${PROVIDER}/01_docker-setup"
+DESCRIPTION="Test ${PROVIDER} provider setup"
+
+echo "Test Name: ${TEST_NAME}"
+echo "${DESCRIPTION}"
+
+
+pushd docs/source/examples/workspaces/${PROVIDER}
+
+linchpin setup docker

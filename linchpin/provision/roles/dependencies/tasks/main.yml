@@ -4,7 +4,7 @@
     msg: "{{ setup_providers }}"
 
 
-- name: Install dependecies per provider
+- name: Install dependencies per provider
   include_tasks: "{{ indv_prov }}_deps.yml"
   with_items: "{{ setup_providers }}"
   loop_control:
@@ -19,6 +19,7 @@
     - docs
     - test
     - setup_selinux
+    - docker
   when: setup_providers | length == 0
   loop_control:
     loop_var: setup_prov

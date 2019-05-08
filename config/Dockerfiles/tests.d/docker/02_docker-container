@@ -1,0 +1,33 @@
+#!/bin/bash -xe
+
+# Verify docker container and image provisioning.
+# distros.exclude: none
+# providers.include: docker
+# providers.exclude: none
+
+DISTRO=${1}
+
+PROVIDER=${2}
+
+TARGETS="${PROVIDER}-new"
+TEST_NAME="${DISTRO}/${PROVIDER}/01_docker-container"
+DESCRIPTION="Test ${PROVIDER} provider with a simple up/destroy"
+
+echo "Test Name: ${TEST_NAME}"
+echo "${DESCRIPTION}"
+
+
+pushd docs/source/examples/workspaces/${PROVIDER}
+
+function clean_up {
+    set +e
+    D_RC=0
+    linchpin -w . -v destroy ${TARGET}
+    D_RC=(${?} -o ${D_RC})
+    if [ ${D_RC} -ne 0 ]; then
+        exit ${D_RC}
+    fi
+}
+trap clean_up EXIT SIGHUP SIGINT SIGTERM
+
+linchpin -w . -vvvv up ${TARGET}

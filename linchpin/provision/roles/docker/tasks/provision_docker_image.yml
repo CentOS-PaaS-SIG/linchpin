@@ -1,0 +1,52 @@
+---
+# Provision a docker container image
+
+# Paths should be relative to workspace if not absolute or relative to OS filesystem
+- set_fact:
+    "{{ path_item }}": "{{ res_def[path_item] | path_relative_to(workspace) }}"
+  when: path_item is in res_def
+  with_items:
+    - cacert_path
+    - cert_path
+    - path
+    - load_path
+  loop_control:
+    loop_var: path_item
+
+- block:
+  - name: Provision Docker image
+    docker_image:
+      name: "{{ res_def['name'] }}"
+      buildargs: "{{ res_def['buildargs'] | default(omit) }}"
+      cacert_path: "{{ cacert_path | default(omit) }}"
+      cert_path: "{{ cert_path | default(omit) }}"
+      container_limits: "{{ res_def['buildargs'] | default(omit) }}"
+      debug: "{{ res_def['debug'] | default(omit) }}"
+      docker_host: "{{ res_def['docker_host'] | default(omit) }}"
+      dockerfile: "{{ res_def['dockerfile'] | default(omit) }}"
+      force: "{{ res_def['force'] | default(omit) }}"
+      http_timeout: "{{ res_def['http_timeout'] | default(omit) }}"
+      load_path: "{{ load_path | default(omit) }}"
+      nocache: "{{ res_def['nocache'] | default(omit) }}"
+      path: "{{ path | default(omit) }}"
+      pull: "{{ res_def['pull'] | default(omit) }}"
+      repository: "{{ res_def['repository'] | default(omit) }}"
+      rm: "{{ res_def['rm'] | default(omit) }}"
+      ssl_version: "{{ res_def['ssl_version'] | default(omit) }}"
+      tag: "{{ res_def['tag'] | default(omit) }}"
+      timeout: "{{ res_def['timeout'] | default(omit) }}"
+      tls: "{{ res_def['tls'] | default(omit) }}"
+      tls_hostname: "{{ res_def['tls_hostname'] | default(omit) }}"
+      tls_verify: "{{ res_def['tls_verify'] | default(omit) }}"
+    register: outputitem
+  rescue:
+  - fail:
+      msg: 'An error occurred with docker_image module. It might be caused by either the lack of Docker on the host, dependencies, or daemon access denial. Please make sure the dependencies are installed and Docker configured correctly. Try running `linchpin setup docker` to install Docker, or `pip install linchpin[docker] to install Python dependencies.'
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_docker_image: "{{ topology_outputs_docker_image + ([outputitem['image'] | combine({'resource_definition': res_def})]) }}"
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_docker_image: "{{ topology_outputs_docker_image | add_res_type('docker_image_res') }}"

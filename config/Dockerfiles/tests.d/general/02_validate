@@ -31,6 +31,8 @@ elif [ "${PROVIDER}" == "duffy" ]; then
     TARGETS="duffy-new"
 elif [ "${PROVIDER}" == "openshift" ]; then
     TARGETS="openshift-new"
+elif [ "${PROVIDER}" == "docker" ]; then
+    TARGETS="docker-new"
 else
     TARGETS="dummy-new"
 fi
