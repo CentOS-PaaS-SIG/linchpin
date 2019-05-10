@@ -28,7 +28,7 @@ library identifier: "cico-pipeline-library@master",
 
 properties([
   buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '25')),
-  disableConcurrentBuilds(false),
+  disableConcurrentBuilds(),
   [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/CentOS-PaaS-SIG/linchpin/'],
   [$class: 'org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty', triggers:[
     [
