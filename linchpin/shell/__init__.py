@@ -270,8 +270,8 @@ def up(ctx, targets, run_id, tx_id, inventory_format, ignore_failed_hooks,
         vault_pass = click.prompt("enter vault password", hide_input=True)
 
     ctx.set_evar('vault_pass', vault_pass)
-    ctx.set_evar('setup_workspace')                 # add default in lp constants
-    ctx.set_evar('provider_type')                   # add default in lp constants
+    ctx.set_evar('setup_workspace', setup_workspace)                 # format: k,v. Add default in lp constants
+    ctx.set_evar('provider_type', provider_type)                   # format: k,v. Add default in lp constants
 
     if ignore_failed_hooks:
         ctx.set_cfg("hook_flags", "ignore_failed_hooks", ignore_failed_hooks)
