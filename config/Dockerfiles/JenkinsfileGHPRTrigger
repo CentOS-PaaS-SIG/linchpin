@@ -16,6 +16,7 @@ env.MSG_PROVIDER = 'fedora-fedmsg'
 // Defaults for SCM operations
 env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/linchpin'
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
+env.ghprbSourceBranch = env.ghprbSourceBranch ?: 'develop'
 env.ghprbTargetBranch = env.ghprbTargetBranch ?: 'develop'
 
 library identifier: "ci-pipeline@master",
