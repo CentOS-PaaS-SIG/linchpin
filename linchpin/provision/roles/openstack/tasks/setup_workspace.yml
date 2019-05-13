@@ -4,26 +4,26 @@
   gather_facts: yes
   any_errors_fatal: true
   vars:
-      - default_pinfile: templates/openstack_PinFile.j2
+    - default_pinfile: templates/openstack_PinFile.j2
 
 
   tasks:
-      - name: set working_dir fact for openstack
-        set_fact:
-            working_dir: ~/openstack
+    - name: set working_dir fact for openstack
+      set_fact:
+        working_dir: ~/openstack
 
-      - name: "Create directory structure in the {{ resource_definition_role }} workspace"
-        file:
-            path: "{{ working_dir }}/{{ item }}"
-            state: directory
-            mode: 0755
-            recurse: yes
-        with_items: ["credentials", "inventories", "layouts"]
+    - name: "Create directory structure in the {{ resource_definition_role }} workspace"
+      file:
+        path: "{{ working_dir }}/{{ item }}"
+        state: directory
+        mode: 0755
+        recurse: yes
+      with_items: ["credentials", "inventories", "layouts"]
 
-       - name: Create PinFile from the jinja templates
-         template:
-           src: "{{ default_pinfile }}"
-           dest: "{{ working_dir }}/PinFile"
-           mode: 0755
+    - name: Create PinFile from the jinja templates
+      template:
+        src: "{{ default_pinfile }}"
+        dest: "{{ working_dir }}/PinFile"
+        mode: 0755
 
 # TODO: Check if we need a task to create dummy clouds.yaml
