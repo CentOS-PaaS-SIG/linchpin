@@ -1,4 +1,5 @@
- name: Placeholder for the creating the PinFile for OpenStack Deployments
+---
+- name: Placeholder for the creating the PinFile for OpenStack Deployments
   hosts: localhost
   gather_facts: yes
   any_errors_fatal: true
@@ -23,6 +24,6 @@
          template:
            src: "{{ default_pinfile }}"
            dest: "{{ working_dir }}/PinFile"
-           mode: 0755                                                           #TODO(skatlapa): Change to 777 if needed
+           mode: 0755
 
 # TODO: Check if we need a task to create dummy clouds.yaml
