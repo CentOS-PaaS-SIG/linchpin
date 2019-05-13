@@ -1,0 +1,19 @@
+---
+
+- name: set working_dir fact for openstack
+  set_fact:
+    working_dir: "{{ workspace_dir }}/openstack"
+
+- name: "Create directory structure in the {{ resource_definition_role }} workspace"
+  file:
+    path: "{{ working_dir }}/{{ item }}"
+    state: directory
+    mode: 0755
+    recurse: yes
+  with_items: ["credentials", "inventories", "layouts"]
+
+- name: Create PinFile from the jinja templates
+  template:
+    src: "templates/{{ default_pinfile }}"
+    dest: "{{ working_dir }}/PinFile"
+    mode: 0755

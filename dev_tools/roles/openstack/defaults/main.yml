@@ -1,0 +1,19 @@
+---
+# These should have default out-of-the-box values and these can be overriden via the cli args
+default_pinfile: openstack_PinFile.j2
+
+# Section: General needed defaults
+topology_name: "OpenStack"
+resource_definition_name: "My_OpenStack_Deployment"
+resource_definition_role: "os_server"
+resource_definition_flavor: "m1.medium"
+resource_definition_image: "minishift-CentOS-7"                                 # Select an image from the available Openstack Tenant
+resource_definition_network: ""                                                 # tenant network
+resource_definition_keypair: "my_key_from_tenant"                               # key from tenant
+credentials_filename: "clouds.yaml"
+tenant_profile: "rhos_tenant"
+
+# Section: layout values
+layout_hosts_name: ""
+layout_count: ""
+host_groups_name: ""

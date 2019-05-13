@@ -1,0 +1,5 @@
+---
+
+setup_openstack_workspace: false
+
+workspace_dir: "{{ ansible_env.HOME }}/linchpin-workspace"

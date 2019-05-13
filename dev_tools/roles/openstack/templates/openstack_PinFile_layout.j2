@@ -1,0 +1,28 @@
+---
+{{ topology_name }}:
+  topology:
+    topology_name: {{ topology_name }}
+    resource_groups:
+      - resource_group_name: {{ topology_name }}
+        resource_group_type: openstack
+        resource_definitions:
+          - name: {{ resource_definition_name }}
+            role: {{ resource_definition_role }}
+            flavor: {{ resource_definition_flavor }}
+            image: {{ resource_definition_image }}
+            count: {{ resource_definition_count }}
+            keypair: {{ resource_definition_keypair }}
+            networks:
+              - {{ resource_definition_network }}                                # TODO(skatlapa): Make it a list for later revisions
+        credentials:
+          filename: {{ credentials_filename }}
+          profile: {{ tenant_profile }}
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        {{ layout_hosts_name }}:
+          count: {{ layout_count }}
+          host_groups:
+            - {{ host_groups_name }}
