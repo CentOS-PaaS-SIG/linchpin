@@ -15,6 +15,7 @@ rundb_schema = {"action": "",
                 "start": "",
                 "end": "",
                 "rc": 0,
+		"hooks": [],
                 "uhash": ""}
 rundb_hash = sha256
 rundb_uhash_length = 6

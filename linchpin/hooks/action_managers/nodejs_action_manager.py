@@ -1,6 +1,7 @@
 from __future__ import absolute_import
+import json
 from .action_manager import ActionManager
-from Naked.toolshed.shell import run_js
+from Naked.toolshed.shell import muterun_js
 from cerberus import Validator
 
 from linchpin.exceptions import HookError
@@ -8,7 +9,7 @@ from linchpin.exceptions import HookError
 
 class NodejsActionManager(ActionManager):
 
-    def __init__(self, name, action_data, target_data, **kwargs):
+    def __init__(self, name, action_data, target_data, state, **kwargs):
 
         """
         NodejsActionManager constructor
@@ -29,6 +30,7 @@ class NodejsActionManager(ActionManager):
         self.action_data = action_data
         self.target_data = target_data
         self.context = kwargs.get('context', True)
+        self.state = state
         self.kwargs = kwargs
 
 
@@ -75,16 +77,34 @@ class NodejsActionManager(ActionManager):
         return "{0} {1}".format(file_path, params)
 
 
-    def execute(self):
+    def execute(self, results):
 
         """
         Executes the action_block in the PinFile
         """
 
         for action in self.action_data["actions"]:
+            result = {}
+
             context = self.action_data.get("context", True)
             path = self.action_data["path"]
             file_path = "{0}/{1}".format(path, action)
+            res_str = json.dumps(results, separators=(',', ':'))
             command = self.add_ctx_params(file_path, context)
-            success = run_js(command)
-            return success
+            run_data = muterun_js(command, arguments=res_str)
+
+            print(run_data.stdout)
+
+            data = run_data.stderr
+            try:
+                if data:
+                    result['data'] = json.loads(data)
+            except ValueError:
+                print("Warning: '{0}' is not a valid JSON object.  "
+                      "Data from this hook will be discarded".format(data))
+
+            result['return_code'] = run_data.exitcode
+            result['state'] = str(self.state)
+            results.append(result)
+
+        return results

@@ -496,7 +496,6 @@ class LinchpinAPI(object):
                 record = rundb.get_tx_record(tx_id)
                 run_id = (list(record['targets'][0][target].keys())[0])
 
-
             rundb_schema = json.loads(self.get_cfg(section='lp',
                                       key='rundb_schema'))
             rundb.schema = rundb_schema
