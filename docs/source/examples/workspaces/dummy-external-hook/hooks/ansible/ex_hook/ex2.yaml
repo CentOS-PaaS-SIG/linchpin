@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  tasks:
+    - name: ping task
+      ping:
+    - name: Write to a file
+      copy:
+        content: "This is a example hook created on {{ lookup('pipe', 'date +%Y%m%d%H%M%SZ') }} \n"
+        dest: /tmp/ex_hook.txt

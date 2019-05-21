@@ -45,6 +45,13 @@ class NodejsActionManager(ActionManager):
             'type': {'type': 'string', 'allowed': ['nodejs']},
             'path': {'type': 'string', 'required': False},
             'context': {'type': 'boolean', 'required': False},
+            'src': {
+                'type': 'dict',
+                'schema': {
+                    'type': {'type': 'string', 'required': True},
+                    'url': {'type': 'string', 'required': True}
+                }
+            },
             'actions': {
                 'type': 'list',
                 'schema': {'type': 'string'},
