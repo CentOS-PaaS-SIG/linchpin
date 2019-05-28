@@ -200,7 +200,7 @@ pipeline {
                     script {
                       def providers = linchpinPipelineUtils.getProvidersToTest(p_providers)
                       if ( "openstack" in providers) {
-                        pipelineUtils.executeInContainer(currentStage, "centos7", "./config/Dockerfiles/cleanup-openstack.sh")
+                        pipelineUtils.executeInContainer("cleanup-openstack", "centos7", "./config/Dockerfiles/cleanup-openstack.sh")
                       }
                       test_providers = providers.join(" ")
                     }
