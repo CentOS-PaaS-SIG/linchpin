@@ -106,6 +106,7 @@ p_providers = ['__RELEASE__':
                  "^docs/source/examples/workspace/PinFile.openstack.yml",
                  "^config/Dockerfiles/tests.d/general/.*",
                  "^config/Dockerfiles/tests.d/openstack/.*",
+                 "^config/Dockerfiles/cleanup-openstack.sh",
                  "linchpin/version.py"],
                'openshift':
                 ["^linchpin/provision/roles/openshift/.*",
