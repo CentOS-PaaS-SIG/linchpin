@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 
 from __future__ import absolute_import
-import os
+
 import ast
+import io
+import os
+
 from setuptools import setup, find_packages
 
 with open('linchpin/version.py') as f:
@@ -11,10 +14,14 @@ with open('linchpin/version.py') as f:
             ver = ast.parse(line).body[0].value.s
             break
 
-# reading requirements from requirements.txt
 dir_path = os.path.dirname(os.path.realpath(__file__))
-reqs_file = 'requirements.txt'.format(dir_path)
-with open(reqs_file) as f:
+
+# reading description from README.rst
+with io.open(os.path.join(dir_path, 'README.rst'), encoding='utf-8') as f:
+    long_description = f.read()
+
+# reading requirements from requirements.txt
+with io.open(os.path.join(dir_path, 'requirements.txt')) as f:
     required = f.read().splitlines()
 
 setup_required = list(required)
@@ -25,7 +32,8 @@ ignore_dir = ['.git']
 setup(
     name='linchpin',
     version=ver,
-    description='Ansible based multi cloud provisioner',
+    description='Ansible-based multi-cloud provisioner',
+    long_description=long_description,
     author='samvaran kashyap rallabandi',
     author_email='linchpin@redhat.com',
     url='http://linchpin.readthedocs.io/',
