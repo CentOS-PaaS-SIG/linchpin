@@ -19,7 +19,7 @@ RUN yum -y install python-pip \
                     qemu-kvm libvirt-daemon-config-network libvirt-python \
                     libvirt-devel virt-install file openssh mkisofs \
                     libvirt-client net-tools git python-krbV make \
-                    libxslt-python krb5-workstation PyYAML python-ipaddress \
+                    libxslt-python krb5-workstation python-ipaddress \
                     python-requests jq buildah git; \
     (cd /lib/systemd/system/sysinit.target.wants/; for i in *; \
      do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
