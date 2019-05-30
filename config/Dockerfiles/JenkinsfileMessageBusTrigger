@@ -4,6 +4,7 @@ executionID = UUID.randomUUID().toString()
 podName = 'linchpinMB-' + executionID
 OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
+env.ghprbSourceBranch = env.ghprbSourceBranch ?: 'develop'
 env.ghprbTargetBranch = env.ghprbTargetBranch ?: 'develop'
 STABLE_LABEL = 'stable-' + env.ghprbTargetBranch
 

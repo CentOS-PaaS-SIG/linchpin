@@ -2,6 +2,7 @@ import com.cloudbees.plugins.credentials.Credentials
 
 env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/linchpin'
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
+env.ghprbSourceBranch = env.ghprbSourceBranch ?: 'develop'
 env.ghprbTargetBranch = env.ghprbTargetBranch ?: 'develop'
 env.ghprbPullAuthorLogin = env.ghprbPullAuthorLogin ?: ''
 env.ghprbPullId = env.ghprbPullId ?: ''

@@ -38,15 +38,16 @@ else
     TARGETS="dummy-new"
 fi
 
-pushd docs/source/examples/workspaces/${PROVIDER}
+ROOT="docs/source/examples/workspaces/${PROVIDER}"
 
 function clean_up {
     set +e
     D_RC=0
     for target in ${TARGETS}; do
-        linchpin -w . -v destroy ${target}
+        linchpin -w ${PROVIDER} -v destroy ${target}
         D_RC=(${?} -o ${D_RC})
     done
+    rm -rf ${PROVIDER}
     if [ ${D_RC} -ne 0 ]; then
         exit ${D_RC}
     fi
@@ -55,5 +56,7 @@ trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
 echo "CREDS_PATH: ${CREDS_PATH}"
 for target in ${TARGETS}; do
-    linchpin -w . --template-data "${TEMPLATE_DATA}"  -vvvv up ${target}
+    which git
+    linchpin -w . fetch --root ${ROOT} --dest . --branch ${ghprbSourceBranch} https://github.com/${ghprbPullAuthorLogin}/linchpin
+    linchpin -w ${PROVIDER} --template-data "${TEMPLATE_DATA}"  -vvvv up ${target}
 done
