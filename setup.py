@@ -40,7 +40,7 @@ setup(
         'krbV': ["python-krbV"],
         'beaker': ['beaker-client>=23.3', 'python-krbV'],
         'docs': ["docutils", "sphinx", "sphinx_rtd_theme"],
-        'tests': ["nose", "mock", "coverage", "flake8"],
+        'tests': ["nose", "mock", "coverage", "flake8", "pytest"],
         'libvirt': ["libvirt-python>=3.0.0", "lxml"],
         'vmware': ["PyVmomi>=6.7.1"],
         'docker': ["docker-py>=1.7.0"],

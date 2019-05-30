@@ -5,7 +5,7 @@ boto3>=1.9.96
 apache-libcloud>=0.20.1
 click>=7.0
 yamlordereddictloader>=0.4.0
-ansible>=2.7.1,<2.7.10
+ansible>=2.7.1
 six>=1.10.0
 shade>=1.30.0
 naked>=0.1.31
@@ -17,7 +17,7 @@ urllib3>=1.23,<1.25
 PyYAML>=5.1
 jinja2>=2.10
 configparser>=3.5.0
-openshift>=0.8.6
+openshift>=0.8.6,<0.8.8
 pyasn1>=0.1.9
 gitpython>=2.1.11
 urllib3<1.25
