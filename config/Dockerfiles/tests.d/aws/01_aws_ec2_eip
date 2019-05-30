@@ -1,9 +1,8 @@
 #!/bin/bash -xe
 
-# Verify the openstack router provisioning
-# distros.exclude: none
-# providers.include: aws
-# providers.exclude: none
+# Verify the aws-eip provisioning
+# distros.exclude: centos7 fedora28 fedora29
+# providers.include: none
 
 DISTRO=${1}
 PROVIDER=${2}
