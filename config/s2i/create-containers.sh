@@ -11,6 +11,7 @@ templates="jenkins/jenkins-continuous-infra-slave-buildconfig-template.yaml \
     jenkins/jenkins-persistent-buildconfig-template.yaml \
     jenkins/buildah-buildconfig-template.yaml \
     distros/centos7-buildconfig-template.yaml \
+    distros/fedora30-buildconfig-template.yaml \
     distros/fedora29-buildconfig-template.yaml \
     distros/fedora28-buildconfig-template.yaml"
 

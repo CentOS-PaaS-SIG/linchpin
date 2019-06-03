@@ -24,6 +24,7 @@ tagMap = [:]
 // Initialize
 tagMap['fedora28'] = STABLE_LABEL
 tagMap['fedora29'] = STABLE_LABEL
+tagMap['fedora30'] = STABLE_LABEL
 tagMap['centos7'] = STABLE_LABEL
 
 // Provider: [ PATH/IN/REPO to match, ]
@@ -239,6 +240,17 @@ pipeline {
                 }
             }
         }
+        stage("fedora30 image build") {
+            when {
+                // Only build if we have related files in changeset
+                changeset "config/Dockerfiles/fedora30/**"
+            }
+            steps {
+                script {
+                    tagMap['fedora30'] = pipelineUtils.buildImage(openshiftProject, "fedora30")
+                }
+            }
+        }
         stage("centos7 image build") {
             when {
                 // Only build if we have related files in changeset
@@ -279,6 +291,8 @@ pipeline {
                                        value: tagMap['fedora28']),
                                 string(name: 'FEDORA29_TAG',
                                        value: tagMap['fedora29']),
+                                string(name: 'FEDORA30_TAG',
+                                       value: tagMap['fedora30']),
                                 string(name: 'CENTOS7_TAG',
                                        value: tagMap['centos7']),
                                 string(name: 'TEST_PROVIDERS',
