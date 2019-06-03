@@ -1,0 +1,38 @@
+{
+    "extensions": {
+        "enabled": [
+            "python_venv",
+            "blocks"
+        ]
+    },
+    "core": {
+        "group": "Application/System",
+        "license": "GPLv3+",
+        "name": "linchpin",
+        "summary": "Ansible based multicloud orchestrator",
+        "release": "2%{?dist}",
+        "url": "https://linchpin.readthedocs.io",
+        "requires": [
+          "python2-lxml",
+          "git",
+          "beaker-client",
+          "python2-libvirt"
+        ]
+    },
+    "python_venv": {
+        "name": "linchpin",
+        "path": "/opt",
+        "python": "python2.7",
+        "strip_binaries": false
+
+    },
+    "blocks": {
+        "desc": [
+            "linchpin is an Ansible-based tool to stand up and tear down",
+            "resources in various cloud environments"
+        ],
+        "post": [
+          "ln -s /opt/linchpin/bin/linchpin /usr/bin/linchpin"
+        ]
+    }
+}
