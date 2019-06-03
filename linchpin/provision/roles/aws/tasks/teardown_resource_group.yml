@@ -58,7 +58,7 @@
   include: teardown_aws_ec2.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.2 }}
   when: res_item.0['role'] == "aws_ec2"
   with_nested:
-    - "{{ resource_definitions }}"
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
     - "{{ topo_output_resources[0]['instances'] | default('') }}"
     - ["{{ res_grp['resource_group_name']  }}"]
   loop_control:
@@ -68,7 +68,7 @@
   include: teardown_aws_s3.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
   when: res_item.0['role'] == "aws_s3"
   with_nested:
-    - "{{ resource_definitions }}"
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
     - ["{{ res_grp['resource_group_name']  }}"]
   loop_control:
     loop_var: res_item
@@ -77,7 +77,7 @@
   include: teardown_aws_ec2_key.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
   when: res_item.0['role'] == "aws_ec2_key"
   with_nested:
-    - "{{ resource_definitions }}"
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
     - ["{{ res_grp['resource_group_name']  }}"]
   loop_control:
     loop_var: res_item
@@ -86,7 +86,7 @@
   include: teardown_aws_cfn.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
   when: res_item.0['role'] == "aws_cfn"
   with_nested:
-    - "{{ resource_definitions }}"
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
     - ["{{ res_grp['resource_group_name'] }}"]
   loop_control:
     loop_var: res_item
@@ -95,7 +95,7 @@
   include: teardown_aws_ec2_eip.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.1 }}
   when: res_item.0['role'] == "aws_ec2_eip"
   with_nested:
-    - "{{ resource_definitions }}"
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
     - "{{ topo_output_resources }}"
     - ["{{ res_grp['resource_group_name'] }}"]
   loop_control:
@@ -105,7 +105,7 @@
   include: teardown_aws_ec2_vpc_endpoint.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.2 }}
   when: res_item.0['role'] == "aws_ec2_vpc_endpoint"
   with_nested:
-    - "{{ resource_definitions }}"
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
     - "{{ topo_output_resources }}"
     - ["{{ res_grp['resource_group_name'] }}"]
   loop_control:
@@ -115,7 +115,7 @@
   include: teardown_aws_ec2_vpc_routetable.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.2 }}
   when: res_item.0['role'] == "aws_ec2_vpc_routetable"
   with_nested:
-    - "{{ resource_definitions }}"
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
     - "{{ topo_output_resources }}"
     - ["{{ res_grp['resource_group_name'] }}"]
   loop_control:
@@ -125,7 +125,7 @@
   include: teardown_aws_ec2_vpc_subnet.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.2 }}
   when: res_item.0['role'] == "aws_ec2_vpc_subnet"
   with_nested:
-    - "{{ resource_definitions }}"
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
     - "{{ topo_output_resources }}"
     - ["{{ res_grp['resource_group_name'] }}"]
   loop_control:
@@ -135,7 +135,7 @@
   include: teardown_aws_ec2_vpc_net.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.2 }}
   when: res_item.0['role'] == "aws_ec2_vpc_net"
   with_nested:
-    - "{{ resource_definitions }}"
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
     - "{{ topo_output_resources }}"
     - ["{{ res_grp['resource_group_name'] }}"]
   loop_control:
