@@ -47,7 +47,7 @@ def setup_cfg_config():
 
     cfg = 'config.yml'
     cfg_file = open(mock_path+'/'+cfg)
-    config = yaml.load(cfg_file)
+    config = yaml.load(cfg_file, Loader=yaml.FullLoader)
     cfg_file.close()
 
 
@@ -126,4 +126,4 @@ def test_generate_inventory():
     # if the json is not valid, this will throw a ValueError and the test
     # will fail
     parser = ConfigParser()
-    data = parser.readfp(inv_cfg)
+    data = parser.read_file(inv_cfg)

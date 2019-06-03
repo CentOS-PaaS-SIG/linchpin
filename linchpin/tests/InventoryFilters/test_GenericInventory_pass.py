@@ -44,7 +44,7 @@ def setup_generic_topology():
 
     topo = 'PinFile'
     topo_file = open(mock_path+'/'+topo)
-    topology = yaml.load(topo_file)['general-inventory']['topology']
+    topology = yaml.load(topo_file, Loader=yaml.FullLoader)['general-inventory']['topology']
     topo_file.close()
 
 def setup_generic_config():
@@ -58,7 +58,7 @@ def setup_generic_config():
 
     cfg = 'PinFile'
     cfg_file = open(mock_path+'/'+cfg)
-    config = yaml.load(cfg_file)['general-inventory']['cfgs']
+    config = yaml.load(cfg_file, Loader=yaml.FullLoader)['general-inventory']['cfgs']
     cfg_file.close()
 
 def setup_generic_layout():
@@ -140,7 +140,7 @@ def test_output_order():
 
     # get topology and layout
     pf_path = '{0}/{1}'.format(workspace, 'PinFile')
-    pinfile = yaml.load(open(pf_path))
+    pinfile = yaml.load(open(pf_path), Loader=yaml.FullLoader)
     topology = pinfile['complex-inventory']['topology']
     layout_path = '{0}/{1}'.format(workspace, 'layout.json')
     layout = json.load(open(layout_path))

@@ -1,17 +1,10 @@
 #!/usr/bin/env python
-
-
-def get_provider_resources(topo_output, res_type):
-    provider_resources = []
-    for host in topo_output:
-        if host['resource_type'] == res_type:
-            provider_resources.append(host)
-    return provider_resources
+import linchpin.FilterUtils.FilterUtils as filter_utils
 
 
 class FilterModule(object):
-    ''' A filter to fix network format '''
+    ''' A filter to get provider resources '''
     def filters(self):
         return {
-            'get_provider_resources': get_provider_resources
+            'get_provider_resources': filter_utils.get_provider_resources
         }

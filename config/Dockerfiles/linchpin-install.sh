@@ -7,7 +7,7 @@ make pip_install.sh
 ./pip_install.sh
 popd
 
-pip install .
+pip install . --ignore-installed
 pip install .[tests]
 pip install .[libvirt]
 pip install .[beaker]

@@ -42,7 +42,7 @@ def setup_aws_config():
 
     cfg = 'PinFile'
     cfg_file = open(mock_path+'/'+cfg)
-    config = yaml.load(cfg_file)['general-inventory']['cfgs']
+    config = yaml.load(cfg_file, Loader=yaml.FullLoader)['general-inventory']['cfgs']
     cfg_file.close()
 
 def setup_aws_layout():

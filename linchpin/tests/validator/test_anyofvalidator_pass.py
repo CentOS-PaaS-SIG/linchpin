@@ -42,7 +42,7 @@ def setup_validator():
 
     topo_name = 'libvirt-new.yml'
     topo_file = '{0}/{1}/{2}'.format(lib_path, 'mockdata/libvirt', topo_name)
-    topo = yaml.load(open(topo_file))
+    topo = yaml.load(open(topo_file), Loader=yaml.FullLoader)
 
 
 

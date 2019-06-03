@@ -1,15 +1,10 @@
 #!/usr/bin/env python
-
-
-def format_output(output, omit):
-    if output == "":
-        return omit
-    return output
+import linchpin.FilterUtils.FilterUtils as filter_utils
 
 
 class FilterModule(object):
-    ''' A filter to fix output format '''
+    ''' A filter to format_output with omit '''
     def filters(self):
         return {
-            'omit_filter': format_output
+            'omit_filter': filter_utils.omit_filter
         }
