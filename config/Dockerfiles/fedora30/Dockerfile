@@ -5,7 +5,9 @@ LABEL description "This container will verify linchpin works under Fedora-30"
 ENV HOME=/root
 WORKDIR $HOME
 
-RUN dnf -y install python-pip ansible curl gcc python-devel python2-shade \
+RUN ln -s /usr/bin/python2.7 /usr/bin/python
+
+RUN dnf -y install python-pip ansible curl gcc python-devel \
                    openssl-devel libvirt-daemon-driver-* libvirt-daemon \
                    libvirt-daemon-kvm qemu-kvm libvirt-daemon-config-network \
                    libvirt-python libvirt-devel redhat-rpm-config file \

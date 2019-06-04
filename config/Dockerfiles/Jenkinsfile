@@ -221,7 +221,7 @@ stage('Tests') {
                                 workingDir: '/workDir'),
                             containerTemplate(name: 'fedora30',
                                 alwaysPullImage: true,
-                                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora30:' + FEDORA29_TAG,
+                                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora30:' + FEDORA30_TAG,
                                 ttyEnabled: false,
                                 command: '/root/init_libvirt.sh',
                                 privileged: true,
