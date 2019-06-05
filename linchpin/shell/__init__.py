@@ -654,7 +654,7 @@ def _get_hosts(ctx, args, incomplete):
     lpctx.load_config(lpconfig=None)
     lpctx.load_global_evars()
     lpcli = LinchpinCli(lpctx)
-    return  [k for k in lpcli.ctx.inventory.hosts.keys() if incomplete in k]
+    return [k for k in lpcli.ctx.inventory.hosts.keys() if incomplete in k]
 
 
 @runcli.command('ssh', short_help='SSH to deployed system')

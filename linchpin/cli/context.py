@@ -279,7 +279,10 @@ class LinchpinCliContext(LinchpinContext):
     def _get_latest_file(self, path):
         """Returns the name of the latest (most recent) file
         of the joined path(s)"""
-        list_of_files = [os.path.join(path, x) for x in os.listdir(path)]
+        try:
+            list_of_files = [os.path.join(path, x) for x in os.listdir(path)]
+        except OSError:
+            list_of_files = None
         if not list_of_files:
             return None
         latest_file = max(list_of_files, key=os.path.getctime)

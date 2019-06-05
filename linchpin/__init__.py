@@ -917,7 +917,7 @@ class LinchpinAPI(object):
                 {
                     'ansible_ssh_common_args': '',
                     'ansible_user': 'root',
-                    },
+                },
                 self.ctx.inventory.hosts.get(target).serialize()['vars'])
         except AttributeError:
             if self.ctx.inventory.hosts.get(target) is None:
@@ -928,6 +928,8 @@ class LinchpinAPI(object):
 
         if 'ansible_host' not in host:
             host['ansible_host'] = host['hostname']
-        cmd = 'ssh {ansible_ssh_common_args} {ansible_user}@{ansible_host}'.format(**host)
+        cmd = ('ssh {ansible_ssh_common_args}'
+               '{ansible_user}@{ansible_host}')
+        cmd = cmd.format(**host)
         print('connecting to {}: {}'.format(target, cmd))
         subprocess.call(cmd, shell=True)
