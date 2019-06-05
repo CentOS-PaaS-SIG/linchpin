@@ -203,8 +203,8 @@ stage('Tests') {
                 }
             }, fedora30: {
                 pipelineUtils.clearTemplateNames()
-                podTemplate(name: f29podName,
-                            label: f29podName,
+                podTemplate(name: f30podName,
+                            label: f30podName,
                             cloud: 'openshift',
                             serviceAccount: OPENSHIFT_SERVICE_ACCOUNT,
                             idleMinutes: 0,
