@@ -8,6 +8,7 @@ import json
 import time
 import errno
 import hashlib
+import subprocess
 
 from uuid import getnode as get_mac
 from collections import OrderedDict
@@ -904,3 +905,31 @@ class LinchpinAPI(object):
             results = None
 
         return (return_code, results)
+
+
+    def ssh(self, target):
+        def merge_two_dicts(x, y):
+            z = x.copy()
+            z.update(y)
+            return z
+        try:
+            host = merge_two_dicts(
+                {
+                    'ansible_ssh_common_args': '',
+                    'ansible_user': 'root',
+                },
+                self.ctx.inventory.hosts.get(target).serialize()['vars'])
+        except AttributeError:
+            if self.ctx.inventory.hosts.get(target) is None:
+                print(target + ' was not found in the inventory')
+                print('Found these hosts:')
+                print('\n'.join(self.ctx.inventory.hosts.keys()))
+                return
+
+        if 'ansible_host' not in host:
+            host['ansible_host'] = host['hostname']
+        cmd = ('ssh {ansible_ssh_common_args}'
+               '{ansible_user}@{ansible_host}')
+        cmd = cmd.format(**host)
+        print('connecting to {}: {}'.format(target, cmd))
+        subprocess.call(cmd, shell=True)

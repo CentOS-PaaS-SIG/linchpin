@@ -649,6 +649,25 @@ def setup(ctx, providers, ask_sudo_pass):
     return sys.exit(return_code)
 
 
+def _get_hosts(ctx, args, incomplete):
+    lpctx = LinchpinCliContext()
+    lpctx.load_config(lpconfig=None)
+    lpctx.load_global_evars()
+    lpcli = LinchpinCli(lpctx)
+    return [k for k in lpcli.ctx.inventory.hosts.keys() if incomplete in k]
+
+
+@runcli.command('ssh', short_help='SSH to deployed system')
+@click.argument('target', type=click.STRING, autocompletion=_get_hosts)
+@pass_context
+def ssh(ctx, target):
+    try:
+        lpcli.ssh(target)
+    except LinchpinError as e:
+        ctx.log_state(e)
+        sys.exit(1)
+
+
 def main():
     # print("entrypoint")
     pass

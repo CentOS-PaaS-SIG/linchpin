@@ -5,6 +5,9 @@ import os
 import ast
 import errno
 import logging
+from ansible.parsing.dataloader import DataLoader
+from ansible.vars.manager import VariableManager
+from ansible.inventory.manager import InventoryManager as Inventory
 
 from linchpin.context import LinchpinContext
 
@@ -122,6 +125,54 @@ class LinchpinCliContext(LinchpinContext):
         self.set_cfg('lp', 'workspace', workspace)
         self.set_evar('workspace', workspace)
 
+    @property
+    def inventory_folder(self):
+        """
+        getter function for inventory_folder
+        """
+        default = '{0}/{1}'.format(self.workspace, 'inventories')
+        return self.get_cfg('lp', 'inventory_folder', default)
+
+
+    @inventory_folder.setter
+    def inventory_folder(self, inventory_folder):
+
+        """
+        setter for inventory_folder
+        """
+
+        self.set_cfg('lp', 'inventory_folder', inventory_folder)
+        self.set_evar('inventory_folder', inventory_folder)
+
+
+    @property
+    def inventory_path(self):
+        """
+        getter function for inventory_path
+        """
+        default = self._get_latest_file(self.inventory_folder)
+        return self.get_cfg('lp', 'inventory_path', default)
+
+
+    @inventory_path.setter
+    def inventory_path(self, inventory_path):
+
+        """
+        setter for inventory_path
+        """
+        self.set_cfg('lp', 'inventory_path', inventory_path)
+        self.set_evar('inventory_path', inventory_path)
+
+
+    @property
+    def inventory(self):
+        """
+        getter function for inventory
+        """
+        loader = DataLoader()
+        inventory = Inventory(loader, self.inventory_path)
+        VariableManager(loader, inventory)
+        return inventory
 
     def setup_logging(self):
 
@@ -224,3 +275,15 @@ class LinchpinCliContext(LinchpinContext):
     def log_debug(self, msg):
         """Logs a DEBUG message"""
         self.log(msg, level=logging.DEBUG)
+
+    def _get_latest_file(self, path):
+        """Returns the name of the latest (most recent) file
+        of the joined path(s)"""
+        try:
+            list_of_files = [os.path.join(path, x) for x in os.listdir(path)]
+        except OSError:
+            list_of_files = None
+        if not list_of_files:
+            return None
+        latest_file = max(list_of_files, key=os.path.getctime)
+        return latest_file
