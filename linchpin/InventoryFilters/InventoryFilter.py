@@ -19,10 +19,6 @@ class InventoryFilter(six.with_metaclass(abc.ABCMeta, object)):
     def get_host_data(self, topo, config):
         pass
 
-    @abc.abstractmethod
-    def get_inventory(self, topo, layout):
-        pass
-
     def get_layout_hosts(self, inv):
         count = 0
         for host_group in inv['hosts']:

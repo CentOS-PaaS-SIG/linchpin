@@ -164,7 +164,7 @@ os-keypair:
       - resource_group_name: os-server-test-lp
         resource_group_type: openstack
         resource_definitions:
-          - name: linchpintestkey
+          - name: "{{ distro }}linchpintestkey"
             role: os_keypair
         {% if credentials is defined %}
         credentials:

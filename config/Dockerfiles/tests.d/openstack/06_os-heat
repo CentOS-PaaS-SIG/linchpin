@@ -1,13 +1,14 @@
 #!/bin/bash -xe
 
 # Verify openstack heat provisioning
-# distros.exclude: fedora28 fedora29
+# distros.exclude: fedora28 fedora29 fedora30
 # providers.include: openstack
 # providers.exclude: none
 
 DISTRO=${1}
 PROVIDER=${2}
 
+TEMPLATE_DATA="{\"distro\": \"${DISTRO}-\"}"
 PINFILE="PinFile"
 TARGET="os_heat_target"
 WORKSPACE_PATH="docs/source/examples/workspaces/openstack-heat/"
@@ -29,4 +30,4 @@ fi
 
 # testing openstack heat workspace
 echo "Testing os_heat workspace"
-linchpin -w "${WORKSPACE_PATH}" -p "${PINFILE}" -v up "${TARGET}"
+linchpin -w "${WORKSPACE_PATH}" --template-data "${TEMPLATE_DATA}" -p "${PINFILE}" -v up "${TARGET}"

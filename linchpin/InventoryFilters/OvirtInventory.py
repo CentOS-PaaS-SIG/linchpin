@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 from __future__ import absolute_import
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
 
 from .InventoryFilter import InventoryFilter
 
@@ -52,9 +48,6 @@ class OvirtInventory(InventoryFilter):
                 self.set_config_values(host_data[hostname], dev, var_data)
         return host_data
 
-    def get_host_ips(self, host_data):
-        return list(host_data.keys())
-
 
     def config_value_helper(self, instance, keys):
         if "." in keys:
@@ -91,26 +84,3 @@ class OvirtInventory(InventoryFilter):
             if val:
                 return (var, val)
         return ''
-
-
-    def get_inventory(self, topo, layout, config):
-        host_data = []
-        inven_hosts = []
-        for res in topo:
-            hd = self.get_host_data(res, config)
-            if hd:
-                host_data.append(hd)
-            inven_hosts = self.get_host_ips(hd)
-        # adding sections to respective host groups
-        host_groups = self.get_layout_host_groups(layout)
-        self.add_sections(host_groups)
-        # set children for each host group
-        self.set_children(layout)
-        # set vars for each host group
-        self.set_vars(layout)
-        # add ip addresses to each host
-        self.add_ips_to_groups(inven_hosts, layout)
-        self.add_common_vars(host_groups, layout)
-        output = StringIO()
-        self.config.write(output)
-        return output.getvalue()
