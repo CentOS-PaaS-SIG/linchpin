@@ -37,6 +37,7 @@ OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
 STABLE_LABEL = 'stable-' + env.ghprbTargetBranch
 env.FEDORA29_TAG = env.FEDORA29_TAG ?: STABLE_LABEL
+env.FEDORA30_TAG = env.FEDORA30_TAG ?: STABLE_LABEL
 
 // Pod name to use
 jslave_podName = 'jslave-' + repoName + '_' + executionID
