@@ -8,6 +8,7 @@
 DISTRO=${1}
 PROVIDER=${2}
 
+TEMPLATE_DATA="{\"distro\": \"${DISTRO}-\"}"
 TARGET="aws-ec2-vpc-routetable"
 
 function clean_up {
@@ -18,5 +19,5 @@ trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
 pushd docs/source/examples/workspaces/${PROVIDER}
 
-linchpin -w . -v up "${TARGET}"
+linchpin -w . --template-data "${TEMPLATE_DATA}" -v up "${TARGET}"
 
