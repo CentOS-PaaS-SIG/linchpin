@@ -82,9 +82,10 @@ def test_format_networks():
 
 
 def test_os_server_insts():
-    res_def = { "count": 2 }
-    expected = [{ "name": "testname1"}, {"name": "testname2" }]
-    assert_equals(expected, filter_utils.render_os_server_insts(res_def, "testname"))
+    res_def = { 'additional_volumes': [{'name': 'test_vol', 'size': 1, 'device_name': '/dev/vdb'}]}
+    expected = [{ "name": "test_vol-testname", 'size': 1, 'device_name': '/dev/vdb', 'server_name': 'testname'}]
+    assert_equals(expected[-1],
+                  filter_utils.render_os_server_insts(res_def, ["testname"])[-1]['volumes'][-1])
 
 
 def test_merge_two_dicts():
