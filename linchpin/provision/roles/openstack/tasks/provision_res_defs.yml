@@ -12,7 +12,7 @@
 - name: "Get the resource name"
   set_fact:
     os_resource_name: "{{ res_def['name'] }}"
-    unique_name: "{{ res_def['unique'] | default(enable_uhash) }}"
+    unique_name: "{{ res_def['unique'] | default(use_uhash) }}"
 
 - name: "Create name using uhash value"
   set_fact:

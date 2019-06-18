@@ -89,8 +89,8 @@ def ansible_runner_24x(playbook_path,
     pbex = PlaybookExecutor([playbook_path],
                             inventory,
                             variable_manager,
-                            options,
                             loader,
+                            options,
                             passwords)
     return pbex
 

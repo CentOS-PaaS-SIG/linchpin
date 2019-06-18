@@ -4,7 +4,7 @@
   include_tasks: "provision_{{ res_def['role'] }}.yml"
   vars:
     ovirt_resource_name: "{{ ovirt_resource_item }}"
-  with_sequence: start=1 end={{ res_def['count'] }} format="{{ res_def['name'] }}-{% if enable_uhash %}{{ uhash }}{% endif %}-%02d"
+  with_sequence: start=1 end={{ res_def['count'] }} format="{{ res_def['name'] }}-{% if use_uhash %}{{ uhash }}{% endif %}-%02d"
   loop_control:
     loop_var: ovirt_resource_item
   

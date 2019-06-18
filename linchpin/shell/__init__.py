@@ -241,9 +241,11 @@ def init(ctx, provider):
               help='Ignores failed hooks')
 @click.option('--no-hooks', '--nh', 'no_hooks', is_flag=True, default=None,
               metavar='NO_HOOKS', help='Do not run hooks')
+@click.option('--disable-uhash', type=str, default=None,
+              metavar='DISABLE_UHASH')
 @pass_context
 def up(ctx, targets, run_id, tx_id, inventory_format, ignore_failed_hooks,
-       no_hooks):
+       no_hooks, disable_uhash):
     """
     Provisions nodes from the given target(s) in the given PinFile.
 
@@ -271,6 +273,8 @@ def up(ctx, targets, run_id, tx_id, inventory_format, ignore_failed_hooks,
         ctx.set_cfg("hook_flags", "ignore_failed_hooks", ignore_failed_hooks)
     if no_hooks:
         ctx.set_cfg("hook_flags", "no_hooks", no_hooks)
+    if disable_uhash:
+        ctx.set_evar("disable_uhash_targets", disable_uhash.split(','))
 
     if tx_id:
         try:
