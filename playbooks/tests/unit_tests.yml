@@ -1,0 +1,26 @@
+---
+- name: Unit tests for Linchpin
+  hosts: localhost
+  gather_facts: False
+  tasks:
+          - name: debug
+            debug:
+              msg: "Disabling linchpin tests until container is fixed. Refer Travis ci for unit tests and flake8 tests"
+              #          - name: Install Test Reqs
+              #            pip:
+              #                    name: .[tests]
+              #                    virtualenv: /tmp/linchpin
+              #            args:
+              #                    chdir: ../../
+              #            - name: pyTest
+              #              shell: |
+              #                    source /tmp/linchpin/bin/activate
+              #                    python setup.py test
+              #            args:
+              #                    chdir: ../../
+              #          - name: Flake8 tests
+              #            shell: |
+              #                    source /tmp/linchpin/bin/activate
+              #                    flake8 --exclude=\.eggs,tests,docs --ignore=E124,E303,W504 --max-line-length 80 .
+              #            args:
+              #                    chdir: ../../
