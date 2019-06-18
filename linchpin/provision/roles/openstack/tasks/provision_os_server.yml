@@ -3,9 +3,22 @@
     res_def_names: []
     res_def_add_vol: "{{ res_def['additional_volumes'] | default([]) }}"
 
+- name: generate res_def_names
+  set_fact:
+    res_def_names: "{{ res_def_names  + [os_resource_name + default_delimiter + inst_c] }}"
+  with_sequence: start=0 end={{ res_def['count']|int - 1 }}
+  when: res_def['count'] > 1
+  loop_control:
+    loop_var: inst_c
+
+- name: generate res_def_names
+  set_fact:
+    res_def_names: "{{ res_def_names  + [os_resource_name] }}"
+  when: res_def['count'] == 1
+
 - name: set_fact instance filters
   set_fact:
-    res_def_prov: "{{ res_def | render_os_server_insts(os_resource_name) }}"
+    res_def_prov: "{{ res_def | render_os_server_insts(res_def_names) }}"
 
 - name: set_fact when addtional volumes
   set_fact:
@@ -46,19 +59,6 @@
   when: state == "absent"
   loop_control:
     loop_var: del_vol
-
-- name: generate res_def_names
-  set_fact:
-    res_def_names: "{{ res_def_names  + [os_resource_name + default_delimiter + inst_c] }}"
-  with_sequence: start=0 end={{ res_def['count']|int - 1 }}
-  when: res_def['count'] > 1
-  loop_control:
-    loop_var: inst_c
-
-- name: generate res_def_names
-  set_fact:
-    res_def_names: "{{ res_def_names  + [os_resource_name] }}"
-  when: res_def['count'] == 1
 
 - name: "provision/teardown os_server resources with provided auth"
   os_server:

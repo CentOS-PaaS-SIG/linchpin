@@ -53,10 +53,22 @@
 			"type": "list",
 			"required": false,
 			"schema": {
-                            "name": { "type": "string", "required": true },
-                            "size": { "type": "integer", "required": false },
-                            "device_name": { "type": "string", "required": false }
+                        "type": "dict",
+                        "schema": {
+                            "name": {
+                                "type": "string",
+                                "required": true
+                            },
+                            "size": {
+                                "type": "integer",
+                                "required": false
+                            },
+                            "device_name": {
+                                "type": "string",
+                                "required": false
+                            }
                         }
+                }
 
 		    }
 
