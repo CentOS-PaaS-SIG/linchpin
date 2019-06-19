@@ -5,13 +5,12 @@
   tasks:
           - name: debug
             debug:
-              msg: "Disabling linchpin tests until container is fixed. Refer Travis ci for unit tests and flake8 tests"
+              msg: "Enabling contra-hdsl tests"
           - name: Install Test Reqs
             pip:
               name: .[tests]
               virtualenv: /tmp/linchpin
-              args:
-                chdir: ../../
+              chdir: ../../
           - name: pyTest
             shell: |
                   source /tmp/linchpin/bin/activate
