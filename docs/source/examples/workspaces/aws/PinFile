@@ -170,7 +170,7 @@ aws-ec2-vpc-net:
               {% endfor %}
             {% else %}
             tags:
-              module: aws_ec2_vpc_net
+              module: "{{ distro }}-aws_ec2_vpc_net"
               this: works
             {% endif %}
             tenancy: {{ tenancy | default('dedicated') }}
@@ -203,7 +203,7 @@ aws-ec2-vpc-subnet:
               {% endfor %}
             {% else %}
             tags:
-              module: aws_ec2_vpc_net
+              module: "{{ distro }}aws_ec2_vpc_net"
               this: works
             {% endif %}
             tenancy: {{ tenancy | default('dedicated') }}
@@ -219,7 +219,7 @@ aws-ec2-vpc-subnet:
               {% endfor %}
             {% else %}
             tags:
-              module: aws_ec2_vpc_subnet
+              module: "{{ distro }}aws_ec2_vpc_subnet"
               this: works
             {% endif %}
         {% if credentials is defined %}
@@ -245,7 +245,7 @@ aws-ec2-vpc-routetable:
             region: us-east-1
             cidr_block: 15.0.0.0/16
             tags:
-              module: aws_ec2_vpc_net
+              module: "{{ distro }}aws_ec2_vpc_net"
               this: alsoworks
             tenancy: dedicated
           - name: demo_vpc_subnet_r
@@ -254,14 +254,14 @@ aws-ec2-vpc-routetable:
             vpc_name: demo_vpc_net_r
             cidr: 15.0.1.0/24
             tags:
-              module: aws_ec2_vpc_subnet
+              module: "{{ distro }}aws_ec2_vpc_subnet"
               this: alsoworks
           - name: demo_routetable
             role: aws_ec2_vpc_routetable
             region: us-east-1
             vpc_name: demo_vpc_net_r
             tags:
-              module: aws_ec2_vpc_routetable
+              module: "{{ distro }}aws_ec2_vpc_routetable"
               this: alsoworks
             subnets:
               - 'demo_vpc_subnet_r'
@@ -288,7 +288,7 @@ aws-ec2-vpc-endpoint:
             region: us-east-1
             cidr_block: 17.0.0.0/16
             tags:
-              module: aws_ec2_vpc_net
+              module: "{{ distro }}aws_ec2_vpc_net"
               some: aws_ec2_vpc_ep
               this: alsoworks
             tenancy: dedicated
@@ -298,14 +298,14 @@ aws-ec2-vpc-endpoint:
             vpc_name: demo_vpc_net_ep
             cidr: 17.0.1.0/24
             tags:
-              module: aws_ec2_vpc_subnet
+              module: "{{ distro }}aws_ec2_vpc_subnet"
               this: alsoworks
           - name: demo_routetable_ep
             role: aws_ec2_vpc_routetable
             region: us-east-1
             vpc_name: demo_vpc_net_ep
             tags:
-              module: aws_ec2_vpc_routetable
+              module: "{{ distro }}aws_ec2_vpc_routetable"
               this: alsoworks
             subnets:
               - 'demo_vpc_subnet_ep'
