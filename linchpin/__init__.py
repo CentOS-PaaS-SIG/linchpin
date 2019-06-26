@@ -732,9 +732,11 @@ class LinchpinAPI(object):
         try:
             for t_id in latest_run_data:
                 targets = latest_run_data[t_id]["targets"][0]
+                """
                 # if there are multiple targets mentioned in pinfile
                 # the multiple inventory files are being generated
-                inv_file_count = 0 if len(targets) > 1 else False
+                """
+                # inv_file_count = 0 if len(targets) > 1 else False
                 for name in targets:
                     if "layout_data" in targets[name]["inputs"]:
                         lt_data = targets[name]["inputs"]["layout_data"]
@@ -742,8 +744,9 @@ class LinchpinAPI(object):
                         c_data = {}
                         if "cfgs" in list(targets[name].keys()):
                             c_data = targets[name]["cfgs"]["user"]
-                        i_path = targets[name]["outputs"]["inventory_path"][0]
+                        # i_path = targets[name]["outputs"]["inventory_path"][0]
                         layout = lt_data["inventory_layout"]
+                        """
                         # check whether inventory_file is mentioned in layout
 
                         #if not os.path.exists(os.path.dirname(i_path)):
@@ -751,15 +754,19 @@ class LinchpinAPI(object):
                         #if inv_path and inv_file_count is not False:
                         #    i_path = inv_path + str(inv_file_count)
                         # r_o -> resources_outputs
+                        """
                         r_o = targets[name]["outputs"]["resources"]
+                        """
                         # TODO: in the future we should render templates in
                         # layout and cfgs here so that we can use data from the
                         # most recent run
+                        """
                         inv = self.generate_inventory(r_o,
                                                       layout,
                                                       inv_format=inv_format,
                                                       topology_data=t_data,
                                                       config_data=c_data)
+                        """
                         # if inv_path is explicitly mentioned it is used
                         #if inv_path:
                         #    i_path = inv_path
@@ -774,6 +781,7 @@ class LinchpinAPI(object):
                         #else:
                         #    with open(i_path, 'w') as the_file:
                         #        the_file.write(inv)
+                        """
                         all_inventories[name] = inv
             return all_inventories
 

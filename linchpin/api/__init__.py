@@ -1,10 +1,10 @@
 from linchpin import LinchpinAPI
 from linchpin.context import LinchpinContext
+from linchpin.exceptions import LinchpinError
 import yaml
 import json
 import os
 import tempfile
-import shutil
 
 
 class Workspace(object):
@@ -59,8 +59,8 @@ class Workspace(object):
 
         PF_NAMES = ["Pinfile", "PinFile", "PinFile.json"]
         for name in PF_NAMES:
-            if os.path.isfile(self.workspace_path+"/"+name):
-                return self.workspace_path+"/"+name
+            if os.path.isfile(self.workspace_path + "/" + name):
+                return self.workspace_path + "/" + name
         return False
 
     def set_workspace(self, path):
@@ -73,7 +73,7 @@ class Workspace(object):
         """
 
         self.workspace_path = path
-        self.context.set_cfg('lp', 'workspace', self.workspace_path )
+        self.context.set_cfg('lp', 'workspace', self.workspace_path)
         self.context.set_evar('workspace', self.workspace_path)
         return self.workspace_path
 
@@ -101,7 +101,7 @@ class Workspace(object):
         """
 
         self.context.set_evar(key, value)
-        return key,value
+        return key, value
 
     def get_evar(self, key):
         """
@@ -140,7 +140,7 @@ class Workspace(object):
 
     def set_vault_encryption(self, vault_enc):
         """
-        set_vault_encryption sets vault_encryption flag 
+        set_vault_encryption sets vault_encryption flag
         if credentials are encrypted in vault current credentials path
 
         param: vault_enc: boolean
@@ -149,7 +149,7 @@ class Workspace(object):
         """
 
         if isinstance(vault_enc, bool):
-            return self.context.set_evar("vault_encryption",vault_enc)
+            return self.context.set_evar("vault_encryption", vault_enc)
         raise LinchpinError("Incorrect datatype please use boolean")
 
     def get_vault_encryption(self):
@@ -192,7 +192,9 @@ class Workspace(object):
         """
 
         if isinstance(flag, bool):
-            return self.context.set_cfg("hookflags", "ignore_failed_hooks", flag)
+            return self.context.set_cfg("hookflags",
+                                        "ignore_failed_hooks",
+                                        flag)
         raise LinchpinError("Incorrect datatype please use boolean")
 
     def get_flag_ignore_failed_hooks(self):
@@ -214,7 +216,7 @@ class Workspace(object):
 
         """
 
-        return self.context.set_evar("vault_password",vault_pass)
+        return self.context.set_evar("vault_password", vault_pass)
 
     def get_vault_pass(self):
         """
@@ -224,7 +226,7 @@ class Workspace(object):
 
         """
 
-        return self.context.get_evar("vault_password")    
+        return self.context.get_evar("vault_password")
 
     def get_inventory(self, inv_format="json"):
         """
@@ -237,7 +239,6 @@ class Workspace(object):
         """
 
         lapi = LinchpinAPI(self.context)
-        latest_run_data = lapi._get_run_data_by_txid()
         inventory_data = lapi._write_to_inventory(inv_format=inv_format)
         return inventory_data
 
@@ -307,7 +308,7 @@ class Pinfile(Workspace):
                  pinfile={},
                  config="linchpin.conf",
                  workspace_path=None):
-        
+
         """
         Linchpin api Pinfile constructor
 
@@ -317,15 +318,15 @@ class Pinfile(Workspace):
         :param workspace_path: path to workspace directory. if not provided
                                workspace would be generated in /tmp/
         """
-        
+
         # if workspace is not provided
         if workspace_path:
-            self.workspace_path= workspace_path
+            self.workspace_path = workspace_path
         else:
-            self.workspace_path= tempfile.mkdtemp()
+            self.workspace_path = tempfile.mkdtemp()
         # generate a workspace name based on Pinfile_contents
         # write contents to workspace
-        open(self.workspace_path+"/PinFile","w").write(json.dumps(pinfile))
+        open(self.workspace_path + "/PinFile", "w").write(json.dumps(pinfile))
         self.pinfile = pinfile
         self.config = config
         self.context = LinchpinContext()
