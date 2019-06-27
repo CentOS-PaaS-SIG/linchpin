@@ -7,7 +7,7 @@ os_heat_target:
         resource_group_type: "openstack"
         resource_definitions:
           - role: "os_heat"
-            name: "test"
+            name: "{{ distro}}ci-lp-test"
             template_path: "/workDir/workspace/ci-linchpin/linchpin/docs/source/examples/workspaces/openstack-heat/os_stack.yml"
             tag: "testtag"
         credentials:

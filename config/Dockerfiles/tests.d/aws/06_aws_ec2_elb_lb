@@ -7,6 +7,7 @@
 
 DISTRO=${1}
 PROVIDER=${2}
+TEMPLATE_DATA="{\"distro\": \"${DISTRO}-\"}"
 
 TARGET="aws-ec2-elb-lb"
 
@@ -22,5 +23,5 @@ echo "add default profile in config"
 mkdir -p ~/.aws/
 printf "[default]\nregion = us-east-1" > ~/.aws/config
 
-linchpin -w . -v up "${TARGET}"
+linchpin -w . --template-data "${TEMPLATE_DATA}" -v up "${TARGET}"
 
