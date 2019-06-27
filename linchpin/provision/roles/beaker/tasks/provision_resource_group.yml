@@ -100,12 +100,19 @@
       run_id: "{{ rundb_id }}"
     when: not generate_resources
 
+- name: Provision beaker systems
+  block:
   - name: "fetch beaker details"
     bkr_info:
       ids: "{{ bkr_ids }}"
-      # pull provision params from the first (should be only) result
+  # pull provision params from the first (should be only) result
       provision_params: "{{ bkr.results[0].provision_params }}"
     register: _topo_out_bkr_server
+  rescue:
+  - bkr_server:
+      recipesets: "{{ topology_outputs_beaker_server | fetch_beaker_job_ids }}"
+      state: absent
+      cancel_message: "cancelled provisioning on timeout"
 
   - name: "set topology_outputs_beaker_server using recipe id"
     set_fact:
