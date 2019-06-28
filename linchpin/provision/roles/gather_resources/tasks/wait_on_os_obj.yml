@@ -4,7 +4,7 @@
     jid: "{{ job_item['ansible_job_id'] }}"
   register: job_result
   until: job_result.finished
-  retries: 30
+  retries: "{{ async_retries | default(60) }}"
   with_items: "{{ os_obj_group['results']}}"
   loop_control:
     loop_var: job_item

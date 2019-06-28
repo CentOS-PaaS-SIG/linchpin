@@ -4,7 +4,7 @@
     jid: "{{ aws_ec2_group['ansible_job_id'] }}"
   register: job_result
   until: job_result.finished
-  retries: 30
+  retries: "{{ async_retries | default(60) }}"
   when: state == "present"
 
 - name: "Append outputitem to topology_outputs"

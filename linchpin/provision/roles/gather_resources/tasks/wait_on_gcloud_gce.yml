@@ -4,7 +4,7 @@
     jid: "{{ gcloud_gce_group['ansible_job_id'] }}"
   register: job_result
   until: job_result.finished
-  retries: 45
+  retries: "{{ async_retries | default(60) }}"
 
 - name: "Append outputitem"
   set_fact:
