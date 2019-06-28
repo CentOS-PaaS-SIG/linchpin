@@ -5,7 +5,7 @@
     module_name: "os_volume"
   register: job_result
   until: job_result.finished
-  retries: 30
+  retries: "{{ async_retries | default(60) }}"
   with_items: "{{ os_volume_group['results']}}"
 
 - name: "Append outputitem to topology_outputs"

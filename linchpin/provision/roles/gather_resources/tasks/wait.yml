@@ -7,6 +7,6 @@
     jid: "{{ job_obj['results'][0].ansible_job_id }}"
   register: job_result
   until: job_result.finished
-  retries: 45
+  retries: "{{ async_retries | default(60) }}"
   when: job_obj['results'][0].ansible_job_id is defined
   ignore_errors: yes

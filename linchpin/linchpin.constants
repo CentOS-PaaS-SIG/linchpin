@@ -37,6 +37,7 @@ default_ssh_key_path = ~/.ssh
 debug_mode = False
 vault_encryption = False
 vault_pass = ''
+async_retries = 60
 
 
 # NOTE: if either of these change, the value in linchpin/templates must also change
