@@ -260,3 +260,13 @@ def transform_os_server_output(res_def_out):
         res_def["openstack"].append(ele.get("openstack", {}))
         res_def["servers"].append(ele.get("server", {}))
     return res_def
+
+
+def fetch_beaker_job_ids(topo_out):
+    output = []
+    for entry in topo_out:
+        entry_dict = {}
+        entry_dict["ids"] = []
+        entry_dict["ids"].append("J:" + entry["id"])
+        output.append(entry_dict)
+    return output

@@ -144,4 +144,11 @@ def test_prepare_ssh_args():
 def test_transform_os_server_output():
     res_def_out = {"results": [{ "id": "testid" }]}
     expected = {'ids': ['testid'], 'openstack': [{}], 'servers': [{}]}
-    assert_equals(expected, filter_utils.transform_os_server_output(res_def_out))
+    assert_equals(expected,
+                  filter_utils.transform_os_server_output(res_def_out))
+
+def test_fetch_beaker_job_ids():
+    test_input = [{"id": "3124"}, {"id": "3214"}]
+    expected = [{'ids': ['J:3124']}, {'ids': ['J:3214']}]
+    assert_equals(expected,
+                  filter_utils.fetch_beaker_job_ids(test_input))
