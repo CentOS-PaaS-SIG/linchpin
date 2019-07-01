@@ -137,7 +137,7 @@ class DataParser(object):
                 pf['hooks'] = self.parse_json_yaml(pf_data,
                                                    ordered=False).get('hooks',
                                                                       {})
-        except ValidationError as e:
+        except ValidationError:
             pass
 
         if not pf:

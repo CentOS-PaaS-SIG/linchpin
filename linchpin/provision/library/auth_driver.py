@@ -85,10 +85,10 @@ def parse_file(filename, vault_enc, vault_pass):
         cred_str = open(filename, "r").read()
     try:
         out = json.loads(cred_str)
-    except Exception as e:
+    except Exception:
         try:
             out = yaml.load(cred_str)
-        except Exception as e:
+        except Exception:
             try:
                 config = ConfigDict()
                 f = open(filename)

@@ -178,7 +178,7 @@ class Validator(object):
             try:
                 err = self._gen_error_msg("", "", v.errors)
                 raise TopologyError(err)
-            except NotImplementedError as e:
+            except NotImplementedError:
                 # we shouldn't have this issue using cererus >= 1.2, but
                 # this is here just in case an older version has to be used
                 self.ctx.log_state("There was an error validating your schema,\
@@ -218,7 +218,7 @@ class Validator(object):
             try:
                 err = self._gen_error_msg("", "", v.errors)
                 raise SchemaError(err)
-            except NotImplementedError as e:
+            except NotImplementedError:
                 # we shouldn't have this issue using cererus >= 1.2, but
                 # this is here just in case an older version has to be used
                 self.ctx.log_state("There was an error validating your schema,\
