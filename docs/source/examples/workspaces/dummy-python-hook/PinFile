@@ -3,10 +3,15 @@ dummy_target:
   topology: dummy-topology.yml
   layout: dummy-layout.yml
   hooks:
-    postup:
+    preup:
       - name: ex_hook
         type: python
         context: False
         actions:
           - list_files.py
+    postdestroy:
+      - name: ex_hook
+        type: python
+        context: False
+        actions:
           - find_pinfile.py
