@@ -26,10 +26,20 @@ library identifier: "cico-pipeline-library@master",
         retriever: modernSCM([$class: 'GitSCMSource',
                               remote: "https://github.com/CentOS/cico-pipeline-library"])
 
+// Check out PR's version of library
+library identifier: "linchpin-pipeline@develop",
+        retriever: modernSCM([$class: 'GitSCMSource',
+                              remote: "https://github.com/CentOS-PaaS-SIG/linchpin",
+                              traits: [[$class: 'jenkins.plugins.git.traits.BranchDiscoveryTrait'],
+                                       [$class: 'RefSpecsSCMSourceTrait',
+                                        templates: [[value: '+refs/heads/*:refs/remotes/@{remote}/*'],
+[value: '+refs/pull/*:refs/remotes/origin/pr/*']]]]])
+
+
 @Library('contra-lib')
 import org.centos.contra.pipeline.GitHubAPI
 
-import org.centos.pipeline.LinchpinPipelineUtils
+
 
 properties([
   buildDiscarder(logRotator(artifactNumToKeepStr: '20', numToKeepStr: '15')),
