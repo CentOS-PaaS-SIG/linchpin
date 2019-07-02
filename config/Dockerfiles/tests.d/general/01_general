@@ -3,7 +3,7 @@
 # Verify basic provisioning for all supplied providers
 # distros.exclude: centos7 fedora28 fedora30
 # providers.include: none
-# providers.exclude: vmware docker gcloud
+# providers.exclude: vmware docker gcloud aws openstack
 
 DISTRO=${1}
 PROVIDER=${2}

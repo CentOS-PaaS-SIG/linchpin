@@ -2,8 +2,7 @@
 
 # Verify os-server provisioning using inline template data
 # distros.exclude: none
-# providers.include: openstack
-# providers.exclude: none
+# providers.include: none
 
 DISTRO=${1}
 PROVIDER=${2}

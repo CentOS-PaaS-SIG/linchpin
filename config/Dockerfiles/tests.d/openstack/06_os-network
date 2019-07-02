@@ -1,8 +1,8 @@
 #!/bin/bash -xe
 
-# Verify the openstack volume provisioning with template data
+# Verify the openstack network provisioning with template data
 # distros.exclude: none
-# providers.include: openstack
+# providers.include: none
 # providers.exclude: none
 
 DISTRO=${1}
