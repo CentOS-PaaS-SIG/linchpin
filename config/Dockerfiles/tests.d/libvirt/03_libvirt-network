@@ -1,8 +1,8 @@
 #!/bin/bash -xe
 
 # Verify basic provisioning for all supplied providers
-# distros.exclude: fedora28 centos7
-# providers.include: none
+# distros.exclude: centos7 fedora29 fedora30
+# providers.include: libvirt
 
 ## NOTE: This is a temporary test to run libvirt tests until we fix
 ## the networking race condition. Tests will only run on centos7.

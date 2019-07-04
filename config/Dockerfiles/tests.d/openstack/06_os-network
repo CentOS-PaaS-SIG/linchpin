@@ -1,9 +1,8 @@
 #!/bin/bash -xe
 
 # Verify the openstack network provisioning with template data
-# distros.exclude: none
-# providers.include: none
-# providers.exclude: none
+# distros.exclude: centos7 fedora29 fedora30
+# providers.include: openstack
 
 DISTRO=${1}
 PROVIDER=${2}

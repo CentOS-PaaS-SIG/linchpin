@@ -1,7 +1,7 @@
 #!/bin/bash -xe
 
 # Verify template-based provisioning using complex template data file
-# distros.exclude: centos7 fedora28
+# distros.exclude: centos7
 # providers.include: none
 # providers.exclude: dummy openstack beaker duffy openshift gcloud aws docker
 

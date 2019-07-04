@@ -1,9 +1,8 @@
 #!/bin/bash -xe
 
 # Verify the aws-ec2 provisioning with template data
-# distros.exclude: fedora28 fedora29
+# distros.exclude: fedora29
 # providers.include: aws
-# providers.exclude: none
 
 DISTRO=${1}
 PROVIDER=${2}

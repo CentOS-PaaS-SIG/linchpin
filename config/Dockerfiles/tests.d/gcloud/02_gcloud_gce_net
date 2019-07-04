@@ -1,7 +1,7 @@
 #!/bin/bash -xe
 
 # Verify the gcloud gce_net provisioning
-# distros.exclude: centos7 fedora28
+# distros.exclude: centos7 fedora29
 # providers.include: gcloud
 
 DISTRO=${1}

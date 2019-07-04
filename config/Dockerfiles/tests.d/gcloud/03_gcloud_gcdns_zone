@@ -1,7 +1,7 @@
 #!/bin/bash -xe
 
 # Verify the gcloud gcdns_zone provisioning
-# distros.include: none 
+# distros.exclude: centos7 fedora29 fedora30
 # providers.include: none
 
 DISTRO=${1}
