@@ -5,7 +5,7 @@
 from __future__ import absolute_import
 import os
 import json
-
+import sys
 from nose.tools import *
 from six import iteritems
 
@@ -27,8 +27,10 @@ def setup_inventory_filter():
 
     template = 'parsed-layout.json'
     template_file = open(mock_path+'/'+template)
-    # object hook can be removed once python 2 is no longer supported
-    inv = json.load(template_file, object_hook=_byteify)
+    if sys.version_info[0] < 3:
+        inv = json.load(template_file, object_hook=_byteify)
+    else:
+        inv = json.load(template_file)
 
 def _byteify(data, ignore_dicts = False):
     # if this is a unicode string, return its string representation

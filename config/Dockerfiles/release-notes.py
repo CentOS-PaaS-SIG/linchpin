@@ -9,7 +9,7 @@ REPO = "CentOS-PaaS-SIG/linchpin"
 def get_doc_fixes(pulls):
     doc_fixes = []
     # iterate over pulls backward so that list can be removed in place
-    for i in xrange(len(pulls) - 1, -1, -1):
+    for i in range(len(pulls) - 1, -1, -1):
         labels = pulls[i].get_labels()
         for label in labels:
             if label.name == "documentation":
@@ -22,7 +22,7 @@ def get_doc_fixes(pulls):
 def get_bug_fixes(pulls):
     bug_fixes = []
     # iterate over pulls backward so that list can be removed in place
-    for i in xrange(len(pulls) - 1, -1, -1):
+    for i in range(len(pulls) - 1, -1, -1):
         labels = pulls[i].get_labels()
         for label in labels:
             if label.name == "bug":
@@ -35,7 +35,7 @@ def get_bug_fixes(pulls):
 def get_enhancements(pulls):
     enhancements = []
     # iterate over pulls backward so that list can be removed in place
-    for i in xrange(len(pulls) - 1, -1, -1):
+    for i in range(len(pulls) - 1, -1, -1):
         labels = pulls[i].get_labels()
         for label in labels:
             if label.name == "rfe":
@@ -48,7 +48,7 @@ def get_enhancements(pulls):
 def get_test_enhancements(pulls):
     test_enhancements = []
     # iterate over pulls backward so that list can be removed in place
-    for i in xrange(len(pulls) - 1, -1, -1):
+    for i in range(len(pulls) - 1, -1, -1):
         labels = pulls[i].get_labels()
         for label in labels:
             if label.name == "ci" or "testing":
@@ -62,7 +62,7 @@ def get_test_enhancements(pulls):
 def get_remaining_changes(pulls):
     changes = []
     # iterate over pulls backward so that list can be removed in place
-    for i in xrange(len(pulls) - 1, -1, -1):
+    for i in range(len(pulls) - 1, -1, -1):
         labels = pulls[i].get_labels()
         for label in labels:
             if label.name == "release":

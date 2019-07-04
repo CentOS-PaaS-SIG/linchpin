@@ -113,7 +113,7 @@ def main():
         if value and (value.startswith("{") or value.startswith("[")):
             try:
                 val = json.loads(value)
-            except Exception as e:
+            except Exception:
                 try:
                     val = ast.literal_eval(value)
                 except Exception as e:
