@@ -96,7 +96,7 @@ def test_load_global_evars():
     lpc.load_global_evars()
 
     # remove workspace key as it's not from the config file
-    for k in lpc.evars.keys():
+    for k in list(lpc.evars):
         if k == 'workspace':
             if lpc.evars.get(k):
                 lpc.evars.pop(k)
