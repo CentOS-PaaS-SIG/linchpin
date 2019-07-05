@@ -33,9 +33,6 @@ def test_api_create():
     assert_equal(isinstance(lpa, LinchpinAPI), True)
 
 
-
-
-
 def setup_load_config():
 
     """
