@@ -267,6 +267,7 @@ def fetch_beaker_job_ids(topo_out):
     for entry in topo_out:
         entry_dict = {}
         entry_dict["ids"] = []
-        entry_dict["ids"].append("J:" + entry["id"])
-        output.append(entry_dict)
+        if "id" in list(entry):
+            entry_dict["ids"].append("J:" + entry["id"])
+            output.append(entry_dict)
     return output

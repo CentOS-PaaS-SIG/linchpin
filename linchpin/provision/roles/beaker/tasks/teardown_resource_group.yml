@@ -7,70 +7,17 @@
     key: "outputs"
     run_id: "{{ orig_run_id }}"
   register: topo_output
-  when: not generate_resources
 
 - name: Filter list for resources
   set_fact:
     topo_output_resources: "{{ topo_output.output | filter_list_by_attr('resources') }}"
-  when: not generate_resources
-
-- name: debug
-  debug:
-    msg: "{{ topo_output }}"
-  when: not generate_resources
-
-- name: debug
-  debug:
-    msg: "{{ topo_output_resources }}"
-  when: not generate_resources
 
 - name: "set topo_output_resources fact"
   set_fact:
     topo_output_resources: "{{ topo_output_resources[0]['resources'] }}"
-  when: not generate_resources
 
-- name: "Get topology output data resources file"
-  output_parser:
-    output_file: "{{ default_resources_path + '/' +
-                 topo_data['topology_name'].replace(' ', '_').lower() + '.output' }}"
-  register: topo_output
-  when: generate_resources
-
-- name: "set topo_output_resources fact"
-  set_fact:
-    topo_output_resources: "{{ topo_output.output['content'] }}"
-  when: generate_resources
-
-- name: "init job_ids"
-  set_fact:
-    job_ids: []
-
-- name: "print beaker res"
-  debug:
-    msg: "{{ topo_output_resources[0] }}"
-
-- name: "build job_id list"
-  set_fact:
-    job_ids: "{{ job_ids + [ 'J:' + fact_item['id'] ] }}"
-  with_items: "{{ topo_output_resources | default([]) }}"
-  when: fact_item[ 'resource_type' ] == 'beaker_res'
-  loop_control:
-    loop_var: fact_item
-
-- name: "make ids a dict"
-  set_fact:
-    just_ids: {"ids": "{{ job_ids }}"}
-
-- name: "Create Job structure to send to beaker API"
-  include: get_job_structure.yml res_grp={{ rs }}
-  with_items:
-    - "{{ resources }}"
-  when: state == "absent"
-  loop_control:
-    loop_var: rs
-
-- name: "teardown beaker systems"
+- name: "Deprovision resources"
   bkr_server:
-    recipesets: "[ {{ combined }} ]"
+    recipesets: "{{ topo_output_resources | fetch_beaker_job_ids }}"
     state: absent
-    job_group: "{{ resources['job_group'] | default('') }}"
+    cancel_message: "cancelled provisioning on teardown request"
