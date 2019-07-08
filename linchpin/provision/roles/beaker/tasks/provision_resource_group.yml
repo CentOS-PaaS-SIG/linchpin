@@ -114,22 +114,22 @@
       state: absent
       cancel_message: "cancelled provisioning on timeout"
 
-  - name: "set topology_outputs_beaker_server using recipe id"
-    set_fact:
-      tmp_topo_bkr_srvc: "{{ ttbs | combine(_topo_out_bkr_server['hosts'] | selectattr('rid', 'match', '^' + ttbs.rid + '$') | first) }}"
-    when:
-      - state == 'present'
-    with_items: "{{ topology_outputs_beaker_server }}"
-    register: tmp_bkr
-    loop_control:
-      loop_var: ttbs
+- name: "set topology_outputs_beaker_server using recipe id"
+  set_fact:
+    tmp_topo_bkr_srvc: "{{ ttbs | combine(_topo_out_bkr_server['hosts'] | selectattr('rid', 'match', '^' + ttbs.rid + '$') | first) }}"
+  when:
+    - state == 'present'
+  with_items: "{{ topology_outputs_beaker_server }}"
+  register: tmp_bkr
+  loop_control:
+    loop_var: ttbs
 
-  - name: "Set topology_outputs_beaker_server to the current job(s) data"
-    set_fact:
-      topology_outputs_beaker_server: "{{ tmp_bkr.results | map_results('ansible_facts', 'tmp_topo_bkr_srvc') }}"
-    when:
-      - state == 'present'
+- name: "Set topology_outputs_beaker_server to the current job(s) data"
+  set_fact:
+    topology_outputs_beaker_server: "{{ tmp_bkr.results | map_results('ansible_facts', 'tmp_topo_bkr_srvc') }}"
+  when:
+    - state == 'present'
 
-  - name: "Add type to resource"
-    set_fact:
-      topology_outputs_beaker_server: "{{ topology_outputs_beaker_server | add_res_type('beaker_res') }}"
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_beaker_server: "{{ topology_outputs_beaker_server | add_res_type('beaker_res') }}"
