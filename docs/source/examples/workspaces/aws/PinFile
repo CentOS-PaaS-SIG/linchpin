@@ -159,7 +159,7 @@ aws-ec2-vpc-net:
       - resource_group_name: "awsvpc"
         resource_group_type: "aws"
         resource_definitions:
-          - name: demo_day_vpc
+          - name: "{{ distro }}demo_day_vpc"
             role: aws_ec2_vpc_net
             region: "{{ region | default('us-east-1') }}"
             cidr_block: {{ cidr_block | default('10.10.0.0/16') }}
