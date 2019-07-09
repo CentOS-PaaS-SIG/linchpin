@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import absolute_import
+from collections import OrderedDict
 
 from .InventoryFilter import InventoryFilter
 
@@ -19,7 +20,7 @@ class DummyInventory(InventoryFilter):
         :param cfgs:
             map of config options from PinFile
         """
-        host_data = {}
+        host_data = OrderedDict()
         var_data = cfgs.get('dummy', {})
         var_data.update(cfgs.get('nummy', {}))
         if var_data is None:

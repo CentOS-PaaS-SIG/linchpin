@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import absolute_import
+from collections import OrderedDict
 
 from .InventoryFilter import InventoryFilter
 
@@ -27,7 +28,7 @@ class GCloudInventory(InventoryFilter):
         :param cfgs:
             map of config options from PinFile
         """
-        host_data = {}
+        host_data = OrderedDict()
         if res['resource_type'] != 'gcloud_gce_res':
             return host_data
         var_data = cfgs.get('gcloud', {})
