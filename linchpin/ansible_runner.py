@@ -4,11 +4,8 @@ import sys
 import ansible
 from contextlib import contextmanager
 
-from ansible import context
-
 ansible24 = float(ansible.__version__[0:3]) >= 2.4
 ansible_version = float(ansible.__version__[0:3])
-
 
 # CentOS 6 EPEL provides an alternate Jinja2 package
 # used by the imports below - Ansible uses Jinja2 here
@@ -29,6 +26,9 @@ if ansible24:
 else:
     from ansible.inventory import Inventory
     from ansible.vars import VariableManager
+
+if ansible_version >= 2.8:
+    from ansible import context
 
 
 @contextmanager
