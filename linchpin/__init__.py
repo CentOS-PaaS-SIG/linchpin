@@ -723,6 +723,43 @@ class LinchpinAPI(object):
         return return_code, results
 
 
+
+    def _write_to_inventory(self, tx_id=None, inv_path=None, inv_format="cfg"):
+        latest_run_data = self._get_run_data_by_txid()
+        if tx_id:
+            latest_run_data = self._get_run_data_by_txid(tx_id)
+        all_inventories = {}
+        try:
+            for t_id in latest_run_data:
+                targets = latest_run_data[t_id]["targets"][0]
+                for name in targets:
+                    if "layout_data" in targets[name]["inputs"]:
+                        lt_data = targets[name]["inputs"]["layout_data"]
+                        t_data = targets[name]["inputs"]["topology_data"]
+                        c_data = {}
+                        if "cfgs" in list(targets[name].keys()):
+                            c_data = targets[name]["cfgs"]["user"]
+                        layout = lt_data["inventory_layout"]
+                        r_o = targets[name]["outputs"]["resources"]
+                        """
+                        # TODO: in the future we should render templates in
+                        # layout and cfgs here so that we can use data from the
+                        # most recent run
+                        """
+                        inv = self.generate_inventory(r_o,
+                                                      layout,
+                                                      inv_format=inv_format,
+                                                      topology_data=t_data,
+                                                      config_data=c_data)
+                        all_inventories[name] = inv
+            return all_inventories
+
+        except Exception as e:
+            self.ctx.log_state('Error: {0}'.format(e))
+            sys.exit(1)
+        return True
+
+
     def get_run_data(self, tx_id, fields, targets=()):
         """
         Returns the RunDB for data from a specified field given a tx_id.
@@ -905,7 +942,6 @@ class LinchpinAPI(object):
             results = None
 
         return (return_code, results)
-
 
     def ssh(self, target):
         def merge_two_dicts(x, y):

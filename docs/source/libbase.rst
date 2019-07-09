@@ -20,3 +20,6 @@ and other useful aspects for provisioning.
     :members:
     :undoc-members:
 
+.. automodule:: linchpin.api
+    :members:
+    :undoc-members:

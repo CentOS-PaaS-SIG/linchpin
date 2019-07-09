@@ -39,7 +39,7 @@ setup(
     extras_require={
         'krbV': ["python-krbV"],
         'beaker': ['beaker-client>=23.3', 'python-krbV'],
-        'docs': ["docutils", "sphinx", "sphinx_rtd_theme"],
+        'docs': ["docutils", "sphinx", "sphinx_rtd_theme", "sphinx-automodapi"],
         'tests': ["nose", "mock", "coverage", "flake8", "pytest"],
         'libvirt': ["libvirt-python>=3.0.0", "lxml"],
         'vmware': ["PyVmomi>=6.7.1"],

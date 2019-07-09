@@ -50,12 +50,55 @@ class LinchpinContext(object):
         self._parse_config(constants_file)
 
 
-    def load_config(self, search_path=None):
+    def load_config(self, workspace=None, config_path=None, search_path=None):
         """
+
         Update self.cfgs from the linchpin configuration file (linchpin.conf).
 
-        NOTE: Must be implemented by a subclass
+        The following paths are used to find the config file.
+        The search path defaults to the first-found order::
+
+          * /etc/linchpin.conf
+          * /linchpin/library/path/linchpin.conf
+          * <workspace>/linchpin.conf
+
+        An alternate search_path can be passed.
+
+        :param search_path: A list of paths to search a linchpin config
+        (default: None)
         """
+
+        if workspace:
+            self.workspace = os.path.realpath(workspace)
+
+        if workspace in dir(self):
+            self.workspace = os.path.realpath(os.path.curdir)
+
+        expanded_path = None
+
+        if config_path:
+            CONFIG_PATH = [config_path]
+        else:
+            CONFIG_PATH = [
+                '/etc/linchpin.conf',
+                '~/.config/linchpin/linchpin.conf',
+            ]
+            if workspace in dir(self):
+                CONFIG_PATH.append('{0}/linchpin.conf'.format(self.workspace))
+
+        existing_paths = []
+        for path in CONFIG_PATH:
+            expanded_path = (
+                "{0}".format(os.path.realpath(os.path.expanduser(path))))
+
+            # implement first found
+            if os.path.exists(expanded_path):
+                # logging before the config file is setup doesn't work
+                # if messages are needed before this, use print.
+                existing_paths.append(expanded_path)
+
+        for path in existing_paths:
+            self._parse_config(path)
 
         pass
 

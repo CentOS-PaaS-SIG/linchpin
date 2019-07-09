@@ -27,6 +27,7 @@ Test
    inventory
    destroy
    tutorials
+   linchpin_api
 
 
 
