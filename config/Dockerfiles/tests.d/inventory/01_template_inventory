@@ -1,9 +1,10 @@
 #!/bin/bash -xe
 
 # Verify template-based provisioning using complex template data file
-# distros.exclude: centos7
-# providers.include: none
+# distros.exclude: fedora29 fedora30
+# providers.include: libvirt
 # providers.exclude: dummy openstack beaker duffy openshift gcloud aws docker
+
 
 DISTRO=${1}
 PROVIDER=${2}
