@@ -15,6 +15,7 @@
                     "vcpus": { "type": "integer", "required": true },
                     "cpu_mode": { "type": "string", "required": false },
                     "memory": { "type": "integer", "required": true },
+                    "static_ip": {"type": "boolean","required": false },
                     "count": { "type": "integer", "required": false },
                     "uri": { "type": "string", "required": false },
                     "driver": {
