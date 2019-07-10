@@ -11,7 +11,6 @@ env.TARGET_BRANCH = env.ghprbTargetBranch ?: 'develop'
 
 // Needed for podTemplate()
 env.SLAVE_TAG = env.SLAVE_TAG ?: 'stable-' + env.ghprbTargetBranch
-env.FEDORA28_TAG = env.FEDORA28_TAG ?: 'stable-' + env.ghprbTargetBranch
 env.FEDORA29_TAG = env.FEDORA29_TAG ?: 'stable-' + env.ghprbTargetBranch
 env.FEDORA30_TAG = env.FEDORA30_TAG ?: 'stable-' + env.ghprbTargetBranch
 env.CENTOS7_TAG = env.CENTOS7_TAG ?: 'stable-' + env.ghprbTargetBranch
@@ -38,7 +37,6 @@ executionID = UUID.randomUUID().toString()
 
 // Pod name to use
 c7podName = 'lp_centos7-' + executionID
-f28podName = 'lp_fedora28-' + executionID
 f29podName = 'lp_fedora29-' + executionID
 f30podName = 'lp_fedora30-' + executionID
 
@@ -76,9 +74,6 @@ properties(
                 string(defaultValue: 'stable-' + env.ghprbTargetBranch,
                        description: 'Tag for slave image',
                        name: 'SLAVE_TAG'),
-                string(defaultValue: 'stable-' + env.ghprbTargetBranch,
-                       description: 'Tag for fedora28 image',
-                       name: 'FEDORA28_TAG'),
                 string(defaultValue: 'stable-' + env.ghprbTargetBranch,
                        description: 'Tag for fedora29 image',
                        name: 'FEDORA29_TAG'),
@@ -134,39 +129,6 @@ stage('Tests') {
                 )
                 {
                     execute_test(c7podName, "centos7")
-                }
-            }, fedora28: {
-                pipelineUtils.clearTemplateNames()
-                podTemplate(name: f28podName,
-                            label: f28podName,
-                            cloud: 'openshift',
-                            serviceAccount: OPENSHIFT_SERVICE_ACCOUNT,
-                            idleMinutes: 0,
-                            namespace: OPENSHIFT_NAMESPACE,
-
-                        containers: [
-                            // This adds the custom slave container to the pod.
-                            // Must be first with name 'jnlp'
-                            containerTemplate(name: 'jnlp',
-                                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/jenkins-continuous-infra-slave:' + SLAVE_TAG,
-                                ttyEnabled: false,
-                                args: '${computer.jnlpmac} ${computer.name}',
-                                command: '',
-                                workingDir: '/workDir'),
-                            containerTemplate(name: 'fedora28',
-                                alwaysPullImage: true,
-                                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora28:' + FEDORA28_TAG,
-                                ttyEnabled: false,
-                                command: '/root/init_libvirt.sh',
-                                privileged: true,
-                                workingDir: '/workDir')
-                        ],
-                        volumes: [
-                            emptyDirVolume(memory: false, mountPath: '/sys/class/net')
-                        ]
-                )
-                {
-                    execute_test(f28podName, "fedora28")
                 }
             }, fedora29: {
                 pipelineUtils.clearTemplateNames()

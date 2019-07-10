@@ -1,9 +1,8 @@
 #!/bin/bash -xe
 
 # Verify os-server provisioning using inline template data
-# distros.exclude: none
-# providers.include: openstack
-# providers.exclude: none
+# distros.exclude: centos7 fedora29 fedora30
+# providers.include: none
 
 DISTRO=${1}
 PROVIDER=${2}

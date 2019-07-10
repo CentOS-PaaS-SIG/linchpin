@@ -1,8 +1,8 @@
 #!/bin/bash -xe
 
 # Verify basic provisioning for all supplied providers
-# distros.exclude: centos7 fedora28
-# providers.include: gcloud
+# distros.exclude: centos7 fedora29
+# providers.include: none
 
 exit
 

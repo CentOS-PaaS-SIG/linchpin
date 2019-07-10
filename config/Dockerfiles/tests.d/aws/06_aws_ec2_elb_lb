@@ -1,9 +1,8 @@
 #!/bin/bash -xe
 
 # Verify the aws ec2 elb lb provisioning
-# distros.exclude: centos7 fedora28 fedora30
+# distros.exclude: centos7 fedora29
 # providers.include: aws
-# providers.exclude: none
 
 DISTRO=${1}
 PROVIDER=${2}

@@ -1,9 +1,8 @@
 #!/bin/bash -xe
 
 # Verify --no-hooks and --ignore-failed-hooks on dummy provider
-# distros.exclude: fedora28 centos7
+# distros.exclude: fedora29 fedora30
 # providers.include: dummy
-# providers.exclude: none
 
 DISTRO=${1}
 PROVIDER=${2}
