@@ -20,8 +20,4 @@ class linchpinPipelineUtils implements Serializable {
     def sendPRComment(ghprbGhRepository, ghprbPullId, message) {
         return linchpinPipelineUtils.sendPRComment(ghprbGhRepository, ghprbPullId, message)
     }
-
-    def getChangedFile(filePath){
-        return linchpinPipelineUtils.sendPRComment(filePath)
-    }
 }
