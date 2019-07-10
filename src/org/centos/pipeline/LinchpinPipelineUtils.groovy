@@ -84,25 +84,3 @@ def sendPRComment(ghprbGhRepository, ghprbPullId, msg) {
         sh './ghi comment ' + ghprbPullId + ' -m "' + msg + '" -- ' + ghprbGhRepository
     }
 }
-
-// check the filePath against changed files
-// return file.path if there's a match, else false
-def getChangedFile(String filePath) {
-
-    def changeLogSets = currentBuild.changeSets
-    sz = changeLogSets.size()
-    for (int i = 0; i < sz; i++) {
-        def entries = changeLogSets[i].items
-        for (int j = 0; j < entries.length; j++) {
-            def entry = entries[j]
-            def files = new ArrayList(entry.affectedFiles)
-            for (int k = 0; k <files.size(); k++) {
-                def file = files[k]
-                if (file.path == filePath) {
-                    return file.path
-                }
-            }
-        }
-    }
-    return false
-}
