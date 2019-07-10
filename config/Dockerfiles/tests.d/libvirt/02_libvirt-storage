@@ -1,7 +1,7 @@
 #!/bin/bash -xe
 
 # Verify basic provisioning for all supplied providers
-# distros.exclude: fedora29 fedora30
+# distros.exclude: centos7 fedora30
 # providers.include: libvirt
 
 ## NOTE: This is a temporary test to run libvirt tests until we fix
