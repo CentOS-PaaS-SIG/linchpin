@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from collections import OrderedDict
 try:
     from StringIO import StringIO
 except ImportError:
@@ -9,7 +11,7 @@ class DockerInventory(InventoryFilter):
     DEFAULT_HOSTNAMES = ['Config.Hostname']
 
     def get_host_data(self, res, config):
-        host_data = {}
+        host_data = OrderedDict()
         # Only docker_container resource type produces host data.
         if res['resource_type'] != 'docker_container_res':
             return host_data

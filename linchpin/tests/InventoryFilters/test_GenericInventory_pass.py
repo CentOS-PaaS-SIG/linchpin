@@ -105,7 +105,7 @@ def test_get_hosts_by_count():
     """
     """
     host_data = filter.get_host_data(res_output, config)
-    expected_hosts = ['10.179.254.83', 'hp-dl380pgen8-02-vm-15.lab.bos.redhat.com', 'dummy-744068-2']
+    expected_hosts = ['10.179.254.83', 'hp-dl380pgen8-02-vm-15.lab.bos.redhat.com', 'dummy-744068-0']
     hosts = filter.get_hosts_by_count(host_data, 0)
     assert_equal(len(hosts), 0)
     hosts = filter.get_hosts_by_count(host_data, 3)
@@ -122,46 +122,3 @@ def test_get_inventory():
     """
     inventory = filter.get_inventory(res_output, layout, topology, config)
     assert_true(inventory)
-
-@with_setup(setup_complex_workspace)
-@with_setup(setup_generic_inventory_filter)
-@with_setup(setup_generic_config)
-def test_output_order():
-    """
-    Test that inventories are ordered correctly
-
-    This test checks that hosts and variables are ordered correctly when a
-    provisioning output made up of multiple hosts is passed to the inventory
-    generator.
-
-    input: resources, topology, and layout from a mock succcessful provisioning
-    output: an inventory file whose order will be verified
-    """
-
-    # get topology and layout
-    pf_path = '{0}/{1}'.format(workspace, 'PinFile')
-    pinfile = yaml.load(open(pf_path), Loader=yaml.FullLoader)
-    topology = pinfile['complex-inventory']['topology']
-    layout_path = '{0}/{1}'.format(workspace, 'layout.json')
-    layout = json.load(open(layout_path))
-
-    # get res_output
-    output_path = '{0}/{1}'.format(workspace, 'linchpin.benchmark')
-    res_output = json.load(open(output_path))
-    res_output = res_output[list(res_output.keys())[0]]['targets'][0]['complex-inventory']['outputs']['resources']
-
-    # call get_inventory and print the result
-    inventory = filter.get_inventory(res_output, layout, topology, config)
-
-    # load in "correct" inventory file
-    correct_inv_path = '{0}/{1}'.format(workspace,
-                                            'correct-inventory')
-    correct_inventory = open(correct_inv_path, 'r').read()
-
-    # check that the two inventories are equal
-    inventory_lines = inventory.splitlines(1)
-    correct_lines = correct_inventory.splitlines(1)
-    # if the assertion fails, this diff will display
-    diff = difflib.unified_diff(inventory_lines, correct_lines)
-    print(''.join(diff))
-    assert_equal(inventory, correct_inventory)

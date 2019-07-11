@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from __future__ import absolute_import
+from collections import OrderedDict
 
 from .InventoryFilter import InventoryFilter
 
@@ -8,7 +9,7 @@ class OpenstackInventory(InventoryFilter):
     DEFAULT_HOSTNAMES = ["accessIPv4", "public_v4", "private_v4"]
 
     def get_host_data(self, res, cfgs):
-        host_data = {}
+        host_data = OrderedDict()
         if res['resource_type'] != 'os_server_res':
             return host_data
         var_data = cfgs.get('openstack', {})
