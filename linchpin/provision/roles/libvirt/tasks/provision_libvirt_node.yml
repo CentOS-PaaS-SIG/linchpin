@@ -410,6 +410,10 @@
   delay: 10
   when: uri_hostname == 'localhost'
 
+- set_fact: 
+    static_ip: "{{extract_ip_address_result.results.0['stdout']|omit_filter(omit)}}"
+  when: uri_hostname == 'localhost'
+
 - name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
     /usr/sbin/arp -an | grep -F {{ mac }} | cut -f 2 -d "(" | cut -f 1 -d ")"
@@ -423,6 +427,10 @@
   delay: 10
   remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
   delegate_to: "{{ uri_hostname }}"
+  when: uri_hostname != 'localhost'
+
+- set_fact: 
+    static_ip: "{{extract_ip_address_result_remote.results.0['stdout']|omit_filter(omit)}}"
   when: uri_hostname != 'localhost'
 
 - name: "Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
@@ -463,3 +471,20 @@
   when:
     - extract_ip_address_result is not defined
     - extract_ip_address_result_remote is not defined
+
+  
+- name: "Update the ip in Inventory"
+  # shell: virsh net-update {{ network['name']}} add ip-dhcp-host "<host mac='{{ macs.0 }}' name='{{ res_def['name'] }}' ip='{{ static_ip }}' />" --live --config
+  virt_net:
+    name: "{{ network['name']}}"
+    command: modify
+    xml: "<host mac='{{ macs.0 }}' name='my_vm' ip='{{ static_ip }}'/>"
+  when: 
+    - network['static_ip_reserved'] is defined
+    - network['static_ip_reserved'] == true
+  with_items: res_def['networks']
+  loop_control:
+    loop_var: network 
+
+ 
+ 
