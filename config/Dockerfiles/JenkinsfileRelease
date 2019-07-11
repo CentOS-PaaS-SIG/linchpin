@@ -199,18 +199,18 @@ EOF
                             sh "twine upload --config-file /tmp/pypirc -r " + env.PROD_PYPI_REPO + " dist/* || echo 'Version already uploaded'"
                         }
                     }
-                    stage('release-container') {
-                        dir(repoName) {
-                            string version= sh (
-                                script: "python setup.py --version",
-                                returnStdout: true
-                                ).trim()
-                            withCredentials([file(credentialsId: 'docker_creds', variable: 'DOCKER_CREDS')]) {
-                                env.DOCKER_CREDS = DOCKER_CREDS
-                                pipelineUtils.executeInContainer(currentStage, "fedora29", "./config/Dockerfiles/buildah-push.sh "+version)
-                            }
-                        }
-                    }
+//                    stage('release-container') {
+//                        dir(repoName) {
+//                            string version= sh (
+//                                script: "python setup.py --version",
+//                                returnStdout: true
+//                                ).trim()
+//                            withCredentials([file(credentialsId: 'docker_creds', variable: 'DOCKER_CREDS')]) {
+//                                env.DOCKER_CREDS = DOCKER_CREDS
+//                                pipelineUtils.executeInContainer(currentStage, "fedora29", "./config/Dockerfiles/buildah-push.sh "+version)
+//                            }
+//                        }
+//                    }
                     stage('push-to-master') {
                         dir(repoName) {
                             sh "git push origin " + env.ghprbActualCommit + ":" + MASTER_BRANCH
