@@ -9,8 +9,11 @@ New in version 1.5.2
 
 When an :term:`layout` is provided in the PinFile, LinchPin automatically generates
 a static inventory for Ansible. The inventory filename is dynamically generated based
-upon a few factors. However, the value can be overridden simply by adding the
-``inventory_file`` option.
+upon the name of the target and the uhash.  However, the value can be overridden
+simply by adding the ``inventory_file`` option.  The uhash can be disabled for all targets
+by setting the ``enable_uhash`` flag to False in ``linchpin.conf`` or for a subset of
+targets by using the ``--disable-uhash`` flag when running ``linchpin up`` and providing
+a comma-separated list of targets
 
 .. code-block:: bash
 

@@ -264,6 +264,7 @@ def test_invoke_playbooks():
     lpa.set_evar('target', provider)
     lpa.set_evar('resources', resources)
     lpa.set_evar('uhash', 'test')
+    lpa.set_evar('use_uhash', True)
 
     return_code, results = lpa._invoke_playbooks(resources,
                                                  action='up',

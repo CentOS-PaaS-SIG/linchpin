@@ -181,13 +181,13 @@
   set_fact:
     inventory_path: "{{ inventory_path | default( workspace +'/'+inventories_folder+'/'+
     topology_name.replace(' ', '_').lower() + '-' + uhash + '.inventory')}}"
-  when: enable_uhash
+  when: use_uhash
 
 - name: "Updating inventory_path with the absolute path"
   set_fact:
     inventory_path: "{{ inventory_path | default( workspace +'/'+inventories_folder+'/'+
     topology_name.replace(' ', '_').lower() ) }}.inventory"
-  when: not enable_uhash
+  when: not use_uhash
 
 - name: "Info"
   debug:

@@ -6,7 +6,7 @@
 - name: "Assign nummy name using uhash value"
   set_fact:
     nummy_name: "{{ nummy_name + '-' + uhash }}"
-  when: enable_uhash
+  when: use_uhash
 
 - name: "Provision nummy resources by looping on count"
   dummy:

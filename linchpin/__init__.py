@@ -473,16 +473,19 @@ class LinchpinAPI(object):
                                            'vault_pass',
                                            default=''))
 
-        for target in list(provision_data.keys()):
+        targets = [x.lower() for x in list(provision_data.keys())]
+        disable_uhash_targets = self.ctx.get_evar('disable_uhash_targets')
+        enable_uhash = self.ctx.get_evar('enable_uhash')
+
+        for target in targets:
             if not isinstance(provision_data[target], dict):
                 raise LinchpinError("Target '{0}' does not"
                                     " exist.".format(target))
 
-        targets = [x.lower() for x in list(provision_data.keys())]
         if 'linchpin' in targets:
             raise LinchpinError("Target 'linchpin' is not allowed.")
 
-        for target in list(provision_data.keys()):
+        for target in targets:
             if target == 'cfgs':
                 continue
 
@@ -615,6 +618,12 @@ class LinchpinAPI(object):
                 self.hook_state = '{0}{1}'.format('pre', action)
 
             # FIXME need to add rundb data for hooks results
+
+            # Enable/disable uhash based on provided flag(s)
+            if disable_uhash_targets and target in disable_uhash_targets:
+                self.ctx.set_evar('use_uhash', False)
+            else:
+                self.ctx.set_evar('use_uhash', enable_uhash)
 
             # invoke the appropriate action
             return_code, results[target]['task_results'] = (
