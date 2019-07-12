@@ -25,6 +25,7 @@ libvirt-new:
               - name: default
               - name: default
                 dhcp: false
+                static_ip_reserved: false
             {% endif %}
             additional_storage: {{ storage | default('10G') }}
             {% if user is defined %}
