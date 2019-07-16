@@ -43,7 +43,7 @@ definition, the following options are available.
 |                    |       |          | * name (req)  | with an incremented value (eth0) |
 |                    |       |          | * ip          |                                  |
 |                    |       |          | * mac         | .. note:: Network must exist     |
-|                    |       |          |               |                                  |
+|                    |       |          | *static_ip_reserved |                                  |
 +--------------------+-------+----------+---------------+---------------------+------------+
 | image_src          | false | string   | virt-install  |                     |            |
 +--------------------+-------+----------+---------------+---------------------+------------+
@@ -66,7 +66,8 @@ definition, the following options are available.
 +--------------------+-------+----------+---------------+---------------------+------------+
 | count              | false | string   | N/A           |                     |            |
 +--------------------+-------+----------+---------------+---------------------+------------+
-
+| static_ip_reserved | false | boolean  | networks      |                     |            |
++--------------------+-------+----------+---------------+---------------------+------------+
 libvirt_network
 ---------------
 

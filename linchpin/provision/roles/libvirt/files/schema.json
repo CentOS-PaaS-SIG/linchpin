@@ -71,6 +71,7 @@
                                 "name": { "type": "string", "required": true },
                                 "ip": { "type": "string", "required": false },
                                 "dhcp": { "type": "boolean", "required": false },
+                                "static_ip_reserved": {"type": "boolean","required": false },
                                 "mac": { "type": "string", "required": false }
                             }
                         }
