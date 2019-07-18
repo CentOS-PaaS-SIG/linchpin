@@ -370,6 +370,9 @@
     networks: []
 
 - set_fact:
+    macs: []
+
+- set_fact:
     networks: "{{ networks + [net] }}"
   loop: "{{ res_def['networks'] }}"
   loop_control:
@@ -389,11 +392,8 @@
   loop: "{{ networks|product(res_count)|list }}"
 
 - set_fact:
-    macs: []
-
-- set_fact:
-    macs: "{{ macs + [mac_addresses.results[node.1].matches[node.0].mac.address] }}"
-  loop: "{{ range(0,networks|length,1)|list|product(res_count)|list }}"
+    macs: "{{ macs + [mac_addresses.results[node].matches[0].mac.address] }}"
+  loop: '{{ range(0,networks|length,1)|list }}'
   loop_control:
     loop_var: node
 
@@ -410,9 +410,30 @@
   delay: 10
   when: uri_hostname == 'localhost'
 
+# ----------------------------------------------------------
+- set_fact:
+    ip_set: []
+
 - set_fact: 
-    static_ip: "{{extract_ip_address_result.results.0['stdout']|omit_filter(omit)}}"
+    ip_set: "{{ip_set + [extract_ip_address_result.results[num]['stdout']|omit_filter(omit)]}}"
+  loop: "{{ range(0,networks|length, 1)|list}}"
+  loop_control:
+    loop_var: num
   when: uri_hostname == 'localhost'
+
+# - debug: 
+#     msg: "{{extract_ip_address_result.results}}"
+#   when: uri_hostname == 'localhost'
+
+# - debug: 
+#     msg: "{{extract_ip_address_result.results.0['stdout']|omit_filter(omit)}}"
+#   when: uri_hostname == 'localhost'
+
+# - debug: 
+#     msg: "{{extract_ip_address_result.results.1['stdout']|omit_filter(omit)}}"
+#   when: uri_hostname == 'localhost'
+
+# -----------------------------------------------------------
 
 - name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
@@ -430,7 +451,10 @@
   when: uri_hostname != 'localhost'
 
 - set_fact: 
-    static_ip: "{{extract_ip_address_result_remote.results.0['stdout']|omit_filter(omit)}}"
+    ip_set: "{{ip_set + [extract_ip_address_result_remote.results[num]['stdout']|omit_filter(omit)]}}"
+  loop: "{{ range(0,networks|length, 1)|list}}"
+  loop_control:
+    loop_var: num
   when: uri_hostname != 'localhost'
 
 - name: "Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
@@ -476,15 +500,18 @@
 - name: "Update the ip in Inventory"
   # shell: virsh net-update {{ network['name']}} add ip-dhcp-host "<host mac='{{ macs.0 }}' name='{{ res_def['name'] }}' ip='{{ static_ip }}' />" --live --config
   virt_net:
-    name: "{{ network['name']}}"
+    name: "{{ networks[num]['name']}}"
     command: modify
-    xml: "<host mac='{{ macs.0 }}' name='my_vm' ip='{{ static_ip }}'/>"
+    xml: "<host mac='{{ macs[num] }}' name='{{ res_def['name'] }}' ip='{{ ip_set[num] }}'/>"
   when: 
-    - network['static_ip_reserved'] is defined
-    - network['static_ip_reserved'] == true
-  with_items: res_def['networks']
+    - networks[num]['static_ip_reserved'] is defined
+    - networks[num]['static_ip_reserved'] == true
+  loop: '{{ range(0,networks|length,1)|list }}'
   loop_control:
-    loop_var: network 
+    loop_var: num
+  # with_items: res_def['networks']
+  # loop_control:
+  #   loop_var: network 
 
  
  
