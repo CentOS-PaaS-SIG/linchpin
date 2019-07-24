@@ -4,6 +4,7 @@ IMAGE=docker.io/${DOCKER_HUB_USERNAME}/${DOCKER_HUB_IMAGE}
 TAG=$1
 TAGGED_IMAGE=${IMAGE}:${TAG}
 
+buildah info | grep metacopy
 buildah bud -t ${IMAGE} config/Dockerfiles/linchpin
 buildah push --authfile ${DOCKER_CREDS} ${IMAGE}
 buildah tag ${IMAGE} ${TAGGED_IMAGE}

@@ -27,7 +27,8 @@ env.MASTER_BRANCH = env.MASTER_BRANCH ?: 'master'
 //env.MASTER_BRANCH = env.MASTER_BRANCH ?: 'master-testing'
 
 env.TEST_PYPI_REPO = env.TEST_PYPI_REPO ?: 'pypitest'
-env.PROD_PYPI_REPO = env.PROD_PYPI_REPO ?: 'pypi'
+// env.PROD_PYPI_REPO = env.PROD_PYPI_REPO ?: 'pypi'
+env.PROD_PYPI_REPO = env.TEST_PYPI_REPO
 
 env.DOCKER_HUB_USERNAME = env.DOCKER_HUB_USERNAME ?: 'contrainfra'
 env.DOCKER_HUB_IMAGE = env.DOCKER_HUB_IMAGE ?: 'linchpin'
