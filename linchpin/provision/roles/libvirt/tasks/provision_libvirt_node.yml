@@ -483,13 +483,10 @@
 
 - name: "remote: Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
   set_fact:
-    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0]+data[2]+data[1]|string, 'ip': extract_ip_address_result_remote.results[data[1]].stdout, 'resource_type': 'libvirt_res' }] }}"
-  with_nested:
-    - "{{ libvirt_resource_name }}"
-    - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': vm_names[index], 'ip': ip_set[index], 'resource_type': 'libvirt_res' }] }}"
+  loop: "{{ range(0, mac_length|int)|list }}"
   loop_control:
-    loop_var: data
+    loop_var: index
   when:
     - not _async and uri_hostname != 'localhost'
     - extract_ip_address_result_remote is defined and extract_ip_address_result_remote.changed == true
