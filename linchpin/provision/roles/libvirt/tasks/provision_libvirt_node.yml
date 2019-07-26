@@ -403,7 +403,6 @@
     network_names: "{{ network_names + [item[0]['name']] }}"
     nets: "{{nets + [item[0]] }}"
   with_nested:
-      # - "{{ range(0,networks|length)|list }}"
       - "{{ networks }}"
       - "{{ res_count }}"
 
@@ -482,17 +481,6 @@
     - not _async and uri_hostname == 'localhost'
     - extract_ip_address_result is defined and extract_ip_address_result.changed == true
 
-# - set_fact:
-#     temp_list: []
-
-
-# - name: Update ip inside dict
-#   set_fact: 
-#     temp_list: "{{temp_list + [ { 'name': '{{topology_outputs_libvirt_nodes[index][0]}}', 'ip': ip_set[index], 'resource_type': 'libvirt_res' }] }}"
-#   loop: "{{ range(0,ip_set|length)|list }}"
-#   loop_control:
-#     loop_var: index
-
 - name: "remote: Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
   set_fact:
     topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0]+data[2]+data[1]|string, 'ip': extract_ip_address_result_remote.results[data[1]].stdout, 'resource_type': 'libvirt_res' }] }}"
@@ -519,9 +507,6 @@
     - extract_ip_address_result is not defined
     - extract_ip_address_result_remote is not defined
 
-# "{{ networks[num]['name']}}"
-
-
 - name: "Update the ip in Inventory"
   # shell: virsh net-update {{ network['name']}} add ip-dhcp-host "<host mac='{{ macs.0 }}' name='{{ res_def['name'] }}' ip='{{ static_ip }}' />" --live --config
   virt_net:
@@ -532,8 +517,6 @@
     - nets[num]['static_ip_reserved'] is defined
     - nets[num]['static_ip_reserved'] == true
   loop: '{{ range(0,mac_length|int,1)|list }}'
-    # - "{{ res_count }}"
-    # - '{{ range(0,mac_length|int,1)|list }}'
   loop_control:
     loop_var: num
 
