@@ -35,6 +35,7 @@ RUN yum -y install python-pip \
     rm -f /usr/sbin/pvs; \
     systemctl enable libvirtd; \
     systemctl enable virtlockd
+RUN fixfiles -F onboot
 RUN sed -i "/Service/a ExecStartPost=\/bin\/chmod 666 /dev/kvm" /usr/lib/systemd/system/libvirtd.service
 
 RUN curl -o /etc/yum.repos.d/beaker-client.repo \

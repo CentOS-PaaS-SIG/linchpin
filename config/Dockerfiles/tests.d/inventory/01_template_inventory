@@ -1,9 +1,8 @@
 #!/bin/bash -xe
 
 # Verify template-based provisioning using complex template data file
-# distros.exclude: centos7 fedora30
+# distros.exclude: fedora29 fedora30
 # providers.include: libvirt
-# providers.exclude: dummy openstack beaker duffy openshift gcloud aws docker
 
 
 DISTRO=${1}
@@ -44,7 +43,28 @@ shopt -s extglob
 VAL2CHECK="${CHECK_VAL##+([[:space:]])}"
 shopt -u extglob
 
-linchpin -w . -p "${PINFILE}" --template-data "@${TEMPLATE_FILE}" -c "${CONFIG_FILE}" -v up "${TARGET}" 2>&1 | tee -a ${TMP_FILE}
+setsebool virt_read_qemu_ga_data 1
+setsebool virt_rw_qemu_ga_data 1
+setsebool virt_sandbox_use_all_caps 1
+setsebool virt_sandbox_use_audit 1
+setsebool virt_sandbox_use_fusefs 1
+setsebool virt_sandbox_use_mknod 1
+setsebool virt_sandbox_use_netlink 1
+setsebool virt_sandbox_use_sys_admin 1
+setsebool virt_transition_userdomain 1
+setsebool virt_use_comm 1
+setsebool virt_use_execmem 1
+setsebool virt_use_fusefs 1
+setsebool virt_use_glusterd 1
+setsebool virt_use_nfs 1
+setsebool virt_use_rawip 1
+setsebool virt_use_samba 1
+setsebool virt_use_sanlock 1
+setsebool virt_use_usb 1
+setsebool virt_use_xserver 1
+semanage fcontext -a -t virt_image_t /var/lib/libvirt/images/*
+restorecon -R -v /var/lib/libvirt/images/
+linchpin -w . -p "${PINFILE}" --template-data "@${TEMPLATE_FILE}" -c "${CONFIG_FILE}" -vvv up "${TARGET}" 2>&1 | tee -a ${TMP_FILE}
 
 RC0=${?}
 
