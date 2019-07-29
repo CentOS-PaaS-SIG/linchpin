@@ -31,12 +31,13 @@ function clean_up {
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
 linchpin -w . -v up ${TARGET} 
-pushd docs/source/examples/workspaces/${PROVIDER}/resources/
-IP_NUM = cat ${TARGET}.output |grep -o ip| wc -l
-if [IP_NUM -eq 6]; then
-    echo "ip is correct"
-    exit 0
-else
-    echo "ip is incorrect"
+pushd resources/
+IP_NUM=$(cat ${TARGET}.output|grep -o ip|wc -l)
+if [ ${IP_NUM} -eq '6']; then
+    echo "ip is returned incorretly"
+    pushd ../
     exit 1
+else
+    pushd ../
+    exit 0
 fi
