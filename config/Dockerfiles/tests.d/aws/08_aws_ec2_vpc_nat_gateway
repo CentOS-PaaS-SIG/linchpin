@@ -1,0 +1,22 @@
+#!/bin/bash -xe
+
+# Verify the AWS EC2 VPC NAT gateway provisioning
+# distros.exclude: none
+# providers.include: aws
+
+DISTRO=${1}
+PROVIDER=${2}
+
+TARGET="aws-ec2-vpc-nat-gateway"
+TEMPLATE_DATA="{\"distro\": \"${DISTRO}-\"}"
+TMP_FILE=$(mktemp)
+
+function clean_up {
+    set +e
+    linchpin -w . --template-data "${TEMPLATE_DATA}" -v destroy "${TARGET}"
+}
+trap clean_up EXIT SIGHUP SIGINT SIGTERM
+
+pushd docs/source/examples/workspaces/${PROVIDER}
+
+linchpin -w . --template-data "${TEMPLATE_DATA}" -v up "${TARGET}"

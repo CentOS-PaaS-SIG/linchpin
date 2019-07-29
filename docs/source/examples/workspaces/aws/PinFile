@@ -324,6 +324,44 @@ aws-ec2-vpc-endpoint:
           profile: default
         {% endif %}
 
+aws-ec2-vpc-nat-gateway:
+  topology:
+    topology_name: {{ distro | default('test-')}}ec2vpcnatgateway
+    resource_groups:
+      - resource_group_name: "aws_ec2_vpc_nat_gateway"
+        resource_group_type: "aws"
+        resource_definitions:
+          - name: demo_vpc_net_ep
+            role: aws_ec2_vpc_net
+            region: us-east-2
+            cidr_block: 17.0.0.0/16
+            tags:
+              module: ec2vpcnatgateway_demo
+              distro: {{ distro | default('test')}}
+          - name: demo_vpc_subnet_ep
+            role: aws_ec2_vpc_subnet
+            region: us-east-2
+            vpc_name: demo_vpc_net_ep
+            cidr: 17.0.1.0/24
+            tags:
+              module: ec2vpcnatgateway_demo
+              distro: {{ distro | default('test')}}
+          - name: demo_vpc_nat_gateway
+            role: aws_ec2_vpc_nat_gateway
+            region: us-east-2
+            subnet_filters:
+              "tag:module": ec2vpcnatgateway_demo
+              "tag:distro": {{ distro | default('test')}}
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
+        credentials:
+          filename: aws.key
+          profile: default
+        {% endif %}
+
 
 aws-ec2-elb-lb:
   topology:

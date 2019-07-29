@@ -1,0 +1,20 @@
+---
+aws-ec2-vpc-nat-gateway:
+  topology:
+    topology_name: ec2vpcnatgateway
+    resource_groups:
+      - resource_group_name: "aws_ec2_vpc_nat_gateway"
+        resource_group_type: "aws"
+        resource_definitions:
+          - name: demo_vpc_nat_gateway
+            role: aws_ec2_vpc_nat_gateway
+            region: us-east-1
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
+        credentials:
+          filename: aws.key
+          profile: default
+        {% endif %}

@@ -113,13 +113,19 @@ AWS VPC networks can be provisioned using this resource.
 * `ec2_vpc_net module <http://docs.ansible.com/ansible/latest/ec2_vpc_net.html
 >`_
 
-
 aws_ec2_vpc_internet_gateway
 -----------------------
 Manage AWS VPC INTERNET Gateways.
 * :docs1.5:`Topology Example <workspace/topologies/aws-ec2-vpc-internet-gateway.yml>`
 * `ec2_vpc_net module <https://docs.ansible.com/ansible/latest/modules/ec2_vpc_igw_module.html>`
 
+aws_ec2_vpc_nat_gateway
+-----------------------
+
+Manage AWS VPC NAT Gateways.
+
+* :docs1.5:`Topology Example <workspace/topologies/aws-ec2-vpc-nat-gateway.yml>`
+* `ec2_vpc_net module <http://docs.ansible.com/ansible/latest/ec2_vpc_nat_gateway_module.html>`_
 
 aws_ec2_vpc_subnet
 ------------------

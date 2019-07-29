@@ -265,7 +265,7 @@
                     "purge_listeners": { "type": "boolean", "required": false },
                     "purge_subnets": { "type": "boolean", "required": false },
                     "purge_zones": { "type": "boolean", "required": false },
-		            "scheme": { "type": "string", "required": false, "allowed": ["internal", "internet-facing"] }
+                    "scheme": { "type": "string", "required": false, "allowed": ["internal", "internet-facing"] }
                 }
             },
             {
@@ -287,7 +287,33 @@
                     "vpc_id": { "type": "string", "required": false },
                     "vpc_name": { "type": "string", "required": false }
                 }
-
+            },
+            {
+              "type": "dict",
+              "schema": {
+                    "role": { "type": "string", "required": true, "allowed": ["aws_ec2_vpc_nat_gateway"]},
+                    "name": { "type": "string", "required": true },
+                    "region": { "type": "string", "required": false },
+                    "profile": { "type": "string", "required": false },
+                    "release_eip": { "type": "boolean", "required": false },
+                    "eip_address": { "type": "string", "required": false },
+                    "nat_gateway_id": { "type": "string", "required": false },
+                    "client_token": { "type": "string", "required": false },
+                    "subnet_id": { "type": "string", "required": false },
+                    "subnet_filters": {
+                      "type": "list",
+                      "required": false,
+                      "schema": {
+                          "type": "dict"
+                      }
+                    },
+                    "force": { "type": "boolean", "required": false },
+                    "wait": { "type": "boolean", "required": false },
+                    "allocation_id": { "type": "string", "required": false },
+                    "ec2_url": { "type": "string", "required": false },
+                    "security_token": { "type": "string", "required": false },
+                    "wait_timeout": { "type": "integer", "required": false }
+              }
             }
 	    ]
         }
