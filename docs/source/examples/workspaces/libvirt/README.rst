@@ -18,3 +18,7 @@ Provisions a new libvirt vm with attached storage
 libvirt-custom-img
 ==================
 Provision a libvirt instances with a custom image
+
+libvirt-multi-node-net
+=====================
+Provision a multiple libvirt instances with multiple networks attached
