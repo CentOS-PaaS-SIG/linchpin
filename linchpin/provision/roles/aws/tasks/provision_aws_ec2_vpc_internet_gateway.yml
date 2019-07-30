@@ -1,0 +1,22 @@
+---
+- name: Provision aws internet gateway
+  ec2_vpc_igw:
+    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
+    debug_botocore_endpoint_logs: "{{ res_def['debug_botocore_endpoint_logs'] | default(omit)}}"
+    ec2_url: "{{ red_def['ec2_url'] | default(omit) }}"
+    region: "{{ red_def['region'] | default(omit) }}"
+    state: "{{ red_def['state'] | default(omit) }}"
+    tags: "{{ red_def['tags'] | default(omit) }}"
+    validate_certs: "{{ red_def['validate_certs'] | default(omit) }}"
+    vpc_id: "{{ red_def['vpc_id'] | default(omit) }}"
+  register: igw
+
+- name: "Append output to topology_outputs"
+  set_fact:
+    topology_outputs_aws_internet_output: "{{ topology_outputs_aws_internet_output + [res_def_output] }}"
+  when: igw['changed'] == true
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_aws_ec2: "{{ topology_outputs_aws_internet_output | add_res_type( 'aws_ec2_vpc_internet_gateway') }}"    
