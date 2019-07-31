@@ -22,3 +22,12 @@ Upon completion, the systems defined in the `dummy` target will be provisioned. 
 
 Upon completion, the systems which were provisioned, are destroyed (or torn down).
 
+Preview Feature: 
+
+linchpin up and destroy includes --use-shell parameter which makes linchpin run as a subprocess rather than ansible api call
+usefull when we would like to overwrite environment varibles
+
+.. code-block:: bash
+
+    $ linchpin -vvvv up --use-shell --env-vars TESTENV testenv value
+
