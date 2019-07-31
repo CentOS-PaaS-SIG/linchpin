@@ -367,7 +367,7 @@ class LinchpinCli(LinchpinAPI):
         pass
 
 
-    def lp_up(self, targets=(), run_id=None, tx_id=None, inv_f="cfg"):
+    def lp_up(self, targets=(), run_id=None, tx_id=None, inv_f="cfg", env_vars=(), use_shell=False):
         """
         This function takes a list of targets, and provisions them according
         to their topology.
@@ -383,6 +383,13 @@ class LinchpinCli(LinchpinAPI):
         """
 
         # Prep input data
+
+        if env_vars:
+            self.ctx.env_vars = env_vars
+
+        if use_shell:
+            self.ctx.use_shell = use_shell
+
 
         # Execute prepped data
         return_code, return_data = self._execute_action('up',
@@ -484,7 +491,7 @@ class LinchpinCli(LinchpinAPI):
 
 
 
-    def lp_destroy(self, targets=(), run_id=None, tx_id=None):
+    def lp_destroy(self, targets=(), run_id=None, tx_id=None, env_vars=None, use_shell=False):
 
         """
         This function takes a list of targets, and performs a destructive
@@ -503,6 +510,12 @@ class LinchpinCli(LinchpinAPI):
         """
 
         # prep inputs
+
+        if env_vars:
+            self.ctx.env_vars = env_vars
+
+        if use_shell:
+            self.ctx.use_shell = use_shell
 
 
         outputs = self._execute_action('destroy',
