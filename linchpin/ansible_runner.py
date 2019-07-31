@@ -140,7 +140,7 @@ def ansible_runner_shell(playbook_path,
                          check=False):
 
     # set verbosity to >=2
-    if verbosity >=2:
+    if verbosity >= 2:
         verbosity = verbosity
     else:
         verbosity = 2
@@ -149,9 +149,9 @@ def ansible_runner_shell(playbook_path,
     process_env = os.environ.copy()
     # set the base command
     base_command = ["ansible-playbook"]
-    # convert verbosity to -v 
-    verbosity = "v"*verbosity
-    verbosity = "-"+verbosity
+    # convert verbosity to -v
+    verbosity = "v" * verbosity
+    verbosity = "-" + verbosity
 
     # append inventory option to command
     base_command.append("-i")
@@ -173,20 +173,19 @@ def ansible_runner_shell(playbook_path,
             tmp.write(json.dumps(extra_vars))
         # Clean up the temporary file yourself
         base_command.append("-e")
-        base_command.append("@"+tmp_file_path)
-      
-    base_command.append(verbosity)
-#    process_env["ANSIBLE_LIBRARY"]= process_env["ANSIBLE_LIBRARY"]+":".join(module_path)
-    ansible_subprocess = subprocess.Popen(base_command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            env=process_env)
+        base_command.append("@" + tmp_file_path)
 
-    stdout,stderr = ansible_subprocess.communicate()
+    base_command.append(verbosity)
+    ansible_subprocess = subprocess.Popen(base_command,
+                                          stdout=subprocess.PIPE,
+                                          stderr=subprocess.STDOUT,
+                                          env=process_env)
+
+    stdout, stderr = ansible_subprocess.communicate()
     if console:
         print(stdout)
         print(stderr)
-    return stdout,stderr
+    return stdout, stderr
 
 
 def ansible_runner(playbook_path,
@@ -222,8 +221,8 @@ def ansible_runner(playbook_path,
             connect_type = 'local'
 
         options = Options(connect_type, module_path, 100, False, 'sudo', 'root',
-                          False, False, False, False, None, None, None, None, None,
-                          None, None, verbosity, False, False)
+                          False, False, False, False, None, None, None, None,
+                          None, None, None, verbosity, False, False)
 
         if ansible_version >= 2.8:
             pbex = ansible_runner_28x(playbook_path,
@@ -231,7 +230,7 @@ def ansible_runner(playbook_path,
                                       options,
                                       inventory_src=inventory_src,
                                       console=console)
-        elif ansible_version >= 2.4 and ansible_varsion < 2.5:
+        elif ansible_version >= 2.4 and ansible_version < 2.5:
             pbex = ansible_runner_24x(playbook_path,
                                       extra_vars,
                                       options,
@@ -244,7 +243,8 @@ def ansible_runner(playbook_path,
                                      inventory_src=inventory_src,
                                      console=console)
         if ansible_version >= 2.5:
-            cb = PlaybookCallback(options=options, ansible_version=ansible_version)
+            cb = PlaybookCallback(options=options,
+                                  ansible_version=ansible_version)
         else:
             cb = PlaybookCallback(options=options)
 
@@ -280,8 +280,8 @@ def ansible_runner(playbook_path,
 # of python or we move to support CentOS8, we can delete this and move back to
 # the (less messy) namedtuple or switch to the 3.7 DataClasses
 class Options():
-    def __init__(self, connection, 
-                 module_path, 
+    def __init__(self, connection,
+                 module_path,
                  forks, become, become_method,
                  become_user, listhosts, listtasks, listtags, syntax,
                  remote_user, private_key_file, ssh_common_args,

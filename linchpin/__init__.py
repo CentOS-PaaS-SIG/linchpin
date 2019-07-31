@@ -934,7 +934,8 @@ class LinchpinAPI(object):
             return_code, res = self._find_n_run_pb(playbook,
                                                    inventory_src,
                                                    console=console)
-            if action == "up" and ( return_code > 0 and not is_instance(return_code,str) ):
+            if action == "up" and (return_code > 0 and
+                                   not isinstance(return_code, str)):
                 if self.ctx.verbosity > 0:
                     raise LinchpinError("Unsuccessful provision of resource")
                 else:

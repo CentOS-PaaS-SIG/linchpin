@@ -155,7 +155,7 @@ class LinchpinContext(object):
         env_vars = self.cfgs.get('env_vars', {})
         env_vars_list = list(self.env_vars)
         for k in env_vars:
-            env_vars_list.append((k,env_vars[k]))
+            env_vars_list.append((k, env_vars[k]))
         self.env_vars = tuple(env_vars_list)
 
 
