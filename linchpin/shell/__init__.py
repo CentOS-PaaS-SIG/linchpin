@@ -283,6 +283,9 @@ def up(ctx, targets, run_id, tx_id, inventory_format, ignore_failed_hooks,
     if disable_uhash:
         ctx.set_evar("disable_uhash_targets", disable_uhash.split(','))
 
+    if use_shell:
+        ctx.set_cfg("ansible", "use_shell", use_shell)
+
     if tx_id:
         try:
             return_code, results = lpcli.lp_up(targets=targets,
@@ -301,8 +304,7 @@ def up(ctx, targets, run_id, tx_id, inventory_format, ignore_failed_hooks,
                                                run_id=run_id,
                                                tx_id=tx_id,
                                                inv_f=inventory_format,
-                                               env_vars=env_vars,
-                                               use_shell=use_shell)
+                                               env_vars=env_vars)
             _handle_results(ctx, results, return_code)
         except LinchpinError as e:
             ctx.log_state(e)
@@ -360,13 +362,15 @@ def destroy(ctx, targets, run_id, tx_id, ignore_failed_hooks, no_hooks,
     if no_hooks:
         ctx.set_cfg("hook_flags", "no_hooks", no_hooks)
 
+    if use_shell:
+        ctx.set_cfg("ansible", "use_shell", use_shell)
+
 
     if tx_id:
         try:
             return_code, results = lpcli.lp_destroy(targets=targets,
                                                     tx_id=tx_id,
-                                                    env_vars=env_vars,
-                                                    use_shell=use_shell)
+                                                    env_vars=env_vars)
             _handle_results(ctx, results, return_code)
 
         except LinchpinError as e:
@@ -380,8 +384,7 @@ def destroy(ctx, targets, run_id, tx_id, ignore_failed_hooks, no_hooks,
             return_code, results = lpcli.lp_destroy(targets=targets,
                                                     run_id=run_id,
                                                     tx_id=tx_id,
-                                                    env_vars=env_vars,
-                                                    use_shell=use_shell)
+                                                    env_vars=env_vars)
             _handle_results(ctx, results, return_code)
         except LinchpinError as e:
             ctx.log_state(e)

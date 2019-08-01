@@ -117,6 +117,7 @@ inventory = .inventory
 
 [ansible]
 console = False
+use_shell = False
 
 [states]
 # in future each state may have comma separated substates

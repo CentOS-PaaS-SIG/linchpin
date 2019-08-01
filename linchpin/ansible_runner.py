@@ -154,8 +154,11 @@ def ansible_runner_shell(playbook_path,
     verbosity = "-" + verbosity
 
     # append inventory option to command
-    base_command.append("-i")
-    base_command.append(inventory_src)
+    # FIX ME ansible considers localhost as another machine
+    if os.path.isfile(inventory_src) and\
+       inventory_src.split("/")[-1] != 'localhost':
+        base_command.append("-i")
+        base_command.append(inventory_src)
 
     # enable checkmode if check mode is mentioned
     if check:
@@ -176,6 +179,7 @@ def ansible_runner_shell(playbook_path,
         base_command.append("@" + tmp_file_path)
 
     base_command.append(verbosity)
+    print(base_command)
     ansible_subprocess = subprocess.Popen(base_command,
                                           stdout=subprocess.PIPE,
                                           stderr=subprocess.STDOUT,

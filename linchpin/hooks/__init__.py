@@ -102,6 +102,7 @@ class LinchpinHooks(object):
         self.api.bind_to_hook_state(self.run_hooks)
         self._rundb = None
         self._rundb_id = None
+        self.use_shell = self.api.get_cfg("ansible", "use_shell")
         self.verbosity = self.api.ctx.verbosity
 
 
@@ -240,6 +241,7 @@ class LinchpinHooks(object):
             - echo ' this is 'postup' operation Hello hai how r u ?'
         """
         global_hook_names = GLOBAL_HOOKS.keys()
+        use_shell = self.api.get_cfg("ansible", "use_shell")
 
         if is_global:
             raise NotImplementedError('Run Hooks is not implemented \
@@ -313,14 +315,16 @@ class LinchpinHooks(object):
                                      tgt_data,
                                      context=ab_ctx,
                                      state=state,
-                                     verbosity=self.verbosity)
+                                     verbosity=self.verbosity,
+                                     use_shell=use_shell)
                 else:
                     a_b_obj = ActionBlockRouter(action_type,
                                                 a_b,
                                                 tgt_data,
                                                 context=ab_ctx,
                                                 state=state,
-                                                verbosity=self.verbosity)
+                                                verbosity=self.verbosity,
+                                                use_shell=use_shell)
                 try:
                     self.api.ctx.log_state('-------\n'
                                            'start hook'
