@@ -14,7 +14,7 @@ TARGET="dummy_target"
 
 function clean_up {
     set +e
-    linchpin -w . -p "${PINFILE}" -v destroy "${TARGET}" --use-shell
+    linchpin -w . -p "${PINFILE}" -v destroy "${TARGET}" --use-shell --no-hooks
     D_RC=0
     D_RC=(${?} -o ${D_RC})
     if [ ${D_RC} -ne 0 ]; then
@@ -31,4 +31,4 @@ pushd ${WORKSPACE_PATH}
 pwd
 
 # runs the linchpin up with --use-shell parameter
-linchpin -w . -p "${PINFILE}" -v up "${TARGET}" --use-shell
+linchpin -w . -p "${PINFILE}" -v up "${TARGET}" --use-shell --no-hooks
