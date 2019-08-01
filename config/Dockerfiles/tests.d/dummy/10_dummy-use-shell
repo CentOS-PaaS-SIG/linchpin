@@ -14,7 +14,7 @@ TARGET="dummy_target"
 
 function clean_up {
     set +e
-    linchpin -w . -p "${PINFILE}" -v destroy "${TARGET}"
+    linchpin -w . -p "${PINFILE}" -v destroy "${TARGET}" --use-shell
     D_RC=0
     D_RC=(${?} -o ${D_RC})
     if [ ${D_RC} -ne 0 ]; then
