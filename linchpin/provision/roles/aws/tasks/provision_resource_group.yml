@@ -20,7 +20,7 @@
   register: auth_variable
   ignore_errors: true
   when: res_grp['credentials'] is defined
-  no_log: "{{ not debug_mode }}"
+  # no_log: "{{ not debug_mode }}"
 
 - name: "Set auth_var"
   set_fact:

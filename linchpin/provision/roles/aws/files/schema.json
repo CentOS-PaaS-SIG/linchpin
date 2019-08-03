@@ -251,7 +251,8 @@
                     "role": {
                         "type": "string",
                         "required": true,
-                        "allowed": ["ec2_vpc_igw"] },
+                        "allowed": ["aws_ec2_vpc_internet_gateway"] },
+                    "name": { "type": "string", "required": true },
                     "ec2_url": { "type": "string", "required": false },
                     "debug_botocore_endpoint_logs": { "type": "boolean", "required": false },
                     "profile": { "type": "string", "required": false},
@@ -260,7 +261,7 @@
                     "state": { "type": "string", "required": false},
                     "tags": {"type": "string", "required": false},
                     "validate_certs": { "type":"string","required":false},
-                    "vpc_id": { "type": "string", "required": false }
+                    "vpc_id": { "type": "string", "required": true }
                 }
 
             }

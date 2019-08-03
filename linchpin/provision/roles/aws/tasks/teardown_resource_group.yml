@@ -45,10 +45,6 @@
   register: topo_output_rundb
   when: not generate_resources
 
-  #- name: "set topo_output_resources fact rundb"
-  #  set_fact:
-  #    topo_output_resources: "{{ topo_output_rundb.output[0]['resources'][0] }}"
-  #  when: not generate_resources
 - name: "set topo_output_resources fact rundb"
   set_fact:
     topo_output_resources: "{{ topo_output_rundb.output[0]['resources'] }}"

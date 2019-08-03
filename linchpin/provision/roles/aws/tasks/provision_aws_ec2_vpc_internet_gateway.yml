@@ -4,18 +4,21 @@
     aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
     aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
     debug_botocore_endpoint_logs: "{{ res_def['debug_botocore_endpoint_logs'] | default(omit)}}"
-    ec2_url: "{{ red_def['ec2_url'] | default(omit) }}"
-    region: "{{ red_def['region'] | default(omit) }}"
-    state: "{{ red_def['state'] | default(omit) }}"
-    tags: "{{ red_def['tags'] | default(omit) }}"
-    validate_certs: "{{ red_def['validate_certs'] | default(omit) }}"
-    vpc_id: "{{ red_def['vpc_id'] | default(omit) }}"
+    ec2_url: "{{ res_def['ec2_url'] | default(omit) }}"
+    region: "{{ res_def['region'] | default(omit) }}"
+    state: "{{ res_def['state'] | default(omit) }}"
+    tags: "{{ res_def['tags'] | default(omit) }}"
+    validate_certs: "{{ res_def['validate_certs'] | default(omit) }}"
+    vpc_id: "{{ res_def['vpc_id'] | default(omit) }}"
   register: igw
+
+- set_fact:
+    topology_outputs_aws_internet_output: []
 
 - name: "Append output to topology_outputs"
   set_fact:
-    topology_outputs_aws_internet_output: "{{ topology_outputs_aws_internet_output + [res_def_output] }}"
-  when: igw['changed'] == true
+    topology_outputs_aws_internet_output: "{{ topology_outputs_aws_internet_output + [igw] }}"
+  when: igw['gateway_id'] is defined
 
 - name: "Add type to resource"
   set_fact:
