@@ -7,8 +7,9 @@ aws-ec2-vpc-internet-gateway:
         resource_group_type: "aws"
         resource_definitions:
           - name: demo_vpc_internet_gateway
-            role: ec2_vpc_igw
+            role: aws_ec2_vpc_internet_gateway
             region: us-east-1
+            vpc_id: vpc-0e461923a63da5578
         {% if credentials is defined %}
         credentials:
           filename: {{ credentials.filename }}
@@ -16,5 +17,7 @@ aws-ec2-vpc-internet-gateway:
         {% else %}
         credentials:
           filename: aws.key
-          profile: default
+          profile: key
         {% endif %}
+
+
