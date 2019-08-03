@@ -9,7 +9,7 @@ aws-ec2-vpc-internet-gateway:
           - name: demo_vpc_internet_gateway
             role: aws_ec2_vpc_internet_gateway
             region: us-east-1
-            vpc_id: vpc-0e461923a63da5578
+            vpc_id: vpc-0546ae7a407edb9a9
         {% if credentials is defined %}
         credentials:
           filename: {{ credentials.filename }}
@@ -19,5 +19,4 @@ aws-ec2-vpc-internet-gateway:
           filename: aws.key
           profile: key
         {% endif %}
-
 
