@@ -12,14 +12,14 @@ TARGET1="aws-ec2-vpc-internet-gateway"
 pushd docs/source/examples/workspaces/${PROVIDER}
 function clean_up {
     set +e
-    linchpin -w . -vvv --creds-path ./ --template-data '{ "vpc_id": '"${VPC_ID}"' }' destroy "${TARGET1}"
-    linchpin -w . -v --creds-path ./ destroy "${TARGET0}"
+    linchpin -w . -vvv --template-data '{ "vpc_id": '"${VPC_ID}"' }' destroy "${TARGET1}"
+    linchpin -w . -v  destroy "${TARGET0}"
     rm -rf resources/
 }
 
 trap clean_up EXIT
 
-linchpin -w . -v --creds-path ./ up "${TARGET0}"
+linchpin -w . -v up "${TARGET0}"
 VPC_ID=$(awk -F '"' '{print $64}' ./resources/ec2vpc.output)
 #awk -F '"' '{print $64}' ./resources/ec2vpc.output|tee a.txt
-linchpin -vvv --creds-path ./ --template-data '{ "vpc_id": '"${VPC_ID}"' }' up "${TARGET1}"
+linchpin -vvv --template-data '{ "vpc_id": '"${VPC_ID}"' }' up "${TARGET1}"
