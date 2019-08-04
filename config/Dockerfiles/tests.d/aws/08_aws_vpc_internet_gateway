@@ -22,4 +22,4 @@ trap clean_up EXIT
 linchpin -w . -v up "${TARGET0}"
 VPC_ID=$(awk -F '"' '{print $64}' ./resources/ec2vpc.output)
 #awk -F '"' '{print $64}' ./resources/ec2vpc.output|tee a.txt
-linchpin -vvv --template-data '{ "vpc_id": '"${VPC_ID}"' }' up "${TARGET1}"
+linchpin -w . -vvv --template-data '{ "vpc_id": '"${VPC_ID}"' }' up "${TARGET1}"
