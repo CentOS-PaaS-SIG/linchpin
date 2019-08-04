@@ -7,17 +7,19 @@
 
 DISTRO=${1}
 PROVIDER=${2}
-
-TARGET="aws-ec2-vpc-internet-gateway"
-TEMPLATE_DATA="{\"distro\": \"${DISTRO}-\"}"
-TMP_FILE=$(mktemp)
-
+TARGET0="aws-ec2-vpc-net"
+TARGET1="aws-ec2-vpc-internet-gateway"
+pushd docs/source/examples/workspaces/${PROVIDER}
 function clean_up {
     set +e
-    linchpin -w . -v --creds-path ./ destroy "${TARGET}"
+    linchpin -w . -vvv --creds-path ./ --template-data '{ "vpc_id": '"${VPC_ID}"' }' destroy "${TARGET1}"
+    linchpin -w . -v --creds-path ./ destroy "${TARGET0}"
+    rm -rf resources/
 }
-# trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
-pushd docs/source/examples/workspaces/${PROVIDER}
+trap clean_up EXIT
 
-linchpin -w . -v --creds-path ./ up "${TARGET}"
+linchpin -w . -v --creds-path ./ up "${TARGET0}"
+VPC_ID=$(awk -F '"' '{print $64}' ./resources/ec2vpc.output)
+#awk -F '"' '{print $64}' ./resources/ec2vpc.output|tee a.txt
+linchpin -vvv --creds-path ./ --template-data '{ "vpc_id": '"${VPC_ID}"' }' up "${TARGET1}"
