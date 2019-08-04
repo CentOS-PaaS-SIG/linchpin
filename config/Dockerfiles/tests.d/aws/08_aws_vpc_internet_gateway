@@ -13,13 +13,13 @@ pushd docs/source/examples/workspaces/${PROVIDER}
 function clean_up {
     set +e
     linchpin -w . -vvv --template-data '{ "vpc_id": '"${VPC_ID}"' }' destroy "${TARGET1}"
-    linchpin -w . -v  destroy "${TARGET0}"
+    linchpin -w . -vvv  destroy "${TARGET0}"
     rm -rf resources/
 }
 
 trap clean_up EXIT
 
-linchpin -w . -v up "${TARGET0}"
+linchpin -w . -vvv up "${TARGET0}"
 cat ./resources/ec2vpc.output
 VPC_ID=$(awk -F '"' '{print $78}' ./resources/ec2vpc.output)
 #awk -F '"' '{print $64}' ./resources/ec2vpc.output|tee a.txt
