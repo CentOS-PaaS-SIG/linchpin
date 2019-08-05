@@ -1,0 +1,51 @@
+---
+- name: "Provision/Teardown AWS_EC2_ELB_LB"
+  ec2_elb_lb:
+    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
+    access_logs: "{{ res_def['access_logs'] | default(omit) }}"
+    connection_draining_timeout: "{{ res_def['connection_draining_timeout'] | default(600) }}"
+    cross_az_load_balancing: "{{ res_def['cross_az_load_balancing'] | default(omit) }}"
+    ec2_url: "{{ res_def['ec2_url'] | default(omit) }}"
+    health_check: "{{ res_def['health_check'] | default(omit) }}"
+    idle_timeout: "{{ res_def['idle_timeout'] | default(600) }}"
+    instance_ids: "{{ res_def['instance_ids'] | default(omit) }}"
+    listeners: "{{ res_def['listeners'] | default(omit) }}"
+    name: "{{ res_def['name'] }}"
+    purge_instance_ids: "{{ res_def['purge_instance_ids'] | default(omit) }}"
+    purge_listeners: "{{ res_def['purge_instance_ids'] | default(omit) }}"
+    purge_subnets: "{{ res_def['purge_subnets'] | default(omit)}}"
+    purge_zones: "{{ res_def['purge_zones'] | default(omit) }}"
+    region: "{{ res_def['region'] | default(omit) }}"
+    scheme: "{{ res_def['scheme'] | default(omit)}}"
+    security_group_ids: "{{ res_def['security_group_ids'] | default(omit) }}"
+    security_group_names: "{{ res_def['security_group_names'] | default(omit) }}"
+    security_token: "{{ res_def['security_token'] | default(omit) }}"
+    state: "{{ state | default(omit)  }}"
+    stickiness: "{{ res_def['stickiness'] | default(omit) }}"
+    subnets: "{{ res_def['subnets'] | default(omit) }}"
+    tags: "{{ res_def['tags'] | default(omit) }}"
+    validate_certs: "{{ res_def['validate_certs'] | default('no') }}"
+    zones: "{{ res_def['zones'] }}"
+    wait_timeout: 600
+    wait: yes
+  register: res_def_output
+  no_log: "{{ not debug_mode }}"
+  ignore_errors: yes
+
+- set_fact:
+    debug_msg: "{{ res_def_output['msg'] }}"
+  when: state == 'absent' and res_def_output['msg'] is defined
+
+- name: fail if its not timeout
+  fail:
+    msg: "{{ debug_msg }}"
+  when: res_def_output['msg'] is defined and debug_msg != 'Timed out waiting for removal of load balancer.'
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_aws_net: "{{ topology_outputs_aws_net + [res_def_output] }}"
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_aws_ec2: "{{ topology_outputs_aws_net | add_res_type( 'aws_ec2_elb_lb') }}"
