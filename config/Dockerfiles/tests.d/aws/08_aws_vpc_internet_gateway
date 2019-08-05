@@ -13,7 +13,7 @@ pushd docs/source/examples/workspaces/${PROVIDER}
 function clean_up {
     set +e
     linchpin -w . -vvv --template-data '{ "vpc_id": '"${VPC_ID}"' }' destroy "${TARGET1}"
-    linchpin -w . -vvv  destroy "${TARGET0}"
+    linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' destroy "${TARGET0}"
     rm -rf resources/
 }
 
