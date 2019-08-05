@@ -152,3 +152,8 @@ def test_fetch_beaker_job_ids():
     expected = [{'ids': ['J:3124']}, {'ids': ['J:3214']}]
     assert_equals(expected,
                   filter_utils.fetch_beaker_job_ids(test_input))
+
+def test_fetch_vm_names():
+    test_input = [{"name": "test_vm_0"}, {"name": 'test_vm_1'}]
+    expected = ['test_vm_0', "test_vm_1"]
+    assert_equals(expected, filter_utils.fetch_vm_names(test_input))

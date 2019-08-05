@@ -271,3 +271,11 @@ def fetch_beaker_job_ids(topo_out):
             entry_dict["ids"].append("J:" + entry["id"])
             output.append(entry_dict)
     return output
+
+
+def fetch_vm_names(topo_out):
+    output = []
+    for entry in topo_out:
+        if "name" in list(entry):
+            output.append(entry["name"])
+    return output

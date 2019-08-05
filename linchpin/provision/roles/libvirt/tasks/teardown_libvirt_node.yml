@@ -1,16 +1,35 @@
+- name: "Get topology output data from RunDB"
+  rundb:
+    conn_str: "{{ rundb_conn }}"
+    operation: get
+    table: "{{ target }}"
+    key: "outputs"
+    run_id: "{{ orig_run_id }}"
+  register: topo_output
+
+- name: Filter list for resources
+  set_fact:
+    topo_output_resources: "{{ topo_output.output | filter_list_by_attr('resources') }}"
+
+- name: "set topo_output_resources fact"
+  set_fact:
+    topo_output_resources: "{{ topo_output_resources[0]['resources'] }}"
+
 - set_fact:
-      res_count: '{{ (res_count | default([])) + [item | int] }}'
-  with_sequence: "start=0 end={{ res_def['count'] | default(1) |int - 1 }}"
+    libvirt_resource_names: "{{ topo_output_resources | fetch_vm_names }}"
+
+#- set_fact:
+#      res_count: '{{ (res_count | default([])) + [item | int] }}'
+#  with_sequence: "start=0 end={{ res_def['count'] | default(1) |int - 1 }}"
 
 - name: "halt node"
   virt:
-    name: "{{ libvirt_resource_name }}{{ instance[2] }}{{ instance[1] }}"
+    name: "{{ instance[1] }}"
     state: destroyed
-    uri: "{{ instance[1]['uri'] | default('qemu:///system') }}"
+    uri: "{{ instance[0]['uri'] | default('qemu:///system') }}"
   with_nested:
     - ["{{ res_def }}"]
-    - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - "{{ libvirt_resource_names }}"
   loop_control:
     loop_var: instance
   register: res_def_output
@@ -19,12 +38,10 @@
   when: not _async
 
 - name: "get XML definition of vm"
-  command: "virsh -c {{ instance[1]  }} dumpxml {{ instance[0] }}{{ instance[3] }}{{ instance[2] }}"
+  command: "virsh -c {{ instance[1]  }} dumpxml {{ instance[0] }}"
   with_nested:
-    - ["{{  libvirt_resource_name }}"]
+    - "{{ libvirt_resource_names }}"
     - ["{{ res_def['uri'] | default('qemu:///system') }}"]
-    - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: instance
   when: not _async
@@ -33,13 +50,12 @@
 
 - name: "undefine node"
   virt:
-    name: "{{ libvirt_resource_name }}{{ instance[2] }}{{ instance[1] }}"
+    name: "{{ instance[1] }}"
     command: undefine
     uri: "{{ instance[0]['uri'] | default('qemu:///system') }}"
   with_nested:
     - ["{{ res_def }}"]
-    - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - "{{ libvirt_resource_names }}"
   loop_control:
     loop_var: instance
   register: res_def_output
