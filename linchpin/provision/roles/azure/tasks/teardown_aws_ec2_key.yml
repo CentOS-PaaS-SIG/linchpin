@@ -1,0 +1,10 @@
+- name: "DeProvisioning AWS_EC2_KEY Resource"
+  ec2_key:
+    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
+    region: "{{ res_def['region'] }}"
+    name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+    state: "{{ state }}"
+    wait: "yes"
+  when: res_def['role'] == 'aws_ec2_key'
+  no_log: "{{ not debug_mode }}"
