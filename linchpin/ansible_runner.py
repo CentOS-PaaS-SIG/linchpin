@@ -188,6 +188,7 @@ def ansible_runner_shell(playbook_path,
     stdout, stderr = ansible_subprocess.communicate()
     p_status = ansible_subprocess.wait()
     if console:
+        print("RUNNING" + " ".join(base_command))
         print(stdout)
         print(stderr)
         print "Command exit status/return code : ", p_status
