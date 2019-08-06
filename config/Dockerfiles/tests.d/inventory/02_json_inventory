@@ -3,19 +3,15 @@
 # Verify that JsonInventoryFormatter produces valid json
 # distros.exclude: none
 # providers.include: dummy
-# providers.exclude: none
 
 DISTRO=${1}
 PROVIDER=${2}
 
 PINFILE="PinFile"
 TARGET="dummy-new"
-CONFIG_FILE="../linchpin.conf"
+#CONFIG_FILE="../linchpin.conf"
 TMP_FILE=$(mktemp)
 
-DESCRIPTION="${PROVIDER} provisioning using complex template data file"
-
-echo "${DESCRIPTION}"
 
 function clean_up {
     set +e
@@ -23,11 +19,11 @@ function clean_up {
 }
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
-pushd docs/source/examples/workspaces/${PROVIDER}
+pushd docs/source/examples/workspaces/dummy/
 
 ls
 
-linchpin -w . -p "${PINFILE}" -c "${CONFIG_FILE}" -v up --if json "${TARGET}" 2>&1 | tee -a ${TMP_FILE}
+linchpin -w . -p "${PINFILE}" -v up --if json "${TARGET}" 2>&1 | tee -a ${TMP_FILE}
 
 RC0=${?}
 
