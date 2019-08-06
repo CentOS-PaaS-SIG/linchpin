@@ -20,7 +20,7 @@ sed -i "s#^Source0: .*#Source0: ${repo}/archive/v${version}.tar.gz#g" "${resultd
 sed -i "s#%{SOURCE0}#%{_builddir}/linchpin-${version}#g" "${resultdir}/linchpin.spec"
 sed -i '/^%prep/a %setup -q' "${resultdir}/linchpin.spec"
 sed -i '/^%prep/a chmod +x %{_builddir}/linchpin.sh' "${resultdir}/linchpin.spec"
-sed -i '/^%prep/a cat << EOF > %{_builddir}/linchpin.sh\n#!/bin/bash\nPYTHONPATH=/usr/lib/python2.7/site-packages /opt/linchpin/bin/linchpin \\$\@\nEOF' "${resultdir}/linchpin.spec"
+sed -i '/^%prep/a cat << EOF > %{_builddir}/linchpin.sh\n#!/bin/bash\nPYTHONPATH="/usr/lib/python2.7/site-packages:/usr/lib64/python2.7/site-packages" /opt/linchpin/bin/linchpin \\$\@\nEOF' "${resultdir}/linchpin.spec"
 sed -i '/^%prep/a pip2 install --user rpmvenv virtualenv==16.1.0' "${resultdir}/linchpin.spec"
 sed -i "/^%install/a cp %{_builddir}/linchpin.sh  %{_builddir}/linchpin-${version}/linchpin.sh" "${resultdir}/linchpin.spec"
 sed -i '/^%install/a export PATH=$PATH:~/.local/bin' "${resultdir}/linchpin.spec"
