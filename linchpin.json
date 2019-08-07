@@ -2,7 +2,9 @@
     "extensions": {
         "enabled": [
             "python_venv",
-            "blocks"
+            "blocks",
+            "file_permissions",
+            "file_extras"
         ]
     },
     "core": {
@@ -25,6 +27,18 @@
         "python": "python2.7",
         "strip_binaries": false
 
+    },
+    "file_permissions": {
+      "user": "root",
+      "group": "root"
+    },
+    "file_extras": {
+        "files": [
+          {
+            "src": "linchpin.sh",
+            "dest": "usr/bin/linchpin"
+          }
+        ]
     },
     "blocks": {
         "desc": [
