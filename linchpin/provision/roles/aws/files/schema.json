@@ -71,7 +71,7 @@
                     "marker": { "type": "string", "required": false },
 		    "max_keys": { "type": "number", "required": false },
 		    "metadata": { "type": "string", "required": false },
-                    "mode": { "type": "string", "required": true, "allowed":[ "get", "put", "delete", "create", "getstr", "geturl", "getobj", "list"] },
+                    "mode": { "type": "string", "required": false, "allowed":[ "get", "put", "delete", "create", "getstr", "geturl", "getobj", "list"] },
 		    "object": { "type": "string", "required": false },
 		    "overwrite": { "type": "string", "required": false },
 		    "prefix": { "type": "string", "required": false },
