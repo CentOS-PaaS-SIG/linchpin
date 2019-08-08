@@ -157,7 +157,7 @@ def ansible_runner_shell(playbook_path,
     # FIX ME ansible considers localhost as another machine
     if os.path.isfile(inventory_src) and\
        inventory_src.split("/")[-1] != 'localhost':
-        base_command.append("-i")
+        base_command.append("--inventory")
         base_command.append(inventory_src)
 
     # enable checkmode if check mode is mentioned
