@@ -12,7 +12,7 @@
 - name: "Generate keyfile "
   copy: 
     content: "{{ res_def_output['key']['private_key'] }}"
-    dest: "/{{ keystore_path | default('tmp') }}/{{ res_def['res_name'] | default(res_def['name']) }}.pem"
+    dest: "/{{ default_ssh_key_path | default('tmp') }}/{{ res_def['res_name'] | default(res_def['name']) }}.pem"
   when: state=="present" and res_def_output['changed']==true
 
 - name: "Append outputitem to topology_outputs"

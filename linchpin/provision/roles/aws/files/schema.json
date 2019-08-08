@@ -71,8 +71,7 @@
                         "required": true,
                         "allowed": ["aws_ec2_key"] },
                     "name": { "type": "string", "required": true },
-                    "region": { "type": "string", "required": false },
-                    "public_key_path": { "type": "string", "required": false }
+                    "region": { "type": "string", "required": false }
                 }
             },
             {
