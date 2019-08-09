@@ -52,6 +52,36 @@ def suppress_stdout():
             sys.stderr = old_stderr
 
 
+def subprocess_runner(cmd, shell=False):
+    """
+    Runs subprocess commands
+    param: cmd in a list
+    param: shell to print stdout, stderr or not
+
+    """
+    os.environ['PYTHONUNBUFFERED'] = "1"
+    os.environ['ANSIBLE_FORCE_COLOR'] = '1'
+    my_env = os.environ.copy()
+    proc = subprocess.Popen(cmd,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            universal_newlines=True,
+                            env=my_env
+                            )
+    stdout = []
+    stderr = []
+    while proc.poll() is None:
+        std_out_line = proc.stdout.read()
+        std_err_line = proc.stderr.read()
+        if shell:
+            print(std_out_line)
+            print(std_err_line)
+        else:
+            stdout.append(std_out_line)
+            stderr.append(std_err_line)
+    return proc.returncode, stdout, stderr
+
+
 def ansible_runner_2x(playbook_path,
                       extra_vars,
                       options=None,
@@ -71,9 +101,7 @@ def ansible_runner_2x(playbook_path,
                             options,
                             loader,
                             passwords)
-
     return pbex
-
 
 
 def ansible_runner_24x(playbook_path,
@@ -140,13 +168,12 @@ def ansible_runner_shell(playbook_path,
                          check=False):
 
     # set verbosity to >=2
+    # since -v in subprocess command fails
     if verbosity >= 2:
         verbosity = verbosity
     else:
         verbosity = 2
 
-    # copy all the environment variables into process_env var
-    process_env = os.environ.copy()
     # set the base command
     base_command = ["ansible-playbook"]
     # convert verbosity to -v
@@ -179,20 +206,9 @@ def ansible_runner_shell(playbook_path,
         base_command.append("@" + tmp_file_path)
 
     base_command.append(verbosity)
-    print(base_command)
-    ansible_subprocess = subprocess.Popen(base_command,
-                                          stdout=subprocess.PIPE,
-                                          stderr=subprocess.STDOUT,
-                                          env=process_env)
-
-    stdout, stderr = ansible_subprocess.communicate()
-    p_status = ansible_subprocess.wait()
-    if console:
-        print("RUNNING" + " ".join(base_command))
-        print(stdout)
-        print(stderr)
-        print "Command exit status/return code : ", p_status
-    return stdout, stderr
+    return_code, stdout, stderr = subprocess_runner(base_command,
+                                                    shell=console)
+    return return_code, stdout, stderr
 
 
 def ansible_runner(playbook_path,
@@ -269,17 +285,13 @@ def ansible_runner(playbook_path,
             return_code = pbex.run()
             return return_code, None
     else:
-        stdout, stderr = ansible_runner_shell(playbook_path,
-                                              module_path,
-                                              extra_vars,
-                                              inventory_src=inventory_src,
-                                              console=console)
+        rc, stdout, stderr = ansible_runner_shell(playbook_path,
+                                                  module_path,
+                                                  extra_vars,
+                                                  inventory_src=inventory_src,
+                                                  console=console)
         results = stdout
-        if isinstance(stdout, str) and not stderr:
-            return_code = 0
-        else:
-            return_code = 1
-        return return_code, results
+        return rc, results
 
 
 # This is just a temporary class because python 2.7.5, the CentOS7 default,
