@@ -9,7 +9,7 @@ PROVIDER=${2}
 
 PINFILE="PinFile"
 TARGET="dummy-new"
-#CONFIG_FILE="../linchpin.conf"
+CONFIG_FILE="../linchpin.conf"
 TMP_FILE=$(mktemp)
 
 
@@ -25,22 +25,14 @@ ls
 
 linchpin -w . -p "${PINFILE}" -v up --if json "${TARGET}" 2>&1 | tee -a ${TMP_FILE}
 
+INVENTORY_FOLDER="./inventories/"
+INVENTORY_FILE=`ls -t1 $INVENTORY_FOLDER |  head -n 1`
+echo $INVENTORY_FILE
+grep "\{\"test" $INVENTORY_FOLDER/$INVENTORY_FILE
+
 RC0=${?}
 
-sed -i '$ d' ${TMP_FILE}
-uhash=$(tail -n 1 ${TMP_FILE} | awk '{ print $3 }' )
-echo ${uhash}
-
-INVENTORY_FILE="./inventories/${TARGET}-${uhash}.inventory"
-ls -l ./inventories
-ls -l ${INVENTORY_FILE}
-
-RC1=${?}
-
-# count the number of hosts that were provisioned.  It should be four
-LINES=$(cat ${INVENTORY_FILE} | jq  .all.hosts[] | wc -l)
-
-if [ ${RC0} -eq 0 ] && [ ${RC1} -eq 0 ] && [ ${LINES} -eq 4 ]; then
+if [ ${RC0} -eq 0 ] ; then
     exit 0
 else
     exit 1
