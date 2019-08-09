@@ -882,7 +882,7 @@ class LinchpinAPI(object):
         return module_paths
 
     def _find_n_run_pb(self, pb_name, inv_src, console=True):
-        use_shell = self.ctx.get_cfg("ansible", "use_shell")
+        use_shell = ast.literal_eval(self.ctx.get_cfg("ansible", "use_shell"))
         pb_path = self._find_playbook_path(pb_name)
         playbook_path = '{0}/{1}{2}'.format(pb_path, pb_name, self.pb_ext)
         extra_vars = self.get_evar()
