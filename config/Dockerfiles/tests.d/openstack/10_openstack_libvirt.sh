@@ -1,11 +1,14 @@
 #!/bin/bash
 
-# check for the linchpin_libvirt_key file
+# Verify the openstack keypair provisioning
+# distros.exclude: fedora29 fedora30 
+# providers.include: openstack
+# providers.exclude: none
 
 echo "The path to linchpin libvirt key is ......."
 echo $LINCHPIN_LIBVIRT_KEY
 
-ssh -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem centos@10.0.147.17 'sudo yum install libselinux-python -yq'
+ssh -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" centos@10.0.147.17 'sudo yum install libselinux-python -yq'
 
 
 # installation of libvirt dependencies
