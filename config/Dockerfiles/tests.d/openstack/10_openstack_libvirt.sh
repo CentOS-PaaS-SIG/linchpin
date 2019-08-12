@@ -7,8 +7,7 @@
 
 echo "The path to linchpin libvirt key is ......."
 echo $LINCHPIN_LIBVIRT_KEY
-
-ssh -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" centos@10.0.147.17 'sudo yum install libselinux-python -yq'
+ssh -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem centos@10.0.147.17 'sudo yum install libselinux-python -yq'
 
 
 # installation of libvirt dependencies
