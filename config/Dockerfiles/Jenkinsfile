@@ -235,7 +235,9 @@ def prepare_env() {
           def cf = creds.findResult { it.id == provider + '-key' ? it : null }
           if ( cf ) {
             println "found credential ${cf.id} filename:${cf.fileName}"
-            withCredentials([file(credentialsId: provider + '-key', variable: 'FILEKEY')]) {
+            withCredentials([file(credentialsId: provider + '-key', variable: 'FILEKEY'),
+                             file(credentialsId: 'linchpin_libvirt_key', variable: 'LINCHPIN_LIBVIRT_KEY')
+                           ]) {
             sh """
                 #!/bin/bash -x
                 mkdir -p keys/
