@@ -3,7 +3,6 @@
 # Verify basic provisioning with global hooks
 # distros.exclude: centos7
 # providers.include: none
-# providers.exclude: none
 
 set -o pipefail
 
