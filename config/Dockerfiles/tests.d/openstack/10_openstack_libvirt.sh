@@ -9,8 +9,15 @@ echo "The path to linchpin libvirt key is ......."
 echo $LINCHPIN_LIBVIRT_KEY
 
 echo "current working directory is ....."
-ls -l . 
+ls -l .
+tar -czf linchpin.tar.gz .
+
 ssh -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem centos@10.0.147.17 'sudo yum install libselinux-python -yq'
+
+scp -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem linchpin.tar.gz centos@10.0.147.17:/tmp/
+
+ssh -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem centos@10.0.147.17 'mkdir -p /tmp/linchpin/'
+ssh -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem centos@10.0.147.17 'ls /tmp/linchpin/'
 
 
 # installation of libvirt dependencies
