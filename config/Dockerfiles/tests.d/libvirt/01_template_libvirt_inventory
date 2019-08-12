@@ -1,8 +1,8 @@
 #!/bin/bash -xe
 
 # Verify template-based provisioning using complex template data file
-# distros.exclude: centos7 fedora30
-# providers.include: none
+# distros.exclude: centos7 fedora30 fedora29
+# providers.include: libvirt
 
 
 DISTRO=${1}
