@@ -242,7 +242,9 @@ def prepare_env() {
                 #!/bin/bash -x
                 mkdir -p keys/
                 cp ${FILEKEY} keys/${cf.fileName}
+                cp ${LINCHPIN_LIBVIRT_KEY} keys/linchpin_libvirt_key.pem
                 chmod 0600 keys/${cf.fileName}
+                chmod 0600 keys/linchpin_libvirt_key.pem
             """
             }
           }
