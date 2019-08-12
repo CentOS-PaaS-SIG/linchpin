@@ -3,15 +3,14 @@
 # Verify template-based provisioning using complex template data file
 # distros.exclude: centos7 fedora30
 # providers.include: none
-# providers.exclude: libvirt dummy openstack beaker duffy openshift gcloud aws docker
 
 
 DISTRO=${1}
 PROVIDER=${2}
 
 PINFILE="PinFile"
-TARGET="${PROVIDER}-template-inventory"
-TOPOLOGY_FILE="./topologies/${PROVIDER}-template-inventory.yml"
+TARGET="libvirt-template-inventory"
+TOPOLOGY_FILE="./topologies/libvirt-template-inventory.yml"
 LAYOUT_FILE="./layouts/template-inventory.yml"
 TEMPLATE_FILE="./template-data/template-inventory.yml"
 CONFIG_FILE="../linchpin.conf"
