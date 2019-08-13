@@ -56,7 +56,7 @@ echo "check the extracted files"
 ssh -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem centos@10.0.147.17 'ls /tmp/linchpin/'
 
 echo "install PR for linchpin"
-ssh -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem centos@10.0.147.17 'pip install -e /tmp/linchpin/'
+ssh -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem centos@10.0.147.17 'sudo pip install -e /tmp/linchpin/'
 
 # installation of libvirt dependencies
 #ssh -i linchpin_libvirt.key centos@10.0.147.17 'sudo yum install libselinux-python -yq'
