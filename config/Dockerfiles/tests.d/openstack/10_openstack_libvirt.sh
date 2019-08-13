@@ -10,14 +10,30 @@ echo $LINCHPIN_LIBVIRT_KEY
 
 echo "current working directory is ....."
 ls -l .
+echo "compressing linchpin folder"
 tar -czf linchpin.tar.gz .
 
+echo "Install linchpin dependencies"
 ssh -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem centos@10.0.147.17 'sudo yum install libselinux-python -yq'
 
-scp -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem linchpin.tar.gz centos@10.0.147.17:/tmp/
-
+echo "make dir for linchpin tar files"
 ssh -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem centos@10.0.147.17 'mkdir -p /tmp/linchpin/'
+
+echo "transfer linchpin tar files"
+scp -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem linchpin.tar.gz centos@10.0.147.17:/tmp/linchpin
+
+echo "make dir for linchpin tar files"
 ssh -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem centos@10.0.147.17 'ls /tmp/linchpin/'
+
+echo "extract dir"
+ssh -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem centos@10.0.147.17 'cd /tmp/linchpin/; tar -xzf linchpin.tar.gz'
+
+echo "check the extracted files"
+ssh -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem centos@10.0.147.17 'ls /tmp/linchpin/'
+
+echo "install PR for linchpin"
+ssh -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem centos@10.0.147.17 'pip install -e /tmp/linchpin/'
+
 
 
 # installation of libvirt dependencies
