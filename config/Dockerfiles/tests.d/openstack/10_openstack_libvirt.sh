@@ -5,11 +5,35 @@
 # providers.include: openstack
 # providers.exclude: none
 
+DISTRO=${1}
+PROVIDER=${2}
+
+TARGET="os-server-new"
+TEMPLATE_DATA="{\"distro\": \"linchpinlib-\"}"
+TMP_FILE=$(mktemp)
+
+function clean_up {
+    set +e
+    linchpin -w . -p "${PINFILE}" --template-data "${TEMPLATE_DATA}" -v destroy "${TARGET}"
+}
+trap clean_up EXIT SIGHUP SIGINT SIGTERM
+
+pushd docs/source/examples/workspaces/${PROVIDER}
+linchpin -w . --template-data "${TEMPLATE_DATA}" --output-pinfile "${TMP_FILE}" -v up "${TARGET}"
+
+grep "${DISTRO}" "${TMP_FILE}"
 echo "The path to linchpin libvirt key is ......."
 echo $LINCHPIN_LIBVIRT_KEY
 
 echo "current working directory is ....."
 ls -l .
+
+
+popd 
+
+echo "current working directory is ....."
+ls -l .
+
 echo "compressing linchpin folder"
 tar -czf linchpin.tar.gz .
 
@@ -33,8 +57,6 @@ ssh -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/
 
 echo "install PR for linchpin"
 ssh -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem centos@10.0.147.17 'pip install -e /tmp/linchpin/'
-
-
 
 # installation of libvirt dependencies
 #ssh -i linchpin_libvirt.key centos@10.0.147.17 'sudo yum install libselinux-python -yq'
