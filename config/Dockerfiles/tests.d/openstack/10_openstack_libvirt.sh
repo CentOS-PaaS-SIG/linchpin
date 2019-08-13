@@ -21,9 +21,6 @@ trap clean_up EXIT SIGHUP SIGINT SIGTERM
 pushd docs/source/examples/workspaces/${PROVIDER}
 linchpin -w . --template-data "${TEMPLATE_DATA}" --output-pinfile "${TMP_FILE}" -v up "${TARGET}"
 
-grep "${DISTRO}" "${TMP_FILE}"
-echo "The path to linchpin libvirt key is ......."
-echo $LINCHPIN_LIBVIRT_KEY
 
 echo "current working directory is ....."
 ls -l .
@@ -54,6 +51,9 @@ ssh -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/
 
 echo "check the extracted files"
 ssh -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem centos@10.0.147.17 'ls /tmp/linchpin/'
+
+echo "uninstall linchpin"
+ssh -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem centos@10.0.147.17 'sudo pip uninstall linchpin'
 
 echo "install PR for linchpin"
 ssh -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem centos@10.0.147.17 'sudo pip install -e /tmp/linchpin/'
