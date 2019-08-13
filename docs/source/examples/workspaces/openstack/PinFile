@@ -13,7 +13,7 @@ os-server-new:
             count: 1
             keypair: {{ keypair | default('ci-factory') }}
             networks:
-              - {{ networks | default('provider_net_cci_6') }}
+              - {{ networks | default('Provider_Net_Cci_4') }}
           - name: "ci-lp-cp-{{ distro | default('') }}frontend"
             role: os_server
             flavor: {{ flavor | default('m1.small') }}
