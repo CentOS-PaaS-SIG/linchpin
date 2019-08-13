@@ -21,3 +21,4 @@ openshift>=0.8.6,<0.8.8
 pyasn1>=0.1.9
 gitpython==2.1.11
 pytest<=4.4.0
+future
