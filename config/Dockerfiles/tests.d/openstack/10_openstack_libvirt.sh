@@ -77,3 +77,4 @@ ssh -o StrictHostKeyChecking=no -i /workDir/workspace/ci-linchpin/linchpin/keys/
 #ssh -i linchpin_libvirt.key centos@10.0.147.17 'sudo pip install -e file:///tmp/linchpin'
 #ssh -i linchpin_libvirt.key centos@10.0.147.17 'mkdir -p /tmp/workspace; linchpin init libvirt'
 
+pushd docs/source/examples/workspaces/${PROVIDER}
