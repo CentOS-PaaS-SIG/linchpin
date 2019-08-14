@@ -9,21 +9,36 @@
   set_fact:
     instance_tags: "{{ res_grp_vars | selectattr('resource_group_name', 'match', '^' + res_grp_name + '$') | first | combine( res_def['instance_tags'] | default({}) ) }}"
 
-- name: "Provisioning AWS_EC2 Resource when not async"
-  ec2:
-    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
-    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
-    key_name: "{{ res_def['keypair'] | default(omit) }}"
-    instance_type: "{{ res_def['flavor'] }}"
-    image: "{{ res_def['image'] }}"
-    region: "{{ res_def['region'] }}"
-    wait: yes
-    wait_timeout: "{{ res_def['wait_timeout'] | default(600) }}"
-    group: "{{ res_def['security_group']| default('default') }}"
-    count: "{{ res_def['count'] }}"
-    vpc_subnet_id: "{{ res_def['vpc_subnet_id']| default(omit) }}"
-    assign_public_ip: "{{ res_def['assign_public_ip']| default(omit) }}"
-    instance_tags: "{{ instance_tags }}"
+- name: "Provisioning Azure Resource when not async"
+  azure_rm_virtualmachine:
+    accept_terms
+    ad_user
+    adfs_authority_url
+    admin_password
+    admin_username
+    allocated
+    api_profile
+    append_tags
+    auth_source
+    availability_set
+    cert_validation_mode
+    client_id
+    cloud_environment
+    custom_data
+    generalized
+    # aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    # aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
+    # key_name: "{{ res_def['keypair'] | default(omit) }}"
+    # instance_type: "{{ res_def['flavor'] }}"
+    # image: "{{ res_def['image'] }}"
+    # region: "{{ res_def['region'] }}"
+    # wait: yes
+    # wait_timeout: "{{ res_def['wait_timeout'] | default(600) }}"
+    # group: "{{ res_def['security_group']| default('default') }}"
+    # count: "{{ res_def['count'] }}"
+    # vpc_subnet_id: "{{ res_def['vpc_subnet_id']| default(omit) }}"
+    # assign_public_ip: "{{ res_def['assign_public_ip']| default(omit) }}"
+    # instance_tags: "{{ instance_tags }}"
   register: res_def_output
   when: not _async
   no_log: "{{ not debug_mode }}"
