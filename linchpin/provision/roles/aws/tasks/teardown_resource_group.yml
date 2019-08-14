@@ -50,6 +50,15 @@
     topo_output_resources: "{{ topo_output_rundb.output[0]['resources'] }}"
   when: not generate_resources
 
+- name: "teardown aws_ec2_vpc_internet_gateway resource def of current group"
+  include: teardown_aws_ec2_vpc_internet_gateway.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  when: res_item.0['role'] == "aws_ec2_vpc_internet_gateway"
+  with_nested:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
+
 - name: "teardown of ec2 resource definitions of current group"
   include: teardown_aws_ec2.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.2 }}
   when: res_item.0['role'] == "aws_ec2"
@@ -146,11 +155,3 @@
   loop_control:
     loop_var: res_item
 
-- name: "teardown aws_ec2_vpc_internet_gateway resource def of current group"
-  include: teardown_aws_ec2_vpc_internet_gateway.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
-  when: res_item.0['role'] == "aws_ec2_vpc_internet_gateway"
-  with_nested:
-    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
-    - ["{{ res_grp['resource_group_name'] }}"]
-  loop_control:
-    loop_var: res_item
