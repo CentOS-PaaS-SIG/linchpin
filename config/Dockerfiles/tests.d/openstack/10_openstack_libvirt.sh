@@ -8,7 +8,7 @@
 DISTRO=${1}
 PROVIDER=${2}
 
-TARGET="os-server-new"
+TARGET="os-server-libvirt"
 TEMPLATE_DATA="{\"distro\": \"linchpinlib-\"}"
 TMP_FILE=$(mktemp)
 
@@ -24,6 +24,8 @@ linchpin -w . --template-data "${TEMPLATE_DATA}" --output-pinfile "${TMP_FILE}" 
 
 echo "current working directory is ....."
 ls -l .
+cat resources/linchpin.latest
+
 
 
 popd 

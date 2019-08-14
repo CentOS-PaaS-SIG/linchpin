@@ -1,4 +1,29 @@
 ---
+os-server-libvirt:
+  topology:
+    topology_name: os-server-libvirt
+    resource_groups:
+      - resource_group_name: os-server-libvirt
+        resource_group_type: openstack
+        resource_definitions:
+          - name: "ci-lp-cp-{{ distro | default('') }}linchpin-libvirt"
+            role: os_server
+            flavor: 'm1.medium'
+            image: {{ image | default('CentOS-7-x86_64-GenericCloud-1612') }}
+            count: 1
+            keypair: linchpin_libvirt
+            networks:
+              - {{ networks | default('Provider_Net_Cci_4') }}
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos
+        {% endif %}
+
 os-server-new:
   topology:
     topology_name: os-server-new
