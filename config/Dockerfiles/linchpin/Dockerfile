@@ -1,4 +1,4 @@
-FROM fedora:28
+FROM fedora:30
 LABEL name="contrainfra/linchpin" \
       maintainer="https://github.com/CentOS-PaaS-SIG/linchpin" \
       version="1.6.5" \

@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -xe
 
 buildah --storage-driver vfs info | grep metacopy
 IMAGE=docker.io/${DOCKER_HUB_USERNAME}/${DOCKER_HUB_IMAGE}
