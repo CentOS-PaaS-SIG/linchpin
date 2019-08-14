@@ -3,7 +3,7 @@
   set_fact:
     topology_outputs_azure: []
 
-- name: "Initiating Provisioning of aws resource group"
+- name: "Initiating Provisioning of Azure resource group"
   include: provision_resource_group.yml res_grp={{ item }}
   with_items:
     - "{{ resources }}"
