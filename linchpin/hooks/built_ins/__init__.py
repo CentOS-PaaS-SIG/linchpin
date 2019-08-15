@@ -1,4 +1,18 @@
 GLOBAL_HOOKS = {
+    "os_server_boot_log": {
+        "name": "os_server_boot_log",
+        "context": True,
+        "type": "ansible",
+        "actions": [
+            {
+                "playbook": "boot_log.yml",
+                "extra_vars": {
+                    "ansible_ssh_user": "",
+                    "ansible_ssh_private_key": ""
+                }
+            }
+        ]
+    },
     "check_ssh": {
         "name": "check_ssh",
         "context": True,
