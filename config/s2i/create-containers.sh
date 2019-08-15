@@ -116,11 +116,17 @@ fi
 NAMESPACE="-p NAMESPACE=${PROJECT}"
 
 
-oc project "${PROJECT}" > /dev/null 2>&1
+#oc project "${PROJECT}" > /dev/null 2>&1
+oc project "${PROJECT}"
 if [ $? -ne 0 ] ; then
-  logdebug "Project does not exist...Creating..."
-  oc new-project "${PROJECT}" > /dev/null 2>&1 || { echo "Failed to create new project! Aborting." >&2; exit 1; }
-  oc project "${PROJECT}" > /dev/null 2>&1
+  echo "Inside project creation. Trying to create project"
+  echo "project name"
+  echo "${PROJECT}"
+#  logdebug "Project does not exist...Creating..."
+#  oc new-project "${PROJECT}" > /dev/null 2>&1 || { echo "Failed to create new project! Aborting." >&2; exit 1; }
+  oc new-project "${PROJECT}"
+#  oc project "${PROJECT}" > /dev/null 2>&1
+  oc project "${PROJECT}"
 fi
 
 for template in ${templates[@]}; do
