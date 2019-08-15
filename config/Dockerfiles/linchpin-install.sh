@@ -1,7 +1,8 @@
 #!/bin/bash -x
 
 WORKDIR=$(pwd)
-
+echo "Present working directory is ...."
+echo "${pwd}"
 pushd config/Dockerfiles
 make pip_install.sh
 ./pip_install.sh
