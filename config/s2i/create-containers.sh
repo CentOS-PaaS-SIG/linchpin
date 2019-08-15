@@ -4,7 +4,13 @@
 DEBUG=0
 
 ## Openshift Project. Will get created if it does not exist
-project="continuous-infra"
+
+if [[ -z "${OPENSHIFT_PROJECT}" ]]; then
+  PROJECT=${OPENSHIFT_PROJECT}
+else
+  PROJECT=continuous-infra
+fi
+
 
 ## List all templates to be processed
 templates="jenkins/jenkins-continuous-infra-slave-buildconfig-template.yaml \
@@ -42,6 +48,7 @@ function verifyEnv {
 
 function processTemplate {
     templateFile="${1}"
+    optionalParams="${2}"
     loginfo "* Processing ${templateFile}..."
     templateName=$(oc process -f "${templateFile}" | jq '.items[1].metadata.labels.template' | sed 's/"//g')
     logdebug "  - Template name is ${templateName}"
@@ -55,6 +62,7 @@ function processTemplate {
     if [ $? -ne 0 ] ; then
         loginfo "    >> Creating Build Config Template ${templateName}"
         oc create -f "${templateFile}" > /dev/null 2>&1 || { echo "Failed to create build config! Aborting." >&2; exit 1; }
+
     else
         logdebug "    >> Updating Build Config Template ${templateName}"
         oc replace -f "${templateFile}" > /dev/null 2>&1 || { echo "Failed to update build config! Aborting." >&2; exit 1; }
@@ -75,7 +83,8 @@ function processTemplate {
 
     if [[ ${imageExists} -eq 0 ]] && [[ ${buildConfigExists} -eq 0 ]] ; then
         loginfo "    >> Image Stream and Build Config do not exist. Creating..."
-        oc new-app "${templateName}" ${REPO_URL_PARAM} ${REPO_REF_PARAM} > /dev/null 2>&1 || { echo "Failed to create new app! Aborting." >&2; exit 1; }
+        oc new-app "${templateName}" ${optionalParams} ${REPO_URL_PARAM} ${REPO_REF_PARAM} > /dev/null 2>&1 || { echo "Failed to create new app! Aborting." >&2; exit 1; }
+
     fi
     loginfo ""
 }
@@ -97,21 +106,29 @@ else
   REPO_REF_PARAM="-p REPO_REF=${REPO_REF}"
 fi
 ##
-if [ -z "{MASTER_CONTEXT_DIR}" ]; then
+echo "${MASTER_CONTEXT_DIR}"
+if [ -z "${MASTER_CONTEXT_DIR}" ]; then
   MASTER_CONTEXT_DIR=""
 else
   MASTER_CONTEXT_DIR="-p MASTER_CONTEXT_DIR=${MASTER_CONTEXT_DIR}"
 fi
 
-oc project "${project}" > /dev/null 2>&1
+NAMESPACE="-p NAMESPACE=${PROJECT}"
+
+
+oc project "${PROJECT}" > /dev/null 2>&1
 if [ $? -ne 0 ] ; then
   logdebug "Project does not exist...Creating..."
-  oc new-project "${project}" > /dev/null 2>&1 || { echo "Failed to create new project! Aborting." >&2; exit 1; }
-  oc project "${project}" > /dev/null 2>&1
+  oc new-project "${PROJECT}" > /dev/null 2>&1 || { echo "Failed to create new project! Aborting." >&2; exit 1; }
+  oc project "${PROJECT}" > /dev/null 2>&1
 fi
 
 for template in ${templates[@]}; do
-    processTemplate "${template}"
+     if [ "$template" = "jenkins/jenkins-persistent-buildconfig-template.yaml" ]; then
+         processTemplate "${template}" "${MASTER_CONTEXT_DIR} ${NAMESPACE}"
+     else
+         processTemplate "${template}"
+     fi
 done
 
 loginfo "Done!"
