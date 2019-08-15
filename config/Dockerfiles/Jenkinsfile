@@ -39,6 +39,7 @@ executionID = UUID.randomUUID().toString()
 c7podName = 'lp_centos7-' + executionID
 f29podName = 'lp_fedora29-' + executionID
 f30podName = 'lp_fedora30-' + executionID
+privileged_status = env.PROVIDERS.contains("libvirt") ?: false
 
 def libraries = ['cico-pipeline' : ['master', 'https://github.com/CentOS/cico-pipeline-library.git'],
                  'ci-pipeline'   : ['master', 'https://github.com/CentOS-PaaS-SIG/ci-pipeline.git']]
@@ -99,6 +100,7 @@ stage('Tests') {
         parallel (
             "centos7" : {
                 pipelineUtils.clearTemplateNames()
+                
                 podTemplate(name: c7podName,
                             label: c7podName,
                             cloud: 'openshift',
@@ -120,7 +122,7 @@ stage('Tests') {
                                 image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/centos7:' + CENTOS7_TAG,
                                 ttyEnabled: false,
                                 command: '/usr/sbin/init',
-                                privileged: true,
+                                privileged: privileged_status,
                                 workingDir: '/workDir')
                         ],
                         volumes: [
@@ -153,7 +155,7 @@ stage('Tests') {
                                 image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora29:' + FEDORA29_TAG,
                                 ttyEnabled: false,
                                 command: '/root/init_libvirt.sh',
-                                privileged: true,
+                                privileged: privileged_status,
                                 workingDir: '/workDir')
                         ],
                         volumes: [
@@ -186,7 +188,7 @@ stage('Tests') {
                                 image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora30:' + FEDORA30_TAG,
                                 ttyEnabled: false,
                                 command: '/root/init_libvirt.sh',
-                                privileged: true,
+                                privileged: privileged_status,
                                 workingDir: '/workDir')
                         ],
                         volumes: [
