@@ -7,7 +7,7 @@
  */
 
 // Openshift project
-openshiftProject = "continuous-infra"
+openshiftProject = env.OPENSHIFT_PROJECT ?: "continuous-infra"
 DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 
 // Defaults for SCM operations
