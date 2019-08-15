@@ -415,13 +415,19 @@
 
 
 - set_fact:
-    publicOrprivate: []
+    forward_modes: []
 
 - set_fact:
-    publicOrprivate: "{{publicOrprivate + [netInfo[name]['forward_mode']] }}"
+    forward_modes: "{{forward_modes + [netInfo[name]['forward_mode']] }}"
   loop: "{{ network_names }}"
   loop_control:
     loop_var: name
+- set_fact:
+    IP_TYPE: []
+
+- name: Differentiate IPs
+  IP_TYPE: "{{ IP_TYPE + [mode|ip_filter]}}"
+  loop: 
 
 
 - xml:
