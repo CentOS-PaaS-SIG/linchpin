@@ -7,7 +7,7 @@ WORKDIR $HOME
 
 RUN ln -s /usr/bin/python2.7 /usr/bin/python
 
-RUN dnf -y install python-pip ansible curl gcc python-devel \
+RUN dnf -y install python-pip ansible curl gcc python-devel python-virtualenv \
                    openssl-devel libvirt-daemon-driver-* libvirt-daemon \
                    libvirt-daemon-kvm qemu-kvm libvirt-daemon-config-network \
                    libvirt-python libvirt-devel redhat-rpm-config file \

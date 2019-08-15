@@ -6,7 +6,7 @@ ENV HOME=/root
 WORKDIR $HOME
 
 RUN dnf -y install python-pip ansible curl gcc python-devel python2-shade \
-                   openssl-devel libvirt-daemon-driver-* libvirt-daemon \
+                   openssl-devel libvirt-daemon-driver-* libvirt-daemon python-virtualenv \
                    libvirt-daemon-kvm qemu-kvm libvirt-daemon-config-network \
                    libvirt-python libvirt-devel redhat-rpm-config file \
                    openssh genisoimage libvirt-client virt-install net-tools \
