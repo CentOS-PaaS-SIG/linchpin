@@ -8,10 +8,10 @@ make pip_install.sh
 popd
 
 pip install . --ignore-installed
-pip install .[tests]
-pip install .[libvirt]
-pip install .[beaker]
-pip install .[docker]
+pip install .[tests] --user
+pip install .[libvirt] --user
+pip install .[beaker] --user
+pip install .[docker] --user
 
 # If duffy.key is available then install duffy ansible module.
 if [ -e "keys/duffy.key" ]; then
