@@ -14,13 +14,19 @@ source ./linchpin_venv/bin/activate;
 #./pip_install.sh
 #popd
 
-pip install -e file://$PWD
+echo "CURRENT WORKING DIRECTORY is ${PWD}"
 
-pip install . --ignore-installed 
-pip install .[tests]
-pip install .[libvirt]
-pip install .[beaker]
-pip install .[docker]
+echo "CURRENT USER"
+whoami;
+
+echo "WAITING FOR 10 minutes for debugging"
+sleep 600;
+
+pip install . --ignore-installed --user 
+pip install .[tests] --user
+pip install .[libvirt] --user
+pip install .[beaker] --user
+pip install .[docker] --user
 
 # If duffy.key is available then install duffy ansible module.
 if [ -e "keys/duffy.key" ]; then
