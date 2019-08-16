@@ -261,7 +261,8 @@
                     "state": { "type": "string", "required": false},
                     "tags": {"type": "string", "required": false},
                     "validate_certs": { "type":"string","required":false},
-                    "vpc_id": { "type": "string", "required": true }
+                    "vpc_id": { "type": "string", "required": false },
+                    "vpc_name": { "type": "string", "required": false }
                 }
 
             }
