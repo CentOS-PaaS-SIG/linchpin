@@ -1,6 +1,9 @@
 #!/bin/bash -x
 
 WORKDIR=$(pwd)
+virtualenv linchpin_venv;
+source linchpin_venv/bin/activate;
+
 echo "Present working directory is ...."
 echo "${pwd}"
 pushd config/Dockerfiles
