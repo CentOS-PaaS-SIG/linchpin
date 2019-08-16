@@ -28,6 +28,8 @@ RUN dnf -y install python-pip ansible curl gcc python-devel python2-shade \
     systemctl enable libvirtd; \
     systemctl enable virtlockd
 
+RUN pip install virtualenv
+
 RUN export GIT_PYTHON_GIT_EXECUTABLE=/usr/bin/git
 
 RUN curl -o /etc/yum.repos.d/beaker-client.repo \

@@ -11,10 +11,11 @@ RUN yum -y install python-pip \
     && pip install -U pip \
     && pip install -U setuptools \
     && pip install -U pygithub \
+    && pip install virtualenv \
     && yum -y install curl \
     && curl -o /etc/yum.repos.d/herlo-linchpin-epel7.repo \
     https://copr.fedorainfracloud.org/coprs/herlo/linchpin-epel7/repo/epel-7/herlo-linchpin-epel7-epel-7.repo; \
-    yum -y install gcc python-devel openssl-devel ansible python-virtualenv\
+    yum -y install gcc python-devel openssl-devel ansible \
                     libvirt-daemon-driver-* libvirt-daemon libvirt-daemon-kvm \
                     qemu-kvm libvirt-daemon-config-network libvirt-python \
                     libvirt-devel virt-install file openssh mkisofs \
