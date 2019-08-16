@@ -2,8 +2,8 @@ FROM fedora:30
 LABEL maintainer "https://github.com/CentOS-PaaS-SIG/linchpin"
 LABEL description "This container will verify linchpin works under Fedora-30"
 
-ENV HOME=/root
-WORKDIR $HOME
+#ENV HOME=/root
+#WORKDIR $HOME
 
 RUN ln -s /usr/bin/python2.7 /usr/bin/python
 

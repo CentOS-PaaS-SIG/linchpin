@@ -2,8 +2,8 @@ FROM fedora:29
 LABEL maintainer "https://github.com/CentOS-PaaS-SIG/linchpin"
 LABEL description "This container will verify linchpin works under Fedora-29"
 
-ENV HOME=/root
-WORKDIR $HOME
+#ENV HOME=/root
+#WORKDIR $HOME
 
 RUN dnf -y install python-pip ansible curl gcc python-devel python2-shade \
                    openssl-devel libvirt-daemon-driver-* libvirt-daemon python-virtualenv \

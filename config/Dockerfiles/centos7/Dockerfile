@@ -2,8 +2,8 @@ FROM centos:7
 LABEL maintainer "https://github.com/CentOS-PaaS-SIG/linchpin"
 LABEL description "This container will verify linchpin works under Centos7"
 
-ENV HOME=/root
-WORKDIR $HOME
+#ENV HOME=/root
+#WORKDIR $HOME
 
 COPY centos7/centos7-pike.repo /etc/yum.repos.d/centos7-pike.repo
 RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
