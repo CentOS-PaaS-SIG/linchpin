@@ -184,25 +184,6 @@ aws-ec2-vpc-net:
           profile: default
         {% endif %}
 
-aws-ec2-vpc-net-test:
-  topology:
-    topology_name: ec2vpc
-    resource_groups:
-      - resource_group_name: "awsvpc"
-        resource_group_type: "aws"
-        resource_definitions:
-          - name: "{{ distro }}-vpc-test"
-            role: aws_ec2_vpc_net
-            region: us-east-1
-            cidr_block: 10.10.0.0/16
-            tags:
-              module: aws_ec2_vpc_net
-              this: works
-            tenancy: dedicated
-        credentials:
-          filename: aws.key
-          profile: default
-
 aws-ec2-vpc-subnet:
   topology:
     topology_name: ec2vpcsubnetdemo
@@ -421,41 +402,6 @@ aws-ec2-vpc-gateway-test:
         {% endif %}
 
 
-
-aws-ec2-vpc-internet-gateway:
-  topology:
-    topology_name: Vpc-Internet-Gateway
-    resource_groups:
-      - resource_group_name: "awsvpc"
-        resource_group_type: "aws"
-        resource_definitions:
-          - name: "{{ distro }}-vpc-test"
-            role: aws_ec2_vpc_net
-            region: us-east-1
-            cidr_block: 10.10.0.0/16
-            tags:
-              module: aws_ec2_vpc_net
-              this: works
-            tenancy: dedicated
-        credentials:
-          filename: aws.key
-          profile: default
-      - resource_group_name: "aws_ec2_vpc_internet_gateway"
-        resource_group_type: "aws"
-        resource_definitions:
-          - name: demo_vpc_internet_gateway
-            role: aws_ec2_vpc_internet_gateway
-            region: us-east-1
-            vpc_id: {{ vpc_id|default('vpc-0546ae7a407edb9a9') }}
-        {% if credentials is defined %}
-        credentials:
-          filename: {{ credentials.filename }}
-          profile: {{ credentials.profile }}
-        {% else %}
-        credentials:
-          filename: aws.key
-          profile: default
-        {% endif %}
 
 aws-ec2-template:
   topology:
