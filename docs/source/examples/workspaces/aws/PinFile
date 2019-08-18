@@ -389,6 +389,39 @@ aws-ec2-elb-lb:
           profile: default
         {% endif %}
 
+aws-ec2-vpc-gateway-test:
+  topology:
+    topology_name: ec2vpc
+    resource_groups:
+      - resource_group_name: "awsvpc-net"
+        resource_group_type: "aws"
+        resource_definitions:
+          - name: "{{ distro }}-vpc-test"
+            role: aws_ec2_vpc_net
+            region: us-east-1
+            cidr_block: 10.10.0.0/16
+            tags:
+              module: aws_ec2_vpc_net
+              this: works
+            tenancy: dedicated
+          - name: demo_vpc_internet_gateway
+            role: aws_ec2_vpc_internet_gateway
+            region: us-east-1
+            vpc_name: "{{ distro }}-vpc-test"
+           #vpc_id is optional, normally you can choose put vpc_id or vpc_name, but not both
+           # vpc_id: {{ vpc_id|default('vpc-0546ae7a407edb9a9') }}
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
+        credentials:
+          filename: aws.key
+          profile: default
+        {% endif %}
+
+
+
 aws-ec2-vpc-internet-gateway:
   topology:
     topology_name: Vpc-Internet-Gateway

@@ -1,9 +1,20 @@
 ---
+- ec2_vpc_net_facts:
+    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
+    region: "{{ res_def['region'] | default(omit) }}"
+    filters:
+      "tag:Name": "{{ res_def['vpc_name'] | default(omit) }}"
+  register: vpc_fact
+
+- set_fact:
+    vpc_id: '{{ vpc_fact.vpcs[0].id }}'
+    
 - name: Teardown aws internet gateway
   ec2_vpc_igw:
     aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
     aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
     state: "absent"
     region: "{{ res_def['region'] | default(omit) }}"
-    vpc_id: "{{ res_def['vpc_id'] | default(omit) }}"
+    vpc_id: "{{ res_def['vpc_id'] | default(vpc_id) }}"
   register: igw

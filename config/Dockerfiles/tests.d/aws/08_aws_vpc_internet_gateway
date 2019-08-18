@@ -7,20 +7,22 @@
 
 DISTRO=${1}
 PROVIDER=${2}
-TARGET0="aws-ec2-vpc-net-test"
-TARGET1="aws-ec2-vpc-internet-gateway"
+TARGET="aws-ec2-vpc-gateway-test"
+#TARGET0="aws-ec2-vpc-net-test"
+#TARGET1="aws-ec2-vpc-internet-gateway"
 pushd docs/source/examples/workspaces/${PROVIDER}
 function clean_up {
     set +e
-    linchpin -w . -vvv --template-data '{ "vpc_id": '"${VPC_ID}"' }' destroy "${TARGET1}"
-    linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' destroy "${TARGET0}"
+ #   linchpin -w . -vvv --template-data '{ "vpc_id": '"${VPC_ID}"' }' destroy "${TARGET1}"
+    linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' destroy "${TARGET}"
     rm -rf resources/
 }
 
 trap clean_up EXIT
 
-linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' up "${TARGET0}"
-cat ./resources/ec2vpc.output
-VPC_ID=$(awk -F '"' '{print $48}' ./resources/ec2vpc.output)
+linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' up "${TARGET}"
+#cat ./resources/ec2vpc.output
+#VPC_ID=$(awk -F '"' '{print $48}' ./resources/ec2vpc.output)
 #awk -F '"' '{print $64}' ./resources/ec2vpc.output|tee a.txt
-linchpin -w . -vvv --template-data '{ "vpc_id": '"${VPC_ID}"' }' up "${TARGET1}"
+#linchpin -w . -vvv --template-data '{ "vpc_id": '"${VPC_ID}"' }' up "${TARGET1}"
+#linchpin -w . --creds-path ./ -vvv up "${TARGET}"
