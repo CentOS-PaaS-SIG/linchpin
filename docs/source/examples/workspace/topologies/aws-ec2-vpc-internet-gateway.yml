@@ -1,0 +1,22 @@
+---
+aws-ec2-vpc-internet-gateway:
+  topology:
+    topology_name: Vpc-Internet-Gateway
+    resource_groups:
+      - resource_group_name: "aws_ec2_vpc_internet_gateway"
+        resource_group_type: "aws"
+        resource_definitions:
+          - name: demo_vpc_internet_gateway
+            role: aws_ec2_vpc_internet_gateway
+            region: us-east-1
+            vpc_id: vpc-0546ae7a407edb9a9
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
+        credentials:
+          filename: aws.key
+          profile: key
+        {% endif %}
+

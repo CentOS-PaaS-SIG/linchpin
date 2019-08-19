@@ -59,7 +59,31 @@
                         "required": true,
                         "allowed": ["aws_s3"] },
                     "name": { "type": "string", "required": true },
-                    "region": { "type": "string", "required": false },
+		    "debug_botocore_endpoint_logs": { "type": "boolean", "required": false },
+                    "dest": { "type": "string", "required": false },
+		    "dualstack": { "type": "boolean", "required": false },
+		    "encrypt": { "type": "boolean", "required": false },
+                    "encryption_kms_key_id": { "type": "string", "required": false },
+		    "encryption_mode": { "type": "string", "required": false },
+                    "expiration": { "type": ["string", "number"], "required": false },
+                    "headers": { "type": "string", "required": false },
+                    "ignore_nonexistent_bucket": { "type": "boolean", "required": false },
+                    "marker": { "type": "string", "required": false },
+		    "max_keys": { "type": "number", "required": false },
+		    "metadata": { "type": "string", "required": false },
+                    "mode": { "type": "string", "required": false, "allowed":[ "get", "put", "delete", "create", "getstr", "geturl", "getobj", "list"] },
+		    "object": { "type": "string", "required": false },
+		    "overwrite": { "type": "string", "required": false },
+		    "prefix": { "type": "string", "required": false },
+		    "profile": { "type": "string", "required": false },
+		    "retries": { "type": "number", "required": false },
+		    "rgw": { "type": "boolean", "required": false },
+		    "s3_url": { "type": "string", "required": false },
+		    "securtity_token": { "type": "string", "required": false },
+		    "src": { "type": "string", "required": false },
+		    "validate_certs": { "type": "boolean", "required": false },
+		    "version": { "type": "string", "required": false },
+                    "region": { "type": "string", "required": true },
                     "permission": { "type": "string", "required": false }
                 }
             },
@@ -71,8 +95,7 @@
                         "required": true,
                         "allowed": ["aws_ec2_key"] },
                     "name": { "type": "string", "required": true },
-                    "region": { "type": "string", "required": false },
-                    "public_key_path": { "type": "string", "required": false }
+                    "region": { "type": "string", "required": false }
                 }
             },
             {
@@ -242,8 +265,29 @@
                     "purge_listeners": { "type": "boolean", "required": false },
                     "purge_subnets": { "type": "boolean", "required": false },
                     "purge_zones": { "type": "boolean", "required": false },
-		    "scheme": { "type": "string", "required": false, "allowed": ["internal", "internet-facing"] }
+		            "scheme": { "type": "string", "required": false, "allowed": ["internal", "internet-facing"] }
                 }
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["aws_ec2_vpc_internet_gateway"] },
+                    "name": { "type": "string", "required": true },
+                    "ec2_url": { "type": "string", "required": false },
+                    "debug_botocore_endpoint_logs": { "type": "boolean", "required": false },
+                    "profile": { "type": "string", "required": false},
+                    "region": { "type": "string", "required": true},
+                    "security_token": { "type": "string", "required": false },
+                    "state": { "type": "string", "required": false},
+                    "tags": {"type": "string", "required": false},
+                    "validate_certs": { "type":"string","required":false},
+                    "vpc_id": { "type": "string", "required": false },
+                    "vpc_name": { "type": "string", "required": false }
+                }
+
             }
 	    ]
         }

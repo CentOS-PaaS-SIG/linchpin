@@ -1,0 +1,36 @@
+---
+- ec2_vpc_net_facts:
+    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
+    region: "{{ res_def['region'] | default(omit) }}"
+    filters:
+      "tag:Name": "{{ res_def['vpc_name'] | default(omit) }}"
+  register: vpc_fact
+
+- set_fact:
+    vpc_id: '{{ vpc_fact.vpcs[0].id }}'
+
+- name: Provision aws internet gateway
+  ec2_vpc_igw:
+    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
+    debug_botocore_endpoint_logs: "{{ res_def['debug_botocore_endpoint_logs'] | default(omit)}}"
+    ec2_url: "{{ res_def['ec2_url'] | default(omit) }}"
+    region: "{{ res_def['region'] | default(omit) }}"
+    state: "{{ res_def['state'] | default(omit) }}"
+    tags: "{{ res_def['tags'] | default(omit) }}"
+    validate_certs: "{{ res_def['validate_certs'] | default(omit) }}"
+    vpc_id: "{{ res_def['vpc_id'] | default(vpc_id) }}"
+  register: igw
+
+- set_fact:
+    topology_outputs_aws_internet_output: []
+
+- name: "Append output to topology_outputs"
+  set_fact:
+    topology_outputs_aws_internet_output: "{{ topology_outputs_aws_internet_output + [igw] }}"
+  when: igw['gateway_id'] is defined
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_aws_ec2: "{{ topology_outputs_aws_internet_output | add_res_type( 'aws_ec2_vpc_internet_gateway') }}"    
