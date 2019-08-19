@@ -26,7 +26,7 @@ def ip_filter(forward_mode):
     if forward_mode == 'bridge':
         return 'public'
 
-    
+
 def fetch_attr(output_dict, attr, default):
     return output_dict.get(attr, default)
 
