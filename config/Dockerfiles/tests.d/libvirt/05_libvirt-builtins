@@ -1,9 +1,8 @@
 #!/bin/bash -xe
 
 # Verify basic provisioning with global hooks
-# distros.exclude: centos7
+# distros.exclude: centos7 fedora29 fedora30
 # providers.include: libvirt
-# providers.exclude: none
 
 set -o pipefail
 
