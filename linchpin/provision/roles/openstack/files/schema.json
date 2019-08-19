@@ -161,8 +161,7 @@
                         "required": true,
                         "allowed": ["os_keypair"] },
                     "name": { "type": "string", "required": true},
-                    "unique": { "type": "boolean", "required": false },
-                    "public_key_path": { "type": "string", "required": false}
+                    "unique": { "type": "boolean", "required": false }
                 }
             },
             {
