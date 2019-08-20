@@ -37,7 +37,7 @@
   when: res_def_output['changed'] == true and not _async
 
 - name: "Async:: Provisioning Azure VM"
-  ec2:
+  azure_rm_virtualmachine:
     client_id: "{{ auth_var['client_id'] | default(omit) }}"
     tenant: "{{ auth_var['tenant'] | default(omit) }}"
     secret: "{{ auth_var['secret'] | default(omit) }}"
