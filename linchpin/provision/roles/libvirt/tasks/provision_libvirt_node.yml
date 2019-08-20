@@ -432,7 +432,6 @@
   loop: "{{forward_modes}}"
   loop_control:
     loop_var: mode
-
 - xml:
     xmlstring: "{{ node_data.results[net.1].get_xml }}"
     xpath: "//interface[@type='network' and ./source[@network='{{net.0.name}}']]/mac"
