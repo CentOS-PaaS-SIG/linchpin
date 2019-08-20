@@ -370,6 +370,9 @@
     networks: []
 
 - set_fact:
+    macs: []
+
+- set_fact:
     networks: "{{ networks + [net] }}"
   loop: "{{ res_def['networks'] }}"
   loop_control:
@@ -377,6 +380,31 @@
   when:
     - res_def['networks'] is defined
     - net.dhcp is not defined or net.dhcp == true
+
+- set_fact:
+    network_names: []
+    nets: []
+    vm_names: []
+
+- name: "Build a vm list"
+  set_fact:
+    vm_names: "{{ vm_names + [ data[0]+data[3]+data[2]|string ] }}"
+  with_nested:
+    - "{{ libvirt_resource_name }}"
+    - "{{ range(0,networks|length, 1)|list}}"
+    - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
+  loop_control:
+    loop_var: data
+
+
+- name: Build a network name list
+  set_fact: 
+    network_names: "{{ network_names + [item[0]['name']] }}"
+    nets: "{{nets + [item[0]] }}"
+  with_nested:
+      - "{{ networks }}"
+      - "{{ res_count }}"
 
 - xml:
     xmlstring: "{{ node_data.results[net.1].get_xml }}"
@@ -387,13 +415,13 @@
   loop_control:
     loop_var: net
   loop: "{{ networks|product(res_count)|list }}"
+- set_fact:
+    mac_length: "{{ networks|length*res_count|length }}"
+
 
 - set_fact:
-    macs: []
-
-- set_fact:
-    macs: "{{ macs + [mac_addresses.results[node.1].matches[node.0].mac.address] }}"
-  loop: "{{ range(0,networks|length,1)|list|product(res_count)|list }}"
+    macs: "{{ macs + [mac_addresses.results[node].matches[0].mac.address] }}"
+  loop: '{{ range(0,mac_length|int,1)|list }}'
   loop_control:
     loop_var: node
 
@@ -410,6 +438,17 @@
   delay: 10
   when: uri_hostname == 'localhost'
 
+- set_fact:
+    ip_set: []
+
+- set_fact: 
+    ip_set: "{{ip_set + [extract_ip_address_result.results[num]['stdout']|omit_filter(omit)]}}"
+  loop: "{{ range(0,mac_length|int, 1)|list}}"
+  loop_control:
+    loop_var: num
+  when: uri_hostname == 'localhost'
+
+
 - name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
     /usr/sbin/arp -an | grep -F {{ mac }} | cut -f 2 -d "(" | cut -f 1 -d ")"
@@ -425,28 +464,29 @@
   delegate_to: "{{ uri_hostname }}"
   when: uri_hostname != 'localhost'
 
+- set_fact: 
+    ip_set: "{{ip_set + [extract_ip_address_result_remote.results[num]['stdout']|omit_filter(omit)]}}"
+  loop: "{{ range(0,mac_length|int, 1)|list}}"
+  loop_control:
+    loop_var: num
+  when: uri_hostname != 'localhost'
+
 - name: "Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
   set_fact:
-    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0]+data[2]+data[1]|string, 'ip': extract_ip_address_result.results[data[1]].stdout, 'resource_type': 'libvirt_res' }] }}"
-  with_nested:
-    - "{{ libvirt_resource_name }}"
-    - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': vm_names[index], 'ip': ip_set[index], 'resource_type': 'libvirt_res' }] }}"
+  loop: "{{ range(0, mac_length|int)|list }}"
   loop_control:
-    loop_var: data
+    loop_var: index
   when:
     - not _async and uri_hostname == 'localhost'
     - extract_ip_address_result is defined and extract_ip_address_result.changed == true
 
 - name: "remote: Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
   set_fact:
-    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0]+data[2]+data[1]|string, 'ip': extract_ip_address_result_remote.results[data[1]].stdout, 'resource_type': 'libvirt_res' }] }}"
-  with_nested:
-    - "{{ libvirt_resource_name }}"
-    - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': vm_names[index], 'ip': ip_set[index], 'resource_type': 'libvirt_res' }] }}"
+  loop: "{{ range(0, mac_length|int)|list }}"
   loop_control:
-    loop_var: data
+    loop_var: index
   when:
     - not _async and uri_hostname != 'localhost'
     - extract_ip_address_result_remote is defined and extract_ip_address_result_remote.changed == true
@@ -463,3 +503,19 @@
   when:
     - extract_ip_address_result is not defined
     - extract_ip_address_result_remote is not defined
+
+- name: "Update the ip in Inventory"
+  # shell: virsh net-update {{ network['name']}} add ip-dhcp-host "<host mac='{{ macs.0 }}' name='{{ res_def['name'] }}' ip='{{ static_ip }}' />" --live --config
+  virt_net:
+    name: "{{network_names[num]}}"
+    command: modify
+    xml: "<host mac='{{ macs[num] }}' name='{{vm_names[num]}}' ip='{{ ip_set[num] }}'/>"
+  when: 
+    - nets[num]['static_ip_reserved'] is defined
+    - nets[num]['static_ip_reserved'] == true
+  loop: '{{ range(0,mac_length|int,1)|list }}'
+  loop_control:
+    loop_var: num
+
+ 
+ 
