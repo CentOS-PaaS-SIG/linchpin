@@ -13,52 +13,29 @@
                                 "azure_vm"
                             ]
                         },
-                        "name": {
+                        "vm_name": {
                             "type": "string",
                             "required": true
-                        },
-                        "flavor": {
-                            "type": "string",
-                            "required": true
-                        },
-                        "region": {
-                            "type": "string",
-                            "required": false
                         },
                         "image": {
                             "type": "string",
-                            "required": false
+                            "required": true
                         },
-                        "count": {
-                            "type": "integer",
-                            "required": false
-                        },
-                        "keypair": {
+                        "vm_username": {
                             "type": "string",
-                            "required": false
+                            "required": true
                         },
-                        "security_group": {
-                            "type": [
-                                "list",
-                                "string"
-                            ],
-                            "required": false
-                        },
-                        "vpc_subnet_id": {
+                        "vm_password": {
                             "type": "string",
-                            "required": false
+                            "required": true
                         },
-                        "assign_public_ip": {
-                            "type": "boolean",
-                            "required": false
+                        "resource_group": {
+                            "type": "string",
+                            "required": true
                         },
-                        "instance_tags": {
-                            "type": "dict",
-                            "required": false
-                        },
-                        "wait_timeout": {
-                            "type": "integer",
-                            "required": false
+                        "vm_size": {
+                            "type": "string",
+                            "required": true
                         }
                     }
                 }
