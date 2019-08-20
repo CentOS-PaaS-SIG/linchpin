@@ -20,6 +20,13 @@ def add_res_type(hosts, res_type):
     return new_hosts
 
 
+def ip_filter(forward_mode):
+    if forward_mode == 'nat':
+        return 'private'
+    if forward_mode == 'bridge':
+        return 'public'
+
+
 def fetch_attr(output_dict, attr, default):
     return output_dict.get(attr, default)
 

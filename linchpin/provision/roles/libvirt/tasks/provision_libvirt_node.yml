@@ -406,6 +406,32 @@
       - "{{ networks }}"
       - "{{ res_count }}"
 
+- virt_net:
+    command: facts
+  register: net_fact
+
+- set_fact:
+    netInfo: "{{net_fact.ansible_facts.ansible_libvirt_networks}}"
+
+
+- set_fact:
+    forward_modes: []
+
+- set_fact:
+    forward_modes: "{{forward_modes + [netInfo[name]['forward_mode']] }}"
+  loop: "{{ network_names }}"
+  loop_control:
+    loop_var: name
+
+- set_fact:
+    IP_TYPE: []
+
+- name: Differentiate IPs
+  set_fact:
+    IP_TYPE: "{{ IP_TYPE + [mode|ip_filter]}}"
+  loop: "{{forward_modes}}"
+  loop_control:
+    loop_var: mode
 - xml:
     xmlstring: "{{ node_data.results[net.1].get_xml }}"
     xpath: "//interface[@type='network' and ./source[@network='{{net.0.name}}']]/mac"
@@ -473,7 +499,7 @@
 
 - name: "Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
   set_fact:
-    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': vm_names[index], 'ip': ip_set[index], 'resource_type': 'libvirt_res' }] }}"
+    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': vm_names[index], 'ip': ip_set[index],'ip_type': IP_TYPE[index], 'resource_type': 'libvirt_res' }] }}"
   loop: "{{ range(0, mac_length|int)|list }}"
   loop_control:
     loop_var: index
@@ -483,7 +509,7 @@
 
 - name: "remote: Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
   set_fact:
-    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': vm_names[index], 'ip': ip_set[index], 'resource_type': 'libvirt_res' }] }}"
+    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': vm_names[index], 'ip': ip_set[index], 'ip_type': IP_TYPE[index], 'resource_type': 'libvirt_res' }] }}"
   loop: "{{ range(0, mac_length|int)|list }}"
   loop_control:
     loop_var: index
