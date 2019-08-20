@@ -2,7 +2,8 @@
       res_count: '{{ (res_count | default([])) + [item | int] }}'
   with_sequence: "start=0 end={{ res_def['count'] | default(1) |int - 1 }}"
 
-- block:
+- name: Deisgned for carbon destruction with count 1
+  block:
   - name: "halt node"
     virt:
       name: "{{ libvirt_resource_name }}"
