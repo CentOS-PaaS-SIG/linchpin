@@ -26,7 +26,7 @@
   set_fact:
     auth_var: "{{ auth_variable['output'][cred_profile] | default('') }}"
   when: cred_profile is defined and auth_variable['changed']
-  no_log: "{{ not debug_mode }}"
+  # no_log: "{{ not debug_mode }}"
 
 - name: "provisioning resource definitions of current group"
   include: provision_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
