@@ -5,11 +5,13 @@ DEBUG=0
 
 ## Openshift Project. Will get created if it does not exist
 
-if [[ -z "${OPENSHIFT_PROJECT}" ]]; then
+if [ ${OPENSHIFT_PROJECT} ]; then
   PROJECT=${OPENSHIFT_PROJECT}
 else
   PROJECT=continuous-infra
 fi
+
+echo $PROJECT
 
 
 ## List all templates to be processed
@@ -116,18 +118,17 @@ fi
 NAMESPACE="-p NAMESPACE=${PROJECT}"
 
 
+# disable project creation un-comment the following lines if you are setting up ci 
 #oc project "${PROJECT}" > /dev/null 2>&1
-oc project "${PROJECT}"
-if [ $? -ne 0 ] ; then
-  echo "Inside project creation. Trying to create project"
-  echo "project name"
-  echo "${PROJECT}"
+#oc project "${PROJECT}"
+#if [ $? -ne 0 ] ; then
+#  echo "Inside project creation. Trying to create project"
+#  echo "project name"
+#  echo "${PROJECT}"
 #  logdebug "Project does not exist...Creating..."
 #  oc new-project "${PROJECT}" > /dev/null 2>&1 || { echo "Failed to create new project! Aborting." >&2; exit 1; }
-  oc new-project "${PROJECT}"
-#  oc project "${PROJECT}" > /dev/null 2>&1
-  oc project "${PROJECT}"
-fi
+#  oc project "${PROJECT}"
+#fi
 
 for template in ${templates[@]}; do
      if [ "$template" = "jenkins/jenkins-persistent-buildconfig-template.yaml" ]; then
