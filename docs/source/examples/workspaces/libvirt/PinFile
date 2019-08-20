@@ -1,4 +1,19 @@
 ---
+libvirt-minimal:
+  topology:
+    topology_name: minimal
+    resource_groups:
+      - resource_group_name: libvirt-minimal
+        resource_group_type: libvirt
+        resource_definitions:
+          - role: libvirt_network
+            name: minimal_network
+          - role: libvirt_node
+            name: minimal_node
+            vcpus: 1
+            memory: 1024
+            image_src: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz
+
 libvirt-new:
   topology:
     topology_name: libvirt-new

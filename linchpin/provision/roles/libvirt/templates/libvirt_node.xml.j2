@@ -1,10 +1,10 @@
-<domain type='{{ definition[1]['driver'] | default('kvm') }}'>
+<domain type='{{ definition[1]['driver'] }}'>
   <name>{{ libvirt_resource_name }}{{ definition[5] }}{{ definition[2] }}</name>
   <memory unit='KiB'>{{ definition[1]['memory'] * 1024 | int }}</memory>
   <vcpu placement='static'>{{ definition[1]['vcpus'] }}</vcpu>
   <os>
-    <type arch='{{ definition[1]['arch'] | default('x86_64') }}'>hvm</type>
-    <boot dev='{{ definition[1]['boot_dev'] | default('hd') }}'/>
+    <type arch='{{ definition[1]['arch'] }}'>hvm</type>
+    <boot dev='{{ definition[1]['boot_dev'] }}'/>
   </os>
   <features>
     <acpi/>
@@ -19,7 +19,7 @@
   <on_reboot>restart</on_reboot>
   <on_crash>destroy</on_crash>
   <devices>
-{% if definition[2]['driver'] is defined and definition[0]['driver'] == 'qemu' %}
+{% if definition[1]['driver'] == 'qemu' %}
     <emulator>/usr/bin/qemu-system-x86_64</emulator>
 {% else %}
     <emulator>{{ qemu_path }}qemu-kvm</emulator>
@@ -46,43 +46,41 @@
     {% if definition[8] == 'virtio_scsi' %}
       <controller type='scsi' model='virtio-scsi' />
     {% endif %}
-    {% if definition[1]['storage'] is defined %}
-      {% for storage_def in definition[1]['storage'] %}
-        <disk type='file' device='disk'>
-          <driver name='qemu' type='qcow2' cache="{{ storage_def['cache'] | default('none') }}"/>
-          {% if storage_def['source'] is not defined %}
-            <source file='{{ libvirt_image_path }}/{{ libvirt_resource_name }}{{ definition[5] }}{{ definition[2] }}{{ definition[5] }}{{ storage_def['name'] }}.qcow2' />
-          {% elif storage_def['source']['file'] is defined %}
-            {% if storage_def['source']['file'].startswith('/') %}
-              <source file='{{ storage_def['source']['file'] }}'/>
-            {% else %}
-              <source file='{{ libvirt_image_path }}/{{ storage_def['source']['file'] }}'/>
-            {% endif %}
-          {% elif storage_def['source']['block'] is defined %}
-            <source block='{{ storage_def['source']['block'] }}'/>
-          {% elif storage_def['source']['dir'] is defined %}
-            <source dir='{{ storage_def['source']['dir'] }}'/>
-          {% elif storage_def['source']['volume'] is defined and sourage_def['source']['pool'] is defined %}
-            <source pool='{{ storage_def['source']['pool'] }}' volume='{{ storage_def['source']['volume'] }}'/>
-          {% elif storage_def['network_protocol'] is defined %}
-            {% if storage_def['source']['network_protocol'] ==  'rbd' or storage_def['source']['network_protocol'] ==  'sheepdog' or storage_def['source']['network_protocol'] ==  'gluster' or storage_def['source']['network_protocol'] ==  'vxhs' %}
-              <source protocol='{{ storage_def['source']['network_protocol'] }}' name='{{ storage_def['source']['network_name'] }}' />
-            {% endif %}
-          {% endif %}
-          {% if storage_def['disk_type'] is not defined or storage_def['disk_type'] == 'virtio_blk' %}
-            <target dev='{{ storage_def['device'] | default('vda') }}' bus='virtio' />
+    {% for storage_def in definition[1]['storage'] %}
+      <disk type='file' device='disk'>
+        <driver name='qemu' type='qcow2' cache="{{ storage_def['cache'] | default('none') }}"/>
+        {% if storage_def['source'] is not defined %}
+          <source file='{{ libvirt_image_path }}/{{ libvirt_resource_name }}{{ definition[5] }}{{ definition[2] }}{{ definition[5] }}{{ storage_def['name'] }}.qcow2' />
+        {% elif storage_def['source']['file'] is defined %}
+          {% if storage_def['source']['file'].startswith('/') %}
+            <source file='{{ storage_def['source']['file'] }}'/>
           {% else %}
-            <target dev='{{ storage_def['device'] | default('vda') }}' bus='scsi' />
+            <source file='{{ libvirt_image_path }}/{{ storage_def['source']['file'] }}'/>
           {% endif %}
-          {% if storage_def['shareable'] is defined %}
-            <shareable />
+        {% elif storage_def['source']['block'] is defined %}
+          <source block='{{ storage_def['source']['block'] }}'/>
+        {% elif storage_def['source']['dir'] is defined %}
+          <source dir='{{ storage_def['source']['dir'] }}'/>
+        {% elif storage_def['source']['volume'] is defined and sourage_def['source']['pool'] is defined %}
+          <source pool='{{ storage_def['source']['pool'] }}' volume='{{ storage_def['source']['volume'] }}'/>
+        {% elif storage_def['network_protocol'] is defined %}
+          {% if storage_def['source']['network_protocol'] ==  'rbd' or storage_def['source']['network_protocol'] ==  'sheepdog' or storage_def['source']['network_protocol'] ==  'gluster' or storage_def['source']['network_protocol'] ==  'vxhs' %}
+            <source protocol='{{ storage_def['source']['network_protocol'] }}' name='{{ storage_def['source']['network_name'] }}' />
           {% endif %}
-        </disk>
-        {% if storage_def['disk_type'] is defined and storage_def['disk_type'] == 'virtio_scsi' and definition[8] != 'virtio_scsi' %}
-          <controller type='scsi' model='virtio-scsi' />
         {% endif %}
-      {% endfor %}
-    {% endif %}
+        {% if storage_def['disk_type'] is not defined or storage_def['disk_type'] == 'virtio_blk' %}
+          <target dev='{{ storage_def['device'] | default('vda') }}' bus='virtio' />
+        {% else %}
+          <target dev='{{ storage_def['device'] | default('vda') }}' bus='scsi' />
+        {% endif %}
+        {% if storage_def['shareable'] is defined %}
+          <shareable />
+        {% endif %}
+      </disk>
+      {% if storage_def['disk_type'] is defined and storage_def['disk_type'] == 'virtio_scsi' and definition[8] != 'virtio_scsi' %}
+        <controller type='scsi' model='virtio-scsi' />
+      {% endif %}
+    {% endfor %}
 {% for network in definition[1]['networks'] %}
     <interface type='network'>
       <model type='virtio'/>

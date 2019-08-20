@@ -1,0 +1,28 @@
+#!/bin/bash -xe
+
+# Verify basic provisioning for all supplied providers
+# distros.exclude: fedora29 fedora30 centos7
+# providers.include: libvirt
+
+DISTRO=${1}
+PROVIDER=${2}
+
+TARGETS="${PROVIDER}-minimal"
+TEST_NAME="${DISTRO}/${PROVIDER}/01-minimal"
+DESCRIPTION="Test ${PROVIDER} provider with a simple validate"
+
+function clean_up {
+    set +e
+    linchpin -w . -v destroy ${target}
+}
+trap clean_up EXIT SIGHUP SIGINT SIGTERM
+
+echo "Test Name: ${TEST_NAME}"
+echo "${DESCRIPTION}"
+
+pushd docs/source/examples/workspaces/${PROVIDER}
+
+echo "CREDS_PATH: ${CREDS_PATH}"
+for target in ${TARGETS}; do
+    linchpin -w . -vvvv up ${target}
+done
