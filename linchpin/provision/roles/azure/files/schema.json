@@ -50,7 +50,7 @@
                             "type": "string",
                             "required": true,
                             "allowed": [
-                                "virtual_network"
+                                "azure_virtual_network"
                             ]
                         },
                         "resource_group": {

@@ -1,5 +1,5 @@
-- name: "Provisioning Azure VM when not async"
-  azure_rm_virtualmachine:
+- name: "Teardown Azure Virtual Network when not async"
+  azure_rm_virtualnetwork:
     client_id: "{{ auth_var['client_id'] | default(omit) }}"
     tenant: "{{ auth_var['tenant'] | default(omit) }}"
     secret: "{{ auth_var['secret'] | default(omit) }}"
