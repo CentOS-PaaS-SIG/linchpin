@@ -6,7 +6,7 @@
     secret: "{{ auth_var['secret'] | default(omit) }}"
     subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
-    address_prefixes: 10.1.0.0/16
+    address_prefixes: "{{ res_def['address_prefixes']|default(10.1.0.0/16)}}"
     name: "{{res_def['virtual_network_name']|default(omit)}}"
   register: res_def_output
 
