@@ -42,6 +42,26 @@
                             "required": true
                         }                        
                     }
+                },
+                {
+                    "type": "dict",
+                    "schema": {
+                        "role": {
+                            "type": "string",
+                            "required": true,
+                            "allowed": [
+                                "azure_virtual_network"
+                            ]
+                        },
+                        "resource_group": {
+                            "type": "string",
+                            "required": true
+                        },
+                        "virtual_network_name": {
+                            "type": "string",
+                            "required": true
+                        }                        
+                    }
                 }
             ]
         }
