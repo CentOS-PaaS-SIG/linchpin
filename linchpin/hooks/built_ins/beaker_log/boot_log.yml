@@ -1,0 +1,26 @@
+---
+- hosts: all
+  gather_facts: false
+  tasks:
+    - name: "collect {{ inventory_hostname }} boot logs"
+      block:
+        - get_url:
+            url: "{{ url }}.xml"
+            dest: "{{ lookup('env','PWD') }}/{{ inventory_hostname }}.xml"
+        - pause:
+            seconds: 30
+        - get_url:
+            url: "{{ url }}.xml"
+            dest: "{{ lookup('env','PWD') }}/{{ inventory_hostname }}.xml"
+            force: true
+        - xml:
+            path: "{{ lookup('env','PWD') }}/{{ inventory_hostname }}.xml"
+            xpath: "//recipe/logs/*"
+            content: attribute
+          register: logs
+        - get_url:
+            url: "{{ item.log.href }}"
+            dest: "{{ lookup('env','PWD') }}/{{ inventory_hostname }}_{{ item.log.name }}"
+          loop: "{{ logs.matches }}"
+      delegate_to: localhost
+

@@ -1,4 +1,8 @@
 ---
+cfgs:
+  beaker:
+    __url__: url
+
 simple:
   topology:
     topology_name: simple
@@ -16,10 +20,13 @@ simple:
     inventory_layout:
       vars:
         hostname: __IP__
+        url: __url__
       hosts:
         example-node:
           count: 1
           host_groups:
             - example
-
+  hooks:
+    postup:
+      - name: beaker_log
 
