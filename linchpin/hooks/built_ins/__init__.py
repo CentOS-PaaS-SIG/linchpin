@@ -1,4 +1,18 @@
 GLOBAL_HOOKS = {
+    "beaker_log": {
+        "name": "beaker_log",
+        "context": True,
+        "type": "ansible",
+        "actions": [
+            {
+                "playbook": "boot_log.yml",
+                "extra_vars": {
+                    "ansible_ssh_user": "",
+                    "ansible_ssh_private_key": ""
+                }
+            }
+        ]
+    },
     "os_server_boot_log": {
         "name": "os_server_boot_log",
         "context": True,
