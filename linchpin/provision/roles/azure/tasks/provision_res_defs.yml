@@ -20,7 +20,7 @@
 
 - name: "Create name using uhash value"
   set_fact:
-    aws_resource_name: "{{ rsrc_name + '-' + uhash + '-' }}"
+    azure_resource_name: "{{ rsrc_name + '-' + uhash + '-' }}"
 
 - name: "provision resource type : {{ res_def['role'] }}"
   include: "provision_{{ res_def['role'] }}.yml"
