@@ -1,0 +1,9 @@
+- name: "Provisioning Azure VM when not async"
+  azure_rm_virtualmachine:
+    client_id: "{{ auth_var['client_id'] | default(omit) }}"
+    tenant: "{{ auth_var['tenant'] | default(omit) }}"
+    secret: "{{ auth_var['secret'] | default(omit) }}"
+    subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
+    resource_group: "{{ res_def['resource_group'] | default(omit) }}"
+    address_prefixes: 10.1.0.0/16
+    name: "{{res_def['virtual_network_name']|default(omit)}}"

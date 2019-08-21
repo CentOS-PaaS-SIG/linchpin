@@ -19,6 +19,7 @@
     admin_password: "{{ res_def['vm_password'] | default(omit) }}"
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
     vm_size: "{{ res_def['vm_size'] | default(omit) }}"
+    virtual_network_name: "{{res_def['virtual_network_name']|default(omit)}}"
     name: "{{ res_def['vm_name'] | default(omit) }}"
     image: "{{ res_def['image'] | default(omit) }}"
     #leave the code below here for now, implement later
