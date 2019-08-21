@@ -2,6 +2,63 @@
       res_count: '{{ (res_count | default([])) + [item | int] }}'
   with_sequence: "start=0 end={{ res_def['count'] | default(1) |int - 1 }}"
 
+- name: Deisgned for carbon destruction with count 1
+  block:
+  - name: "halt node"
+    virt:
+      name: "{{ libvirt_resource_name }}"
+      state: destroyed
+      uri: "{{ instance[1]['uri'] | default('qemu:///system') }}"
+    with_nested:
+      - ["{{ res_def }}"]
+      - "{{ res_count }}"
+      - ["{{ res_def['name_separator'] | default('_')  }}"]
+    loop_control:
+      loop_var: instance
+    register: res_def_output
+    ignore_errors: yes
+    delegate_to: "{{ uri_hostname }}"
+    when: not _async
+
+  - name: "get XML definition of vm"
+    command: "virsh -c {{ instance[1]  }} dumpxml {{ instance[0] }}"
+    with_nested:
+      - ["{{  libvirt_resource_name }}"]
+      - ["{{ res_def['uri'] | default('qemu:///system') }}"]
+    loop_control:
+      loop_var: instance
+    when: not _async
+    register: vm_xml_dump
+    ignore_errors: yes
+
+  - name: "undefine node"
+    virt:
+      name: "{{ libvirt_resource_name }}"
+      command: undefine
+      uri: "{{ instance[0]['uri'] | default('qemu:///system') }}"
+    with_nested:
+      - ["{{ res_def }}"]
+    loop_control:
+      loop_var: instance
+    register: res_def_output
+    when: not _async
+    ignore_errors: yes
+
+  - name: "Delete associated image files"
+    file:
+      state: absent
+      path: "{{ inst }}"
+    with_items: "{{ vm_xml_dump | get_libvirt_files }}"
+    loop_control:
+      loop_var: inst
+    ignore_errors: yes
+    become: "{{ libvirt_become }}"
+    delegate_to: "{{ uri_hostname }}"
+    when: not _async
+
+  when: res_count|length|int == 1
+
+
 - name: "halt node"
   virt:
     name: "{{ libvirt_resource_name }}{{ instance[2] }}{{ instance[1] }}"
@@ -57,3 +114,4 @@
   become: "{{ libvirt_become }}"
   delegate_to: "{{ uri_hostname }}"
   when: not _async
+
