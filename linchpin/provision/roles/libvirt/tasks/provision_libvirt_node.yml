@@ -159,7 +159,7 @@
     loop_var: definition
   remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
   delegate_to: "{{ uri_hostname }}"
-  when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init"
+  when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init" 
 
 - name: "Create directories"
   file:
@@ -322,7 +322,7 @@
     - ["{{ res_def['name_separator'] | default('_')  }}"]
   loop_control:
     loop_var: definition
-  when: node_exists['failed'] is defined and virt_type == "cloud-init"
+  when: node_exists['failed'] is defined and virt_type == "cloud-init" and cloud_config != {}
 
 - name: "Remove cdrom (cloud-init)"
   command: virsh -c {{ definition[1] }} change-media {{ definition[0] }}{{ definition[3] }}{{ definition[2] }} hda --eject --config
@@ -334,7 +334,8 @@
   loop_control:
     loop_var: definition
   ignore_errors: yes
-  when: node_exists['failed'] is defined and virt_type == "cloud-init"
+  when: node_exists['failed'] is defined and virt_type == "cloud-init" and cloud_config != {}
+
 
 - name: "Start VM again (post cloud-init)"
   virt:
@@ -349,7 +350,7 @@
   loop_control:
     loop_var: definition
   ignore_errors: no
-  when: node_exists['failed'] is defined and virt_type == "cloud-init"
+  when: node_exists['failed'] is defined and virt_type == "cloud-init" and cloud_config != {}
 
 - name: "dump node data"
   virt:

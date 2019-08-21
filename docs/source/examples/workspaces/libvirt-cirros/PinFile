@@ -1,0 +1,35 @@
+---
+libvirt-cirros:
+  topology:
+    topology_name: libvirt-new
+    resource_groups:
+      - resource_group_name: libvirt-new
+        resource_group_type: libvirt
+        resource_definitions:
+          - role: libvirt_node
+            name: hello
+            uri: {{ uri | default('qemu:///system') }}
+            count: 1
+            image_src: {{ image_src | default('http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img') }}
+            memory: {{ memory | default('200') }}
+            vcpus: {{ vcpus | default('1') }}
+            arch: {{ arch |  default('x86_64') }}
+            ssh_key: {{ ssh_key | default('libvirt') }}
+            {% if networks is defined %}
+            networks:
+              {% for net in networks %}
+              - {{ net }}
+              {% endfor %}
+            {% else %}
+            networks:
+              - name: default
+            {% endif %}
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example
