@@ -84,13 +84,13 @@
   when: uri_hostname != 'localhost'
 
 - name: "local: Generate ssh keys when they don't exist"
-  shell: "ssh-keygen -t rsa -f {{ ssh_key_path }} -N '';cat {{ ssh_key_path }} >> ~/.ssh/authorized_keys"
+  shell: "ssh-keygen -t rsa -f {{ ssh_key_path }} -N '';cat {{ ssh_key_path }}.pub >> ~/.ssh/authorized_keys"
   args:
     creates: "{{ ssh_key_path }}"
   when: uri_hostname =='localhost' and ssh_key_stat_local.stat.exists == false
 
 - name: "remote: Generate ssh keys when they don't exist"
-  shell: "ssh-keygen -t rsa -f {{ ssh_key_path }} -N '';cat {{ ssh_key_path }} >> ~/.ssh/authorized_keys"
+  shell: "ssh-keygen -t rsa -f {{ ssh_key_path }} -N '';cat {{ ssh_key_path }}.pub >> ~/.ssh/authorized_keys"
   args:
     creates: "{{ ssh_key_path }}"
   remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
@@ -544,5 +544,4 @@
   loop_control:
     loop_var: num
 
- 
  
