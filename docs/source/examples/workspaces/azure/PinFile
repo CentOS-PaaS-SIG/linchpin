@@ -1,0 +1,19 @@
+---
+azure_vm:
+  topology:
+    topology_name: azure_vm
+    resource_groups:
+      - resource_group_name: "azure"
+        resource_group_type: "azure"
+        resource_definitions:
+          - vm_name: linchpinvm
+            role: azure_vm
+            resource_group: "ccit"
+            vm_size: "Standard_DS1_v2"
+            image: "rhcostestimage"
+#vm name can't include _
+            vm_username: {{"VM_NAME"|default("linchpinvm")}}
+            vm_password: {{"vm_password"|default( Asdfghjkl;']) }}
+        credentials:
+          filename: azure.key
+          profile: key
