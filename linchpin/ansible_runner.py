@@ -1,7 +1,10 @@
 from __future__ import absolute_import
 import os
 import sys
+import json
 import ansible
+import subprocess
+import tempfile
 from contextlib import contextmanager
 
 ansible24 = float(ansible.__version__[0:3]) >= 2.4
@@ -49,6 +52,36 @@ def suppress_stdout():
             sys.stderr = old_stderr
 
 
+def subprocess_runner(cmd, shell=False):
+    """
+    Runs subprocess commands
+    param: cmd in a list
+    param: shell to print stdout, stderr or not
+
+    """
+    os.environ['PYTHONUNBUFFERED'] = "1"
+    os.environ['ANSIBLE_FORCE_COLOR'] = '1'
+    my_env = os.environ.copy()
+    proc = subprocess.Popen(cmd,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            universal_newlines=True,
+                            env=my_env
+                            )
+    stdout = []
+    stderr = []
+    while proc.poll() is None:
+        std_out_line = proc.stdout.read()
+        std_err_line = proc.stderr.read()
+        if shell:
+            print(std_out_line)
+            print(std_err_line)
+        else:
+            stdout.append(std_out_line)
+            stderr.append(std_err_line)
+    return proc.returncode, stdout, stderr
+
+
 def ansible_runner_2x(playbook_path,
                       extra_vars,
                       options=None,
@@ -68,9 +101,7 @@ def ansible_runner_2x(playbook_path,
                             options,
                             loader,
                             passwords)
-
     return pbex
-
 
 
 def ansible_runner_24x(playbook_path,
@@ -117,71 +148,150 @@ def ansible_runner_28x(playbook_path,
     return pbex
 
 
+def set_environment_vars(env_vars):
+    """
+    Sets environment variables passed
+    : param env_vars: list of tuples
+    """
+    for tup in env_vars:
+        os.environ[tup[0]] = tup[1]
+    return True
+
+
+def ansible_runner_shell(playbook_path,
+                         module_path,
+                         extra_vars,
+                         inventory_src='localhost',
+                         verbosity=1,
+                         console=True,
+                         env_vars=(),
+                         check=False):
+
+    # set verbosity to >=2
+    # since -v in subprocess command fails
+    if verbosity >= 2:
+        verbosity = verbosity
+    else:
+        verbosity = 2
+
+    # set the base command
+    base_command = ["ansible-playbook"]
+    # convert verbosity to -v
+    verbosity = "v" * verbosity
+    verbosity = "-" + verbosity
+
+    # append inventory option to command
+    # FIX ME ansible considers localhost as another machine
+    if os.path.isfile(inventory_src) and\
+       inventory_src.split("/")[-1] != 'localhost':
+        base_command.append("--inventory")
+        base_command.append(inventory_src)
+
+    # enable checkmode if check mode is mentioned
+    if check:
+        base_command.append("-C")
+
+    base_command.append(playbook_path)
+
+    # extravars to be passed into ansible.
+
+    if extra_vars:
+
+        fd, tmp_file_path = tempfile.mkstemp()
+        with os.fdopen(fd, 'w+b') as tmp:
+            # write files to temp file
+            tmp.write(json.dumps(extra_vars))
+        # Clean up the temporary file yourself
+        base_command.append("-e")
+        base_command.append("@" + tmp_file_path)
+
+    base_command.append(verbosity)
+    return_code, stdout, stderr = subprocess_runner(base_command,
+                                                    shell=console)
+    return return_code, stdout, stderr
+
+
 def ansible_runner(playbook_path,
                    module_path,
                    extra_vars,
                    inventory_src='localhost',
-                   verbosity=1,
-                   console=True):
+                   verbosity=2,
+                   console=True,
+                   env_vars=(),
+                   use_shell=False):
     """
     Uses the Ansible API code to invoke the specified linchpin playbook
     :param playbook: Which ansible playbook to run (default: 'up')
     :param console: Whether to display the ansible console (default: True)
     """
 
+    # sets environment variables for subsequent processes
+    if env_vars:
+        set_environment_vars(env_vars)
+
     # note: It may be advantageous to put the options into the context and pass
     # that onto this method down the road. The verbosity flag would just live
     # in options and we could set the defaults.
 
     # module path cannot accept list in ansible 2.3.x versions
-    if ansible_version <= 2.3:
-        module_path = ":".join(module_path)
+    if not use_shell:
+        if ansible_version <= 2.3:
+            module_path = ":".join(module_path)
 
-    connect_type = 'ssh'
-    if 'localhost' in inventory_src:
-        extra_vars["ansible_python_interpreter"] = sys.executable
-        connect_type = 'local'
+        connect_type = 'ssh'
+        if 'localhost' in inventory_src:
+            extra_vars["ansible_python_interpreter"] = sys.executable
+            connect_type = 'local'
 
-    options = Options(connect_type, module_path, 100, False, 'sudo', 'root',
-                      False, False, False, False, None, None, None, None, None,
-                      None, None, verbosity, False, False)
+        options = Options(connect_type, module_path, 100, False, 'sudo', 'root',
+                          False, False, False, False, None, None, None, None,
+                          None, None, None, verbosity, False, False)
 
-    if ansible_version >= 2.8:
-        pbex = ansible_runner_28x(playbook_path,
-                                  extra_vars,
-                                  options,
-                                  inventory_src=inventory_src,
-                                  console=console)
-    elif ansible_version >= 2.4:
-        pbex = ansible_runner_24x(playbook_path,
-                                  extra_vars,
-                                  options,
-                                  inventory_src=inventory_src,
-                                  console=console)
+        if ansible_version >= 2.8:
+            pbex = ansible_runner_28x(playbook_path,
+                                      extra_vars,
+                                      options,
+                                      inventory_src=inventory_src,
+                                      console=console)
+        elif ansible_version >= 2.4 and ansible_version < 2.5:
+            pbex = ansible_runner_24x(playbook_path,
+                                      extra_vars,
+                                      options,
+                                      inventory_src=inventory_src,
+                                      console=console)
+        else:
+            pbex = ansible_runner_2x(playbook_path,
+                                     extra_vars,
+                                     options,
+                                     inventory_src=inventory_src,
+                                     console=console)
+        if ansible_version >= 2.5:
+            cb = PlaybookCallback(options=options,
+                                  ansible_version=ansible_version)
+        else:
+            cb = PlaybookCallback(options=options)
+
+        if not console:
+            results = {}
+            return_code = 0
+            with suppress_stdout():
+                pbex._tqm._stdout_callback = cb
+            return_code = pbex.run()
+            results = cb.results
+            return return_code, results
+        else:
+            # the console only returns a return_code
+            pbex._tqm._stdout_callback = None
+            return_code = pbex.run()
+            return return_code, None
     else:
-        pbex = ansible_runner_2x(playbook_path,
-                                 extra_vars,
-                                 options,
-                                 inventory_src=inventory_src,
-                                 console=console)
-    if ansible_version >= 2.5:
-        cb = PlaybookCallback(options=options, ansible_version=ansible_version)
-    else:
-        cb = PlaybookCallback(options=options)
-
-    if not console:
-        results = {}
-        return_code = 0
-        with suppress_stdout():
-            pbex._tqm._stdout_callback = cb
-        return_code = pbex.run()
-        results = cb.results
-        return return_code, results
-    else:
-        # the console only returns a return_code
-        pbex._tqm._stdout_callback = None
-        return_code = pbex.run()
-        return return_code, None
+        rc, stdout, stderr = ansible_runner_shell(playbook_path,
+                                                  module_path,
+                                                  extra_vars,
+                                                  inventory_src=inventory_src,
+                                                  console=console)
+        results = stdout
+        return rc, results
 
 
 # This is just a temporary class because python 2.7.5, the CentOS7 default,
@@ -189,7 +299,9 @@ def ansible_runner(playbook_path,
 # of python or we move to support CentOS8, we can delete this and move back to
 # the (less messy) namedtuple or switch to the 3.7 DataClasses
 class Options():
-    def __init__(self, connection, module_path, forks, become, become_method,
+    def __init__(self, connection,
+                 module_path,
+                 forks, become, become_method,
                  become_user, listhosts, listtasks, listtags, syntax,
                  remote_user, private_key_file, ssh_common_args,
                  ssh_extra_args, sftp_extra_args, scp_extra_args,

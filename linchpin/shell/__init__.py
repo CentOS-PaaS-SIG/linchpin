@@ -66,7 +66,8 @@ def _handle_results(ctx, results, return_code):
         task_results = v.get('results_data')
         if task_results:
             for target, results in six.iteritems(task_results):
-                if results['task_results']:
+                if results['task_results'] and \
+                   (not isinstance(results['task_results'][0], str)):
                     tasks = results['task_results'][0].get('failed')
 
                     if not isinstance(tasks, int) and len(tasks):
@@ -243,9 +244,12 @@ def init(ctx, provider):
               metavar='NO_HOOKS', help='Do not run hooks')
 @click.option('--disable-uhash', type=str, default=None,
               metavar='DISABLE_UHASH')
+@click.option('--env-vars', type=(str, str), multiple=True, metavar='ENV_VARS')
+@click.option('--use-shell', '--us', metavar='USE_SHELL', default=False,
+              is_flag=True, help='Use subprocess for linchpin run')
 @pass_context
 def up(ctx, targets, run_id, tx_id, inventory_format, ignore_failed_hooks,
-       no_hooks, disable_uhash):
+       no_hooks, disable_uhash, env_vars, use_shell):
     """
     Provisions nodes from the given target(s) in the given PinFile.
 
@@ -262,7 +266,10 @@ def up(ctx, targets, run_id, tx_id, inventory_format, ignore_failed_hooks,
 
     run-id:     Use the data from the provided run_id value
     """
+
     vault_pass = os.environ.get('VAULT_PASSWORD', '')
+
+    ctx.env_vars = env_vars
 
     if ctx.ask_vault_pass:
         vault_pass = click.prompt("enter vault password", hide_input=True)
@@ -275,6 +282,9 @@ def up(ctx, targets, run_id, tx_id, inventory_format, ignore_failed_hooks,
         ctx.set_cfg("hook_flags", "no_hooks", no_hooks)
     if disable_uhash:
         ctx.set_evar("disable_uhash_targets", disable_uhash.split(','))
+
+    if use_shell:
+        ctx.set_cfg("ansible", "use_shell", use_shell)
 
     if tx_id:
         try:
@@ -293,7 +303,8 @@ def up(ctx, targets, run_id, tx_id, inventory_format, ignore_failed_hooks,
             return_code, results = lpcli.lp_up(targets=targets,
                                                run_id=run_id,
                                                tx_id=tx_id,
-                                               inv_f=inventory_format)
+                                               inv_f=inventory_format,
+                                               env_vars=env_vars)
             _handle_results(ctx, results, return_code)
         except LinchpinError as e:
             ctx.log_state(e)
@@ -321,8 +332,12 @@ def up(ctx, targets, run_id, tx_id, inventory_format, ignore_failed_hooks,
               help='Ignores failed hooks')
 @click.option('--no-hooks', '--nh', 'no_hooks', metavar='NO_HOOKS',
               is_flag=True, help='Do not run hooks')
+@click.option('--env-vars', type=(str, str), multiple=True, metavar='ENV_VARS')
+@click.option('--use-shell', '--us', metavar='USE_SHELL', default=False,
+              is_flag=True, help='Use subprocess for linchpin run')
 @pass_context
-def destroy(ctx, targets, run_id, tx_id, ignore_failed_hooks, no_hooks):
+def destroy(ctx, targets, run_id, tx_id, ignore_failed_hooks, no_hooks,
+            env_vars, use_shell):
     """
     Destroys resources using either the run_id or tx_id (mutually exclusive).
 
@@ -347,12 +362,17 @@ def destroy(ctx, targets, run_id, tx_id, ignore_failed_hooks, no_hooks):
     if no_hooks:
         ctx.set_cfg("hook_flags", "no_hooks", no_hooks)
 
+    if use_shell:
+        ctx.set_cfg("ansible", "use_shell", use_shell)
+
 
     if tx_id:
         try:
             return_code, results = lpcli.lp_destroy(targets=targets,
-                                                    tx_id=tx_id)
+                                                    tx_id=tx_id,
+                                                    env_vars=env_vars)
             _handle_results(ctx, results, return_code)
+
         except LinchpinError as e:
             ctx.log_state(e)
             sys.exit(1)
@@ -363,7 +383,8 @@ def destroy(ctx, targets, run_id, tx_id, ignore_failed_hooks, no_hooks):
         try:
             return_code, results = lpcli.lp_destroy(targets=targets,
                                                     run_id=run_id,
-                                                    tx_id=tx_id)
+                                                    tx_id=tx_id,
+                                                    env_vars=env_vars)
             _handle_results(ctx, results, return_code)
         except LinchpinError as e:
             ctx.log_state(e)

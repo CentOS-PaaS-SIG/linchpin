@@ -34,6 +34,7 @@ class AnsibleActionManager(ActionManager):
         self.action_data = action_data
         self.target_data = target_data
         self.context = kwargs.get("context", True)
+        self.use_shell = kwargs.get("use_shell", False)
         self.state = state
         self.kwargs = kwargs
 
@@ -147,7 +148,9 @@ class AnsibleActionManager(ActionManager):
                                         "",
                                         extra_vars,
                                         inventory_src=inv_file,
-                                        verbosity=verbosity)
+                                        verbosity=verbosity,
+                                        use_shell=self.use_shell
+                                        )
 
                 result['state'] = str(self.state)
                 result['return_code'] = runner[0]
@@ -159,7 +162,9 @@ class AnsibleActionManager(ActionManager):
                                         "",
                                         extra_vars,
                                         inventory_src="localhost",
-                                        verbosity=verbosity)
+                                        verbosity=verbosity,
+                                        use_shell=self.use_shell
+                                        )
                 result['state'] = str(self.state)
                 result['return_code'] = runner[0]
                 result['data'] = runner[1]

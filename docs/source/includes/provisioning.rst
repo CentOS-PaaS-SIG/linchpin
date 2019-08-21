@@ -39,3 +39,14 @@ A subset of the hosts in a PinFile can be provisioned by listing each of them at
     Target              Run ID  uHash       Exit Code
     -------------------------------------------------
     dummy-new           83      a18e9a	            0
+
+
+
+Preview Feature:
+
+linchpin up and destroy includes --use-shell parameter which makes linchpin run as a subprocess rather than ansible api call
+usefull when we would like to overwrite environment varibles
+
+.. code-block:: bash
+
+    $ linchpin -vvvv up dummy-new --use-shell --env-vars TESTENV testenv value

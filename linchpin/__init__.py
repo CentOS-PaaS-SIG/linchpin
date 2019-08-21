@@ -882,15 +882,20 @@ class LinchpinAPI(object):
         return module_paths
 
     def _find_n_run_pb(self, pb_name, inv_src, console=True):
+        use_shell = ast.literal_eval(str(self.ctx.get_cfg("ansible",
+                                                          "use_shell")))
         pb_path = self._find_playbook_path(pb_name)
         playbook_path = '{0}/{1}{2}'.format(pb_path, pb_name, self.pb_ext)
         extra_vars = self.get_evar()
+        env_vars = self.ctx.get_env_vars()
         return_code, res = ansible_runner(playbook_path,
                                           self._get_module_path(),
                                           extra_vars,
                                           inventory_src=inv_src,
                                           verbosity=self.ctx.verbosity,
-                                          console=console)
+                                          console=console,
+                                          env_vars=env_vars,
+                                          use_shell=use_shell)
         return return_code, res
 
     def _invoke_playbooks(self, resources={}, action='up', console=True,
@@ -931,7 +936,8 @@ class LinchpinAPI(object):
             return_code, res = self._find_n_run_pb(playbook,
                                                    inventory_src,
                                                    console=console)
-            if action == "up" and return_code > 0:
+            if action == "up" and (return_code > 0 and
+                                   not isinstance(return_code, str)):
                 if self.ctx.verbosity > 0:
                     raise LinchpinError("Unsuccessful provision of resource")
                 else:

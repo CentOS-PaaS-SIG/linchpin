@@ -38,6 +38,8 @@ class LinchpinContext(object):
 
         self.cfgs = {}
         self._load_constants()
+        self.env_vars = ()
+        self.use_shell = False
 
 
     def _load_constants(self):
@@ -150,6 +152,12 @@ class LinchpinContext(object):
         """
 
         self.evars = self.cfgs.get('evars', {})
+        env_vars = self.cfgs.get('env_vars', {})
+        env_vars_list = list(self.env_vars)
+        for k in env_vars:
+            env_vars_list.append((k, env_vars[k]))
+        self.env_vars = tuple(env_vars_list)
+
 
 
     def get_cfg(self, section=None, key=None, default=None):
@@ -215,6 +223,46 @@ class LinchpinContext(object):
         """
 
         self.set_cfg('evars', key, value)
+
+
+    def get_env_vars(self, key=None, default=None):
+        """
+        Get the current env_vars
+
+        :param key: key to use
+
+        :param default: default value to return if nothing is found
+        (default: None)
+        """
+
+        if key:
+            for kv in self.env_vars:
+                if key == kv[0]:
+                    return kv[1]
+            return default
+        return self.env_vars
+
+
+    def set_env_vars(self, key, value):
+        """
+        Set a value into env_vars. Does not persist into a file,
+        only during the current execution.
+
+        :param key: key to use
+
+        :param value: value to set into evars
+        """
+        env_vars_tuple = self.env_vars
+        env_vars_tuple = [x for x in env_vars_tuple]
+        set_env = False
+        for kv in self.env_vars:
+            if key == kv[0]:
+                env_vars_tuple.remove(kv)
+                env_vars_tuple.append((key, value))
+                set_env = True
+        if not set_env:
+            env_vars_tuple.append((key, value))
+        self.env_vars = tuple(env_vars_tuple)
 
 
     def setup_logging(self):
