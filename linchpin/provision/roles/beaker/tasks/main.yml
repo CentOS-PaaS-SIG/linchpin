@@ -1,5 +1,8 @@
 ---
 # This playbook will provision beaker resources.
+- name: "beaker test change"
+  debug:
+    msg: "Hello this is beaker"
 
 - name: "allocate beaker outputs"
   set_fact:

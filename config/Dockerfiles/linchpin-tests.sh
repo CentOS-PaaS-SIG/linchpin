@@ -81,14 +81,19 @@ summary=''
 result=0
 #
 
+echo "start extraction of credentials if needed"
 export CREDS_PATH="$base_dir/keys"
 pushd "${CREDS_PATH}"
 for provider in ${PROVIDERS}; do
     # If CREDS_PATH provides a tarball extract it and
     # run it's install script
+    echo "Inside extraction loop"
     if [ -e "$CREDS_PATH/${provider}.tgz" ]; then
+	echo "creating temp directory for extraction"
         tmpdir=$(mktemp -d)
+	echo "extracting provider credentials"
         tar xvf $CREDS_PATH/${provider}.tgz -C $tmpdir
+	echo "installing credentials"
         $tmpdir/install.sh
     fi
 done
