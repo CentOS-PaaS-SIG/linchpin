@@ -4,6 +4,7 @@ from github import Github
 import sys
 
 REPO = "CentOS-PaaS-SIG/linchpin"
+NIGHTLY = False
 
 
 def get_doc_fixes(pulls):
@@ -88,7 +89,7 @@ def get_milestone_tasks(repo, milestone_title):
     for m in milestones:
         if m.title == milestone_title:
             return get_pulls(m)
-    return None
+    return []
 
 
 def get_repo(token, name):
@@ -122,6 +123,8 @@ def format_body(tasks):
 # get API token
 token = sys.argv[1]
 milestone = sys.argv[2]
+if len(sys.argv) == 4 and sys.argv[3] == "nightly":
+    NIGHTLY = True
 
 repo = get_repo(token, REPO)
 
@@ -129,5 +132,6 @@ tasks = get_milestone_tasks(repo, milestone)
 release_body = format_body(tasks)
 release_name = milestone
 
-repo.create_git_release(milestone, release_name, release_body,
-                        target_commitish="master")
+if not NIGHTLY:
+    repo.create_git_release(milestone, release_name, release_body,
+                            target_commitish="master")
