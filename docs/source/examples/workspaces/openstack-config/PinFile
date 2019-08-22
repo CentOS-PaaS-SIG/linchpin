@@ -1,7 +1,7 @@
 ---
 cfgs:
   openstack:
-    __IP__: addresses.e2e-openstack.0.OS-EXT-IPS-MAC:mac_addr
+    __IP__: addresses.provider_net_cci_2.0.OS-EXT-IPS-MAC:mac_addr
     __ZONE__: location.zone
 
 os-private:
@@ -18,7 +18,7 @@ os-private:
             count: 1
             keypair: ci-factory
             networks:
-              - e2e-openstack
+              - provider_net_cci_2
             auto_ip: no
           - name: "596-node"
             role: os_server
@@ -28,7 +28,7 @@ os-private:
             keypair: ci-factory
             auto_ip: no
             networks:
-              - e2e-openstack
+              - provider_net_cci_2
         credentials:
           filename: clouds.yaml
           profile: ci-rhos
