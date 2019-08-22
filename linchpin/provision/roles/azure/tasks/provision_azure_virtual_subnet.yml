@@ -1,0 +1,13 @@
+- name: "Provisioning Azure Virtual Subnet when not async"
+  azure_rm_subnet:
+    client_id: "{{ auth_var['client_id'] | default(omit) }}"
+    tenant: "{{ auth_var['tenant'] | default(omit) }}"
+    secret: "{{ auth_var['secret'] | default(omit) }}"
+    subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
+    resource_group: "{{ res_def['resource_group'] | default(omit) }}"
+    name: "{{ res_def['subnet_name'] | default(omit) }}"
+    virtual_network_name: "{{ res_def['virtual_network_name']}}"
+    address_prefix: "{{ res_def['address_prefix']|default('10.1.0.0/24')}}"
+  register: res_def_output
+  when: not _async
+  # no_log: "{{ not debug_mode }}"
