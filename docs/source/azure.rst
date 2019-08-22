@@ -30,26 +30,17 @@ definition, the following options are available.
 | image            | true       | string        | image             |                 |
 +------------------+------------+---------------+-------------------+-----------------+
 
-EC2 Inventory Generation
+Azure Inventory Generation
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 If an instance has a public IP attached, its hostname in public DNS, if
 available, will be provided in the generated Ansible inventory file, and if not
 the public IP address will be provided.
 
-For instances which have a private IP address for VPC usage, the private IP
-address will be provided since private EC2 DNS hostnames (e.g.
-**ip-10-0-0-1.ec2.internal**) will not typically be resolvable outside of AWS.
-
-For instances with both a public and private IP address, the public address is
-always provided instead of the private address, so as to avoid duplicate runs
-of Ansible on the same host via the generated inventory file.
-
 
 Additional Dependencies
 -----------------------
-
-No additional dependencies are required for the AWS Provider.
+Run "sudo pip install ansible[azure]"
 
 Credentials Management
 ----------------------
@@ -63,7 +54,7 @@ Credentials Management
 Environment Variables
 ~~~~~~~~~~~~~~~~~~~~~
 
-LinchPin honors the AWS environment variables
+LinchPin honors the Azure environment variables
 
 Provisioning
 ~~~~~~~~~~~~

@@ -14,11 +14,12 @@ from .OpenstackInventory import OpenstackInventory
 from .OvirtInventory import OvirtInventory
 from .VMwareInventory import VMwareInventory
 from .DockerInventory import DockerInventory
-
+from .AzureInventory import AzureInventory
 from .CFGInventoryFormatter import CFGInventoryFormatter
 from .JSONInventoryFormatter import JSONInventoryFormatter
 
 filter_classes = {
+    "azure_vm": AzureInventory,
     "aws_ec2_res": AWSInventory,
     "beaker_res": BeakerInventory,
     "duffy_res": DuffyInventory,

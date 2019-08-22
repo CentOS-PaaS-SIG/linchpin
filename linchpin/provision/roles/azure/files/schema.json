@@ -36,7 +36,11 @@
                         "vm_size": {
                             "type": "string",
                             "required": true
-                        }
+                        },
+                        "virtual_network_name": {
+                            "type": "string",
+                            "required": true
+                        }                        
                     }
                 }
             ]
