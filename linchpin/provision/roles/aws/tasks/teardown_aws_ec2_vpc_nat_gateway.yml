@@ -1,6 +1,4 @@
 ---
-- debug:
-    var: res_def
 - name: "Get AWS VPC NAT Gateway ID"
   block:
   - ec2_vpc_nat_gateway_facts:
