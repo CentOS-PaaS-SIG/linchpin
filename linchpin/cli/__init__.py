@@ -751,6 +751,8 @@ class LinchpinCli(LinchpinAPI):
         if len(targets):
             for target in targets:
                 prov_data[target] = provision_data.get(target)
+            if 'cfgs' not in targets and 'cfgs' in provision_data.keys():
+                prov_data['cfgs'] = provision_data.get('cfgs')
         else:
             prov_data = provision_data
 
