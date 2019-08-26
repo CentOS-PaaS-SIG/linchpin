@@ -2,7 +2,7 @@
       res_count: '{{ (res_count | default([])) + [item | int] }}'
   with_sequence: "start=0 end={{ res_def['count'] | default(1) |int - 1 }}"
 
-- name: Deisgned for carbon destruction with count 1
+- name: Designed for carbon destruction with count 1
   block:
   - name: "halt node"
     virt:
@@ -43,18 +43,6 @@
     register: res_def_output
     when: not _async
     ignore_errors: yes
-
-  - name: "Delete associated image files"
-    file:
-      state: absent
-      path: "{{ inst }}"
-    with_items: "{{ vm_xml_dump | get_libvirt_files }}"
-    loop_control:
-      loop_var: inst
-    ignore_errors: yes
-    become: "{{ libvirt_become }}"
-    delegate_to: "{{ uri_hostname }}"
-    when: not _async
 
   when: res_count|length|int == 1
 
