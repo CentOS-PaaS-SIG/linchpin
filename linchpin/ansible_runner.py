@@ -253,7 +253,7 @@ def ansible_runner(playbook_path,
                                       options,
                                       inventory_src=inventory_src,
                                       console=console)
-        elif ansible_version >= 2.4 and ansible_version < 2.5:
+        elif ansible_version >= 2.4 and ansible_version < 2.8:
             pbex = ansible_runner_24x(playbook_path,
                                       extra_vars,
                                       options,
