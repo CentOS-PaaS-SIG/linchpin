@@ -1,0 +1,17 @@
+---
+- hosts: all
+  gather_facts: false
+  tasks:
+    - name: "collect {{ inventory_hostname }} boot logs"
+      command: "aws ec2 get-console-output --instance-id {{ hostvars[inventory_hostname]['id'] }} --output text"
+      register: results
+      until: results.stdout.find("\n") != -1
+      retries: 10
+      delay: 30
+      delegate_to: localhost
+      ignore_errors: true
+    - name: "save log"
+      template:
+        src: log.j2
+        dest: "{{ lookup('env','PWD') }}/boot-{{ inventory_hostname }}.log"
+      delegate_to: localhost

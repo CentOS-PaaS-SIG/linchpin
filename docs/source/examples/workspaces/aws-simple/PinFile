@@ -1,4 +1,8 @@
 ---
+cfgs:
+  aws:
+    __id__: id
+
 simple:
   topology:
     topology_name: simple
@@ -7,12 +11,13 @@ simple:
         resource_group_type: aws
         resource_definitions:
           - name: simple
-            flavor: {{ flavor | default('t2.nano') }}
+            flavor: {{ flavor | default('t2.micro') }}
             role: aws_ec2
             region: {{ region | default('us-east-1') }}
-            image: {{ image | default('ami-9887c6e7') }}
+            image: {{ image | default('ami-0c322300a1dd5dc79') }}
             {% if security_groups is defined %}
             security_group:
+              - default
               {% for group in security_groups %}
               - {{ group }}
               {% endfor %}
@@ -21,14 +26,18 @@ simple:
             {% if assign_public_ip is defined %}
             assign_public_ip: {{ assign_public_ip }}
             {% endif %}
-            keypair: {{ keypair | default('ec2_keypair') }}
+            keypair: {{ keypair | default('ci-ops-central') }}
   layout:
     inventory_layout:
       vars:
         hostname: __IP__
+        id: __id__
         ansible_ssh_private_key_file: {{ keypath | default('~/.ssh/id_rsa') }}
       hosts:
         example-node:
           count: 1
           host_groups:
             - example
+  hooks:
+    postup:
+      - name: ec2_boot_log
