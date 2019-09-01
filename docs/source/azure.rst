@@ -30,45 +30,8 @@ definition, the following options are available.
 | image            | true       | string        | image             |                 |
 +------------------+------------+---------------+-------------------+-----------------+
 
-Azure Inventory Generation
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-If an instance has a public IP attached, its hostname in public DNS, if
-available, will be provided in the generated Ansible inventory file, and if not
-the public IP address will be provided.
-
-
-Additional Dependencies
------------------------
-Run "sudo pip install ansible[azure]"
 
 Credentials Management
 ----------------------
  Support IAM user
  example: docs/source/example/workspaces/azure/azure.key
-
-
-
-.. include:: credentials/aws.rst
-
-Environment Variables
-~~~~~~~~~~~~~~~~~~~~~
-
-LinchPin honors the Azure environment variables
-
-Provisioning
-~~~~~~~~~~~~
-
-Provisioning with credentials uses the ``--creds-path`` option.
-
-.. code-block:: bash
-
-   $ linchpin -v --creds-path ~/.config/aws up
-
-Alternatively, the credentials path can be set as an environment variable,
-
-.. code-block:: bash
-
-   $ export CREDS_PATH="~/.config/aws"
-   $ linchpin -v up
-
