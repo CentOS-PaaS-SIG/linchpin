@@ -6,14 +6,51 @@ azure_vm:
       - resource_group_name: "azure"
         resource_group_type: "azure"
         resource_definitions:
-          - vm_name: linchpinvm
+          - vm_name: TEST-Azure
             role: azure_vm
             resource_group: "ccit"
             vm_size: "Standard_DS1_v2"
             image: "rhcostestimage"
-#vm name can't include _
-            vm_username: {{"VM_NAME"|default("linchpinvm")}}
-            vm_password: {{"vm_password"|default( Asdfghjkl;']) }}
+            vm_username: linchpin
+            vm_password: Asdfghjkl12345_
+            virtual_network_name: linchpincreated
+        credentials:
+          filename: azure.key
+          profile: key
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example
+
+azure_vn:
+  topology:
+    topology_name: azure_vn
+    resource_groups:
+      - resource_group_name: "azure"
+        resource_group_type: "azure"
+        resource_definitions:
+          - virtual_network_name: linchpincreated
+            role: azure_virtual_network
+            resource_group: "ccit"
+        credentials:
+          filename: azure.key
+          profile: key
+azure_vn_subnet:
+  topology:
+    topology_name: azure_vn
+    resource_groups:
+      - resource_group_name: "azure"
+        resource_group_type: "azure"
+        resource_definitions:
+          - virtual_network_name: linchpincreated
+            subnet_name: linchpin-created
+            role: azure_virtual_subnet
+            resource_group: "ccit"
         credentials:
           filename: azure.key
           profile: key
