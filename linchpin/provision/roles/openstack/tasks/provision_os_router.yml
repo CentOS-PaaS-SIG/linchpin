@@ -8,7 +8,7 @@
     external_fixed_ips: "{{ res_def['external_fixed_ips'] | default(omit) }}"
     interface: "{{ res_def['interface'] | default(omit) }}"
     interfaces: []
-    name: "{{ os_resource_name }}"
+    name: "{{ res_def['name'] }}"
     network: "{{ res_def['network'] | default(omit) }}"
     key: "{{ res_def['key'] | default(omit) }}"
     project: "{{ res_def['project'] | default(omit) }}"
@@ -30,7 +30,7 @@
     external_fixed_ips: "{{ res_def['external_fixed_ips'] | default(omit) }}"
     interface: "{{ res_def['interface'] | default(omit) }}"
     interfaces: "{{ res_def['interfaces'] | default(omit) }}"
-    name: "{{ os_resource_name }}"
+    name: "{{ res_def['name'] }}"
     network: "{{ res_def['network'] | default(omit) }}"
     key: "{{ res_def['key'] | default(omit) }}"
     project: "{{ res_def['project'] | default(omit) }}"

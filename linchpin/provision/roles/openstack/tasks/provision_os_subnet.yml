@@ -18,7 +18,7 @@
     no_gateway_ip:  "{{ res_def['no_gateway_ip'] | default(omit) }}"
     use_default_subnetpool:  "{{ res_def['use_default_subnetpool'] | default(omit) }}"
     interface: "{{ res_def['interface'] | default(omit) }}"
-    name: "{{ os_resource_name }}"
+    name: "{{ res_def['name'] }}"
     key: "{{ res_def['key'] | default(omit) }}"
     project: "{{ res_def['project'] | default(omit) }}"
     region_name: "{{ res_def['region_name'] | default(omit) }}"
