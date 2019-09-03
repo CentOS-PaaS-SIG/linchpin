@@ -19,7 +19,7 @@
     #   version: latest
   register: res_def_output
   when: not _async
-  # no_log: "{{ not debug_mode }}"
+  no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
