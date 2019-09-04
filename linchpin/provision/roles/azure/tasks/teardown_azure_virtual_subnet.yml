@@ -1,0 +1,10 @@
+- name: "Teardown Azure Virtual Subnet"
+  azure_rm_subnet:
+    client_id: "{{ auth_var['client_id'] | default(omit) }}"
+    tenant: "{{ auth_var['tenant'] | default(omit) }}"
+    secret: "{{ auth_var['secret'] | default(omit) }}"
+    subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
+    resource_group: "{{ res_def['resource_group'] | default(omit) }}"
+    remove_on_absent: all_autocreated
+    name: "{{ res_def['subnet_name'] | default(omit) }}"
+    state: 'absent'

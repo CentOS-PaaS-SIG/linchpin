@@ -16,7 +16,7 @@
 
 - name: "Get the resource name"
   set_fact:
-    rsrc_name: "{{ res_def['res_name'] | default(res_def['vm_name']) }}"
+    rsrc_name: "{{ res_def['res_name'] | default(res_def['role']) }}"
 
 - name: "Create name using uhash value"
   set_fact:
