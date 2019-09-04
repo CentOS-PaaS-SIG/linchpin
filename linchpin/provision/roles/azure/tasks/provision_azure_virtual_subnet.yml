@@ -12,7 +12,7 @@
   when: not _async
   no_log: "{{ not debug_mode }}"
 
-- name: ""Async::Provisioning Azure Virtual Subnet"
+- name: "Async::Provisioning Azure Virtual Subnet"
   azure_rm_subnet:
     client_id: "{{ auth_var['client_id'] | default(omit) }}"
     tenant: "{{ auth_var['tenant'] | default(omit) }}"
