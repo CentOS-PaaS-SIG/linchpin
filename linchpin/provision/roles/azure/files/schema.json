@@ -60,6 +60,10 @@
                         "virtual_network_name": {
                             "type": "string",
                             "required": true
+                        },
+                        "address_prefixes": {
+                            "type": "string",
+                            "required": false
                         }                        
                     }
                 }
