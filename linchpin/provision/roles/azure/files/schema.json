@@ -64,6 +64,10 @@
                         "resource_group": {
                             "type": "string",
                             "required": true
+                        },
+                        "address_prefix": {
+                            "type": "string",
+                            "required":false
                         }
                     }
                 }
