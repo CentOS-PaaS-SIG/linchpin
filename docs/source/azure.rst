@@ -30,8 +30,20 @@ definition, the following options are available.
 | image            | true       | string        | image             |                 |
 +------------------+------------+---------------+-------------------+-----------------+
 
+Azure Inventory Generation
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+If an instance has a public IP attached, its hostname in public DNS, if
+available, will be provided in the generated Ansible inventory file, and if not
+the public IP address will be provided.
+
+
+Additional Dependencies
+-----------------------
+Run "sudo pip install ansible[azure]"
 
 Credentials Management
 ----------------------
  Support IAM user
- example: docs/source/example/workspaces/azure/azure.key
+ example: docs/source/example/workspaces/azure/azure.key.template
+

@@ -18,13 +18,14 @@ from linchpin.InventoryFilters.OpenstackInventory import OpenstackInventory
 from linchpin.InventoryFilters.OvirtInventory import OvirtInventory
 from linchpin.InventoryFilters.VMwareInventory import VMwareInventory
 from linchpin.InventoryFilters.DockerInventory import DockerInventory
-
+from linchpin.InventoryFilters.AzureInventory import AzureInventory
 def test_get_driver():
     driver = InventoryProviders.get_driver("aws_ec2_res")
     assert_equal(driver, AWSInventory)
 
 def test_get_all_drivers():
     drivers = {
+        "azure_vm" : AzureInventory,
         "aws_ec2_res": AWSInventory,
         "beaker_res": BeakerInventory,
         "duffy_res": DuffyInventory,

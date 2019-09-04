@@ -1,14 +1,3 @@
----
-- name: "Set default res_grp_vars when not defined"
-  set_fact:
-    res_grp_vars:
-      - name: "{{ res_def['res_name'] | default(res_def['vm_name']) }}"
-        resource_group_name: "{{ res_grp_name  }}"
-
-# - name: Update Instance Tags
-#   set_fact:
-#     instance_tags: "{{ res_grp_vars | selectattr('resource_group_name', 'match', '^' + res_grp_name + '$') | first | combine( res_def['instance_tags'] | default({}) ) }}"
-
 - name: "Provisioning Azure VM when not async"
   azure_rm_virtualmachine:
     client_id: "{{ auth_var['client_id'] | default(omit) }}"
@@ -19,8 +8,8 @@
     admin_password: "{{ res_def['vm_password'] | default(omit) }}"
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
     vm_size: "{{ res_def['vm_size'] | default(omit) }}"
-    virtual_network_name: "{{res_def['virtual_network_name']|default(omit)}}"
     name: "{{ res_def['vm_name'] | default(omit) }}"
+    virtual_network_name: "{{res_def['virtual_network_name']|default(omit)}}"
     image: "{{ res_def['image'] | default(omit) }}"
     #leave the code below here for now, implement later
     # image: 
@@ -30,11 +19,11 @@
     #   version: latest
   register: res_def_output
   when: not _async
-  # no_log: "{{ not debug_mode }}"
+  no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_azure_vm: "{{ topology_outputs_azure_vm + [res_def_output] }}"
+    topology_outputs_azure_vm: "{{ topology_outputs_azure_vm + [res_def_output.ansible_facts.azure_vm] }}"
   when: res_def_output['changed'] == true and not _async
 
 - name: "Async:: Provisioning Azure VM"
@@ -63,7 +52,7 @@
 
 - name: "Async:: Append outputitem to topology_outputs"
   set_fact:
-    async_outputs_azure_vm: "{{ async_outputs_azure_vm + [res_def_output] }}"
+    async_outputs_azure_vm: "{{ async_outputs_azure_vm + [res_def_output.ansible_facts.azure_vm] }}"
   when: _async
 
 
