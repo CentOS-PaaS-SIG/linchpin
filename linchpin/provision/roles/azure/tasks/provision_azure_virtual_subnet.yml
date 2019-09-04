@@ -41,10 +41,10 @@
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_azure_vn_subnet: "{{ topology_outputs_azure_vn_subnet | add_res_type( 'azure_vm') }}"
+    topology_outputs_azure_vn_subnet: "{{ topology_outputs_azure_vn_subnet | add_res_type( 'azure_virtual_subnet') }}"
 
 
 - name: "Async:: Add type to resource"
   set_fact:
-    async_outputs_azure_vn_subnet: "{{ async_outputs_azure_vn_subnet | add_res_type( 'azure_vm') }}"
+    async_outputs_azure_vn_subnet: "{{ async_outputs_azure_vn_subnet | add_res_type( 'azure_virtual_subnet') }}"
   when: _async
