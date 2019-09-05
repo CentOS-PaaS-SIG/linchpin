@@ -10,7 +10,14 @@ azure_vm:
             role: azure_vm
             resource_group: "ccit"
             vm_size: "Standard_DS1_v2"
-            image: "rhcostestimage"
+            private_image: "rhcostestimage"
+            # If you have both private and public images
+            # Linchpin will take the private one
+            public_image:
+              offer: CentOS
+              publisher: OpenLogic
+              sku: '7.1'
+              version: latest
             vm_username: linchpin
             vm_password: Asdfghjkl12345_
             virtual_network_name: linchpincreated

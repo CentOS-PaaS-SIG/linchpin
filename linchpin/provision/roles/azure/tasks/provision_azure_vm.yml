@@ -20,12 +20,12 @@
 - name: Set image
   set_fact:
     image: "{{pub_img}}"
-    when: res_def[image] is not defined   
+    when: res_def[private_image] is not defined   
 
 - name: Set image
   set_fact: 
     image: "{{res_def[image]}}"
-  when: res_def[image] is defined     
+  when: res_def[private_image] is defined     
 
 - name: "Provisioning Azure VM when not async"
   azure_rm_virtualmachine:
