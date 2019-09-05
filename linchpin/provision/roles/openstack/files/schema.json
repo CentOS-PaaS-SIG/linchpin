@@ -195,15 +195,22 @@
                         "allowed": ["os_router"] },
                     "admin_state_up": { "type": "boolean", "required": false},
                     "api_timeout": { "type": "number", "required": false},
-		    "external_fixed_ips": {
+                    "external_fixed_ips": {
                         "type": "list",
                         "required": false,
                         "schema": { "type": "string", "required": true }
                     },
-		    "interfaces": {
+                    "interfaces": {
                         "type": "list",
                         "required": false,
-                        "schema": { "type": "string", "required": true }
+                        "schema": {
+                          "type": "dict",
+                          "schema": {
+                            "net": { "type": "string", "required": true },
+                            "subnet": { "type": "string", "required": true },
+                            "portip": { "type": "string", "required": true }
+                          }
+                        }
                     },
                     "network": { "type": "string", "required": false },
                     "enable_snat": { "type": "boolean", "required": false},

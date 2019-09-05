@@ -1,0 +1,23 @@
+---
+os_net:
+  topology:
+    topology_name: os-net
+    resource_groups:
+      - resource_group_name: os-net
+        resource_group_type: openstack
+        resource_definitions:
+          - name: lp-net
+            role: os_network
+          - name: lp-sub
+            role: os_subnet
+            network_name: lp-net
+            cidr: 172.16.180.0/24
+            dns_nameservers:
+              - 8.8.8.8
+          - name: lp-route
+            role: os_router
+            network: provider_net_cci_5
+            interfaces:
+              - net: lp-net
+                subnet: lp-sub
+                portip: 172.16.180.1

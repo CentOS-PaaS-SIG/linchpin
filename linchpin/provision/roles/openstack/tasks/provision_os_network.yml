@@ -6,7 +6,7 @@
     external: "{{ res_def['external'] | default(omit) }}"
     interface: "{{ res_def['interface'] | default(omit) }}"
     key: "{{ res_def['key'] | default(omit) }}"
-    name: "{{ os_resource_name }}"
+    name: "{{ res_def['name'] }}"
     project: "{{ res_def['project'] | default(omit) }}"
     provider_network_type: "{{ res_def['provider_network_type'] | default(omit) }}"
     provider_physical_network: "{{ res_def['provider_physical_network'] | default(omit) }}"

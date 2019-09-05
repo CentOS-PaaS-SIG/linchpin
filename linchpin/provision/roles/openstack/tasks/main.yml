@@ -13,9 +13,18 @@
     topology_outputs_os_keypair: []
     topology_outputs_os_sg: []
     topology_outputs_os_network: []
+    topology_outputs_os_router: []
+    topology_outputs_os_subnet: []
 
-- name: "Initiating Provision/Teardown of openstack resource group"
+- name: "Initiating Provision of openstack resource group"
   include: provision_resource_group.yml res_grp={{ item }}
   with_items:
     - "{{ resources }}"
   register: resource_grps_output
+  when: state == "present"
+
+- name: "Initiating Teardown of openstack resource group"
+  include: teardown_resource_group.yml res_grp={{ item }}
+  with_items:
+    - "{{ resources }}"
+  when: state == "absent"
