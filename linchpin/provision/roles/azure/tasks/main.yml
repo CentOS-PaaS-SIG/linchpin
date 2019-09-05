@@ -2,6 +2,7 @@
 - name: "declaring output vars"
   set_fact:
     topology_outputs_azure_vm: []
+    topology_outputs_azure_vn: []
     topology_outputs_azure_vn_subnet: []
 
 - name: "Initiating Provisioning of Azure resource group"

@@ -1,0 +1,47 @@
+---
+- name: "Provisioning Azure Virtual Network when not async"
+  azure_rm_virtualnetwork:
+    client_id: "{{ auth_var['client_id'] | default(omit) }}"
+    tenant: "{{ auth_var['tenant'] | default(omit) }}"
+    secret: "{{ auth_var['secret'] | default(omit) }}"
+    subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
+    resource_group: "{{ res_def['resource_group'] | default(omit) }}"
+    address_prefixes: "{{ res_def['address_prefixes']|default('10.1.0.0/16')}}"
+    name: "{{res_def['virtual_network_name']|default(omit)}}"
+  register: res_def_output
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_azure_vn: "{{ topology_outputs_azure_vn + [res_def_output] }}"
+  when: res_def_output['changed'] == true and not _async
+
+- name: "Async:: Provisioning Azure Virtual Network"
+  azure_rm_virtualnetwork:
+    client_id: "{{ auth_var['client_id'] | default(omit) }}"
+    tenant: "{{ auth_var['tenant'] | default(omit) }}"
+    secret: "{{ auth_var['secret'] | default(omit) }}"
+    subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
+    resource_group: "{{ res_def['resource_group'] | default(omit) }}"
+    address_prefixes: "{{ res_def['address_prefixes']|default('10.1.0.0/16')}}"
+    name: "{{res_def['virtual_network_name']|default(omit)}}"
+  async: "{{ async_timeout }}"
+  poll: 0
+  register: res_def_output
+  when: _async
+  no_log: "{{ not debug_mode }}"
+
+- name: "Async:: Append outputitem to topology_outputs"
+  set_fact:
+    async_outputs_azure_vn: "{{ async_outputs_azure_vn + [res_def_output] }}"
+  when: _async
+
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_azure_vn: "{{ topology_outputs_azure_vn | add_res_type( 'azure_virtual_network') }}"
+
+
+- name: "Async:: Add type to resource"
+  set_fact:
+    async_outputs_azure_vn: "{{ async_outputs_azure_vn | add_res_type( 'azure_virtual_network') }}"
+  when: _async
