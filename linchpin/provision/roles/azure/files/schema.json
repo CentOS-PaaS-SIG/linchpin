@@ -13,13 +13,35 @@
                                 "azure_vm"
                             ]
                         },
+                        "public_image": {
+                            "type": "dict",
+                            "required": false,
+                            "schema": {
+                                "offer": {
+                                    "type": "string",
+                                    "required": true
+                                },
+                                "publisher": {
+                                    "type": "string",
+                                    "required": true
+                                },
+                                "sku": {
+                                    "type": "string",
+                                    "required": true
+                                },
+                                "version": {
+                                    "type": "string",
+                                    "required": true
+                                }
+                            }
+                        },
                         "vm_name": {
                             "type": "string",
                             "required": true
                         },
                         "image": {
                             "type": "string",
-                            "required": true
+                            "required": false
                         },
                         "vm_username": {
                             "type": "string",
@@ -111,7 +133,7 @@
                         },
                         "subnet_name": {
                             "type": "string",
-                            "required":true
+                            "required": true
                         },
                         "resource_group": {
                             "type": "string",
@@ -119,7 +141,7 @@
                         },
                         "address_prefix": {
                             "type": "string",
-                            "required":false
+                            "required": false
                         }
                     }
                 }
