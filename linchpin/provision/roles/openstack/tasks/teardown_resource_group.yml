@@ -1,0 +1,153 @@
+---
+# Credentials
+- name: "Unset the authvar from previous run"
+  set_fact:
+    auth_var: ""
+
+- name: "set default_cred_profile when res_grp[credentials] is undefined"
+  set_fact:
+    cred_profile: 'default'
+  when: res_grp['credentials'] is not defined
+
+- name: "set default_cred_profile when res_grp[credentials] is undefined"
+  set_fact:
+    cred_filename: 'clouds.yaml'
+  when: res_grp['credentials'] is not defined
+
+- name: "set cred_profile when res_grp[credentials] is defined"
+  set_fact:
+    cred_profile: "{{ res_grp['credentials']['profile'] }}"
+  when: res_grp['credentials'] is defined
+
+- name: "set default_cred_filename when res_grp[credentials] is defined"
+  set_fact:
+    cred_filename: "{{ res_grp['credentials']['filename'] }}"
+  when: res_grp['credentials'] is defined
+
+- name: "Get creds from auth driver"
+  auth_driver:
+    filename: "{{ cred_filename }}"
+    cred_type: "openstack"
+    cred_path: "{{ creds_path | default(default_credentials_path) }}"
+    driver: "file"
+    vault_enc: "{{ vault_encryption }}"
+    vault_pass: "{{ vault_pass }}"
+  register: auth_var_out
+  ignore_errors: true
+  no_log: "{{ not debug_mode }}"
+  when: res_grp['credentials'] is defined
+
+- name: "set auth_var"
+  set_fact:
+    auth_var: "{{ auth_var_out['output']['clouds'][cred_profile]['auth'] }}"
+  ignore_errors: true
+  when: auth_var_out['output'] is defined
+  no_log: "{{ not debug_mode }}"
+
+# Deployment information
+- name: "Get topology output data from resources file"
+  output_parser:
+    output_file: "{{ default_resources_path + '/' + topo_data['topology_name'].replace(' ', '_').lower() + '.output' }}"
+  register: topo_output
+  when: generate_resources
+
+- name: "set topo_output_resources fact"
+  set_fact:
+    topo_output_resources: "{{ topo_output.output['content'] }}"
+  when: generate_resources
+
+- name: "Get topology output data from RunDB"
+  rundb:
+    conn_str: "{{ rundb_conn }}"
+    operation: get
+    table: "{{ target }}"
+    key: "outputs"
+    run_id: "{{ orig_run_id }}"
+  register: topo_output_rundb
+  when: not generate_resources
+
+- name: "set topo_output_resources fact rundb"
+  set_fact:
+    topo_output_resources: "{{ topo_output_rundb.output[0]['resources'] }}"
+  when: not generate_resources
+
+- name: teardown os_router resource def of current group
+  include: teardown_os_router.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  when: res_item.0['role'] == "os_router"
+  with_nested:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
+
+- name: teardown os_heat resource def of current group
+  include: teardown_os_heat.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  when: res_item.0['role'] == "os_heat"
+  with_nested:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
+
+- name: teardown os_keypair resource def of current group
+  include: teardown_os_keypair.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  when: res_item.0['role'] == "os_keypair"
+  with_nested:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
+
+- name: teardown os_network resource def of current group
+  include: teardown_os_network.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  when: res_item.0['role'] == "os_network"
+  with_nested:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
+
+- name: teardown os_object resource def of current group
+  include: teardown_os_object.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  when: res_item.0['role'] == "os_object"
+  with_nested:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
+
+- name: teardown os_server resource def of current group
+  include: teardown_os_server.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  when: res_item.0['role'] == "os_server"
+  with_nested:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
+
+- name: teardown os_sg resource def of current group
+  include: teardown_os_sg.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  when: res_item.0['role'] == "os_sg"
+  with_nested:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
+
+- name: teardown os_subnet resource def of current group
+  include: teardown_os_subnet.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  when: res_item.0['role'] == "os_subnet"
+  with_nested:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
+
+- name: teardown os_volume resource def of current group
+  include: teardown_os_volume.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  when: res_item.0['role'] == "os_volume"
+  with_nested:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
