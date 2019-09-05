@@ -40,7 +40,7 @@
                         "virtual_network_name": {
                             "type": "string",
                             "required": true
-                        }                        
+                        }
                     }
                 },
                 {
@@ -64,7 +64,35 @@
                         "address_prefixes": {
                             "type": "string",
                             "required": false
-                        }                        
+                        }
+                    }
+                },
+                {
+                    "type": "dict",
+                    "schema": {
+                        "role": {
+                            "type": "string",
+                            "required": true,
+                            "allowed": [
+                                "azure_virtual_subnet"
+                            ]
+                        },
+                        "virtual_network_name": {
+                            "type": "string",
+                            "required": true
+                        },
+                        "subnet_name": {
+                            "type": "string",
+                            "required": true
+                        },
+                        "resource_group": {
+                            "type": "string",
+                            "required": true
+                        },
+                        "address_prefix": {
+                            "type": "string",
+                            "required": false
+                        }
                     }
                 }
             ]
