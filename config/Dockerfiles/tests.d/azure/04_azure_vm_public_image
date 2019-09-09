@@ -1,0 +1,20 @@
+#!/bin/bash -xe
+  
+# Verify the azure vm provisioning
+# distros.exclude: none
+# providers.include: azure
+# providers.exclude: none
+
+DISTRO=${1}
+PROVIDER=${2}
+TARGET="azure_vm_public_image"
+pushd docs/source/examples/workspaces/${PROVIDER}
+function clean_up {
+    set +e
+    linchpin -w . -vvv --creds-path ./ --template-data '{ "distro": '${DISTRO}""'}' destroy "${TARGET}"
+    rm -rf resources/ inventories/
+}
+
+trap clean_up EXIT
+
+linchpin -w . -vvv --creds-path ./ --template-data '{ "distro": '${DISTRO}""'}' up "${TARGET}"
