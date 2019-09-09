@@ -40,6 +40,20 @@ azure_vn:
         credentials:
           filename: azure.key
           profile: key
+
+azure_res_group:
+  topology:
+    topology_name: azure_res_group
+    resource_groups:
+      - resource_group_name: "azure"
+        resource_group_type: "azure"
+        resource_definitions:
+          - role: azure_resource_group
+            resource_group_name: "LinchpinCreatedGroup"
+            location: centralus
+        credentials:
+          filename: azure.key
+
 azure_vn_subnet:
   topology:
     topology_name: azure_vn
