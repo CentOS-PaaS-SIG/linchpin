@@ -1,0 +1,46 @@
+---
+- name: Provision resource group for Azure when not async
+  azure_rm_resourcegroup:
+    client_id: "{{ auth_var['client_id'] | default(omit) }}"
+    tenant: "{{ auth_var['tenant'] | default(omit) }}"
+    secret: "{{ auth_var['secret'] | default(omit) }}"
+    subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
+    name: "{{ res_def['resource_group_name']|default(omit)}}"
+    location: "{{res_def['location']|default(omit)}}"
+  register: res_def_output
+  when: not _async
+  no_log: "{{ not debug_mode }}"
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_azure_res_grp: "{{ topology_outputs_azure_res_grp + [res_def_output] }}"
+  when: res_def_output['changed'] == true and not _async
+
+- name: Provision resource group for Azure when async
+  azure_rm_resourcegroup:
+    client_id: "{{ auth_var['client_id'] | default(omit) }}"
+    tenant: "{{ auth_var['tenant'] | default(omit) }}"
+    secret: "{{ auth_var['secret'] | default(omit) }}"
+    subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
+    name: "{{ res_def['resource_group_name']|default(omit)}}"
+    location: "{{res_def['location']|default(omit)}}"
+  register: res_def_output
+  poll: 0
+  when: _async
+  no_log: "{{ not debug_mode }}"
+
+- name: "Async:: Append outputitem to topology_outputs"
+  set_fact:
+    async_outputs_azure_res_grp: "{{ async_outputs_azure_res_grp + [res_def_output] }}"
+  when: _async
+
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_azure_res_grp: "{{ topology_outputs_azure_res_grp | add_res_type( 'azure_res_grp') }}"
+
+
+- name: "Async:: Add type to resource"
+  set_fact:
+    async_outputs_azure_res_grp: "{{ async_outputs_azure_res_grp | add_res_type( 'azure_res_grp') }}"
+  when: _async
