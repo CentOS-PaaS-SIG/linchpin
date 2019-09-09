@@ -1,0 +1,9 @@
+- name: "Teardown Azure Resource Group"
+  azure_rm_resourcegroup:
+    client_id: "{{ auth_var['client_id'] | default(omit) }}"
+    tenant: "{{ auth_var['tenant'] | default(omit) }}"
+    secret: "{{ auth_var['secret'] | default(omit) }}"
+    subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
+    name: "{{res_def['resource_group_name']|default(omit)}}"
+    force_delete_nonempty: yes
+    state: 'absent'
