@@ -11,7 +11,7 @@ openshift-new:
             # the variable name must not be 'namespace' due to collision
             # with Jinja2 internal variable. Known issue:
             # https://github.com/ansible/ansible/issues/41955
-            namespace: {{ oc_namespace | default('continuous-infra') }}
+            namespace: {{ oc_namespace | default('linchpin') }}
             definition:
               kind: Pod
               apiVersion: v1
@@ -43,12 +43,58 @@ openshift-new:
                 dnsPolicy: ClusterFirst
                 serviceAccount: ''
                 status: {}
+          - name: openshift2
+            role: openshift_inline
+            # the variable name must not be 'namespace' due to collision
+            # with Jinja2 internal variable. Known issue:
+            # https://github.com/ansible/ansible/issues/41955
+            namespace: {{ oc_namespace | default('linchpin') }}
+            definition:
+              kind: Pod
+              apiVersion: v1
+              metadata:
+                name: goodbye-openshift
+                labels:
+                  name: goodbye-openshift
+              spec:
+                containers:
+                - name: goodbye-openshift
+                  image: openshift/hello-openshift
+                  ports:
+                  - containerPort: 8080
+                    protocol: TCP
+                  resources: {}
+                  volumeMounts:
+                  - name: tmp
+                    mountPath: /tmp
+                  terminationMessagePath: /dev/termination-log
+                  imagePullPolicy: IfNotPresent
+                  capabilities: {}
+                  securityContext:
+                    capabilities: {}
+                    privileged: false
+                volumes:
+                - name: tmp
+                  emptyDir: {}
+                restartPolicy: Always
+                dnsPolicy: ClusterFirst
+                serviceAccount: ''
+                status: {}
         {% if credentials is defined %}
         credentials:
           filename: {{ credentials.filename }}
           profile: {{ credentials.profile }}
         {% else %}
         credentials:
-          filename: upshift.yaml
+          filename: config.yml
           profile: default
         {% endif %}
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        pod:
+          count: 1
+          host_groups:
+            - pods
