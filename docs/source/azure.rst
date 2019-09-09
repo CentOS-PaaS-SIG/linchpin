@@ -24,12 +24,29 @@ definition, the following options are available.
 | role             | true       | string        | N/A               |                 |
 +------------------+------------+---------------+-------------------+-----------------+
 | vm_name          | true       | string        | name              |It can't include |
-|                  |            |               |                   | _ and other     |
+|                  |            |               |                   | '_' and other   |
 |                  |            |               |                   |special char     |
 +------------------+------------+---------------+-------------------+-----------------+
-| image            | true       | string        | image             |                 |
+| private_image    | false      | string        | image             |This para takes  |
+|                  |            |               |                   | private images  |
+|                  |            |               |                   |                 |
++------------------+------------+---------------+-------------------+-----------------+
+| resource_group   | true       | string        | resource_group    |                 |
++------------------+------------+---------------+-------------------+-----------------+
+| vm_size          | true       | string        | vm_size           |                 |
++------------------+------------+---------------+-------------------+-----------------+
+| public_image     | false      | dict          | image             |This para takes  |
+|                  |            |               |                   | public images   |
+|                  |            |               |                   |                 |
++------------------+------------+---------------+-------------------+-----------------+
+|virtual_network_name| true     | string        |virtual_network_name|                 |
++------------------+------------+---------------+-------------------+-----------------+
+| vm_username      | true       | string        | image             |                 |
++------------------+------------+---------------+-------------------+-----------------+
+| vm_password      | true       | string        | image             |                 |
 +------------------+------------+---------------+-------------------+-----------------+
 
+#If you declare both public and private image, only the private will be taken
 
 Credentials Management
 ----------------------
