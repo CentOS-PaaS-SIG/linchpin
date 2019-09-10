@@ -27,7 +27,7 @@ definition, the following options are available.
 |                  |            |               |                   | '_' and other   |
 |                  |            |               |                   |special char     |
 +------------------+------------+---------------+-------------------+-----------------+
-| private_image    | false      | string        | image             |This para takes  |
+| private_image    | false      | string        | image             |This takes       |
 |                  |            |               |                   | private images  |
 |                  |            |               |                   |                 |
 +------------------+------------+---------------+-------------------+-----------------+
@@ -35,7 +35,7 @@ definition, the following options are available.
 +------------------+------------+---------------+-------------------+-----------------+
 | vm_size          | true       | string        | vm_size           |                 |
 +------------------+------------+---------------+-------------------+-----------------+
-| public_image     | false      | dict          | image             |This para takes  |
+| public_image     | false      | dict          | image             |This takes       |
 |                  |            |               |                   | public images   |
 |                  |            |               |                   |                 |
 +------------------+------------+---------------+-------------------+-----------------+
@@ -46,7 +46,7 @@ definition, the following options are available.
 | vm_password      | true       | string        | image             |                 |
 +------------------+------------+---------------+-------------------+-----------------+
 
-#If you declare both public and private image, only the private will be taken
+⚫ If you declare both public and private image, only the private will be taken
 
 Credentials Management
 ----------------------
