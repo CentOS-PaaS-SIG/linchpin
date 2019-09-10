@@ -1,0 +1,66 @@
+---
+- local_action:
+    module: os_image_facts
+    auth: "{{ auth_var | omit_filter(omit) }}"
+    api_timeout: 99999
+    timeout: 3600
+    cacert: "{{ res_def['cacert'] | default(omit) }}"
+    cert: "{{ res_def['cert'] | default(omit) }}"
+    region_name: "{{ res_def['region_name'] | default(omit) }}"
+    verify: "{{ res_def['verify'] | default(omit) }}"
+    image: "{{ res_def['image'] }}"
+  when: res_def.image is defined
+  register: results
+
+- assert:
+    that:
+      - results.ansible_facts.openstack_image is not none
+    fail_msg: "Image {{ res_def.image }} was not found"
+    success_msg: "Image {{ res_def.image }} exists"
+  when: res_def.image is defined
+
+- local_action:
+    module: os_flavor_facts
+    auth: "{{ auth_var | omit_filter(omit) }}"
+    api_timeout: 99999
+    timeout: 3600
+    cacert: "{{ res_def['cacert'] | default(omit) }}"
+    cert: "{{ res_def['cert'] | default(omit) }}"
+    region_name: "{{ res_def['region_name'] | default(omit) }}"
+    verify: "{{ res_def['verify'] | default(omit) }}"
+    name: "{{ res_def['flavor'] }}"
+  when: res_def.flavor is defined
+  register: results
+
+- assert:
+    that:
+      - results.ansible_facts.openstack_flavors | length > 0
+    fail_msg: "Flavor {{ res_def.flavor }} was not found"
+    success_msg: "Flavor {{ res_def.flavor }} exists"
+  when: res_def.flavor is defined
+
+- local_action:
+    module: os_networks_facts
+    auth: "{{ auth_var | omit_filter(omit) }}"
+    api_timeout: 99999
+    timeout: 3600
+    cacert: "{{ res_def['cacert'] | default(omit) }}"
+    cert: "{{ res_def['cert'] | default(omit) }}"
+    region_name: "{{ res_def['region_name'] | default(omit) }}"
+    verify: "{{ res_def['verify'] | default(omit) }}"
+    name: "{{ network }}"
+  loop: "{{ res_def.networks }}"
+  loop_control:
+    loop_var: network
+  when: res_def.networks is defined
+  register: results
+
+- assert:
+    that:
+      - results.results[index].ansible_facts.openstack_networks | length > 0
+    fail_msg: "Network {{ res_def.networks[index] }} was not found"
+    success_msg: "Network {{ res_def.networks[index] }} exists"
+  loop: "{{ res_def.networks | flatten(levels=1) }}"
+  loop_control:
+    index_var: index
+  when: res_def.networks is defined

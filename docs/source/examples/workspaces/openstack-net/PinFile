@@ -21,3 +21,6 @@ os_net:
               - net: lp-net
                 subnet: lp-sub
                 portip: 172.16.180.1
+  hooks:
+    preup:
+      - name: res_check

@@ -1,0 +1,49 @@
+---
+- name: "Unset the authvar from previous run"
+  set_fact:
+    auth_var: ""
+
+- name: "set default_cred_profile when res[credentials] is undefined"
+  set_fact:
+    cred_profile: 'default'
+  when: res['credentials'] is not defined
+
+- name: "set default_cred_profile when res[credentials] is undefined"
+  set_fact:
+    cred_filename: 'clouds.yaml'
+  when: res['credentials'] is not defined
+
+- name: "set cred_profile when res[credentials] is defined"
+  set_fact:
+    cred_profile: "{{ res['credentials']['profile'] }}"
+  when: res['credentials'] is defined
+
+- name: "set default_cred_filename when res[credentials] is defined"
+  set_fact:
+    cred_filename: "{{ res['credentials']['filename'] }}"
+  when: res['credentials'] is defined
+
+- name: "Get creds from auth driver"
+  auth_driver:
+    filename: "{{ cred_filename }}"
+    cred_type: "openstack"
+    cred_path: "{{ creds_path | default(default_credentials_path) }}"
+    driver: "file"
+    vault_enc: "{{ vault_encryption }}"
+    vault_pass: "{{ vault_pass }}"
+  register: auth_var_out
+  ignore_errors: true
+  no_log: "{{ not debug_mode }}"
+  when: res['credentials'] is defined
+
+- name: "set auth_var"
+  set_fact:
+    auth_var: "{{ auth_var_out['output']['clouds'][cred_profile]['auth'] }}"
+  ignore_errors: true
+  when: auth_var_out['output'] is defined
+  no_log: "{{ not debug_mode }}"
+
+- include: "{{ res_def.role }}.yml"
+  loop: "{{ res.resource_definitions }}"
+  loop_control:
+    loop_var: res_def

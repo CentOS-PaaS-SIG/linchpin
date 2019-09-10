@@ -13,7 +13,7 @@ simple:
           - name: {{ name | default('database') }}
             role: os_server
             flavor: {{ flavor | default('m1.small') }}
-            image: {{ image | default('CentOS-7-x86_64-GenericCloud-1612') }}
+            image: {{ image | default('31204290-8e4f-4929-8a97-0e016fff5e59') }}
             count: 1
             keypair: {{ keypair | default('ci-factory') }}
             fip_pool: {{ fip_pool | default('10.8.240.0') }}
@@ -31,5 +31,7 @@ simple:
           host_groups:
             - example
   hooks:
+    preup:
+      - name: res_check
     postup:
       - name: os_server_boot_log
