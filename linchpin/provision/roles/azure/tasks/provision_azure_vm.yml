@@ -1,12 +1,32 @@
 ---
-- name: "Set default public image"
+- name: Make a default image
+  set_fact: 
+    default_img:
+      offer: CoreOS
+      publisher: CoreOS
+      sku: Stable
+      version: latest
+
+- name: "Set public images when public image is defined"
   set_fact:
-    pub_img:
-      - publisher: f5-networks
-        offer: f5-big-ip-best
-        sku: f5-bigip-virtual-edition-200m-best-hourly
-        version: latest
-        
+    pub_img: "{{res_def['public_image']}}"
+  when: res_def['public_image'] is defined
+
+- name: "Set default public images"
+  set_fact:
+    pub_img: "{{default_img}}"
+  when: res_def['public_image'] is not defined  
+
+- name: Set image
+  set_fact:
+    image: "{{pub_img}}"
+    when: res_def[private_image] is not defined   
+
+- name: Set image
+  set_fact: 
+    image: "{{res_def[image]}}"
+  when: res_def[private_image] is defined     
+
 - name: "Provisioning Azure VM when not async"
   azure_rm_virtualmachine:
     client_id: "{{ auth_var['client_id'] | default(omit) }}"
@@ -19,13 +39,7 @@
     vm_size: "{{ res_def['vm_size'] | default(omit) }}"
     name: "{{ res_def['vm_name'] | default(omit) }}"
     virtual_network_name: "{{res_def['virtual_network_name']|default(omit)}}"
-    image: "{{ res_def['image'] | default(omit) }}"
-    #leave the code below here for now, implement later
-    # image: 
-    #   offer: CentOS
-    #   publisher: OpenLogic
-    #   sku: '7.1'
-    #   version: latest
+    image: "{{ image | default(omit) }}"
   register: res_def_output
   when: not _async
   no_log: "{{ not debug_mode }}"
@@ -46,13 +60,7 @@
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
     vm_size: "{{ res_def['vm_size'] | default(omit) }}"
     name: "{{ res_def['vm_name'] | default(omit) }}"
-    image: "{{ res_def['image'] | default(omit) }}"
-    #leave the code below here for now, implement later
-    # image: 
-    #   offer: CentOS
-    #   publisher: OpenLogic
-    #   sku: '7.1'
-    #   version: latest
+    image: "{{ image | default(omit) }}"
   async: "{{ async_timeout }}"
   poll: 0
   register: res_def_output

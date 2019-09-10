@@ -13,13 +13,35 @@
                                 "azure_vm"
                             ]
                         },
+                        "public_image": {
+                            "type": "dict",
+                            "required": false,
+                            "schema": {
+                                "offer": {
+                                    "type": "string",
+                                    "required": true
+                                },
+                                "publisher": {
+                                    "type": "string",
+                                    "required": true
+                                },
+                                "sku": {
+                                    "type": "string",
+                                    "required": true
+                                },
+                                "version": {
+                                    "type": "string",
+                                    "required": true
+                                }
+                            }
+                        },
                         "vm_name": {
                             "type": "string",
                             "required": true
                         },
-                        "image": {
+                        "private_image": {
                             "type": "string",
-                            "required": true
+                            "required": false
                         },
                         "vm_username": {
                             "type": "string",
