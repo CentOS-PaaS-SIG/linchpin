@@ -1,0 +1,34 @@
+---
+- block:
+    - local_action:
+        module: os_networks_facts
+        auth: "{{ auth_var | omit_filter(omit) }}"
+        api_timeout: 99999
+        timeout: 3600
+        cacert: "{{ res_def['cacert'] | default(omit) }}"
+        cert: "{{ res_def['cert'] | default(omit) }}"
+        region_name: "{{ res_def['region_name'] | default(omit) }}"
+        verify: "{{ res_def['verify'] | default(omit) }}"
+        name: "{{ res_def.network_name }}"
+      when: res_def.network_name is defined
+      register: results
+
+    - assert:
+        that:
+          - results.ansible_facts.openstack_networks | length > 0
+        fail_msg: "Network {{ res_def.network_name }} was not found"
+        success_msg: "Network {{ res_def.network_name }} exists"
+      when: res_def.network_name is defined
+  rescue:
+    - set_fact:
+        network_exist: true
+      loop: "{{ res.resource_definitions }}"
+      loop_control:
+        loop_var: def
+      when: def.role == 'os_network' and def.name == res_def.network_name
+    - assert:
+        that:
+          - network_exist == True
+        fail_msg: "Network {{ res_def.network_name }} is not defined"
+        success_msg: "Network {{ res_def.network_name }} will be created"
+
