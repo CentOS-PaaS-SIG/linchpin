@@ -31,6 +31,7 @@
                     "network_bridge": { "type": "string", "required": false },
                     "ssh_key": { "type": "string", "required": false },
                     "xml": { "type": "string", "required": false },
+                    "domain": { "type": "string", "required": false },
                     "cloud_config": {
                         "type": "dict",
                         "required": false,
