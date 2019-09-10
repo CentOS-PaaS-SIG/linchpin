@@ -144,6 +144,26 @@
                             "required": false
                         }
                     }
+                },
+                {
+                    "type": "dict",
+                    "schema": {
+                        "role": {
+                            "type": "string",
+                            "required": true,
+                            "allowed": [
+                                "azure_resource_group"
+                            ]
+                        },
+                        "resource_group_name": {
+                            "type": "string",
+                            "required": true
+                        },
+                        "location": {
+                            "type": "string",
+                            "required": true
+                        }
+                    }
                 }
             ]
         }

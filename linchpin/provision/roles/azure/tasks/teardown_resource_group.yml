@@ -69,3 +69,11 @@
     - ["{{ res_grp['resource_group_name']  }}"]
   loop_control:
     loop_var: res_item
+
+- name: "teardown of Azure Resource Group resource definitions of current group"
+  include: teardown_azure_resource_group.yml res_def={{ res_item.0 }}
+  when: res_item.0['role'] == "azure_resource_group"
+  loop:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
+  loop_control:
+    loop_var: res_item

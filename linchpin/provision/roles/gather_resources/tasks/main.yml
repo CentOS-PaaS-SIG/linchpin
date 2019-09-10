@@ -139,10 +139,15 @@
     topology_outputs: "{{ topology_outputs + topology_outputs_azure_vm }}"
   when: topology_outputs_azure_vm is defined
 
-- name: "Add azure_vm_res"
+- name: "Add azure_vn_res"
   set_fact:
     topology_outputs: "{{ topology_outputs + topology_outputs_azure_vn }}"
   when: topology_outputs_azure_vn is defined
+
+- name: "Add azure_res_grp_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs + topology_outputs_azure_res_grp }}"
+  when: topology_outputs_azure_res_grp is defined
 
 - name: "set value"
   set_fact:
