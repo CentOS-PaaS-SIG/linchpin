@@ -1,39 +1,4 @@
 ---
-azure_vm:
-  topology:
-    topology_name: azure_vm
-    resource_groups:
-      - resource_group_name: "azure"
-        resource_group_type: "azure"
-        resource_definitions:
-          - vm_name: TEST-Azure
-            role: azure_vm
-            resource_group: "ccit"
-            vm_size: "Standard_DS1_v2"
-            private_image: "rhcostestimage"
-            # If you have both private and public images
-            # Linchpin will take the private one
-            public_image:
-              offer: CentOS
-              publisher: OpenLogic
-              sku: '7.1'
-              version: latest
-            vm_username: linchpin
-            vm_password: Asdfghjkl12345_
-            virtual_network_name: linchpincreated
-        credentials:
-          filename: azure.key
-          profile: key
-  layout:
-    inventory_layout:
-      vars:
-        hostname: __IP__
-      hosts:
-        example-node:
-          count: 1
-          host_groups:
-            - example
-
 azure_vm_public_image:
   topology:
     topology_name: azure_vm_public_image
@@ -51,7 +16,7 @@ azure_vm_public_image:
               sku: '7.1'
               version: latest
             vm_username: linchpin
-            vm_password: Asdfghjkl12345_
+            vm_password: IloveLinchpin!
             virtual_network_name: linchpincreated
         credentials:
           filename: azure.key
@@ -104,6 +69,51 @@ azure_vn_subnet:
             subnet_name: linchpin-created
             role: azure_virtual_subnet
             resource_group: "ccit"
+        credentials:
+          filename: azure.key
+          profile: key
+
+azure_vm:
+  topology:
+    topology_name: azure_vm
+    resource_groups:
+      - resource_group_name: "azure"
+        resource_group_type: "azure"
+        resource_definitions:
+          - vm_name: TestAzureAuto
+            resource_group: "ccit"
+            role: azure_vm_auto
+# This part below is now required, but you can still specify it
+            vm_size: "Standard_DS1_v2"
+            private_image: "rhcostestimage"
+            # If you have both private and public images
+            # Linchpin will take the private one
+            public_image:
+              offer: CentOS
+              publisher: OpenLogic
+              sku: '7.1'
+              version: latest
+              # If you don't specify the username and password
+              # The default is as below
+              # vm_username: linchpin&&&vm_password: IloveLinchpin!
+            vm_username: linchpin 
+            vm_password: IloveLinchpin!
+# This part above is now required, but you can still specify it
+        credentials:
+          filename: azure.key
+          profile: key
+
+#This is the minimum viable input for azure_vm
+azure_vm_test:
+  topology:
+    topology_name: azure_vm_test
+    resource_groups:
+      - resource_group_name: "azure"
+        resource_group_type: "azure"
+        resource_definitions:
+          - vm_name: TestAzureAuto
+            resource_group: "ccit"
+            role: azure_vm_auto
         credentials:
           filename: azure.key
           profile: key

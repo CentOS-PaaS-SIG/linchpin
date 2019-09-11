@@ -1,4 +1,28 @@
 ---
+- name: Set the vm name
+  set_fact:
+    vm_name: "{{res_def['vm_name']}}"
+
+- name: Set the vn name
+  set_fact:
+    vn_name: "{{res_def['vm_name']+ '-' + uhash + '_' }}" 
+
+- name: Set resource group
+  set_fact:
+    resource_group: "{{ res_def['resource_group'] }}"
+
+- name: Set subnet name
+  set_fact:
+    subnet_name: "{{ vn_name + uhash}}"
+
+- name: Creating virtual network auomatically...
+  include: provision_azure_virtual_network.yml name={{vn_name}} resource_group={{resource_group}}
+  when: res_def['virtual_network_name'] is not defined
+
+- name: Creating virtual subnet automatically...
+  include: provision_azure_virtual_subnet.yml name={{subnet_name}} vs_vn_name={{vn_name}} resource_group={{resource_group}}
+  when: res_def['virtual_network_name'] is not defined
+
 - name: Make a default image
   set_fact: 
     default_img:
@@ -20,12 +44,12 @@
 - name: Set image
   set_fact:
     image: "{{pub_img}}"
-    when: res_def[private_image] is not defined   
+    when: res_def['private_image'] is not defined   
 
 - name: Set image
   set_fact: 
-    image: "{{res_def[image]}}"
-  when: res_def[private_image] is defined     
+    image: "{{res_def['image']}}"
+  when: res_def['private_image'] is defined     
 
 - name: "Provisioning Azure VM when not async"
   azure_rm_virtualmachine:
@@ -33,16 +57,16 @@
     tenant: "{{ auth_var['tenant'] | default(omit) }}"
     secret: "{{ auth_var['secret'] | default(omit) }}"
     subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
-    admin_username: "{{ res_def['vm_username'] | default(omit) }}"
-    admin_password: "{{ res_def['vm_password'] | default(omit) }}"
+    admin_username: "{{ res_def['vm_username'] | default('linchpin') }}"
+    admin_password: "{{ res_def['vm_password'] | default('IloveLinchpin!') }}"
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
-    vm_size: "{{ res_def['vm_size'] | default(omit) }}"
+    vm_size: "{{ res_def['vm_size'] | default('Standard_DS1_v2') }}"
     name: "{{ res_def['vm_name'] | default(omit) }}"
-    virtual_network_name: "{{res_def['virtual_network_name']|default(omit)}}"
+    virtual_network_name: "{{res_def['virtual_network_name']|default(vn_name)}}"
     image: "{{ image | default(omit) }}"
   register: res_def_output
   when: not _async
-  no_log: "{{ not debug_mode }}"
+  # no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
@@ -55,17 +79,18 @@
     tenant: "{{ auth_var['tenant'] | default(omit) }}"
     secret: "{{ auth_var['secret'] | default(omit) }}"
     subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
-    admin_username: "{{ res_def['vm_username'] | default(omit) }}"
-    admin_password: "{{ res_def['vm_password'] | default(omit) }}"
+    admin_username: "{{ res_def['vm_username'] | default('linchpin') }}"
+    admin_password: "{{ res_def['vm_password'] | default('IloveLinchpin!') }}"
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
-    vm_size: "{{ res_def['vm_size'] | default(omit) }}"
+    vm_size: "{{ res_def['vm_size'] | default('Standard_DS1_v2') }}"
+    virtual_network_name: "{{res_def['virtual_network_name']|default(vn_name)}}"
     name: "{{ res_def['vm_name'] | default(omit) }}"
     image: "{{ image | default(omit) }}"
   async: "{{ async_timeout }}"
   poll: 0
   register: res_def_output
   when: _async
-  no_log: "{{ not debug_mode }}"
+  # no_log: "{{ not debug_mode }}"
 
 - name: "Async:: Append outputitem to topology_outputs"
   set_fact:

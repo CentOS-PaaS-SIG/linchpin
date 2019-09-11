@@ -1,4 +1,8 @@
 ---
+- name: Set vn name
+  set_fact: 
+    vn_name: "{{res_def['virtual_network_name']|default(omit)}}"
+
 - name: "Provisioning Azure Virtual Network when not async"
   azure_rm_virtualnetwork:
     client_id: "{{ auth_var['client_id'] | default(omit) }}"
@@ -7,7 +11,7 @@
     subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
     address_prefixes: "{{ res_def['address_prefixes']|default('10.1.0.0/16')}}"
-    name: "{{res_def['virtual_network_name']|default(omit)}}"
+    name: "{{ name|default(vn_name) }}"
   register: res_def_output
 
 - name: "Append outputitem to topology_outputs"
@@ -23,7 +27,7 @@
     subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
     address_prefixes: "{{ res_def['address_prefixes']|default('10.1.0.0/16')}}"
-    name: "{{res_def['virtual_network_name']|default(omit)}}"
+    name: "{{ name|default(vn_name) }}"
   async: "{{ async_timeout }}"
   poll: 0
   register: res_def_output

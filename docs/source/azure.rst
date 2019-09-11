@@ -31,19 +31,23 @@ definition, the following options are available.
 |                  |            |               |                   | private images  |
 |                  |            |               |                   |                 |
 +------------------+------------+---------------+-------------------+-----------------+
+|virtual_network_name| false    | string        |virtual_network_name|                 |
++------------------+------------+---------------+-------------------+-----------------+
+| vm_username      | false      | string        | image             |                 |
++------------------+------------+---------------+-------------------+-----------------+
+| vm_password      | false      | string        | image             |                 |
++------------------+------------+---------------+-------------------+-----------------+
 | resource_group   | true       | string        | resource_group    |                 |
 +------------------+------------+---------------+-------------------+-----------------+
-| vm_size          | true       | string        | vm_size           |                 |
+| vm_size          | false      | string        | vm_size           |                 |
 +------------------+------------+---------------+-------------------+-----------------+
-| public_image     | false      | dict          | image             |This takes       |
+| public_image     | false      | dict          | image             |This para takes  |
 |                  |            |               |                   | public images   |
 |                  |            |               |                   |                 |
 +------------------+------------+---------------+-------------------+-----------------+
-|virtual_network_name| true     | string        |virtual_network_name|                 |
+| vm_username      | false      | string        | image             |                 |
 +------------------+------------+---------------+-------------------+-----------------+
-| vm_username      | true       | string        | image             |                 |
-+------------------+------------+---------------+-------------------+-----------------+
-| vm_password      | true       | string        | image             |                 |
+| vm_password      | false      | string        | image             |                 |
 +------------------+------------+---------------+-------------------+-----------------+
 
 ⚫ If you declare both public and private image, only the private will be taken
