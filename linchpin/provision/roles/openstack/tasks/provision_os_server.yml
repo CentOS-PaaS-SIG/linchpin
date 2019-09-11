@@ -7,14 +7,88 @@
   set_fact:
     res_def_names: "{{ res_def_names  + [os_resource_name + default_delimiter + inst_c] }}"
   with_sequence: start=0 end={{ res_def['count']|int - 1 }}
-  when: res_def['count'] > 1
+  when: 
+    - res_def['count'] > 1
+    - state == "present"
   loop_control:
     loop_var: inst_c
+
+- name: Generate res_def_names when absent
+  set_fact:
+    res_def_names: "{{ topo_output_resources | fetch_os_server_names }}"
+  when: state == "absent"
+
+
+- name: set fact for instance ids
+  set_fact:
+    os_server_instance_ids: "{{ topo_output_resources | fetch_os_server_ids }}"
+  when: state == "absent"
+
+- name: "teardown os_server resources with provided auth"
+  os_server:
+    state: "absent"
+    auth: "{{ auth_var | omit_filter(omit) }}"
+    name: "{{ prov_inst }}"
+    api_timeout: 99999
+    timeout: 3600
+    region_name: "{{ res_def['region_name'] | default(omit) }}"
+    verify: "{{ res_def['verify'] | default(omit) }}"
+  register: res_def_output
+  loop: "{{ res_def_names }}"
+  loop_control:
+    loop_var: prov_inst
+  when:
+    - not _async
+    - state == "absent"
+
+- name: "provision/teardown os_server resources with provided auth"
+  os_server:
+    state: "{{ state }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
+    name: "{{ prov_inst }}"
+    image: "{{ res_def['image'] | default(omit) }}"
+    key_name: "{{ res_def['keypair'] }}"
+    api_timeout: 99999
+    timeout: 3600
+    flavor: "{{ res_def['flavor'] }}"
+    nics:  "{{ res_def['networks'] | default(None) | os_net }}"
+    floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
+    security_groups: "{{ res_def['security_groups'] | default(omit) }}"
+    userdata: "{{ res_def['userdata'] | default(omit) }}"
+    boot_from_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
+    terminate_volume: "{{ res_def['boot_from_volume'] | default(omit) }}"
+    volume_size: "{{ res_def['volume_size'] | default(omit) }}"
+    boot_volume: "{{ res_def['boot_volume'] | default(omit) }}"
+    volumes: "{{ res_def['volumes'] | default(omit) }}"
+    availability_zone: "{{ res_def['availability_zone'] | default(omit) }}"
+    cacert: "{{ res_def['cacert'] | default(omit) }}"
+    cert: "{{ res_def['cert'] | default(omit) }}"
+    config_drive: "{{ res_def['config_drive'] | default(omit) }}"
+    delete_fip: "{{ res_def['delete_fip'] | default(omit) }}"
+    flavor_include: "{{ res_def['flavor_include'] | default(omit) }}"
+    flavor_ram: "{{ res_def['flavor_ram'] | default(omit) }}"
+    floating_ips: "{{ res_def['floating_ips'] | default(omit) }}"
+    image_exclude: "{{ res_def['image_exclude'] | default(omit) }}"
+    interface: "{{ res_def['interface'] | default(omit) }}"
+    region_name: "{{ res_def['region_name'] | default(omit) }}"
+    scheduler_hints: "{{ res_def['scheduler_hints'] | default(omit) }}"
+    verify: "{{ res_def['verify'] | default(omit) }}"
+    auto_ip: "{{ res_def['auto_ip'] | default(omit) }}"
+  register: res_def_output
+  loop: "{{ res_def_names }}"
+  when:
+    - not _async
+    - state == "present"
+  no_log: "{{ not debug_mode }}"
+  loop_control:
+    loop_var: prov_inst
 
 - name: generate res_def_names
   set_fact:
     res_def_names: "{{ res_def_names  + [os_resource_name] }}"
-  when: res_def['count'] == 1
+  when:
+  - res_def['count'] == 1 
+  - state == "present"
 
 - name: set_fact instance filters
   set_fact:
@@ -23,7 +97,8 @@
 - name: set_fact when addtional volumes
   set_fact:
     res_def_add_vol: "{{ res_def_prov | selectattr('volumes') | sum(attribute='volumes', start=[])  }}"
-  when: res_def_add_vol | length > 0
+  when: 
+    - res_def_add_vol | length > 0
 
 - name: Provision additional volumes
   os_volume:
@@ -37,18 +112,6 @@
   when: state == "present"
   loop_control:
     loop_var: prov_vol
-
-- name: Detach additional volumes
-  os_server_volume:
-    state: "{{ state }}"
-    auth: "{{ auth_var | omit_filter(omit) }}"
-    server: "{{ detach_vol['server_name']  }}"
-    volume: "{{ detach_vol['name'] }}"
-    device: "{{ detach_vol['device_name'] | default(omit) }}"
-  loop: "{{ res_def_add_vol }}"
-  when: state == "absent"
-  loop_control:
-    loop_var: detach_vol
 
 - name: Delete additional volumes
   os_volume:
@@ -97,6 +160,7 @@
   loop: "{{ res_def_names }}"
   when:
     - not _async
+    - state == "present"
   no_log: "{{ not debug_mode }}"
   loop_control:
     loop_var: prov_inst
@@ -116,13 +180,16 @@
 - name: "Transform outputs to match the distiller format"
   set_fact:
     res_def_output: "{{ res_def_output | transform_os_server_output  }}"
-  when: not _async
+  when: 
+    - not _async
+    - state == "present"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_os_server: "{{ topology_outputs_os_server }} + [  {{ res_def_output }} ]"
+    topology_outputs_os_server: "{{ topology_outputs_os_server + [ res_def_output ] }}"
   when: 
     - not _async
+    - state == "present"
     - res_def_output['skipped'] is not defined
 
 - name: "Async:: provision/teardown os_server resources"
@@ -163,6 +230,7 @@
   no_log: "{{ not debug_mode }}"
   when:
     - _async
+    - state == "present"
   loop_control:
     loop_var: prov_inst
   async: "{{ async_timeout | default(1000) }}"
@@ -170,13 +238,15 @@
 
 - name: "Async:: Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_os_server: "{{ topology_outputs_os_server }} + [ {{ res_def_output }} ]"
+    topology_outputs_os_server: "{{ topology_outputs_os_server  + [res_def_output] }}"
   when:
     - _async
     - res_def_output['skipped'] is not defined
+    - state == "present"
 
 - name: "Add type to resource"
   set_fact:
     topology_outputs_os_server: "{{ topology_outputs_os_server | add_res_type('os_server_res') }}"
   when:
+    - state == "present"
     - not _async
