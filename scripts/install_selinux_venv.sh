@@ -1,14 +1,15 @@
 #!/bin/bash
 
 DNF='dnf'
+VERSION=$(python --version 2>&1 | cut -f 2 -d ' ' | sed 's/\.[0-9]*$//')
 grep -i fedora /etc/os-release
 
 if [ "${?}" != 0 ]; then
     DNF='yum'
 fi
 
-VENV_LIB_PATH=lib/python2.7/site-packages
-LIBSELINUX_PATH=/usr/lib64/python2.7/site-packages
+VENV_LIB_PATH=lib/python${VERSION}/site-packages
+LIBSELINUX_PATH=/usr/lib64/python${VERSION}/site-packages
 
 if [ -n "${VIRTUAL_ENV}" ]; then
     if [ "${USER}" != "root" ]; then
