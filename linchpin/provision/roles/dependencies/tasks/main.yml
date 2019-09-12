@@ -10,10 +10,17 @@
   loop_control:
     loop_var: indv_prov
 
+- name: Install os-specific depdendencies:: Fedora
+  include_tasks: "setup_dnf_deps.yml"
+  when: setup_providers | length == 0  and ansible_distribution == 'Fedora'
+
+- name: Install os-specific depdendencies:: CentOS/RHEL
+  include_tasks: "setup_yum_deps.yml"
+  when: setup_providers | length == 0  and (ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS')
+
 - name: Install all dependencies
   include_tasks: "{{ setup_prov }}_deps.yml"
   with_items:
-    - setup_dnf
     - beaker
     - libvirt
     - docs
