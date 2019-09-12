@@ -1,0 +1,65 @@
+---
+- block:
+  - ec2_vpc_subnet_facts:
+      filters: "{{ res_def['subnet_filters'] }}"
+      aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+      aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
+      security_token: "{{ res_def['security_token'] | default(omit) }}"
+      region: "{{ res_def['region'] }}"
+      ec2_url: "{{ res_def['ec2_url'] | default(omit) }}"
+      profile: "{{ res_def['profile'] | default(omit) }}"
+      debug_botocore_endpoint_logs: "{{ debug_mode | default(omit) }}"
+      validate_certs: no
+    register: subnet_facts
+
+  - set_fact:
+      subnet_ids: "{{ subnet_facts.subnets|map(attribute='id')|list }}"
+
+  - fail:
+      msg: "Found too many subnets, refine the filters or add tags: {{ subnet_id }}"
+    when: subnet_ids | length > 1
+
+  - fail:
+      msg: "No subnet was found, refine the filters or add tags"
+    when: subnet_ids | length == 0
+
+  - set_fact:
+      subnet_id: "{{ subnet_ids[0] }}"
+  when: res_def['subnet_filters'] is defined
+
+- set_fact:
+    subnet_id: res_def['subnet_id']
+  when: res_def['subnet_id'] is defined
+
+- fail:
+    msg: "subnet_id is not defined or wasn't found by subnet_filters"
+  when: subnet_id is undefined
+
+- name: "Provision/Teardown AWS VPC NAT Gateways"
+  ec2_vpc_nat_gateway:
+    state: present
+    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
+    region: "{{ res_def['region'] }}"
+    security_token: "{{ res_def['security_token'] | default(omit) }}"
+    validate_certs: no
+    allocation_id: "{{ res_def['allocation_id'] | default(omit) }}"
+    client_token: "{{ res_def['client_token'] | default(omit) }}"
+    if_exist_do_not_create: "{{ res_def['force'] | default(omit) }}"
+    debug_botocore_endpoint_logs: "{{ debug_mode | default(omit) }}"
+    wait_timeout: "{{ res_def['wait_timeout'] | default(omit) }}"
+    wait: "{{ res_def['wait'] | default(omit) }}"
+    subnet_id: "{{ subnet_id | default(omit) }}"
+    ec2_url: "{{ res_def['ec2_url'] | default(omit) }}"
+    eip_address: "{{ res_def['eip_address'] | default(omit) }}"
+    profile: "{{ res_def['profile'] | default(omit) }}"
+  register: res_def_output
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_aws_net: "{{ topology_outputs_aws_net + [res_def_output] }}"
+  when: res_def_output['changed'] == true
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_aws_ec2: "{{ topology_outputs_aws_net | add_res_type( 'aws_ec2_vpc_nat_gateway') }}"

@@ -138,9 +138,9 @@ aws-ec2-eip:
       - resource_group_name: "aws"
         resource_group_type: "aws"
         resource_definitions:
-          - name: demoday
+          - name: demodaycilp
             role: aws_ec2_eip
-            region: "{{ region | default('us-east-1') }}"
+            region: "{{ region | default('ca-central-1') }}"
         {% if credentials is defined %}
         credentials:
           filename: {{ credentials.filename }}
@@ -324,6 +324,45 @@ aws-ec2-vpc-endpoint:
           profile: default
         {% endif %}
 
+aws-ec2-vpc-nat-gateway:
+  topology:
+    topology_name: {{ distro | default('test-')}}ec2vpcnatgateway
+    resource_groups:
+      - resource_group_name: "aws_ec2_vpc_nat_gateway"
+        resource_group_type: "aws"
+        resource_definitions:
+          - name: demo_vpc_net_ep_ci_lp
+            role: aws_ec2_vpc_net
+            region: ca-central-1
+            cidr_block: 17.0.0.0/16
+            tags:
+              module: ec2vpcnatgateway_demo
+              desc: provisioned_by_linchpin
+              distro: {{ distro | default('test')}}
+          - name: demo_vpc_subnet_ep_ci_lp
+            role: aws_ec2_vpc_subnet
+            region: ca-central-1
+            vpc_name: demo_vpc_net_ep_ci_lp
+            cidr: 17.0.1.0/24
+            tags:
+              module: ec2vpcnatgateway_demo
+              distro: {{ distro | default('test')}}
+          - name: demo_vpc_nat_gateway_ci_lp
+            role: aws_ec2_vpc_nat_gateway
+            region: ca-central-1
+            subnet_filters:
+              "tag:module": ec2vpcnatgateway_demo
+              "tag:distro": {{ distro | default('test')}}
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
+        credentials:
+          filename: aws.key
+          profile: default
+        {% endif %}
+
 
 aws-ec2-elb-lb:
   topology:
@@ -332,9 +371,9 @@ aws-ec2-elb-lb:
       - resource_group_name: "awsec2elblbdemo"
         resource_group_type: "aws"
         resource_definitions:
-          - name: "{{ distro }}demoec2elblb"
+          - name: "{{ distro }}demoec2elblbcilp"
             role: aws_ec2_elb_lb
-            region: {{ region | default('us-east-1') }}
+            region: {{ region | default('ca-central-1') }}
             {% if zones is defined %}
             zones:
               {% for zone in zones %}
@@ -342,8 +381,8 @@ aws-ec2-elb-lb:
               {% endfor %}
             {% else %}
             zones:
-            - us-east-1a
-            - us-east-1d
+            - ca-central-1a
+            - ca-central-1b
             {% endif %}
             {% if listeners is defined %}
             listeners:
@@ -379,7 +418,7 @@ aws-ec2-vpc-gateway-test:
         resource_definitions:
           - name: "{{ distro }}-vpc-test"
             role: aws_ec2_vpc_net
-            region: us-east-1
+            region: ca-central-1
             cidr_block: 10.10.0.0/16
             tags:
               module: aws_ec2_vpc_net
@@ -387,7 +426,7 @@ aws-ec2-vpc-gateway-test:
             tenancy: dedicated
           - name: demo_vpc_internet_gateway
             role: aws_ec2_vpc_internet_gateway
-            region: us-east-1
+            region: ca-central-1
             vpc_name: "{{ distro }}-vpc-test"
            #vpc_id is optional, normally you can choose put vpc_id or vpc_name, but not both
            # vpc_id: {{ vpc_id|default('vpc-0546ae7a407edb9a9') }}
@@ -411,14 +450,15 @@ aws-ec2-template:
         resource_group_type: "aws"
         resource_definitions:
         - name: "template-inventory{{ distro }}"
-          flavor: m1.small
+          flavor: t2.micro
           role: aws_ec2
-          region: us-east-1
-          image: ami-984189e2
+          region: ca-central-1
+          image: ami-0b85d4ff00de6a225
           count: 1
           instance_tags:
             color: blue
             shape: oval
+            desc: provisioned_by_linchpin
             distro: "{{ distro }}"
           security_group:
           - default
