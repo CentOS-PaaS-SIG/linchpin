@@ -138,9 +138,9 @@ aws-ec2-eip:
       - resource_group_name: "aws"
         resource_group_type: "aws"
         resource_definitions:
-          - name: demoday
+          - name: demodaycilp
             role: aws_ec2_eip
-            region: "{{ region | default('us-east-1') }}"
+            region: "{{ region | default('ca-central-1') }}"
         {% if credentials is defined %}
         credentials:
           filename: {{ credentials.filename }}
@@ -371,7 +371,7 @@ aws-ec2-elb-lb:
       - resource_group_name: "awsec2elblbdemo"
         resource_group_type: "aws"
         resource_definitions:
-          - name: "{{ distro }}demoec2elblb_ci_lp"
+          - name: "{{ distro }}demoec2elblbcilp"
             role: aws_ec2_elb_lb
             region: {{ region | default('ca-central-1') }}
             {% if zones is defined %}
@@ -381,8 +381,8 @@ aws-ec2-elb-lb:
               {% endfor %}
             {% else %}
             zones:
-            - us-east-1a
-            - us-east-1d
+            - ca-central-1a
+            - ca-central-1b
             {% endif %}
             {% if listeners is defined %}
             listeners:
