@@ -20,7 +20,6 @@ pushd docs/source/examples/workspaces/${PROVIDER}
 
 echo "add default profile in config"
 mkdir -p ~/.aws/
-printf "[default]\nregion = us-east-1" > ~/.aws/config
+printf "[default]\nregion = ca-central-1" > ~/.aws/config
 
 linchpin -w . --template-data "${TEMPLATE_DATA}" -v up "${TARGET}"
-
