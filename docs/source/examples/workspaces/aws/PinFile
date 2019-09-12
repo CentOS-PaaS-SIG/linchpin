@@ -450,10 +450,10 @@ aws-ec2-template:
         resource_group_type: "aws"
         resource_definitions:
         - name: "template-inventory{{ distro }}"
-          flavor: m1.small
+          flavor: t2.micro
           role: aws_ec2
-          region: us-east-1
-          image: ami-984189e2
+          region: ca-central-1
+          image: ami-0b85d4ff00de6a225
           count: 1
           instance_tags:
             color: blue
