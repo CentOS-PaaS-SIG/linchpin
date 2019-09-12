@@ -1,0 +1,79 @@
+---
+- block:
+    - local_action:
+        module: os_networks_facts
+        auth: "{{ auth_var | omit_filter(omit) }}"
+        api_timeout: 99999
+        timeout: 3600
+        cacert: "{{ res_def['cacert'] | default(omit) }}"
+        cert: "{{ res_def['cert'] | default(omit) }}"
+        region_name: "{{ res_def['region_name'] | default(omit) }}"
+        verify: "{{ res_def['verify'] | default(omit) }}"
+        name: "{{ res_def.network }}"
+      when: res_def.network is defined
+      register: results
+
+    - assert:
+        that:
+          - results.ansible_facts.openstack_networks | length > 0
+        fail_msg: "Network {{ res_def.network }} was not found"
+        success_msg: "Network {{ res_def.network }} exists"
+      when: res_def.network is defined
+  rescue:
+    - set_fact:
+        network_exist: true
+      loop: "{{ res.resource_definitions }}"
+      loop_control:
+        loop_var: def
+      when: def.role == 'os_network' and def.name == res_def.network
+    - assert:
+        that:
+          - network_exist == True
+        fail_msg: "Network {{ res_def.network }} is not defined"
+        success_msg: "Network {{ res_def.network }} will be created"
+
+- block:
+  - local_action:
+      module: os_subnets_facts
+      auth: "{{ auth_var | omit_filter(omit) }}"
+      api_timeout: 99999
+      timeout: 3600
+      cacert: "{{ res_def['cacert'] | default(omit) }}"
+      cert: "{{ res_def['cert'] | default(omit) }}"
+      region_name: "{{ res_def['region_name'] | default(omit) }}"
+      verify: "{{ res_def['verify'] | default(omit) }}"
+      name: "{{ interface.subnet }}"
+    loop: "{{ res_def.interfaces }}"
+    loop_control:
+      loop_var: interface
+    when: res_def.interfaces is defined
+    register: results
+
+  - assert:
+      that:
+        - results.results[index].ansible_facts.openstack_subnets | length > 0
+      fail_msg: "Subnet {{ res_def.interfaces[index].subnet }} was not found"
+      success_msg: "Subnet {{ res_def.interfaces[index].subnet }} exists"
+    loop: "{{ res_def.interfaces | flatten(levels=1) }}"
+    loop_control:
+      index_var: index
+    when: res_def.interfaces is defined
+  rescue:
+    - set_fact:
+        subnet_exist: []
+    - set_fact:
+        subnet_exist: "{{ subnet_exist + [def[0].subnet] }}"
+      loop: "{{ res_def.interfaces | product(res.resource_definitions) | list }}"
+      loop_control:
+        loop_var: def
+      when: def[1].role == 'os_subnet' and def[1].name == def[0].subnet
+    - assert:
+        that:
+          - interface.subnet in subnet_exist
+        fail_msg: "Subnet {{ interface.subnet }} is not defined or exists"
+        success_msg: "Subnet {{ interface.subnet }} will be created"
+      loop: "{{ res_def.interfaces }}"
+      loop_control:
+        loop_var: interface
+
+

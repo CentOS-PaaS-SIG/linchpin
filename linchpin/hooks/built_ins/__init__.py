@@ -1,4 +1,18 @@
 GLOBAL_HOOKS = {
+    "res_check": {
+        "name": "res_check",
+        "context": True,
+        "type": "ansible",
+        "actions": [
+            {
+                "playbook": "res_check.yml",
+                "extra_vars": {
+                    "ansible_ssh_user": "",
+                    "ansible_ssh_private_key": ""
+                }
+            }
+        ]
+    },
     "ec2_boot_log": {
         "name": "ec2_boot_log",
         "context": True,

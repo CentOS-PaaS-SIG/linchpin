@@ -1,0 +1,8 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+  - include: "{{ res.resource_group_type }}.yml"
+    loop: "{{ topo_data.resource_groups }}"
+    loop_control:
+      loop_var: res
