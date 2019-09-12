@@ -342,7 +342,7 @@ aws-ec2-vpc-nat-gateway:
           - name: demo_vpc_subnet_ep_ci_lp
             role: aws_ec2_vpc_subnet
             region: ca-central-1
-            vpc_name: demo_vpc_net_ep
+            vpc_name: demo_vpc_net_ep_ci_lp
             cidr: 17.0.1.0/24
             tags:
               module: ec2vpcnatgateway_demo

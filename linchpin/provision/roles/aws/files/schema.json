@@ -301,11 +301,8 @@
                     "client_token": { "type": "string", "required": false },
                     "subnet_id": { "type": "string", "required": false },
                     "subnet_filters": {
-                      "type": "list",
-                      "required": false,
-                      "schema": {
-                          "type": "dict"
-                      }
+                      "type": "dict",
+                      "required": false
                     },
                     "force": { "type": "boolean", "required": false },
                     "wait": { "type": "boolean", "required": false },
