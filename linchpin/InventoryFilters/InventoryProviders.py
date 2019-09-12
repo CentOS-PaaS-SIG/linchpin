@@ -15,8 +15,10 @@ from .OvirtInventory import OvirtInventory
 from .VMwareInventory import VMwareInventory
 from .DockerInventory import DockerInventory
 from .AzureInventory import AzureInventory
-from .CFGInventoryFormatter import CFGInventoryFormatter
+from .OpenshiftInventory import OpenshiftInventory
+
 from .JSONInventoryFormatter import JSONInventoryFormatter
+from .CFGInventoryFormatter import CFGInventoryFormatter
 
 filter_classes = {
     "azure_vm": AzureInventory,
@@ -32,6 +34,7 @@ filter_classes = {
     "vmware_guest_res": VMwareInventory,
     "docker_container_res": DockerInventory,
     "docker_image_res": DockerInventory,
+    "openshift_res": OpenshiftInventory
 }
 
 formatter_classes = {

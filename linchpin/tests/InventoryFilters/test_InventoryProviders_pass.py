@@ -19,6 +19,7 @@ from linchpin.InventoryFilters.OvirtInventory import OvirtInventory
 from linchpin.InventoryFilters.VMwareInventory import VMwareInventory
 from linchpin.InventoryFilters.DockerInventory import DockerInventory
 from linchpin.InventoryFilters.AzureInventory import AzureInventory
+from linchpin.InventoryFilters.OpenshiftInventory import OpenshiftInventory
 def test_get_driver():
     driver = InventoryProviders.get_driver("aws_ec2_res")
     assert_equal(driver, AWSInventory)
@@ -38,6 +39,7 @@ def test_get_all_drivers():
         "vmware_guest_res": VMwareInventory,
         "docker_container_res": DockerInventory,
         "docker_image_res": DockerInventory,
+        "openshift_res": OpenshiftInventory,
     }
     if_drivers = InventoryProviders.get_all_drivers()
     assert_equal(drivers,if_drivers)
