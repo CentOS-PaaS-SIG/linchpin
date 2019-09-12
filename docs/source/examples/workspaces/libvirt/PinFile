@@ -15,6 +15,7 @@ libvirt-new:
             vcpus: {{ vcpus | default('1') }}
             arch: {{ arch |  default('x86_64') }}
             ssh_key: {{ ssh_key | default('libvirt') }}
+            domain: {{ domain | default('example.com') }}
             {% if networks is defined %}
             networks:
               {% for net in networks %}

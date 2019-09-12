@@ -209,6 +209,7 @@
     - ["{{ libvirt_resource_name }}"]
     - "{{ res_count }}"
     - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - ["{{ res_def['domain'] | default('example.com') }}"]
   loop_control:
     loop_var: definition
   when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init"
@@ -221,6 +222,7 @@
     - ["{{ libvirt_resource_name }}"]
     - "{{ res_count }}"
     - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - ["{{ res_def['domain'] | default('example.com') }}"]
   loop_control:
     loop_var: definition
   remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
