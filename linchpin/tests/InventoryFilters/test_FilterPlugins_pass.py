@@ -152,3 +152,11 @@ def test_fetch_beaker_job_ids():
     expected = [{'ids': ['J:3124']}, {'ids': ['J:3214']}]
     assert_equals(expected,
                   filter_utils.fetch_beaker_job_ids(test_input))
+
+def test_fetch_os_server_names():
+    test_input = [ {"resource_type": "os_server_res",
+                    "openstack": [{"name": "test"}]
+                   }
+                 ]
+    assert_equals(["test"],
+                  filter_utils.get_os_server_names(test_input))
