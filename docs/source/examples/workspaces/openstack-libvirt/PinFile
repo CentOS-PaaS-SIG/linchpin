@@ -31,7 +31,7 @@ libvirt-server:
             flavor: {{ flavor | default('m1.medium') }}
             image: "linchpin_libvirt_image"
             count: 1
-            keypair: {{ keypair | default('linchpin_libvirt') }}
+            keypair: {{ keypair | default('linchpin-libvirt') }}
             networks:
               - {{ networks | default('provider_net_cci_4') }}
             security_groups: "wideopen"
