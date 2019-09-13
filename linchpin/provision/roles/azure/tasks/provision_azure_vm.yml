@@ -51,14 +51,27 @@
     image: "{{res_def['image']}}"
   when: res_def['private_image'] is defined     
 
+- name: "Generate tempfile"
+  tempfile:
+    suffix: yml
+  register: parsed_defaults
+
+- name: "Parse default variable file"
+  template:
+    src: "../files/defaults.yml"
+    dest: "{{ parsed_defaults.path }}"
+
+- name: "Load default variables"
+  include_vars: "{{ parsed_defaults.path }}"
+
 - name: "Provisioning Azure VM when not async"
   azure_rm_virtualmachine:
     client_id: "{{ auth_var['client_id'] | default(omit) }}"
     tenant: "{{ auth_var['tenant'] | default(omit) }}"
     secret: "{{ auth_var['secret'] | default(omit) }}"
     subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
-    admin_username: "{{ res_def['vm_username'] | default('linchpin') }}"
-    admin_password: "{{ res_def['vm_password'] | default('IloveLinchpin!') }}"
+    admin_username: "{{ res_def['vm_username'] | default('{{linchpinUsername}}') }}"
+    admin_password: "{{ res_def['vm_password'] | default(linchpinPassword) }}"
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
     vm_size: "{{ res_def['vm_size'] | default('Standard_DS1_v2') }}"
     name: "{{ res_def['vm_name'] | default(omit) }}"
@@ -66,7 +79,7 @@
     image: "{{ image | default(omit) }}"
   register: res_def_output
   when: not _async
-  # no_log: "{{ not debug_mode }}"
+  no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
@@ -79,8 +92,8 @@
     tenant: "{{ auth_var['tenant'] | default(omit) }}"
     secret: "{{ auth_var['secret'] | default(omit) }}"
     subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
-    admin_username: "{{ res_def['vm_username'] | default('linchpin') }}"
-    admin_password: "{{ res_def['vm_password'] | default('IloveLinchpin!') }}"
+    admin_username: "{{ res_def['vm_username'] | default(linchpinUsername) }}"
+    admin_password: "{{ res_def['vm_password'] | default(linchpinPassword) }}"
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
     vm_size: "{{ res_def['vm_size'] | default('Standard_DS1_v2') }}"
     virtual_network_name: "{{res_def['virtual_network_name']|default(vn_name)}}"
@@ -90,7 +103,7 @@
   poll: 0
   register: res_def_output
   when: _async
-  # no_log: "{{ not debug_mode }}"
+  no_log: "{{ not debug_mode }}"
 
 - name: "Async:: Append outputitem to topology_outputs"
   set_fact:
