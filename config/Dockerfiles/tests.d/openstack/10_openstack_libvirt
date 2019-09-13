@@ -33,4 +33,4 @@ echo "IP ADDR is ${IP_ADDR}"
 
 popd 
 
-pushd docs/source/examples/workspaces/${PROVIDER}
+pushd docs/source/examples/workspaces/openstack-libvirt/
