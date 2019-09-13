@@ -24,7 +24,7 @@ echo "compressing linchpin folder"
 tar -czf /tmp/linchpin.tar.gz .
 
 pushd docs/source/examples/workspaces/openstack-libvirt/
-linchpin -w . --creds-path ./credentials/ --template-data "${TEMPLATE_DATA}" --output-pinfile "${TMP_FILE}" -v up "${TARGET}"
+linchpin -w . --template-data "${TEMPLATE_DATA}" --output-pinfile "${TMP_FILE}" -v up "${TARGET}"
 
 
 IP_ADDR=$(grep -Po '"public_v4":.*?[^\\]",' resources/linchpin.latest |  grep -E -o -m1 "([0-9]{1,3}[\.]){3}[0-9]{1,3}")
