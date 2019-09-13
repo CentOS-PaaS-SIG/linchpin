@@ -1,0 +1,25 @@
+---
+- hosts: all
+  gather_facts: no
+  become: true
+  tasks:
+  - name: "ensure machine is up"
+    wait_for_connection:
+      delay: 5
+      timeout: 300
+  - name: ping
+    ping:
+  - name: create directory
+    file:
+      path: /tmp/linchpin
+      state: directory
+  - name: copy the tar file
+    unarchive:
+      src: /tmp/linchpin.tar.gz
+      dest: /tmp/linchpin/
+  - name: shell to see contents
+    shell: "ls /tmp/linchpin"
+  - name: "Install linchpin using the contents"
+    shell: "pip install -e file:///tmp/linchpin/ --ignore-installed"
+  - name: "Version of linchpin"
+    shell: "linchpin --version"

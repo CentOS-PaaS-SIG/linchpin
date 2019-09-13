@@ -1,0 +1,15 @@
+---
+- hosts: all
+  gather_facts: no
+  become: true
+  tasks:
+  - name: "Version of linchpin"
+    shell: "linchpin --version"
+  - name: "Run linchpin libvirt cirros test"
+    shell: "linchpin -vvvv up"
+    args:
+      chdir: /tmp/linchpin/docs/source/examples/workspaces/libvirt-cirros
+  - name: "destroy resources of linchpin libvirt cirros test"
+    shell: "linchpin -vvvv destroy"
+    args:
+      chdir: /tmp/linchpin/docs/source/examples/workspaces/libvirt-cirros
