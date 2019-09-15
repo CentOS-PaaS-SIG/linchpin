@@ -27,6 +27,8 @@ simple:
           host_groups:
             - example
   hooks:
+    preup:
+      - name: res_check
     postup:
       - name: beaker_log
 

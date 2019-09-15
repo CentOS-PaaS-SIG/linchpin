@@ -1,0 +1,20 @@
+---
+- local_action:
+    module: bkr_distro_facts
+    arch: "{{ recipeset.arch | default(omit) }}"
+    name: "{{ recipeset.distro | default(omit) }}"
+    family: "{{ recipeset.family | default(omit) }}"
+    tags: "{{ recipeset.tags | default(omit) }}"
+    limit: 2
+  register: results
+
+- assert:
+    that:
+      - results.hosts | length > 0
+    fail_msg: "Required distro for {{ recipeset.name }} was not found"
+
+- assert:
+    that:
+      - results.hosts | length < 2
+    fail_msg: "At least two distros found for {{ recipeset.name }}: {{ results.hosts }}"
+    success_msg: "Distro {{ results.hosts[0].distro_name }} was found"
