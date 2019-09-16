@@ -561,3 +561,16 @@
     loop_var: num
 
  
+- name: "Start VM"
+  virt:
+    name: "{{ definition[0] }}{{ definition[3] }}{{ definition[2] }}"
+    state: "running"
+    uri: "{{ definition[1] }}"
+  with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ res_def['uri'] | default('qemu:///system') }}"]
+    - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
+  loop_control:
+    loop_var: definition
+  ignore_errors: no
