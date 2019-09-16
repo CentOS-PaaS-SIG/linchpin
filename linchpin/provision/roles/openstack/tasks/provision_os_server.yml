@@ -19,11 +19,6 @@
   when: state == "absent"
 
 
-- name: set fact for instance ids
-  set_fact:
-    os_server_instance_ids: "{{ topo_output_resources | fetch_os_server_ids }}"
-  when: state == "absent"
-
 - name: "teardown os_server resources with provided auth"
   os_server:
     state: "absent"
