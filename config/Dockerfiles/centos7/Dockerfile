@@ -11,6 +11,7 @@ RUN yum -y install python-pip \
     && pip install -U pip \
     && pip install -U setuptools \
     && pip install -U pygithub \
+    && pip install -U openstackclient boto>=2.49.0 \
     && yum -y install curl \
     && curl -o /etc/yum.repos.d/herlo-linchpin-epel7.repo \
     https://copr.fedorainfracloud.org/coprs/herlo/linchpin-epel7/repo/epel-7/herlo-linchpin-epel7-epel-7.repo; \
@@ -19,8 +20,8 @@ RUN yum -y install python-pip \
                     qemu-kvm libvirt-daemon-config-network libvirt-python \
                     libvirt-devel virt-install file openssh mkisofs \
                     libvirt-client net-tools git python-krbV make \
-                    libxslt-python krb5-workstation python-ipaddress \
-                    python-requests jq buildah git; \
+                    libxslt-python krb5-workstation \
+                    python-requests jq buildah git which; \
     (cd /lib/systemd/system/sysinit.target.wants/; for i in *; \
      do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
     rm -f /lib/systemd/system/multi-user.target.wants/*;\
