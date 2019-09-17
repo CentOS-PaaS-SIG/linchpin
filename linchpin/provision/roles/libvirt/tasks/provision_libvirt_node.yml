@@ -468,6 +468,20 @@
   loop_control:
     loop_var: node
 
+- name: "Make sure the VMs are running"
+  virt:
+    name: "{{ definition[0] }}{{ definition[3] }}{{ definition[2] }}"
+    state: "running"
+    uri: "{{ definition[1] }}"
+  with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ res_def['uri'] | default('qemu:///system') }}"]
+    - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] | default('_')  }}"]
+  loop_control:
+    loop_var: definition
+  ignore_errors: no
+
 - name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
     /usr/sbin/arp -an | grep -F {{ mac }} | cut -f 2 -d "(" | cut -f 1 -d ")"
@@ -559,9 +573,8 @@
   loop: '{{ range(0,mac_length|int,1)|list }}'
   loop_control:
     loop_var: num
-
  
-- name: "Start VM"
+- name: "Make sure the vms are running when play ends"
   virt:
     name: "{{ definition[0] }}{{ definition[3] }}{{ definition[2] }}"
     state: "running"
