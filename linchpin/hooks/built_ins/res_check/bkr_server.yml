@@ -1,0 +1,5 @@
+---
+- include: bkr_recipeset.yml
+  loop: "{{ res_def.recipesets }}"
+  loop_control:
+    loop_var: recipeset
