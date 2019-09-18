@@ -1,4 +1,8 @@
 ---
+cfgs:
+  openshift:
+    __name__: metadata.name
+
 openshift-new:
   topology:
     topology_name: openshift
@@ -93,8 +97,12 @@ openshift-new:
     inventory_layout:
       vars:
         hostname: __IP__
+        name: __name__
       hosts:
         pod:
           count: 1
           host_groups:
             - pods
+  hooks:
+    postup:
+      - name: ocp_container_boot_log
