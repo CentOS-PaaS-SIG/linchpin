@@ -1,4 +1,4 @@
-FROM fedora:28
+FROM fedora:30
 LABEL name="contrainfra/linchpin" \
       maintainer="https://github.com/CentOS-PaaS-SIG/linchpin" \
       version="1.6.5" \
@@ -23,7 +23,6 @@ RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
         ansible \
         curl gcc \
         python-devel \
-        python2-shade \
         openssl-devel \
         redhat-rpm-config file \
         net-tools \
@@ -47,6 +46,7 @@ RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
     fi; \
         pip install -U pip; \
         pip install -U setuptools; \
+        pip install -U shade; \
         pip install ${install_location}; \
         pip install ${install_location}[beaker]; \
         mkdir -p ${HOME}/bin/ && \
