@@ -136,6 +136,7 @@ class AnsibleActionManager(ActionManager):
                     extra_vars = json.loads(extra_vars)
 
             e_vars = action.get("extra_vars", {})
+            vault_pass_file = action.get("vault_password_file", None)
             extra_vars.update(e_vars)
             extra_vars['hook_data'] = results
             verbosity = self.kwargs.get('verbosity', 1)
@@ -147,6 +148,7 @@ class AnsibleActionManager(ActionManager):
                 runner = ansible_runner(playbook,
                                         "",
                                         extra_vars,
+                                        vault_password_file=vault_pass_file,
                                         inventory_src=inv_file,
                                         verbosity=verbosity,
                                         use_shell=self.use_shell
@@ -161,6 +163,7 @@ class AnsibleActionManager(ActionManager):
                 runner = ansible_runner(playbook,
                                         "",
                                         extra_vars,
+                                        vault_password_file=vault_pass_file,
                                         inventory_src="localhost",
                                         verbosity=verbosity,
                                         use_shell=self.use_shell
