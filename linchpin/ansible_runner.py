@@ -161,6 +161,7 @@ def set_environment_vars(env_vars):
 def ansible_runner_shell(playbook_path,
                          module_path,
                          extra_vars,
+                         vault_password_file=None,
                          inventory_src='localhost',
                          verbosity=1,
                          console=True,
@@ -186,6 +187,11 @@ def ansible_runner_shell(playbook_path,
        inventory_src.split("/")[-1] != 'localhost':
         base_command.append("--inventory")
         base_command.append(inventory_src)
+
+    # Load vault password file
+    if vault_password_file and os.path.isfile(vault_password_file):
+        base_command.append("--vault-password-file")
+        base_command.append(vault_password_file)
 
     # enable checkmode if check mode is mentioned
     if check:
@@ -214,6 +220,7 @@ def ansible_runner_shell(playbook_path,
 def ansible_runner(playbook_path,
                    module_path,
                    extra_vars,
+                   vault_password_file,
                    inventory_src='localhost',
                    verbosity=2,
                    console=True,
@@ -288,6 +295,7 @@ def ansible_runner(playbook_path,
         rc, stdout, stderr = ansible_runner_shell(playbook_path,
                                                   module_path,
                                                   extra_vars,
+                                                  vault_password_file,
                                                   inventory_src=inventory_src,
                                                   console=console)
         results = stdout

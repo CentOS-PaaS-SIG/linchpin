@@ -891,6 +891,7 @@ class LinchpinAPI(object):
         return_code, res = ansible_runner(playbook_path,
                                           self._get_module_path(),
                                           extra_vars,
+                                          vault_password_file=None,
                                           inventory_src=inv_src,
                                           verbosity=self.ctx.verbosity,
                                           console=console,
