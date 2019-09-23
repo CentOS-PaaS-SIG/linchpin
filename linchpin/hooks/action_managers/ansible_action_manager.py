@@ -57,6 +57,7 @@ class AnsibleActionManager(ActionManager):
             'type': {'type': 'string', 'allowed': ['ansible']},
             'path': {'type': 'string', 'required': False},
             'context': {'type': 'boolean', 'required': False},
+            'vault_password_file': {'type': 'string', 'required': False},
             'src': {
                 'type': 'dict',
                 'schema': {
@@ -136,7 +137,7 @@ class AnsibleActionManager(ActionManager):
                     extra_vars = json.loads(extra_vars)
 
             e_vars = action.get("extra_vars", {})
-            vault_pass_file = action.get("vault_password_file", None)
+            vault_pass_file = self.action_data.get("vault_password_file", None)
             extra_vars.update(e_vars)
             extra_vars['hook_data'] = results
             verbosity = self.kwargs.get('verbosity', 1)
