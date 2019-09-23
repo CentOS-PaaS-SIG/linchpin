@@ -57,6 +57,7 @@ class SubprocessActionManager(ActionManager):
             },
             'path': {'type': 'string', 'required': False},
             'context': {'type': 'boolean', 'required': False},
+            'vault_password_file': {'type': 'string', 'required': False},
             'src': {
                 'type': 'dict',
                 'schema': {
