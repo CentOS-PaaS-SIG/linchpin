@@ -23,10 +23,10 @@ libvirt-new:
               {% endfor %}
             {% else %}
             networks:
-              - name: default0
+              - name: default
                 dhcp: True
             {% endif %}
-            additional_storage: {{ storage | default('10G') }}
+            additional_storage: {{ storage | default('2G') }}
             {% if user is defined %}
             cloud_config:
               users:
@@ -74,7 +74,7 @@ libvirt-custom-xml:
             count: 1
             uri: {{ uri | default('qemu:///system') }}
             image_src: {{ image_src | default('http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz') }}
-            memory: {{ memory | default('2048') }}
+            memory: {{ memory | default('512') }}
             vcpus: {{ vcpus | default('1') }}
             arch: {{ arch |  default('x86_64') }}
             xml: {{ xml | default('custom.xml') }}
@@ -127,8 +127,8 @@ libvirt-storage:
             uri: {{ uri | default('qemu:///system') }}
             count: 1
             image_src: {{ image_src | default('http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz') }}
-            memory: {{ memory | default('2048') }}
-            vcpus: {{ vcpus | default('2') }}
+            memory: {{ memory | default('512') }}
+            vcpus: {{ vcpus | default('1') }}
             arch: {{ arch |  default('x86_64') }}
             ssh_key: {{ ssh_key | default('libvirt') }}
             {% if networks is defined %}
@@ -139,12 +139,13 @@ libvirt-storage:
             {% else %}
             networks:
               - name: default
+                dhcp: True
             {% endif %}
             disk_cache: none
             {% if add_storage is defined %}
             additional_storage: {{ storage }}
             {% else %}
-            additional_storage: 10G
+            additional_storage: 2G
             {% endif %}
             {% if storage is defined %}
             storage:
@@ -175,7 +176,7 @@ libvirt-custom-img:
             uri: {{ uri | default('qemu:///system') }}
             count: 1
             image_src: {{ image_src | default('http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz') }}
-            memory: {{ memory | default('2048') }}
+            memory: {{ memory | default('512') }}
             arch: {{ arch |  default('x86_64') }}
             vcpus: {{ vcpus | default('1') }}
             {% if networks is defined %}
@@ -191,7 +192,7 @@ libvirt-custom-img:
             {% if storage is defined %}
             additional_storage: {{ storage }}
             {% else %}
-            additional_storage: 10G
+            additional_storage: 2G
             {% endif %}
             cloud_config:
               virt_type: virt-customize
@@ -200,12 +201,12 @@ libvirt-custom-img:
               users:
                 - name: {{ user.name | default('admin') }}
                   groups: {{ user.groups | default('wheel') }}
-                  inject_ssh_keys: {{ user.inject | default(true) }}  # by default linchpin generated libvirt key is injected.
+                  inject_ssh_keys: "{{ user.inject | default(true) }}"  # by default linchpin generated libvirt key is injected.
               {% else %}
               users:
                 - name: admin
                   groups: wheel
-                  inject_ssh_keys: true  # by default linchpin generated libvirt key is injected.
+                  inject_ssh_keys: "true"  # by default linchpin generated libvirt key is injected.
               {% endif %}
               {% if commands is defined %}
               run_commands:
@@ -306,9 +307,9 @@ libvirt-multi-node-net:
           - role: libvirt_node
             name: lib-multi-net-node
             uri: {{ uri | default('qemu:///system') }}
-            count: 3
+            count: 2
             image_src: 'http://repo.atlantic.net/fedora/linux/releases/29/Cloud/x86_64/images/Fedora-Cloud-Base-29-1.2.x86_64.qcow2'
-            memory: {{ memory | default('2048') }}
+            memory: {{ memory | default('400') }}
             vcpus: {{ vcpus | default('1') }}
             arch: {{ arch |  default('x86_64') }}
             ssh_key: {{ ssh_key | default('libvirt') }}
