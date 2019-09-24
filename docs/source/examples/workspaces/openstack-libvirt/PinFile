@@ -8,7 +8,6 @@ libvirt-server:
         actions:
           - playbook: install.yaml
             extra_vars: 
-              #ansible_ssh_private_key_file: "/home/srallaba/workspace/lp_ws_backup/linchpin_libvirt.key"
               ansible_ssh_private_key_file: "/workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem"
               ansible_ssh_user: centos
       - name: run_linchpin_libvirt_tests
@@ -17,7 +16,6 @@ libvirt-server:
         actions:
           - playbook: run_tests.yaml
             extra_vars:
-              #ansible_ssh_private_key_file: "/home/srallaba/workspace/lp_ws_backup/linchpin_libvirt.key"
               ansible_ssh_private_key_file: "/workDir/workspace/ci-linchpin/linchpin/keys/linchpin_libvirt_key.pem"
               ansible_ssh_user: centos
   topology:
@@ -28,8 +26,8 @@ libvirt-server:
         resource_definitions:
           - name: "ci-lp-cp-linchpin-libvirt"
             role: os_server
-            flavor: {{ flavor | default('m1.medium') }}
-            image: "linchpin_libvirt_image"
+            flavor: {{ flavor | default('m1.small') }}
+            image: "linchpin_libvirt_small"
             count: 1
             keypair: {{ keypair | default('linchpin-libvirt') }}
             networks:
@@ -47,4 +45,3 @@ libvirt-server:
           count: 1
           host_groups:
             - database
-
