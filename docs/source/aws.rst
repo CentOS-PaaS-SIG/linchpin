@@ -107,12 +107,6 @@ AWS EC2 elastic ips can be provisioned using this resource.
 aws_ec2_vpc_net
 ---------------
 
-AWS VPC networks can be provisioned using this resource.
-
-* :docs1.5:`Topology Example <workspaces/topologies/aws-ec2-vpc-net.yml>`
-* `ec2_vpc_net module <http://docs.ansible.com/ansible/latest/ec2_vpc_net.html
->`_
-
 aws_ec2_vpc_internet_gateway
 -----------------------
 Manage AWS VPC INTERNET Gateways.
@@ -126,13 +120,6 @@ Manage AWS VPC NAT Gateways.
 
 * :docs1.5:`Topology Example <workspace/topologies/aws-ec2-vpc-nat-gateway.yml>`
 * `ec2_vpc_net module <http://docs.ansible.com/ansible/latest/ec2_vpc_nat_gateway_module.html>`_
-
-aws_ec2_vpc_subnet
-------------------
-
-AWS VPC subnets can be provisioned using this resource.
-* :docs1.5:`Topology Example <workspace/topologies/aws-ec2-vpc-subnet.yml>`
-* `ec2_vpc_subnet module <http://docs.ansible.com/ansible/latest/ec2_vpc_subnet.html>`_
 
 aws_ec2_vpc_routetable
 ----------------------
