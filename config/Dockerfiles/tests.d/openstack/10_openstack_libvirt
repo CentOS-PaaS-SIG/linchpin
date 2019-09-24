@@ -14,7 +14,8 @@ TMP_FILE=$(mktemp)
 
 function clean_up {
     set +e
-    linchpin -w . -p "${PINFILE}" --template-data "${TEMPLATE_DATA}" -v destroy "${TARGET}"
+  echo "Clean up happens here"
+  linchpin -w . -p "${PINFILE}" --template-data "${TEMPLATE_DATA}" -v destroy "${TARGET}"
 }
 trap clean_up EXIT SIGHUP SIGINT SIGTERM
 
