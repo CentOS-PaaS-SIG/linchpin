@@ -13,3 +13,35 @@
     shell: "linchpin -vvvv destroy"
     args:
       chdir: /tmp/linchpin/docs/source/examples/workspaces/libvirt-cirros
+  - name: "Run linchpin libvirt-new test"
+    shell: "linchpin -vvvv up libvirt-new"
+    args:
+      chdir: /tmp/linchpin/docs/source/examples/workspaces/libvirt
+  - name: "Run cleanup for linchpin libvirt-new test"
+    shell: "linchpin -vvvv destroy libvirt-new"
+    args:
+      chdir: /tmp/linchpin/docs/source/examples/workspaces/libvirt
+  - name: "Run linchpin libvirt-network test"
+    shell: "linchpin -vvvv up libvirt-network"
+    args:
+      chdir: /tmp/linchpin/docs/source/examples/workspaces/libvirt
+  - name: "Run linchpin libvirt-network test"
+    shell: "linchpin -vvvv destroy libvirt-network"
+    args:
+      chdir: /tmp/linchpin/docs/source/examples/workspaces/libvirt
+  - name: "Run linchpin libvirt-storage test"
+    shell: "linchpin -vvvv up libvirt-storage"
+    args:
+      chdir: /tmp/linchpin/docs/source/examples/workspaces/libvirt
+  - name: "Cleanup linchpin libvirt-storage test"
+    shell: "linchpin -vvvv destroy libvirt-storage"
+    args:
+      chdir: /tmp/linchpin/docs/source/examples/workspaces/libvirt
+  - name: "Run linchpin libvirt-network-dns test"
+    shell: "linchpin -vvvv up libvirt-network-dns"
+    args:
+      chdir: /tmp/linchpin/docs/source/examples/workspaces/libvirt
+  - name: "cleanup linchpin libvirt-network-dns test"
+    shell: "linchpin -vvvv destroy libvirt-network-dns"
+    args:
+      chdir: /tmp/linchpin/docs/source/examples/workspaces/libvirt
