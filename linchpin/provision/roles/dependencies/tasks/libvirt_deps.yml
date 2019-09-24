@@ -3,7 +3,6 @@
     - name: Install package dependencies
       package:
         name:
-          - python2-dnf 
           - libvirt-devel
           - libguestfs-tools 
           - python-libguestfs
@@ -14,6 +13,7 @@
       with_items:
       - "libvirt-python>=3.0.0"
       - "lxml"
+      - "dnf"
       loop_control: 
         loop_var: libvirt_pypi
   rescue:
