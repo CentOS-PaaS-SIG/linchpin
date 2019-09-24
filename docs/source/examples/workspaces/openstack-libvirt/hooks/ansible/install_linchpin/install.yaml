@@ -17,9 +17,11 @@
     unarchive:
       src: /tmp/linchpin.tar.gz
       dest: /tmp/linchpin/
+  - name: uninstall pyopenssl 
+    shell: "sudo pip uninstall -y pyopenssl;"   
   - name: shell to see contents
     shell: "ls /tmp/linchpin"
   - name: "Install linchpin using the contents"
-    shell: "pip install -e file:///tmp/linchpin/ --ignore-installed"
+    shell: "pip install -e file:///tmp/linchpin/ --ignore-installed "
   - name: "Version of linchpin"
     shell: "linchpin --version"
