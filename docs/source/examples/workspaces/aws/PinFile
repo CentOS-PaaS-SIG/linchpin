@@ -8,9 +8,9 @@ aws-ec2-new:
         resource_definitions:
           - name: demo-day
             role: aws_ec2
-            flavor: {{ flavor | default('m1.small') }}
-            region: {{ region | default('us-east-1') }}
-            image: {{ image | default('ami-984189e2') }}
+            flavor: {{ flavor | default('t2.micro') }}
+            region: {{ region | default('ca-central-1') }}
+            image: {{ image | default('ami-0b85d4ff00de6a225') }}
             count: 1
             {% if tags is defined %}
             instance_tags:
@@ -30,7 +30,6 @@ aws-ec2-new:
             {% else %}
             security_group:
               - default
-              - public
             {% endif %}
         {% if credentials is defined %}
         credentials:
@@ -462,7 +461,6 @@ aws-ec2-template:
             distro: "{{ distro }}"
           security_group:
           - default
-          - public
         {% if credentials is defined %}
         credentials:
           filename: {{ credentials.filename }}

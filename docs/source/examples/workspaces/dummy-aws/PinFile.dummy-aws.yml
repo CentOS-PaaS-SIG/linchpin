@@ -3,30 +3,29 @@ dummy-aws:
   topology:
     topology_name: dummy-aws
     resource_groups:
-      - resource_group_name: dummy-topology
-        resource_group_type: dummy
-        resource_definitions:
-          - name: "{{ distro | default('') }}test"
-            role: "dummy_node"
-            count: 1
       - resource_group_name: aws-topology
         resource_group_type: aws
         resource_definitions:
           - name: demo-day
-            flavor: m1.small
+            flavor: t2.micro
             role: aws_ec2
-            region: us-east-1
-            image: ami-984189e2
+            region: ca-central-1
+            image: ami-0b85d4ff00de6a225
             count: 1
             instance_tags:
               color: blue
               shape: oval
             security_group:
               - default
-              - public
         credentials:
           filename: aws.key
           profile: default
+      - resource_group_name: dummy-topology
+        resource_group_type: dummy
+        resource_definitions:
+          - name: "{{ distro | default('') }}test"
+            role: "dummy_node"
+            count: 1
   layout:
     inventory_layout:
       vars:
