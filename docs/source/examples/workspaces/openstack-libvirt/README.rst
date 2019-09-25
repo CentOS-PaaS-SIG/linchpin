@@ -1,28 +1,12 @@
-Openstack
-=========
+Openstack-libvirt 
+=================
 
-This workspace contains the basic tasks for provisioning and teardown of openstack clusters
+This workspace contains set of hooks and Pinfile to provision and openstack instance
 
-os-server-new
-=============
-Provisions two new openstack servers
+and run libvirt tests remotely using the remote hooks. 
 
-os-sg-new
-=========
-Creates a new openstack security group
+In order to run these tests one has to be inside cloned linchpin repository and run 
 
-os-vol-new
-==========
-Provisions a new openstack volume
+./config/Dockerfiles/tests.d/openstack/10_openstack_libvirt
 
-os-network
-==========
-Creates a new openstack network
-
-os-router
-=========
-Creates a new router on an openstack instances
-
-os-subnet
-=========
-Creates two new openstack subnets on an existing openstack network
+Further, you set the CREDS_PATH environment variable before running the script. 
