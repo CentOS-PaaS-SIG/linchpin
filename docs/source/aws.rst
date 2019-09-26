@@ -110,7 +110,7 @@ aws_ec2_vpc_net
 AWS VPC networks can be provisioned using this resource.
 
 * :docs1.5:`Topology Example <workspaces/topologies/aws-ec2-vpc-net.yml>`
-* `ec2_vpc_net module <http://docs.ansible.com/ansible/latest/ec2_vpc_net.html
+* `ec2_vpc_net module <https://docs.ansible.com/ansible/latest/modules/ec2_vpc_net_module.html
 >`_
 
 aws_ec2_vpc_internet_gateway
@@ -132,7 +132,7 @@ aws_ec2_vpc_subnet
 
 AWS VPC subnets can be provisioned using this resource.
 * :docs1.5:`Topology Example <workspace/topologies/aws-ec2-vpc-subnet.yml>`
-* `ec2_vpc_subnet module <http://docs.ansible.com/ansible/latest/ec2_vpc_subnet.html>`_
+* `ec2_vpc_subnet module <https://docs.ansible.com/ansible/latest/modules/ec2_vpc_subnet_module.html?highlight=ec2_vpc_subnet>`_
 
 aws_ec2_vpc_routetable
 ----------------------
