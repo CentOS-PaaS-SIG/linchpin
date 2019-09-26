@@ -13,8 +13,8 @@ simple:
           - name: simple
             flavor: {{ flavor | default('t2.micro') }}
             role: aws_ec2
-            region: {{ region | default('us-east-1') }}
-            image: {{ image | default('ami-0c322300a1dd5dc79') }}
+            region: {{ region | default('ca-central-1') }}
+            image: {{ image | default('ami-0b85d4ff00de6a225') }}
             {% if security_groups is defined %}
             security_group:
               - default
