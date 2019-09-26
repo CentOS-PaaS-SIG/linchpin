@@ -38,12 +38,12 @@
   virt_net:
     name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     command: destroy
-    uri: "{{ res_def['uri'] | default('qemu:///system') }}"
+    uri: "{{ res_def['uri'] }}"
   ignore_errors: yes
 
 - name: "undefine network"
   virt_net:
     name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     command: undefine
-    uri: "{{ res_def['uri'] | default('qemu:///system') }}"
+    uri: "{{ res_def['uri'] }}"
   ignore_errors: yes

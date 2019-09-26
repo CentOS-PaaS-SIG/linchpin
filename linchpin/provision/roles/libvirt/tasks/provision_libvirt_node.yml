@@ -1,6 +1,6 @@
 - set_fact:
       res_count: '{{ (res_count | default([])) + [item | int] }}'
-  with_sequence: "start=0 end={{ res_def['count'] | default(1) |int - 1 }}"
+  with_sequence: "start=0 end={{ res_def['count'] | int - 1 }}"
 
 - set_fact:
     res_count: "{{ res_count | unique }}"
@@ -9,11 +9,12 @@
   virt:
     name: "{{ nodeinfo[0] }}{{ nodeinfo[2] }}{{ nodeinfo[1] }}"
     command: status
-    uri: "{{ nodeinfo[1]['uri'] | default('qemu:///system') }}"
+    uri: "{{ nodeinfo[3] }}"
   with_nested:
     - "{{ libvirt_resource_name }}"
     - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - ["{{ res_def['name_separator'] }}"]
+    - ["{{ res_def['uri'] }}"]
   ignore_errors: yes
   loop_control:
     loop_var: nodeinfo
@@ -32,7 +33,7 @@
   when: node_exists['failed'] is defined and uri_hostname == 'localhost'
 
 - name: "copy image_src: remote"
-  include: copy_image_src_remote.yml remote_user={{ res_def['remote_user'] | default(ansible_user_id) }}
+  include: copy_image_src_remote.yml remote_user={{ res_def['remote_user'] }}
   when: node_exists['failed'] is defined and uri_hostname != 'localhost'
 
 - name: "set qemu_path"
@@ -41,7 +42,7 @@
 
 - name: set cloud config default
   set_fact:
-    cloud_config: "{{ res_def['cloud_config'] | default({})  }}"
+    cloud_config: "{{ res_def['cloud_config'] }}"
 
 - name: set cloud_config virt_type
   set_fact:
@@ -52,22 +53,21 @@
     src: "../templates/libvirt_node.xml.j2"
     dest: "/tmp/{{ libvirt_resource_name }}{{ definition[5] }}{{ definition[3] }}"
   with_nested:
-    - ["{{ res_def['uri'] | default('qemu:///system') }}"]
     - ["{{ res_def }}"]
     - "{{ res_count }}"
     - ["{{ local_image_path }}"]
     - ["{{ img_src_ext }}"]
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
-    - ["{{ res_def['disk_cache'] | default('none')  }}"]
-    - ["{{ res_def['cpu_mode'] | default('host-model')  }}"]
-    - ["{{ res_def['disk_type'] | default('virtio_blk')  }}"]
+    - ["{{ res_def['name_separator'] }}"]
+    - ["{{ res_def['disk_cache'] }}"]
+    - ["{{ res_def['cpu_mode'] }}"]
+    - ["{{ res_def['disk_type'] }}"]
   loop_control:
     loop_var: definition
   when:  node_exists['failed'] is defined
 
 - name: "set_ssh_key_name"
   set_fact:
-    ssh_key_path: "{{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] | default(res_grp['resource_group_name'])}}"
+    ssh_key_path: "{{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] }}"
 
 - name: "local: does ssh key already exists ?"
   stat:
@@ -79,7 +79,7 @@
   stat:
     path: "{{ ssh_key_path }}"
   register: ssh_key_stat_remote
-  remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
+  remote_user: "{{ res_def['remote_user'] }}"
   delegate_to: "{{ uri_hostname }}"
   when: uri_hostname != 'localhost'
 
@@ -93,7 +93,7 @@
   shell: "ssh-keygen -t rsa -f {{ ssh_key_path }} -N '';cat {{ ssh_key_path }}.pub >> ~/.ssh/authorized_keys"
   args:
     creates: "{{ ssh_key_path }}"
-  remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
+  remote_user: "{{ res_def['remote_user'] }}"
   delegate_to: "{{ uri_hostname }}"
   when: uri_hostname != 'localhost' and ssh_key_stat_remote.stat.exists == false
 
@@ -105,7 +105,7 @@
 - name: "remote: cat out contents of public key"
   shell: "cat {{ ssh_key_path }}.pub"
   register: pubkey_remote
-  remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
+  remote_user: "{{ res_def['remote_user'] }}"
   delegate_to: "{{ uri_hostname }}"
   when: uri_hostname != 'localhost'
 
@@ -117,9 +117,9 @@
     - ["{{ libvirt_resource_name }}"]
     - ["{{ libvirt_image_path | expanduser }}"]
     - ["{{ img_src_ext }}"]
-    - ["{{ res_def['additional_storage'] | default('1G') }}"]
+    - ["{{ res_def['additional_storage'] }}"]
     - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - ["{{ res_def['name_separator'] }}"]
     loop_control:
       loop_var: definition
     become: "{{ libvirt_become }}"
@@ -131,13 +131,13 @@
       - ["{{ libvirt_resource_name }}"]
       - ["{{ libvirt_image_path | expanduser }}"]
       - ["{{ img_src_ext }}"]
-      - ["{{ res_def['additional_storage'] | default('1G') }}"]
+      - ["{{ res_def['additional_storage'] }}"]
       - "{{ res_count }}"
-      - ["{{ res_def['name_separator'] | default('_')  }}"]
+      - ["{{ res_def['name_separator'] }}"]
     loop_control:
       loop_var: definition
     become: "{{ libvirt_become }}"
-    remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
+    remote_user: "{{ res_def['remote_user'] }}"
     delegate_to: "{{ uri_hostname }}"
     when: res_def['additional_storage'] is defined and node_exists['failed'] is defined and uri_hostname != 'localhost'
   rescue:
@@ -154,10 +154,10 @@
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - ["{{ res_def['name_separator'] }}"]
   loop_control:
     loop_var: definition
-  remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
+  remote_user: "{{ res_def['remote_user'] }}"
   delegate_to: "{{ uri_hostname }}"
   when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init" 
 
@@ -168,7 +168,7 @@
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - ["{{ res_def['name_separator'] }}"]
   loop_control:
     loop_var: definition
   when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init"
@@ -180,7 +180,7 @@
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - ["{{ res_def['name_separator'] }}"]
   loop_control:
     loop_var: definition
   vars:
@@ -194,10 +194,10 @@
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - ["{{ res_def['name_separator'] }}"]
   loop_control:
     loop_var: definition
-  remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
+  remote_user: "{{ res_def['remote_user'] }}"
   delegate_to: "{{ uri_hostname }}"
   when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init"
 
@@ -208,8 +208,8 @@
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
-    - ["{{ res_def['domain'] | default('example.com') }}"]
+    - ["{{ res_def['name_separator'] }}"]
+    - ["{{ res_def['domain'] }}"]
   loop_control:
     loop_var: definition
   when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init"
@@ -221,11 +221,11 @@
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
-    - ["{{ res_def['domain'] | default('example.com') }}"]
+    - ["{{ res_def['name_separator'] }}"]
+    - ["{{ res_def['domain'] }}"]
   loop_control:
     loop_var: definition
-  remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
+  remote_user: "{{ res_def['remote_user'] }}"
   delegate_to: "{{ uri_hostname }}"
   when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init"
 
@@ -234,7 +234,7 @@
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - ["{{ res_def['name_separator'] }}"]
   loop_control:
     loop_var: definition
   when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init" 
@@ -244,10 +244,10 @@
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - ["{{ res_def['name_separator'] }}"]
   loop_control:
     loop_var: definition
-  remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
+  remote_user: "{{ res_def['remote_user'] }}"
   delegate_to: "{{ uri_hostname }}"
   when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init"
 
@@ -261,15 +261,15 @@
     xml: "{{ lookup('template', vm_xml) }}"
     uri: "{{ definition[0] }}"
   with_nested:
-    - ["{{ res_def['uri'] | default('qemu:///system') }}"]
+    - ["{{ res_def['uri'] }}"]
     - ["{{ res_def }}"]
     - "{{ res_count }}"
     - ["{{ local_image_path }}"]
     - ["{{ img_src_ext }}"]
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
-    - ["{{ res_def['disk_cache'] | default('none')  }}"]
-    - ["{{ res_def['cpu_mode'] | default('host-model')  }}"]
-    - ["{{ res_def['disk_type'] | default('virtio_blk')  }}"]
+    - ["{{ res_def['name_separator'] }}"]
+    - ["{{ res_def['disk_cache'] }}"]
+    - ["{{ res_def['cpu_mode'] }}"]
+    - ["{{ res_def['disk_type'] }}"]
   loop_control:
     loop_var: definition
   when: node_exists['failed'] is defined
@@ -283,7 +283,7 @@
     - ["{{ res_def['name'] }}"]
     - "{{ res_def['storage'] }}"
     - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - ["{{ res_def['name_separator'] }}"]
     loop_control:
       loop_var: definition
     when:
@@ -308,9 +308,9 @@
     uri: "{{ definition[1] }}"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
-    - ["{{ res_def['uri'] | default('qemu:///system') }}"]
+    - ["{{ res_def['uri'] }}"]
     - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - ["{{ res_def['name_separator'] }}"]
   loop_control:
     loop_var: definition
   ignore_errors: no
@@ -327,9 +327,9 @@
   delay: 10
   with_nested:
     - ["{{ libvirt_resource_name }}"]
-    - ["{{ res_def['uri'] | default('qemu:///system') }}"]
+    - ["{{ res_def['uri'] }}"]
     - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - ["{{ res_def['name_separator'] }}"]
   loop_control:
     loop_var: definition
   when: node_exists['failed'] is defined and virt_type == "cloud-init" and cloud_config != {}
@@ -340,7 +340,7 @@
     - ["{{ libvirt_resource_name }}"]
     - ["{{ res_def['uri'] }}"]
     - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - ["{{ res_def['name_separator'] }}"]
   loop_control:
     loop_var: definition
   ignore_errors: yes
@@ -360,9 +360,9 @@
     uri: "{{ definition[1] }}"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
-    - ["{{ res_def['uri'] | default('qemu:///system') }}"]
+    - ["{{ res_def['uri'] }}"]
     - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - ["{{ res_def['name_separator'] }}"]
   loop_control:
     loop_var: definition
   ignore_errors: no
@@ -375,9 +375,9 @@
     uri: "{{ data[1] }}"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
-    - ["{{ res_def['uri'] | default('qemu:///system') }}"]
+    - ["{{ res_def['uri'] }}"]
     - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - ["{{ res_def['name_separator'] }}"]
   loop_control:
     loop_var: data
   when: not _async
@@ -517,7 +517,7 @@
   until: extract_ip_address_result_remote.stdout != ""
   retries: 30
   delay: 10
-  remote_user: "{{ res_def['remote_user'] | default(ansible_user_id) }}"
+  remote_user: "{{ res_def['remote_user'] }}"
   delegate_to: "{{ uri_hostname }}"
   when: uri_hostname != 'localhost'
 
@@ -554,7 +554,7 @@
   with_nested:
     - "{{ libvirt_resource_name }}"
     - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - ["{{ res_def['name_separator'] }}"]
   loop_control:
     loop_var: data
   when:

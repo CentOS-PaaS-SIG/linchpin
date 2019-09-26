@@ -1,0 +1,28 @@
+libvirt_node_defaults:
+  name_separator: '_'
+  cpu_mode: host-model
+  count: 1
+  uri: 'qemu:///system'
+  driver: 'kvm'
+  arch: x86_64
+  remote_user: "{{ ansible_user_id }}" # root is another default that popped up in copy_image_src_remote.yml
+  boot_dev: hd
+  additional_storage: 1G
+  disk_cache: none
+  disk_type: virtio-blk
+  network_bridge: ''
+  ssh_key: "{{ res_grp['resource_group_name'] }}"
+  cloud_config:
+    virt_type: 'cloud-init'
+    users: []
+    run_commands: []
+  networks: []
+  storage: []
+  domain: example.com
+
+libvirt_network_defaults:
+  uri: 'qemu:///system'
+  delete_on_destroy: no
+
+libvirt_storage_defaults:
+  uri: 'qemu:///system'

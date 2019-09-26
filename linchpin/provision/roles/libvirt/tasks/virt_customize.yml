@@ -16,7 +16,7 @@
 - name: set run_commands in virt_args
   set_fact:
     virt_args: "{{ virt_args }} --run-command '{{ cmd }}'"
-  loop: "{{ cloud_config['run_commands'] | default([]) }}"
+  loop: "{{ cloud_config['run_commands'] }}"
   loop_control:
     loop_var: cmd
 

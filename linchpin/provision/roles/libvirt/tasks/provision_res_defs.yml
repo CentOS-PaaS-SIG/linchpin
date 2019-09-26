@@ -1,13 +1,39 @@
 ---
 #- name: "provision libvirt storage"
 #  include: provision_libvirt_storage.yml
-- name: "Get host from uri"
-  set_fact:
-    uri_hostname: "{{ res_def['uri'] | get_host_from_uri }}"
+
+- name: "Generate tempfile"
+  tempfile:
+    suffix: yml
+  register: parsed_defaults
+
+- name: "Parse default variable file"
+  template:
+    src: "../files/defaults.yml"
+    dest: "{{ parsed_defaults.path }}"
+
+- name: "Load default variables"
+  include_vars: "{{ parsed_defaults.path }}"
 
 - name: set resource_type
   set_fact:
-    resource_type: "{{ res_def['role'] }}"
+    resource_type: "{{ user_res_def['role'] }}"
+
+- name: get default values
+  set_fact:
+    defaults: "{{ vars[resource_type + '_defaults'] }}"
+
+- name: info
+  debug:
+    var: defaults
+
+- name: set default values
+  set_fact:
+    res_def: "{{ defaults | combine(user_res_def, recursive=True) }}"
+
+- name: "Get host from uri"
+  set_fact:
+    uri_hostname: "{{ res_def['uri'] | get_host_from_uri }}"
 
 - name: "provision libvirt network"
   include: provision_libvirt_network.yml

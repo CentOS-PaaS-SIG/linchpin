@@ -1,6 +1,6 @@
 - set_fact:
       res_count: '{{ (res_count | default([])) + [item | int] }}'
-  with_sequence: "start=0 end={{ res_def['count'] | default(1) |int - 1 }}"
+  with_sequence: "start=0 end={{ res_def['count'] | int - 1 }}"
 
 - name: Designed for carbon destruction with count 1
   block:
@@ -51,11 +51,11 @@
   virt:
     name: "{{ libvirt_resource_name }}{{ instance[2] }}{{ instance[1] }}"
     state: destroyed
-    uri: "{{ instance[1]['uri'] | default('qemu:///system') }}"
+    uri: "{{ instance[1]['uri'] }}"
   with_nested:
     - ["{{ res_def }}"]
     - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - ["{{ res_def['name_separator'] }}"]
   loop_control:
     loop_var: instance
   register: res_def_output
@@ -67,9 +67,9 @@
   command: "virsh -c {{ instance[1]  }} dumpxml {{ instance[0] }}{{ instance[3] }}{{ instance[2] }}"
   with_nested:
     - ["{{  libvirt_resource_name }}"]
-    - ["{{ res_def['uri'] | default('qemu:///system') }}"]
+    - ["{{ res_def['uri'] }}"]
     - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - ["{{ res_def['name_separator'] }}"]
   loop_control:
     loop_var: instance
   when: not _async
@@ -80,11 +80,11 @@
   virt:
     name: "{{ libvirt_resource_name }}{{ instance[2] }}{{ instance[1] }}"
     command: undefine
-    uri: "{{ instance[0]['uri'] | default('qemu:///system') }}"
+    uri: "{{ instance[0]['uri'] }}"
   with_nested:
     - ["{{ res_def }}"]
     - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] | default('_')  }}"]
+    - ["{{ res_def['name_separator'] }}"]
   loop_control:
     loop_var: instance
   register: res_def_output
