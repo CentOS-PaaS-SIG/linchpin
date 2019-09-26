@@ -204,7 +204,7 @@ def ansible_runner_shell(playbook_path,
     if extra_vars:
 
         fd, tmp_file_path = tempfile.mkstemp()
-        with os.fdopen(fd, 'w+b') as tmp:
+        with os.fdopen(fd, 'w') as tmp:
             # write files to temp file
             tmp.write(json.dumps(extra_vars))
         # Clean up the temporary file yourself
