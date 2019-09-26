@@ -74,6 +74,17 @@ p_providers = ['__RELEASE__':
                  "^config/Dockerfiles/tests.d/(general|inventory)/.*",
                  "^config/Dockerfiles/tests.d/aws/.*",
                  "linchpin/version.py"],
+                'azure':
+                ["^linchpin/provision/roles/azure/.*",
+                 "^linchpin/provision/azure.yml",
+                 "^linchpin/InventoryFilters/AzureInventory.py",
+                 "^linchpin/InventoryFilters/GenericInventory.py",
+                 "^linchpin/InventoryFilters/.*InventoryFormatter.py",
+                 "^linchpin/InventoryFilters/InventoryProviders.py",
+                 "^docs/source/examples/workspace/PinFile.azure.yml",
+                 "^config/Dockerfiles/tests.d/(general|inventory)/.*",
+                 "^config/Dockerfiles/tests.d/azure/.*",
+                 "linchpin/version.py"],
                'gcloud':
                 ["^linchpin/provision/roles/gcloud/.*",
                  "^linchpin/provision/gcloud.yml",
