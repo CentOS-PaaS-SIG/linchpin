@@ -10,11 +10,11 @@
   loop_control:
     loop_var: indv_prov
 
-- name: Install os-specific depdendencies:: Fedora
+- name: Install os-specific dependencies Fedora
   include_tasks: "setup_dnf_deps.yml"
   when: setup_providers | length == 0  and ansible_distribution == 'Fedora'
 
-- name: Install os-specific depdendencies:: CentOS/RHEL
+- name: Install os-specific dependencies CentOS/RHEL
   include_tasks: "setup_yum_deps.yml"
   when: setup_providers | length == 0  and (ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS')
 
