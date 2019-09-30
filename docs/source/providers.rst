@@ -1,4 +1,4 @@
-Providers
+Examples for all Providers
 =========
 
 LinchPin has many default providers. This choose-your-own-adventure page takes you through the basics to ensure success for each.

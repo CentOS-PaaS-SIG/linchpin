@@ -9,7 +9,7 @@ azure_vm
 Azure VM Instances can be provisioned using this resource.
 
 * Example <workspaces/azure/Pinfile>`
-* azure_vm module <https://docs.ansible.com/ansible/latest/modules/azure_rm_virtualmachine_module.html#id4>_
+* azure_vm module <https://docs.ansible.com/ansible/latest/modules/azure_rm_virtualmachine_module.html#id4>`_
 
 Topology Schema
 ~~~~~~~~~~~~~~~
@@ -31,7 +31,7 @@ definition, the following options are available.
 |                  |            |               |                   | private images  |
 |                  |            |               |                   |                 |
 +------------------+------------+---------------+-------------------+-----------------+
-|virtual_network_name| false    | string        |virtual_network_name|                 |
+|virtual_network_name| false    | string        |virtual_network_name|                |
 +------------------+------------+---------------+-------------------+-----------------+
 | vm_username      | false      | string        | image             |                 |
 +------------------+------------+---------------+-------------------+-----------------+
