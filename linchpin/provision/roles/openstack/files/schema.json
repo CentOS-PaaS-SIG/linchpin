@@ -317,6 +317,24 @@
                     "ttl": { "type": "number", "required": true },
                     "interface": { "type": "string", "required": false,  "allowed": ["primary", "secondary"] }
                 }
+            },
+	    {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["os_recordset"] },
+                    "availability_zone": { "type": "string", "required": false },
+                    "description": { "type": "string", "required": false },
+                    "interface": { "type": "string", "required": false,  "allowed": ["admin", "public", "internal"] },
+                    "name": { "type": "string", "required": true },
+                    "records": { "type": "list", "required": true },
+                    "recordset_type": { "type": "string", "required": true },
+                    "zone": { "type": "string", "required": true },
+                    "region": { "type": "string", "required": true },
+                    "ttl": { "type": "number", "required": true }
+                }
             }
 	    ]
         }
