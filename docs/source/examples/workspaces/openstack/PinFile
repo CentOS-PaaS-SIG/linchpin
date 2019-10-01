@@ -175,3 +175,24 @@ os-keypair:
           filename: clouds.yaml
           profile: ci-rhos
         {% endif %}
+
+os-port:
+  topology:
+    topology_name: os-server-keypair
+    resource_groups:
+      - resource_group_name: os-port-ex
+        resource_group_type: openstack
+        resource_definitions:
+        - name: "os_port_example"
+          role: os_port
+          network: provider_net_cci_6
+          no_security_groups: True
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos
+        {% endif %}
