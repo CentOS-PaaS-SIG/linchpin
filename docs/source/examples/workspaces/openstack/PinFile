@@ -196,3 +196,26 @@ os-port:
           filename: clouds.yaml
           profile: ci-rhos
         {% endif %}
+
+os-zone:
+  topology:
+    topology_name: os-network-zone
+    resource_groups:
+      - resource_group_name: os-zone-ex
+        resource_group_type: openstack
+        resource_definitions:
+        - name: "os_zone_example"
+          role: os_zone
+          name: example.net.
+          zone_type: primary
+          email: test@example.net
+          description: Test zone
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos
+        {% endif %}
