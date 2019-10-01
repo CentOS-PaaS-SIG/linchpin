@@ -178,7 +178,7 @@ os-keypair:
 
 os-port:
   topology:
-    topology_name: os-server-keypair
+    topology_name: os-network-port
     resource_groups:
       - resource_group_name: os-port-ex
         resource_group_type: openstack
