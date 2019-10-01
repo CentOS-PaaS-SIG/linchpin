@@ -299,8 +299,25 @@
                     "security_groups": { "type": "string", "required": false},
                     "vnic_type": { "type": "string", "required": false,  "allowed": ["direct", "normal", "direct-physical", "macvtap", "baremetal", "virtio-forwarder"] }
                 }
+            },
+	    {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["os_zone"] },
+                    "availability_zone": { "type": "string", "required": false },
+                    "description": { "type": "string", "required": false },
+                    "email": { "type": "string", "required": false },
+                    "interface": { "type": "string", "required": false,  "allowed": ["admin", "public", "internal"] },
+                    "masters": { "type": "list", "required": false },
+                    "name": { "type": "string", "required": true },
+                    "region": { "type": "string", "required": true },
+                    "ttl": { "type": "number", "required": true },
+                    "interface": { "type": "string", "required": false,  "allowed": ["primary", "secondary"] }
+                }
             }
-
 	    ]
         }
     }
