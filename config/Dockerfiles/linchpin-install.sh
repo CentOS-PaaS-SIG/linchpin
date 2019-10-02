@@ -12,6 +12,7 @@ pip install .[tests]
 pip install .[libvirt]
 pip install .[beaker]
 pip install .[docker]
+pip install .[azure]
 
 # If duffy.key is available then install duffy ansible module.
 if [ -e "keys/duffy.key" ]; then
