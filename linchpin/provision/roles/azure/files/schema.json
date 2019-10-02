@@ -93,6 +93,10 @@
                                 "azure_vm"
                             ]
                         },
+                        "delete_all_attached":{
+                            "type": "string",
+                            "required": false
+                        },
                         "vm_name": {
                             "type": "string",
                             "required": true
