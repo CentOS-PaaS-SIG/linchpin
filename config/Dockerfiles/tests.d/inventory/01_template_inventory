@@ -3,7 +3,7 @@
 # Verify template-based provisioning using complex template data file
 # distros.exclude: centos7 fedora30 fedora29
 # providers.include: libvirt
-# providers.exclude: dummy openstack beaker duffy openshift gcloud aws docker
+# providers.exclude: dummy openstack beaker duffy openshift gcloud aws docker azure
 
 
 DISTRO=${1}

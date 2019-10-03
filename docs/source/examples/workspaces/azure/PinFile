@@ -82,7 +82,7 @@ azure_vm:
         resource_definitions:
           - vm_name: TestAzureAuto
             resource_group: "ccit"
-            role: azure_vm_auto
+            role: azure_vm
 # This part below is now required, but you can still specify it
             vm_size: "Standard_DS1_v2"
             private_image: "rhcostestimage"
@@ -98,16 +98,12 @@ azure_vm:
               # vm_username: linchpin&&&vm_password: IloveLinchpin!
             vm_username: linchpin 
             vm_password: IloveLinchpin!
-            remove_on_absent: all   
-            #could be all or all_autocreated
-            #( all: delete all resources attached to the vm, 
-            #all_autocreated just delete everything but virtual network) 
 # This part above is now required, but you can still specify it
         credentials:
           filename: azure.key
           profile: key
 
-#Below This is the minimum viable input for azure_vm
+#This is the minimum viable input for azure_vm
 azure_vm_test:
   topology:
     topology_name: azure_vm_test

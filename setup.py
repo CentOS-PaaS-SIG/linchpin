@@ -29,6 +29,8 @@ setup_required.append('pytest-runner')
 
 ignore_dir = ['.git']
 
+azure_deps = open("requirements-azure.txt", "r").readlines()
+
 setup(
     name='linchpin',
     version=ver,
@@ -52,6 +54,7 @@ setup(
         'libvirt': ["libvirt-python>=3.0.0", "lxml"],
         'vmware': ["PyVmomi>=6.7.1"],
         'docker': ["docker-py>=1.7.0"],
+        'azure': azure_deps
     },
     zip_safe=False,
     packages=find_packages(),

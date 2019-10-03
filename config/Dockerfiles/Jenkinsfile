@@ -21,10 +21,10 @@ DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 // if it's not defined you will get all the possible providers
 // listed here.
 
-LPROVIDERS = env.LINCHPIN_PROVIDERS ?: '__RELEASE__ dummy duffy libvirt aws gcloud'
+LPROVIDERS = env.LINCHPIN_PROVIDERS ?: '__RELEASE__ dummy duffy libvirt aws gcloud azure'
 PPROVIDERS = LPROVIDERS.tokenize()
 
-TEST_PROVIDERS = env.TEST_PROVIDERS ?: '__RELEASE__ dummy duffy libvirt aws beaker openstack openshift gcloud'
+TEST_PROVIDERS = env.TEST_PROVIDERS ?: '__RELEASE__ dummy duffy libvirt aws beaker openstack openshift gcloud azure'
 TPROVIDERS = TEST_PROVIDERS.tokenize()
 
 env.PROVIDERS = TPROVIDERS.intersect( PPROVIDERS ).join(" ")

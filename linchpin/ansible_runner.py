@@ -82,6 +82,28 @@ def subprocess_runner(cmd, shell=False):
     return proc.returncode, stdout, stderr
 
 
+def ansible_runner_2x(playbook_path,
+                      extra_vars,
+                      options=None,
+                      inventory_src='localhost',
+                      console=True):
+
+    variable_manager = VariableManager()
+    loader = DataLoader()
+    variable_manager.extra_vars = extra_vars
+    inventory = Inventory(loader=loader,
+                          variable_manager=variable_manager,
+                          host_list=inventory_src)
+    passwords = {}
+    pbex = PlaybookExecutor([playbook_path],
+                            inventory,
+                            variable_manager,
+                            options,
+                            loader,
+                            passwords)
+    return pbex
+
+
 def ansible_runner_24x(playbook_path,
                        extra_vars,
                        options,
@@ -218,7 +240,10 @@ def ansible_runner(playbook_path,
     # that onto this method down the road. The verbosity flag would just live
     # in options and we could set the defaults.
 
+    # module path cannot accept list in ansible 2.3.x versions
     if not use_shell:
+        if ansible_version <= 2.3:
+            module_path = ":".join(module_path)
 
         connect_type = 'ssh'
         if 'localhost' in inventory_src:
@@ -235,16 +260,23 @@ def ansible_runner(playbook_path,
                                       options,
                                       inventory_src=inventory_src,
                                       console=console)
-        elif ansible_version < 2.8:
+        elif ansible_version >= 2.4 and ansible_version < 2.8:
             pbex = ansible_runner_24x(playbook_path,
                                       extra_vars,
                                       options,
                                       inventory_src=inventory_src,
                                       console=console)
-
-        # ansible should be >=2.6 to run this statement
-        cb = PlaybookCallback(options=options,
-                              ansible_version=ansible_version)
+        else:
+            pbex = ansible_runner_2x(playbook_path,
+                                     extra_vars,
+                                     options,
+                                     inventory_src=inventory_src,
+                                     console=console)
+        if ansible_version >= 2.5:
+            cb = PlaybookCallback(options=options,
+                                  ansible_version=ansible_version)
+        else:
+            cb = PlaybookCallback(options=options)
 
         if not console:
             results = {}

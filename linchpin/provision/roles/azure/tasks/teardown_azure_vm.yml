@@ -5,6 +5,6 @@
     secret: "{{ auth_var['secret'] | default(omit) }}"
     subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
-    remove_on_absent: "{{res_def['delete_all_attached']|default('all_autocreated')}}"
+    remove_on_absent: all_autocreated
     name: "{{ res_def['vm_name'] | default(omit) }}"
     state: 'absent'
