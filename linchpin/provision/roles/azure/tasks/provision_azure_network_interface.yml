@@ -5,8 +5,12 @@
     secret: "{{ auth_var['secret'] | default(omit) }}"
     subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
-    # address_prefixes: "{{ res_def['address_prefixes']|default('10.1.0.0/16')}}"
     virtual_network: "{{ res_def['virtual_network_name']|default(omit) }}"
     subnet_name: "{{ res_def['subnet_name']|default(omit) }}"
     name: "{{ res_def['network_interface_name']|default('network_interface_name') }}"
   register: res_def_output
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_azure_net_interface: "{{ topology_outputs_azure_net_interface + [res_def_output] }}"
+  when: res_def_output['changed'] == true
