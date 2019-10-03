@@ -48,7 +48,7 @@
 
 - name: Set image
   set_fact: 
-    image: "{{res_def['image']}}"
+    image: "{{res_def['private_image']}}"
   when: res_def['private_image'] is defined     
 
 - name: "Generate tempfile"
