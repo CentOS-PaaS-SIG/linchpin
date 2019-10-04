@@ -25,9 +25,6 @@
           - name: pyTest
             shell: |
                   source /tmp/tutorial-env/bin/activate
-                  python3 setup.py test
-            args:
-              chdir: ../../
           - name: Flake8 tests
             shell: |
                   source /tmp/tutorial-env/bin/activate
