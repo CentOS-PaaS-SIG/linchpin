@@ -5,11 +5,8 @@ from __future__ import absolute_import
 import os
 import ast
 import json
-
 from ansible.module_utils.basic import AnsibleModule
-
-from linchpin.rundb.basedb import BaseDB
-from linchpin.rundb.drivers import DB_DRIVERS
+from ansible.module_utils.linchpin_rundb import BaseDB, DB_DRIVERS
 
 
 # ---- Documentation Start ----------------#
@@ -187,9 +184,4 @@ def main():
         module.fail_json(msg=str(e))
 
 
-#
-#            module.exit_json(output=output, changed=output)
-#        except Exception as e:
-#            module.fail_json(msg=str(e))
-# ---- Import Ansible Utilities (Ansible Framework) -------------------#
 main()
