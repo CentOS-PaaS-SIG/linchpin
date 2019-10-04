@@ -19,7 +19,7 @@ from linchpin.ansible_runner import ansible_runner
 from linchpin.hooks.state import State
 from linchpin.hooks import LinchpinHooks
 
-from ansible.module_utils.linchpin_rundb import BaseDB, DB_DRIVERS
+from linchpin.linchpin_rundb import BaseDB, DB_DRIVERS
 
 from linchpin.exceptions import ActionError
 from linchpin.exceptions import LinchpinError

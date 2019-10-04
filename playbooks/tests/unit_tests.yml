@@ -20,8 +20,6 @@
             shell: |
                   source /tmp/tutorial-env/bin/activate
                   pip3 install .[tests]
-            args:
-              chdir: ../../
           - name: pyTest
             shell: |
                   source /tmp/tutorial-env/bin/activate
