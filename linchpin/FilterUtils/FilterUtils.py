@@ -4,14 +4,6 @@ import json
 from six.moves import range
 
 
-try:
-    import libvirt
-    from xml.dom import minidom
-    from xml.etree.ElementTree import fromstring
-except Exception as e:
-    print(e)
-
-
 def add_res_type(hosts, res_type):
     new_hosts = []
     for host in hosts:
@@ -166,6 +158,7 @@ def filter_list_by_attr(output, attr):
 
 
 def get_libvirt_files(output):
+    from xml.etree.ElementTree import fromstring
     files = []
     results = output['results']
     for result in results:
@@ -202,6 +195,8 @@ def filter_list_by_attr_val(output, attr, val):
 
 
 def get_network_domains(network, uri):
+    import libvirt
+    from xml.dom import minidom
     network_hosts = []
     conn = libvirt.open(uri)
     if conn is None:
