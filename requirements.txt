@@ -17,7 +17,6 @@ urllib3>=1.23,<1.25
 PyYAML>=5.1
 jinja2>=2.10
 configparser>=3.5.0
-openshift>=0.8.6,<0.8.8
 pyasn1>=0.1.9
 gitpython==2.1.11
 future
