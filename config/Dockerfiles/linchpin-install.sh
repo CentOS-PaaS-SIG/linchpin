@@ -25,3 +25,7 @@ if [ -e "keys/duffy.key" ]; then
         popd
     fi
 fi
+
+flake8 --exclude=\.eggs,tests,docs,config/Dockerfiles --ignore=E124,E303,W504 --max-line-length 80 .
+
+python ./setup.py test
