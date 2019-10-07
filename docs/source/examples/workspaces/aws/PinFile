@@ -71,7 +71,7 @@ aws-sg-new:
           - name: "aws_sg_test"
             role: "aws_sg"
             description: {{ description | default('aws ssh security group') }}
-            region: "{{ region | default('us-east-1') }}"
+            region: "{{ region | default('ca-central-1') }}"
             {% if rules is defined %}
             rules:
               {% for rule in rules %}
