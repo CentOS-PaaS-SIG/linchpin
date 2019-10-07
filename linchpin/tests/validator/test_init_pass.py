@@ -99,8 +99,8 @@ def test_validate_cfgs():
     pass
 
 @with_setup(setup_validator)
-def test_find_playbook_path():
-    pb_path = validator._find_playbook_path('dummy')
+def test_find_role_path():
+    pb_path = validator._find_role_path('dummy')
 
     assert os.path.exists(os.path.expanduser(pb_path))
 
