@@ -6,20 +6,31 @@
           - name: debug
             debug:
               msg: "Enabling contra-hdsl tests"
-          - name: Install Test Reqs
-            pip:
-              name: .[tests]
-              virtualenv: /tmp/linchpin
+          - name: shell for ansible version
+            shell: "ansible --version"
+          - name: shell to find version of setuptools
+            shell: "python -c 'import setuptools; print(setuptools.__version__)'"
+          - name: create virtualenv
+            shell: "python3 -m venv tutorial-env"
+            args:
+              chdir: /tmp/
+          - name: "Current directory"
+            shell: "echo $PWD; ls;"
+          - name: Install test requirements
+            shell: |
+                  source /tmp/tutorial-env/bin/activate
+                  pip3 install .[tests]
+            args:
               chdir: ../../
           - name: pyTest
             shell: |
-                  source /tmp/linchpin/bin/activate
+                  source /tmp/tutorial-env/bin/activate
                   python setup.py test
             args:
               chdir: ../../
           - name: Flake8 tests
             shell: |
-                  source /tmp/linchpin/bin/activate
+                  source /tmp/tutorial-env/bin/activate
                   flake8 --exclude=\.eggs,tests,docs,config/Dockerfiles --ignore=E124,E303,W504 --max-line-length 80 .
             args:
               chdir: ../../
