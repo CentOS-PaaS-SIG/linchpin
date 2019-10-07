@@ -17,7 +17,7 @@ azure_vm_public_image:
               version: latest
             vm_username: linchpin
             vm_password: IloveLinchpin!
-            virtual_network_name: linchpincreated
+            virtual_network_name: forLinchpinautomation
         credentials:
           filename: azure.key
           profile: key
@@ -57,6 +57,7 @@ azure_res_group:
             location: centralus
         credentials:
           filename: azure.key
+          profile: key
 
 azure_vn_subnet:
   topology:
@@ -98,7 +99,7 @@ azure_vm:
               # vm_username: linchpin&&&vm_password: IloveLinchpin!
             vm_username: linchpin 
             vm_password: IloveLinchpin!
-            remove_on_absent: all_autocreated   
+            delete_all_attached: all_autocreated   
             #could be all or all_autocreated
             #( all: delete all resources attached to the vm, 
             #all_autocreated just delete everything but virtual network) 
@@ -117,7 +118,7 @@ azure_vm_test:
         resource_definitions:
           - vm_name: TestAzureAuto
             resource_group: "ccit"
-            role: azure_vm_auto
+            role: azure_vm
         credentials:
           filename: azure.key
           profile: key
