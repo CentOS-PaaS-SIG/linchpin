@@ -93,6 +93,10 @@
                                 "azure_vm"
                             ]
                         },
+                        "delete_all_attached": {
+                            "type": "string",
+                            "required": false
+                        },
                         "vm_name": {
                             "type": "string",
                             "required": true
@@ -162,6 +166,34 @@
                         "location": {
                             "type": "string",
                             "required": true
+                        }
+                    }
+                },
+                {
+                    "type": "dict",
+                    "schema": {
+                        "role": {
+                            "type": "string",
+                            "required": true,
+                            "allowed": [
+                                "azure_network_interface"
+                            ]
+                        },
+                        "network_interface_name": {
+                            "type": "string",
+                            "required": true
+                        },
+                        "resource_group": {
+                            "type": "string",
+                            "required": true
+                        },
+                        "subnet_name": {
+                            "type": "string",
+                            "required": true
+                        },
+                        "virtual_network_name": {
+                            "type": "string",
+                            "required": false
                         }
                     }
                 }

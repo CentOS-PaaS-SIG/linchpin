@@ -11,7 +11,7 @@ TARGET="azure_vn"
 pushd docs/source/examples/workspaces/${PROVIDER}
 function clean_up {
     set +e
-    linchpin -w . -vvv --creds-path ./ --template-data '{ "distro": '${DISTRO}""'}' destroy "${TARGET}"
+    linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' destroy "${TARGET}"
     rm -rf resources/ inventories/
 }
 

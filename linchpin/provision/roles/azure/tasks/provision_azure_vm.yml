@@ -70,7 +70,7 @@
     tenant: "{{ auth_var['tenant'] | default(omit) }}"
     secret: "{{ auth_var['secret'] | default(omit) }}"
     subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
-    admin_username: "{{ res_def['vm_username'] | default('{{linchpinUsername}}') }}"
+    admin_username: "{{ res_def['vm_username'] | default(linchpinUsername) }}"
     admin_password: "{{ res_def['vm_password'] | default(linchpinPassword) }}"
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
     vm_size: "{{ res_def['vm_size'] | default('Standard_DS1_v2') }}"
