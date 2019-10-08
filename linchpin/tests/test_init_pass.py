@@ -378,14 +378,20 @@ def test_api_wksp_set_vault_pass():
 def test_api_wksp_get_inventory():
     wksp.up()
     inven = wksp.get_inventory()
+    assert_equal.__self__.maxDiff = None
     expected = {u'dummy-test': '{"test": {"hosts": ["web-0"]}, "all": {"hosts": ["web-0", "web-1", "web-2", "test"], "vars": {"ansible_user": "root"}}, "example": {"hosts": ["web-1", "web-2", "test"]}, "_meta": {"hostvars": {"test": "test", "web-0": "web-0", "web-1": "web-1", "web-2": "web-2"}}}'}
+    expected = json.loads(expected['dummy-test']).get("all").get("hosts")
+    inven = json.loads(inven['dummy-test']).get("all").get("hosts")
     assert_equal(inven, expected)
 
 @with_setup(setup_api)
 def test_api_pinfile_get_inventory():
     pfile.up()
     inven = pfile.get_inventory()
+    assert_equal.__self__.maxDiff = None
     expected = {u'dummy-test': '{"test": {"hosts": ["web-0"]}, "all": {"hosts": ["web-0", "web-1", "web-2", "test"], "vars": {"ansible_user": "root"}}, "example": {"hosts": ["web-1", "web-2", "test"]}, "_meta": {"hostvars": {"test": "test", "web-0": "web-0", "web-1": "web-1", "web-2": "web-2"}}}'}
+    expected = json.loads(expected['dummy-test']).get("all").get("hosts")
+    inven = json.loads(inven['dummy-test']).get("all").get("hosts")
     assert_equal(inven, expected)
 
 @with_setup(setup_api)
