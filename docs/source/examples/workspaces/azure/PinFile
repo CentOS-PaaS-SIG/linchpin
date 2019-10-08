@@ -6,7 +6,7 @@ azure_vm_public_image:
       - resource_group_name: "azure"
         resource_group_type: "azure"
         resource_definitions:
-          - vm_name: TEST-Azure
+          - vm_name: "{{ distro }}-TEST-Azure"
             role: azure_vm
             resource_group: "ccit"
             vm_size: "Standard_DS1_v2"
@@ -38,7 +38,7 @@ azure_vn:
       - resource_group_name: "azure"
         resource_group_type: "azure"
         resource_definitions:
-          - virtual_network_name: linchpincreated
+          - virtual_network_name: "{{ distro }}-linchpincreated"
             role: azure_virtual_network
             resource_group: "ccit"
         credentials:
@@ -53,7 +53,7 @@ azure_res_group:
         resource_group_type: "azure"
         resource_definitions:
           - role: azure_resource_group
-            resource_group_name: "LinchpinCreatedGroup"
+            resource_group_name: "{{ distro }}-LinchpinCreatedGroup"
             location: centralus
         credentials:
           filename: azure.key
@@ -67,7 +67,7 @@ azure_vn_subnet:
         resource_group_type: "azure"
         resource_definitions:
           - virtual_network_name: forLinchpinautomation
-            subnet_name: linchpincreated
+            subnet_name: "{{ distro }}-linchpincreated"
             role: azure_virtual_subnet
             resource_group: "ccit"
         credentials:
@@ -81,7 +81,7 @@ azure_vm:
       - resource_group_name: "azure"
         resource_group_type: "azure"
         resource_definitions:
-          - vm_name: TestAzureAuto
+          - vm_name: "{{ distro }}-TestAzureAuto"
             resource_group: "ccit"
             role: azure_vm
 # This part below is now required, but you can still specify it
