@@ -25,7 +25,7 @@ definition, the following options are available.
 +----------------------+------------+---------------+-----------------------+--------------------+
 | vm_name              | true       | string        | name                  | It can't include   |
 |                      |            |               |                       | '_' and other      |
-|                      |            |               |                       | special char       |     
+|                      |            |               |                       | special char       |
 +----------------------+------------+---------------+-----------------------+--------------------+
 | private_image        | false      | string        | image                 | This takes         |
 |                      |            |               |                       | private images     |

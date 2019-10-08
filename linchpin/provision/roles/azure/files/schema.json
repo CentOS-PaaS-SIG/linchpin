@@ -93,7 +93,7 @@
                                 "azure_vm"
                             ]
                         },
-                        "delete_all_attached":{
+                        "delete_all_attached": {
                             "type": "string",
                             "required": false
                         },

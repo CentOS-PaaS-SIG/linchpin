@@ -15,7 +15,7 @@
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
     name: "{{ subnet_name| default(virtual_subnet_name) }}"
     virtual_network_name: "{{ vs_vn_name|default(vn_name) }}"
-    address_prefix: "{{ res_def['address_prefix']|default('10.1.0.0/24')}}"
+    address_prefix: "{{ res_def['address_prefix']|default('10.1.1.0/24')}}"
   register: res_def_output
   when: not _async
   no_log: "{{ not debug_mode }}"

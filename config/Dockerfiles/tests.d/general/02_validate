@@ -23,6 +23,8 @@ elif [ "${PROVIDER}" == "openstack" ]; then
     TARGETS="os-server-new os-sg-new os-vol-new"
 elif [ "${PROVIDER}" == "aws" ]; then
     TARGETS="aws-ec2-new aws-sg-new aws-s3-new aws-ec2-key-new"
+elif [ "${PROVIDER}" == "azure" ]; then
+TARGETS="azure_vm azure_vn azure_res_group azure_vm_public_image"
 elif [ "${PROVIDER}" == "gcloud" ]; then
     TARGETS="gcloud-gce-new"
 elif [ "${PROVIDER}" == "beaker" ]; then

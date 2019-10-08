@@ -5,6 +5,6 @@
     secret: "{{ auth_var['secret'] | default(omit) }}"
     subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
-    remove_on_absent: all_autocreated
+    virtual_network_name: "{{res_def['virtual_network_name']|default(omit)}}"
     name: "{{ res_def['subnet_name'] | default(omit) }}"
     state: 'absent'
