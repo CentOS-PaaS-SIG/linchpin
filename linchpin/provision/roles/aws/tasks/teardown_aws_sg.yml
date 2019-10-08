@@ -1,0 +1,10 @@
+---
+- name: Teardown AWS EC2 security groups
+  ec2_group:
+    name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+    region: "{{ res_def['region']}}"
+    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    aws_secret_key: "{{ auth_var['aws_secret_access_key'] | default(omit) }}"
+    vpc_id: "{{ res_def['vpc_id'] | default(omit) }}"
+    state: absent
+  no_log: "{{ not debug_mode }}"

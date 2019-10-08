@@ -165,3 +165,11 @@
   loop_control:
     loop_var: res_item
 
+- name: "teardown security group resource def of current group"
+  include: teardown_aws_sg.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  when: res_item.0['role'] == "aws_sg"
+  with_nested:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
