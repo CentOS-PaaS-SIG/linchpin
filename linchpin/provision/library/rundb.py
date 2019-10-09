@@ -6,11 +6,20 @@ import os
 import ast
 import json
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.linchpin_rundb import BaseDB, DB_DRIVERS
+from linchpin.linchpin_rundb import TinyRunDB, BaseDB
 
+DB_DRIVERS = {
+    "TinyRunDB": TinyRunDB,
+}
+
+
+def get_all_drivers():
+    return DB_DRIVERS
 
 # ---- Documentation Start ----------------#
-DOCUMENTATION = '''
+
+
+DOCUMENTATION = """
 ---
 version_added: "0.1"
 module: rundb
@@ -70,7 +79,7 @@ example
 
 requirements: [TinyDB (or your own database)]
 author: Clint Savage - herlo@redhat.com
-'''
+"""
 
 
 def main():
