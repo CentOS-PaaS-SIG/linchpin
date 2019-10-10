@@ -15,7 +15,7 @@
     tenant: "{{ auth_var['tenant'] | default(omit) }}"
     secret: "{{ auth_var['secret'] | default(omit) }}"
     subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
-    name: "{{ res_def['vm_name']+".vhd" | default(omit) }}"
+    name: "{{ res_def['vm_name']+'.vhd'| default(omit) }}"
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
     state: absent
   when: res_def['deepclean'] is defined and res_def['deepclean'] == true

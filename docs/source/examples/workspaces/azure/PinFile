@@ -17,7 +17,7 @@ azure_vm_public_image:
               version: latest
             vm_username: linchpin
             vm_password: IloveLinchpin!
-            virtual_network_name: forLinchpinautomation
+            virtual_network_name: "{{ distro }}-forLinchpinautomation"  
         credentials:
           filename: azure.key
           profile: key
@@ -66,9 +66,10 @@ azure_vn_subnet:
       - resource_group_name: "azure"
         resource_group_type: "azure"
         resource_definitions:
-          - virtual_network_name: forLinchpinautomation
+          - virtual_network_name: "{{ distro }}-forLinchpinautomation"
             subnet_name: "{{ distro }}-linchpincreated"
             role: azure_virtual_subnet
+            address_prefix: '10.0.1.0/24'
             resource_group: "ccit"
         credentials:
           filename: azure.key
