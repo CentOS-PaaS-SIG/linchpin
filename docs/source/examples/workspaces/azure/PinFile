@@ -99,6 +99,8 @@ azure_vm:
               # vm_username: linchpin&&&vm_password: IloveLinchpin!
             vm_username: linchpin 
             vm_password: IloveLinchpin!
+            deepclean: True
+            #With deepclean you can clean the disk attached on the vm if you use private image
             delete_all_attached: all_autocreated
             #could be all or all_autocreated
             #( all: delete all resources attached to the vm, 

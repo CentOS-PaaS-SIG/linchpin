@@ -93,7 +93,11 @@
                                 "azure_vm"
                             ]
                         },
-                        "delete_all_attached": {
+                        "deepclean": {
+                            "type":"boolean",
+                            "required":false
+                        },
+                        "delete_all_attached":{
                             "type": "string",
                             "required": false
                         },
