@@ -134,7 +134,7 @@ If testing or docs is desired, additional steps are required
 Virtual Environments and SELinux
 ````````````````````````````````
 
-When using a virtualenv with SELinux enabled, LinchPin may fail due to an error related to with the libselinux-python libraries. This is because the libselinux-python binary needs to be enabled in the Virtual Environment. Because this library affects the filesystem, it isn't provided as a standard python module via pip. The RPM must be installed, then a symlink must occur.
+When using a virtualenv with SELinux enabled, LinchPin may fail due to an error related to the libselinux-python libraries. This is because the libselinux-python binary needs to be enabled in the Virtual Environment. Because this library affects the filesystem, it isn't provided as a standard python module via pip. The RPM must be installed, then a symlink must occur.
 
 .. code-block:: bash
 
