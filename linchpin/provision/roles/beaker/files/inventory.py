@@ -1,13 +1,11 @@
-#!/usr/bin/env python
-
 from __future__ import absolute_import
 from collections import OrderedDict
 
-from .InventoryFilter import InventoryFilter
+from linchpin.InventoryFilters.InventoryFilter import InventoryFilter
 
 
-class GCloudInventory(InventoryFilter):
-    DEFAULT_HOSTNAMES = ['public_ip']
+class Inventory(InventoryFilter):
+    DEFAULT_HOSTNAMES = ['system']
 
     def get_host_data(self, res, cfgs):
         """
@@ -20,28 +18,27 @@ class GCloudInventory(InventoryFilter):
         cfgs section of the PinFile (e.g. __IP__) to the value in the field that
         corresponds with that variable in the cfgs.
 
-        By default, the hostname will be the public_ip field returned by gcloud
+        By default, the hostname will be the system field returned by beaker
 
         :param topo:
-            linchpin GCloud resource data
+            linchpin Beaker resource data
 
         :param cfgs:
             map of config options from PinFile
         """
+
         host_data = OrderedDict()
-        if res['resource_type'] != 'gcloud_gce_res':
+        if res['resource_group'] != 'beaker' or res['role'] != 'bkr_server':
             return host_data
-        var_data = cfgs.get('gcloud', {})
+        var_data = cfgs.get('beaker', {})
         if var_data is None:
             var_data = {}
-        for instance in res['instance_data']:
-            host = self.get_hostname(instance, var_data,
-                                     self.DEFAULT_HOSTNAMES)
-            hostname_var = host[0]
-            hostname = host[1]
-            host_data[hostname] = {}
-            if '__IP__' not in list(var_data.keys()):
-                var_data['__IP__'] = hostname_var
-                host_data[hostname] = {}
-            self.set_config_values(host_data[hostname], instance, var_data)
+        host = self.get_hostname(res, var_data,
+                                 self.DEFAULT_HOSTNAMES)
+        hostname_var = host[0]
+        hostname = host[1]
+        host_data[hostname] = {}
+        if '__IP__' not in list(var_data.keys()):
+            var_data['__IP__'] = hostname_var
+        self.set_config_values(host_data[hostname], res, var_data)
         return host_data

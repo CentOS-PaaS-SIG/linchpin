@@ -2,15 +2,15 @@
 from __future__ import absolute_import
 from collections import OrderedDict
 
-from .InventoryFilter import InventoryFilter
+from linchpin.InventoryFilters.InventoryFilter import InventoryFilter
 
 
-class OpenstackInventory(InventoryFilter):
+class Inventory(InventoryFilter):
     DEFAULT_HOSTNAMES = ["accessIPv4", "public_v4", "private_v4"]
 
     def get_host_data(self, res, cfgs):
         host_data = OrderedDict()
-        if res['resource_type'] != 'os_server_res':
+        if res['resource_group'] != 'openstack' or res['role'] != 'os_server':
             return host_data
         var_data = cfgs.get('openstack', {})
         if var_data is None:

@@ -3,10 +3,10 @@
 from __future__ import absolute_import
 from collections import OrderedDict
 
-from .InventoryFilter import InventoryFilter
+from linchpin.InventoryFilters.InventoryFilter import InventoryFilter
 
 
-class OpenshiftInventory(InventoryFilter):
+class Inventory(InventoryFilter):
     DEFAULT_HOSTNAMES = ['metadata.name']
 
 
@@ -30,12 +30,12 @@ class OpenshiftInventory(InventoryFilter):
             map of config options from PinFile
         """
         res_keys = res.keys()
-        res_keys.remove('resource_type')
+        res_keys.remove('resource_group')
         # this is the only remaining key after removing resource type
         # it corresponds with the name of the pod
         key = res_keys[0]
         host_data = OrderedDict()
-        if res['resource_type'] != 'openshift_res':
+        if res['resource_group'] != 'openshift':
             return host_data
         var_data = cfgs.get('openshift', {})
         if var_data is None:

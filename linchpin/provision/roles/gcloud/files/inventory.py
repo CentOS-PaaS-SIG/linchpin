@@ -3,11 +3,11 @@
 from __future__ import absolute_import
 from collections import OrderedDict
 
-from .InventoryFilter import InventoryFilter
+from linchpin.InventoryFilters.InventoryFilter import InventoryFilter
 
 
-class AWSInventory(InventoryFilter):
-    DEFAULT_HOSTNAMES = ['public_dns_name', 'public_ip', 'private_ip']
+class Inventory(InventoryFilter):
+    DEFAULT_HOSTNAMES = ['public_ip']
 
     def get_host_data(self, res, cfgs):
         """
@@ -20,34 +20,36 @@ class AWSInventory(InventoryFilter):
         cfgs section of the PinFile (e.g. __IP__) to the value in the field that
         corresponds with that variable in the cfgs.
 
-        If an instance has a public IP attached, its hostname in DNS will be
-        returned if available, and if not the public IP address will be used.
-        For instances which have a private IP address for VPC use cases, the
-        private IP address will be returned since private EC2 hostnames (e.g.
-        ip-10-0-0-1.ec2.internal) will not typically be resolvable outside of
-        AWS. For instances with both a public and private IP address, the
-        public address is always returned instead of the private address.
+        By default, the hostname will be the public_ip field returned by gcloud
 
         :param topo:
-            linchpin AWS EC2 resource data
+            linchpin GCloud resource data
 
         :param cfgs:
             map of config options from PinFile
         """
+        if res['resource_group'] != 'gcloud':
+            return OrderedDict()
 
+        if res['role'] == 'gcloud_gce':
+            return self.get_gcloud_gce_host_data(res, cfgs)
+        else:
+            return OrderedDict()
+
+    def get_gcloud_gce_host_data(self, res, cfgs):
         host_data = OrderedDict()
-        if res['resource_type'] != 'aws_ec2_res':
-            return host_data
-        var_data = cfgs.get('aws', {})
+
+        var_data = cfgs.get('gcloud', {})
         if var_data is None:
             var_data = {}
-        for instance in res['instances']:
+        for instance in res['instance_data']:
             host = self.get_hostname(instance, var_data,
                                      self.DEFAULT_HOSTNAMES)
             hostname_var = host[0]
             hostname = host[1]
+            host_data[hostname] = {}
             if '__IP__' not in list(var_data.keys()):
                 var_data['__IP__'] = hostname_var
-            host_data[hostname] = {}
+                host_data[hostname] = {}
             self.set_config_values(host_data[hostname], instance, var_data)
         return host_data

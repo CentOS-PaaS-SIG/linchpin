@@ -13,7 +13,7 @@
     topo_output_resources: "{{ topo_output['output'][0]['resources'] }}"
 
 - name: "Teardown resource"
-  include: teardown_{{ topo_output_res['resource_type'] }}.yml output_res={{ topo_output_res }}
+  include: teardown_{{ topo_output_res['resource_group'] }}.yml output_res={{ topo_output_res }}
   with_items: "{{ topo_output_resources }}"
   loop_control:
     loop_var: topo_output_res

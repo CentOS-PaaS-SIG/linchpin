@@ -14,13 +14,29 @@ from configparser import ConfigParser
 
 from nose.tools import *
 
+from linchpin.context import LinchpinContext
+from linchpin import LinchpinAPI
 from linchpin.InventoryFilters import GenericInventory
+from linchpin.tests.mockdata.contextdata import ContextData
 
 def setup_generic_inventory_filter():
     global filter
     global res_output
 
-    filter = GenericInventory.GenericInventory()
+    cd = ContextData()
+    cd.load_config_data()
+    config_path = cd.get_temp_filename()
+    config_data = cd.cfg_data
+    cd.write_config_file(config_path)
+    lpc = LinchpinContext()
+    lpc.load_config(search_path=[config_path])
+    lpc.load_global_evars()
+    lpc.setup_logging()
+
+    lpa = LinchpinAPI(lpc)
+
+
+    filter = GenericInventory.GenericInventory(pb_path=lpa.pb_path)
 
     provider = 'general-inventory'
     base_path = '{0}'.format(os.path.dirname(

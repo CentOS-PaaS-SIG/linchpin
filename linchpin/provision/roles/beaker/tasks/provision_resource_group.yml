@@ -132,4 +132,4 @@
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_beaker_server: "{{ topology_outputs_beaker_server | add_res_type('beaker_res') }}"
+    topology_outputs_beaker_server: "{{ topology_outputs_beaker_server | add_res_data(lookup('vars', 'role_name'), res_defs['resource_definitions']['role']) }}"

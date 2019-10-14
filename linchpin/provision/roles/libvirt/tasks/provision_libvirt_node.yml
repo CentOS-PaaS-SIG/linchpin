@@ -530,7 +530,7 @@
 
 - name: "Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
   set_fact:
-    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': vm_names[index], 'ip': ip_set[index],'ip_type': IP_TYPE[index], 'resource_type': 'libvirt_res' }] }}"
+    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': vm_names[index], 'ip': ip_set[index],'ip_type': IP_TYPE[index], 'resource_group': 'libvirt_res' }] }}"
   loop: "{{ range(0, mac_length|int)|list }}"
   loop_control:
     loop_var: index
@@ -540,7 +540,7 @@
 
 - name: "remote: Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
   set_fact:
-    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': vm_names[index], 'ip': ip_set[index], 'ip_type': IP_TYPE[index], 'resource_type': 'libvirt_res' }] }}"
+    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': vm_names[index], 'ip': ip_set[index], 'ip_type': IP_TYPE[index], 'resource_group': 'libvirt_res' }] }}"
   loop: "{{ range(0, mac_length|int)|list }}"
   loop_control:
     loop_var: index
@@ -550,7 +550,7 @@
 
 - name: "Append to topology_outputs_libvirt_nodes"
   set_fact:
-    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0]+data[2]+data[1]|string, 'resource_type': 'libvirt_res' }] }}"
+    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes + [ { 'name': data[0]+data[2]+data[1]|string, 'resource_group': 'libvirt_res' }] }}"
   with_nested:
     - "{{ libvirt_resource_name }}"
     - "{{ res_count }}"
