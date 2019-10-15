@@ -61,6 +61,7 @@ Credentials Management
 
 IAM Instruction
 ---------------------
+⚫ FROM UI Azure website
 1. Go to Azure Active Directory
 2. Go to app registration on the left bar
 3. Create a new app
@@ -77,3 +78,20 @@ client_id:
 tenant:
 secret: 
 subscription_id:
+
+⚫ FROM AZ cmd line
+
+accountname@Azure:~$ az ad sp create-for-rbac --name ServicePrincipalName
+Changing "ServicePrincipalName" to a valid URI of "http://ServicePrincipalName", which is the required format used for service principal names
+Creating a role assignment under the scope of "/subscriptions/dcc74c29-4db6-4c49-9a0f-ac0ee03fa17e"
+  Retrying role assignment creation: 1/36
+  Retrying role assignment creation: 2/36
+  Retrying role assignment creation: 3/36
+  Retrying role assignment creation: 4/36
+{
+  "appId": "xxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "displayName": "ServicePrincipalName",
+  "name": "http://ServicePrincipalName",
+  "password": "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxx",
+  "tenant": "xxxxx-xxxxx-xxxx-xxxx-xxxxxxxxxxxx"
+}
