@@ -56,5 +56,42 @@ definition, the following options are available.
 
 Credentials Management
 ----------------------
- Support IAM user
+ Support IAM user (instruction below)         
  example: docs/source/example/workspaces/azure/azure.key
+
+IAM Instruction
+---------------------
+⚫ FROM UI Azure website
+1. Go to Azure Active Directory
+2. Go to app registration on the left bar
+3. Create a new app
+4. Take notes of Application (client) ID (this is client_id)
+5. Take notes of Directory (tenant) ID (this is tenant)
+6. Go to Certificates & secrets on left bar 
+7. Upload or create a new key and take note of it  (this is secret)
+8. Go to the ACESS CONTROL of you resource group or subscription
+9. Click Add button to add new role assignment
+10. Assign the role of Contributor to the App you just created
+11. Go to subscription find out the subscription id (this is subscription_id)
+11. Fill out the form below and put it into your workplace
+client_id:
+tenant:
+secret: 
+subscription_id:
+
+⚫ FROM AZ cmd line
+
+accountname@Azure:~$ az ad sp create-for-rbac --name ServicePrincipalName
+Changing "ServicePrincipalName" to a valid URI of "http://ServicePrincipalName", which is the required format used for service principal names
+Creating a role assignment under the scope of "/subscriptions/dcc74c29-4db6-4c49-9a0f-ac0ee03fa17e"
+  Retrying role assignment creation: 1/36
+  Retrying role assignment creation: 2/36
+  Retrying role assignment creation: 3/36
+  Retrying role assignment creation: 4/36
+{
+  "appId": "xxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "displayName": "ServicePrincipalName",
+  "name": "http://ServicePrincipalName",
+  "password": "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxx",
+  "tenant": "xxxxx-xxxxx-xxxx-xxxx-xxxxxxxxxxxx"
+}
