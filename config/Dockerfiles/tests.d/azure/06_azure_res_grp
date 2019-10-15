@@ -12,10 +12,11 @@ pushd docs/source/examples/workspaces/${PROVIDER}
 function clean_up {
     set +e
     linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' destroy "${TARGET}"
-    rm -rf resources/
+    rm -rf resources/ inventories/
 }
 
 trap clean_up EXIT
 
 
 linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' up "${TARGET}"
+linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' up "azure_vm_test"

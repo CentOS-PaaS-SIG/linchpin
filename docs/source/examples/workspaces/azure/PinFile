@@ -119,7 +119,7 @@ azure_vm_test:
       - resource_group_name: "azure"
         resource_group_type: "azure"
         resource_definitions:
-          - vm_name: TestAzureAuto
+          - vm_name: "{{ distro }}-TestAzureAuto"
             resource_group: "ccit"
             role: azure_vm
         credentials:
