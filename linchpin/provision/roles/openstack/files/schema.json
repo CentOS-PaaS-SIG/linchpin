@@ -268,7 +268,39 @@
                     "region_name": { "type": "string", "required": false},
                     "timeout": { "type": "number", "required": false }
                 }
+            },
+            {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["os_port"] },
+                    "admin_state_up": { "type": "boolean", "required": false},
+		    "allowed_address_pairs": {
+                        "type": "list",
+                        "required": false
+                    },
+                    "availability_zone": { "type": "string", "required": false },
+                    "device_id": { "type": "string", "required": false },
+                    "device_owner": { "type": "string", "required": false },
+                    "extra_dhcp_opts": {
+                        "type": "list",
+                        "required": false
+                    },
+                    "fixed_ips": { "type": "string", "required": false },
+                    "interface": { "type": "string", "required": false,  "allowed": ["admin", "public", "internal"] },
+                    "mac_address": { "type": "string", "required": false },
+                    "name": { "type": "string", "required": true },
+                    "network": { "type": "string", "required": true },
+		    "no_security_groups": { "type": "boolean", "required": false},
+                    "port_security_enabled": { "type": "boolean", "required": false},
+                    "region_name": { "type": "string", "required": false},
+                    "security_groups": { "type": "string", "required": false},
+                    "vnic_type": { "type": "string", "required": false,  "allowed": ["direct", "normal", "direct-physical", "macvtap", "baremetal", "virtio-forwarder"] }
+                }
             }
+
 	    ]
         }
     }

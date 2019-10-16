@@ -71,6 +71,15 @@
     topo_output_resources: "{{ topo_output_rundb.output[0]['resources'] }}"
   when: not generate_resources
 
+- name: teardown os_port resource def of current group
+  include: teardown_os_port.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  when: res_item.0['role'] == "os_port"
+  with_nested:
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
+    - ["{{ res_grp['resource_group_name'] }}"]
+  loop_control:
+    loop_var: res_item
+
 - name: teardown os_router resource def of current group
   include: teardown_os_router.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
   when: res_item.0['role'] == "os_router"
