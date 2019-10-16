@@ -20,8 +20,7 @@ from linchpin.galaxy_runner import galaxy_runner
 from linchpin.hooks.state import State
 from linchpin.hooks import LinchpinHooks
 
-from linchpin.rundb.basedb import BaseDB
-from linchpin.rundb.drivers import DB_DRIVERS
+from linchpin.linchpin_rundb import BaseDB, DB_DRIVERS
 
 from linchpin.exceptions import ActionError
 from linchpin.exceptions import LinchpinError

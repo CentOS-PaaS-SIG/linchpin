@@ -54,7 +54,8 @@ setup(
         'libvirt': ["libvirt-python>=3.0.0", "lxml"],
         'vmware': ["PyVmomi>=6.7.1"],
         'docker': ["docker-py>=1.7.0"],
-        'azure': azure_deps
+        'azure': azure_deps,
+        'openshift': ['openshift>=0.8.6,<0.8.8']
     },
     zip_safe=False,
     packages=find_packages(),
