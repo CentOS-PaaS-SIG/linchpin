@@ -27,8 +27,12 @@ class RunDB(six.with_metaclass(ABCMeta, object)):
         return self.driver.get_tx_records(tx_ids)
 
     @abstractmethod
+    def get_run_id(self, table, action='up'):
+        return self.driver.get_run_id(table, action=action)
+
+    @abstractmethod
     def get_record(self, table, action='up', run_id=None):
-        return self.driver.get_record(table, run_id=run_id)
+        return self.driver.get_record(table, action=action, run_id=run_id)
 
     @abstractmethod
     def get_records(self, table=[], count=10):
@@ -86,8 +90,11 @@ class BaseDB(RunDB):
     def get_tx_records(self, tx_ids):
         return self.driver.get_tx_records(tx_ids)
 
+    def get_run_id(self, table, action='up'):
+        return self.driver.get_run_id(table, action=action)
+
     def get_record(self, table, action='up', run_id=None):
-        return self.driver.get_record(table, run_id=run_id)
+        return self.driver.get_record(table, action=action, run_id=run_id)
 
     def get_records(self, table=[], count=10):
         return self.driver.get_records(table=table, count=count)
@@ -199,23 +206,36 @@ class TinyRunDB(BaseDB):
 
 
     @usedb
+    def get_run_id(self, table, action='up'):
+        """
+        gets the run_id associated with the most recent instance of `action`
+        if there is no instance of action, returns the most recent run_id
+        """
+        t = self.db.table(name=table)
+        run_id = len(t.all())
+
+        for rid in range(int(run_id), 0, -1):
+            record = t.get(eid=int(rid))
+            if record and record['action'] == action:
+                return rid
+        return run_id
+
+
+    @usedb
     def get_record(self, table, action='up', run_id=None):
 
         t = self.db.table(name=table)
         if not run_id:
-            run_id = len(t.all())
+            run_id = self.get_run_id(action, table)
             if not run_id:
                 return (None, 0)
-
-            for rid in range(int(run_id), 0, -1):
-                record = t.get(eid=int(rid))
-                if record and record['action'] == action:
-                    return (record, int(rid))
+            record = t.get(eid=int(run_id))
+            if record and record['action'] == action:
+                return (record, int(run_id))
         else:
             record = t.get(eid=int(run_id))
             if record:
                 return(record, int(run_id))
-
 
         return (None, 0)
 

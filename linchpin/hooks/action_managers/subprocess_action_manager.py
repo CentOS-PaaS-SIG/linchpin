@@ -3,6 +3,8 @@ from __future__ import print_function
 import os
 import subprocess
 import json
+import tempfile
+import shutil
 from .action_manager import ActionManager
 from cerberus import Validator
 
@@ -92,7 +94,7 @@ class SubprocessActionManager(ActionManager):
             os.environ["PATH"] += ":{0}".format(self.action_data["path"])
 
 
-    def add_context_params(self, action, results, context=True):
+    def add_context_params(self, action, results, data_path, context=True):
 
         """
         Adds ctx params to the action_block run when context is true
@@ -107,7 +109,7 @@ class SubprocessActionManager(ActionManager):
             for key in self.target_data:
                 data += "{0}={1}; ".format(key, self.target_data[key])
             command = data + command
-        return "{0} -- '{1}'".format(command, results)
+        return "{0} -- '{1}' {2}".format(command, results, data_path)
 
 
     def execute(self, results):
@@ -117,11 +119,16 @@ class SubprocessActionManager(ActionManager):
         """
 
         self.load()
+        tmpdir = tempfile.mkdtemp()
         for action in self.action_data["actions"]:
             result = {}
 
+            data_path = os.path.join(tmpdir, action)
             res_str = json.dumps(results, separators=(',', ':'))
-            command = self.add_context_params(action, res_str, self.context)
+            command = self.add_context_params(action,
+                                              res_str,
+                                              data_path,
+                                              self.context)
             proc = subprocess.Popen(command,
                                     shell=True,
                                     stdout=subprocess.PIPE,
@@ -131,15 +138,21 @@ class SubprocessActionManager(ActionManager):
             for line in proc.stdout:
                 print(line)
 
-            data = proc.stderr.read()
             try:
+                data_file = open(data_path, 'r')
+                data = data_file.read()
                 if data:
                     result['data'] = json.loads(data)
+            except IOError:
+                # if an IOError is thrown, the file does not exist
+                continue
             except ValueError:
                 print("Warning: '{0}' is not a valid JSON object.  "
                       "Data from this hook will be discarded".format(data))
             result['return_code'] = proc.returncode
             result['state'] = str(self.state)
-
             results.append(result)
+            data_file.close()
+
+        shutil.rmtree(tmpdir)
         return results

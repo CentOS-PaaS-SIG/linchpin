@@ -622,7 +622,13 @@ class LinchpinAPI(object):
                                     ])
 
             # note : changing the state triggers the hooks
-            self.hooks.rundb = (rundb, rundb_id)
+            if action == 'destroy':
+                if not run_id:
+                    prev_id = run_id if run_id else rundb.get_run_id(target,
+                                                                     'up')
+                self.hooks.rundb = (rundb, rundb_id, prev_id)
+            else:
+                self.hooks.rundb = (rundb, rundb_id)
             self.pb_hooks = self.get_cfg('hookstates', action)
             self.ctx.log_debug('calling: {0}{1}'.format('pre', action))
 

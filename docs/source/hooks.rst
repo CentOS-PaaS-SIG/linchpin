@@ -263,7 +263,7 @@ Hook Communication:
 
 Hooks can read data from other hooks run in the same target.  Hook data is not shared between a provisioning and corresponding teardown task, but is shared between pre- and post- provisioning as well as between action managers.
 
-With the exception of the Ansible action manager, hook data is passed as the last argument to the hook.  The data is formatted as a JSON array.  Each item in the array is an object with three fields: :term:`return_code`. :term:`data`, and :term:`state` (e.g. preup).  In order for a hook to share data, it should output it as json to stderr.  This will be saved to the :term:`data` field of the hook data object.  If the stderr output is not valid json, it will be ignored.
+**Experimental** With the exception of the Ansible action manager, hook data is passed via the command line.  Each hook will receive two arguments on the command line.  The first is a json array containing data from previous hook runs.  If the hooks are associated with a teardown, this will include hook data for both the hooks in the current run and the hooks in the corresponding provisioning step.  Each item in the array is an object with three fields: :term:`return_code`. :term:`data`, and :term:`state` (e.g. preup).  The second argument is a path to a temporary file.  In order for a hook to share data, it should write any data it wants to share as json to this file.  If the data in the file is not valid json, it will be ignored.
 
 The ansible action manager handles data somewhat differently.  The results array is passed as a variable called :term:`hook_results` to Ansible's extra vars.  Data from Ansible will be sent back to LinchPin using the :term:`PlaybookCallback` class.
 
