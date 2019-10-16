@@ -182,10 +182,8 @@
     topology_name: "{{ topo_data['topology_name'] }}"
 
 - name: "Generate resources file (v1.0.x compatibility)"
-  template:
-    src: "../templates/output_formatter.j2"
-    dest: "{{ default_resources_path + '/' +
-    topology_name.replace(' ', '_').lower() + '.output' }}"
+  debug:
+    msg: "{{ topology_outputs | write_to_file(default_resources_path+'/', topology_name) }}"
   when: generate_resources and state == "present"
 
 - name: "set topology_name"
