@@ -1,7 +1,7 @@
 Managing Resources
 ==================
 
-Resources in LinchPin generally consist of Virtual Machines, Containers, Networks, Security Groups, Instances, and much more. Detailed below are examples of topoologies, layouts, and PinFiles used to manage resources.
+Resources in LinchPin generally consist of Virtual Machines, Containers, Networks, Security Groups, Instances, and much more. Detailed below are examples of topologies, layouts, and PinFiles used to manage resources.
 
 .. toctree::
    :tocdepth: 1
