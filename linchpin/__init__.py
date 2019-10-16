@@ -15,6 +15,7 @@ from collections import OrderedDict
 from six import text_type
 
 from linchpin.ansible_runner import ansible_runner
+from linchpin.galaxy_runner import galaxy_runner
 
 from linchpin.hooks.state import State
 from linchpin.hooks import LinchpinHooks
@@ -81,6 +82,9 @@ class LinchpinAPI(object):
 
         for path in xp_path:
             self.pb_path.append(os.path.expanduser(path))
+
+        ansible_path = '{0}/{1}'.format(os.path.expanduser('~'), '.ansible')
+        self.pb_path.append(ansible_path)
 
         self.set_evar('default_delimiter', default_delimiter)
         self.set_evar('lp_path', lp_path)
@@ -268,10 +272,20 @@ class LinchpinAPI(object):
         return journal
 
 
+    def _get_role(self, role):
+        for path in self.pb_path:
+            p = '{0}/{1}/{2}'.format(path, 'roles', role)
+
+            if os.path.exists(os.path.expanduser(p)):
+                return
+
+        galaxy_runner(role)
+
+
     def _find_playbook_path(self, playbook):
 
         for path in self.pb_path:
-            p = '{0}/{1}{2}'.format(path, playbook, self.pb_ext)
+            p = '{0}/{1}'.format(path, playbook)
 
             if os.path.exists(os.path.expanduser(p)):
                 return path
@@ -882,10 +896,11 @@ class LinchpinAPI(object):
         return module_paths
 
     def _find_n_run_pb(self, pb_name, inv_src, console=True):
+        self._get_role(pb_name)
         use_shell = ast.literal_eval(str(self.ctx.get_cfg("ansible",
                                                           "use_shell")))
-        pb_path = self._find_playbook_path(pb_name)
-        playbook_path = '{0}/{1}{2}'.format(pb_path, pb_name, self.pb_ext)
+        pb_path = self._find_playbook_path("linchpin.yml")
+        playbook_path = '{0}/{1}{2}'.format(pb_path, 'linchpin', self.pb_ext)
         extra_vars = self.get_evar()
         env_vars = self.ctx.get_env_vars()
         return_code, res = ansible_runner(playbook_path,

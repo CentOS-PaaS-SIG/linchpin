@@ -13,6 +13,8 @@ from linchpin.exceptions import TopologyError
 from linchpin.validator.anyofvalidator import AnyofValidator
 import six
 
+from linchpin.galaxy_runner import galaxy_runner
+
 
 class Validator(object):
     SECTIONS = ['topology', 'layout', 'cfgs', 'hooks', 'run_id']
@@ -163,9 +165,9 @@ class Validator(object):
         :param topo_data topology data from the pinfile
         """
 
-        pb_path = self._find_playbook_path("layout")
+        pb_path = self._find_role_path("common")
         try:
-            sp = "{0}/roles/common/files/topo-schema.json".format(pb_path)
+            sp = "{0}/files/topo-schema.json".format(pb_path)
             schema = json.load(open(sp))
         except Exception as e:
             raise LinchpinError("Error with schema: '{0}'"
@@ -197,11 +199,11 @@ class Validator(object):
         res_grp_type = (res_grp.get('resource_group_type') or
                         res_grp.get('res_group_type'))
 
-        pb_path = self._find_playbook_path(res_grp_type)
+        pb_path = self._find_role_path(res_grp_type)
 
         try:
-            sp = "{0}/roles/{1}/files/schema.json".format(pb_path,
-                                                          res_grp_type)
+            sp = "{0}/files/schema.json".format(pb_path,
+                                                res_grp_type)
             schema = json.load(open(sp))
         except Exception as e:
             raise LinchpinError("Error with schema: '{0}'"
@@ -237,9 +239,10 @@ class Validator(object):
         :param layout: layout dictionary
         """
 
-        pb_path = self._find_playbook_path("layout")
+        # the layout schema is in the 'common' role
+        pb_path = self._find_role_path("common")
         try:
-            sp = "{0}/roles/common/files/schema.json".format(pb_path)
+            sp = "{0}/files/schema.json".format(pb_path)
 
             schema = json.load(open(sp))
         except Exception as e:
@@ -255,7 +258,7 @@ class Validator(object):
         pass
 
 
-    def _find_playbook_path(self, playbook):
+    def _find_role_path(self, playbook):
         """
         returns the full path to a given playbook
 
@@ -263,10 +266,16 @@ class Validator(object):
         """
 
         for path in self.pb_path:
-            p = '{0}/{1}{2}'.format(path, playbook, self.pb_ext)
+            p = '{0}/{1}/{2}'.format(path, 'roles', playbook)
 
             if os.path.exists(os.path.expanduser(p)):
-                return path
+                return p
+        if galaxy_runner(playbook):
+            for path in self.pb_path:
+                p = '{0}/{1}/{2}'.format(path, 'roles', playbook)
+
+                if os.path.exists(os.path.expanduser(p)):
+                    return p
 
         raise LinchpinError("playbook '{0}' not found in"
                             " path: {1}".format(playbook, self.pb_path))
