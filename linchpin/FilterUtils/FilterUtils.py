@@ -283,3 +283,12 @@ def get_os_server_names(topo_output):
             for os_item in openstack_res:
                 names.append(os_item["name"])
     return names
+
+
+def write_to_file(data, path, filename):
+    filename = filename.replace(' ', '_').lower()
+
+    fd = open(path + filename + ".output", "w")
+    fd.write(json.dumps(data))
+    fd.close()
+    return data
