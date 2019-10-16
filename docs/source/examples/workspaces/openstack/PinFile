@@ -219,3 +219,34 @@ os-zone:
           filename: clouds.yaml
           profile: ci-rhos
         {% endif %}
+
+os-recordset:
+  topology:
+    topology_name: os-network-zone
+    resource_groups:
+      - resource_group_name: os-zone-ex
+        resource_group_type: openstack
+        resource_definitions:
+        - name: "os_zone_recset_example"
+          role: os_zone
+          name: example.net.
+          zone_type: primary
+          email: test@example.net
+          description: Test zone
+        - name: "os_recset"
+          role: os_recordset
+          zone: example.net.
+          name: www
+          recordset_type: primary
+          records: ['10.1.1.1']
+          description: "test recordset"
+          ttl: 3600
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos
+        {% endif %}
