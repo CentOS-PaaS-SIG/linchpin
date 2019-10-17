@@ -7,13 +7,13 @@ make pip_install.sh
 ./pip_install.sh
 popd
 
-pip install . --ignore-installed
-pip install .[tests]
-pip install .[libvirt]
-pip install .[beaker]
-pip install .[docker]
-pip install .[azure]
-pip install .[openshift]
+pip3 install . --ignore-installed
+pip3 install .[tests]
+pip3 install .[libvirt]
+pip3 install .[beaker]
+pip3 install .[docker]
+pip3 install .[azure]
+pip3 install .[openshift]
 
 # If duffy.key is available then install duffy ansible module.
 if [ -e "keys/duffy.key" ]; then

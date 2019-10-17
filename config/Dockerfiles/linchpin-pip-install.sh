@@ -10,19 +10,19 @@ TMPDIR=$(mktemp -d)
 
 PYPI=https://test.pypi.org/simple
 
-pip install -U pip setuptools
+#pip3 install -U pip setuptools
 
 # wait for test.pypi.org to have files
 sleep 10
 
-pip download linchpin==${VERSION} --index-url ${PYPI} --retries 10 --pre --no-deps --no-binary :all: -d ${TMPDIR}
+pip3 download linchpin==${VERSION} --index-url ${PYPI} --retries 10 --pre --no-deps --no-binary :all: -d ${TMPDIR}
 
 # grab the requirements.txt from the linchpin package and intall those packages from production pypi
 tar -xvf ${TMPDIR}/linchpin-${VERSION}.tar.gz -C ${TMPDIR} linchpin-${VERSION}/requirements.txt --strip-components=1
-pip install -r ${TMPDIR}/requirements.txt
+pip3 install -r ${TMPDIR}/requirements.txt
 
 # once deps are installed from production pypi, install linchpin from test.pypi
-pip install linchpin==${VERSION} --index-url ${PYPI}
+pip3 install linchpin==${VERSION} --index-url ${PYPI}
 
 # verify linchpin is installed
 linchpin --version 2>&1 | grep ${VERSION}

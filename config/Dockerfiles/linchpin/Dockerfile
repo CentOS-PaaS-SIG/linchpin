@@ -19,15 +19,14 @@ COPY bin/ ${HOME}/bin/
 RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
     https://beaker-project.org/yum/beaker-client-Fedora.repo; \
     dnf install -y git beaker-client \
-        python-pip \
+        python3-pip \
         ansible \
         curl gcc \
-        python-devel \
+        python3-devel \
         openssl-devel \
         redhat-rpm-config file \
         net-tools \
         python-krbV \
-        libxslt-python \
         libxml2-python \
         krb5-workstation \
         libselinux-python \
@@ -44,11 +43,11 @@ RUN curl -L -o /etc/yum.repos.d/beaker-client.repo \
             pushd lp; \
         fi; \
     fi; \
-        pip install -U pip; \
-        pip install -U setuptools; \
-        pip install -U shade; \
-        pip install ${install_location}; \
-        pip install ${install_location}[beaker]; \
+        pip3 install -U pip; \
+        pip3 install -U setuptools; \
+        pip3 install -U shade; \
+        pip3 install ${install_location}; \
+        pip3 install ${install_location}[beaker]; \
         mkdir -p ${HOME}/bin/ && \
         chmod -R u+x ${HOME}/bin && \
         chown -R ${UID}.0 ${HOME} && \
