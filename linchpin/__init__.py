@@ -15,7 +15,7 @@ from collections import OrderedDict
 from six import text_type
 
 from linchpin.ansible_runner import ansible_runner
-from linchpin.galaxy_runner import galaxy_runner
+import linchpin.galaxy_runner as galaxy_runner
 
 from linchpin.hooks.state import State
 from linchpin.hooks import LinchpinHooks
@@ -74,20 +74,28 @@ class LinchpinAPI(object):
                                'external_providers_path',
                                default='').split(':')
 
+
         pb_path = '{0}/{1}'.format(lp_path,
                                    self.get_evar('playbooks_folder',
                                                  default='provision'))
-        self.pb_path = [pb_path]
+
+        role_path = '{0}/{1}/roles'.format(lp_path,
+                                           self.get_evar('playbooks_folder',
+                                                         default='provision'))
+        self.role_path = [role_path]
+        self.pb_path = pb_path
 
         for path in xp_path:
-            self.pb_path.append(os.path.expanduser(path))
+            role_path = '{0}/roles'.format(path)
+            self.role_path.append(os.path.expanduser(role_path))
 
-        ansible_path = '{0}/{1}'.format(os.path.expanduser('~'), '.ansible')
-        self.pb_path.append(ansible_path)
+        for path in galaxy_runner.get_role_paths():
+            self.role_path.append(os.path.expanduser(path))
 
         self.set_evar('default_delimiter', default_delimiter)
         self.set_evar('lp_path', lp_path)
         self.set_evar('pb_path', self.pb_path)
+        self.set_evar('role_path', self.role_path)
         self.set_evar('from_api', True)
         self.workspace = self.get_evar('workspace')
 
@@ -272,22 +280,27 @@ class LinchpinAPI(object):
 
 
     def _get_role(self, role):
-        for path in self.pb_path:
-            p = '{0}/{1}/{2}'.format(path, 'roles', role)
+        for path in self.role_path:
+            p = '{0}/{1}'.format(path, role)
 
             if os.path.exists(os.path.expanduser(p)):
                 return
 
-        galaxy_runner(role)
+        # if the role is not in role_path, ansible-galaxy may be able to install
+        # it (if it has not already).  galaxy_runner() will return True if the
+        # role was successfully installed or if the role was previously
+        # installed.  It will return false otherwise
+        if not galaxy_runner.install(role):
+            raise LinchpinError("role '{0]' not found in path: {1}\n. It also"
+                                " could not be installed via Ansible"
+                                " Galaxy".format(role, self.role_path))
 
 
     def _find_playbook_path(self, playbook):
+        p = '{0}/{1}'.format(self.pb_path, playbook)
 
-        for path in self.pb_path:
-            p = '{0}/{1}'.format(path, playbook)
-
-            if os.path.exists(os.path.expanduser(p)):
-                return path
+        if os.path.exists(os.path.expanduser(p)):
+            return self.pb_path
 
         raise LinchpinError("playbook '{0}' not found in"
                             " path: {1}".format(playbook, self.pb_path))
@@ -371,7 +384,7 @@ class LinchpinAPI(object):
     def generate_inventory(self, resource_data, layout, inv_format="cfg",
                            topology_data={}, config_data={}):
         inv = GenericInventory.GenericInventory(inv_format=inv_format,
-                                                pb_path=self.pb_path)
+                                                role_path=self.role_path)
         inventory = inv.get_inventory(resource_data, layout, topology_data,
                                       config_data)
         return inventory
@@ -569,7 +582,7 @@ class LinchpinAPI(object):
             self.set_evar('uhash', uhash)
 
             try:
-                validator = Validator(self.ctx, self.pb_path, self.pb_ext)
+                validator = Validator(self.ctx, self.role_path, self.pb_ext)
                 resources = validator.validate(provision_data[target])
             except SchemaError:
                 raise ValidationError("Target '{0}' does not validate.  For"
@@ -742,7 +755,7 @@ class LinchpinAPI(object):
             results[target] = {}
             self.set_evar('target', target)
 
-            validator = Validator(self.ctx, self.pb_path, self.pb_ext)
+            validator = Validator(self.ctx, self.role_path, self.pb_ext)
             target_dict = provision_data[target]
             ret, results[target] = validator.validate_pretty(target_dict,
                                                              target,
@@ -897,7 +910,7 @@ class LinchpinAPI(object):
         module_folder = self.get_cfg('lp',
                                      'module_folder',
                                      default='library')
-        for path in reversed(self.pb_path):
+        for path in reversed(self.role_path):
             module_paths.append('{0}/{1}/'.format(path, module_folder))
         return module_paths
 

@@ -36,7 +36,7 @@ def setup_generic_inventory_filter():
     lpa = LinchpinAPI(lpc)
 
 
-    filter = GenericInventory.GenericInventory(pb_path=lpa.pb_path)
+    filter = GenericInventory.GenericInventory(role_path=lpa.role_path)
 
     provider = 'general-inventory'
     base_path = '{0}'.format(os.path.dirname(

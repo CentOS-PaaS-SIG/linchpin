@@ -9,9 +9,9 @@ from .InventoryProviders import get_inv_formatter
 
 class GenericInventory(InventoryFilter):
 
-    def __init__(self, inv_format="cfg", pb_path=None):
+    def __init__(self, inv_format="cfg", role_path=None):
         InventoryFilter.__init__(self)
-        self.pb_path = pb_path
+        self.role_path = role_path
         self.inv_formatter = get_inv_formatter(inv_format)()
 
     def get_host_data(self, res_output, config):
@@ -40,8 +40,8 @@ class GenericInventory(InventoryFilter):
         :params res_type: name of the role
         """
 
-        for path in self.pb_path:
-            p = '{0}/{1}/{2}'.format(path, 'roles', res_type)
+        for path in self.role_path:
+            p = '{0}/{1}'.format(path, res_type)
 
             if os.path.exists(os.path.expanduser(p)):
                 return p
