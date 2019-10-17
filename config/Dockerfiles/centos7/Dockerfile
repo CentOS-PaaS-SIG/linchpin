@@ -5,22 +5,23 @@ LABEL description "This container will verify linchpin works under Centos7"
 ENV HOME=/root
 WORKDIR $HOME
 
-COPY centos7/centos7-pike.repo /etc/yum.repos.d/centos7-pike.repo
-RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+# install python 3 dependencies
+RUN  yum install -y epel-release
+RUN  yum update -y \
+     && yum install -y python3 python3-pip python3-devel python3-setuptools 
+
 RUN yum -y install python-pip \
-    && pip install -U pip \
-    && pip install -U setuptools \
-    && pip install -U pygithub \
-    && pip install -U openstackclient boto>=2.49.0 \
+    && pip3 install -U pip3 \
+    && pip3 install -U setuptools \
+    && pip3 install -U pygithub \
+    && pip3 install -U openstackclient boto>=2.49.0 \
     && yum -y install curl \
-    && curl -o /etc/yum.repos.d/herlo-linchpin-epel7.repo \
-    https://copr.fedorainfracloud.org/coprs/herlo/linchpin-epel7/repo/epel-7/herlo-linchpin-epel7-epel-7.repo; \
-    yum -y install gcc python-devel openssl-devel ansible \
+    && yum -y install gcc python-devel openssl-devel ansible \
                     libvirt-daemon-driver-* libvirt-daemon libvirt-daemon-kvm \
                     qemu-kvm libvirt-daemon-config-network libvirt-python \
                     libvirt-devel virt-install file openssh mkisofs \
                     libvirt-client net-tools git python-krbV make \
-                    libxslt-python krb5-workstation \
+                    krb5-workstation \
                     python-requests jq buildah git which; \
     (cd /lib/systemd/system/sysinit.target.wants/; for i in *; \
      do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
