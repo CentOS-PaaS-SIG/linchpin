@@ -145,6 +145,11 @@
     topology_outputs: "{{ topology_outputs + topology_outputs_azure_net_interface }}"
   when: topology_outputs_azure_net_interface is defined
 
+- name: "Add azure_api_res"
+  set_fact:
+    topology_outputs: "{{ topology_outputs + topology_outputs_azure_api }}"
+  when: topology_outputs_azure_api is defined
+
 - name: "Add azure_res_grp_res"
   set_fact:
     topology_outputs: "{{ topology_outputs + topology_outputs_azure_res_grp }}"

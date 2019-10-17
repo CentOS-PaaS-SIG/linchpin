@@ -1,0 +1,30 @@
+---
+- name: set a body path
+  set_fact:
+    body_path: "{{res_def['body_path']|default('{{workspace}}/body.json')}}"
+
+- debug:
+    msg: "{{ res_def['url']}}"
+
+- name: Use Azure Api to manage resources
+  azure_rm_resource:
+    client_id: "{{ auth_var['client_id'] | default(omit) }}"
+    tenant: "{{ auth_var['tenant'] | default(omit) }}"
+    secret: "{{ auth_var['secret'] | default(omit) }}"
+    subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
+    api_version: "{{res_def['api_version']|default('2019-03-01')}}"
+    url: "{{ res_def['url']|default(omit)}}"
+    body: "{{ lookup('file', body_path) }}"
+  register: res_def_output
+  until: res_def_output.response.properties.provisioningState == "Updating"
+  retries: 30
+  delay: 30
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_azure_api: "{{ topology_outputs_azure_api + [res_def_output] }}"
+  when: res_def_output['changed'] == true
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_azure_api: "{{ topology_outputs_azure_api | add_res_data(lookup('vars', 'role_name'),'azure_api') }}"

@@ -1,0 +1,17 @@
+---
+- name: set a body path
+  set_fact:
+    body_path: "{{res_def['body_path']|default('{{workspace}}/body.json')}}"
+
+- name: Use Azure Api to manage resources
+  azure_rm_resource:
+    client_id: "{{ auth_var['client_id'] | default(omit) }}"
+    tenant: "{{ auth_var['tenant'] | default(omit) }}"
+    secret: "{{ auth_var['secret'] | default(omit) }}"
+    subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
+    api_version: "{{res_def['api_version']|default('2019-03-01')}}"
+    url: "{{ res_def['url']|default(omit)}}"
+    method: 'DELETE'
+    polling_timeout: 60
+    polling_interval: 10
+    body: "{{ lookup('file', body_path) }}"
