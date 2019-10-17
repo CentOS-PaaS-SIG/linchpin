@@ -1,4 +1,4 @@
-- name: "Provisioning Azure Virtual Network when not async"
+- name: "Provisioning Azure Virtual Network Interface when not async"
   azure_rm_networkinterface:
     client_id: "{{ auth_var['client_id'] | default(omit) }}"
     tenant: "{{ auth_var['tenant'] | default(omit) }}"

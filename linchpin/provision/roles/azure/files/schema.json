@@ -102,10 +102,10 @@
                             "required": false
                         },
                         "deepclean": {
-                            "type":"boolean",
-                            "required":false
+                            "type": "boolean",
+                            "required": false
                         },
-                        "delete_all_attached":{
+                        "delete_all_attached": {
                             "type": "string",
                             "required": false
                         },
@@ -204,6 +204,42 @@
                             "required": true
                         },
                         "virtual_network_name": {
+                            "type": "string",
+                            "required": false
+                        }
+                    }
+                },
+                {
+                    "type": "dict",
+                    "schema": {
+                        "role": {
+                            "type": "string",
+                            "required": true,
+                            "allowed": [
+                                "azure_api"
+                            ]
+                        },
+                        "resource_type": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "url": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "resource_group": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "resource_name": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "api_version": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "body_path": {
                             "type": "string",
                             "required": false
                         }

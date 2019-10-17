@@ -6,6 +6,7 @@
     topology_outputs_azure_vn_subnet: []
     topology_outputs_azure_res_grp: []
     topology_outputs_azure_net_interface: []
+    topology_outputs_azure_api: []
 
 - name: "Initiating Provisioning of Azure resource group"
   include: provision_resource_group.yml res_grp={{ item }}

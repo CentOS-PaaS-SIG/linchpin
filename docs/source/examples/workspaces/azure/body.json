@@ -1,0 +1,39 @@
+{
+  "location": "centralus",
+  "properties": {
+    "hardwareProfile": {
+      "vmSize": "Standard_D1_v2"
+    },
+    "storageProfile": {
+      "imageReference": {
+        "sku": "7.1",
+        "publisher": "OpenLogic",
+        "version": "latest",
+        "offer": "CentOS"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "managedDisk": {
+          "storageAccountType": "Standard_LRS"
+        },
+        "name": "myVMosdisk",
+        "createOption": "FromImage"
+      }
+    },
+    "osProfile": {
+      "adminUsername": "Linchpin",
+      "computerName": "myVM",
+      "adminPassword": "IloveLinchpin!"
+    },
+    "networkProfile": {
+      "networkInterfaces": [
+        {
+          "id": "/subscriptions/dcc74c29-4db6-4c49-9a0f-ac0ee03fa17e/resourceGroups/ccit/providers/Microsoft.Network/networkInterfaces/TestingNIC",
+          "properties": {
+            "primary": true
+          }
+        }
+      ]
+    }
+  }
+}
