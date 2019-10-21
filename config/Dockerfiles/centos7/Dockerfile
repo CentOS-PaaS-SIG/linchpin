@@ -10,8 +10,7 @@ WORKDIR $HOME
 RUN  yum update -y \
      && yum install -y python3 python3-pip python3-devel python3-setuptools 
 
-RUN yum -y install  python-devel openssl-devel ansible
-RUN yum -y install  libvirt-daemon-driver-* libvirt-daemon libvirt-daemon-kvm \
+RUN yum -y install  ansible libvirt-daemon-driver-* libvirt-daemon libvirt-daemon-kvm \
                     qemu-kvm libvirt-daemon-config-network libvirt-python \
                     libvirt-devel virt-install file openssh mkisofs \
                     libvirt-client net-tools git python-krbV make \
