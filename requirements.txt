@@ -20,3 +20,4 @@ configparser>=3.5.0
 pyasn1>=0.1.9
 gitpython==2.1.11
 future
+tinyrecord

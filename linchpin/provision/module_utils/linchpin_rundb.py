@@ -7,6 +7,7 @@ from tinydb.operations import add
 from tinydb.operations import set as tinySet
 from tinydb.middlewares import CachingMiddleware
 from six.moves import range
+from tinyrecord import transaction
 
 
 class RunDB(six.with_metaclass(ABCMeta, object)):
@@ -160,7 +161,11 @@ class TinyRunDB(BaseDB):
     @usedb
     def init_table(self, table):
         t = self.db.table(name=table)
-        return t.insert(self.schema)
+        with transaction(t) as tr:
+            # insert a new record
+            tr.insert(self.schema)
+        # return length for run_id
+        return len(t)
 
 
     @usedb
@@ -182,9 +187,12 @@ class TinyRunDB(BaseDB):
                         de.append(i)
                     de = {"resources": de}
                     tx_rec[res_idx] = de
-                    res = t.update(tinySet(key, [de]), doc_ids=[run_id])
-                    return res
-        return t.update(add(key, value), doc_ids=[run_id])
+                    with transaction(t) as tr:
+                        res = tr.update(tinySet(key, [de]), doc_ids=[run_id])
+                        return res
+        with transaction(t) as tr:
+            update_rec = t.update(add(key, value), doc_ids=[run_id])
+            return update_rec
 
 
     @usedb
