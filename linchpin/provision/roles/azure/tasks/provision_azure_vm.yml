@@ -64,6 +64,19 @@
 - name: "Load default variables"
   include_vars: "{{ parsed_defaults.path }}"
 
+
+- name: set public key
+  set_fact:
+    ssh_public_keys:
+      - path: "/home/{{ res_def['vm_username'] | default(linchpinUsername) }}/.ssh/authorized_keys"
+        key_data: "{{ res_def['public_key']}}"
+  when: res_def['public_key'] is defined
+
+- name: set public key
+  set_fact:
+    ssh_public_keys: null
+  when: res_def['public_key'] is not defined
+
 - name: "Provisioning Azure VM when not async"
   azure_rm_virtualmachine:
     client_id: "{{ auth_var['client_id'] | default(omit) }}"
@@ -73,6 +86,7 @@
     admin_username: "{{ res_def['vm_username'] | default(linchpinUsername) }}"
     admin_password: "{{ res_def['vm_password'] | default(linchpinPassword) }}"
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
+    ssh_public_keys: "{{ssh_public_keys}}"
     vm_size: "{{ res_def['vm_size'] | default('Standard_DS1_v2') }}"
     name: "{{ res_def['vm_name'] | default(omit) }}"
     virtual_network_name: "{{res_def['virtual_network_name']|default(vn_name)}}"
