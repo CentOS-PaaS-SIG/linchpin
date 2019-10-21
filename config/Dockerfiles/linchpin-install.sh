@@ -2,13 +2,17 @@
 
 WORKDIR=$(pwd)
 
-pip3 install .
-pip3 install .[tests]
-pip3 install .[libvirt]
-pip3 install .[beaker]
-pip3 install .[docker]
-pip3 install .[azure]
-pip3 install .[openshift]
+# test virtual environment installation
+python3 -m venv ./testenv;
+
+source ./testenv/bin/activate;
+pip3 install .;
+pip3 install .[tests];
+pip3 install .[libvirt];
+pip3 install .[beaker];
+pip3 install .[docker];
+pip3 install .[azure];
+pip3 install .[openshift];
 
 # If duffy.key is available then install duffy ansible module.
 if [ -e "keys/duffy.key" ]; then
