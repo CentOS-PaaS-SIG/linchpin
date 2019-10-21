@@ -3,9 +3,9 @@
 WORKDIR=$(pwd)
 
 # test virtual environment installation
-python3 -m venv ./testenv;
+#python3 -m venv ./testenv;
 
-source ./testenv/bin/activate;
+#source ./testenv/bin/activate;
 pip3 install .;
 pip3 install .[tests];
 pip3 install .[libvirt];
