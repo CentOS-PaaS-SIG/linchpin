@@ -11,10 +11,11 @@ from nose.tools import *
 import linchpin.FilterUtils.FilterUtils as filter_utils
 
 
-def test_add_res_type():
+def test_add_res_data():
     hosts = [{}]
-    new_hosts = filter_utils.add_res_type(hosts, "test_res_type")
-    assert_equal("test_res_type", new_hosts[0].get("resource_type"))
+    new_hosts = filter_utils.add_res_data(hosts, "test_res_type", "test_role")
+    assert_equal("test_res_type", new_hosts[0].get("resource_group"))
+    assert_equal("test_role", new_hosts[0].get("role"))
 
 
 def test_fetch_attr():
@@ -71,7 +72,7 @@ def test_get_host_from_uri_local():
 
 
 def test_get_provider_resources():
-    test_out = [{"resource_type": "openstack"}]
+    test_out = [{"resource_group": "openstack"}]
     assert_equal(test_out,
                  filter_utils.get_provider_resources(test_out,
                                                      "openstack"))
@@ -124,7 +125,7 @@ def test_translate_ruletype_invalid():
 def test_filter_list_by_attr_val():
     test_list = [{"a":"b"}, {"c":"d"}]
     expected = [{"a": "b"}]
-    assert_equals(expected, 
+    assert_equals(expected,
                   filter_utils.filter_list_by_attr_val(test_list, "a", "b"))
 
 
@@ -154,7 +155,8 @@ def test_fetch_beaker_job_ids():
                   filter_utils.fetch_beaker_job_ids(test_input))
 
 def test_fetch_os_server_names():
-    test_input = [ {"resource_type": "os_server_res",
+    test_input = [ {"resource_group": "openstack",
+                    "role": "os_server",
                     "openstack": [{"name": "test"}]
                    }
                  ]

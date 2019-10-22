@@ -370,7 +370,8 @@ class LinchpinAPI(object):
 
     def generate_inventory(self, resource_data, layout, inv_format="cfg",
                            topology_data={}, config_data={}):
-        inv = GenericInventory.GenericInventory(inv_format=inv_format)
+        inv = GenericInventory.GenericInventory(inv_format=inv_format,
+                                                pb_path=self.pb_path)
         inventory = inv.get_inventory(resource_data, layout, topology_data,
                                       config_data)
         return inventory

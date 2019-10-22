@@ -16,4 +16,4 @@
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce | add_res_type('gcloud_gce_eip') }}"
+    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"

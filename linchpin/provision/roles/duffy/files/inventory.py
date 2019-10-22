@@ -3,13 +3,10 @@
 from __future__ import absolute_import
 from collections import OrderedDict
 
-from .InventoryFilter import InventoryFilter
+from linchpin.InventoryFilters.InventoryFilter import InventoryFilter
 
 
-class LibvirtInventory(InventoryFilter):
-    DEFAULT_HOSTNAMES = ['ip']
-
-
+class Inventory(InventoryFilter):
     def get_host_data(self, res, cfgs):
         """
         Returns a dict of hostnames or IP addresses for use in an Ansible
@@ -21,29 +18,23 @@ class LibvirtInventory(InventoryFilter):
         cfgs section of the PinFile (e.g. __IP__) to the value in the field that
         corresponds with that variable in the cfgs.
 
-        By default, the hostname will be the system field returned by libvirt
+        By default, the hostname will be the system field returned by duffy
 
         :param topo:
-            linchpin Libvirt resource data
+            linchpin Duffy resource data
 
         :param cfgs:
             map of config options from PinFile
         """
-
         host_data = OrderedDict()
-        if res['resource_type'] != 'libvirt_res':
+        if res['resource_group'] != 'duffy' or res['role'] != 'duffy_node':
             return host_data
-        var_data = cfgs.get('libvirt', {})
+        var_data = cfgs.get('duffy', {})
         if var_data is None:
             var_data = {}
-        host = self.get_hostname(res, var_data,
-                                 self.DEFAULT_HOSTNAMES)
-        hostname_var = host[0]
-        hostname = host[1]
-        host_data[hostname] = {}
-        if '__IP__' not in list(var_data.keys()):
-            var_data['__IP__'] = hostname_var
-            host_data[hostname] = {}
-        host_data[hostname] = {}
-        self.set_config_values(host_data[hostname], res, var_data)
+        for host in res['hosts']:
+            host_data[host] = {}
+            if '__IP__' not in list(var_data.keys()):
+                host_data[host]['__IP__'] = host
+            self.set_config_values(host_data[host], res, var_data)
         return host_data

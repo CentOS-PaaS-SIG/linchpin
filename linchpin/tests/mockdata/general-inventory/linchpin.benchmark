@@ -318,7 +318,8 @@
                               "virtualization_type":"hvm"
                            }
                         ],
-                        "resource_type":"aws_ec2_res",
+                        "resource_group": "aws",
+                        "role": "aws_ec2",
                         "tagged_instances":[
 
                         ]
@@ -329,7 +330,8 @@
                         "family":"RedHatEnterpriseLinux7",
                         "id":"3239261",
                         "name":"rhel76",
-                        "resource_type":"beaker_res",
+                        "resource_group": "beaker",
+                        "role": "bkr_server",
                         "result":"Pass",
                         "rid":"6310134",
                         "status":"Running",
@@ -346,12 +348,14 @@
                            "dummy-744068-1",
                            "dummy-744068-2"
                         ],
-                        "resource_type":"dummy_res"
+                        "resource_group": "dummy",
+                        "role": "dummy_node"
                      },
                      {
                         "ip":"192.168.122.219",
                         "name":"centos71-744068_0",
-                        "resource_type":"libvirt_res"
+                        "resource_group": "libvirt",
+                        "role": "libvirt_node"
                      },
                      {
                         "ids":[
@@ -615,7 +619,8 @@
                               ]
                            }
                         ],
-                        "resource_type":"os_server_res",
+                        "resource_group": "openstack",
+                        "role": "os_server",
                         "servers":[
                            {
                               "OS-DCF:diskConfig":"MANUAL",
@@ -876,20 +881,23 @@
                         ]
                      },
                      {
-                        "resource_type":"duffy_res",
+                        "resource_group": "duffy",
+                        "role": "duffy_node",
                         "hosts":[
                            "109.254.93.117",
                            "test.example.com"
                         ]
                      },
                      {
-                        "resource_type":"duffy_res",
+                        "resource_group": "duffy",
+                        "role": "duffy_node",
                         "hosts":[
                            "171.109.242.199"
                         ]
                      },
                      {
-                        "resource_type":"gcloud_gce_res",
+                        "resource_group": "gcloud",
+                        "role": "gcloud_gce",
                         "instance_data":[
                            {
                               "public_ip":"194.231.24.112"
@@ -900,7 +908,8 @@
                         ]
                      },
                      {
-                        "resource_type":"ovirt_vms_res",
+                        "resource_group": "ovirt",
+                        "role": "ovirt_vms",
                         "vm":{
                            "reported_devices":[
                               {
@@ -931,7 +940,8 @@
                         }
                      },
                      {
-                        "resource_type": "vmware_guest_res",
+                        "resource_group": "vmware",
+                        "role": "vmware_guest",
                         "instance":{
                            "hw_name": "vmware-node",
                            "hw_power_status": "poweredOn",

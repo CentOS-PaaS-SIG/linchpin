@@ -24,4 +24,4 @@
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_duffy: "{{ topology_outputs_duffy | add_res_type('duffy_res') }}"
+    topology_outputs_duffy: "{{ topology_outputs_duffy | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"

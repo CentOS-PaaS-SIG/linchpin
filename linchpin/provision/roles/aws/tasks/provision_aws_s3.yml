@@ -41,4 +41,4 @@
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_aws_s3: "{{ topology_outputs_aws_s3 | add_res_type('aws_s3_res') }}"
+    topology_outputs_aws_s3: "{{ topology_outputs_aws_s3 | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"

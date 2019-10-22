@@ -22,4 +22,4 @@
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_aws_ec2_key: "{{ topology_outputs_aws_ec2_key | add_res_type('aws_ec2_key_res') }}"
+    topology_outputs_aws_ec2_key: "{{ topology_outputs_aws_ec2_key | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"

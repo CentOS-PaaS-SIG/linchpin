@@ -3,10 +3,10 @@
 from __future__ import absolute_import
 from collections import OrderedDict
 
-from .InventoryFilter import InventoryFilter
+from linchpin.InventoryFilters.InventoryFilter import InventoryFilter
 
 
-class DummyInventory(InventoryFilter):
+class Inventory(InventoryFilter):
     def get_host_data(self, res, cfgs={}):
         """
         Returns a dict of hostnames or IP addresses for use in an Ansible

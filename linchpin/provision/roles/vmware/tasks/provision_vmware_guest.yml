@@ -93,11 +93,11 @@
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_vmware_guest: "{{ topology_outputs_vmware_guest | add_res_type('vmware_guest_res') }}"
+    topology_outputs_vmware_guest: "{{ topology_outputs_vmware_guest | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"
 
 - name: "Async Add type to resource"
   set_fact:
-    async_outputs_vmware_guest: "{{ async_outputs_vmware_guest | add_res_type('vmware_guest_res') }}"
+    async_outputs_vmware_guest: "{{ async_outputs_vmware_guest | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"
   when: async
 
 

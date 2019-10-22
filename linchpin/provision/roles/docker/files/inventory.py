@@ -1,20 +1,25 @@
 from __future__ import absolute_import
 from collections import OrderedDict
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
-from .InventoryFilter import InventoryFilter
+
+from linchpin.InventoryFilters.InventoryFilter import InventoryFilter
 
 
-class DockerInventory(InventoryFilter):
+class Inventory(InventoryFilter):
     DEFAULT_HOSTNAMES = ['Config.Hostname']
 
     def get_host_data(self, res, config):
-        host_data = OrderedDict()
         # Only docker_container resource type produces host data.
-        if res['resource_type'] != 'docker_container_res':
-            return host_data
+        if res['resource_group'] != 'docker':
+            return {}
+
+        if res['role'] == 'docker_container':
+            return self.get_docker_container_host_data(res, config)
+        else:
+            return {}
+
+    def get_docker_container_host_data(self, res, config):
+        host_data = OrderedDict()
+
         var_data = config.get('docker', {})
         if var_data is None:
             var_data = {}
@@ -27,9 +32,3 @@ class DockerInventory(InventoryFilter):
             var_data['__IP__'] = hostname_var
         self.set_config_values(host_data[hostname], res, var_data)
         return host_data
-
-    def get_inventory(self, res, layout, config):
-        output = StringIO()
-        self.config.write(output)
-
-        return output.getvalue()
