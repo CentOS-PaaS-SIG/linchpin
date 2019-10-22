@@ -370,7 +370,8 @@ class LinchpinAPI(object):
 
     def generate_inventory(self, resource_data, layout, inv_format="cfg",
                            topology_data={}, config_data={}):
-        inv = GenericInventory.GenericInventory(inv_format=inv_format)
+        inv = GenericInventory.GenericInventory(inv_format=inv_format,
+                                                pb_path=self.pb_path)
         inventory = inv.get_inventory(resource_data, layout, topology_data,
                                       config_data)
         return inventory
@@ -626,7 +627,7 @@ class LinchpinAPI(object):
                 if not run_id:
                     prev_id = run_id if run_id else rundb.get_run_id(target,
                                                                      'up')
-                self.hooks.rundb = (rundb, rundb_id, prev_id)
+                    self.hooks.rundb = (rundb, rundb_id, prev_id)
             else:
                 self.hooks.rundb = (rundb, rundb_id)
             self.pb_hooks = self.get_cfg('hookstates', action)

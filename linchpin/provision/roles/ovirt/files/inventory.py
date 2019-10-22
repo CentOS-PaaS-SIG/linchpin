@@ -2,10 +2,10 @@
 from __future__ import absolute_import
 from collections import OrderedDict
 
-from .InventoryFilter import InventoryFilter
+from linchpin.InventoryFilters.InventoryFilter import InventoryFilter
 
 
-class OvirtInventory(InventoryFilter):
+class Inventory(InventoryFilter):
     # we should find a better set of defaults at some point
     DEFAULT_HOSTNAMES = ['ips.address_v4']
 
@@ -31,7 +31,7 @@ class OvirtInventory(InventoryFilter):
         """
 
         host_data = OrderedDict()
-        if res['resource_type'] != 'ovirt_vms_res':
+        if res['resource_group'] != 'ovirt' or res['role'] != 'ovirt_vms':
             return host_data
         var_data = cfgs.get('ovirt', {})
         if var_data is None:

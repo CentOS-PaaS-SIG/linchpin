@@ -69,8 +69,3 @@
   with_items: "{{ vpc_endpoint_ids_fetched['vpc_endpoints'] | default([]) }}"
   loop_control:
     loop_var: ep_id
-
-- name: "Add type to resource"
-  set_fact:
-    topology_outputs_aws_ec2: "{{ topology_outputs_aws_net | add_res_type('aws_ec2_vpc_endpoint') }}"
-  when: state == 'present'

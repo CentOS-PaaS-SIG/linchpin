@@ -43,7 +43,3 @@
   set_fact:
     topology_outputs_aws_net: "{{ topology_outputs_aws_net + [res_def_output] }}"
   when: res_def_output['changed'] == true
-
-- name: "Add type to resource"
-  set_fact:
-    topology_outputs_aws_ec2: "{{ topology_outputs_aws_net | add_res_type( 'aws_ec2_vpc_nat_gateway') }}"

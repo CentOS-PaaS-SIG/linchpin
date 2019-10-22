@@ -7,10 +7,10 @@ try:
 except ImportError:
     from io import StringIO
 
-from .InventoryFilter import InventoryFilter
+from linchpin.InventoryFilters.InventoryFilter import InventoryFilter
 
 
-class VMwareInventory(InventoryFilter):
+class Inventory(InventoryFilter):
     DEFAULT_HOSTNAMES = ['ipv4', 'ipv6']
 
     def get_host_data(self, res, cfgs):
@@ -32,7 +32,7 @@ class VMwareInventory(InventoryFilter):
         """
 
         host_data = OrderedDict()
-        if res['resource_type'] != 'vmware_guest_res':
+        if res['resource_group'] != 'vmware' or res['role'] != 'vmware_guest':
             return host_data
         var_data = cfgs.get('vmware', {})
         if var_data is None:

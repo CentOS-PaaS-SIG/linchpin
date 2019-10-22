@@ -124,4 +124,4 @@
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_ovirt_vms: "{{ topology_outputs_ovirt_vms | add_res_type('ovirt_vms_res') }}"
+    topology_outputs_ovirt_vms: "{{ topology_outputs_ovirt_vms | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"

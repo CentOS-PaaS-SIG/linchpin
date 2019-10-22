@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 
+import imp
+import os
+
 from .InventoryFilter import InventoryFilter
-from .InventoryProviders import get_all_drivers
 from .InventoryProviders import get_inv_formatter
 
 
 class GenericInventory(InventoryFilter):
 
-    def __init__(self, inv_format="cfg"):
+    def __init__(self, inv_format="cfg", pb_path=None):
         InventoryFilter.__init__(self)
-        self.filter_classes = get_all_drivers()
+        self.pb_path = pb_path
         self.inv_formatter = get_inv_formatter(inv_format)()
 
     def get_host_data(self, res_output, config):
@@ -17,13 +19,33 @@ class GenericInventory(InventoryFilter):
         """
         host_data = []
         for res_grp in res_output:
-            inv_filter = res_grp['resource_type']
+            res_type = res_grp['resource_group']
             # check only when the inventory_filter exists
-            if inv_filter in list(self.filter_classes.keys()):
-                data = self.filter_classes[inv_filter]()\
-                    .get_host_data(res_grp, config)
-                host_data.append(data)
+            filter_class = self.get_filter_class(res_type)
+            data = filter_class.get_host_data(res_grp, config)
+            host_data.append(data)
         return host_data
+
+
+    def get_filter_class(self, res_type):
+        path = "{0}/files/inventory.py".format(self._find_role_path(res_type))
+        provider = imp.load_source('Inventory', path)
+        return provider.Inventory()
+
+
+    def _find_role_path(self, res_type):
+        """
+        returns the full path to the given playbook
+
+        :params res_type: name of the role
+        """
+
+        for path in self.pb_path:
+            p = '{0}/{1}/{2}'.format(path, 'roles', res_type)
+
+            if os.path.exists(os.path.expanduser(p)):
+                return p
+
 
     def get_hosts_by_count(self, host_data, count):
         """

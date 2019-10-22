@@ -66,4 +66,4 @@
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_os_object: "{{ topology_outputs_os_object | add_res_type('os_object_res') }}"
+    topology_outputs_os_object: "{{ topology_outputs_os_object | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"

@@ -49,4 +49,4 @@
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_docker_image: "{{ topology_outputs_docker_image | add_res_type('docker_image_res') }}"
+    topology_outputs_docker_image: "{{ topology_outputs_docker_image | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"

@@ -4,10 +4,11 @@ import json
 from six.moves import range
 
 
-def add_res_type(hosts, res_type):
+def add_res_data(hosts, res_grp, role):
     new_hosts = []
     for host in hosts:
-        host['resource_type'] = res_type
+        host['resource_group'] = res_grp
+        host['role'] = role
         new_hosts.append(host)
     return new_hosts
 
@@ -96,7 +97,7 @@ def get_host_from_uri(uri):
 def get_provider_resources(topo_output, res_type):
     provider_resources = []
     for host in topo_output:
-        if host['resource_type'] == res_type:
+        if host['resource_group'] == res_type:
             provider_resources.append(host)
     return provider_resources
 
@@ -278,7 +279,7 @@ def fetch_beaker_job_ids(topo_out):
 def get_os_server_names(topo_output):
     names = []
     for item in topo_output:
-        if item["resource_type"] == "os_server_res":
+        if item["role"] == "os_server":
             openstack_res = item.get("openstack", [])
             for os_item in openstack_res:
                 names.append(os_item["name"])

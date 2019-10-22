@@ -113,10 +113,10 @@
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_azure_vm: "{{ topology_outputs_azure_vm | add_res_type( 'azure_vm') }}"
+    topology_outputs_azure_vm: "{{ topology_outputs_azure_vm | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"
 
 
 - name: "Async:: Add type to resource"
   set_fact:
-    async_outputs_azure_vm: "{{ async_outputs_azure_vm | add_res_type( 'azure_vm') }}"
+    async_outputs_azure_vm: "{{ async_outputs_azure_vm | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"
   when: _async

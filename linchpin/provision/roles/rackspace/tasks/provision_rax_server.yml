@@ -21,4 +21,4 @@
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_rax_server: "{{ topology_outputs_rax_server | add_res_type('rax_res') }}"
+    topology_outputs_rax_server: "{{ topology_outputs_rax_server | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"

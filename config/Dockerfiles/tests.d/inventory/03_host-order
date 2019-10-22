@@ -35,10 +35,8 @@ linchpin -w . -p "${PINFILE}" -c ${CONFIG_FILE} -v up --if json "${TARGET}" 2>&1
 RC0=${?}
 
 sed -i '$ d' ${TMP_FILE}
-uhash=$(tail -n 1 ${TMP_FILE} | awk '{ print $3 }' )
-echo ${uhash}
 
-INVENTORY_FILE="./inventories/${TARGET}-${uhash}.inventory"
+INVENTORY_FILE="./inventories/${TARGET}.inventory"
 ls -l ./inventories
 ls -l ${INVENTORY_FILE}
 

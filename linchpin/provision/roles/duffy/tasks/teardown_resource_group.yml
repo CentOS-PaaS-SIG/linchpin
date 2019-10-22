@@ -27,7 +27,7 @@
 
 - name: "Build duffy teardown list"
   set_fact:
-    duffy_output_resources: "{{ topo_output_resources | get_provider_resources('duffy_res') }}"
+    duffy_output_resources: "{{ topo_output_resources | get_provider_resources('duffy') }}"
 
 
 - name: "Teardown resource definitions of current group"
