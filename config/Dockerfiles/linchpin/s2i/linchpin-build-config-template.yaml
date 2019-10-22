@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: linchpin-executor
+labels:
+  template: linchpin-executor
+
+objects:
+  - kind: ImageStream
+    apiVersion: v1
+    metadata:
+      name: "linchpin-executor"
+      annotations:
+        description: "A container used to execute linchpin commands"
+        openshift.io/display-name: "Linchpin Executor (Ephemeral)"
+        iconClass: linchpin
+        tags: "linchpin"
+        openshift.io/provider-display-name: "Red Hat, Inc."
+    spec: {}
+
+  - kind: BuildConfig
+    apiVersion: v1
+    metadata:
+      name: "linchpin-executor"
+    spec:
+      triggers:
+        - type: ConfigChange
+      source:
+        contextDir: ${REPO_CONTEXTDIR}
+        git:
+          ref: ${REPO_REF}
+          uri: ${REPO_URL}
+        type: Git
+      strategy:
+        dockerStrategy:
+          env:
+            - name: CONTAINER_NAME
+              value: linchpin-executor
+            - name: GIT_SSL_NO_VERIFY
+              value: 'true'
+        type: Docker
+      output:
+        to:
+          kind: ImageStreamTag
+          name: linchpin-executor:latest
+parameters:
+  - description: Git repository with Dockerfile and slave entrypoint.
+    displayName: Repostory URL
+    name: REPO_URL
+    value: https://github.com/CentOS-PaaS-SIG/linchpin.git
+  - description: The subdirectory inside the repo, containing the Dockerfile
+    displayName: Context Directory
+    name: REPO_CONTEXTDIR
+    value: config/Dockerfiles/linchpin
+  - description: The git ref or tag to use for customization.
+    displayName: Git Reference
+    name: REPO_REF
+    value: master
