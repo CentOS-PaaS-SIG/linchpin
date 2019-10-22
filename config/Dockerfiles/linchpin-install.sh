@@ -8,7 +8,7 @@ WORKDIR=$(pwd)
 #source ./testenv/bin/activate;
 pip3 install .;
 pip3 install .[tests];
-pip3 install .[libvirt];
+#pip3 install .[libvirt];
 #pip3 install .[beaker];
 pip3 install .[docker];
 pip3 install .[azure];

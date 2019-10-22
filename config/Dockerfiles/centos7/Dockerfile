@@ -13,6 +13,7 @@ RUN  yum update -y \
 RUN yum -y install  ansible libvirt-daemon-driver-* libvirt-daemon libvirt-daemon-kvm \
                     qemu-kvm libvirt-daemon-config-network libvirt-python \
                     libvirt-devel virt-install file openssh mkisofs \
+                    python-libvirt python3-libvirt python2-lxml python3-lxml \
                     libvirt-client net-tools git python-krbV make \
                     krb5-workstation \
                     python-requests jq buildah git which; 

@@ -8,7 +8,8 @@ WORKDIR $HOME
 RUN dnf -y install python3-pip ansible curl gcc python3-devel python3-setuptools \
                    openssl-devel libvirt-daemon-driver-* libvirt-daemon \
                    libvirt-daemon-kvm qemu-kvm libvirt-daemon-config-network \
-                   libvirt-python libvirt-python3 libvirt-devel redhat-rpm-config file \
+                   libvirt-devel redhat-rpm-config file \
+                   python-libvirt python3-libvirt python2-lxml python3-lxml \
                    openssh genisoimage libvirt-client virt-install net-tools \
                    python-krbV make krb5-workstation jq buildah \
                    libselinux-python libselinux-python3 git \
