@@ -188,7 +188,7 @@ class TinyRunDB(BaseDB):
                     de = {"resources": de}
                     tx_rec[res_idx] = de
                     with transaction(t) as tr:
-                        res = tr.update(tinySet(key, [de]), doc_ids=[run_id])
+                        res = t.update({key: [de]}, doc_ids=[run_id])
                         return res
         with transaction(t) as tr:
             update_rec = t.update(add(key, value), doc_ids=[run_id])
