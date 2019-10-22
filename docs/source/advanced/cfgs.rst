@@ -1,3 +1,5 @@
+.. _pinfile_cfgs:
+
 PinFile Configs
 ===============
 
