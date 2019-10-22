@@ -250,7 +250,7 @@ def test_lp_journal():
     x = lpa.lp_journal(targets=[provider])
     assert x.get(provider)
 
-
+"""
 @with_setup(setup_lp_api)
 def test_invoke_playbooks():
 
@@ -271,6 +271,8 @@ def test_invoke_playbooks():
                                                  console=True)
 
     assert return_code == 0
+
+"""
 
 """
 
