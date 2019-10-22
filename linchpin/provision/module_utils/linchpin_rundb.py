@@ -226,7 +226,7 @@ class TinyRunDB(BaseDB):
 
         t = self.db.table(name=table)
         if not run_id:
-            run_id = self.get_run_id(action, table)
+            run_id = self.get_run_id(table, action)
             if not run_id:
                 return (None, 0)
             record = t.get(eid=int(run_id))
