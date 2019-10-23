@@ -5,6 +5,9 @@ LABEL description "This container will verify linchpin works under centos7"
 ENV HOME=/root
 WORKDIR $HOME
 
+ENV LC_ALL=en_US.utf-8
+ENV LANG=en_US.utf-8
+
 # install python 3 dependencies
 #RUN  yum install -y epel-release
 RUN  yum update -y \
