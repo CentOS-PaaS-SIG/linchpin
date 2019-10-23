@@ -21,7 +21,7 @@ if [ -e "keys/duffy.key" ]; then
 
     # Link duffy module linchpin library
     pushd ~
-    linchpin_path=$(python -c 'import os, linchpin; print os.path.dirname(linchpin.__file__)')
+    linchpin_path=$(python3 -c 'import os, linchpin; print(os.path.dirname(linchpin.__file__))')
     popd
     if [ -n "$linchpin_path" ]; then
         pushd $linchpin_path/provision/library
