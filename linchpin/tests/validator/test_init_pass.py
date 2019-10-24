@@ -28,7 +28,7 @@ def setup_validator():
     lpc.load_config()
     lpc.load_global_evars()
     lpa = LinchpinAPI(lpc)
-    validator = Validator(lpa.ctx, lpa.pb_path, lpa.pb_ext)
+    validator = Validator(lpa.ctx, lpa.role_path, lpa.pb_ext)
 
     schema_file = 'schema.json'
     base_path = '{0}'.format(os.path.dirname(os.path.realpath(__file__)))\
@@ -100,9 +100,9 @@ def test_validate_cfgs():
 
 @with_setup(setup_validator)
 def test_find_role_path():
-    pb_path = validator._find_role_path('dummy')
+    role_path = validator._find_role_path('dummy')
 
-    assert os.path.exists(os.path.expanduser(pb_path))
+    assert os.path.exists(os.path.expanduser(role_path))
 
 
 def test_gen_error_msg():

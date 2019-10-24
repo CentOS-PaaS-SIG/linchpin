@@ -13,15 +13,15 @@ from linchpin.exceptions import TopologyError
 from linchpin.validator.anyofvalidator import AnyofValidator
 import six
 
-from linchpin.galaxy_runner import galaxy_runner
+import linchpin.galaxy_runner as galaxy_runner
 
 
 class Validator(object):
     SECTIONS = ['topology', 'layout', 'cfgs', 'hooks', 'run_id']
 
-    def __init__(self, ctx, pb_path, pb_ext):
+    def __init__(self, ctx, role_path, pb_ext):
         self.ctx = ctx
-        self.pb_path = pb_path
+        self.role_path = role_path
         self.pb_ext = pb_ext
 
 
@@ -165,9 +165,9 @@ class Validator(object):
         :param topo_data topology data from the pinfile
         """
 
-        pb_path = self._find_role_path("common")
+        role_path = self._find_role_path("common")
         try:
-            sp = "{0}/files/topo-schema.json".format(pb_path)
+            sp = "{0}/files/topo-schema.json".format(role_path)
             schema = json.load(open(sp))
         except Exception as e:
             raise LinchpinError("Error with schema: '{0}'"
@@ -199,10 +199,10 @@ class Validator(object):
         res_grp_type = (res_grp.get('resource_group_type') or
                         res_grp.get('res_group_type'))
 
-        pb_path = self._find_role_path(res_grp_type)
+        role_path = self._find_role_path(res_grp_type)
 
         try:
-            sp = "{0}/files/schema.json".format(pb_path,
+            sp = "{0}/files/schema.json".format(role_path,
                                                 res_grp_type)
             schema = json.load(open(sp))
         except Exception as e:
@@ -240,9 +240,9 @@ class Validator(object):
         """
 
         # the layout schema is in the 'common' role
-        pb_path = self._find_role_path("common")
+        role_path = self._find_role_path("common")
         try:
-            sp = "{0}/files/schema.json".format(pb_path)
+            sp = "{0}/files/schema.json".format(role_path)
 
             schema = json.load(open(sp))
         except Exception as e:
@@ -258,27 +258,28 @@ class Validator(object):
         pass
 
 
-    def _find_role_path(self, playbook):
+    def _find_role_path(self, role):
         """
-        returns the full path to a given playbook
+        returns the full path to a given role
 
-        :params playbook: name of the playbook
+        :params role: name of the role
         """
-
-        for path in self.pb_path:
-            p = '{0}/{1}/{2}'.format(path, 'roles', playbook)
+        # if the role exists, this will not return an error
+        for path in self.role_path:
+            p = '{0}/{1}'.format(path, role)
 
             if os.path.exists(os.path.expanduser(p)):
                 return p
-        if galaxy_runner(playbook):
-            for path in self.pb_path:
-                p = '{0}/{1}/{2}'.format(path, 'roles', playbook)
+
+        if galaxy_runner.install(role):
+            for path in self.role_path:
+                p = '{0}/{1}'.format(path, role)
 
                 if os.path.exists(os.path.expanduser(p)):
                     return p
 
-        raise LinchpinError("playbook '{0}' not found in"
-                            " path: {1}".format(playbook, self.pb_path))
+        raise LinchpinError("role '{0}' not found in"
+                            " path: {1}".format(role, self.role_path))
 
 
     def _gen_error_msg(self, prefix, section, error):
