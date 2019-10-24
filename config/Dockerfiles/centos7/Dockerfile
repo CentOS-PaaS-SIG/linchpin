@@ -9,7 +9,7 @@ ENV LC_ALL=en_US.utf-8
 ENV LANG=en_US.utf-8
 
 # install python 3 dependencies
-#RUN  yum install -y epel-release
+RUN  yum install -y epel-release jq
 RUN  yum update -y \
      && yum install -y python3 python3-pip python3-devel python3-setuptools 
 
