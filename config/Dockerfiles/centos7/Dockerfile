@@ -17,7 +17,7 @@ RUN yum -y install  ansible libvirt-daemon-driver-* libvirt-daemon libvirt-daemo
                     qemu-kvm libvirt-daemon-config-network libvirt-python \
                     libvirt-devel virt-install file openssh mkisofs \
                     python-libvirt python3-libvirt python2-lxml python3-lxml \
-                    libvirt-client net-tools git python-krbV make \
+                    libvirt-client net-tools git python-krbV make libselinux-python \
                     krb5-workstation \
                     python-requests jq buildah git which; 
 RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; \
