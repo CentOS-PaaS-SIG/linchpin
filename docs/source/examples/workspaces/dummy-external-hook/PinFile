@@ -12,4 +12,4 @@ dummy_target:
         context: False
         actions:
           - playbook: ex1.yaml
-          - playbook: ex2.yaml
+#          - playbook: ex2.yaml
