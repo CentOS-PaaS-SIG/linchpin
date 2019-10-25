@@ -12,4 +12,4 @@
 
 - name: "output vars"
   set_fact:
-    topology_outputs: {}
+    topology_outputs: []

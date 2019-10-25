@@ -6,10 +6,6 @@
 # NOTE: If there's async or not, lets just use topology_outputs_<resource> values
 # and do the updating after all data collection is complete.
 # ^^ I don't know what this comment means because it seems like the updating is done first
-- name: "Declare topology_outputs"
-  set_fact:
-    topology_outputs: []
-
 - name: "Add dummy_res"
   set_fact:
     topology_outputs: "{{ topology_outputs_dummy }}"
