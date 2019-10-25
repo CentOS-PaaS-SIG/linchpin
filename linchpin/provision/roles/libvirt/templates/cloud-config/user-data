@@ -23,6 +23,11 @@ users:
 timezone: UTC
 
 runcmd:
+{% if res_def['cloud_config']['run_commands'] is defined %}
+{% for item in res_def['cloud_config']['run_commands'] %}
+ - {{ item }}
+{% endfor %}
+{% endif %}
  - systemctl disable cloud-init.service
  - systemctl disable cloud-init-local.service
  - systemctl disable cloud-final.service

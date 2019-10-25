@@ -484,7 +484,7 @@
 
 - name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
-    /usr/sbin/arp -an | grep -F {{ mac }} | cut -f 2 -d "(" | cut -f 1 -d ")"
+    /usr/sbin/ip n | grep -F {{ mac }} | awk {'print $1'} | grep -v ^fe80
   with_items:
     - "{{ macs }}"
   loop_control:
@@ -508,7 +508,7 @@
 
 - name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
-    /usr/sbin/arp -an | grep -F {{ mac }} | cut -f 2 -d "(" | cut -f 1 -d ")"
+    /usr/sbin/ip n | grep -F {{ mac }} | awk {'print $1'} | grep -v ^fe80
   with_items:
     - "{{ macs }}"
   loop_control:
