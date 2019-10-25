@@ -51,7 +51,7 @@
   virt:
     name: "{{ libvirt_resource_name }}{{ instance[2] }}{{ instance[1] }}"
     state: destroyed
-    uri: "{{ instance[1]['uri'] }}"
+    uri: "{{ instance[0]['uri'] }}"
   with_nested:
     - ["{{ res_def }}"]
     - "{{ res_count }}"
