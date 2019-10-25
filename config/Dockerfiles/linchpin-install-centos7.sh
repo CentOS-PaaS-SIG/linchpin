@@ -2,10 +2,10 @@
 
 WORKDIR=$(pwd)
 
-pushd config/Dockerfiles
-make pip_install.sh
-./pip_install.sh
-popd
+#pushd config/Dockerfiles
+#make pip_install.sh
+#./pip_install.sh
+#popd
 
 pip install . --ignore-installed
 pip install .[tests]
