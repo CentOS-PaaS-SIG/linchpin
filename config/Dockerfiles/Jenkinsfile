@@ -266,9 +266,18 @@ def execute_test(String podname, String container) {
             currentStage = container + "-install"
             stage(currentStage) {
                 dir('linchpin') {
+                if (currentStage.contains("centos7")){
+                  // need to add seperate installation script for centos since 
+                  // centos7 does not yet support python3-libselinux
                   pipelineUtils.executeInContainer(currentStage,
                                                    container,
+                                                   "./config/Dockerfiles/linchpin-install-centos7.sh")
+                }
+                else {
+                                   pipelineUtils.executeInContainer(currentStage,
+                                                   container,
                                                    "./config/Dockerfiles/linchpin-install.sh")
+                }
                 }
             }
             currentStage = container + "-test"
