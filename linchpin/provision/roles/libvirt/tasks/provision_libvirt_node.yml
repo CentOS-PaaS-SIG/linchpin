@@ -51,7 +51,7 @@
 - name: "define node template"
   template:
     src: "../templates/libvirt_node.xml.j2"
-    dest: "/tmp/{{ libvirt_resource_name }}{{ definition[5] }}{{ definition[3] }}"
+    dest: "/tmp/{{ libvirt_resource_name }}{{ definition[4] }}{{ definition[2] }}"
   with_nested:
     - ["{{ res_def }}"]
     - "{{ res_count }}"
@@ -259,9 +259,8 @@
     name: "{{ libvirt_resource_name }}"
     command: define
     xml: "{{ lookup('template', vm_xml) }}"
-    uri: "{{ definition[0] }}"
+    uri: "{{ definition[0]['uri'] }}"
   with_nested:
-    - ["{{ res_def['uri'] }}"]
     - ["{{ res_def }}"]
     - "{{ res_count }}"
     - ["{{ local_image_path }}"]
