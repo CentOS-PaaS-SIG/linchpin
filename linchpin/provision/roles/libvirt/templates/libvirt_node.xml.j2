@@ -1,17 +1,17 @@
-<domain type='{{ definition[1]['driver'] }}'>
-  <name>{{ libvirt_resource_name }}{{ definition[5] }}{{ definition[2] }}</name>
-  <memory unit='KiB'>{{ definition[1]['memory'] * 1024 | int }}</memory>
-  <vcpu placement='static'>{{ definition[1]['vcpus'] }}</vcpu>
+<domain type='{{ definition[0]['driver'] }}'>
+  <name>{{ libvirt_resource_name }}{{ definition[4] }}{{ definition[1] }}</name>
+  <memory unit='KiB'>{{ definition[0]['memory'] * 1024 | int }}</memory>
+  <vcpu placement='static'>{{ definition[0]['vcpus'] }}</vcpu>
   <os>
-    <type arch='{{ definition[1]['arch'] }}'>hvm</type>
-    <boot dev='{{ definition[1]['boot_dev'] }}'/>
+    <type arch='{{ definition[0]['arch'] }}'>hvm</type>
+    <boot dev='{{ definition[0]['boot_dev'] }}'/>
   </os>
   <features>
     <acpi/>
     <apic/>
     <pae/>
   </features>
-  <cpu mode='{{ definition[7] }}'>
+  <cpu mode='{{ definition[6] }}'>
     <model fallback='allow' />
   </cpu>
   <clock offset='utc'/>
@@ -19,7 +19,7 @@
   <on_reboot>restart</on_reboot>
   <on_crash>destroy</on_crash>
   <devices>
-{% if definition[1]['driver'] == 'qemu' %}
+{% if definition[0]['driver'] == 'qemu' %}
     <emulator>/usr/bin/qemu-system-x86_64</emulator>
 {% else %}
     <emulator>{{ qemu_path }}qemu-kvm</emulator>
@@ -28,29 +28,29 @@
 {% if virt_type == 'cloud-init' %}
     <disk type='file' device='cdrom'>
       <driver name='qemu' type='raw'/>
-      <source file='/tmp/vm-{{ libvirt_resource_name }}{{ definition[5] }}{{ definition[2] }}.iso'/>
+      <source file='/tmp/vm-{{ libvirt_resource_name }}{{ definition[4] }}{{ definition[1] }}.iso'/>
       <backingStore/>
       <target dev='hda' bus='ide'/>
       <readonly/>
     </disk>
 {% endif %}
     <disk type='file' device='disk'>
-      <driver name='qemu' type='qcow2' cache='{{ definition[6] }}'/>
-      <source file='{{ definition[3] }}/{{ libvirt_resource_name }}{{ definition[5] }}{{ definition[2] }}.{{ definition[4] }}'/>
-      {% if definition[8] == 'virtio_blk' %}
+      <driver name='qemu' type='qcow2' cache='{{ definition[5] }}'/>
+      <source file='{{ definition[2] }}/{{ libvirt_resource_name }}{{ definition[4] }}{{ definition[1] }}.{{ definition[3] }}'/>
+      {% if definition[7] == 'virtio_blk' %}
       <target dev='vda' bus='virtio'/>
       {% else %}
       <target dev='sda' bus='scsi'/>
       {% endif %}
     </disk>
-    {% if definition[8] == 'virtio_scsi' %}
+    {% if definition[7] == 'virtio_scsi' %}
       <controller type='scsi' model='virtio-scsi' />
     {% endif %}
-    {% for storage_def in definition[1]['storage'] %}
+    {% for storage_def in definition[0]['storage'] %}
       <disk type='file' device='disk'>
         <driver name='qemu' type='qcow2' cache="{{ storage_def['cache'] | default('none') }}"/>
         {% if storage_def['source'] is not defined %}
-          <source file='{{ libvirt_image_path }}/{{ libvirt_resource_name }}{{ definition[5] }}{{ definition[2] }}{{ definition[5] }}{{ storage_def['name'] }}.qcow2' />
+          <source file='{{ libvirt_image_path }}/{{ libvirt_resource_name }}{{ definition[4] }}{{ definition[1] }}{{ definition[4] }}{{ storage_def['name'] }}.qcow2' />
         {% elif storage_def['source']['file'] is defined %}
           {% if storage_def['source']['file'].startswith('/') %}
             <source file='{{ storage_def['source']['file'] }}'/>
@@ -77,11 +77,11 @@
           <shareable />
         {% endif %}
       </disk>
-      {% if storage_def['disk_type'] is defined and storage_def['disk_type'] == 'virtio_scsi' and definition[8] != 'virtio_scsi' %}
+      {% if storage_def['disk_type'] is defined and storage_def['disk_type'] == 'virtio_scsi' and definition[7] != 'virtio_scsi' %}
         <controller type='scsi' model='virtio-scsi' />
       {% endif %}
     {% endfor %}
-{% for network in definition[1]['networks'] %}
+{% for network in definition[0]['networks'] %}
     <interface type='network'>
       <model type='virtio'/>
       <source network='{{ network['name'] }}'/>
