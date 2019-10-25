@@ -1,26 +1,28 @@
 FROM centos:7
 LABEL maintainer "https://github.com/CentOS-PaaS-SIG/linchpin"
-LABEL description "This container will verify linchpin works under centos7"
+LABEL description "This container will verify linchpin works under Centos7"
 
 ENV HOME=/root
 WORKDIR $HOME
 
-ENV LC_ALL=en_US.utf-8
-ENV LANG=en_US.utf-8
-
-# install python 3 dependencies
-RUN  yum install -y epel-release jq
-RUN  yum update -y \
-     && yum install -y python3 python3-pip python3-devel python3-setuptools 
-
-RUN yum -y install  ansible libvirt-daemon-driver-* libvirt-daemon libvirt-daemon-kvm \
+COPY centos7/centos7-pike.repo /etc/yum.repos.d/centos7-pike.repo
+RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+RUN yum -y install python-pip \
+    && pip install -U pip \
+    && pip install -U setuptools \
+    && pip install -U pygithub \
+    && pip install -U openstackclient boto>=2.49.0 \
+    && yum -y install curl \
+    && curl -o /etc/yum.repos.d/herlo-linchpin-epel7.repo \
+    https://copr.fedorainfracloud.org/coprs/herlo/linchpin-epel7/repo/epel-7/herlo-linchpin-epel7-epel-7.repo; \
+    yum -y install gcc python-devel openssl-devel ansible \
+                    libvirt-daemon-driver-* libvirt-daemon libvirt-daemon-kvm \
                     qemu-kvm libvirt-daemon-config-network libvirt-python \
                     libvirt-devel virt-install file openssh mkisofs \
-                    python-libvirt python3-libvirt python2-lxml python3-lxml \
-                    libvirt-client net-tools git python-krbV make libselinux-python \
-                    krb5-workstation \
-                    python-requests jq buildah git which; 
-RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; \
+                    libvirt-client net-tools git python-krbV make \
+                    libxslt-python krb5-workstation \
+                    python-requests jq buildah git which; \
+    (cd /lib/systemd/system/sysinit.target.wants/; for i in *; \
      do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
     rm -f /lib/systemd/system/multi-user.target.wants/*;\
     rm -f /etc/systemd/system/*.wants/*;\

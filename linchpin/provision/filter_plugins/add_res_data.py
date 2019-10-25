@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-#import linchpin.FilterUtils.FilterUtils as filter_utils
+# import linchpin.FilterUtils.FilterUtils as filter_utils
+
 
 def add_res_data(hosts, res_grp, role):
     new_hosts = []
