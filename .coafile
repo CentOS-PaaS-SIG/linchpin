@@ -1,0 +1,47 @@
+[python]
+files = linchpin/**.py
+language = Python
+max_line_length = 80
+use_spaces = True
+
+[python.looks]
+# Patches may conflict with autopep8 so putting them in own section so they
+# will be executed sequentially; also we need the LineLengthBear to double
+# check the line length because PEP8Bear sometimes isn't able to correct the
+# linelength.
+bears = PyImportSortBear, SpaceConsistencyBear
+default_actions = *: ShowPatchAction
+preferred_quotation = '
+
+[python.unused]
+# Do not set default_action to ApplyPatchAction as it may lead to some
+# required imports being removed which might result in coala behaving weirdly.
+default_action = *: ShowPatchAction
+bears = PyUnusedCodeBear
+language = Python
+
+[docstring]
+bears = PyDocStyleBear
+files = linchpin/**/*.py
+
+[python.linting]
+bears = PEP8Bear, PycodestyleBear, PyLintBear
+default_actions = *: ShowPatchAction
+ylint_rcfile = .pylintrc
+
+[python.style]
+bear = YapfBear
+spaces_around_power_operator = False
+coalesce_brackets = True
+
+[python.lines]
+# Sometimes autopep8 makes too long lines, need to check after!
+bears = LineLengthBear, LineCountBear
+ignore_length_regex = ^.*https?://
+max_lines_per_file = 1000
+
+[python.security]
+bear = BanditBear
+
+[python.health]
+bear = MypyBear, RadonBear, VultureBear, CPDBear
