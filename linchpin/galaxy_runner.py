@@ -36,10 +36,10 @@ def get_role_paths():
     for line in proc.stderr:
         if line.strip().startswith(b'[WARNING]: - the configured path'):
             before = b'the configured path '
-            after = b' does not exist'
             start_idx = line.index(before) + len(before) - 1
-            end_idx = line.index(after)
-            path = line[start_idx:end_idx].strip()
+            path = line[start_idx:].strip()
+            end_idx = path.index(b' ')
+            path = path[:end_idx].strip()
             paths.append(path.decode('utf-8'))
 
     return paths
