@@ -84,7 +84,7 @@ azure_vm:
           - vm_name: "{{ distro }}-TestAzureAuto"
             resource_group: "ccit"
             role: azure_vm
-# This part below is now required, but you can still specify it
+# This part below is not required, but you can still specify it
             vm_size: "Standard_DS1_v2"
             private_image: "rhcostestimage"
             # If you have both private and public images
@@ -99,6 +99,8 @@ azure_vm:
               # vm_username: linchpin&&&vm_password: IloveLinchpin!
             vm_username: linchpin 
             vm_password: IloveLinchpin!
+            #you can also use public-key-authentication by below
+            #public_key: "Your key goes here"
             deepclean: True
             #With deepclean you can clean the disk attached on the vm if you use private image
             delete_all_attached: all_autocreated
@@ -111,6 +113,7 @@ azure_vm:
           profile: key
 
 #This is the minimum viable input for azure_vm
+# Default setting use username and password, no public key
 azure_vm_test:
   topology:
     topology_name: azure_vm_test

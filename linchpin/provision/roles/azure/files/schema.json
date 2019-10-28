@@ -93,6 +93,10 @@
                                 "azure_vm"
                             ]
                         },
+                        "public_key":{
+                            "type": "string",
+                            "required": false
+                        },
                         "deepclean": {
                             "type":"boolean",
                             "required":false
