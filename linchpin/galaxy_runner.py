@@ -19,6 +19,11 @@ def get_role_paths():
     In the future, we should read the ansible.cfg and combine it with
     linchpin.conf, since this data is set in ansible.cfg.
     """
+    """
+    [WARNING]: - the configured path /usr/share/ansible/roles does not exist.
+
+    [WARNING]: - the configured path /etc/ansible/roles does not exist.
+    """
     paths = []
 
     cmd = "ansible-galaxy list"
@@ -33,13 +38,6 @@ def get_role_paths():
             path = line[2:].strip()
             paths.append(path.decode('utf-8'))
 
-    for line in proc.stderr:
-        if line.strip().startswith(b'[WARNING]: - the configured path'):
-            before = b'the configured path '
-            start_idx = line.index(before) + len(before) - 1
-            path = line[start_idx:].strip()
-            end_idx = path.index(b' ')
-            path = path[:end_idx].strip()
-            paths.append(path.decode('utf-8'))
-
+    paths.extend(["/usr/share/ansible/roles",
+                  "/etc/ansible/roles"])
     return paths
