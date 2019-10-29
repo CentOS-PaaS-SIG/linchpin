@@ -869,6 +869,11 @@ class LinchpinAPI(object):
 
             target_data[target] = field_data
 
+        for key in list(target_data.keys()):
+            resources = target_data[key]['outputs']['resources']
+            if resources is str:
+                target_data[key]['outputs']['resources'] = json.loads(resources)
+
         return target_data
 
     def _get_run_data_by_txid(self, tx_id=None):
