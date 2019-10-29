@@ -37,6 +37,24 @@ A :term:`PinFile` takes a :term:`topology` and an optional :term:`layout`, among
 
 The :term:`PinFile` collects the given :term:`topology` and :term:`layout` into one place. Many :term:`targets <target>` can be referenced in a single :term:`PinFile`.
 
+To use a PinFile with an Ansible Galaxy role, simply provide the role name as the `resource_group_type`.  An example is shown below.
+
+.. code-block:: yaml
+
+    dummy-new:
+      topology:
+        topology_name: "dummy_cluster" # topology name
+        resource_groups:
+          - resource_group_name: "dummy"
+            resource_group_type: "14rcole.ansible_role_lp_dummy"
+            resource_definitions:
+              - name: "{{ distro | default('') }}web"
+                role: "dummy_node"
+                count: 3
+              - name: "{{ distro | default('') }}test"
+                role: "dummy_node"
+                count: 1
+
 More detail about the PinFile can be found in the :ref:`res_pinfiles` document.
 
 Additional PinFile examples can be found in :dirs1.5:`the source code <workspace>`

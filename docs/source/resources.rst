@@ -5,6 +5,8 @@ Topology
 
 .. include:: includes/topologies.rst
 
+.. _inv_layouts:
+
 Inventory Layout
 ````````````````
 
