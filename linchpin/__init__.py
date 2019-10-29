@@ -870,9 +870,9 @@ class LinchpinAPI(object):
             target_data[target] = field_data
 
         for key in list(target_data.keys()):
-            resources = target_data[key]['outputs']['resources']
-            if resources is str:
-                target_data[key]['outputs']['resources'] = json.loads(resources)
+            rs = target_data[key]['outputs']['resources']
+            if type(rs) == str:
+                target_data[key]['outputs']['resources'] = ast.literal_eval(rs)
 
         return target_data
 
