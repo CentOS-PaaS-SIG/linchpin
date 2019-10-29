@@ -130,6 +130,9 @@
   when:
     - state == 'present'
 
+  # in the future, we may have to come up with a way of doing this that doesn't rely on the role for the first resource definition
+  # beaker only has one role currently and because of the recipeset syntax, there should never be more than one resource definition anyway
+  # But if either of these facts change, this will need to be reworked
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_beaker_server: "{{ topology_outputs_beaker_server | add_res_data(lookup('vars', 'role_name'), res_defs['resource_definitions']['role']) }}"
+    topology_outputs_beaker_server: "{{ topology_outputs_beaker_server | add_res_data(lookup('vars', 'role_name'), res_defs['resource_definitions'][0]['role']) }}"
