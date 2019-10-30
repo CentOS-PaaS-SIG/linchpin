@@ -1,4 +1,5 @@
 include requirements.txt
+include requirements-azure.txt
 include README.rst
 include CONTRIBUTING.rst
 include LICENSE
