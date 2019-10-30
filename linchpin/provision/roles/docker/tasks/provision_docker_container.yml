@@ -33,4 +33,4 @@
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_docker_container: "{{ topology_outputs_docker_container | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"
+    topology_outputs_docker_container: "{{ topology_outputs_docker_container | add_res_data(res_grp_type, res_def['role']) }}"

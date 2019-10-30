@@ -42,10 +42,10 @@
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_azure_vn: "{{ topology_outputs_azure_vn | add_res_data(lookup('vars', 'role_name'),'azure_virtual_network') }}"
+    topology_outputs_azure_vn: "{{ topology_outputs_azure_vn | add_res_data(res_grp_type, 'azure_virtual_network') }}"
 
 
 - name: "Async:: Add type to resource"
   set_fact:
-    async_outputs_azure_vn: "{{ async_outputs_azure_vn | add_res_data(lookup('vars', 'role_name'), 'azure_virtual_network') }}"
+    async_outputs_azure_vn: "{{ async_outputs_azure_vn | add_res_data(res_grp_type, 'azure_virtual_network') }}"
   when: _async

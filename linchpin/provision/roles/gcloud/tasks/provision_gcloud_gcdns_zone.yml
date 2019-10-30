@@ -14,8 +14,9 @@
 - name: "Appending outputitem to topology_outputs"
   set_fact:
     topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce + [res_def_output] }}"
-  when: not _async
+  when: not _async and state == 'present'
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"
+    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce | add_res_data(res_grp_type, res_def['role']) }}"
+  when: state == 'present'

@@ -106,7 +106,7 @@ In order to pass data from your role to LinchPin for inventory generation, first
 
     - name: "Add type to resource"
       set_fact:
-      topology_outputs: "{{ topology_outputs }} + {{ res_def_output | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"
+      topology_outputs: "{{ topology_outputs }} + {{ res_def_output | add_res_data(res_grp_name, res_def['role']) }}"
 
 
 .. note:: Be sure to APPEND the data! If you simply assign the output to `topology_outputs`,

@@ -687,6 +687,7 @@ class LinchpinAPI(object):
             # It's possible that a flag might allow more targets to run, then
             # return an error code at the end.
 
+
             # add post provision hook for inventory generation
             if (('inv' in self.pb_hooks) and not self.get_cfg('hook_flags',
                                                               'no_hooks')):

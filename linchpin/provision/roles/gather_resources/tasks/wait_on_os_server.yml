@@ -34,4 +34,4 @@
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_os_server: "{{ topology_outputs_os_server | add_res_data(lookup('vars', 'role_name'), 'os_server') }}"
+    topology_outputs_os_server: "{{ topology_outputs_os_server | add_res_data(res_grp_type, 'os_server') }}"
