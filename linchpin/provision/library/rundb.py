@@ -481,4 +481,5 @@ def main():
         module.fail_json(msg=str(e))
 
 
-main()
+if __name__ == '__main__':
+    main()
