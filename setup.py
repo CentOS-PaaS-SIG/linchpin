@@ -24,8 +24,8 @@ with io.open(os.path.join(dir_path, 'README.rst'), encoding='utf-8') as f:
 with io.open(os.path.join(dir_path, 'requirements.txt')) as f:
     required = f.read().splitlines()
 
-setup_required = list(required)
-setup_required.append('pytest-runner')
+install_required = list(required)
+install_required.append('pytest-runner')
 
 ignore_dir = ['.git']
 
@@ -39,8 +39,7 @@ setup(
     author='samvaran kashyap rallabandi',
     author_email='linchpin@redhat.com',
     url='http://linchpin.readthedocs.io/',
-    setup_requires=setup_required,
-    install_requires=required,
+    install_requires=install_required,
     entry_points='''
         [console_scripts]
         linchpin=linchpin.shell:runcli
