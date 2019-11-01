@@ -165,6 +165,8 @@
     key: "outputs"
     value: "{{ value }}"
     run_id: "{{ rundb_id }}"
+    db_type: "{{ rundb_type }}"
+    db_schema: "{{ rundb_schema }}"
 
 - name: "Create resources directory (v1.0.x compatibility)"
   file:
@@ -215,3 +217,5 @@
     key: "outputs"
     value: "[{{ {'inventory_path': [inventory_path]} }}]"
     run_id: "{{ rundb_id }}"
+    db_type: "{{ rundb_type }}"
+    db_schema: "{{ rundb_schema }}"

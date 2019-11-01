@@ -1,6 +1,5 @@
 from __future__ import absolute_import
-from abc import ABCMeta, abstractmethod
-import six
+
 from tinydb import TinyDB
 from tinydb.storages import JSONStorage
 from tinydb.operations import add
@@ -8,121 +7,8 @@ from tinydb.operations import set as tinySet
 from tinydb.middlewares import CachingMiddleware
 from six.moves import range
 
-
-class RunDB(six.with_metaclass(ABCMeta, object)):
-
-    @abstractmethod
-    def init_table(self, table):
-        return self.driver.init_table(table)
-
-    @abstractmethod
-    def update_record(self, table, run_id, key, value):
-        return self.driver.update_record(table, run_id, key, value)
-
-    @abstractmethod
-    def get_tx_record(self, tx_id):
-        return self.driver.get_tx_record(tx_id)
-
-    def get_tx_records(self, tx_ids):
-        return self.driver.get_tx_records(tx_ids)
-
-    @abstractmethod
-    def get_run_id(self, table, action='up'):
-        return self.driver.get_run_id(table, action=action)
-
-    @abstractmethod
-    def get_record(self, table, action='up', run_id=None):
-        return self.driver.get_record(table, action=action, run_id=run_id)
-
-    @abstractmethod
-    def get_records(self, table=[], count=10):
-        return self.driver.get_records(table=table, count=count)
-
-    @abstractmethod
-    def get_tables(self):
-        return self.driver.get_tables()
-
-    @abstractmethod
-    def remove_record(self, table, key, value):
-        return self.driver.remove_record(table, key, value)
-
-    @abstractmethod
-    def search(self, table, key):
-        return self.driver.search(table, key)
-
-    @abstractmethod
-    def query(self, table, query_info):
-        return self.driver.query(table, query_info)
-
-    @abstractmethod
-    def purge(self, table=None):
-        return self.driver.purge(table)
-
-
-class BaseDB(RunDB):
-
-    def __init__(self, driver, conn_str):
-
-        self.name = 'BaseDB'
-        self.conn_str = conn_str
-        self.driver = driver(conn_str)
-
-    def __str__(self):
-        return self.driver.__str__()
-
-    @property
-    def schema(self):
-        return self.driver.schema
-
-    @schema.setter
-    def schema(self, schema):
-        self.driver.schema = schema
-
-    def init_table(self, table):
-        return self.driver.init_table(table)
-
-    def update_record(self, table, run_id, key, value):
-        return self.driver.update_record(table, run_id, key, value)
-
-    def get_tx_record(self, tx_id):
-        return self.driver.get_tx_record(tx_id)
-
-    def get_tx_records(self, tx_ids):
-        return self.driver.get_tx_records(tx_ids)
-
-    def get_run_id(self, table, action='up'):
-        return self.driver.get_run_id(table, action=action)
-
-    def get_record(self, table, action='up', run_id=None):
-        return self.driver.get_record(table, action=action, run_id=run_id)
-
-    def get_records(self, table=[], count=10):
-        return self.driver.get_records(table=table, count=count)
-
-    def get_tables(self):
-        return self.driver.get_tables()
-
-    def remove_record(self, table, key, value):
-        return self.driver.remove_record(table, key, value)
-
-    def search(self, table, key):
-        return self.driver.search(table, key)
-
-    def query(self, table, query_info):
-        return self.driver.query(table, query_info)
-
-    def purge(self, table=None):
-        return self.driver.purge(table)
-
-
-
-def usedb(func):
-    def func_wrapper(*args, **kwargs):
-        args[0]._opendb()
-        x = func(*args, **kwargs)
-        args[0]._closedb()
-        return x
-    return func_wrapper
+from . import usedb
+from .basedb import BaseDB
 
 
 class TinyRunDB(BaseDB):
@@ -135,7 +21,7 @@ class TinyRunDB(BaseDB):
 
     def _opendb(self):
         self.middleware = CachingMiddleware(JSONStorage)
-        self.middleware.WRITE_CACHE_SIZE = 500
+        self.middleware.WRITE_CACHE_SIZE = 4096
         self.db = TinyDB(self.conn_str, storage=self.middleware,
                          default_table=self.default_table)
 
@@ -184,21 +70,22 @@ class TinyRunDB(BaseDB):
                     tx_rec[res_idx] = de
                     res = t.update(tinySet(key, [de]), doc_ids=[run_id])
                     return res
-        return t.update(add(key, value), doc_ids=[run_id])
+        changed = t.update(add(key, value), doc_ids=[run_id])
+        return changed
 
 
     @usedb
-    def get_tx_record(self, tx_id):
+    def get_tx_record(self, table, tx_id):
 
-        t = self.db.table(name='linchpin')
+        t = self.db.table(name=table)
         return t.get(doc_id=tx_id)
 
 
     @usedb
-    def get_tx_records(self, tx_ids):
+    def get_tx_records(self, table, tx_ids):
 
         txs = {}
-        t = self.db.table(name='linchpin')
+        t = self.db.table(name=table)
         for tx_id in tx_ids:
             txs[tx_id] = t.get(doc_id=tx_id)
 
@@ -222,10 +109,14 @@ class TinyRunDB(BaseDB):
 
 
     @usedb
-    def get_record(self, table, action='up', run_id=None):
+    def get_record(self, table, action=None, run_id=None):
 
         t = self.db.table(name=table)
-        if not run_id:
+        if run_id:
+            record = t.get(eid=int(run_id))
+            if record:
+                return(record, int(run_id))
+        if action:
             run_id = self.get_run_id(table, action)
             if not run_id:
                 return (None, 0)
@@ -233,10 +124,11 @@ class TinyRunDB(BaseDB):
             if record and record['action'] == action:
                 return (record, int(run_id))
         else:
-            record = t.get(eid=int(run_id))
-            if record:
-                return(record, int(run_id))
+            record = t.get(doc_id=len(t))
+            run_id = record['run_id']
 
+        if record:
+            return (record, int(run_id))
         return (None, 0)
 
 
@@ -288,12 +180,3 @@ class TinyRunDB(BaseDB):
 
     def _closedb(self):
         self.db.close()
-
-
-DB_DRIVERS = {
-    "TinyRunDB": TinyRunDB,
-}
-
-
-def get_all_drivers():
-    return DB_DRIVERS
