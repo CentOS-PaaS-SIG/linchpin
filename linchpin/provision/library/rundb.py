@@ -5,7 +5,11 @@ import os
 import ast
 import json
 from ansible.module_utils.basic import AnsibleModule
-from ..module_utils.linchpin_rundb import TinyRunDB, BaseDB
+
+try:
+    from ..module_utils.linchpin_rundb import TinyRunDB, BaseDB
+except Exception:
+    from linchpin.linchpin_rundb import TinyRunDB, BaseDB
 
 DB_DRIVERS = {
     "TinyRunDB": TinyRunDB,
