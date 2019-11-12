@@ -84,6 +84,7 @@ p_providers = ['__RELEASE__':
                  "^docs/source/examples/workspace/PinFile.azure.yml",
                  "^config/Dockerfiles/tests.d/(general|inventory)/.*",
                  "^config/Dockerfiles/tests.d/azure/.*",
+                 "^linchpin/requirements-azure.txt",
                  "linchpin/version.py"],
                'gcloud':
                 ["^linchpin/provision/roles/gcloud/.*",
