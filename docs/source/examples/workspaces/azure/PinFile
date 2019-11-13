@@ -127,3 +127,28 @@ azure_vm_test:
         credentials:
           filename: azure.key
           profile: key
+
+azure_multi_vm:
+  topology:
+    topology_name: azure_vm
+    resource_groups:
+      - resource_group_name: "azure"
+        resource_group_type: "azure"
+        resource_definitions:
+          - vm_name: "{{ distro }}-TestMultiVm"
+            count: 4
+            role: azure_vm
+            resource_group: "ccit"
+        credentials:
+          filename: azure.key
+          profile: key
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        example-node:
+          count: 4
+          host_groups:
+            - example
+
