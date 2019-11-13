@@ -295,7 +295,6 @@ class TinyRunDB(BaseDB):
     def _closedb(self):
         self.db.close()
 
-
 DB_DRIVERS = {
     "TinyRunDB": TinyRunDB,
 }
