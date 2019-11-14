@@ -22,9 +22,12 @@ STABLE_LABEL = "stable-" + env.ghprbTargetBranch
 tagMap = [:]
 
 // Initialize
-tagMap['fedora29'] = STABLE_LABEL
 tagMap['fedora30'] = STABLE_LABEL
+tagMap['fedora31'] = STABLE_LABEL
 tagMap['centos7'] = STABLE_LABEL
+tagMap['centos8'] = STABLE_LABEL
+tagMap['rhel7'] = STABLE_LABEL
+tagMap['rhel8'] = STABLE_LABEL
 
 // Provider: [ PATH/IN/REPO to match, ]
 p_providers = ['__RELEASE__':
@@ -229,17 +232,6 @@ pipeline {
                 }
             }
         }
-        stage("fedora29 image build") {
-            when {
-                // Only build if we have related files in changeset
-                changeset "config/Dockerfiles/fedora29/**"
-            }
-            steps {
-                script {
-                    tagMap['fedora29'] = pipelineUtils.buildImage(openshiftProject, "fedora29")
-                }
-            }
-        }
         stage("fedora30 image build") {
             when {
                 // Only build if we have related files in changeset
@@ -251,6 +243,17 @@ pipeline {
                 }
             }
         }
+        stage("fedora31 image build") {
+            when {
+                // Only build if we have related files in changeset
+                changeset "config/Dockerfiles/fedora31/**"
+            }
+            steps {
+                script {
+                    tagMap['fedora31'] = pipelineUtils.buildImage(openshiftProject, "fedora31")
+                }
+            }
+        }
         stage("centos7 image build") {
             when {
                 // Only build if we have related files in changeset
@@ -259,6 +262,39 @@ pipeline {
             steps {
                 script {
                     tagMap['centos7'] = pipelineUtils.buildImage(openshiftProject, "centos7")
+                }
+            }
+        }
+        stage("centos8 image build") {
+            when {
+                // Only build if we have related files in changeset
+                changeset "config/Dockerfiles/centos8/**"
+            }
+            steps {
+                script {
+                    tagMap['centos8'] = pipelineUtils.buildImage(openshiftProject, "centos8")
+                }
+            }
+        }
+        stage("rhel7 image build") {
+            when {
+                // Only build if we have related files in changeset
+                changeset "config/Dockerfiles/rhel7/**"
+            }
+            steps {
+                script {
+                    tagMap['rhel7'] = pipelineUtils.buildImage(openshiftProject, "rhel7")
+                }
+            }
+        }
+        stage("rhel8 image build") {
+            when {
+                // Only build if we have related files in changeset
+                changeset "config/Dockerfiles/rhel8/**"
+            }
+            steps {
+                script {
+                    tagMap['rhel8'] = pipelineUtils.buildImage(openshiftProject, "rhel8")
                 }
             }
         }
@@ -287,12 +323,18 @@ pipeline {
                                        value: "${env.ghprbPullId}"),
                                 string(name: 'ghprbGhRepository',
                                        value: "${env.ghprbGhRepository}"),
-                                string(name: 'FEDORA29_TAG',
-                                       value: tagMap['fedora29']),
                                 string(name: 'FEDORA30_TAG',
                                        value: tagMap['fedora30']),
+                                string(name: 'FEDORA31_TAG',
+                                       value: tagMap['fedora31']),
                                 string(name: 'CENTOS7_TAG',
                                        value: tagMap['centos7']),
+                                string(name: 'CENTOS8_TAG',
+                                       value: tagMap['centos8']),
+                                string(name: 'RHEL7_TAG',
+                                       value: tagMap['rhel7']),
+                                string(name: 'rhel8_TAG',
+                                       value: tagMap['rhel8']),
                                 string(name: 'TEST_PROVIDERS',
                                        value: test_providers)
                         ],
