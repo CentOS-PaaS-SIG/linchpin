@@ -10,14 +10,8 @@ RUN yum -y install python-pip \
     && yum -y install curl \
     yum -y install gcc python-devel openssl-devel ansible file openssh \
                     net-tools git make \
-                    krb5-workstation \
-                    python-requests jq git which; \
-RUN sed -i "/Service/a ExecStartPost=\/bin\/chmod 666 /dev/kvm" /usr/lib/systemd/system/libvirtd.service
-
-RUN curl -o /etc/yum.repos.d/beaker-client.repo \
-            https://beaker-project.org/yum/beaker-client-CentOS.repo; \
-    yum -y install beaker-client \
-    && yum clean all && rm -rf /var/cache/yum;
-
+                    krb5-workstation python-krbV libxslt-python \
+                    python-requests jq git which;
 # Start bash
-ENTRYPOINT ["/usr/bin/tail -f /dev/null"]
+ENTRYPOINT ["/usr/bin/tail", "-f","/dev/null"]
+

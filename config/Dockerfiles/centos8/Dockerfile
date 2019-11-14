@@ -1,4 +1,4 @@
-FROM centos:centos8
+FROM centos:8
 LABEL maintainer "https://github.com/CentOS-PaaS-SIG/linchpin"
 LABEL description "This container will verify linchpin works under Centos8"
 
