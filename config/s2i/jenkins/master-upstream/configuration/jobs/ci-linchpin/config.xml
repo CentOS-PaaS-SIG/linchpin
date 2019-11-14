@@ -78,20 +78,38 @@
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>FEDORA29_TAG</name>
-          <description>Tag for fedora29 image</description>
-          <defaultValue>stable</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
           <name>FEDORA30_TAG</name>
           <description>Tag for fedora30 image</description>
           <defaultValue>stable</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
+          <name>FEDORA31_TAG</name>
+          <description>Tag for fedora31 image</description>
+          <defaultValue>stable</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
           <name>CENTOS7_TAG</name>
           <description>Tag for centos7 image</description>
+          <defaultValue>stable</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+	<hudson.model.StringParameterDefinition>
+          <name>CENTOS8_TAG</name>
+          <description>Tag for centos7 image</description>
+          <defaultValue>stable</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>RHEL7_TAG</name>
+          <description>Tag for rhel7 image</description>
+          <defaultValue>stable</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+	<hudson.model.StringParameterDefinition>
+          <name>RHEL8_TAG</name>
+          <description>Tag for rhel8 image</description>
           <defaultValue>stable</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
