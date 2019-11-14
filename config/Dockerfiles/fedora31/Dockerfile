@@ -1,17 +1,17 @@
-FROM fedora:29
+FROM fedora:31
 LABEL maintainer "https://github.com/CentOS-PaaS-SIG/linchpin"
-LABEL description "This container will verify linchpin works under Fedora-29"
+LABEL description "This container will verify linchpin works under Fedora-30"
 
 ENV HOME=/root
 WORKDIR $HOME
 
-RUN dnf -y install python-pip ansible curl gcc python-devel python2-shade \
+RUN dnf -y install python3-pip ansible curl gcc python3-devel \
                    openssl-devel libvirt-daemon-driver-* libvirt-daemon \
                    libvirt-daemon-kvm qemu-kvm libvirt-daemon-config-network \
-                   libvirt-python libvirt-devel redhat-rpm-config file \
+                   libvirt-python3 libvirt-devel redhat-rpm-config file \
                    openssh genisoimage libvirt-client virt-install net-tools \
-                   python-krbV make libxslt-python krb5-workstation jq buildah \
-                   libselinux-python git kmod\
+                   make libxslt krb5-workstation jq buildah \
+                   libselinux-python3 git libxslt-devel libxslt \
     && dnf clean all; \
     (cd /lib/systemd/system/sysinit.target.wants/; for i in *; \
      do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
@@ -37,9 +37,8 @@ RUN curl -o /etc/yum.repos.d/beaker-client.repo \
 
 COPY init_libvirt.sh $HOME/
 
-RUN pip install -U pip; \
-    pip install -U setuptools; \
-    pip install -U pygithub; \
+RUN pip3 install -U setuptools; \
+    pip3 install -U pygithub; \
     sed -i "/Service/a ExecStartPost=\/bin\/chmod 666 /dev/kvm" \
       /usr/lib/systemd/system/libvirtd.service
 
