@@ -8,6 +8,5 @@ The following information may be useful for those wishing to extend LinchPin.
 
    libdocs
    developing_linchpin
-   writing_provider
 
 .. include:: includes/footer.rst
