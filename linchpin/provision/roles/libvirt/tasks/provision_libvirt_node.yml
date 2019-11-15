@@ -589,4 +589,4 @@
 
 - name: "Add types to resource"
   set_fact:
-    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes | add_res_data(lookup('vars', 'role_name'), res_def['role'] }}"
+    topology_outputs_libvirt_nodes: "{{ topology_outputs_libvirt_nodes | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"
