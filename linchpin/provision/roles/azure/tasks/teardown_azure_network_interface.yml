@@ -1,0 +1,12 @@
+- name: "Teardown Azure Virtual Network Interface when not async"
+  azure_rm_networkinterface:
+    client_id: "{{ auth_var['client_id'] | default(omit) }}"
+    tenant: "{{ auth_var['tenant'] | default(omit) }}"
+    secret: "{{ auth_var['secret'] | default(omit) }}"
+    subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
+    resource_group: "{{ res_def['resource_group'] | default(omit) }}"
+    virtual_network: "{{ res_def['virtual_network_name']|default(omit) }}"
+    subnet_name: "{{ res_def['subnet_name']|default(omit) }}"
+    name: "{{ res_def['network_interface_name']|default('network_interface_name') }}"
+    state: absent
+  register: res_def_output 

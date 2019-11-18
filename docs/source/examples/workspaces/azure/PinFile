@@ -57,6 +57,23 @@ azure_res_group:
         credentials:
           filename: azure.key
           profile: key
+          
+azure_nic:
+  topology:
+    topology_name: azure_nic
+    resource_groups:
+      - resource_group_name: "azure"
+        resource_group_type: "azure"
+        resource_definitions:
+          - virtual_network_name: "{{ distro }}-forLinchpinautomation"
+            role: azure_network_interface
+            resource_group: "ccit"
+            subnet_name: "{{ distro }}-linchpincreated"
+            network_interface_name: "{{ distro }}-forLinchpinautomation"
+        credentials:
+          filename: azure.key
+          profile: key
+
 
 azure_vn_subnet:
   topology:
