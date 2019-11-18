@@ -405,9 +405,7 @@ class LinchpinHooks(object):
         try:
             os.makedirs(dest_dir)
         except OSError as e:
-            if e.errno != os.errno.EEXIST:
-                raise
-            pass
+            print(str(e))
         repo_name = git_remote.rsplit('/', 1)[-1]
         for filename in glob.glob(os.path.join(cwd,
                                                repo_name,
