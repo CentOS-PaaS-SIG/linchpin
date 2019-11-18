@@ -36,7 +36,7 @@ env.DOCKER_HUB_IMAGE = env.DOCKER_HUB_IMAGE ?: 'linchpin'
 OPENSHIFT_NAMESPACE = env.OPENSHIFT_NAMESPACE ?: 'continuous-infra'
 OPENSHIFT_SERVICE_ACCOUNT = env.OPENSHIFT_SERVICE_ACCOUNT ?: 'jenkins'
 STABLE_LABEL = 'stable-' + env.ghprbTargetBranch
-env.FEDORA29_TAG = env.FEDORA29_TAG ?: STABLE_LABEL
+env.FEDORA31_TAG = env.FEDORA31_TAG ?: STABLE_LABEL
 env.FEDORA30_TAG = env.FEDORA30_TAG ?: STABLE_LABEL
 
 // Pod name to use
@@ -82,9 +82,9 @@ podTemplate(name: jslave_podName,
                 args: '${computer.jnlpmac} ${computer.name}',
                 command: '',
                 workingDir: '/workDir'),
-            containerTemplate(name: 'fedora29',
+            containerTemplate(name: 'fedora31',
                 alwaysPullImage: true,
-                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora29:' + FEDORA29_TAG,
+                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora31:' + FEDORA31_TAG,
                 ttyEnabled: false,
                 command: '',
                 privileged: true,
@@ -183,15 +183,15 @@ EOF
                     currentStage = 'test-pypi-install'
                     stage(currentStage) {
                       dir(repoName) {
-                        pipelineUtils.executeInContainer(currentStage, "fedora29", "./config/Dockerfiles/linchpin-pip-install.sh " + version)
+                        pipelineUtils.executeInContainer(currentStage, "fedora31", "./config/Dockerfiles/linchpin-pip-install.sh " + version)
                       }
                     }
                     currentStage = "test-pypi-verify"
                     stage(currentStage) {
                       dir('linchpin') {
-                        env.distro = "fedora29"
+                        env.distro = "fedora31"
                         env.PROVIDERS = "dummy"
-                        pipelineUtils.executeInContainer(currentStage, "fedora29", "./config/Dockerfiles/linchpin-tests.sh")
+                        pipelineUtils.executeInContainer(currentStage, "fedora31", "./config/Dockerfiles/linchpin-tests.sh")
                       }
                     }
                     stage('release-prod-version') {
@@ -207,7 +207,7 @@ EOF
                                 ).trim()
                             withCredentials([file(credentialsId: 'docker_creds', variable: 'DOCKER_CREDS')]) {
                                 env.DOCKER_CREDS = DOCKER_CREDS
-                                pipelineUtils.executeInContainer(currentStage, "fedora29", "./config/Dockerfiles/buildah-push.sh "+version)
+                                pipelineUtils.executeInContainer(currentStage, "fedora31", "./config/Dockerfiles/buildah-push.sh "+version)
                             }
                         }
                     }
@@ -223,7 +223,7 @@ EOF
                                 returnStdout: true
                             ).trim()
                             withCredentials([string(credentialsId: 'github_api_token', variable: 'TOKEN')]) {
-                                pipelineUtils.executeInContainer(currentStage, "fedora29", "python ./config/Dockerfiles/release-notes.py "+ TOKEN + " " + version)
+                                pipelineUtils.executeInContainer(currentStage, "fedora31", "python ./config/Dockerfiles/release-notes.py "+ TOKEN + " " + version)
                             }
                         }
                     }

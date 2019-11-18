@@ -11,7 +11,7 @@ env.TARGET_BRANCH = env.ghprbTargetBranch ?: 'develop'
 
 // Needed for podTemplate()
 env.SLAVE_TAG = env.SLAVE_TAG ?: 'stable-' + env.ghprbTargetBranch
-env.FEDORA29_TAG = env.FEDORA29_TAG ?: 'stable-' + env.ghprbTargetBranch
+env.FEDORA31_TAG = env.FEDORA31_TAG ?: 'stable-' + env.ghprbTargetBranch
 env.FEDORA30_TAG = env.FEDORA30_TAG ?: 'stable-' + env.ghprbTargetBranch
 env.CENTOS7_TAG = env.CENTOS7_TAG ?: 'stable-' + env.ghprbTargetBranch
 
@@ -37,7 +37,7 @@ executionID = UUID.randomUUID().toString()
 
 // Pod name to use
 c7podName = 'lp_centos7-' + executionID
-f29podName = 'lp_fedora29-' + executionID
+f31podName = 'lp_fedora31-' + executionID
 f30podName = 'lp_fedora30-' + executionID
 
 def libraries = ['cico-pipeline' : ['master', 'https://github.com/CentOS/cico-pipeline-library.git'],
@@ -75,8 +75,8 @@ properties(
                        description: 'Tag for slave image',
                        name: 'SLAVE_TAG'),
                 string(defaultValue: 'stable-' + env.ghprbTargetBranch,
-                       description: 'Tag for fedora29 image',
-                       name: 'FEDORA29_TAG'),
+                       description: 'Tag for fedora31 image',
+                       name: 'FEDORA31_TAG'),
                 string(defaultValue: 'stable-' + env.ghprbTargetBranch,
                        description: 'Tag for fedora30 image',
                        name: 'FEDORA30_TAG'),
@@ -130,10 +130,10 @@ stage('Tests') {
                 {
                     execute_test(c7podName, "centos7")
                 }
-            }, fedora29: {
+            }, fedora31: {
                 pipelineUtils.clearTemplateNames()
-                podTemplate(name: f29podName,
-                            label: f29podName,
+                podTemplate(name: f31podName,
+                            label: f31podName,
                             cloud: 'openshift',
                             serviceAccount: OPENSHIFT_SERVICE_ACCOUNT,
                             idleMinutes: 0,
@@ -148,9 +148,9 @@ stage('Tests') {
                                 args: '${computer.jnlpmac} ${computer.name}',
                                 command: '',
                                 workingDir: '/workDir'),
-                            containerTemplate(name: 'fedora29',
+                            containerTemplate(name: 'fedora31',
                                 alwaysPullImage: true,
-                                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora29:' + FEDORA29_TAG,
+                                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/fedora31:' + FEDORA31_TAG,
                                 ttyEnabled: false,
                                 command: '/root/init_libvirt.sh',
                                 privileged: true,
@@ -161,7 +161,7 @@ stage('Tests') {
                         ]
                 )
                 {
-                    execute_test(f29podName, "fedora29")
+                    execute_test(f31podName, "fedora31")
                 }
             }, fedora30: {
                 pipelineUtils.clearTemplateNames()

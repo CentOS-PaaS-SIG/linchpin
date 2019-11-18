@@ -84,8 +84,8 @@
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>FEDORA29_TAG</name>
-          <description>Tag for fedora29 image</description>
+          <name>FEDORA31_TAG</name>
+          <description>Tag for fedora31 image</description>
           <defaultValue>stable</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
