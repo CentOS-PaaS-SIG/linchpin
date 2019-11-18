@@ -77,60 +77,26 @@
     ssh_public_keys: null
   when: res_def['public_key'] is not defined
 
-- name: "Provisioning Azure VM when not async"
-  azure_rm_virtualmachine:
-    client_id: "{{ auth_var['client_id'] | default(omit) }}"
-    tenant: "{{ auth_var['tenant'] | default(omit) }}"
-    secret: "{{ auth_var['secret'] | default(omit) }}"
-    subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
-    admin_username: "{{ res_def['vm_username'] | default(linchpinUsername) }}"
-    admin_password: "{{ res_def['vm_password'] | default(linchpinPassword) }}"
-    resource_group: "{{ res_def['resource_group'] | default(omit) }}"
-    ssh_public_keys: "{{ssh_public_keys}}"
-    vm_size: "{{ res_def['vm_size'] | default('Standard_DS1_v2') }}"
-    name: "{{ res_def['vm_name'] | default(omit) }}"
-    virtual_network_name: "{{res_def['virtual_network_name']|default(vn_name)}}"
-    image: "{{ image | default(omit) }}"
-  register: res_def_output
-  when: not _async
-  no_log: "{{ not debug_mode }}"
+- set_fact:
+    res_count: [0]
+  when: res_def['count'] is not defined
 
-- name: "Append outputitem to topology_outputs"
+- set_fact:
+    res_count: '{{ res_count|default([]) + [item | int] }}'
+  with_sequence: "start=0 end={{ res_def['count'] | int - 1 }}"
+  when: res_def['count'] is defined
+
+- name: Declare name list
   set_fact:
-    topology_outputs_azure_vm: "{{ topology_outputs_azure_vm + [res_def_output.ansible_facts.azure_vm] }}"
-  when: res_def_output['changed'] == true and not _async
+    name_list: []
 
-- name: "Async:: Provisioning Azure VM"
-  azure_rm_virtualmachine:
-    client_id: "{{ auth_var['client_id'] | default(omit) }}"
-    tenant: "{{ auth_var['tenant'] | default(omit) }}"
-    secret: "{{ auth_var['secret'] | default(omit) }}"
-    subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
-    admin_username: "{{ res_def['vm_username'] | default(linchpinUsername) }}"
-    admin_password: "{{ res_def['vm_password'] | default(linchpinPassword) }}"
-    resource_group: "{{ res_def['resource_group'] | default(omit) }}"
-    vm_size: "{{ res_def['vm_size'] | default('Standard_DS1_v2') }}"
-    virtual_network_name: "{{res_def['virtual_network_name']|default(vn_name)}}"
-    name: "{{ res_def['vm_name'] | default(omit) }}"
-    image: "{{ image | default(omit) }}"
-  async: "{{ async_timeout }}"
-  poll: 0
-  register: res_def_output
-  when: _async
-  no_log: "{{ not debug_mode }}"
+- name: Set name list when
+  set_fact: 
+    name_list: "{{ name_list + [vm_name+item|string] }}"
+  loop: "{{ res_count }}"
 
-- name: "Async:: Append outputitem to topology_outputs"
-  set_fact:
-    async_outputs_azure_vm: "{{ async_outputs_azure_vm + [res_def_output.ansible_facts.azure_vm] }}"
-  when: _async
-
-
-- name: "Add type to resource"
-  set_fact:
-    topology_outputs_azure_vm: "{{ topology_outputs_azure_vm | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"
-
-
-- name: "Async:: Add type to resource"
-  set_fact:
-    async_outputs_azure_vm: "{{ async_outputs_azure_vm | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"
-  when: _async
+- name: Run Provision
+  include: provisionVM.yml nameOfvm={{nameOfvm}}
+  loop: "{{ name_list}}"
+  loop_control:
+    loop_var: nameOfvm

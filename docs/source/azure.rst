@@ -1,3 +1,5 @@
+The dependencies is perfectly working for the latest version of Ansible, 
+if you are not using the latest version, may not work.
 Azure VM
 ===================
 
@@ -36,6 +38,8 @@ definition, the following options are available.
 | vm_username          | false      | string        | image                 |                    |
 +----------------------+------------+---------------+-----------------------+--------------------+
 | vm_password          | false      | string        | image                 |                    |
++----------------------+------------+---------------+-----------------------+--------------------+
+| count                | false      | int           |                       |                    |
 +----------------------+------------+---------------+-----------------------+--------------------+
 | resource_group       | true       | string        | resource_group        |                    |
 +----------------------+------------+---------------+-----------------------+--------------------+

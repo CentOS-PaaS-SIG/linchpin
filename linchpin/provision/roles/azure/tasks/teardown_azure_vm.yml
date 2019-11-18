@@ -1,22 +1,28 @@
-- name: "Teardown Azure VM"
-  azure_rm_virtualmachine:
-    client_id: "{{ auth_var['client_id'] | default(omit) }}"
-    tenant: "{{ auth_var['tenant'] | default(omit) }}"
-    secret: "{{ auth_var['secret'] | default(omit) }}"
-    subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
-    resource_group: "{{ res_def['resource_group'] | default(omit) }}"
-    remove_on_absent: "{{res_def['delete_all_attached']|default('all_autocreated')}}"
-    name: "{{ res_def['vm_name'] | default(omit) }}"
-    state: 'absent'
+---
+- name: Set the vm name
+  set_fact:
+    vm_name: "{{res_def['vm_name']}}"
 
-- name: Delete managed disk
-  azure_rm_manageddisk:
-    client_id: "{{ auth_var['client_id'] | default(omit) }}"
-    tenant: "{{ auth_var['tenant'] | default(omit) }}"
-    secret: "{{ auth_var['secret'] | default(omit) }}"
-    subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
-    name: "{{ res_def['vm_name']+'.vhd'| default(omit) }}"
-    resource_group: "{{ res_def['resource_group'] | default(omit) }}"
-    state: absent
-  when: res_def['deepclean'] is defined and res_def['deepclean'] == true
-  ignore_errors: true
+- set_fact:
+    res_count: [0]
+  when: res_def['count'] is not defined
+
+- set_fact:
+    res_count: '{{ res_count|default([]) + [item | int] }}'
+  with_sequence: "start=0 end={{ res_def['count'] | int - 1 }}"
+  when: res_def['count'] is defined
+
+- name: Declare name list
+  set_fact:
+    name_list: []
+
+- name: Set name list when
+  set_fact: 
+    name_list: "{{ name_list + [vm_name+item|string] }}"
+  loop: "{{ res_count }}"
+
+- name: Run Provision
+  include: teardownVM.yml nameOfvm={{nameOfvm}}
+  loop: "{{ name_list}}"
+  loop_control:
+    loop_var: nameOfvm
