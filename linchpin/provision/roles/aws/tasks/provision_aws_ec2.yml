@@ -17,8 +17,7 @@
     instance_type: "{{ res_def['flavor'] }}"
     image: "{{ res_def['image'] }}"
     region: "{{ res_def['region'] }}"
-    wait: yes
-    wait_timeout: "{{ res_def['wait_timeout'] | default(600) }}"
+    wait: no
     group: "{{ res_def['security_group']| default('default') }}"
     count: "{{ res_def['count'] }}"
     vpc_subnet_id: "{{ res_def['vpc_subnet_id']| default(omit) }}"

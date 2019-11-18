@@ -13,7 +13,7 @@ RUN dnf -y install python-pip ansible curl gcc python-devel \
                    libvirt-python libvirt-devel redhat-rpm-config file \
                    openssh genisoimage libvirt-client virt-install net-tools \
                    python-krbV make libxslt-python krb5-workstation jq buildah \
-                   libselinux-python git \
+                   libselinux-python git nanomsg nanomsg-devel \
     && dnf clean all; \
     (cd /lib/systemd/system/sysinit.target.wants/; for i in *; \
      do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \

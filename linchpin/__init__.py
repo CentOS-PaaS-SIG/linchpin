@@ -9,6 +9,9 @@ import time
 import errno
 import hashlib
 import subprocess
+from tqdm import tqdm
+from concurrent.futures import ProcessPoolExecutor
+from nanomsg import Socket, NanoMsgAPIError, BUS
 
 from uuid import getnode as get_mac
 from collections import OrderedDict
@@ -30,6 +33,8 @@ from linchpin.exceptions import ValidationError
 from linchpin.validator import Validator
 
 from linchpin.InventoryFilters import GenericInventory
+
+from linchpin.handlers import *
 
 
 class LinchpinAPI(object):
@@ -98,7 +103,11 @@ class LinchpinAPI(object):
         self.set_evar('role_path', self.role_path)
         self.set_evar('from_api', True)
         self.workspace = self.get_evar('workspace')
-
+        self.pbar = tqdm(
+            bar_format="[{bar:10}] {desc:<30}| {postfix[0][group]}",
+            postfix=[dict(group='initializing')],
+            position=0,
+            leave=False)
 
     def setup_rundb(self):
         """
@@ -224,7 +233,6 @@ class LinchpinAPI(object):
 
             for callback in self._hook_observers:
                 callback(self._hook_state)
-
 
     def bind_to_hook_state(self, callback):
         """
@@ -700,6 +708,7 @@ class LinchpinAPI(object):
             results[target]['rundb_data'] = {rundb_id: run_data[0]}
 
 
+
         # generate the linchpin_id and structure
         lp_schema = ('{"action": "", "targets": []}')
 
@@ -922,15 +931,29 @@ class LinchpinAPI(object):
         playbook_path = '{0}/{1}{2}'.format(pb_path, 'linchpin', self.pb_ext)
         extra_vars = self.get_evar()
         env_vars = self.ctx.get_env_vars()
-        return_code, res = ansible_runner(playbook_path,
-                                          self._get_module_path(),
-                                          extra_vars,
-                                          vault_password_file=None,
-                                          inventory_src=inv_src,
-                                          verbosity=self.ctx.verbosity,
-                                          console=console,
-                                          env_vars=env_vars,
-                                          use_shell=use_shell)
+        res= extra_vars['resources']
+        group = res['resource_group_name']
+        self.pbar.postfix[0] = dict(group="resource group '%s'" % group)
+        self.pbar.refresh()
+        with ProcessPoolExecutor() as executor:
+            monitor_thread = executor.submit(progress_monitor, res)
+            ansible_thread = executor.submit(
+                ansible_runner,
+                playbook_path,
+                self._get_module_path(),
+                extra_vars,
+                vault_password_file=None,
+                inventory_src=inv_src,
+                verbosity=self.ctx.verbosity,
+                console=console,
+                env_vars=env_vars,
+                use_shell=use_shell)
+
+            return_code, res = ansible_thread.result()
+            monitor_thread.result()
+        self.pbar.postfix[0] = dict(group="Finishing resource group '%s'" % group)
+        self.pbar.refresh()
+        self.pbar.update()
         return return_code, res
 
     def _invoke_playbooks(self, resources={}, action='up', console=True,
@@ -964,7 +987,9 @@ class LinchpinAPI(object):
             self.set_evar('state', 'absent')
 
         inventory_src = '{0}/localhost'.format(self.workspace)
-
+        self.pbar.set_description_str("Linchpin(%s)" % action)
+        self.pbar.total = len(resources) + 1
+        self.pbar.update()
         for resource in resources:
             self.set_evar('resources', resource)
             playbook = resource.get('resource_group_type')
@@ -977,6 +1002,7 @@ class LinchpinAPI(object):
                     raise LinchpinError("Unsuccessful provision of resource")
                 else:
                     res_grp_name = resource['resource_group_name']
+                    print(res['failed'])
                     msg = res['failed'][0]._result['msg']
                     task = res['failed'][0].task_name
                     raise LinchpinError("Unable to provision resource group "
@@ -991,6 +1017,7 @@ class LinchpinAPI(object):
         if not len(results):
             results = None
 
+        self.pbar.postfix[0] = dict(group='Done')
         return (return_code, results)
 
     def ssh(self, target):
@@ -1019,3 +1046,47 @@ class LinchpinAPI(object):
         cmd = cmd.format(**host)
         print('connecting to {}: {}'.format(target, cmd))
         subprocess.call(cmd, shell=True)
+
+def progress_monitor(target):
+    position = 1
+    num_resources = 0
+    for resource in target['resource_definitions']:
+        num_resources += resource.get('count', 1)
+    group_bar = tqdm(
+        desc=target['resource_group_name'],
+        bar_format="[{bar:10}] |-> {desc:<26}| {postfix[0][resource]}",
+        postfix=[dict(resource='initializing')],
+        total=num_resources,
+        position=position, leave=False)
+    resource_bars = dict()
+    socket = Socket(BUS)
+    socket.bind("ipc:///tmp/linchpin.ipc")
+    event = dict(playbook='started')
+    while event.get('playbook', 'in progress') != 'done':
+        try:
+            msg = socket.recv(flags=1)
+            msg = msg.decode("utf-8")
+            event = ast.literal_eval(msg)
+            resource = event['status']['target']
+            group_bar.postfix[0] = dict(resource="resource '%s'" % resource)
+            if resource not in resource_bars.keys():
+                position += 1
+                resource_bars[resource] = tqdm(
+                    desc=resource,
+                    bar_format="[{bar:10}]  |-> {desc:<25}| {postfix[0][state]}",
+                    postfix=[dict(state=event['status']['state'])],
+                    total=100,
+                    position=position, leave=False)
+            resource_bars[resource].postfix[0] = event['status']
+            resource_bars[resource].update(event['bar'])
+            resource_bars[resource].refresh()
+            if event['status']['state'] == 'Done':
+                group_bar.update()
+        except NanoMsgAPIError as nn_error:
+            continue
+        except ValueError as error:
+            continue
+        except KeyError:
+            continue
+    group_bar.postfix[0] = dict(resource='Done')
+
