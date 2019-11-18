@@ -24,7 +24,7 @@ objects:
     output:
       to:
         kind: ImageStreamTag
-        name: centos:8
+        name: centos8:latest
     resources: {}
     source:
       contextDir: ${REPO_CONTEXTDIR}
