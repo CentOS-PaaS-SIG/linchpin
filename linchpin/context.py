@@ -275,15 +275,17 @@ class LinchpinContext(object):
         """
 
         self.console = logging.getLogger('lp_console')
-        self.console.setLevel(logging.INFO)
+        if not self.console.handlers:
+            self.console.setLevel(logging.INFO)
 
-        ch = logging.StreamHandler()
-        ch.setLevel(logging.INFO)
+            ch = logging.StreamHandler()
+            ch.setLevel(logging.INFO)
 
-        formatter = logging.Formatter('%(levelname)s %(asctime)s %(message)s')
-        ch.setFormatter(formatter)
+            formatter = \
+                logging.Formatter('%(levelname)s %(asctime)s %(message)s')
+            ch.setFormatter(formatter)
 
-        self.console.addHandler(ch)
+            self.console.addHandler(ch)
 
 
     def log(self, msg, **kwargs):
