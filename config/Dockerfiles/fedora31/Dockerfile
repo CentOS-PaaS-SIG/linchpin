@@ -27,4 +27,4 @@ RUN pip install -U pip;
 
 # /workdir should include the source code of linchpin
 VOLUME [ "/workdir" ]
-CMD ["/usr/sbin/init"]
+CMD ["sh", "-c", "tail -f /dev/null"]
