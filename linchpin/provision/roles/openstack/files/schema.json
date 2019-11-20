@@ -335,6 +335,25 @@
                     "region": { "type": "string", "required": true },
                     "ttl": { "type": "number", "required": true }
                 }
+            },
+	    {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["os_floating_ip"] },
+                    "availability_zone": { "type": "string", "required": false },
+                    "fixed_address": { "type": "string", "required": false },
+                    "floating_ip_address": { "type": "string", "required": false },
+                    "interface": { "type": "string", "required": false,  "allowed": ["admin", "public", "internal"] },
+                    "nat_destination": { "type": "string", "required": false },
+                    "network": { "type": "string", "required": false },
+                    "purge": { "type": "boolean", "required": false },
+                    "region_name": { "type": "string", "required": false },
+                    "reuse": { "type": "boolean", "required": false },
+                    "server": { "type": "string", "required": true }
+                }
             }
 	    ]
         }

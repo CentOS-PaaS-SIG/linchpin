@@ -1,0 +1,24 @@
+---
+os-floating-ip:
+  topology:
+    topology_name: os-server-new
+    resource_groups:
+      - resource_group_name: os-server-new
+        resource_group_type: openstack
+        resource_definitions:
+          - role: os_floating_ip
+            # Assign a new floating IP to the instance fixed ip `192.0.2.3` of
+            # `cattle001`. If a free floating IP is already allocated to the project, it is
+            reuse: yes
+            server: cattle001
+            network: ext_net
+            fixed_address: 192.0.2.3
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos
+        {% endif %}
