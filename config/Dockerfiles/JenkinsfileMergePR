@@ -9,7 +9,7 @@ env.ghprbTargetBranch = env.ghprbTargetBranch ?: 'develop'
 STABLE_LABEL = "stable-" + env.ghprbTargetBranch
 
 // Add new images here
-imageList = ["fedora29", "fedora30", "centos7"]
+imageList = ["fedora30", "centos7"]
 imageOperations = []
 
 library identifier: "ci-pipeline@master",

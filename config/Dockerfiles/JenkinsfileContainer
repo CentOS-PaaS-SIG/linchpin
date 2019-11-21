@@ -22,7 +22,6 @@ STABLE_LABEL = "stable-" + env.ghprbTargetBranch
 tagMap = [:]
 
 // Initialize
-tagMap['fedora29'] = STABLE_LABEL
 tagMap['fedora30'] = STABLE_LABEL
 tagMap['centos7'] = STABLE_LABEL
 
@@ -230,17 +229,6 @@ pipeline {
                 }
             }
         }
-        stage("fedora29 image build") {
-            when {
-                // Only build if we have related files in changeset
-                changeset "config/Dockerfiles/fedora29/**"
-            }
-            steps {
-                script {
-                    tagMap['fedora29'] = pipelineUtils.buildImage(openshiftProject, "fedora29")
-                }
-            }
-        }
         stage("fedora30 image build") {
             when {
                 // Only build if we have related files in changeset
@@ -288,8 +276,6 @@ pipeline {
                                        value: "${env.ghprbPullId}"),
                                 string(name: 'ghprbGhRepository',
                                        value: "${env.ghprbGhRepository}"),
-                                string(name: 'FEDORA29_TAG',
-                                       value: tagMap['fedora29']),
                                 string(name: 'FEDORA30_TAG',
                                        value: tagMap['fedora30']),
                                 string(name: 'CENTOS7_TAG',
