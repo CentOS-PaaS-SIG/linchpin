@@ -28,8 +28,8 @@ linchpin -w . -p "${PINFILE}" -v up --if json "${TARGET}" 2>&1 | tee -a ${TMP_FI
 INVENTORY_FOLDER="./inventories/"
 INVENTORY_FILE=`ls -t1 $INVENTORY_FOLDER |  head -n 1`
 echo $INVENTORY_FILE
-grep "\{\"test" $INVENTORY_FOLDER/$INVENTORY_FILE
-
+grep "test" $INVENTORY_FOLDER/$INVENTORY_FILE
+cat $INVENTORY_FOLDER/$INVENTORY_FILE
 RC0=${?}
 
 if [ ${RC0} -eq 0 ] ; then
