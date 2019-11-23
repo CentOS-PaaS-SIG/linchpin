@@ -5,8 +5,8 @@ WORKDIR=$(pwd)
 pip3 install . --ignore-installed
 pip3 install .[tests]
 pip3 install .[libvirt]
-pip3 install .[beaker]
-pip3 install .[docker]
+#pip3 install .[beaker]
+#pip3 install .[docker]
 pip3 install .[azure]
 pip3 install .[openshift]
 
