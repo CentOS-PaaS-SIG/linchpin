@@ -9,9 +9,10 @@ import time
 import errno
 import hashlib
 import subprocess
+import zmq
+
 from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor
-from nanomsg import Socket, NanoMsgAPIError, BUS
 
 from uuid import getnode as get_mac
 from collections import OrderedDict
@@ -33,8 +34,6 @@ from linchpin.exceptions import ValidationError
 from linchpin.validator import Validator
 
 from linchpin.InventoryFilters import GenericInventory
-
-from linchpin.handlers import *
 
 
 class LinchpinAPI(object):
@@ -806,7 +805,7 @@ class LinchpinAPI(object):
             return all_inventories
 
         except Exception as e:
-            self.ctx.log_state('Error: {0}'.format(e))
+            self.ctx.log_state('Failed to write invenotry: {0}'.format(e))
             sys.exit(1)
         return True
 
@@ -931,12 +930,12 @@ class LinchpinAPI(object):
         playbook_path = '{0}/{1}{2}'.format(pb_path, 'linchpin', self.pb_ext)
         extra_vars = self.get_evar()
         env_vars = self.ctx.get_env_vars()
-        res= extra_vars['resources']
+        res = extra_vars['resources']
         group = res['resource_group_name']
         self.pbar.postfix[0] = dict(group="resource group '%s'" % group)
         self.pbar.refresh()
         with ProcessPoolExecutor() as executor:
-            monitor_thread = executor.submit(progress_monitor, res)
+            executor.submit(progress_monitor, res)
             ansible_thread = executor.submit(
                 ansible_runner,
                 playbook_path,
@@ -950,8 +949,7 @@ class LinchpinAPI(object):
                 use_shell=use_shell)
 
             return_code, res = ansible_thread.result()
-            monitor_thread.result()
-        self.pbar.postfix[0] = dict(group="Finishing resource group '%s'" % group)
+        self.pbar.postfix[0] = dict(group="Finishing resource group " + group)
         self.pbar.refresh()
         self.pbar.update()
         return return_code, res
@@ -1047,9 +1045,11 @@ class LinchpinAPI(object):
         print('connecting to {}: {}'.format(target, cmd))
         subprocess.call(cmd, shell=True)
 
+
 def progress_monitor(target):
     position = 1
     num_resources = 0
+    resource_bar_format = "[{bar:10}] |-> {desc:<25}| {postfix[0][state]}"
     for resource in target['resource_definitions']:
         num_resources += resource.get('count', 1)
     group_bar = tqdm(
@@ -1059,12 +1059,14 @@ def progress_monitor(target):
         total=num_resources,
         position=position, leave=False)
     resource_bars = dict()
-    socket = Socket(BUS)
-    socket.bind("ipc:///tmp/linchpin.ipc")
+    context = zmq.Context()
+    socket = context.socket(zmq.REP)
+    socket.bind("tcp://*:5599")
+
     event = dict(playbook='started')
     while event.get('playbook', 'in progress') != 'done':
         try:
-            msg = socket.recv(flags=1)
+            msg = socket.recv()
             msg = msg.decode("utf-8")
             event = ast.literal_eval(msg)
             resource = event['status']['target']
@@ -1073,7 +1075,7 @@ def progress_monitor(target):
                 position += 1
                 resource_bars[resource] = tqdm(
                     desc=resource,
-                    bar_format="[{bar:10}]  |-> {desc:<25}| {postfix[0][state]}",
+                    bar_format=resource_bar_format,
                     postfix=[dict(state=event['status']['state'])],
                     total=100,
                     position=position, leave=False)
@@ -1082,11 +1084,12 @@ def progress_monitor(target):
             resource_bars[resource].refresh()
             if event['status']['state'] == 'Done':
                 group_bar.update()
-        except NanoMsgAPIError as nn_error:
-            continue
-        except ValueError as error:
+            socket.send_string("next", flags=1)
+        except ValueError:
             continue
         except KeyError:
             continue
     group_bar.postfix[0] = dict(resource='Done')
-
+    socket.close()
+    context.destroy()
+    return True

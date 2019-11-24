@@ -22,4 +22,4 @@ gitpython==2.1.11
 future
 openstacksdk>=0.37
 tqdm==4.36.1
-nanomsg==1.0
+pyzmq==18.1.1
