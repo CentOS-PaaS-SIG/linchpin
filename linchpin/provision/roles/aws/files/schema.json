@@ -311,6 +311,35 @@
                     "security_token": { "type": "string", "required": false },
                     "wait_timeout": { "type": "integer", "required": false }
               }
+            },
+	    {
+              "type": "dict",
+              "schema": {
+                    "role": { "type": "string", "required": true, "allowed": ["aws_route53"]},
+                    "alias": { "type": "boolean", "required": false },
+                    "alias_evaluate_target_health": { "type": "boolean", "required": false },
+                    "alias_evaluate_target_health": { "type": "string", "required": false, "allowed": ["yes", "no"] },
+                    "alias_hosted_zone_id": { "type": "string", "required": false },
+                    "debug_botocore_endpoint_logs": { "type": "boolean", "required": false },
+                    "ec2_url": { "type": "string", "required": false },
+                    "failover": { "type": "string", "required": false, "allowed": ["PRIMARY", "SECONDARY"] },
+                    "health_check": { "type": "string", "required": false },
+                    "hosted_zone_id": { "type": "string", "required": false },
+                    "identifier": { "type": "string", "required": false },
+                    "overwrite": { "type": "string", "required": false, "allowed": ["yes", "no"] },
+                    "private_zone": { "type": "string", "required": false, "allowed": ["yes", "no"] },
+                    "record": { "type": "string", "required": true},
+                    "region": { "type": "string", "required": false},
+                    "retry_interval": { "type": "string", "required": false},
+                    "security_token": { "type": "string", "required": false },
+                    "ttl": { "type": "integer", "required": false },
+                    "type": { "type": "string", "required": false, "allowed": ["A", "CNAME", "MX", "AAAA", "TXT", "PTR", "SRV", "SPF", "CAA", "NS", "SOA"] },
+                    "value": { "type": "string", "required": false },
+                    "vpc_id": { "type": "string", "required": false },
+                    "weight": { "type": "string", "required": false },
+                    "zone": { "type": "string", "required": false },
+                    "wait_timeout": { "type": "integer", "required": false }
+              }
             }
 	    ]
         }
