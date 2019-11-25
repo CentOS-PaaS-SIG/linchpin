@@ -10,7 +10,6 @@ from nose.tools import with_setup
 from linchpin import LinchpinAPI
 from linchpin.utils.dataparser import DataParser
 from linchpin.context import LinchpinContext
-from linchpin.linchpin_rundb import RunDB
 from linchpin.validator import AnyofValidator
 
 from linchpin.tests.mockdata.contextdata import ContextData

@@ -83,7 +83,6 @@ class GenericInventory(InventoryFilter):
                                               layout_host_count)
         # adding sections to respective host groups
         host_groups = self.get_layout_host_groups(layout)
-
         self.inv_formatter.add_sections(host_groups)
         # set children for each host group
         self.inv_formatter.set_children(layout)

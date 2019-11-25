@@ -12,7 +12,7 @@ from nose.tools import with_setup
 from linchpin import LinchpinAPI
 from linchpin.utils.dataparser import DataParser
 from linchpin.context import LinchpinContext
-from linchpin.linchpin_rundb import RunDB
+from linchpin.rundb import RunDB
 
 from linchpin.tests.mockdata.contextdata import ContextData
 import six
@@ -265,6 +265,13 @@ def test_invoke_playbooks():
     lpa.set_evar('resources', resources)
     lpa.set_evar('uhash', 'test')
     lpa.set_evar('use_uhash', True)
+    lpa.set_evar('rundb_schema', {'action': '',
+                                  'inputs': [],
+                                  'outputs': [],
+                                  'start': '',
+                                  'end': '',
+                                  'rc': 0,
+                                  'uhash': ''})
 
     return_code, results = lpa._invoke_playbooks(resources,
                                                  action='up',

@@ -1,18 +1,24 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 from __future__ import absolute_import
 import os
-import ast
 import json
+import ast
 from ansible.module_utils.basic import AnsibleModule
 
 try:
-    from ..module_utils.linchpin_rundb import TinyRunDB, BaseDB
+    from ..module_utils.rundb.basedb import BaseDB
+    from ..module_utils.rundb.tinydb import TinyRunDB
+    from ..module_utils.rundb.mongodb import MongoDB
 except Exception:
-    from linchpin.linchpin_rundb import TinyRunDB, BaseDB
+    from linchpin.rundb.basedb import BaseDB
+    from linchpin.rundb.tinydb import TinyRunDB
+    from linchpin.rundb.mongodb import MongoDB
 
 DB_DRIVERS = {
     "TinyRunDB": TinyRunDB,
+    "MongoDB": MongoDB
 }
 
 
@@ -45,7 +51,7 @@ options:
     description:
       Database schema to use when running operations.
       The schema is required for an 'init' operation.
-    required: false
+    required: true
   operation:
     description:
       Operation being performed on the database
@@ -91,6 +97,7 @@ def main():
     module = AnsibleModule(
         argument_spec=dict(
             db_type=dict(type='str', required=False, default='TinyRunDB'),
+            db_schema=dict(type='dict', required=True),
             conn_str=dict(type='str', required=True),
             operation=dict(choices=['init',
                                     'update',
@@ -105,18 +112,17 @@ def main():
         ),
     )
     db_type = module.params['db_type']
+    db_schema = module.params['db_schema']
     conn_str = os.path.expanduser(module.params['conn_str'])
-    table = module.params['table']
-    action = module.params['action']
     op = module.params['operation']
-    key = module.params['key']
     value = module.params['value']
-    run_id = module.params['run_id']
 
     is_changed = False
     output = None
     try:
         rundb = BaseDB(DB_DRIVERS[db_type], conn_str=conn_str)
+        rundb.schema = db_schema
+
         val = value
         # if value looks like a dict it is a dict!
         if value and (value.startswith("{") or value.startswith("[")):
@@ -128,61 +134,14 @@ def main():
                 except Exception as e:
                     module.fail_json(msg=e)
 
-        if op in ['init', 'purge']:
-            if op == "init":
-                if val:
-                    rundb.schema = val
-                    output = rundb.init_table(table)
-                else:
-                    msg = ("'table' and 'value' required for init operation")
-                    module.fail_json(msg=msg)
-            if op == "purge":
-                output = rundb.purge(table=table)
-
-        elif op in ['update', 'get']:
-            if op == "update":
-                # idempotent update
-                if run_id and key and val:
-                    # get the record first
-                    runid = int(run_id)
-                    out = rundb.get_record(table,
-                                           action=action,
-                                           run_id=runid)
-                    existing_val = out[0].get(key, "")
-                    if existing_val == value:
-                        is_changed = False
-                    else:
-                        output = rundb.update_record(table, runid, key, val)[0]
-                else:
-                    msg = ("'table', 'run_id, 'key', and 'value' required"
-                           " for update operation")
-                    module.fail_json(msg=msg)
-
-            if op == "get":
-                if key:
-                    runid = None
-                    if run_id:
-                        runid = int(run_id)
-                    if key == 'run_id':
-                        output = rundb.get_record(table,
-                                                  action=action,
-                                                  run_id=runid)[1]
-
-                    else:
-                        record = rundb.get_record(table,
-                                                  action=action,
-                                                  run_id=runid)[0]
-
-                        if key in record:
-                            output = record.get(key)
-                        else:
-                            msg = "key '{0}' was not found in"
-                            " record".format(key)
-                            module.fail_json(msg=msg)
-                else:
-                    msg = "The 'key' value must be passed"
-                    module.fail_json(msg=msg)
-
+        if op == "init":
+            init_rundb(module, rundb, val)
+        elif op == "purge":
+            output = purge_rundb(rundb)
+        elif op == "update":
+            output = update_rundb(module, rundb, val)
+        elif op == "get":
+            output = get_item(module, rundb)
         else:
             msg = "Module 'action' required"
             module.fail_json(msg=msg)
@@ -190,10 +149,72 @@ def main():
         if output:
             is_changed = True
 
-        module.exit_json(output=output, changed=is_changed)
+        module.exit_json(output=str(output), changed=is_changed)
 
     except Exception as e:
         module.fail_json(msg=str(e))
+
+
+def update_rundb(module, rundb, value):
+    table = module.params['table']
+    run_id = module.params['run_id']
+    key = module.params['key']
+
+    # idempotent update
+    if run_id and key and value:
+        # get the record first
+        runid = int(run_id)
+        return rundb.update_record(table, runid, key, value)
+
+    else:
+        msg = ("'table', 'run_id, 'key', and 'value' required"
+               " for update operation")
+        module.fail_json(msg=msg)
+
+
+def get_item(module, rundb):
+    table = module.params['table']
+    action = module.params['action']
+    run_id = module.params['run_id']
+    key = module.params['key']
+
+    if key:
+        runid = None
+        if run_id:
+            runid = int(run_id)
+        if key == 'run_id':
+            output = rundb.get_record(table,
+                                      action=action,
+                                      run_id=runid)[1]
+
+        else:
+            record = rundb.get_record(table,
+                                      action=action,
+                                      run_id=runid)[0]
+
+            if key in record:
+                output = record.get(key)
+            else:
+                msg = "key '{0}' was not found in"
+                " record".format(key)
+                module.fail_json(msg=msg)
+        return output
+    else:
+        msg = "The 'key' value must be passed"
+        module.fail_json(msg=msg)
+
+
+def init_rundb(module, rundb, val):
+    if val:
+        rundb.schema = val
+        return rundb.init_table(module.params['table'])
+    else:
+        msg = ("'table' and 'value' required for init operation")
+        module.fail_json(msg=msg)
+
+
+def purge_rundb(module, rundb):
+    return rundb.purge(table=module.params['table'])
 
 
 if __name__ == '__main__':

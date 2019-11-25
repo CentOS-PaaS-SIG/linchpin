@@ -20,7 +20,8 @@ import linchpin.galaxy_runner as galaxy_runner
 from linchpin.hooks.state import State
 from linchpin.hooks import LinchpinHooks
 
-from linchpin.linchpin_rundb import BaseDB, DB_DRIVERS
+from linchpin.rundb.drivers import DB_DRIVERS
+from linchpin.rundb.basedb import BaseDB
 
 from linchpin.exceptions import ActionError
 from linchpin.exceptions import LinchpinError
@@ -134,12 +135,13 @@ class LinchpinAPI(object):
                         pass
                     else:
                         raise
+            rundb_conn = rundb_conn_f
 
         self.set_evar('rundb_type', rundb_type)
-        self.set_evar('rundb_conn', rundb_conn_f)
+        self.set_evar('rundb_conn', rundb_conn)
         self.set_evar('rundb_hash', self.rundb_hash)
 
-        return BaseDB(DB_DRIVERS[rundb_type], rundb_conn_f)
+        return BaseDB(DB_DRIVERS[rundb_type], rundb_conn)
 
 
     def get_cfg(self, section=None, key=None, default=None):
@@ -272,7 +274,7 @@ class LinchpinAPI(object):
                 journal[target] = tgt_records
         if view == 'tx':
             if len(tx_ids):
-                journal = rundb.get_tx_records(tx_ids)
+                journal = rundb.get_tx_records('linchpin', tx_ids)
             else:
                 journal = rundb.get_records('linchpin', count=count)
 
@@ -417,7 +419,7 @@ class LinchpinAPI(object):
                                                    action='up',
                                                    run_id=run_id)
         if tx_id:
-            record = rundb.get_tx_record(tx_id)
+            record = rundb.get_tx_record('linchpin', tx_id)
 
             if not record or not len(record):
                 return None
@@ -524,7 +526,7 @@ class LinchpinAPI(object):
             rundb = self.setup_rundb()
 
             if tx_id:
-                record = rundb.get_tx_record(tx_id)
+                record = rundb.get_tx_record('linchpin', tx_id)
                 run_id = (list(record['targets'][0][target].keys())[0])
 
             rundb_schema = json.loads(self.get_cfg(section='lp',
@@ -711,7 +713,8 @@ class LinchpinAPI(object):
 
         for target, data in results.items():
             for k, v in data['rundb_data'].items():
-                summary[target] = {k: {'rc': v['rc'], 'uhash': v['uhash']}}
+                str_k = str(k)
+                summary[target] = {str_k: {'rc': v['rc'], 'uhash': v['uhash']}}
 
         rundb.update_record('linchpin', lp_id, 'action', action)
         rundb.update_record('linchpin', lp_id, 'targets', [summary])
@@ -772,28 +775,27 @@ class LinchpinAPI(object):
             latest_run_data = self._get_run_data_by_txid(tx_id)
         all_inventories = {}
         try:
-            for t_id in latest_run_data:
-                targets = latest_run_data[t_id]["targets"][0]
-                for name in targets:
-                    if "layout_data" in targets[name]["inputs"]:
-                        lt_data = targets[name]["inputs"]["layout_data"]
-                        t_data = targets[name]["inputs"]["topology_data"]
-                        c_data = {}
-                        if "cfgs" in list(targets[name].keys()):
-                            c_data = targets[name]["cfgs"]["user"]
-                        layout = lt_data["inventory_layout"]
-                        r_o = targets[name]["outputs"]["resources"]
-                        """
-                        # TODO: in the future we should render templates in
-                        # layout and cfgs here so that we can use data from the
-                        # most recent run
-                        """
-                        inv = self.generate_inventory(r_o,
-                                                      layout,
-                                                      inv_format=inv_format,
-                                                      topology_data=t_data,
-                                                      config_data=c_data)
-                        all_inventories[name] = inv
+            targets = latest_run_data["targets"][0]
+            for name in targets:
+                if "layout_data" in targets[name]["inputs"]:
+                    lt_data = targets[name]["inputs"]["layout_data"]
+                    t_data = targets[name]["inputs"]["topology_data"]
+                    c_data = {}
+                    if "cfgs" in list(targets[name].keys()):
+                        c_data = targets[name]["cfgs"]["user"]
+                    layout = lt_data["inventory_layout"]
+                    r_o = targets[name]["outputs"]["resources"]
+                    """
+                    # TODO: in the future we should render templates in
+                    # layout and cfgs here so that we can use data from the
+                    # most recent run
+                    """
+                    inv = self.generate_inventory(r_o,
+                                                  layout,
+                                                  inv_format=inv_format,
+                                                  topology_data=t_data,
+                                                  config_data=c_data)
+                    all_inventories[name] = inv
             return all_inventories
 
         except Exception as e:
@@ -819,7 +821,7 @@ class LinchpinAPI(object):
         tgt_run_ids = {}
         target_data = {}
 
-        record = rundb.get_tx_record(tx_id)
+        record = rundb.get_tx_record('linchpin', tx_id)
 
         if not record or not len(record):
             return None
@@ -876,33 +878,34 @@ class LinchpinAPI(object):
         latest_run_data = {}
         run_data = {}
         if tx_id is None:
-            latest_run_data = rundb.get_records('linchpin', count=1)
-            run_data = self.get_run_data(list(latest_run_data.keys())[0],
-                                         ('outputs',
-                                          'inputs',
-                                          'cfgs'))
-        else:
-            latest_run_data = rundb.get_records('linchpin',
-                                                count='all')
-            latest_run_data = {tx_id: latest_run_data.get(tx_id)}
+            latest_run_data, tx_id = rundb.get_record('linchpin')
             run_data = self.get_run_data(tx_id,
                                          ('outputs',
                                           'inputs',
                                           'cfgs'))
-        for k in latest_run_data:
-            v = latest_run_data[k]
-            target_group = v.get("targets", [])
-            # Note:
-            # target_group always returns a dict inside a list due to
-            # rundb implemenatation. This code works for one PinFile run
-            # might be subjected to change in future releases
-            if len(target_group) == 0:
-                continue
-            else:
-                target_group = target_group[0]
-            for key in list(target_group.keys()):
-                target_group[key].update(run_data.get(key, {}))
-            latest_run_data[k]["targets"] = [target_group]
+        else:
+            latest_run_data = rundb.get_record('linchpin',
+                                               run_id=tx_id)
+            latest_run_data = {tx_id: latest_run_data}
+            run_data = self.get_run_data(tx_id,
+                                         ('outputs',
+                                          'inputs',
+                                          'cfgs'))
+        # this is expecting a dict of:
+        # { tx_id: latest_run_data[tx_id] } but we're just giving it:
+        # latest_run_data[tx_id]
+        target_group = latest_run_data.get("targets", [])
+        # Note:
+        # target_group always returns a dict inside a list due to
+        # rundb implemenatation. This code works for one PinFile run
+        # might be subjected to change in future releases
+        if len(target_group) == 0:
+            return {}
+        else:
+            target_group = target_group[0]
+        for key in list(target_group.keys()):
+            target_group[key].update(run_data.get(key, {}))
+        latest_run_data["targets"] = [target_group]
         return latest_run_data
 
     def _get_module_path(self):
