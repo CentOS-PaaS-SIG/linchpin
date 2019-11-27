@@ -28,6 +28,7 @@ libvirt-new:
             image_src: {{ image_src | default('http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1608.qcow2.xz') }}
             memory: {{ memory | default('512') }}
             vcpus: {{ vcpus | default('1') }}
+            libvirt_firmware: {{ libvirt_firmware | default('bios')}
             arch: {{ arch |  default('x86_64') }}
             ssh_key: {{ ssh_key | default('libvirt') }}
             domain: {{ domain | default('example.com') }}

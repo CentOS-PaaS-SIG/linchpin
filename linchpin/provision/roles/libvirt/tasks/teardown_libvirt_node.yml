@@ -76,11 +76,10 @@
   register: vm_xml_dump
   ignore_errors: yes
 
+# virt module undefine doesn't work with domains including nvram
+# https://github.com/ansible/ansible/issues/43915
 - name: "undefine node"
-  virt:
-    name: "{{ libvirt_resource_name }}{{ instance[2] }}{{ instance[1] }}"
-    command: undefine
-    uri: "{{ instance[0]['uri'] }}"
+  shell: "virsh undefine --nvram {{ libvirt_resource_name }}{{ instance[2] }}{{ instance[1] }}"
   with_nested:
     - ["{{ res_def }}"]
     - "{{ res_count }}"
@@ -102,4 +101,3 @@
   become: "{{ libvirt_become }}"
   delegate_to: "{{ uri_hostname }}"
   when: not _async
-

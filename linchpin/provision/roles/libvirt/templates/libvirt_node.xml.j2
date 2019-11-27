@@ -5,6 +5,10 @@
   <os>
     <type arch='{{ definition[0]['arch'] }}'>hvm</type>
     <boot dev='{{ definition[0]['boot_dev'] }}'/>
+{% if definition[8] | default('bios')  == 'uefi' %}
+     <loader readonly='yes' type='pflash'>/usr/share/OVMF/OVMF_CODE.secboot.fd</loader>
+     <nvram>/var/lib/libvirt/qemu/nvram/{{ libvirt_resource_name }}{{ definition[4] }}{{ definition[1] }}.fd</nvram>
+{% endif %}
   </os>
   <features>
     <acpi/>

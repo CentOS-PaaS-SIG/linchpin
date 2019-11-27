@@ -28,6 +28,7 @@
                     "additional_storage": { "type": "string", "required": false },
                     "disk_cache": { "type": "string", "required": false },
                     "disk_type": { "type": "string", "required": false },
+                    "libvirt_firmware": { "type": "string", "required": false },
                     "network_bridge": { "type": "string", "required": false },
                     "ssh_key": { "type": "string", "required": false },
                     "xml": { "type": "string", "required": false },

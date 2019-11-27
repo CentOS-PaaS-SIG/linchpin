@@ -61,6 +61,7 @@
     - ["{{ res_def['disk_cache'] }}"]
     - ["{{ res_def['cpu_mode'] }}"]
     - ["{{ res_def['disk_type'] }}"]
+    - ["{{ res_def['libvirt_firmware'] }}"]
   loop_control:
     loop_var: definition
   when:  node_exists['failed'] is defined
@@ -269,6 +270,7 @@
     - ["{{ res_def['disk_cache'] }}"]
     - ["{{ res_def['cpu_mode'] }}"]
     - ["{{ res_def['disk_type'] }}"]
+    - ["{{ res_def['libvirt_firmware'] }}"]
   loop_control:
     loop_var: definition
   when: node_exists['failed'] is defined
