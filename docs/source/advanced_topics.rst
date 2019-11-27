@@ -11,6 +11,7 @@ features are covered here.
 
    advanced/layouts
    advanced/rundb
+   advanced/rundb_drivers
    advanced/journal
    advanced/context_distiller
    advanced/cfgs
