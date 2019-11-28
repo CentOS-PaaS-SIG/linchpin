@@ -15,7 +15,7 @@ from collections import OrderedDict
 from six import text_type
 
 from linchpin.ansible_runner import ansible_runner
-import linchpin.galaxy_runner as galaxy_runner
+from linchpin import galaxy_runner 
 
 from linchpin.hooks.state import State
 from linchpin.hooks import LinchpinHooks
