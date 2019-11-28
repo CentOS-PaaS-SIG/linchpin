@@ -6,11 +6,18 @@
     table: "{{ target }}"
     key: "outputs"
     run_id: "{{ orig_run_id }}"
+    db_schema: "{{ rundb_schema }}"
   register: topo_output
 
-- name: "set topo_output_resources fact"
+- name: "convert set topo_output_resources from rundb"
   set_fact:
-    topo_output_resources: "{{ topo_output.output[0]['resources'] }}"
+    topo_output_json: "{{ topo_output_rundb.output | convert_to_json }}"
+  when: not generate_resources
+
+- name: "set topo_output_resources fact rundb"
+   set_fact:
+     topo_output_resources: "{{ topo_output_json[0]['resources'] }}"
+   when: not generate_resources
 
 - name: "debug res_grp"
   debug:
