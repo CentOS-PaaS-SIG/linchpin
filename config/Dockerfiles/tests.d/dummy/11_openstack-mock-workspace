@@ -26,5 +26,13 @@ trap clean_up EXIT SIGHUP SIGINT SIGTERM
 pushd ${WORKSPACE_PATH}
 pwd
 
+<<<<<<< Updated upstream:config/Dockerfiles/tests.d/dummy/11_openstack-mock-workspace
 # Provision whole workspace using the mock data
 linchpin -w . -p "${PINFILE}" -v up 
+=======
+# create .ssh folder path for keygen
+mkdir -p /root/.ssh/
+
+# runs the linchpin up with --use-shell parameter
+linchpin -w . -p "${PINFILE}" -v up "${TARGET}"
+>>>>>>> Stashed changes:config/Dockerfiles/tests.d/dummy/11_mock-dummy-module

@@ -47,8 +47,7 @@ os_heat_target:
         resource_definitions:
           - role: "os_heat"
             name: "{{ distro}}ci-lp-test"
-            #template_path: "/workDir/workspace/ci-linchpin/linchpin/docs/source/examples/workspaces/openstack-heat/os_stack.yml"
-            template_path: "/home/srallaba/workspace/lp_ws_backup/lp_ws/ibm_cloud/linchpin/docs/source/examples/workspaces/openstack-mock-workspace/os_stack.yml"
+            template_path: "/workDir/workspace/ci-linchpin/linchpin/docs/source/examples/workspaces/openstack-heat/os_stack.yml"
             tag: "testtag"
         credentials:
           filename: clouds.yaml
