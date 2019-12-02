@@ -20,6 +20,11 @@ graft linchpin/hooks
 recursive-include linchpin/hooks *
 recursive-exclude linchpin/hooks *.pyc
 
+graft linchpin/MockUtils
+recursive-include linchpin/MockUtils *
+recursive-exclude linchpin/MockUtils *.pyc
+
+
 prune config
 prune vars
 prune dev_setup
