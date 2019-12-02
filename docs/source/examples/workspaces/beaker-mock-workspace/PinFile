@@ -1,0 +1,26 @@
+---
+beaker-new:
+  topology:
+    topology_name: "bkr-new"
+    resource_groups:
+      - resource_group_name: "bkr-new"
+        resource_group_type: beaker
+        resource_definitions:
+          - role: bkr_server
+            # option to set job whiteboard message
+            whiteboard: {{ whiteboard | default('Provisioned with linchpin') }}
+            # options to configure amount of time spent polling beaker:
+            # 60 attempts with 60 seconds wait time between them,
+            # provisioning timeout is roughly 3600 seconds
+            max_attempts: {{ max_attempts | default('240') }}
+            attempt_wait_time: {{ attempt_wait_time | default('60') }}
+            # option to set cancellation message if linchpin cancels provisioning
+            cancel_message: {{ cancel_message | default('Job cancelled on account of rain') }}
+            recipesets:
+              - distro: {{ bkr_distro | default('RHEL-7.5') }}
+                arch: {{ arch | default('x86_64') }}
+                count: 1
+                name: {{ name | default('rhel75') }}
+                variant: {{ variant | default('Server') }}
+                hostrequires:
+                  - rawxml: {{ rawxml | default('<key_value key="model" op="=" value="KVM"/>') }}

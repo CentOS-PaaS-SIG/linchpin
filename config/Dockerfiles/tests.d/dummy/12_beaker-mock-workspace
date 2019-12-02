@@ -9,10 +9,8 @@ DISTRO=${1}
 PROVIDER=${2}
 
 PINFILE="PinFile"
-WORKSPACE_PATH="docs/source/examples/workspaces/openstack-mock-workspace"
-TARGET="all"
-
-mkdir -p /root/.ssh/
+WORKSPACE_PATH="docs/source/examples/workspaces/beaker-mock-workspace"
+TARGET="beaker-new"
 
 function clean_up {
     set +e
@@ -28,5 +26,5 @@ trap clean_up EXIT SIGHUP SIGINT SIGTERM
 pushd ${WORKSPACE_PATH}
 pwd
 
-# Provision whole workspace using the mock data
-linchpin -w . -p "${PINFILE}" -v up 
+# runs the linchpin up on beaker mock workspace
+linchpin -w . -p "${PINFILE}" -v up "${TARGET}"

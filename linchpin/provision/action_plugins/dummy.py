@@ -32,7 +32,7 @@ class ActionModule(ActionBase):
         linchpin_mock = task_vars['vars'].get('linchpin_mock',
                                               False)
         if linchpin_mock:
-            return mock_utils.get_mock_data(module_args, 
+            return mock_utils.get_mock_data(module_args,
                                             "dummy")
         else:
             module_return = self._execute_module(module_name='dummy',
