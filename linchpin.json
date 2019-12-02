@@ -25,7 +25,8 @@
         "name": "linchpin",
         "path": "/opt",
         "python": "python2.7",
-        "strip_binaries": false
+        "strip_binaries": false,
+        "requirements": ["requirements.txt", "/dev/null 'ansible<2.9.0'"]
 
     },
     "file_permissions": {
