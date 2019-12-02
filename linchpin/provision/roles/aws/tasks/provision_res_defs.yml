@@ -20,10 +20,12 @@
 - name: "Get the resource name"
   set_fact:
     rsrc_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+  ignore_errors: true
 
 - name: "Create name using uhash value"
   set_fact:
     aws_resource_name: "{{ rsrc_name + '-' + uhash + '-' }}"
+  ignore_errors: true
 
 - name: "provision resource type : {{ res_def['role'] }}"
   include: "provision_{{ res_def['role'] }}.yml"
