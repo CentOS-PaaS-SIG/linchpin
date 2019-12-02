@@ -22,8 +22,8 @@ class ActionModule(ActionBase):
         linchpin_mock = task_vars['vars'].get('linchpin_mock',
                                               False)
         if linchpin_mock:
-            return mock_utils.get_openstack_mock_data(module_args,
-                                                      "os_security_group_rule")
+            return mock_utils.get_mock_data(module_args,
+                                            "os_security_group_rule")
 
         module_return = self._execute_module(module_args=module_args,
                                              task_vars=task_vars, tmp=tmp)

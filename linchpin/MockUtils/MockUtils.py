@@ -18,7 +18,7 @@ def get_dummy_mock_data(module_args):
     return data
 
 
-def get_openstack_mock_data(module_args, module_name):
+def get_mock_data(module_args, module_name):
     dirname, filename = os.path.split(os.path.abspath(__file__))
     data = open(dirname + "/" + module_name + ".data", "r").read()
     data = json.loads(data)
