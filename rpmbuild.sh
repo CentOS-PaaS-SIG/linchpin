@@ -18,7 +18,7 @@ python2 setup.py sdist -d "$resultdir"
 
 version="$(cat linchpin/version.py | awk -F "'" '{print $2}' | head -n1)"
 rpmvenv linchpin.json --core_version="${version}" --verbose --spec > "${resultdir}/linchpin.spec"
-sed -i -e "s#^Requires: .*#Requires: git, beaker-client#g" \
+sed -i -e "s#^Requires: .*#Requires: git, beaker-client, nanomsg#g" \
        -e '/^# Blocks/i %{?fc30:Requires: python2-lxml, python2-libvirt}' \
        -e '/^# Blocks/i %{?rhel:Requires: python-lxml, libvirt-python}' \
        -e '/^# Blocks/i BuildRequires: python2-pip, python2-devel, gcc' \

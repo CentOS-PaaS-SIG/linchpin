@@ -26,7 +26,7 @@ class Inventory(InventoryFilter):
         if var_data is None:
             var_data = {}
             var_data['__IP__'] = '__SELF__'
-        for host in res['hosts']:
+        for host in res.get('hosts', []):
             host_data[host] = {}
             self.set_config_values(host_data[host], host, res, var_data)
         return host_data

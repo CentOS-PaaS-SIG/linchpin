@@ -21,3 +21,5 @@ pyasn1>=0.1.9
 gitpython==2.1.11
 future
 openstacksdk>=0.37
+tqdm==4.36.1
+pyzmq==18.1.1
