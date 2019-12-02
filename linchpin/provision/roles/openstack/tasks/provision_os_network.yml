@@ -20,6 +20,10 @@
   register: res_def_output
   no_log: "{{ not debug_mode }}"
 
+- name: debug
+  debug:
+    msg: "{{ res_def_output | write_to_file('/tmp/', 'os_net.output')  }}"
+
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_network: "{{ topology_outputs_os_network + [ res_def_output ] }}"

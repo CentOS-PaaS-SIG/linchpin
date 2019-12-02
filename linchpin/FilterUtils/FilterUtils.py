@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
+import os
 import json
 from six.moves import range
 
@@ -288,7 +289,7 @@ def get_os_server_names(topo_output):
 
 def write_to_file(data, path, filename):
     filename = filename.replace(' ', '_').lower()
-
+    path = os.path.expanduser(path)
     fd = open(path + filename + ".output", "w")
     fd.write(json.dumps(data))
     fd.close()

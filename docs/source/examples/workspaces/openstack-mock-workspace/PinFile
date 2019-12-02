@@ -1,0 +1,159 @@
+---
+os-server-new:
+  topology:
+    topology_name: os-server-new
+    resource_groups:
+      - resource_group_name: os-server-new
+        resource_group_type: openstack
+        resource_definitions:
+          - name: "ci-lp-cp-{{ distro | default('') }}database"
+            role: os_server
+            flavor: {{ flavor | default('m1.small') }}
+            image: {{ image | default('CentOS-7-x86_64-GenericCloud-1612') }}
+            count: 1
+            keypair: {{ keypair | default('linchpin') }}
+            networks:
+              - {{ networks | default('provider_net_cci_6') }}
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos
+        {% endif %}
+
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+      hosts:
+        db-node:
+          count: 1
+          host_groups:
+            - database
+        frontend-node:
+          count: 1
+          host_groups:
+            - frontend
+
+os_heat_target:
+  topology:
+    topology_name: "os_heat_ex"
+    resource_groups:
+      - resource_group_name: "hotstack"
+        resource_group_type: "openstack"
+        resource_definitions:
+          - role: "os_heat"
+            name: "{{ distro}}ci-lp-test"
+            #template_path: "/workDir/workspace/ci-linchpin/linchpin/docs/source/examples/workspaces/openstack-heat/os_stack.yml"
+            template_path: "/home/srallaba/workspace/lp_ws_backup/lp_ws/ibm_cloud/linchpin/docs/source/examples/workspaces/openstack-mock-workspace/os_stack.yml"
+            tag: "testtag"
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos
+
+os_net:
+  topology:
+    topology_name: os-net
+    resource_groups:
+      - resource_group_name: os-net
+        resource_group_type: openstack
+        resource_definitions:
+          - name: lp-net
+            role: os_network
+          - name: lp-sub
+            role: os_subnet
+            network_name: lp-net
+            cidr: 172.16.180.0/24
+            dns_nameservers:
+              - 8.8.8.8
+          - name: lp-route
+            role: os_router
+            network: provider_net_cci_5
+            interfaces:
+              - net: lp-net
+                subnet: lp-sub
+                portip: 172.16.180.1
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos
+
+
+os-sg-new:
+  topology:
+    topology_name: os-sg-new
+    resource_groups:
+      - resource_group_name: os-sg-new
+        resource_group_type: openstack
+        resource_definitions:
+          - name: "ci-lp-cp-{{ distro | default('') }}security_group"
+            role: os_sg
+            description: {{ description | default('Openstack Security Group with ssh access') }}
+            {% if rules is defined %}
+            rules:
+              {% for rule in rules %}
+              - rule_type: {{ rule.type }}
+                from_port: {{ rule.from_port }}
+                to_port: {{ rule.to_port }}
+                proto: {{ rule.proto }}
+                cidr_ip: {{ rule.cidr_ip }}
+              {% endfor %}
+            {% else %}
+            rules:
+              - rule_type: "inbound"
+                from_port: 22
+                to_port: 22
+                proto: "tcp"
+                cidr_ip: "0.0.0.0/0"
+              - rule_type: "outbound"
+                from_port: 22
+                to_port: 22
+                proto: "tcp"
+                cidr_ip: "0.0.0.0/0"
+            {% endif %}
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos
+        {% endif %}
+
+
+os-vol-new:
+  topology:
+    topology_name: os-volume
+    resource_groups:
+    - resource_group_name: os-vol
+      resource_group_type: openstack
+      resource_definitions:
+      - name: "ci-lp-cp-{{ distro | default('') }}volume"
+        role: os_volume
+        size: 2
+      credentials:
+        filename: clouds.yaml
+        profile: ci-rhos
+
+
+os-keypair:
+  topology:
+    topology_name: os-server-keypair
+    resource_groups:
+      - resource_group_name: os-server-test-lp
+        resource_group_type: openstack
+        resource_definitions:
+          - name: "{{ distro }}cilinchpintestkey"
+            role: os_keypair
+        {% if credentials is defined %}
+        credentials:
+          filename: {{ credentials.filename }}
+          profile: {{ credentials.profile }}
+        {% else %}
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos
+        {% endif %}
