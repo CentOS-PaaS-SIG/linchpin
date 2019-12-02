@@ -103,7 +103,7 @@ azure_vm:
             role: azure_vm
 # This part below is not required, but you can still specify it
             vm_size: "Standard_DS1_v2"
-            private_image: "rhcostestimage"
+            private_image: "ccit-private-image"
             # If you have both private and public images
             # Linchpin will take the private one
             public_image:
