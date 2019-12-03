@@ -8,7 +8,7 @@ azure_vm_public_image:
         resource_definitions:
           - vm_name: "{{ distro }}-TEST-Azure"
             role: azure_vm
-            resource_group: "ccit"
+            resource_group: "{{ distro }}-LinchpinCreatedGroup"
             vm_size: "Standard_DS1_v2"
             public_image:
               offer: CentOS
@@ -39,7 +39,7 @@ azure_vn:
         resource_definitions:
           - virtual_network_name: "{{ distro }}-forLinchpinautomation"
             role: azure_virtual_network
-            resource_group: "ccit"
+            resource_group: "{{ distro }}-LinchpinCreatedGroup"
         credentials:
           filename: azure.key
           profile: key
@@ -67,7 +67,7 @@ azure_nic:
         resource_definitions:
           - virtual_network_name: "{{ distro }}-forLinchpinautomation"
             role: azure_network_interface
-            resource_group: "ccit"
+            resource_group: "{{ distro }}-LinchpinCreatedGroup"
             subnet_name: "{{ distro }}-linchpincreated"
             network_interface_name: "{{ distro }}-forLinchpinautomation"
         credentials:
@@ -86,7 +86,7 @@ azure_vn_subnet:
             subnet_name: "{{ distro }}-linchpincreated"
             role: azure_virtual_subnet
             address_prefix: '10.1.0.0/24'
-            resource_group: "ccit"
+            resource_group: "{{ distro }}-LinchpinCreatedGroup"
         credentials:
           filename: azure.key
           profile: key
@@ -99,7 +99,7 @@ azure_vm:
         resource_group_type: "azure"
         resource_definitions:
           - vm_name: "{{ distro }}-TestAzureAuto"
-            resource_group: "ccit"
+            resource_group: "{{ distro }}-LinchpinCreatedGroup"
             role: azure_vm
 # This part below is not required, but you can still specify it
             vm_size: "Standard_DS1_v2"
@@ -155,7 +155,7 @@ azure_multi_vm:
           - vm_name: "{{ distro }}-TestMultiVm"
             count: 4
             role: azure_vm
-            resource_group: "ccit"
+            resource_group: "{{ distro }}-LinchpinCreatedGroup"
         credentials:
           filename: azure.key
           profile: key
