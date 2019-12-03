@@ -98,6 +98,7 @@
       key: "outputs"
       value: "[{{ {'bkr_id_values': bkr_id_values} }}]"
       run_id: "{{ rundb_id }}"
+      db_schema: "{{ rundb_schema }}"
     when: not generate_resources
 
 - name: Provision beaker systems
