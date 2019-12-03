@@ -1,0 +1,1 @@
+{"hosts": [{"family": "RedHatEnterpriseLinux7", "distro": "RHEL-7.5", "arch": "x86_64", "variant": "Server", "system": "kvm-01-guest10.lab.eng.brq.redhat.com", "status": "Running", "result": "Pass", "rid": "7642234", "id": "3931548"}], "changed": true, "failed": false}

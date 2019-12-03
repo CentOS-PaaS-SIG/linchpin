@@ -11,7 +11,7 @@
 
 - name: "convert set topo_output_resources from rundb"
   set_fact:
-    topo_output_json: "{{ topo_output_rundb.output | convert_to_json }}"
+    topo_output_json: "{{ topo_output.output | convert_to_json }}"
   when: not generate_resources
 
 - name: Filter list for resources
