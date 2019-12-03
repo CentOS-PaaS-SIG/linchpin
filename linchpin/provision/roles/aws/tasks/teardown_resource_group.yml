@@ -42,7 +42,13 @@
     table: "{{ target }}"
     key: "outputs"
     run_id: "{{ orig_run_id }}"
+    db_schema: "{{ rundb_schema }}"
   register: topo_output_rundb
+  when: not generate_resources
+
+- name: "convert topo_output_resources in rundb"
+  set_fact:
+    topo_output_json: "{{ topo_output_rundb.output | convert_to_json }}"
   when: not generate_resources
 
 - name: "set topo_output_resources fact rundb"

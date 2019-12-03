@@ -293,3 +293,10 @@ def write_to_file(data, path, filename):
     fd.write(json.dumps(data))
     fd.close()
     return data
+
+
+def convert_to_json(input_str):
+    if type(input_str) is str:
+        return json.loads(input_str)
+    else:
+        return input_str
