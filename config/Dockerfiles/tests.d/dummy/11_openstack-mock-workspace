@@ -9,8 +9,7 @@ DISTRO=${1}
 PROVIDER=${2}
 
 PINFILE="PinFile"
-WORKSPACE_PATH="docs/source/examples/workspaces/openstack-mock-workspace"
-TARGET="all"
+WORKSPACE_PATH="docs/source/examples/workspaces/openstack"
 
 mkdir -p /root/.ssh/
 
@@ -29,4 +28,4 @@ pushd ${WORKSPACE_PATH}
 pwd
 
 # Provision whole workspace using the mock data
-linchpin -w . -p "${PINFILE}" -v up 
+linchpin -w . -p "${PINFILE}" -v up  

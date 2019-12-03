@@ -11,16 +11,7 @@ os-server-new:
             flavor: {{ flavor | default('m1.small') }}
             image: {{ image | default('CentOS-7-x86_64-GenericCloud-1612') }}
             count: 1
-            keypair: {{ keypair | default('ci-factory') }}
-            networks:
-              - {{ networks | default('provider_net_cci_6') }}
-          - name: "ci-lp-cp-{{ distro | default('') }}frontend"
-            role: os_server
-            flavor: {{ flavor | default('m1.small') }}
-            image: {{ image | default('CentOS-7-x86_64-GenericCloud-1808') }}
-            count: 1
-            keypair: {{ keypair | default('ci-factory') }}
-            auto_ip: no
+            keypair: {{ keypair | default('linchpin') }}
             networks:
               - {{ networks | default('provider_net_cci_6') }}
         {% if credentials is defined %}
@@ -46,6 +37,48 @@ os-server-new:
           count: 1
           host_groups:
             - frontend
+
+os_heat_target:
+  topology:
+    topology_name: "os_heat_ex"
+    resource_groups:
+      - resource_group_name: "hotstack"
+        resource_group_type: "openstack"
+        resource_definitions:
+          - role: "os_heat"
+            name: "{{ distro}}ci-lp-test"
+            template_path: "/workDir/workspace/ci-linchpin/linchpin/docs/source/examples/workspaces/openstack-heat/os_stack.yml"
+            tag: "testtag"
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos
+
+os_net:
+  topology:
+    topology_name: os-net
+    resource_groups:
+      - resource_group_name: os-net
+        resource_group_type: openstack
+        resource_definitions:
+          - name: lp-net
+            role: os_network
+          - name: lp-sub
+            role: os_subnet
+            network_name: lp-net
+            cidr: 172.16.180.0/24
+            dns_nameservers:
+              - 8.8.8.8
+          - name: lp-route
+            role: os_router
+            network: provider_net_cci_5
+            interfaces:
+              - net: lp-net
+                subnet: lp-sub
+                portip: 172.16.180.1
+        credentials:
+          filename: clouds.yaml
+          profile: ci-rhos
+
 
 os-sg-new:
   topology:
@@ -89,73 +122,21 @@ os-sg-new:
           profile: ci-rhos
         {% endif %}
 
+
 os-vol-new:
-  topology: os-vol-new.yml
-
-os-network:
   topology:
-    topology_name: os_network
+    topology_name: os-volume
     resource_groups:
-      - resource_group_name: simple
-        resource_group_type: openstack
-        resource_definitions:
-          - name: "ci-lp-cp-testnet_example"
-            role: os_network
-            unique: {{ unique | default(true) }}
-        {% if credentials is defined %}
-        credentials:
-          filename: {{ credentials.filename }}
-          profile: {{ credentials.profile }}
-        {% else %}
-        credentials:
-          filename: clouds.yaml
-          profile: ci-rhos
-        {% endif %}
+    - resource_group_name: os-vol
+      resource_group_type: openstack
+      resource_definitions:
+      - name: "ci-lp-cp-{{ distro | default('') }}volume"
+        role: os_volume
+        size: 2
+      credentials:
+        filename: clouds.yaml
+        profile: ci-rhos
 
-os-router:
-  topology:
-    topology_name: os_router
-    resource_groups:
-      - resource_group_name: ex_group
-        resource_group_type: openstack
-        resource_definitions:
-          - name: ci-lp-cp-trouter_example
-            role: os_router
-            unique: {{ unique | default(true) }}
-        {% if credentials is defined %}
-        credentials:
-          filename: {{ credentials.filename }}
-          profile: {{ credentials.profile }}
-        {% else %}
-        credentials:
-          filename: clouds.yaml
-          profile: ci-rhos
-        {% endif %}
-
-os-subnet:
-  topology:
-    topology_name: os-subnet
-    resource_groups:
-      - resource_group_name: ex_os_subnet
-        resource_group_type: openstack
-        resource_definitions:
-          - name: ci-lp-cp-test_network_ex
-            role: os_network
-            unique: {{ unique | default(false) }}
-          - name: ci-lp-cp-test_subnet_ex
-            role: os_subnet
-            network_name: ci-lp-cp-test_network_ex
-            unique: {{ unique | default(false) }}
-            cidr: {{ cidr | default('192.167.128.0/24') }}
-        {% if credentials is defined %}
-        credentials:
-          filename: {{ credentials.filename }}
-          profile: {{ credentials.profile }}
-        {% else %}
-        credentials:
-          filename: clouds.yaml
-          profile: ci-rhos
-        {% endif %}
 
 os-keypair:
   topology:
@@ -164,83 +145,8 @@ os-keypair:
       - resource_group_name: os-server-test-lp
         resource_group_type: openstack
         resource_definitions:
-          - name: "{{ distro }}linchpintestkey"
+          - name: "{{ distro }}cilinchpintestkey"
             role: os_keypair
-        {% if credentials is defined %}
-        credentials:
-          filename: {{ credentials.filename }}
-          profile: {{ credentials.profile }}
-        {% else %}
-        credentials:
-          filename: clouds.yaml
-          profile: ci-rhos
-        {% endif %}
-
-os-port:
-  topology:
-    topology_name: os-network-port
-    resource_groups:
-      - resource_group_name: os-port-ex
-        resource_group_type: openstack
-        resource_definitions:
-        - name: "os_port_example"
-          role: os_port
-          network: provider_net_cci_6
-          no_security_groups: True
-        {% if credentials is defined %}
-        credentials:
-          filename: {{ credentials.filename }}
-          profile: {{ credentials.profile }}
-        {% else %}
-        credentials:
-          filename: clouds.yaml
-          profile: ci-rhos
-        {% endif %}
-
-os-zone:
-  topology:
-    topology_name: os-network-zone
-    resource_groups:
-      - resource_group_name: os-zone-ex
-        resource_group_type: openstack
-        resource_definitions:
-        - name: "os_zone_example"
-          role: os_zone
-          name: example.net.
-          zone_type: primary
-          email: test@example.net
-          description: Test zone
-        {% if credentials is defined %}
-        credentials:
-          filename: {{ credentials.filename }}
-          profile: {{ credentials.profile }}
-        {% else %}
-        credentials:
-          filename: clouds.yaml
-          profile: ci-rhos
-        {% endif %}
-
-os-recordset:
-  topology:
-    topology_name: os-network-zone
-    resource_groups:
-      - resource_group_name: os-zone-ex
-        resource_group_type: openstack
-        resource_definitions:
-        - name: "os_zone_recset_example"
-          role: os_zone
-          name: example.net.
-          zone_type: primary
-          email: test@example.net
-          description: Test zone
-        - name: "os_recset"
-          role: os_recordset
-          zone: example.net.
-          name: www
-          recordset_type: primary
-          records: ['10.1.1.1']
-          description: "test recordset"
-          ttl: 3600
         {% if credentials is defined %}
         credentials:
           filename: {{ credentials.filename }}

@@ -9,7 +9,7 @@ DISTRO=${1}
 PROVIDER=${2}
 
 PINFILE="PinFile"
-WORKSPACE_PATH="docs/source/examples/workspaces/beaker-mock-workspace"
+WORKSPACE_PATH="docs/source/examples/workspaces/beaker"
 TARGET="beaker-new"
 
 function clean_up {
