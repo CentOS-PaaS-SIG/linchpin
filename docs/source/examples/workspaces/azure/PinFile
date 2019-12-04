@@ -1,4 +1,20 @@
----
+---            
+azure_api:
+  topology:
+    topology_name: azure_api
+    resource_groups:
+      - resource_group_name: "azure_api"
+        resource_group_type: "azure"
+        resource_definitions:
+          - role: "azure_api"
+            resource_group: "{{ distro }}-LinchpinCreatedGroup"
+            body_path: {{body_path}}
+            #You can specify the name and path of body.json
+            url: "https://management.azure.com/subscriptions/{{subscriptionid}}/resourceGroups/{{resourcegroupname}}/providers/Microsoft.{{providers}}/virtualMachines/{{vmname}}?api-version=2019-03-01"
+        credentials:
+          filename: azure.key
+          profile: key
+
 azure_vm_public_image:
   topology:
     topology_name: azure_vm_public_image
@@ -40,22 +56,6 @@ azure_vn:
           - virtual_network_name: "{{ distro }}-forLinchpinautomation"
             role: azure_virtual_network
             resource_group: "{{ distro }}-LinchpinCreatedGroup"
-        credentials:
-          filename: azure.key
-          profile: key
-
-azure_nic:
-  topology:
-    topology_name: azure_nic
-    resource_groups:
-      - resource_group_name: "azure"
-        resource_group_type: "azure"
-        resource_definitions:
-          - virtual_network_name: "{{ distro }}-forLinchpinautomation"
-            role: azure_network_interface
-            resource_group: "ccit"
-            subnet_name: "{{ distro }}-linchpincreated"
-            network_interface_name: "{{ distro }}-forLinchpinautomation"
         credentials:
           filename: azure.key
           profile: key
@@ -184,20 +184,4 @@ azure_multi_vm:
           count: 4
           host_groups:
             - example
-            
-azure_api:
-  topology:
-    topology_name: azure_api
-    resource_groups:
-      - resource_group_name: "azure_api"
-        resource_group_type: "azure"
-        resource_definitions:
-          - role: "azure_api"
-            resource_group: ccit
-            body_path: {{body_path}}
-            #You can specify the name and path of body.json
-            url: "https://management.azure.com/subscriptions/{{subscriptionid}}/resourceGroups/{{resourcegroupname}}/providers/Microsoft.{{providers}}/virtualMachines/{{vmname}}?api-version=2019-03-01"
-        credentials:
-          filename: azure.key
-          profile: key
 

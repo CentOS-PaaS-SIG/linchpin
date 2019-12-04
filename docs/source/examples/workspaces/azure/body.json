@@ -28,7 +28,7 @@
     "networkProfile": {
       "networkInterfaces": [
         {
-          "id": "/subscriptions/dcc74c29-4db6-4c49-9a0f-ac0ee03fa17e/resourceGroups/ccit/providers/Microsoft.Network/networkInterfaces/TestingNIC",
+          "id": "/subscriptions/SUBSCRIPTIONPLACEHOLDER/resourceGroups/REDSOURCEGROUPPLACEHOLDER/providers/Microsoft.Network/networkInterfaces/TestingNIC",
           "properties": {
             "primary": true
           }
