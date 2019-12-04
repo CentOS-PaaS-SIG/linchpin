@@ -21,3 +21,15 @@
     state: absent
   when: res_def['deepclean'] is defined and res_def['deepclean'] == true
   ignore_errors: true
+
+- name: "Teardown Azure Virtual Network when not async"
+  azure_rm_virtualnetwork:
+    client_id: "{{ auth_var['client_id'] | default(omit) }}"
+    tenant: "{{ auth_var['tenant'] | default(omit) }}"
+    secret: "{{ auth_var['secret'] | default(omit) }}"
+    subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
+    resource_group: "{{ res_def['resource_group'] | default(omit) }}"
+    name: "{{vn_name}}"
+    state: 'absent'
+  when: res_def['deepclean'] is defined and res_def['deepclean'] == true
+  ignore_errors: true
