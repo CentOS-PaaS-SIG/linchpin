@@ -6,8 +6,11 @@ import sys
 from . import usedb
 from .basedb import BaseDB
 
-if sys.version_info[0] == 3:
-    from pymongo import MongoClient, DESCENDING
+try:
+    if sys.version_info[0] == 3:
+        from pymongo import MongoClient, DESCENDING
+except Exception:
+    pass
 
 
 
@@ -20,8 +23,11 @@ class MongoDB(BaseDB):
 
 
     def _opendb(self):
-        self.client = MongoClient(self.conn_str)
-        self.db = self.client['linchpin']
+        try:
+            self.client = MongoClient(self.conn_str)
+            self.db = self.client['linchpin']
+        except Exception:
+            pass
 
     def _closedb(self):
         # also flush the stored data to mongodb

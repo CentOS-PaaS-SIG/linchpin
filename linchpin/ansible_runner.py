@@ -18,7 +18,6 @@ try:
     from ansible.parsing.dataloader import DataLoader
     from ansible.executor.playbook_executor import PlaybookExecutor
 except ImportError:
-    sys.path.insert(0, '/usr/lib/python2.6/site-packages/Jinja2-2.6-py2.6.egg')
     from .callbacks import PlaybookCallback
     from ansible.parsing.dataloader import DataLoader
     from ansible.executor.playbook_executor import PlaybookExecutor
