@@ -6,14 +6,20 @@
     wait: "yes"
   register: res_def_output_nasync
   when: not _async
-  #  no_log: "{{ not debug_mode }}"
+  no_log: "{{ not debug_mode }}"
 
 - name: "Generate keyfile"
-  copy: 
-    content: "{{ res_def_output_nasync['key']['private_key'] }}"
-    dest: "{{ default_ssh_key_path }}/{{ res_def['res_name'] | default(res_def['name']) }}.key"
+  debug:
+    msg: "{{ res_def_output_nasync['key']['private_key'] | write_to_file(default_ssh_key_path+'/', res_def['name']+'.key') }}"
   when: state == "present" and res_def_output_nasync['changed'] == true and not _async
-  no_log: "{{ not debug_mode }}"
+
+# commented due to selinux issues
+#- name: "Generate keyfile"
+#  copy: 
+#    content: "{{ res_def_output_nasync['key']['private_key'] }}"
+#    dest: "{{ default_ssh_key_path }}/{{ res_def['res_name'] | default(res_def['name']) }}.key"
+#  when: state == "present" and res_def_output_nasync['changed'] == true and not _async
+#  no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:

@@ -46,3 +46,4 @@
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_os_network: "{{ topology_outputs_os_network + [ res_def_output_auth ] }}"
+  when: state=='present'
