@@ -1,4 +1,3 @@
----
 - name: "Get the resource name"
   set_fact:
     dummy_name: "{{ res_def['name'] }}"
@@ -22,4 +21,3 @@
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_dummy: "{{ topology_outputs_dummy + tmp }}"
-
