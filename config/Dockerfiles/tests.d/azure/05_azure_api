@@ -1,0 +1,37 @@
+#!/bin/bash -xe
+  
+# Verify the azure vm provisioning
+# distros.exclude: none
+# providers.include: azure
+# providers.exclude: none
+
+DISTRO=${1}
+PROVIDER=${2}
+subscriptionid=${3}
+resourcegroupname="${DISTRO}-LinchpinCreatedGroup"
+providers='compute'
+TARGET="azure_api"
+vmname="${1}test"
+body_path="/workDir/workspace/ci-linchpin/linchpin/docs/source/examples/workspaces/azure/body.json"
+pushd docs/source/examples/workspaces/${PROVIDER}
+function clean_up {
+    set +e
+    linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}', "subscriptionid": '${subscriptionid}',"resourcegroupname": '${resourcegroupname}',"providers": '${providers}',"vmname": '${vmname}',"body_path": '${body_path}'}' destroy "${TARGET}"
+    linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}'}' destroy "azure_nic"
+    linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' destroy "azure_vn"
+    sed "s/\(\"id\".*\/\).*/\1TestingNIC\",/" ${body_path} -i
+    sed "s/${resourcegroupname}/REDSOURCEGROUPPLACEHOLDER/" ${body_path} -i
+    sed "s/${subscriptionid}/SUBSCRIPTIONPLACEHOLDER/" ${body_path} -i
+    rm -rf resources/ inventories/
+}
+
+trap clean_up EXIT
+
+linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' up "azure_vn"
+linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' up "azure_vn_subnet"
+linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}'}' up "azure_nic"
+sed "s/\(\"id\".*\/\).*/\1${DISTRO}-forLinchpinautomation\",/" ${body_path} -i
+sed "s/REDSOURCEGROUPPLACEHOLDER/${resourcegroupname}/" ${body_path} -i
+sed "s/SUBSCRIPTIONPLACEHOLDER/${subscriptionid}/" ${body_path} -i
+cat ${body_path}
+linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}', "subscriptionid": '${subscriptionid}',"resourcegroupname": '${resourcegroupname}',"providers": '${providers}',"vmname": '${vmname}',"body_path": '${body_path}'}' up "${TARGET}"
