@@ -294,10 +294,8 @@
       msg: 'Error running command qemu-img. Please make sure the dependencies are installed correctly. Try running `linchpin setup libvirt` to reinstall dependencies'
 
 
-- name: sleep for 60 seconds and continue with play
-  wait_for:
-    timeout: 60
-  delegate_to: localhost
+- name: sync memory data to disk
+  command: sync
 
 
 - name: "Start VM"
@@ -346,10 +344,8 @@
   when: node_exists['failed'] is defined and virt_type == "cloud-init" and cloud_config != {}
 
 
-- name: sleep for 60 seconds and continue with play
-  wait_for:
-    timeout: 60
-  delegate_to: localhost
+- name: sync memory data to disk
+  command: sync
 
 
 - name: "Start VM again (post cloud-init)"
