@@ -24,7 +24,8 @@
                   pip3 install mock;
                   pip3 install flake8;
                   pip3 install pytest<=4.40;
-                  pip3 install pymongo
+                  pip3 install pymongo;
+                  pip3 install pytest-runner;
                   pip3 install -r requirements.txt;
                   python3 setup.py install;
             args:

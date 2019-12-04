@@ -25,7 +25,6 @@ with io.open(os.path.join(dir_path, 'requirements.txt')) as f:
     required = f.read().splitlines()
 
 install_required = list(required)
-install_required.append('pytest-runner')
 
 ignore_dir = ['.git']
 
@@ -49,7 +48,8 @@ setup(
         'krbV': ["python-krbV"],
         'beaker': ['beaker-client>=23.3', 'python-krbV'],
         'docs': ["docutils", "sphinx", "sphinx_rtd_theme", "sphinx-automodapi"],
-        'tests': ["nose", "mock", "coverage", "flake8", "pytest<=4.4.0"],
+        'tests': ["nose", "mock", "coverage", "flake8",
+                  "pytest<=4.4.0", "pytest-runner"],
         'libvirt': ["libvirt-python>=3.0.0", "lxml"],
         'vmware': ["PyVmomi>=6.7.1"],
         'docker': ["docker-py>=1.7.0"],
