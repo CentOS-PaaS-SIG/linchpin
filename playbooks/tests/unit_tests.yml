@@ -44,7 +44,7 @@
           - name: Flake8 tests
             shell: |
                   source /tmp/tutorial-env/bin/activate;
-                  flake8 --exclude=\.eggs,tests,docs,config/Dockerfiles,linchpin/provision/library/*.py \
+                  flake8 --exclude=\.eggs,tests,docs,build,config/Dockerfiles,linchpin/provision/library/*.py \
                          linchpin/provision/roles/* --ignore=E124,E303,W504 --max-line-length 80 .
             args:
               chdir: ../../
