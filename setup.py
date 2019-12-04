@@ -25,7 +25,6 @@ with io.open(os.path.join(dir_path, 'requirements.txt')) as f:
     required = f.read().splitlines()
 
 install_required = list(required)
-install_required.append('pytest-runner')
 
 ignore_dir = ['.git']
 
