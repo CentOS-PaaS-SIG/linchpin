@@ -453,3 +453,4 @@ class LinchpinHooks(object):
             self.api.get_evar())
         t_block["actions"][0]["extra_vars"].update(
             block.get("extra_vars", {}))
+        return t_block
