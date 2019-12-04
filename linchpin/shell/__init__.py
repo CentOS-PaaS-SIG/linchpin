@@ -127,8 +127,7 @@ def _handle_results(ctx, results, return_code):
               help='Enable verbose output')
 @click.option('--version', is_flag=True,
               help='Prints the version and exits')
-@click.option('--creds-path', default="./",
-              type=click.Path(),
+@click.option('--creds-path', type=click.Path(),
               envvar='CREDS_PATH',
               help='Use the specified credentials path. Also works'
                    ' if CREDS_PATH environment variable is set')
