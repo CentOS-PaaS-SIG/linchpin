@@ -226,7 +226,8 @@ def ansible_runner(playbook_path,
 
         options = Options(connect_type, module_path, 100, False, 'sudo', 'root',
                           False, False, False, False, None, None, None, None,
-                          None, None, None, verbosity, False, False)
+                          None, None, None, verbosity, False, False,
+                          [vault_password_file])
 
         if ansible_version >= 2.8:
             pbex = ansible_runner_28x(playbook_path,
@@ -280,7 +281,7 @@ class Options():
                  become_user, listhosts, listtasks, listtags, syntax,
                  remote_user, private_key_file, ssh_common_args,
                  ssh_extra_args, sftp_extra_args, scp_extra_args,
-                 start_at_task, verbosity, check, diff):
+                 start_at_task, verbosity, check, diff, vault_password_files):
         self.connection = connection
         self.module_path = module_path
         self.forks = forks
@@ -301,3 +302,4 @@ class Options():
         self. verbosity = verbosity
         self.check = check
         self.diff = diff
+        self.vault_password_files = vault_password_files
