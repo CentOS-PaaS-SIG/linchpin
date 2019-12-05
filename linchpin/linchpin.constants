@@ -59,7 +59,7 @@ default_inventories_path = {{ workspace }}/inventories/
 default_roles_path = {{ lp_path }}/%(playbooks_folder)s/%(roles_folder)s
 
 # default credentials data, this path doesn't automatically exist
-default_credentials_path = %(default_config_path)s
+default_credentials_path = {{ workspace }}/credentials
 
 default_resources_path = {{ workspace }}/%(resources_folder)s
 
