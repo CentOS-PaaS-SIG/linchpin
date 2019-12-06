@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: fedora31-builder
+metadata:
+  annotations:
+    description: fedora31 container
+    iconClass: fedora31
+    tags: instant-app
+  name: fedora31-builder
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+    labels:
+    name: fedora31
+  spec: {}
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: fedora31
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: fedora31:latest
+    resources: {}
+    source:
+      contextDir: ${REPO_CONTEXTDIR}
+      git:
+        ref: ${REPO_REF}
+        uri: ${REPO_URL}
+      type: Git
+    strategy:
+      dockerStrategy:
+        dockerfilePath: fedora31/Dockerfile
+        env:
+          - name: CONTAINER_NAME
+            value: fedora31
+      type: Docker
+    triggers:
+    - type: ConfigChange
+parameters:
+- description: Git repository with Dockerfile and slave entrypoint.
+  displayName: Repository URL
+  name: REPO_URL
+  value: https://github.com/samvarankashyap/linchpin.git
+- description: The sub-directory inside the repository.
+  displayName: Context Directory
+  name: REPO_CONTEXTDIR
+  value: config/Dockerfiles
+- description: The git ref or tag to use for customization.
+  displayName: Git Reference
+  name: REPO_REF
+  value: develop

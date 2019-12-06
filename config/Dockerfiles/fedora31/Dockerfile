@@ -1,4 +1,4 @@
-FROM fedora:30
+FROM fedora:31
 LABEL maintainer "https://github.com/CentOS-PaaS-SIG/linchpin"
 LABEL description "This container will verify linchpin works under Fedora-30"
 
@@ -38,9 +38,7 @@ RUN curl -o /etc/yum.repos.d/beaker-client.repo \
 
 COPY init_libvirt.sh $HOME/
 
-RUN pip install -U pip; \
-    pip install -U setuptools; \
-    pip install -U pygithub; \
+RUN pip3 install -U setuptools; \
     sed -i "/Service/a ExecStartPost=\/bin\/chmod 666 /dev/kvm" \
       /usr/lib/systemd/system/libvirtd.service
 
