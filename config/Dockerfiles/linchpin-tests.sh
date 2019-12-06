@@ -11,7 +11,7 @@ TESTS_DIR="./config/Dockerfiles/tests.d"
 
 
 if [ -z "${PROVIDERS}" ]; then
-    PROVIDERS="dummy libvirt beaker openstack"
+    PROVIDERS="dummy libvirt beaker openstack azure aws"
 fi
 
 # this function checks the distros.exclude value within the test.
@@ -109,10 +109,11 @@ for testdir in *; do
 
                     tname="${provider}/${test}"
                     testname=${distro}/${tname}
+                    subscriptionid=$(tail -n 1 azure.key)
                     echo >> ${base_dir}/${distro}_logs/${provider}.log
                     echo "==== TEST: ${testname} ====" | tee -a ${base_dir}/${distro}_logs/${provider}.log
                     pushd "${base_dir}" &> /dev/null
-                    ${TESTS_DIR}/${testdir}/${test} ${distro} ${provider} 2>&1 | tee -a ${base_dir}/${distro}_logs/${provider}.log
+                    ${TESTS_DIR}/${testdir}/${test} ${distro} ${provider} ${subscriptionid} 2>&1 | tee -a ${base_dir}/${distro}_logs/${provider}.log
                     RC=${?}
                     if [ ${RC} -eq 0 ]; then
                         test_summary="$(tput setaf 2)SUCCESS$(tput sgr0)\t${testname}"

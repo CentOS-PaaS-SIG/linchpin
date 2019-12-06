@@ -7,7 +7,7 @@
 
 DISTRO=${1}
 PROVIDER=${2}
-subscriptionid='dcc74c29-4db6-4c49-9a0f-ac0ee03fa17e'
+subscriptionid=${3}
 resourcegroupname="${DISTRO}-LinchpinCreatedGroup"
 providers='compute'
 TARGET="azure_api"
