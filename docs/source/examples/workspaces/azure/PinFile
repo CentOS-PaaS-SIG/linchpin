@@ -1,4 +1,20 @@
----
+---            
+azure_api:
+  topology:
+    topology_name: azure_api
+    resource_groups:
+      - resource_group_name: "azure_api"
+        resource_group_type: "azure"
+        resource_definitions:
+          - role: "azure_api"
+            resource_group: "{{ distro }}-LinchpinCreatedGroup"
+            body_path: {{body_path}}
+            #You can specify the name and path of body.json
+            url: "https://management.azure.com/subscriptions/{{subscriptionid}}/resourceGroups/{{resourcegroupname}}/providers/Microsoft.{{providers}}/virtualMachines/{{vmname}}?api-version=2019-03-01"
+        credentials:
+          filename: azure.key
+          profile: key
+
 azure_vm_public_image:
   topology:
     topology_name: azure_vm_public_image

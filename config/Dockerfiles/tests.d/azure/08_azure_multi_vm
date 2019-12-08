@@ -1,7 +1,7 @@
 #!/bin/bash -xe
   
 # Verify the azure vm provisioning
-# distros.exclude: fedora30 centos7 fedora31
+# distros.exclude: none
 # providers.include: azure
 # providers.exclude: none
 

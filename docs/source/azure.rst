@@ -60,6 +60,42 @@ definition, the following options are available.
 
 ⚫ If you declare both public and private image, only the private will be taken
 
+azure_api
+-------
+
+Any Azure resources can be provisioned using this role, it supported by the Azure Api
+
+* Example <workspaces/azure/Pinfile>`
+* azure_api module <https://docs.ansible.com/ansible/latest/modules/azure_rm_resource_module.html#azure-rm-resource-module>`_
+* Azure API <https://docs.microsoft.com/en-us/rest/api/?view=Azure>`_
+
+Topology Schema
+~~~~~~~~~~~~~~~
+
+Within Linchpin, the :term:`azure_api` :term:`resource_definition` has more
+options than what is shown in the examples above. For each :term:`azure_api`
+definition, the following options are available.
+
++----------------------+------------+---------------+-----------------------+--------------------+
+| Parameter            | required   | type          | ansible value         | comments           |
++======================+============+===============+=======================+====================+
+|  role                | true       | string        | N/A                   |                    |
++----------------------+------------+---------------+-----------------------+--------------------+
+|  resource_group      | true       |String         | resource_group        |                    |
++----------------------+------------+---------------+-----------------------+--------------------+
+|  resource_type       | true       |string         | resource_type         |                    |
++----------------------+------------+---------------+-----------------------+--------------------+
+|  resource_name       | true       |string         | resource_name         |                    |
++----------------------+------------+---------------+-----------------------+--------------------+
+|  api_version         |true        | string        | api_version           |                    |
++----------------------+------------+---------------+-----------------------+--------------------+
+|  body_path           |true        | string        |                       |Path to request body|
++----------------------+------------+---------------+-----------------------+--------------------+
+|  url                 |true        | string        |url                    |                    |
++----------------------+------------+---------------+-----------------------+--------------------+
+
+
+
 Credentials Management
 ----------------------
  Support IAM user (instruction below)         
