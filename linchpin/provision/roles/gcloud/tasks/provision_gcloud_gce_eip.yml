@@ -3,9 +3,9 @@
     name: "{{ gce_resource_name }}"
     state: "{{ state }}"
     region: "{{ res_def['region'] }}"
-    service_account_email: "{{ auth_var['output']['client_email'] }}"
-    credentials_file: "{{ auth_var['path'] }}/{{ auth_var['params']['filename'] }}"
-    project_id: "{{ auth_var['output']['project_id'] }}"
+    service_account_email: "{{ auth_var['output']['client_email'] | default(omit) }}"
+    credentials_file: "{{ auth_var['path'] | default(omit) }}/{{ auth_var['params']['filename'] | default(omit) }}"
+    project_id: "{{ auth_var['output']['project_id'] | default(omit) }}"
   register: res_def_output
   no_log: "{{ not debug_mode }}"
 
