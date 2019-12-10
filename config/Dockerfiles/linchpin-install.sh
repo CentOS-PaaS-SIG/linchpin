@@ -25,3 +25,12 @@ if [ -e "keys/duffy.key" ]; then
         popd
     fi
 fi
+
+pushd $WORKDIR
+PYTHON_VERSION=$(which python)
+echo $PYTHON_VERSION
+# run flake8 tests on linchpin source code
+flake8 --exclude=\.eggs,tests,docs,config/Dockerfiles,duffy-ansible-module --ignore=E124,E303,W504 --max-line-length 80 .
+# run unit tests
+$PYTHON_VERSION ./setup.py test
+popd
