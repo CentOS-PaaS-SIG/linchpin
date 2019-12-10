@@ -6,20 +6,3 @@
           - name: debug
             debug:
               msg: "Disabling contra-hdsl tests"
-#          - name: Install Test Reqs
-#            pip:
-#              name: .[tests]
-#              virtualenv: /tmp/linchpin
-#              chdir: ../../
-#          - name: pyTest
-#            shell: |
-#                  source /tmp/linchpin/bin/activate
-#                  python setup.py test
-#            args:
-#              chdir: ../../
-#          - name: Flake8 tests
-#            shell: |
-#                  source /tmp/linchpin/bin/activate
-#                  flake8 --exclude=\.eggs,tests,docs,config/Dockerfiles --ignore=E124,E303,W504 --max-line-length 80 .
-#            args:
-#              chdir: ../../
