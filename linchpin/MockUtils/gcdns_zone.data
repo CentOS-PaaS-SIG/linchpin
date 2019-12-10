@@ -1,0 +1,1 @@
+{"changed": true, "diff": {"before": "", "before_header": "<absent>", "after": {"zone": "testlpgcdnszone.com.", "description": "test"}, "after_header": "testlpgcdnszone.com."}, "state": "present", "zone": "testlpgcdnszone.com.", "description": "test", "failed": false}

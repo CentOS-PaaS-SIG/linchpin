@@ -7,7 +7,7 @@
     mode: "{{ res_def['mode'] | default(omit) }}"
     pem_file:  "{{ auth_var['output']['pem_file'] | default(omit) }}"
     project_id: "{{ auth_var['output']['project_id'] | default(omit) }}"
-    credentials_file: "{{ auth_var['path'] }}/{{ auth_var['params']['filename'] | default(omit) }}"
+    credentials_file: "{{ auth_var['path'] | default(omit) }}/{{ auth_var['params']['filename'] | default(omit) }}"
     state: "{{ state }}"
     subnet_region: "{{ res_def['subent_region'] | default(omit) }}"
     service_account_email: "{{ auth_var['output']['client_email'] | default(omit) }}"
@@ -20,9 +20,6 @@
     target_tags: "{{ res_def['target_tags'] | default(omit) }}"
   register: res_def_output
   no_log: "{{ not debug_mode }}"
-
-- debug:
-    msg: "{{ res_def_output }}"
 
 - name: "Appending outputitem to topology_outputs"
   set_fact:

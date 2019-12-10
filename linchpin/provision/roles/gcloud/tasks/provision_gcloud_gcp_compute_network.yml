@@ -8,7 +8,7 @@
     ipv4_range: "{{ res_def['ipv4_range'] | default(omit) }}"
     project: "{{ auth_var['output']['project_id'] | default(omit) }}"
     scopes: "{{ res_def['scopes'] | default(['https://www.googleapis.com/auth/compute']) }}"
-    service_account_file: "{{ auth_var['path'] }}/{{ auth_var['params']['filename'] | default(omit) }}"
+    service_account_file: "{{ auth_var['path'] | default(omit) }}/{{ auth_var['params']['filename'] | default(omit) }}"
     state: "{{ state }}"
   register: res_def_output
   no_log: "{{ not debug_mode }}"
