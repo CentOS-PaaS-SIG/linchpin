@@ -265,6 +265,7 @@ def ansible_runner(playbook_path,
                                                   extra_vars,
                                                   vault_password_file,
                                                   inventory_src=inventory_src,
+                                                  verbosity=verbosity,
                                                   console=console)
         results = stdout
         return rc, results
