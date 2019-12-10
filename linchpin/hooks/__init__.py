@@ -260,7 +260,7 @@ class LinchpinHooks(object):
 
 
     def run_action(self, state, block, tgt_data):
-        use_shell = self.api.get_cfg("ansible", "use_shell")
+        use_shell = ast.literal_eval(self.api.get_cfg("ansible", "use_shell"))
         if block['name'] in GLOBAL_HOOKS.keys():
             block = self.global_hooks_block(block)
         # currently built-ins support only ansible
