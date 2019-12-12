@@ -1,4 +1,3 @@
----
 - name: "Get the resource name"
   set_fact:
     dummy_name: "{{ res_def['name'] }}"
@@ -26,4 +25,6 @@
 
 - name: "Add types to resource"
   set_fact:
-    topology_outputs_dummy: "{{ topology_outputs_dummy | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"
+    topology_outputs_dummy: "{{ topology_outputs_dummy |
+                                add_res_data(lookup('vars', 'role_name'),
+                                res_def['role']) }}"

@@ -1,16 +1,19 @@
----
 - name: "declaring output vars"
   set_fact:
     topology_outputs_dummy: []
 
 - name: "Initiating Provisioning of dummy resource group"
-  include: provision_resource_group.yml res_grp={{ item }}
+  include_tasks: provision_resource_group.yml
+  vars:
+    res_grp: "{{ item }}"
   with_items:
     - "{{ resources }}"
   when: state == "present"
 
 - name: "Initiating Teardown of dummy resource group"
-  include: teardown_resource_group.yml res_grp={{ item }}
+  include_tasks: teardown_resource_group.yml
+  vars:
+    res_grp: "{{ item }}"
   with_items:
     - "{{ resources }}"
   when: state == "absent"
