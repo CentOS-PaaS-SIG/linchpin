@@ -498,35 +498,12 @@ class LinchpinAPI(object):
                    to perform an idempotent reprovision, or destroy provisioned
                    resources.
         """
-        ansible_console = False
-        if self.ctx.cfgs.get('ansible'):
-            ansible_console = (
-                ast.literal_eval(self.get_cfg('ansible',
-                                              'console',
-                                              default='False')))
-
-        if not ansible_console:
-            ansible_console = bool(self.ctx.verbosity)
 
         results = {}
-
-
         return_code = 99
-        vault_pass = self.get_evar('vault_pass')
-        if vault_pass == '':
-            self.set_evar('vault_pass',
-                          self.ctx.get_cfg('evars',
-                                           'vault_pass',
-                                           default=''))
-
+        
+        # verify_targets_exist()
         targets = [x.lower() for x in list(provision_data.keys())]
-        disable_uhash_targets = self.ctx.get_evar('disable_uhash_targets')
-        enable_uhash = self.ctx.get_evar('enable_uhash')
-
-        for target in targets:
-            if not isinstance(provision_data[target], dict):
-                raise LinchpinError("Target '{0}' does not"
-                                    " exist.".format(target))
 
         if 'linchpin' in targets:
             raise LinchpinError("Target 'linchpin' is not allowed.")
@@ -534,71 +511,15 @@ class LinchpinAPI(object):
         for target in targets:
             if target == 'cfgs':
                 continue
+            if not isinstance(provision_data[target], dict):
+                raise LinchpinError("Target '{0}' does not"
+                                    " exist.".format(target))
 
             self.ctx.log_debug("Processing target: {0}".format(target))
-
             results[target] = {}
             self.set_evar('target', target)
 
-            rundb = self.setup_rundb()
-
-            if tx_id:
-                record = rundb.get_tx_record('linchpin', tx_id)
-                run_id = (list(record['targets'][0][target].keys())[0])
-
-            rundb_schema = json.loads(self.get_cfg(section='lp',
-                                      key='rundb_schema'))
-            rundb.schema = rundb_schema
-            self.set_evar('rundb_schema', rundb_schema)
-
-            start = time.time()
-            st_uhash = int(start * 1000)
-            uhash = None
-
-            # generate a new rundb_id
-            # (don't confuse it with an already existing run_id)
-            rundb_id = rundb.init_table(target)
-            orig_run_id = rundb_id
-
-            uhash_length = self.get_cfg('lp', 'rundb_uhash_length')
-            uhash_len = int(uhash_length)
-            if not run_id:
-                hash_str = ':'.join([target, str(tx_id), str(rundb_id),
-                                     str(st_uhash)])
-                if isinstance(hash_str, text_type):
-                    hash_str = hash_str.encode('utf-8')
-                uh = hashlib.new(self.rundb_hash, hash_str)
-                uhash = uh.hexdigest()[:uhash_len]
-
-            if action == 'destroy' or run_id:
-                # look for the action='up' records to destroy
-                data, orig_run_id = rundb.get_record(target,
-                                                     action='up',
-                                                     run_id=run_id)
-
-                if data:
-                    uhash = data.get('uhash')
-                    self.ctx.log_debug("using data from"
-                                       " run_id: {0}".format(run_id))
-
-            elif action not in ['up', 'destroy']:
-                # it doesn't appear this code will will execute,
-                # but if it does...
-                raise LinchpinError("Attempting '{0}' action on"
-                                    " target: '{1}' failed. Not an"
-                                    " action.".format(action, target))
-
-
-            self.ctx.log_debug('rundb_id: {0}'.format(rundb_id))
-            self.ctx.log_debug('uhash: {0}'.format(uhash))
-
-            rundb.update_record(target, rundb_id, 'uhash', uhash)
-            rundb.update_record(target, rundb_id, 'start', str(start))
-            rundb.update_record(target, rundb_id, 'action', action)
-
-            self.set_evar('orig_run_id', orig_run_id)
-            self.set_evar('rundb_id', rundb_id)
-            self.set_evar('uhash', uhash)
+            rundb_id = self.prepare_rundb(target, action, run_id, tx_id)
 
             try:
                 validator = Validator(self.ctx, self.role_path, self.pb_ext)
@@ -611,117 +532,98 @@ class LinchpinAPI(object):
             topology_data = provision_data[target].get('topology')
             self.set_evar('topo_data', topology_data)
 
-            rundb.update_record(target,
-                                rundb_id,
-                                'inputs',
-                                [
-                                    {'topology_data':
-                                     provision_data[target]['topology']}
-                                ])
-
-            if provision_data[target].get('layout', None):
-                l_data = provision_data[target]['layout']
-                provision_data[target]['layout'] = self._convert_layout(l_data)
-                self.set_evar('layout_data', provision_data[target]['layout'])
-
-                rundb.update_record(target,
-                                    rundb_id,
-                                    'inputs',
-                                    [
-                                        {'layout_data':
-                                         provision_data[target]['layout']}
-                                    ])
-
-            if provision_data[target].get('hooks', None):
-                hooks_data = provision_data[target].get('hooks')
-                self.set_evar('hooks_data', hooks_data)
-                rundb.update_record(target,
-                                    rundb_id,
-                                    'inputs',
-                                    [
-                                        {'hooks_data':
-                                         provision_data[target]['hooks']}
-                                    ])
-
-            if provision_data.get('cfgs', None):
-                vars_data = provision_data[target].get('cfgs')
-                self.set_evar('cfgs_data', vars_data)
-                rundb.update_record(target,
-                                    rundb_id,
-                                    'cfgs',
-                                    [
-                                        {'user':
-                                         provision_data['cfgs']}
-                                    ])
+            self.update_rundb(rundb_id, target, provision_data)
 
             # note : changing the state triggers the hooks
-            if action == 'destroy':
-                if not run_id:
-                    prev_id = run_id if run_id else rundb.get_run_id(target,
-                                                                     'up')
-                    self.hooks.rundb = (rundb, rundb_id, prev_id)
-            else:
-                self.hooks.rundb = (rundb, rundb_id)
-            self.pb_hooks = self.get_cfg('hookstates', action)
-            self.ctx.log_debug('calling: {0}{1}'.format('pre', action))
-
-            if (('pre' in self.pb_hooks) and not self.get_cfg('hook_flags',
-                                                              'no_hooks')):
-                self.hook_state = '{0}{1}'.format('pre', action)
-
-            # FIXME need to add rundb data for hooks results
-
-            # Enable/disable uhash based on provided flag(s)
-            if disable_uhash_targets and target in disable_uhash_targets:
-                self.ctx.set_evar('use_uhash', False)
-            else:
-                self.ctx.set_evar('use_uhash', enable_uhash)
-
-            # invoke the appropriate action
             return_code, results[target]['task_results'] = (
-                self._invoke_playbooks(resources, action=action,
-                                       console=ansible_console)
+                    self.run_target(target, resources, action, run_id)
             )
-
-            # logs the return_code back to console and quits
-            # quits if return_code > 0
-            self.ctx.log("Playbook Return code {0}".format(str(return_code)))
-            if return_code > 0 and action == "up":
-                sys.exit(return_code)
-
-            if not return_code:
-                self.ctx.log_state("Action '{0}' on Target '{1}' is "
-                                   "complete".format(action, target))
-
-            # FIXME Check the result[target] value here, and fail if applicable.
-            # It's possible that a flag might allow more targets to run, then
-            # return an error code at the end.
-
-
-            # add post provision hook for inventory generation
-            if (('inv' in self.pb_hooks) and not self.get_cfg('hook_flags',
-                                                              'no_hooks')):
-                self.hook_state = 'postinv'
-
-            if (('post' in self.pb_hooks) and
-                    (self.__meta__ == "API") and
-                    not self.get_cfg('hook_flags', 'no_hooks')):
-                self.hook_state = '{0}{1}'.format('post', action)
 
             end = time.time()
 
-            rundb.update_record(target, rundb_id, 'end', str(end))
-            rundb.update_record(target, rundb_id, 'rc', return_code)
+            self.rundb.update_record(target, rundb_id, 'end', str(end))
+            self.rundb.update_record(target, rundb_id, 'rc', return_code)
 
-            run_data = rundb.get_record(target,
-                                        action=action,
-                                        run_id=rundb_id)
+            run_data = self.rundb.get_record(target,
+                                             action=action,
+                                             run_id=rundb_id)
 
             results[target]['rundb_data'] = {rundb_id: run_data[0]}
 
-
-
         # generate the linchpin_id and structure
+        lp_data = self.write_results_to_rundb(results, action)
+
+        return (return_code, lp_data)
+
+
+    def run_target(self, target, resources, action, run_id=None):
+        disable_uhash_targets = self.ctx.get_evar('disable_uhash_targets')
+        enable_uhash = self.ctx.get_evar('enable_uhash')
+        ansible_console = False
+        if self.ctx.cfgs.get('ansible'):
+            ansible_console = (
+                ast.literal_eval(self.get_cfg('ansible',
+                                              'console',
+                                              default='False')))
+
+        if not ansible_console:
+            ansible_console = bool(self.ctx.verbosity)
+        
+        rundb_id = self.get_evar('rundb_id')
+        if action == 'destroy':
+            prev_id = run_id if run_id else self.rundb.get_run_id(target, 'up')
+            self.hooks.rundb = (self.rundb, rundb_id, prev_id)
+        else:
+            self.hooks.rundb = (self.rundb, rundb_id)
+ 
+        self.run_hooks('pre', action)
+
+        # Enable/disable uhash based on provided flag(s)
+        if disable_uhash_targets and target in disable_uhash_targets:
+            self.ctx.set_evar('use_uhash', False)
+        else:
+            self.ctx.set_evar('use_uhash', enable_uhash)
+
+        # invoke the appropriate action
+        return_code, results =  self._invoke_playbooks(resources,
+                                                      action=action,
+                                                      console=ansible_console)
+
+        # logs the return_code back to console and quits
+        # quits if return_code > 0
+        self.ctx.log("Playbook Return code {0}".format(str(return_code)))
+        if return_code == 0:
+            self.ctx.log_state("Action '{0}' on Target '{1}' is "
+                               "complete".format(action, target))
+        elif action == "up":
+            sys.exit(return_code)
+
+        # FIXME Check the result[target] value here, and fail if applicable.
+        # It's possible that a flag might allow more targets to run, then
+        # return an error code at the end.
+
+        self.run_hooks('inv', action)
+        if self.__meta__ == "API":
+            self.run_hooks('post', action)
+
+        return return_code, results
+
+
+    def run_hooks(self, state, action):
+        self.pb_hooks = self.get_cfg('hookstates', action)
+        if self.get_cfg('hook_flags', 'no_hooks'):
+            return
+
+        if state == 'inv':
+            hook = 'postinv'
+        else:
+            hook = '{0}{1}'.format(state, action)
+        self.ctx.log_debug('calling: {0}'.format(hook))
+        if state in self.pb_hooks:
+            self.hook_state = hook
+
+
+    def write_results_to_rundb(self, results, action):
         lp_schema = ('{"action": "", "targets": []}')
 
         rundb = self.setup_rundb()
@@ -742,7 +644,115 @@ class LinchpinAPI(object):
                            'summary_data': summary,
                            'results_data': results}}
 
-        return (return_code, lp_data)
+        return lp_data
+
+
+    def prepare_rundb(self, target, action, run_id=None, tx_id=None):
+        self.rundb = self.setup_rundb()
+
+        if tx_id:
+            record = self.rundb.get_tx_record('linchpin', tx_id)
+            run_id = (list(record['targets'][0][target].keys())[0])
+
+        rundb_schema = json.loads(self.get_cfg(section='lp',
+                                  key='rundb_schema'))
+        self.rundb.schema = rundb_schema
+        self.set_evar('rundb_schema', rundb_schema)
+
+        start = time.time()
+        st_uhash = int(start * 1000)
+        uhash = None
+
+        # generate a new rundb_id
+        # (don't confuse it with an already existing run_id)
+        rundb_id = self.rundb.init_table(target)
+        orig_run_id = rundb_id
+
+        uhash_length = self.get_cfg('lp', 'rundb_uhash_length')
+        uhash_len = int(uhash_length)
+        if not run_id:
+            hash_str = ':'.join([target, str(tx_id), str(rundb_id),
+                                 str(st_uhash)])
+            if isinstance(hash_str, text_type):
+                hash_str = hash_str.encode('utf-8')
+            uh = hashlib.new(self.rundb_hash, hash_str)
+            uhash = uh.hexdigest()[:uhash_len]
+
+        if action == 'destroy' or run_id:
+            # look for the action='up' records to destroy
+            data, orig_run_id = self.rundb.get_record(target,
+                                                      action='up',
+                                                      run_id=run_id)
+
+            if data:
+                uhash = data.get('uhash')
+                self.ctx.log_debug("using data from"
+                                   " run_id: {0}".format(run_id))
+
+        elif action not in ['up', 'destroy']:
+            # it doesn't appear this code will will execute,
+            # but if it does...
+            raise LinchpinError("Attempting '{0}' action on"
+                                " target: '{1}' failed. Not an"
+                                " action.".format(action, target))
+
+
+        self.ctx.log_debug('rundb_id: {0}'.format(rundb_id))
+        self.ctx.log_debug('uhash: {0}'.format(uhash))
+        
+        self.rundb.update_record(target, rundb_id, 'uhash', uhash)
+        self.rundb.update_record(target, rundb_id, 'start', str(start))
+        self.rundb.update_record(target, rundb_id, 'action', action)
+
+        self.set_evar('orig_run_id', orig_run_id)
+        self.set_evar('rundb_id', rundb_id)
+        self.set_evar('uhash', uhash)
+
+        return rundb_id
+
+
+    def update_rundb(self, rundb_id, target, provision_data):
+        self.rundb.update_record(target,
+                            rundb_id,
+                            'inputs',
+                            [
+                                {'topology_data':
+                                 provision_data[target]['topology']}
+                            ])
+
+        if provision_data[target].get('layout', None):
+            l_data = provision_data[target]['layout']
+            provision_data[target]['layout'] = self._convert_layout(l_data)
+            self.set_evar('layout_data', provision_data[target]['layout'])
+            self.rundb.update_record(target,
+                                rundb_id,
+                                'inputs',
+                                [
+                                    {'layout_data':
+                                     provision_data[target]['layout']}
+                                ])
+
+        if provision_data[target].get('hooks', None):
+            hooks_data = provision_data[target].get('hooks')
+            self.set_evar('hooks_data', hooks_data)
+            self.rundb.update_record(target,
+                                rundb_id,
+                                'inputs',
+                                [
+                                    {'hooks_data':
+                                     provision_data[target]['hooks']}
+                                ])
+
+        if provision_data.get('cfgs', None):
+            vars_data = provision_data[target].get('cfgs')
+            self.set_evar('cfgs_data', vars_data)
+            self.rundb.update_record(target,
+                                rundb_id,
+                                'cfgs',
+                                [
+                                    {'user':
+                                     provision_data['cfgs']}
+                                ])
 
 
     def do_validation(self, provision_data, old_schema=False):
