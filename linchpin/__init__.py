@@ -108,7 +108,7 @@ class LinchpinAPI(object):
 
     def setup_pbar(self):
         if (eval(self.get_cfg('progress_bar', 'no_progress')) or
-           self.ctx.verbosity):
+           self.ctx.verbosity or self.ctx.no_monitor):
             self.disable_pbar = 'True'
         else:
             self.disable_pbar = 'False'
@@ -948,10 +948,8 @@ class LinchpinAPI(object):
         group = res['resource_group_name']
         self.pbar.postfix[0] = dict(group="resource group '%s'" % group)
         self.pbar.refresh()
-        with ProcessPoolExecutor() as executor:
-            executor.submit(progress_monitor, self.disable_pbar, res)
-            ansible_thread = executor.submit(
-                ansible_runner,
+        if self.ctx.no_monitor:
+            return_code, res = ansible_runner(
                 playbook_path,
                 self._get_module_path(),
                 extra_vars,
@@ -960,12 +958,27 @@ class LinchpinAPI(object):
                 verbosity=self.ctx.verbosity,
                 console=console,
                 env_vars=env_vars,
-                use_shell=use_shell)
+                use_shell=use_shell
+                )
+        else:
+            with ProcessPoolExecutor() as executor:
+                executor.submit(progress_monitor, self.disable_pbar, res)
+                ansible_thread = executor.submit(
+                    ansible_runner,
+                    playbook_path,
+                    self._get_module_path(),
+                    extra_vars,
+                    vault_password_file=None,
+                    inventory_src=inv_src,
+                    verbosity=self.ctx.verbosity,
+                    console=console,
+                    env_vars=env_vars,
+                    use_shell=use_shell)
 
-            return_code, res = ansible_thread.result()
-        self.pbar.postfix[0] = dict(group="Finishing resource group " + group)
-        self.pbar.refresh()
-        self.pbar.update()
+                return_code, res = ansible_thread.result()
+            self.pbar.postfix[0] = dict(group="Finishing resource group " + group)
+            self.pbar.refresh()
+            self.pbar.update()
         return return_code, res
 
     def _invoke_playbooks(self, resources={}, action='up', console=True,

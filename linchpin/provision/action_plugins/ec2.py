@@ -13,9 +13,23 @@ class ActionModule(ActionBase):
     ''' Send events to Nanomsg '''
 
     TRANSFERS_FILES = False
-    # _VALID_ARGS = frozenset(('nanomsg',))
 
     def run(self, tmp=None, task_vars=None):
+
+       vm = self._task.get_variable_manager()
+        if vm.extra_vars.get('no_monitor', False):
+            def get_dict(context, key):
+                return context.__context_dict[key]
+
+            def set_dict(context, key, value):
+                context.__context_dict[key] = value
+
+            context = MagicMock()
+            context.__context_dict = {}
+            context.__getitem__ = get_dict
+            context.__setitem__ = set_dict
+        else:
+            context = zmq.Context()
         context = zmq.Context()
         socket = context.socket(zmq.REQ)
         socket.connect("tcp://localhost:5599")
