@@ -130,3 +130,6 @@ postinv = inventory
 [hookflags]
 no_hooks = False
 ignore_failed_hooks = False
+
+[progress_bar]
+no_progress = False
