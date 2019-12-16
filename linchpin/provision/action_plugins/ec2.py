@@ -2,6 +2,7 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 from ansible.plugins.action import ActionBase
+import linchpin.MockUtils.MockUtils as mock_utils
 import zmq
 import sys
 
@@ -36,6 +37,20 @@ class ActionModule(ActionBase):
             context.__setitem__ = set_dict
         else:
             context = zmq.Context()
+        module_args = self._task.args.copy()
+
+        
+        if task_vars is None:
+            task_vars = dict()
+        linchpin_mock = task_vars['vars'].get('linchpin_mock',
+                                              False)
+        if linchpin_mock:
+            return mock_utils.get_mock_data(module_args,
+                                            "ec2")
+
+        module_return = self._execute_module(module_args=module_args,
+                                             task_vars=task_vars, tmp=tmp)
+
         context = zmq.Context()
         socket = context.socket(zmq.REQ)
         socket.connect("tcp://localhost:5599")
@@ -69,6 +84,7 @@ class ActionModule(ActionBase):
         done = False
         old_state = ''
         while not done:
+            print(result)
             facts_args = dict(instance_ids=result['instance_ids'],
                               aws_access_key=self._task.args['aws_access_key'],
                               aws_secret_key=self._task.args['aws_secret_key'],
