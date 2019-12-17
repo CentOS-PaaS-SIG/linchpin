@@ -4,14 +4,14 @@ __metaclass__ = type
 import zmq
 
 DOCUMENTATION = '''
-    callback: nanomsg
+    callback: zmq
     type: notification
     requirements:
-      - nanomsg
+      - zmq
     short_description: push to massage bus play events
     version_added: 1.9
     description:
-      - This plugin will use nanomsg to push play events.
+      - This plugin will use zmq to push play events.
 '''
 
 
@@ -21,7 +21,7 @@ class CallbackModule(CallbackBase):
     """
     CALLBACK_VERSION = 2.0
     CALLBACK_TYPE = 'notification'
-    CALLBACK_NAME = 'nanomsg'
+    CALLBACK_NAME = 'zmq'
     CALLBACK_NEEDS_WHITELIST = False
 
     def __init__(self):

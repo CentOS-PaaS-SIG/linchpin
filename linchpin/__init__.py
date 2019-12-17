@@ -17,6 +17,7 @@ from concurrent.futures import ProcessPoolExecutor
 from uuid import getnode as get_mac
 from collections import OrderedDict
 from six import text_type
+from mock import MagicMock
 
 from linchpin.ansible_runner import ansible_runner
 from linchpin import galaxy_runner
@@ -103,11 +104,20 @@ class LinchpinAPI(object):
         self.set_evar('role_path', self.role_path)
         self.set_evar('from_api', True)
         self.workspace = self.get_evar('workspace')
-        self.pbar = tqdm(
-            bar_format="[{bar:10}] {desc:<30}| {postfix[0][group]}",
-            postfix=[dict(group='initializing')],
-            position=0,
-            leave=False)
+        self.disable_pbar = 'True'
+
+    def setup_pbar(self):
+        if (eval(self.get_cfg('progress_bar', 'no_progress')) or
+           self.ctx.verbosity):
+            self.disable_pbar = 'True'
+        else:
+            self.disable_pbar = 'False'
+        self.pbar = tqdm_or_mock(
+                disable=self.disable_pbar,
+                bar_format="[{bar:10}] {desc:<30}| {postfix[0][group]}",
+                postfix=[dict(group='initializing')],
+                position=0,
+                leave=False)
 
     def setup_rundb(self):
         """
@@ -938,7 +948,7 @@ class LinchpinAPI(object):
         self.pbar.postfix[0] = dict(group="resource group '%s'" % group)
         self.pbar.refresh()
         with ProcessPoolExecutor() as executor:
-            executor.submit(progress_monitor, res)
+            executor.submit(progress_monitor, self.disable_pbar, res)
             ansible_thread = executor.submit(
                 ansible_runner,
                 playbook_path,
@@ -1049,13 +1059,14 @@ class LinchpinAPI(object):
         subprocess.call(cmd, shell=True)
 
 
-def progress_monitor(target):
+def progress_monitor(disable_pbar, target):
     position = 1
     num_resources = 0
     resource_bar_format = "[{bar:10}] |-> {desc:<25}| {postfix[0][state]}"
     for resource in target['resource_definitions']:
         num_resources += resource.get('count', 1)
-    group_bar = tqdm(
+    group_bar = tqdm_or_mock(
+        disable=disable_pbar,
         desc=target['resource_group_name'],
         bar_format="[{bar:10}] |-> {desc:<26}| {postfix[0][resource]}",
         postfix=[dict(resource='initializing')],
@@ -1076,7 +1087,8 @@ def progress_monitor(target):
             group_bar.postfix[0] = dict(resource="resource '%s'" % resource)
             if resource not in resource_bars.keys():
                 position += 1
-                resource_bars[resource] = tqdm(
+                resource_bars[resource] = tqdm_or_mock(
+                    disable=disable_pbar,
                     desc=resource,
                     bar_format=resource_bar_format,
                     postfix=[dict(state=event['status']['state'])],
@@ -1096,3 +1108,20 @@ def progress_monitor(target):
     socket.close()
     context.destroy()
     return True
+
+
+def tqdm_or_mock(disable, *args, **kwargs):
+    if not eval(disable):
+        return tqdm(*args, **kwargs)
+    else:
+        def get_dict(dbar, key):
+            return dbar.__dbar_dict[key]
+
+        def set_dict(dbar, key, value):
+            dbar.__dbar_dict[key] = value
+
+        dbar = MagicMock()
+        dbar.__dbar_dict = {}
+        dbar.__getitem__ = get_dict
+        dbar.__setitem__ = set_dict
+        return dbar

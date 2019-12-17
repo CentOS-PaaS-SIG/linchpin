@@ -248,9 +248,11 @@ def init(ctx, provider):
 @click.option('--env-vars', type=(str, str), multiple=True, metavar='ENV_VARS')
 @click.option('--use-shell', '--us', metavar='USE_SHELL', default=False,
               is_flag=True, help='Use subprocess for linchpin run')
+@click.option('--no-progress', '--np', 'no_progress', is_flag=True,
+              default=None, metavar='NO_PROGRESS', help='Do not progress bar')
 @pass_context
 def up(ctx, targets, run_id, tx_id, inventory_format, ignore_failed_hooks,
-       no_hooks, disable_uhash, env_vars, use_shell):
+       no_hooks, disable_uhash, env_vars, use_shell, no_progress):
     """
     Provisions nodes from the given target(s) in the given PinFile.
 
@@ -281,6 +283,9 @@ def up(ctx, targets, run_id, tx_id, inventory_format, ignore_failed_hooks,
         ctx.set_cfg("hook_flags", "ignore_failed_hooks", ignore_failed_hooks)
     if no_hooks:
         ctx.set_cfg("hook_flags", "no_hooks", no_hooks)
+    if no_progress:
+        ctx.set_cfg("progress_bar", "no_progress", str(no_progress))
+    lpcli.setup_pbar()
     if disable_uhash:
         ctx.set_evar("disable_uhash_targets", disable_uhash.split(','))
 
@@ -336,9 +341,11 @@ def up(ctx, targets, run_id, tx_id, inventory_format, ignore_failed_hooks,
 @click.option('--env-vars', type=(str, str), multiple=True, metavar='ENV_VARS')
 @click.option('--use-shell', '--us', metavar='USE_SHELL', default=False,
               is_flag=True, help='Use subprocess for linchpin run')
+@click.option('--no-progress', '--np', 'no_progress', is_flag=True,
+              default=None, metavar='NO_PROGRESS', help='Do not progress bar')
 @pass_context
 def destroy(ctx, targets, run_id, tx_id, ignore_failed_hooks, no_hooks,
-            env_vars, use_shell):
+            env_vars, use_shell, no_progress):
     """
     Destroys resources using either the run_id or tx_id (mutually exclusive).
 
@@ -362,7 +369,9 @@ def destroy(ctx, targets, run_id, tx_id, ignore_failed_hooks, no_hooks,
         ctx.set_cfg("hook_flags", "ignore_failed_hooks", ignore_failed_hooks)
     if no_hooks:
         ctx.set_cfg("hook_flags", "no_hooks", no_hooks)
-
+    if no_progress:
+        ctx.set_cfg("progress_bar", "no_progress", no_progress)
+    lpcli.setup_pbar()
     if use_shell:
         ctx.set_cfg("ansible", "use_shell", use_shell)
 
