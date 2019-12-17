@@ -136,4 +136,4 @@
   # But if either of these facts change, this will need to be reworked
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_beaker_server: "{{ topology_outputs_beaker_server | add_res_data(lookup('vars', 'role_name'), res_defs['resource_definitions'][0]['role']) }}"
+    topology_outputs_beaker_server: "{{ topology_outputs_beaker_server | add_res_data(res_defs['resouce_group_type'], res_defs['resource_definitions'][0]['role']) }}"

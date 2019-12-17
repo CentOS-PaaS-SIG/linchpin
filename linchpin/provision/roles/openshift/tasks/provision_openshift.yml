@@ -72,4 +72,4 @@
     
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_openshift_resources: "{{ topology_outputs_openshift_resources | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"
+    topology_outputs_openshift_resources: "{{ topology_outputs_openshift_resources | add_res_data(res_grp_type, res_def['role']) }}"

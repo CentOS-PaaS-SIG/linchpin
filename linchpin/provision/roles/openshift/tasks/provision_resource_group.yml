@@ -69,8 +69,10 @@
   ignore_errors: true
 
 - name: "Initiating Provision/Teardown of openshift resource group"
-  include: provision_res_defs.yml res_def={{ res_item }}
+  include: provision_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }} res_grp_type={{ res_item.2 }}
   with_items:
     - "{{ res_grp['resource_definitions'] }}"
+    - "{{ res_group['resource_group_name'] }}"
+    - "{{ res_group['resource_group_type'] }}"
   loop_control:
     loop_var: res_item

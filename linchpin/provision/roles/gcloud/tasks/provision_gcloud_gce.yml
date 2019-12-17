@@ -45,9 +45,9 @@
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"
+    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce | add_res_data(res_grp_type, res_def['role']) }}"
 
 - name: "Async:: Add type to resource"
   set_fact:
-    async_outputs_gcloud_gce: "{{ async_outputs_gcloud_gce | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"
+    async_outputs_gcloud_gce: "{{ async_outputs_gcloud_gce | add_res_data(res_grp_type, res_def['role']) }}"
   when: _async

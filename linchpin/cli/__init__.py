@@ -417,6 +417,7 @@ class LinchpinCli(LinchpinAPI):
                     self._write_distilled_context(run_data)
             else:
                 self._write_distilled_context(run_data)
+
         self._write_latest_run()
         self._write_to_inventory(inv_format=inv_f)
 

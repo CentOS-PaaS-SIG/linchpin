@@ -1,5 +1,4 @@
----
-- name: "Set cred filename"
+--- - name: "Set cred filename"
   set_fact:
     credentials: "{{ res_grp['credentials'] | default('') }}"
   when: res_grp['credentials'] is defined
@@ -24,4 +23,4 @@
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_duffy: "{{ topology_outputs_duffy | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"
+    topology_outputs_duffy: "{{ topology_outputs_duffy | add_res_data(res_grp_type, res_def['role']) }}"
