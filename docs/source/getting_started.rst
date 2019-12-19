@@ -26,6 +26,7 @@ Test
    custom_action_managers
    inventory
    destroy
+   monitor
    tutorials
    linchpin_api
 

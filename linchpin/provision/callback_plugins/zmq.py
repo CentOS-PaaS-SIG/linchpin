@@ -27,9 +27,7 @@ class CallbackModule(CallbackBase):
     def __init__(self):
 
         super(CallbackModule, self).__init__()
-        context = zmq.Context()
-        self.socket = context.socket(zmq.REQ)
-        self.socket.connect("tcp://localhost:5599")
+        self.socket = None
 
     def push(self, msg):
         try:
@@ -37,6 +35,17 @@ class CallbackModule(CallbackBase):
         except Exception:
             # FIXME: any other error
             pass
+
+    def v2_playbook_on_play_start(self, playbook):
+        vm = playbook.get_variable_manager()
+        extra_vars = vm.extra_vars
+        no_monitor = extra_vars.get('no_monitor', '')
+        if no_monitor:
+            self.disabled = True
+        else:
+            context = zmq.Context()
+            self.socket = context.socket(zmq.REQ)
+            self.socket.connect("tcp://localhost:5599")
 
     def v2_playbook_on_task_start(self, task, is_conditional):
         pass

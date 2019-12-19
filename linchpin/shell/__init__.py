@@ -133,9 +133,11 @@ def _handle_results(ctx, results, return_code):
                    ' if CREDS_PATH environment variable is set')
 @click.option('--ask-vault-pass', is_flag=True, default=False,
               help='Prompts for vault password')
+@click.option('--no-monitor', is_flag=True, default=False,
+              help='Disalbe multiprocessing for monitoring Ansible execution')
 @pass_context
-def runcli(ctx, config, pinfile, template_data, outfile,
-           workspace, verbose, version, creds_path, ask_vault_pass):
+def runcli(ctx, config, pinfile, template_data, outfile, workspace, verbose,
+           version, creds_path, ask_vault_pass, no_monitor):
     """linchpin: hybrid cloud orchestration"""
 
     ctx.load_config(lpconfig=config)
@@ -160,6 +162,11 @@ def runcli(ctx, config, pinfile, template_data, outfile,
         ctx.log_state('linchpin version {0}'.format(ctx.version))
         sys.exit(0)
 
+    ctx.no_monitor = False
+    if no_monitor:
+        ctx.no_monitor = True
+        ctx.set_evar('no_monitor', True)
+
     if creds_path is not None:
         ctx.set_evar('creds_path',
                      os.path.realpath(os.path.expanduser(creds_path)))
@@ -169,7 +176,6 @@ def runcli(ctx, config, pinfile, template_data, outfile,
         ctx.log_debug("ctx.workspace: {0}".format(ctx.workspace))
 
     ctx.ask_vault_pass = ask_vault_pass
-
 
     # global LinchpinCli placeholder
     global lpcli
@@ -375,7 +381,6 @@ def destroy(ctx, targets, run_id, tx_id, ignore_failed_hooks, no_hooks,
     if use_shell:
         ctx.set_cfg("ansible", "use_shell", use_shell)
 
-
     if tx_id:
         try:
             return_code, results = lpcli.lp_destroy(targets=targets,
@@ -542,7 +547,6 @@ def journal(ctx, targets, fields, count, view,
         output += '\n'
         output += '--------------------------------------------------'
 
-
         if len(journal):
             for target, values in six.iteritems(journal):
                 keys = list(values.keys())
@@ -560,7 +564,6 @@ def journal(ctx, targets, fields, count, view,
                             print(out, file=sys.stderr)
                 else:
                     no_records.append(target)
-
 
             if no_records:
                 no_out = '\nNo records for targets:'
@@ -597,7 +600,8 @@ def journal(ctx, targets, fields, count, view,
                     output += '\nID: {0}\t\t\t'.format(lp_id)
                     output += 'Action: {0}\n'.format(v['action'])
                     output += '\n{0:<20}\t{1:>6}'.format('Target', 'Run ID')
-                    output += '\t{0:<5}\t{1:<10}\n'.format('uHash', 'Exit Code')
+                    output += '\t{0:<5}\t{1:<10}\n'.format('uHash',
+                                                           'Exit Code')
                     output += '----------------------------------------------'
                     output += '---\n'
 
