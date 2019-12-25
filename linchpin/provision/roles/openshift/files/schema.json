@@ -11,6 +11,8 @@
                 },
                 "name": { "type": "string", "required": true },
                 "force": {"type": "boolean", "required": false },
+                "validate": {"type": "boolean", "required": false },
+                "strict": {"type": "boolean", "required": false },
                 "kind": {"type": "string", "required": false },
                 "namespace": {"type": "string", "required": false },
                 "definition": {"type": "dict", "required": false },

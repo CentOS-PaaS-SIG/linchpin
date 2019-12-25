@@ -1,0 +1,136 @@
+---
+- name: "Unset the authvar from previous run"
+  set_fact:
+    auth_var: ""
+
+- name: "set default_cred_profile when res[credentials] is undefined"
+  set_fact:
+    cred_profile: 'default'
+  when: res['credentials'] is not defined
+
+- name: "set default_cred_filename when res[credentials] is undefined"
+  set_fact:
+    cred_filename: 'openshift.yaml'
+  when: res['credentials'] is not defined
+
+  # sets cred profile as 'default' if key profile is not mentioned in
+  # credentials section of topology
+- name: "set default_cred_filename when res[credentials] is undefined"
+  set_fact:
+    cred_profile: "{{ res['credentials']['profile'] | default('default') }}"
+  when: res['credentials'] is defined
+
+- name: "set default_cred_filename when res[credentials] is defined"
+  set_fact:
+    cred_filename: "{{ res['credentials']['filename'] }}"
+  when: res['credentials'] is defined and res['credentials']['filename'] is defined
+
+- name: "Get creds from auth driver"
+  auth_driver:
+    filename: "{{ cred_filename }}"
+    cred_type: "openshift"
+    cred_path: "{{ creds_path | default(default_credentials_path) }}"
+    driver: "file"
+  register: auth_var_out
+  ignore_errors: true
+  no_log: "{{ not debug_mode }}"
+  when: res['credentials'] is defined and res['credentials']['filename'] is defined
+
+- name: "set auth_var"
+  set_fact:
+    auth_var: "{{ auth_var_out['output'][cred_profile] }}"
+  ignore_errors: true
+  no_log: "{{ not debug_mode }}"
+  when: auth_var_out['output'] is defined and res['credentials'] is defined and res['credentials']['filename'] is defined
+
+- name: "set auth_var when filename is not defined"
+  set_fact:
+    auth_var: "{{ res['credentials'] }}"
+  when: res['credentials'] is defined and res['credentials']['filename'] is not defined
+  ignore_errors: true
+
+- debug: var=res
+
+- name: get current quota usage and limits
+  local_action:
+    module: k8s_facts
+    host: "{{ auth_var['api_endpoint'] | default(omit) }}"
+    api_key: "{{ auth_var['api_token'] | default(omit) }}"
+    key: "{{ auth_var['key_file'] | default(omit) }}"
+    context: "{{ auth_var['context'] | default(omit) }}"
+    kubeconfig: "{{ auth_var['kubeconfig'] | default(omit) }}"
+    ssl_ca_cert: "{{ auth_var['ssl_ca_cert'] | default(omit) }}"
+    namespace: "{{ auth_var['namespace'] | default(omit) }}"
+    kind: quota
+  register: quota
+
+- name: get pod size defaults and limits
+  local_action:
+    module: k8s_facts
+    host: "{{ auth_var['api_endpoint'] | default(omit) }}"
+    api_key: "{{ auth_var['api_token'] | default(omit) }}"
+    key: "{{ auth_var['key_file'] | default(omit) }}"
+    context: "{{ auth_var['context'] | default(omit) }}"
+    kubeconfig: "{{ auth_var['kubeconfig'] | default(omit) }}"
+    ssl_ca_cert: "{{ auth_var['ssl_ca_cert'] | default(omit) }}"
+    namespace: "{{ auth_var['namespace'] | default(omit) }}"
+    kind: limits
+  register: limits
+
+- name: check if every containers requested resources are in boundries
+  assert:
+    that:
+      - ((container.1.resources.requests.memory | default('0Mi')) | memory_to_int) < ((limits.resources.0.spec.limits.0.max.memory | default('100Gi')) | memory_to_int)
+      - ((container.1.resources.limits.memory   | default('0Mi')) | memory_to_int) < ((limits.resources.0.spec.limits.0.max.memory | default('100Gi')) | memory_to_int)
+      - ((container.1.resources.requests.cpu | default('0')) | cpu_to_int ) < ((limits.resources.0.spec.limits.0.max.cpu | default('100')) | cpu_to_int )
+      - ((container.1.resources.limits.cpu   | default('0')) | cpu_to_int ) < ((limits.resources.0.spec.limits.0.max.cpu | default('100')) | cpu_to_int )
+    fail_msg: "Container {{ container.name | default('unnamed') }} is over the limits"
+  loop: "{{ res.resource_definitions | subelements('definition.spec.containers', skip_missing=True)}}"
+  loop_control:
+    loop_var: container
+
+- name: find how much resources are needed
+  set_fact:
+    req_memory: "{{ (req_memory | default(0)) | int + ((container.resources.requests.memory | default(limits.resources.0.spec.limits.0.default.memory)) | memory_to_int ) }}"
+    req_cpu: "{{ (req_cpu | default(0)) | float + ((container.resources.requests.cpu | default(limits.resources.0.spec.limits.0.default.cpu)) | cpu_to_int ) }}"
+  loop: "{{ res.resource_definitions | subelements('definition.spec.containers', skip_missing=True)}}"
+  loop_control:
+    loop_var: container
+
+- name: find how many pods are needed
+  set_fact:
+    req_pods: "{{ (req_pods | default(0)) | int + 1 }}"
+  when: res_def.definition.kind == 'Pod'
+  loop: "{{ res.resource_definitions }}"
+  loop_control:
+    loop_var: res_def
+
+- set_fact:
+    hard_pod: "{{ quota.resources.0.status.hard.pods }}"
+    used_pod: "{{ quota.resources.0.status.used.pods }}"
+
+- name: check that there is enough space for pods
+  assert:
+    that:
+      - req_pods | int <= ( hard_pod | int - used_pod | int)
+    fail_msg: "Not enough space for pods, required {{ req_pods }} but already used  {{ used_pod }} of {{ hard_pod }}"
+
+- set_fact:
+    hard_memory: "{{ quota.resources.0.status.hard['limits.memory'] | memory_to_int }}"
+    used_memory: "{{ quota.resources.0.status.used['limits.memory'] | memory_to_int }}"
+
+- name: check that there is enough memory
+  assert:
+    that:
+      - req_memory | int <= ( hard_memory | int - used_memory | int )
+    fail_msg: "Not enough memory, required {{ req_memory }}Mi but already used {{ used_memory }}Mi out of {{ hard_memory }}"
+
+- set_fact:
+    hard_cpu: "{{ quota.resources.0.status.hard['limits.cpu'] | cpu_to_int }}"
+    used_cpu: "{{ quota.resources.0.status.used['limits.cpu'] | cpu_to_int }}"
+
+- name: check that there is enough cpu
+  assert:
+    that:
+      - req_cpu | float <= ( hard_cpu | float - used_cpu | float)
+    fail_msg: "Not enough cpu, required {{ req_cpu }} but used {{ used_cpu }} out of {{ hard_cpu }}"

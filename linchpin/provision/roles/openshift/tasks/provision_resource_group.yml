@@ -44,17 +44,6 @@
   no_log: "{{ not debug_mode }}"
   when: res_grp['credentials'] is defined and res_grp['credentials']['filename'] is defined
 
-- name: "Search creds from workspace when not found in default_credentials_path"
-  auth_driver:
-    filename: "{{ cred_filename }}"
-    cred_type: "openshift"
-    cred_path: "{{ creds_path | default(workspace) }}"
-    driver: "file"
-  register: auth_var_out
-  ignore_errors: true
-  no_log: "{{ not debug_mode }}"
-  when: res_grp['credentials'] is defined and res_grp['credentials']['filename'] is defined and auth_var_out['failed']
-
 - name: "set auth_var"
   set_fact:
     auth_var: "{{ auth_var_out['output'][cred_profile] }}"
@@ -68,11 +57,12 @@
   when: res_grp['credentials'] is defined and res_grp['credentials']['filename'] is not defined
   ignore_errors: true
 
+- debug: var=auth_var_out
 - name: "Initiating Provision/Teardown of openshift resource group"
   include: provision_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }} res_grp_type={{ res_item.2 }}
-  with_items:
+  with_nested:
     - "{{ res_grp['resource_definitions'] }}"
-    - "{{ res_group['resource_group_name'] }}"
-    - "{{ res_group['resource_group_type'] }}"
+    - "{{ res_grp['resource_group_name'] }}"
+    - "{{ res_grp['resource_group_type'] }}"
   loop_control:
     loop_var: res_item
