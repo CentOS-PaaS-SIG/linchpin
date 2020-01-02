@@ -3,6 +3,12 @@ __metaclass__ = type
 
 from ansible.plugins.action import ActionBase
 import zmq
+import sys
+
+if sys.version_info >= (3, 3):
+    from unittest.mock import MagicMock
+else:
+    from mock import MagicMock
 
 
 def instance_id(result):
@@ -16,7 +22,7 @@ class ActionModule(ActionBase):
 
     def run(self, tmp=None, task_vars=None):
 
-       vm = self._task.get_variable_manager()
+        vm = self._task.get_variable_manager()
         if vm.extra_vars.get('no_monitor', False):
             def get_dict(context, key):
                 return context.__context_dict[key]
