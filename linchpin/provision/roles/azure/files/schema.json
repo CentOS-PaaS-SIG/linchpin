@@ -93,11 +93,11 @@
                                 "azure_vm"
                             ]
                         },
-                        "count":{
+                        "count": {
                             "type": "integer",
                             "required": false
                         },
-                        "public_key":{
+                        "public_key": {
                             "type": "string",
                             "required": false
                         },
@@ -240,6 +240,42 @@
                             "required": false
                         },
                         "body_path": {
+                            "type": "string",
+                            "required": false
+                        }
+                    }
+                },
+                {
+                    "type": "dict",
+                    "schema": {
+                        "role": {
+                            "type": "string",
+                            "required": true,
+                            "allowed": [
+                                "azure_availabilityset"
+                            ]
+                        },
+                        "resource_group": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "name": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "location": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "platform_update_domain_count": {
+                            "type": "integer",
+                            "required": false
+                        },
+                        "platform_fault_domain_count": {
+                            "type": "integer",
+                            "required": false
+                        },
+                        "sku": {
                             "type": "string",
                             "required": false
                         }
