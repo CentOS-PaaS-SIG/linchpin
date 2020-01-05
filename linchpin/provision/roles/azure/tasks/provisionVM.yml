@@ -1,6 +1,8 @@
 ---
 - name: "Provisioning Azure VM when not async"
   azure_rm_virtualmachine:
+    ad_user: "{{ auth_var['user'] | default(omit) }}"
+    password: "{{ auth_var['password'] | default(omit) }}"
     client_id: "{{ auth_var['client_id'] | default(omit) }}"
     tenant: "{{ auth_var['tenant'] | default(omit) }}"
     secret: "{{ auth_var['secret'] | default(omit) }}"
@@ -15,7 +17,6 @@
     image: "{{ image | default(omit) }}"
   register: res_def_output
   when: not _async
-  no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
@@ -24,6 +25,8 @@
 
 - name: "Async:: Provisioning Azure VM"
   azure_rm_virtualmachine:
+    ad_user: "{{ auth_var['user'] | default(omit) }}"
+    password: "{{ auth_var['password'] | default(omit) }}"
     client_id: "{{ auth_var['client_id'] | default(omit) }}"
     tenant: "{{ auth_var['tenant'] | default(omit) }}"
     secret: "{{ auth_var['secret'] | default(omit) }}"
@@ -39,7 +42,7 @@
   poll: 0
   register: res_def_output
   when: _async
-  no_log: "{{ not debug_mode }}"
+
 
 - name: "Async:: Append outputitem to topology_outputs"
   set_fact:
