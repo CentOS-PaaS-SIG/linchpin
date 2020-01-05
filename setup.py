@@ -54,7 +54,7 @@ setup(
         'vmware': ["PyVmomi>=6.7.1"],
         'docker': ["docker-py>=1.7.0"],
         'azure': azure_deps,
-        'openshift': ['openshift>=0.8.6,<0.8.8']
+        'openshift': ['openshift>=0.8.6,<0.8.8', 'kubernetes-validate']
     },
     zip_safe=False,
     packages=find_packages(),

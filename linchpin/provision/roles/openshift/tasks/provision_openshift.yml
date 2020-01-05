@@ -12,7 +12,7 @@
     api_version: "{{ auth_var['api_version'] | default(omit) }}"
     cert_file: "{{ auth_var['cert_file'] | default(omit) }}"
     name: "{{ res_def['name'] }}"
-    namespace: "{{ res_def['namespace'] | default(omit) }}"
+    namespace: "{{ auth_var['namespace'] | default(omit) }}"
     kind: "{{ res_def['kind'] | default(omit) }}"
     state: "{{ state }}"
     definition: "{{ res_def['definition'] | default(omit) }}"
@@ -22,6 +22,35 @@
     username: "{{ auth_var['username'] | default(omit) }}"
     ssl_ca_cert: "{{ auth_var['ssl_ca_cert'] | default(omit) }}" 
   register: res_def_output
+
+- name: create resource definition with validation
+  k8s:
+    # if the host is not mentioned it takes value from K8S_AUTH_HOST env var
+    host: "{{ auth_var['api_endpoint'] | default(omit) }}"
+    # if the host is not mentioned it takes value from K8S_API_KEY env var
+    api_key: "{{ auth_var['api_token'] | default(omit) }}"
+    key: "{{ auth_var['key_file'] | default(omit) }}"
+    context: "{{ auth_var['context'] | default(omit) }}"
+    kubeconfig: "{{ auth_var['kubeconfig'] | default(omit) }}"
+    force: "{{ res_def['force'] | default('no') }}"
+    api_version: "{{ auth_var['api_version'] | default(omit) }}"
+    cert_file: "{{ auth_var['cert_file'] | default(omit) }}"
+    name: "{{ res_def['name'] }}"
+    namespace: "{{ auth_var['namespace'] | default(omit) }}"
+    kind: "{{ res_def['kind'] | default(omit) }}"
+    state: "{{ state }}"
+    definition: "{{ res_def['definition'] | default(omit) }}"
+    src: "{{ res_def['src'] | default(omit) }}"
+    verify_ssl: "{{ auth_var['verify_ssl'] | default('no') }}"
+    password: "{{ auth_var['password'] | default(omit) }}"
+    username: "{{ auth_var['username'] | default(omit) }}"
+    ssl_ca_cert: "{{ auth_var['ssl_ca_cert'] | default(omit) }}" 
+    validate:
+      fail_on_error: "{{ res_def['validate'] | default('yes') }}"
+      strict: "{{ res_def['strict'] | default('yes') }}"
+  register: res_def_output
+  when: ansible_version >= "2.8"
+
 
 - name: Wait for the deployment to happen
   pause: 
@@ -36,7 +65,7 @@
     context: "{{ auth_var['context'] | default(omit) }}"
     kubeconfig: "{{ auth_var['kubeconfig'] | default(omit) }}"
     ssl_ca_cert: "{{ auth_var['ssl_ca_cert'] | default(omit) }}"
-    namespace: "{{ res_def['namespace'] | default(omit) }}"
+    namespace: "{{ auth_var['namespace'] | default(omit) }}"
     kind: Pod
     verify_ssl: no
   register: pod_list

@@ -36,7 +36,6 @@ openshift-new:
                     mountPath: /tmp
                   terminationMessagePath: /dev/termination-log
                   imagePullPolicy: IfNotPresent
-                  capabilities: {}
                   securityContext:
                     capabilities: {}
                     privileged: false
@@ -46,7 +45,6 @@ openshift-new:
                 restartPolicy: Always
                 dnsPolicy: ClusterFirst
                 serviceAccount: ''
-                status: {}
           - name: openshift2
             role: openshift_inline
             # the variable name must not be 'namespace' due to collision
@@ -73,7 +71,6 @@ openshift-new:
                     mountPath: /tmp
                   terminationMessagePath: /dev/termination-log
                   imagePullPolicy: IfNotPresent
-                  capabilities: {}
                   securityContext:
                     capabilities: {}
                     privileged: false
@@ -83,7 +80,6 @@ openshift-new:
                 restartPolicy: Always
                 dnsPolicy: ClusterFirst
                 serviceAccount: ''
-                status: {}
         {% if credentials is defined %}
         credentials:
           filename: {{ credentials.filename }}
@@ -104,5 +100,7 @@ openshift-new:
           host_groups:
             - pods
   hooks:
+    preup:
+      - name: res_check
     postup:
       - name: ocp_container_boot_log
