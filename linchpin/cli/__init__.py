@@ -421,10 +421,8 @@ class LinchpinCli(LinchpinAPI):
         self._write_latest_run()
         self._write_to_inventory(inv_format=inv_f)
 
-        if (('post' in self.pb_hooks) and
-                (self.__meta__ == "CLI") and
-                not self.get_cfg('hook_flags', 'no_hooks')):
-            self.hook_state = '{0}{1}'.format('post', 'up')
+        if self.__meta__ == "CLI":
+            self.run_hooks('post', 'up')
 
         # Show success and errors, with data
         return (return_code, return_data)
