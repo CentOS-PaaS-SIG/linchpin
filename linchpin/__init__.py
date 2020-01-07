@@ -17,7 +17,6 @@ from concurrent.futures import ProcessPoolExecutor
 from uuid import getnode as get_mac
 from collections import OrderedDict
 from six import text_type
-from mock import MagicMock
 
 from linchpin.ansible_runner import ansible_runner
 from linchpin import galaxy_runner
@@ -36,6 +35,11 @@ from linchpin.exceptions import ValidationError
 from linchpin.validator import Validator
 
 from linchpin.InventoryFilters import GenericInventory
+
+if sys.version_info >= (3, 3):
+    from unittest.mock import MagicMock
+else:
+    from mock import MagicMock
 
 
 class LinchpinAPI(object):
@@ -112,12 +116,12 @@ class LinchpinAPI(object):
             self.disable_pbar = 'True'
         else:
             self.disable_pbar = 'False'
-        self.pbar = tqdm_or_mock(
-                disable=self.disable_pbar,
-                bar_format="[{bar:10}] {desc:<30}| {postfix[0][group]}",
-                postfix=[dict(group='initializing')],
-                position=0,
-                leave=False)
+        self.pbar = tqdm_or_mock(disable=self.disable_pbar,
+                                 bar_format="[{bar:10}] {desc:<30}|" +
+                                            "{postfix[0][group]}",
+                                 postfix=[dict(group='initializing')],
+                                 position=0,
+                                 leave=False)
 
     def setup_rundb(self):
         """
@@ -949,17 +953,16 @@ class LinchpinAPI(object):
         self.pbar.postfix[0] = dict(group="resource group '%s'" % group)
         self.pbar.refresh()
         if self.ctx.no_monitor:
-            return_code, res = ansible_runner(
-                playbook_path,
-                self._get_module_path(),
-                extra_vars,
-                vault_password_file=None,
-                inventory_src=inv_src,
-                verbosity=self.ctx.verbosity,
-                console=console,
-                env_vars=env_vars,
-                use_shell=use_shell
-                )
+            return_code, res = ansible_runner(playbook_path,
+                                              self._get_module_path(),
+                                              extra_vars,
+                                              vault_password_file=None,
+                                              inventory_src=inv_src,
+                                              verbosity=self.ctx.verbosity,
+                                              console=console,
+                                              env_vars=env_vars,
+                                              use_shell=use_shell
+                                             )
         else:
             with ProcessPoolExecutor() as executor:
                 executor.submit(progress_monitor, self.disable_pbar, res)
@@ -976,7 +979,8 @@ class LinchpinAPI(object):
                     use_shell=use_shell)
 
                 return_code, res = ansible_thread.result()
-            self.pbar.postfix[0] = dict(group="Finishing resource group " + group)
+            self.pbar.postfix[0] = dict(group="Finishing resource group " +
+                                        group)
             self.pbar.refresh()
             self.pbar.update()
         return return_code, res

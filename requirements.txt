@@ -23,4 +23,5 @@ future
 openstacksdk>=0.37
 tqdm==4.36.1
 pyzmq==18.1.1
+mock
 google-auth
