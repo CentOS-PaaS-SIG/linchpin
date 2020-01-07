@@ -1,0 +1,28 @@
+language: python
+dist: xenial
+python:
+  - "2.7"
+  - "3.7"
+cache: pip
+services:
+  - docker
+
+install:
+  - pip install -U pip
+  - pip --version
+  - pip install ansible ansible-lint yamllint flake8 molecule docker
+  - ansible --version
+  - ansible-lint --version
+  - yamllint --version
+  - flake8 --version
+  - molecule --version
+
+script:
+  # every scenario with a converge playbook should be linted
+  - molecule lint -s openstack
+  # flake8 is not guaranteed to run on lint, do that before testing
+  - flake8 $(find . -name '*.py')
+  - molecule test -s docker
+
+notifications:
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/

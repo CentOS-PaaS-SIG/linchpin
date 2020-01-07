@@ -28,4 +28,4 @@
   ignore_errors: true
 
 - name: "provision resource type : {{ res_def['role'] }}"
-  include: "provision_{{ res_def['role'] }}.yml"
+  include_tasks: "provision_{{ res_def['role'] }}.yml"

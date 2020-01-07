@@ -8,14 +8,17 @@
     topology_outputs_aws_net: []
 
 - name: "Initiating Provisioning of aws resource group"
-  include: provision_resource_group.yml res_grp={{ item }}
+  include_tasks: provision_resource_group.yml
+  vars:
+    res_grp: "{{ item }}"
   with_items:
     - "{{ resources }}"
   when: state == "present"
-  check_mode: "{{ _check_mode }}"
 
 - name: "Initiating Teardown of aws resource group"
-  include: teardown_resource_group.yml res_grp={{ item }}
+  include_tasks: teardown_resource_group.yml
+  vars:
+    res_grp: "{{ item }}"
   with_items:
     - "{{ resources }}"
   when: state == "absent"
