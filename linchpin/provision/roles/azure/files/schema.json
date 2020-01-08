@@ -109,6 +109,10 @@
                             "type": "string",
                             "required": false
                         },
+                        "availability_set": {
+                            "type": "string",
+                            "required": false
+                        },
                         "vm_name": {
                             "type": "string",
                             "required": true

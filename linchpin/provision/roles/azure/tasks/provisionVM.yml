@@ -13,6 +13,7 @@
     name: "{{ nameOfvm | default(omit) }}"
     virtual_network_name: "{{res_def['virtual_network_name']|default(vn_name)}}"
     image: "{{ image | default(omit) }}"
+    availability_set: "{{ res_def['availability_set'] | default(omit) }}"
   register: res_def_output
   when: not _async
   no_log: "{{ not debug_mode }}"
@@ -32,6 +33,7 @@
     admin_password: "{{ res_def['vm_password'] | default(linchpinPassword) }}"
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
     vm_size: "{{ res_def['vm_size'] | default('Standard_DS1_v2') }}"
+    availability_set: "{{ res_def['availability_set'] | default(omit) }}"
     virtual_network_name: "{{res_def['virtual_network_name']|default(vn_name)}}"
     name: "{{  nameOfvm| default(omit) }}"
     image: "{{ image | default(omit) }}"
