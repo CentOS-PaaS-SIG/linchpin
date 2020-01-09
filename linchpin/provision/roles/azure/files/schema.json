@@ -244,6 +244,34 @@
                             "required": false
                         }
                     }
+                },
+                {
+                    "type": "dict",
+                    "schema": {
+                        "role": {
+                            "type": "string",
+                            "required": true,
+                            "allowed": [
+                                "azure_publicipaddress"
+                            ]
+                        },
+                        "resource_group": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "allocation_method": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "domain_name": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "name": {
+                            "type": "string",
+                            "required": false
+                        }
+                    }
                 }
             ]
         }
