@@ -57,6 +57,8 @@ definition, the following options are available.
 +----------------------+------------+---------------+-----------------------+--------------------+
 | delete_all_attached  |false       | string        | remove_on_absent      |                    |
 +----------------------+------------+---------------+-----------------------+--------------------+
+| availability_set     |false       | string        | availability_set      |                    |
++----------------------+------------+---------------+-----------------------+--------------------+
 
 ⚫ If you declare both public and private image, only the private will be taken
 
