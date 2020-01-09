@@ -95,6 +95,39 @@ definition, the following options are available.
 +----------------------+------------+---------------+-----------------------+--------------------+
 
 
+azure_availabilityset
+-------
+
+Any Azure resources can be provisioned using this role, it supported by the Azure Api
+
+* Example <workspaces/azure/Pinfile>`
+* azure_availabilityset module <https://docs.ansible.com/ansible/latest/modules/azure_rm_availabilityset_module.html?highlight=azure%20avail>`_
+
+Topology Schema
+~~~~~~~~~~~~~~~
+
+Within Linchpin, the :term:`azure_availabilityset` :term:`resource_definition` has more
+options than what is shown in the examples above. For each :term:`azure_availabilityset`
+definition, the following options are available.
+
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+| Parameter                   | required   | type          | ansible value               | comments           |
++=============================+============+===============+=============================+====================+
+|  role                       | true       | string        | N/A                         |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  resource_group             | false      | string        | resource_group              |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  name                       | true       | string        |  name                       |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  location                   | false      | string        |  name                       |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+| platform_update_domain_count| false      | string        | platform_update_domain_count|                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+| platform_fault_domain_count | false      | string        | platform_fault_domain_count |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  sku                        | false      | string        | sku                         |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+
 
 Credentials Management
 ----------------------
