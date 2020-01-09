@@ -261,7 +261,7 @@
                         },
                         "name": {
                             "type": "string",
-                            "required": false
+                            "required": true
                         },
                         "location": {
                             "type": "string",
