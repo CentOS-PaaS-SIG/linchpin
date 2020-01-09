@@ -505,7 +505,7 @@ class LinchpinAPI(object):
 
         results = {}
         return_code = 99
-        
+
         # verify_targets_exist()
         targets = [x.lower() for x in list(provision_data.keys())]
 
@@ -572,14 +572,14 @@ class LinchpinAPI(object):
 
         if not ansible_console:
             ansible_console = bool(self.ctx.verbosity)
-        
+
         rundb_id = self.get_evar('rundb_id')
         if action == 'destroy':
             prev_id = run_id if run_id else self.rundb.get_run_id(target, 'up')
             self.hooks.rundb = (self.rundb, rundb_id, prev_id)
         else:
             self.hooks.rundb = (self.rundb, rundb_id)
- 
+
         self.run_hooks('pre', action)
 
         # Enable/disable uhash based on provided flag(s)
@@ -703,7 +703,7 @@ class LinchpinAPI(object):
 
         self.ctx.log_debug('rundb_id: {0}'.format(rundb_id))
         self.ctx.log_debug('uhash: {0}'.format(uhash))
-        
+
         self.rundb.update_record(target, rundb_id, 'uhash', uhash)
         self.rundb.update_record(target, rundb_id, 'start', str(start))
         self.rundb.update_record(target, rundb_id, 'action', action)
