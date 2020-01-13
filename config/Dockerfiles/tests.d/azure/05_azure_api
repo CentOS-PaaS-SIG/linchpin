@@ -7,7 +7,8 @@
 
 DISTRO=${1}
 PROVIDER=${2}
-subscriptionid=${3}
+CREDS_PATH=${3l}
+subscriptionid="$(sed 's/subscription_id: //' "${CREDS_PATH}/azure.key" |tail -n 1)"
 resourcegroupname="${DISTRO}-LinchpinCreatedGroup"
 providers='compute'
 TARGET="azure_api"
