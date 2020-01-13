@@ -13,7 +13,7 @@ azure_api:
             url: "https://management.azure.com/subscriptions/{{subscriptionid}}/resourceGroups/{{resourcegroupname}}/providers/Microsoft.{{providers}}/virtualMachines/{{vmname}}?api-version=2019-03-01"
         credentials:
           filename: azure.key
-          profile: key
+          profile: "{{ profile }}"
 
 azure_vm_public_image:
   topology:
@@ -35,7 +35,7 @@ azure_vm_public_image:
             vm_password: IloveLinchpin!
         credentials:
           filename: azure.key
-          profile: key
+          profile: "{{ profile }}"
   layout:
     inventory_layout:
       vars:
@@ -58,7 +58,7 @@ azure_vn:
             resource_group: "{{ distro }}-LinchpinCreatedGroup"
         credentials:
           filename: azure.key
-          profile: key
+          profile: "{{ profile }}"
 
 azure_res_group:
   topology:
@@ -72,8 +72,8 @@ azure_res_group:
             location: centralus
         credentials:
           filename: azure.key
-          profile: key
-          
+          profile: "{{ profile }}"
+
 azure_nic:
   topology:
     topology_name: azure_nic
@@ -88,7 +88,7 @@ azure_nic:
             network_interface_name: "{{ distro }}-forLinchpinautomation"
         credentials:
           filename: azure.key
-          profile: key
+          profile: "{{ profile }}"
 
 
 azure_vn_subnet:
@@ -105,7 +105,7 @@ azure_vn_subnet:
             resource_group: "{{ distro }}-LinchpinCreatedGroup"
         credentials:
           filename: azure.key
-          profile: key
+          profile: "{{ profile }}"
 
 azure_vm:
   topology:
@@ -143,7 +143,7 @@ azure_vm:
 # This part above is now required, but you can still specify it
         credentials:
           filename: azure.key
-          profile: key
+          profile: "{{ profile }}"
 
 #This is the minimum viable input for azure_vm
 # Default setting use username and password, no public key
@@ -159,7 +159,7 @@ azure_vm_test:
             role: azure_vm
         credentials:
           filename: azure.key
-          profile: key
+          profile: "{{ profile }}"
 
 azure_multi_vm:
   topology:
@@ -174,7 +174,7 @@ azure_multi_vm:
             resource_group: "{{ distro }}-LinchpinCreatedGroup"
         credentials:
           filename: azure.key
-          profile: key
+          profile: "{{ profile }}"
   layout:
     inventory_layout:
       vars:

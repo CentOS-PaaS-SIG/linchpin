@@ -9,4 +9,4 @@ DISTRO=${1}
 PROVIDER=${2}
 TARGET="azure_res_group"
 pushd docs/source/examples/workspaces/${PROVIDER}
-linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' up "${TARGET}"
+linchpin -w . -vvv --template-data '{"profile": "sp", "distro": '${DISTRO}""'}' up "${TARGET}"
