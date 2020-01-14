@@ -1,4 +1,13 @@
+{% if res_def['dnsmasq_options'] is defined %}
+<network ipv6='yes' xmlns:dnsmasq='http://libvirt.org/schemas/network/dnsmasq/1.0'>
+  <dnsmasq:options>
+  {% for dns_opt in res_def['dnsmasq_options'] %}
+    <dnsmasq:option value='{{ dns_opt }}'/>
+  {% endfor %}
+  </dnsmasq:options>
+{% else %}
 <network ipv6='yes'>
+{% endif %}
   <name>{{ res_def['res_name'] | default(res_def['name']) }}</name>
   {% if res_def['bridge'] is defined %}
   <bridge name="{{ res_def['bridge'] }}" stp='on' delay='0'/>
