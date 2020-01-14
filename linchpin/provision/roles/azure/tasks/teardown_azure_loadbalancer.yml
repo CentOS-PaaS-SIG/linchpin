@@ -1,0 +1,32 @@
+- name: create load balancer
+  azure_rm_loadbalancer:
+    resource_group: 
+    name: "{{ res_def['myResourceGroup']|default(omit) }}" 
+    frontend_ip_configurations:
+      - name: "{{res_def['frontend_ip_configuration_name']|default(omit)}}"
+        public_ip_address: "{{ res_def['public_ip_address']|default(omit) }}" 
+    backend_address_pools:
+      - name: "{{ res_def['backend_address_name']|default(omit) }}"
+    probes:
+      - name: "{{res_def['probes_name']|default(omit)}}"
+        port: "{{res_def['probes_port']|default(omit)}}"
+    inbound_nat_pools:
+      - name: "{{ res_def['inbound_nat_pools_name']|default(omit) }}"
+        frontend_ip_configuration_name: "{{ res_def['frontend_ip_configuration_name']|default(omit) }}"
+        protocol: "{{ res_def['inbound_nat_pools_protocal']|default(omit) }}"
+        frontend_port_range_start: "{{ res_def['frontend_port_range_start'] ] }}"
+        frontend_port_range_end: "{{ res_def['frontend_port_range_end']|default(omit)}}"
+        backend_port: "{{ res_def['backend_port']|default(omit) }}"
+    load_balancing_rules:
+      - name: "{{ res_def['load_balancing_rules']|default(omit) }}"
+        frontend_ip_configuration: "{{ res_def['load_balancing_rules_load_balancing_rules']|default(omit) }"
+        backend_address_pool: backendaddrpool0
+        frontend_port: 80
+        backend_port: 80
+        probe: prob0
+    inbound_nat_rules:
+      - name: inboundnatrule0
+        backend_port: 8080
+        protocol: Tcp
+        frontend_port: 8080
+        frontend_ip_configuration: frontendipconf0
