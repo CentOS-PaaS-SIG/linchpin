@@ -8,6 +8,8 @@
     virtual_subnet_name: "{{ res_def['subnet_name'] | default(omit) }}"
 - name: "Provisioning Azure Virtual Subnet when not async"
   azure_rm_subnet:
+    ad_user: "{{ auth_var['user'] | default(omit) }}"
+    password: "{{ auth_var['password'] | default(omit) }}"
     client_id: "{{ auth_var['client_id'] | default(omit) }}"
     tenant: "{{ auth_var['tenant'] | default(omit) }}"
     secret: "{{ auth_var['secret'] | default(omit) }}"
@@ -22,6 +24,8 @@
 
 - name: "Async::Provisioning Azure Virtual Subnet"
   azure_rm_subnet:
+    ad_user: "{{ auth_var['user'] | default(omit) }}"
+    password: "{{ auth_var['password'] | default(omit) }}"
     client_id: "{{ auth_var['client_id'] | default(omit) }}"
     tenant: "{{ auth_var['tenant'] | default(omit) }}"
     secret: "{{ auth_var['secret'] | default(omit) }}"

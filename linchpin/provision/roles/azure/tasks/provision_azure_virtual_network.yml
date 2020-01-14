@@ -5,6 +5,8 @@
 
 - name: "Provisioning Azure Virtual Network when not async"
   azure_rm_virtualnetwork:
+    ad_user: "{{ auth_var['user'] | default(omit) }}"
+    password: "{{ auth_var['password'] | default(omit) }}"
     client_id: "{{ auth_var['client_id'] | default(omit) }}"
     tenant: "{{ auth_var['tenant'] | default(omit) }}"
     secret: "{{ auth_var['secret'] | default(omit) }}"
@@ -21,6 +23,8 @@
 
 - name: "Async:: Provisioning Azure Virtual Network"
   azure_rm_virtualnetwork:
+    ad_user: "{{ auth_var['user'] | default(omit) }}"
+    password: "{{ auth_var['password'] | default(omit) }}"
     client_id: "{{ auth_var['client_id'] | default(omit) }}"
     tenant: "{{ auth_var['tenant'] | default(omit) }}"
     secret: "{{ auth_var['secret'] | default(omit) }}"
@@ -33,6 +37,7 @@
   register: res_def_output
   when: _async
   no_log: "{{ not debug_mode }}"
+
 
 - name: "Async:: Append outputitem to topology_outputs"
   set_fact:
