@@ -5,6 +5,7 @@
 # providers.include: azure
 # providers.exclude: none
 
+TERM=xterm
 DISTRO=${1}
 PROVIDER=${2}
 CREDS_PATH=${3}
