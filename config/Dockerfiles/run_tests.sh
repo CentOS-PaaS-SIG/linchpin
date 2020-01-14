@@ -7,7 +7,7 @@ shift
 DISTROS=$*
 #TARGETS="dummy os-server-new os-sg-new os-vol-new"
 
-PROVIDERS="dummy libvirt"
+PROVIDERS="dummy"
 
 export WORKSPACE="/tmp"
 

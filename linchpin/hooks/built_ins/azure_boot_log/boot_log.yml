@@ -20,6 +20,10 @@
   - set_fact:
       blob: "{{ hostvars[inventory_hostname]['log_url'].split('/') | last }}"
 
+  - name: debug stuff
+    debug:
+      msg: "{{ inventory_hostname}}: {{ hostvars[inventory_hostname] }}"
+  
   - azure_rm_storageblob:
       ad_user: "{{ auth_var['user'] | default(omit) }}"
       password: "{{ auth_var['password'] | default(omit) }}"

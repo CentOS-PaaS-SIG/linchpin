@@ -1,7 +1,7 @@
 #!/bin/bash -xe
 
 # Verify os-zone provisioning ( the test is currently disabled due to unavailable infra)
-# distros.exclude: centos7 fedora29 fedora30 fedora31
+# distros.exclude: centos7 fedora29 fedora30 fedora31 rhel8
 # providers.include: none
 
 DISTRO=${1}

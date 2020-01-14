@@ -15,7 +15,7 @@ providers='compute'
 TARGET="azure_api"
 vmname="${1}test"
 body_path="/workDir/workspace/ci-linchpin/linchpin/docs/source/examples/workspaces/azure/body.json"
-pushd "docs/source/examples/workspaces/${PROVIDER}"
+	pushd "docs/source/examples/workspaces/${PROVIDER}"
 
 IFS='' read -r -d '' data << EOF || :
 { "distro": "${DISTRO}" }

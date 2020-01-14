@@ -1,7 +1,7 @@
 #!/bin/bash -xe
 
 # Verify template-based provisioning using complex template data file
-# distros.exclude: centos7 fedora30 fedora31
+# distros.exclude: centos7 fedora30 fedora31 rhel8
 # providers.exclude: dummy openstack beaker duffy openshift gcloud aws docker azure libvirt
 
 

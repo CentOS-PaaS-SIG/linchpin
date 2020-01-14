@@ -25,6 +25,7 @@ tagMap = [:]
 tagMap['fedora30'] = STABLE_LABEL
 tagMap['fedora31'] = STABLE_LABEL
 tagMap['centos7'] = STABLE_LABEL
+tagMap['rhel8'] = STABLE_LABEL
 
 // Provider: [ PATH/IN/REPO to match, ]
 p_providers = ['__RELEASE__':
@@ -263,6 +264,17 @@ pipeline {
                 }
             }
         }
+        stage("rhel8 image build") {
+            when {
+                // Only build if we have related files in changeset
+                changeset "config/Dockerfiles/rhel8/**"
+            }
+            steps {
+                script {
+                    tagMap['rhel8'] = pipelineUtils.buildImage(openshiftProject, "rhel8")
+                }
+            }
+        }
         stage("Image Tag Report") {
             steps {
                 script {
@@ -294,6 +306,8 @@ pipeline {
                                        value: tagMap['fedora31']),
                                 string(name: 'CENTOS7_TAG',
                                        value: tagMap['centos7']),
+                                string(name: 'RHEL8_TAG',
+                                       value: tagMap['RHEL8']),
                                 string(name: 'TEST_PROVIDERS',
                                        value: test_providers)
                         ],

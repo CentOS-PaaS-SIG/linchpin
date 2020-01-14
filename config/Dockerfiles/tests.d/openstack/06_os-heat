@@ -1,7 +1,7 @@
 #!/bin/bash -xe
 
 # Verify openstack heat provisioning
-# distros.exclude: fedora29 fedora30
+# distros.exclude: fedora29 fedora30 rhel8
 # providers.include: openstack
 # providers.exclude: none
 
