@@ -35,6 +35,7 @@ _async = False
 async_timeout = 1000
 default_ssh_key_path = ~/.ssh
 debug_mode = False
+auth_debug = False
 vault_encryption = False
 vault_password = ''
 async_retries = 60

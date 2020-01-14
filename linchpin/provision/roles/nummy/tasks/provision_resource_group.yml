@@ -18,7 +18,7 @@
     vault_enc: "{{ vault_encryption }}"
     vault_pass: "{{ vault_pass }}"
   register: auth_var
-  no_log: "{{ not debug_mode }}"
+  no_log: "{{ not auth_debug }}"
   when: res_grp['credentials'] is defined
 
 - name: "Fail when auth_var is null"
