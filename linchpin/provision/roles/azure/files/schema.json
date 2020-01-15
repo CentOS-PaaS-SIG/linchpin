@@ -327,11 +327,142 @@
                                 "azure_loadbalancer"
                             ]
                         },
-                        "": {
+                        "sku": {
                             "type": "string",
                             "required": false
                         },
-
+                        "name": {
+                            "type": "string",
+                            "required": true
+                        },
+                        "resource_group":{
+                            "type": "string",
+                            "required": true
+                        },
+                        "frontend_ip_configurations": {
+                            "type": "dict",
+                            "required": false,
+                            "schema": {
+                                "name": {
+                                    "type": "string",
+                                    "required": true
+                                },
+                                "public_ip_address": {
+                                    "type": "string",
+                                    "required": true
+                                }
+                            }
+                        },
+                        "backend_address_pools": {
+                            "type": "dict",
+                            "required": false,
+                            "schema": {
+                                "name": {
+                                    "type": "string",
+                                    "required": true
+                                }
+                            }
+                        },
+                        "probes": {
+                            "type": "dict",
+                            "required": false,
+                            "schema": {
+                                "name": {
+                                    "type": "string",
+                                    "required": true
+                                },
+                                "port": {
+                                    "type": "integer",
+                                    "required": false
+                                }
+                            }
+                        },
+                        "inbound_nat_pools": {
+                            "type": "dict",
+                            "required": false,
+                            "schema": {
+                                "name": {
+                                    "type": "string",
+                                    "required": true
+                                },
+                                "frontend_ip_configuration_name": {
+                                    "type": "string",
+                                    "required": false
+                                },
+                                "protocol": {
+                                    "type": "string",
+                                    "required": false
+                                },
+                                "frontend_port_range_start": {
+                                    "type": "integer",
+                                    "required": false
+                                },
+                                "frontend_port_range_end": {
+                                    "type": "integer",
+                                    "required": false
+                                },
+                                "backend_port": {
+                                    "type": "integer",
+                                    "required": false
+                                }
+                            }
+                        },
+                        "load_balancing_rules": {
+                            "type": "dict",
+                            "required": false,
+                            "schema": {
+                                "name": {
+                                    "type": "string",
+                                    "required": true
+                                },
+                                "frontend_ip_configuration": {
+                                    "type": "string",
+                                    "required": false
+                                },
+                                "backend_address_pool": {
+                                    "type": "string",
+                                    "required": false
+                                },
+                                "frontend_port": {
+                                    "type": "integer",
+                                    "required": false
+                                },
+                                "backend_port": {
+                                    "type": "integer",
+                                    "required": false
+                                },
+                                "probe": {
+                                    "type": "string",
+                                    "required": false
+                                }
+                            }
+                        },
+                        "inbound_nat_rules": {
+                            "type": "dict",
+                            "required": false,
+                            "schema": {
+                                "name": {
+                                    "type": "string",
+                                    "required": true
+                                },
+                                "backend_port": {
+                                    "type": "integer",
+                                    "required": true
+                                },
+                                "protocol": {
+                                    "type": "string",
+                                    "required": false
+                                },
+                                "frontend_port": {
+                                    "type": "integer",
+                                    "required": false
+                                },
+                                "frontend_ip_configuration": {
+                                    "type": "string",
+                                    "required": false
+                                }
+                            }
+                        }
                     }
                 }
             ]
