@@ -22,4 +22,3 @@ linchpin -w . -vvv --template-data '{ "distro": "'"${DISTRO}"'", "profile": "key
 clean_up
 
 linchpin -w . -vvv --template-data '{ "distro": "'"${DISTRO}"'", "profile": "ad"}' up "${TARGET}"
-clean_up
