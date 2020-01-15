@@ -28,6 +28,7 @@ class Workspace(object):
         self.context.set_cfg('lp', 'workspace', self.workspace_path)
         self.context.set_evar('workspace', self.workspace_path)
         self.context.set_evar('debug_mode', True)
+        self.context.set_evar('auth_debug', True)
 
     def load_data(self, path):
         """
@@ -337,6 +338,7 @@ class Pinfile(Workspace):
         self.context.set_cfg('lp', 'workspace', self.workspace_path)
         self.context.set_evar('workspace', self.workspace_path)
         self.context.set_evar('debug_mode', True)
+        self.context.set_evar('auth_debug', True)
 
     def up(self):
         """
