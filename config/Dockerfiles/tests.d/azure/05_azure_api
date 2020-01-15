@@ -17,11 +17,11 @@ vmname="${1}test"
 body_path="/workDir/workspace/ci-linchpin/linchpin/docs/source/examples/workspaces/azure/body.json"
 pushd "docs/source/examples/workspaces/${PROVIDER}"
 
-IFS='' read -r -d '' data << EOF
+IFS='' read -r -d '' data << EOF || :
 { "distro": "${DISTRO}" }
 EOF
 
-IFS='' read -r -d '' az_api_data << EOF
+IFS='' read -r -d '' az_api_data << EOF || :
 {
   "distro": "${DISTRO}",
   "subscriptionid": "${subscriptionid}",
