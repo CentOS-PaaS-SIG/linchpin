@@ -107,8 +107,10 @@ class LinchpinAPI(object):
         self.set_evar('pb_path', self.pb_path)
         self.set_evar('role_path', self.role_path)
         self.set_evar('from_api', True)
-        self.workspace = self.get_evar('workspace')
+        self.set_evar('no_monitor', self.ctx.no_monitor)
         self.disable_pbar = 'True'
+        self.workspace = self.get_evar('workspace')
+
 
     def setup_pbar(self):
         if (eval(self.get_cfg('progress_bar', 'no_progress')) or
@@ -122,6 +124,7 @@ class LinchpinAPI(object):
                                  postfix=[dict(group='initializing')],
                                  position=0,
                                  leave=False)
+
 
     def setup_rundb(self):
         """
@@ -1026,6 +1029,7 @@ class LinchpinAPI(object):
             self.set_evar('state', 'absent')
 
         inventory_src = '{0}/localhost'.format(self.workspace)
+        self.setup_pbar()
         self.pbar.set_description_str("Linchpin(%s)" % action)
         self.pbar.total = len(resources) + 1
         self.pbar.update()

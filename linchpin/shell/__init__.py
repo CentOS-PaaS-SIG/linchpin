@@ -291,7 +291,6 @@ def up(ctx, targets, run_id, tx_id, inventory_format, ignore_failed_hooks,
         ctx.set_cfg("hook_flags", "no_hooks", no_hooks)
     if no_progress:
         ctx.set_cfg("progress_bar", "no_progress", str(no_progress))
-    lpcli.setup_pbar()
     if disable_uhash:
         ctx.set_evar("disable_uhash_targets", disable_uhash.split(','))
 
@@ -377,7 +376,6 @@ def destroy(ctx, targets, run_id, tx_id, ignore_failed_hooks, no_hooks,
         ctx.set_cfg("hook_flags", "no_hooks", no_hooks)
     if no_progress:
         ctx.set_cfg("progress_bar", "no_progress", no_progress)
-    lpcli.setup_pbar()
     if use_shell:
         ctx.set_cfg("ansible", "use_shell", use_shell)
 
