@@ -5,20 +5,38 @@
 # providers.include: azure
 # providers.exclude: none
 
+TERM=xterm
 DISTRO=${1}
 PROVIDER=${2}
-subscriptionid=${3}
+CREDS_PATH=${3}
+subscriptionid="$(grep subscription_id "${CREDS_PATH}/azure.key" | awk '{print $2}' | tail -n 1)"
 resourcegroupname="${DISTRO}-LinchpinCreatedGroup"
 providers='compute'
 TARGET="azure_api"
 vmname="${1}test"
 body_path="/workDir/workspace/ci-linchpin/linchpin/docs/source/examples/workspaces/azure/body.json"
-pushd docs/source/examples/workspaces/${PROVIDER}
+pushd "docs/source/examples/workspaces/${PROVIDER}"
+
+IFS='' read -r -d '' data << EOF || :
+{ "distro": "${DISTRO}" }
+EOF
+
+IFS='' read -r -d '' az_api_data << EOF || :
+{
+  "distro": "${DISTRO}",
+  "subscriptionid": "${subscriptionid}",
+  "resourcegroupname": "${resourcegroupname}",
+  "providers": "${providers}",
+  "vmname": "${vmname}",
+  "body_path": "${body_path}"
+}
+EOF
+
 function clean_up {
     set +e
-    linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}', "subscriptionid": '${subscriptionid}',"resourcegroupname": '${resourcegroupname}',"providers": '${providers}',"vmname": '${vmname}',"body_path": '${body_path}'}' destroy "${TARGET}"
-    linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}'}' destroy "azure_nic"
-    linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' destroy "azure_vn"
+    linchpin -w . -vvv --template-data "${az_api_data}" destroy "${TARGET}"
+    linchpin -w . -vvv --template-data "${data}" destroy "azure_nic"
+    linchpin -w . -vvv --template-data "${data}" destroy "azure_vn"
     sed "s/\(\"id\".*\/\).*/\1TestingNIC\",/" ${body_path} -i
     sed "s/${resourcegroupname}/REDSOURCEGROUPPLACEHOLDER/" ${body_path} -i
     sed "s/${subscriptionid}/SUBSCRIPTIONPLACEHOLDER/" ${body_path} -i
@@ -27,11 +45,11 @@ function clean_up {
 
 trap clean_up EXIT
 
-linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' up "azure_vn"
-linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' up "azure_vn_subnet"
-linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}'}' up "azure_nic"
+linchpin -w . -vvv --template-data "${data}" up "azure_vn"
+linchpin -w . -vvv --template-data "${data}" up "azure_vn_subnet"
+linchpin -w . -vvv --template-data "${data}" up "azure_nic"
 sed "s/\(\"id\".*\/\).*/\1${DISTRO}-forLinchpinautomation\",/" ${body_path} -i
 sed "s/REDSOURCEGROUPPLACEHOLDER/${resourcegroupname}/" ${body_path} -i
 sed "s/SUBSCRIPTIONPLACEHOLDER/${subscriptionid}/" ${body_path} -i
 cat ${body_path}
-linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}', "subscriptionid": '${subscriptionid}',"resourcegroupname": '${resourcegroupname}',"providers": '${providers}',"vmname": '${vmname}',"body_path": '${body_path}'}' up "${TARGET}"
+linchpin -w . -vvv --template-data "${az_api_data}" up "${TARGET}"
