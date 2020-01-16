@@ -248,7 +248,7 @@ azure_vm_loadbalancer:
             name: "{{ distro }}-LB-Auto"
             resource_group: ccit
             frontend_ip_configurations:
-              name: "{{ distro }}-AzureAutoLB""
+              name: "{{ distro }}-AzureAutoLB"
               public_ip_address: "{{ distro }}-Test-Ip-Auto"
             backend_address_pools:
               name: "{{ distro }}-Backend-Pool-Auto"
