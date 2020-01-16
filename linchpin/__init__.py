@@ -109,6 +109,10 @@ class LinchpinAPI(object):
         self.set_evar('from_api', True)
         self.workspace = self.get_evar('workspace')
         self.disable_pbar = 'True'
+        if not hasattr(self.ctx, 'no_monitor'):
+            self.ctx.no_monitor = False
+        self.get_evar('no_monitor', self.ctx.no_monitor)
+
 
     def setup_pbar(self):
         if (eval(self.get_cfg('progress_bar', 'no_progress')) or
@@ -1026,6 +1030,7 @@ class LinchpinAPI(object):
             self.set_evar('state', 'absent')
 
         inventory_src = '{0}/localhost'.format(self.workspace)
+        self.setup_pbar()
         self.pbar.set_description_str("Linchpin(%s)" % action)
         self.pbar.total = len(resources) + 1
         self.pbar.update()
