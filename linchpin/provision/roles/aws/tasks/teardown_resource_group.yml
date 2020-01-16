@@ -1,4 +1,3 @@
----
 - name: "Set cred profile"
   set_fact:
     cred_profile: "{{ res_grp['credentials']['profile'] | default('default') }}"
@@ -26,7 +25,9 @@
 
 - name: "Get topology output data from resources file"
   output_parser:
-    output_file: "{{ default_resources_path + '/' + topo_data['topology_name'].replace(' ', '_').lower() + '.output' }}"
+    output_file: "{{ default_resources_path + '/' +
+                     topo_data['topology_name'].replace(' ', '_').lower() +
+                     '.output' }}"
   register: topo_output
   when: generate_resources
 

@@ -1,4 +1,3 @@
----
 - ec2_vpc_route_table_facts:
     aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
     aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
@@ -10,7 +9,8 @@
 
 - name: get all route_table_ids when route_table_name is defined
   set_fact:
-    route_table_ids: "{{ register_route_table['route_tables'] | fetch_list_by_attr('id') }}"
+    route_table_ids: "{{ register_route_table['route_tables'] |
+                         fetch_list_by_attr('id') }}"
   when: res_def['route_table_name'] is defined
 
 - name: route_table_ids when route_table_name is not defined
@@ -46,7 +46,8 @@
 
 - name: "Fetch vpc details when vpc_name is defined"
   set_fact:
-    vpc_id_fetched: "{{ vpc_net_details['vpcs'] | first | default({}) | fetch_attr('vpc_id', '')}}"
+    vpc_id_fetched: "{{ vpc_net_details['vpcs'] | first | default({}) |
+                        fetch_attr('vpc_id', '')}}"
   when: res_def['vpc_name'] is defined
 
 - name: Get all endpoints with specific filters
@@ -73,7 +74,7 @@
     route_table_ids: "{{ route_table_ids }}"
     validate_certs: "{{ res_def['validate_certs'] | default(false) }}"
     vpc_endpoint_id: "{{ ep_id['vpc_endpoint_id'] }}"
-    wait: yes
+    wait: false
     wait_timeout: 600
   with_items: "{{ vpc_endpoint_ids_fetched['vpc_endpoints'] | default([]) }}"
   loop_control:

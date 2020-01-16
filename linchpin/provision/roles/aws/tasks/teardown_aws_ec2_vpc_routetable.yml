@@ -27,7 +27,8 @@
 
 - name: "Fetch vpc details when vpc_name is defined"
   set_fact:
-    vpc_id_fetched: "{{ vpc_net_details['vpcs'] | first | default({}) | fetch_attr('vpc_id', '')}}"
+    vpc_id_fetched: "{{ vpc_net_details['vpcs'] | first | default({})
+                     | fetch_attr('vpc_id', '')}}"
   when: res_def['vpc_name'] is defined
 
 - name: "Fetch vpc route table facts by name"
@@ -42,7 +43,7 @@
 - name: setfact for routetable_id
   set_fact:
     route_table_id: "{{ routetable_facts['route_tables'][0].id }}"
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: "Add tags to route table"
   set_fact:
@@ -50,9 +51,10 @@
 
 - name: "Append name to tags"
   set_fact:
-    routetable_tags: "{{ routetable_tags | combine({routekey.key: routekey.value}) }}"
+    routetable_tags: "{{ routetable_tags
+                      | combine({routekey.key: routekey.value}) }}"
   with_items:
-    - { key: 'Name', value: "{{ res_def['name'] }}" }
+    - {key: 'Name', value: "{{ res_def['name'] }}"}
   loop_control:
     loop_var: routekey
 
@@ -61,7 +63,7 @@
     aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
     aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
     # either vpc_id or vpc_name needs to be mentioned in topology
-    vpc_id: "{{ res_def['vpc_id'] | default(vpc_id_fetched) }}" 
+    vpc_id: "{{ res_def['vpc_id'] | default(vpc_id_fetched) }}"
     region: "{{ res_def['region'] }}"
     route_table_id: "{{ route_table_id | default(omit) }}"
     tags: "{{ routetable_tags }}"

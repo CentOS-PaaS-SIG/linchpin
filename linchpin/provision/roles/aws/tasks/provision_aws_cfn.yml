@@ -1,20 +1,22 @@
----
 - name: "Set cfn parameters for template"
   set_fact:
-    cfn_grp_vars : "{{ res_grp_vars | selectattr('resource_group_name', 'match', '^' + res_grp_name + '$') | first }}"
+    cfn_grp_vars: "{{ res_grp_vars |
+                      selectattr('resource_group_name', 'match',
+                                 '^' + res_grp_name + '$') |
+                      first }}"
 
 - name: "Set cfn parameters for template"
   set_fact:
-    cfn_params : "{{ cfn_grp_vars['cfn_params'] }}"
+    cfn_params: "{{ cfn_grp_vars['cfn_params'] }}"
 
 - name: "Provision cloud formation stack"
   cloudformation:
     aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
     aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
-    stack_name:  "{{ res_def['res_name'] | default(res_def['name']) }}"
+    stack_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     state: "{{ state }}"
-    region:  "{{ res_def['region'] }}"
-    disable_rollback:  "{{ res_def['disable_roleback']| default(omit) }}"
+    region: "{{ res_def['region'] }}"
+    disable_rollback: "{{ res_def['disable_roleback']| default(omit) }}"
     template: "{{ res_def['template_path'] }}"
     template_parameters: "{{ cfn_params }}"
     tags:
@@ -27,10 +29,10 @@
   cloudformation:
     aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
     aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
-    stack_name:  "{{ res_def['res_name'] | default(res_def['name']) }}"
+    stack_name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     state: "{{ state }}"
-    region:  "{{ res_def['region'] }}"
-    disable_rollback:  "{{ res_def['disable_roleback']| default(omit) }}"
+    region: "{{ res_def['region'] }}"
+    disable_rollback: "{{ res_def['disable_roleback']| default(omit) }}"
     template: "{{ res_def['template_path'] }}"
     template_parameters: "{{ cfn_params }}"
     tags:
@@ -43,8 +45,11 @@
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_aws_cfn: "{{ topology_outputs_aws_cfn + [res_def_output] }}"
-    
+    topology_outputs_aws_cfn: "{{ topology_outputs_aws_cfn +
+                                  [res_def_output] }}"
+
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_aws_cfn: "{{ topology_outputs_aws_cfn | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}"
+    topology_outputs_aws_cfn: "{{ topology_outputs_aws_cfn |
+                                  add_res_data(lookup('vars', 'role_name'),
+                                               res_def['role']) }}"

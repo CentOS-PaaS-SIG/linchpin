@@ -1,4 +1,3 @@
----
 - name: "Get AWS VPC NAT Gateway ID"
   block:
   - ec2_vpc_nat_gateway_facts:
@@ -9,7 +8,7 @@
       ec2_url: "{{ res_def['ec2_url'] | default(omit) }}"
       profile: "{{ res_def['profile'] | default(omit) }}"
       debug_botocore_endpoint_logs: "{{ debug_mode | default(omit) }}"
-      validate_certs: no
+      validate_certs: false
       filters:
         "tag:Name": "{{ res_def['name'] }}"
     register: ngws_facts
@@ -29,7 +28,7 @@
     ec2_url: "{{ res_def['ec2_url'] | default(omit) }}"
     profile: "{{ res_def['profile'] | default(omit) }}"
     debug_botocore_endpoint_logs: "{{ debug_mode | default(omit) }}"
-    validate_certs: no
+    validate_certs: false
     client_token: "{{ res_def['client_token'] | default(omit) }}"
     wait_timeout: "{{ res_def['wait_timeout'] | default(omit) }}"
     wait: "{{ res_def['wait'] | default(omit) }}"
@@ -41,5 +40,6 @@
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_aws_net: "{{ topology_outputs_aws_net + [res_def_output] }}"
+    topology_outputs_aws_net: "{{ topology_outputs_aws_net +
+                                  [res_def_output] }}"
   when: res_def_output['changed'] == true

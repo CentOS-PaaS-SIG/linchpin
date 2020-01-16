@@ -28,7 +28,7 @@
 - name: "Set vpc id"
   set_fact:
     vpc_id: '{{ vpc_fact.vpcs[0].id }}'
-    
+
 - name: Teardown aws internet gateway
   ec2_vpc_igw:
     aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"

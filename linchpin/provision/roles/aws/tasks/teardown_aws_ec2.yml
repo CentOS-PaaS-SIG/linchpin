@@ -1,4 +1,3 @@
----
 - name: "Teardown of AWS_EC2 Resource"
   ec2:
     aws_access_key: "{{ res_def_item.0 }}"
@@ -8,8 +7,9 @@
     region: "{{ res_def_item.3 }}"
     instance_tags:
       name: "{{ res_def_item.8 }}"
-    wait: no
-  when: res_def_item.4 == res_def_item.5 and res_def_item.6 == "aws_ec2" and res_def_item.7 == false
+    wait: false
+  when: res_def_item.4 == res_def_item.5 and res_def_item.6 == "aws_ec2"
+        and res_def_item.7 == false
   with_together:
     - "{{ auth_var['aws_access_key_id'] | default(omit) }}"
     - "{{ auth_var['aws_secret_access_key'] | default(omit) }}"

@@ -1,4 +1,3 @@
----
 - name: "Set aws_res_type value"
   set_fact:
     aws_res_type: "{{ res_def['role'] }}"

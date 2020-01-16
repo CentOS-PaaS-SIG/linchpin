@@ -32,7 +32,8 @@
   ec2_vpc_igw:
     aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
     aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
-    debug_botocore_endpoint_logs: "{{ res_def['debug_botocore_endpoint_logs'] | default(omit)}}"
+    debug_botocore_endpoint_logs: "{{ res_def['debug_botocore_endpoint_logs'] |
+                                      default(omit)}}"
     ec2_url: "{{ res_def['ec2_url'] | default(omit) }}"
     region: "{{ res_def['region'] | default(omit) }}"
     state: "{{ res_def['state'] | default(omit) }}"
@@ -42,13 +43,16 @@
   register: igw
 
 - set_fact:
-    topology_outputs_aws_internet_output: []
+    topology_outputs_aws_internet: []
 
 - name: "Append output to topology_outputs"
   set_fact:
-    topology_outputs_aws_internet_output: "{{ topology_outputs_aws_internet_output + [igw] }}"
+    topology_outputs_aws_internet: "{{ topology_outputs_aws_internet +
+                                              [igw] }}"
   when: igw['gateway_id'] is defined
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_aws_ec2: "{{ topology_outputs_aws_internet_output | add_res_data(lookup('vars', 'role_name'), res_def['role']) }}" 
+    topology_outputs_aws_ec2: "{{ topology_outputs_aws_internet |
+                                  add_res_data(lookup('vars', 'role_name'),
+                                               res_def['role']) }}"
