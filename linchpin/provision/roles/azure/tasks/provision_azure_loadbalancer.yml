@@ -65,3 +65,15 @@
     inbound_nat_rules: "{{ inbound_nat_rules }}"
     state: present
     sku: "{{ res_def['sku']|default(omit)}}"
+  register: res_def_output
+
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_azure_loadbalancer: "{{ topology_outputs_azure_loadbalancer + [res_def_output] }}"
+  when: res_def_output['changed'] == true
+
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_azure_loadbalancer: "{{ topology_outputs_azure_loadbalancer | add_res_data(res_grp_type, 'azure_loadbalancer') }}"

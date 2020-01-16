@@ -33,6 +33,22 @@
     topology_outputs: "{{ topology_outputs }} + {{ topology_outputs_os_obj }}"
   when: topology_outputs_os_obj is defined and (topology_outputs_os_obj != [])
 
+- name: "Add azure availability set"
+  set_fact:
+    topology_outputs: "{{ topology_outputs }} + {{ topology_outputs_azure_availabilityset }}"
+  when: topology_outputs_azure_availabilityset is defined and (topology_outputs_azure_availabilityset != [])
+
+- name: "Add azure load balancer"
+  set_fact:
+    topology_outputs: "{{ topology_outputs }} + {{ topology_outputs_azure_loadbalancer }}"
+  when: topology_outputs_azure_loadbalancer is defined and (topology_outputs_azure_loadbalancer != [])
+
+- name: "Add azure public ip address"
+  set_fact:
+    topology_outputs: "{{ topology_outputs }} + {{ topology_outputs_azure_publicip }}"
+  when: topology_outputs_azure_publicip is defined and (topology_outputs_azure_publicip != [])
+
+
 # we have to append here, otherwise we'll nullify the previous os resources
 - name: "Add os_volume_res"
   set_fact:
