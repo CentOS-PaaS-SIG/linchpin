@@ -479,6 +479,8 @@
 
 - name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
+    #ping once the IP address provided by libvirt dnsmasq in order to populate the ARP table
+    ping -c1 $(virsh net-dhcp-leases baremetal | awk '/{{ mac }}/ {print $5}' | awk -F / {'print $1'}) -W1 || true
     /usr/sbin/ip n | grep -F {{ mac }} | awk {'print $1'} | grep -v ^fe80
   with_items:
     - "{{ macs }}"
