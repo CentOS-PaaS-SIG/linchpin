@@ -14,3 +14,7 @@
   set_fact:
     topology_outputs_azure_net_interface: "{{ topology_outputs_azure_net_interface + [res_def_output] }}"
   when: res_def_output['changed'] == true
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_azure_api: "{{ topology_outputs_azure_api | add_res_data(lookup('vars', 'role_name'),'azure_nic') }}"
