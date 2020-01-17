@@ -279,3 +279,25 @@ azure_vm_loadbalancer:
         credentials:
           filename: azure.key
           profile: key
+
+azure_nsg:
+  topology:
+    topology_name: azure_nsg
+    resource_groups:
+      - resource_group_name: "azure"
+        resource_group_type: "azure"
+        resource_definitions:
+          - name: "{{ distro }}-Test-NSG-AUTO"
+            role: azure_nsg
+            resource_group: "ccit"
+            purge_rules: True
+            rules:
+               name: DenySSH
+               protocol: Tcp
+               destination_port_range: 22
+               access: Deny
+               priority: 100
+               direction: Inbound
+        credentials:
+          filename: azure.key
+          profile: "{{ profile | default('key') }}"

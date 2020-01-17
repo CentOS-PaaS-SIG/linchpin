@@ -335,7 +335,7 @@
                             "type": "string",
                             "required": true
                         },
-                        "resource_group":{
+                        "resource_group": {
                             "type": "string",
                             "required": true
                         },
@@ -459,6 +459,84 @@
                                 },
                                 "frontend_ip_configuration": {
                                     "type": "string",
+                                    "required": false
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "dict",
+                    "schema": {
+                        "role": {
+                            "type": "string",
+                            "required": true,
+                            "allowed": [
+                                "azure_nsg"
+                            ]
+                        },
+                        "name": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "resource_group": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "purge_rules": {
+                            "type": "boolean",
+                            "required": false
+                        },
+                        "rules": {
+                            "type": "dict",
+                            "required": false,
+                            "schema": {
+                                "access": {
+                                    "type": "string",
+                                    "required": false
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "required": false
+                                },
+                                "destination_address_prefix": {
+                                    "type": "string",
+                                    "required": false
+                                },
+                                "destination_application_security_groups": {
+                                    "type": "string",
+                                    "required": false
+                                },
+                                "destination_port_range": {
+                                    "type": "integer",
+                                    "required": false
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "required": false
+                                },
+                                "direction": {
+                                    "type": "string",
+                                    "required": false
+                                },
+                                "priority": {
+                                    "type": "integer",
+                                    "required": false
+                                },
+                                "protocol": {
+                                    "type": "string",
+                                    "required": false
+                                },
+                                "source_address_prefix": {
+                                    "type": "string",
+                                    "required": false
+                                },
+                                "source_application_security_groups": {
+                                    "type": "string",
+                                    "required": false
+                                },
+                                "source_port_range": {
+                                    "type": "integer",
                                     "required": false
                                 }
                             }

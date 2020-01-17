@@ -1,0 +1,30 @@
+---
+- set_fact: 
+    rules: ["{{res_def['rules']}}"]
+  when: res_def['rules'] is defined
+
+- set_fact: 
+    rules: null
+  when: res_def['rules'] is not defined
+
+- name: "Provisioning Azure NSG"
+  azure_rm_securitygroup:
+      client_id: "{{ auth_var['client_id'] | default(omit) }}"
+      tenant: "{{ auth_var['tenant'] | default(omit) }}"
+      secret: "{{ auth_var['secret'] | default(omit) }}"
+      subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
+      resource_group: "{{ res_def['resource_group']|default(omit)}}"
+      name: "{{ res_def['name']|default(omit)}}"
+      purge_rules: "{{ res_def['purge_rules']|default(omit)}}"
+      rules: "{{ rules }}"
+  register: res_def_output
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_azure_nsg: "{{ topology_outputs_azure_nsg + [res_def_output] }}"
+    when: res_def_output['changed'] == true
+
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_azure_nsg: "{{ topology_outputs_azure_nsg | add_res_data(res_grp_type, 'azure_nsg') }}"
