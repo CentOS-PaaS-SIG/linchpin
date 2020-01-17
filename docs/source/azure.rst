@@ -1,5 +1,6 @@
 The dependencies is perfectly working for the latest version of Ansible, 
 if you are not using the latest version, may not work.
+
 Azure VM
 ===================
 
@@ -109,8 +110,8 @@ With this role you can provision and configure the Azure Load Balancer
 Topology Schema
 ~~~~~~~~~~~~~~~
 
-Within Linchpin, the :term:`azure_availabilityset` :term:`resource_definition` has more
-options than what is shown in the examples above. For each :term:`azure_availabilityset`
+Within Linchpin, the :term:`azure_loadbalancer` :term:`resource_definition` has more
+options than what is shown in the examples above. For each :term:`azure_loadbalancer`
 definition, the following options are available.
 
 +-----------------------------+------------+---------------+-----------------------------+--------------------+
@@ -122,17 +123,17 @@ definition, the following options are available.
 +-----------------------------+------------+---------------+-----------------------------+--------------------+
 |  name                       | true       | string        |  name                       |                    |
 +-----------------------------+------------+---------------+-----------------------------+--------------------+
-|  frontend_ip_configuration  | false      | string        |  name                       |                    |
+|  frontend_ip_configuration  | false      | string        |  frontend_ip_configuration  |                    |
 +-----------------------------+------------+---------------+-----------------------------+--------------------+
-|  backend_address_pools      | false      | string        | sku                         |                    |
+|  backend_address_pools      | false      | string        |  backend_address_pools      |                    |
 +-----------------------------+------------+---------------+-----------------------------+--------------------+
-|  probes                     | false      | string        | sku                         |                    |
+|  probes                     | false      | string        |  probes                     |                    |
 +-----------------------------+------------+---------------+-----------------------------+--------------------+
-|  inbound_nat_pools          | false      | string        | sku                         |                    |
+|  inbound_nat_pools          | false      | string        | inbound_nat_pools           |                    |
 +-----------------------------+------------+---------------+-----------------------------+--------------------+
-|  inbound_nat_rules          | false      | string        | sku                         |                    |
+|  inbound_nat_rules          | false      | string        | inbound_nat_rules           |                    |
 +-----------------------------+------------+---------------+-----------------------------+--------------------+
-|  load_balacing_rules        | false      | string        | sku                         |                    |
+|  load_balacing_rules        | false      | string        | load_balacing_rules         |                    |
 +-----------------------------+------------+---------------+-----------------------------+--------------------+
 
 
@@ -148,8 +149,8 @@ With this role, you can provision and manage Azure public ip address
 Topology Schema
 ~~~~~~~~~~~~~~~
 
-Within Linchpin, the :term:`azure_availabilityset` :term:`resource_definition` has more
-options than what is shown in the examples above. For each :term:`azure_availabilityset`
+Within Linchpin, the :term:`azure_publicipaddress` :term:`resource_definition` has more
+options than what is shown in the examples above. For each :term:`azure_publicipaddress`
 definition, the following options are available.
 
 +-----------------------------+------------+---------------+-----------------------------+--------------------+
@@ -159,9 +160,9 @@ definition, the following options are available.
 +-----------------------------+------------+---------------+-----------------------------+--------------------+
 |  resource_group             | false      | string        | resource_group              |                    |
 +-----------------------------+------------+---------------+-----------------------------+--------------------+
-|  allocation_method          | true       | string        |  name                       |                    |
+|  allocation_method          | true       | string        | allocation_method           |                    |
 +-----------------------------+------------+---------------+-----------------------------+--------------------+
-|  domain_name                | false      | string        |  name                       |                    |
+|  domain_name                | false      | string        | domain_name                 |                    |
 +-----------------------------+------------+---------------+-----------------------------+--------------------+
 |  sku                        | false      | string        | sku                         |                    |
 +-----------------------------+------------+---------------+-----------------------------+--------------------+
@@ -198,6 +199,121 @@ definition, the following options are available.
 | platform_fault_domain_count | false      | string        | platform_fault_domain_count |                    |
 +-----------------------------+------------+---------------+-----------------------------+--------------------+
 |  sku                        | false      | string        | sku                         |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+
+
+
+azure_network_interface
+-------
+
+Azure network interface can be provisioned using this role
+
+* Example <workspaces/azure/Pinfile>`
+* azure_rm_networkinterface module <https://docs.ansible.com/ansible/latest/modules/azure_rm_networkinterface_module.html?highlight=azure%20network%20interface>`_
+
+Topology Schema
+~~~~~~~~~~~~~~~
+
+Within Linchpin, the :term:`azure_rm_networkinterface` :term:`resource_definition` has more
+options than what is shown in the examples above. For each :term:`azure_rm_networkinterface`
+definition, the following options are available.
+
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+| Parameter                   | required   | type          | ansible value               | comments           |
++=============================+============+===============+=============================+====================+
+|  role                       | true       | string        | N/A                         |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  resource_group             | false      | string        | resource_group              |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  name                       | true       | string        |  name                       |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  virtual_network_name       | false      | string        |  virtual_network            |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+| subnet_name                 | false      | string        | platform_update_domain_count|                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+
+
+azure_resource_group
+-------
+
+Azure network interface can be provisioned using this role
+
+* Example <workspaces/azure/Pinfile>`
+* azure_rm_resourcegroup module <https://docs.ansible.com/ansible/latest/modules/azure_rm_resourcegroup_module.html?highlight=azure%20resource%20group>`_
+
+Topology Schema
+~~~~~~~~~~~~~~~
+
+Within Linchpin, the :term:`azure_rm_networkinterface` :term:`resource_definition` has more
+options than what is shown in the examples above. For each :term:`azure_rm_networkinterface`
+definition, the following options are available.
+
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+| Parameter                   | required   | type          | ansible value               | comments           |
++=============================+============+===============+=============================+====================+
+|  role                       | true       | string        | N/A                         |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  resource_group             | false      | string        | resource_group              |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  name                       | true       | string        |  name                       |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  location                   | false      | string        |  location                   |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+
+azure_virtual_network
+-------
+
+Azure virtual network can be provisioned using this role
+
+* Example <workspaces/azure/Pinfile>`
+* azure_rm_virtualnetwork module <https://docs.ansible.com/ansible/latest/modules/azure_rm_virtualnetwork_module.html?highlight=azure%20virtual%20network>`_
+
+Topology Schema
+~~~~~~~~~~~~~~~
+
+Within Linchpin, the :term:`azure_rm_virtualnetwork` :term:`resource_definition` has more
+options than what is shown in the examples above. For each :term:`azure_rm_virtualnetwork`
+definition, the following options are available.
+
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+| Parameter                   | required   | type          | ansible value               | comments           |
++=============================+============+===============+=============================+====================+
+|  role                       | true       | string        | N/A                         |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  resource_group             | false      | string        | resource_group              |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  name                       | true       | string        |  name                       |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  address_prefixes           | false      | string        |  address_prefixes           |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+
+azure_virtual_subnet
+-------
+
+Azure network interface can be provisioned using this role
+
+* Example <workspaces/azure/Pinfile>`
+* azure_rm_subnet module <https://docs.ansible.com/ansible/latest/modules/azure_rm_subnet_module.html?highlight=azure%20subnet>`_
+
+Topology Schema
+~~~~~~~~~~~~~~~
+
+Within Linchpin, the :term:`azure_rm_subnet` :term:`resource_definition` has more
+options than what is shown in the examples above. For each :term:`azure_rm_subnet`
+definition, the following options are available.
+
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+| Parameter                   | required   | type          | ansible value               | comments           |
++=============================+============+===============+=============================+====================+
+|  role                       | true       | string        | N/A                         |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  resource_group             | false      | string        | resource_group              |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  name                       | true       | string        |  name                       |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  virtual_network_name       | false      | string        |  virtual_network_name       |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  address_prefix             | false      | string        |  address_prefix             |                    |
 +-----------------------------+------------+---------------+-----------------------------+--------------------+
 
 
