@@ -60,6 +60,35 @@ definition, the following options are available.
 | availability_set     | false      | string        | availability_set      |                    |
 +----------------------+------------+---------------+-----------------------+--------------------+
 
+
+azure_nsg
+-------
+
+Azure Network Security Group can be provisioned using this resource.
+
+* Example <workspaces/azure/Pinfile>`
+* azure_nsg module <https://docs.ansible.com/ansible/latest/modules/azure_rm_securitygroup_module.html?highlight=azure%20security#examples>`_
+
+Topology Schema
+~~~~~~~~~~~~~~~
+
+Within Linchpin, the :term:`azure_vm` :term:`resource_definition` has more
+options than what are shown in the examples above. For each :term:`azure_vm`
+definition, the following options are available.
+
++----------------------+------------+---------------+-----------------------+--------------------+
+| Parameter            | required   | type          | ansible value         | comments           |
++======================+============+===============+=======================+====================+
+| role                 | true       | string        | N/A                   |                    |
++----------------------+------------+---------------+-----------------------+--------------------+
+| name                 | true       | string        | name                  |                    |
++----------------------+------------+---------------+-----------------------+--------------------+
+| purge_rules          | false      | string        | purge_rules           |                    |
++----------------------+------------+---------------+-----------------------+--------------------+
+| rules                | false      | list(dict)   | rules                  |                    |
++----------------------+------------+---------------+-----------------------+--------------------+
+
+
 ⚫ If you declare both public and private image, only the private will be taken
 
 azure_api
