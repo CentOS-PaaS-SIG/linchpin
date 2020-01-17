@@ -10,6 +10,7 @@
     topology_outputs_azure_publicip: []
     topology_outputs_azure_loadbalancer: []
     topology_outputs_azure_availabilityset: []
+    topology_outputs_azure_nsg: []
 
 - name: "Initiating Provisioning of Azure resource group"
   include: provision_resource_group.yml res_grp={{ item }}

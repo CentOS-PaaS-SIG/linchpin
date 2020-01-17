@@ -49,6 +49,10 @@
   when: topology_outputs_azure_publicip is defined and (topology_outputs_azure_publicip != [])
 
 
+- name: "Add azure nsg"
+  set_fact:
+    topology_outputs: "{{ topology_outputs }} + {{ topology_outputs_azure_nsg }}"
+  when: topology_outputs_azure_nsg is defined and (topology_outputs_azure_nsg != [])
 # we have to append here, otherwise we'll nullify the previous os resources
 - name: "Add os_volume_res"
   set_fact:
