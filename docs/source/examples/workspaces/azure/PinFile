@@ -283,6 +283,10 @@ azure_vm_loadbalancer:
 azure_nsg:
   topology:
     topology_name: azure_nsg
+    resource_groups:
+      - resource_group_name: "azure"
+        resource_group_type: "azure"
+        resource_definitions:
           - name: "{{ distro }}-Test-NSG-AUTO"
             role: azure_nsg
             resource_group: "ccit"
