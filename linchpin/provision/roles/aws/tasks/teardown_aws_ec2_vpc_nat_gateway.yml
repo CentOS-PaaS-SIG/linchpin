@@ -1,6 +1,7 @@
 - name: "Get AWS VPC NAT Gateway ID"
   block:
-  - ec2_vpc_nat_gateway_facts:
+  - name: "set ec2_vpc_nat_gateway facts"
+    ec2_vpc_nat_gateway_facts:
       aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
       aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
       region: "{{ res_def['region'] }}"
@@ -13,7 +14,8 @@
         "tag:Name": "{{ res_def['name'] }}"
     register: ngws_facts
 
-  - set_fact:
+  - name: "set nat_gateway ids"
+    set_fact:
       nat_gateway_ids: "{{ ngws_facts.netgateways|map(attribute='id')|list }}"
     when: ngws_facts.netgateways is defined and ngws_facts | length > 0
 
@@ -42,4 +44,4 @@
   set_fact:
     topology_outputs_aws_net: "{{ topology_outputs_aws_net +
                                   [res_def_output] }}"
-  when: res_def_output['changed'] == true
+  when: res_def_output['changed']

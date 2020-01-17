@@ -1,2 +1,3 @@
 skip_list:
   - "204"  # disable LineTooLongRule
+  - "503"  # disable "Tasks run when changed should be handlers"

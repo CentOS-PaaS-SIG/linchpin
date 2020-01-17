@@ -35,7 +35,7 @@
   set_fact:
     topology_outputs_aws_ec2: "{{ topology_outputs_aws_ec2 +
                                   [res_def_output] }}"
-  when: res_def_output['changed'] == true and not _async
+  when: res_def_output['changed'] and not _async
 
 - name: "Async:: Provisioning AWS_EC2 Resource"
   ec2:

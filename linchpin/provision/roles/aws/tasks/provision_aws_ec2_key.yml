@@ -18,7 +18,7 @@
   set_fact:
     topology_outputs_aws_ec2_key: "{{ topology_outputs_aws_ec2_key +
                                       [res_def_output] }}"
-  when: res_def_output['changed'] == true
+  when: res_def_output['changed']
 
 - name: "Add type to resource"
   set_fact:

@@ -22,7 +22,7 @@
   set_fact:
     topology_outputs_aws_net: "{{ topology_outputs_aws_net +
                                   [res_def_output] }}"
-  when: res_def_output['changed'] == true
+  when: res_def_output['changed']
 
 - name: "Add type to resource"
   set_fact:

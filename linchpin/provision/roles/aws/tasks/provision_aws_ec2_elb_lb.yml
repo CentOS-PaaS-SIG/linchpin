@@ -15,10 +15,10 @@
     name: "{{ res_def['name'] }}"
     purge_instance_ids: "{{ res_def['purge_instance_ids'] | default(omit) }}"
     purge_listeners: "{{ res_def['purge_instance_ids'] | default(omit) }}"
-    purge_subnets: "{{ res_def['purge_subnets'] | default(omit)}}"
+    purge_subnets: "{{ res_def['purge_subnets'] | default(omit) }}"
     purge_zones: "{{ res_def['purge_zones'] | default(omit) }}"
     region: "{{ res_def['region'] | default(omit) }}"
-    scheme: "{{ res_def['scheme'] | default(omit)}}"
+    scheme: "{{ res_def['scheme'] | default(omit) }}"
     security_group_ids: "{{ res_def['security_group_ids'] | default(omit) }}"
     security_group_names: "{{ res_def['security_group_names'] |
                               default(omit) }}"
@@ -35,7 +35,8 @@
   no_log: "{{ not debug_mode }}"
   ignore_errors: true
 
-- set_fact:
+- name: "Set debug message in case of failure"
+  set_fact:
     debug_msg: "{{ res_def_output['msg'] }}"
   when: state == 'absent' and res_def_output['msg'] is defined
 

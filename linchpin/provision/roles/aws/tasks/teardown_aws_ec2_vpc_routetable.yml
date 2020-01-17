@@ -28,7 +28,7 @@
 - name: "Fetch vpc details when vpc_name is defined"
   set_fact:
     vpc_id_fetched: "{{ vpc_net_details['vpcs'] | first | default({})
-                     | fetch_attr('vpc_id', '')}}"
+                     | fetch_attr('vpc_id', '') }}"
   when: res_def['vpc_name'] is defined
 
 - name: "Fetch vpc route table facts by name"

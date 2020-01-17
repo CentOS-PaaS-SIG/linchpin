@@ -1,4 +1,5 @@
-- ec2_vpc_route_table_facts:
+- name: "set ec2_vpc_route_table facts"
+  ec2_vpc_route_table_facts:
     aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
     aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
     region: "{{ res_def['region'] }}"
@@ -47,7 +48,7 @@
 - name: "Fetch vpc details when vpc_name is defined"
   set_fact:
     vpc_id_fetched: "{{ vpc_net_details['vpcs'] | first | default({}) |
-                        fetch_attr('vpc_id', '')}}"
+                        fetch_attr('vpc_id', '') }}"
   when: res_def['vpc_name'] is defined
 
 - name: Get all endpoints with specific filters

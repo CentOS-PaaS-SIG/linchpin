@@ -1,5 +1,6 @@
 - block:
-  - ec2_vpc_subnet_facts:
+  - name: "set ec2_vpc_subnet facts"
+    ec2_vpc_subnet_facts:
       filters: "{{ res_def['subnet_filters'] }}"
       aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
       aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
@@ -11,28 +12,34 @@
       validate_certs: false
     register: subnet_facts
 
-  - set_fact:
+  - name: "set subnet ids"
+    set_fact:
       subnet_ids: "{{ subnet_facts.subnets|map(attribute='id')|list }}"
 
-  - fail:
+  - name: "fail if there are too many subnet ids"
+    fail:
       msg: >-
         "Found too many subnets, refine the filters or add tags:
          {{ subnet_id }}"
     when: subnet_ids | length > 1
 
-  - fail:
+  - name: "fail if there are no subnet ids"
+    fail:
       msg: "No subnet was found, refine the filters or add tags"
     when: subnet_ids | length == 0
 
-  - set_fact:
+  - name: "set the subnet id"
+    set_fact:
       subnet_id: "{{ subnet_ids[0] }}"
   when: res_def['subnet_filters'] is defined
 
-- set_fact:
+- name: "set the subnet id when it is defined in res_defs"
+  set_fact:
     subnet_id: res_def['subnet_id']
   when: res_def['subnet_id'] is defined
 
-- fail:
+- name: "fail when subnet id is not found"
+  fail:
     msg: "subnet_id is not defined or wasn't found by subnet_filters"
   when: subnet_id is undefined
 
@@ -60,7 +67,7 @@
   set_fact:
     topology_outputs_aws_net: "{{ topology_outputs_aws_net +
                                   [res_def_output] }}"
-  when: res_def_output['changed'] == true
+  when: res_def_output['changed']
 
 - name: "Add type to resource"
   set_fact:
