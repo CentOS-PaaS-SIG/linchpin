@@ -93,11 +93,11 @@
                                 "azure_vm"
                             ]
                         },
-                        "count":{
+                        "count": {
                             "type": "integer",
                             "required": false
                         },
-                        "public_key":{
+                        "public_key": {
                             "type": "string",
                             "required": false
                         },
@@ -106,6 +106,10 @@
                             "required": false
                         },
                         "delete_all_attached": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "availability_set": {
                             "type": "string",
                             "required": false
                         },
@@ -242,6 +246,222 @@
                         "body_path": {
                             "type": "string",
                             "required": false
+                        }
+                    }
+                },
+                {
+                    "type": "dict",
+                    "schema": {
+                        "role": {
+                            "type": "string",
+                            "required": true,
+                            "allowed": [
+                                "azure_availabilityset"
+                            ]
+                        },
+                        "resource_group": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "name": {
+                            "type": "string",
+                            "required": true
+                        },
+                        "location": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "platform_update_domain_count": {
+                            "type": "integer",
+                            "required": false
+                        },
+                        "platform_fault_domain_count": {
+                            "type": "integer",
+                            "required": false
+                        },
+                        "sku": {
+                            "type": "string",
+                            "required": false
+                        }
+                    }
+                },
+                {
+                    "type": "dict",
+                    "schema": {
+                        "role": {
+                            "type": "string",
+                            "required": true,
+                            "allowed": [
+                                "azure_publicipaddress"
+                            ]
+                        },
+                        "sku": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "resource_group": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "allocation_method": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "domain_name": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "name": {
+                            "type": "string",
+                            "required": false
+                        }
+                    }
+                },
+                {
+                    "type": "dict",
+                    "schema": {
+                        "role": {
+                            "type": "string",
+                            "required": true,
+                            "allowed": [
+                                "azure_loadbalancer"
+                            ]
+                        },
+                        "sku": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "name": {
+                            "type": "string",
+                            "required": true
+                        },
+                        "resource_group":{
+                            "type": "string",
+                            "required": true
+                        },
+                        "frontend_ip_configurations": {
+                            "type": "dict",
+                            "required": false,
+                            "schema": {
+                                "name": {
+                                    "type": "string",
+                                    "required": true
+                                },
+                                "public_ip_address": {
+                                    "type": "string",
+                                    "required": true
+                                }
+                            }
+                        },
+                        "backend_address_pools": {
+                            "type": "dict",
+                            "required": false,
+                            "schema": {
+                                "name": {
+                                    "type": "string",
+                                    "required": true
+                                }
+                            }
+                        },
+                        "probes": {
+                            "type": "dict",
+                            "required": false,
+                            "schema": {
+                                "name": {
+                                    "type": "string",
+                                    "required": true
+                                },
+                                "port": {
+                                    "type": "integer",
+                                    "required": false
+                                }
+                            }
+                        },
+                        "inbound_nat_pools": {
+                            "type": "dict",
+                            "required": false,
+                            "schema": {
+                                "name": {
+                                    "type": "string",
+                                    "required": true
+                                },
+                                "frontend_ip_configuration_name": {
+                                    "type": "string",
+                                    "required": false
+                                },
+                                "protocol": {
+                                    "type": "string",
+                                    "required": false
+                                },
+                                "frontend_port_range_start": {
+                                    "type": "integer",
+                                    "required": false
+                                },
+                                "frontend_port_range_end": {
+                                    "type": "integer",
+                                    "required": false
+                                },
+                                "backend_port": {
+                                    "type": "integer",
+                                    "required": false
+                                }
+                            }
+                        },
+                        "load_balancing_rules": {
+                            "type": "dict",
+                            "required": false,
+                            "schema": {
+                                "name": {
+                                    "type": "string",
+                                    "required": true
+                                },
+                                "frontend_ip_configuration": {
+                                    "type": "string",
+                                    "required": false
+                                },
+                                "backend_address_pool": {
+                                    "type": "string",
+                                    "required": false
+                                },
+                                "frontend_port": {
+                                    "type": "integer",
+                                    "required": false
+                                },
+                                "backend_port": {
+                                    "type": "integer",
+                                    "required": false
+                                },
+                                "probe": {
+                                    "type": "string",
+                                    "required": false
+                                }
+                            }
+                        },
+                        "inbound_nat_rules": {
+                            "type": "dict",
+                            "required": false,
+                            "schema": {
+                                "name": {
+                                    "type": "string",
+                                    "required": true
+                                },
+                                "backend_port": {
+                                    "type": "integer",
+                                    "required": true
+                                },
+                                "protocol": {
+                                    "type": "string",
+                                    "required": false
+                                },
+                                "frontend_port": {
+                                    "type": "integer",
+                                    "required": false
+                                },
+                                "frontend_ip_configuration": {
+                                    "type": "string",
+                                    "required": false
+                                }
+                            }
                         }
                     }
                 }

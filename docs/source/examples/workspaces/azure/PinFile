@@ -119,6 +119,7 @@ azure_vm:
             role: azure_vm
 # This part below is not required, but you can still specify it
             vm_size: "Standard_DS1_v2"
+            #availability_set: '{{ distro }}-LinchpinCreatedAVSet'
             private_image: "TestingImageAzure"
             # If you have both private and public images
             # Linchpin will take the private one
@@ -185,3 +186,96 @@ azure_multi_vm:
           host_groups:
             - example
 
+azure_availabilityset:
+  topology:
+    topology_name: azure_availabilityset
+    resource_groups:
+      - resource_group_name: "azure"
+        resource_group_type: "azure"
+        resource_definitions:
+          - name: "{{ distro }}-Test_AV"
+            role: azure_availabilityset
+            resource_group: "ccit"
+            sku: "Classic"
+            platform_update_domain_count: 3
+            platform_fault_domain_count: 3
+        credentials:
+          filename: azure.key
+          profile: key
+
+azure_vm_with_av:
+  topology:
+    topology_name: azure_vm_with_av
+    resource_groups:
+      - resource_group_name: "azure"
+        resource_group_type: "azure"
+        resource_definitions:
+          - vm_name: "{{ distro }}-TEST-AV-vm"
+            role: azure_vm
+            count: 1
+            resource_group: "ccit"
+            availability_set: "Test_AV"
+        credentials:
+          filename: azure.key
+          profile: key
+
+azure_vm_ip:
+  topology:
+    topology_name: azure_vm_ip
+    resource_groups:
+      - resource_group_name: "azure"
+        resource_group_type: "azure"
+        resource_definitions:
+          - name: "{{ distro }}-Test-Ip-Auto"
+            role: azure_publicipaddress
+            resource_group: "ccit"
+            allocation_method: dynamic  
+            sku: Basic
+        credentials:
+          filename: azure.key
+          profile: key
+
+
+azure_vm_loadbalancer:
+  topology:
+    topology_name: azure_vm_with_av
+    resource_groups:
+      - resource_group_name: "azure"
+        resource_group_type: "azure"
+        resource_definitions:
+          - role: azure_loadbalancer
+            sku: Basic
+            name: "{{ distro }}-LB-Auto"
+            resource_group: ccit
+            frontend_ip_configurations:
+              name: "{{ distro }}-AzureAutoLB"
+              public_ip_address: "{{ distro }}-Test-Ip-Auto"
+            backend_address_pools:
+              name: "{{ distro }}-Backend-Pool-Auto"
+            probes:
+              name: "{{ distro }}-Probe-Auto"
+              port: 80
+            inbound_nat_pools:
+              name: "{{ distro }}-inbound_nat_pools_Auto"
+              frontend_ip_configuration_name: "{{ distro }}-AzureAutoLB"
+              protocol: Tcp
+              frontend_port_range_start: 80
+              frontend_port_range_end: 81
+              backend_port: 8080
+            load_balancing_rules:
+              name: "{{ distro }}-load_balancing_rules_Auto"
+              frontend_ip_configuration: "{{ distro }}-AzureAutoLB"
+              backend_address_pool: "{{ distro }}-Backend-Pool-Auto"
+              frontend_port: 80
+              backend_port: 80
+              probe: "{{ distro }}-Probe-Auto"
+# inbound_nat_pools and inbound_nat_rules can't appear at the same time
+#            inbound_nat_rules:
+#              name: "{{ distro }}-inbound_nat_rules_Auto"
+#              backend_port: 8080
+#              protocol: Tcp
+#              frontend_port: 8080
+#              frontend_ip_configuration: "{{ distro }}-AzureAutoLB"
+        credentials:
+          filename: azure.key
+          profile: key

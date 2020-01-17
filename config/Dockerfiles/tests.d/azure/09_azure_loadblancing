@@ -1,0 +1,23 @@
+#!/bin/bash -xe
+  
+# Verify the azure vm provisioning
+# distros.exclude: none
+# providers.include: azure
+# providers.exclude: none
+
+DISTRO=${1}
+PROVIDER=${2}
+TARGET0="azure_vm_loadbalancer"
+TARGET1="azure_vm_ip"
+pushd docs/source/examples/workspaces/${PROVIDER}
+function clean_up {
+    set +e
+    linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' destroy "${TARGET0}"
+    linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' destroy "${TARGET1}"
+    rm -rf resources/ inventories/
+}
+
+trap clean_up EXIT
+
+linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' up "${TARGET1}"
+linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' up "${TARGET0}"

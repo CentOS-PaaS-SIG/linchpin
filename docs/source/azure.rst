@@ -55,7 +55,9 @@ definition, the following options are available.
 +----------------------+------------+---------------+-----------------------+--------------------+
 | public_key           | false      | string        |                       | Copy you key here  |
 +----------------------+------------+---------------+-----------------------+--------------------+
-| delete_all_attached  |false       | string        | remove_on_absent      |                    |
+| delete_all_attached  | false      | string        | remove_on_absent      |                    |
++----------------------+------------+---------------+-----------------------+--------------------+
+| availability_set     | false      | string        | availability_set      |                    |
 +----------------------+------------+---------------+-----------------------+--------------------+
 
 ⚫ If you declare both public and private image, only the private will be taken
@@ -81,19 +83,122 @@ definition, the following options are available.
 +======================+============+===============+=======================+====================+
 |  role                | true       | string        | N/A                   |                    |
 +----------------------+------------+---------------+-----------------------+--------------------+
-|  resource_group      | true       |String         | resource_group        |                    |
+|  resource_group      | true       | string        | resource_group        |                    |
 +----------------------+------------+---------------+-----------------------+--------------------+
-|  resource_type       | true       |string         | resource_type         |                    |
+|  resource_type       | true       | string        | resource_type         |                    |
 +----------------------+------------+---------------+-----------------------+--------------------+
-|  resource_name       | true       |string         | resource_name         |                    |
+|  resource_name       | true       | string        | resource_name         |                    |
 +----------------------+------------+---------------+-----------------------+--------------------+
-|  api_version         |true        | string        | api_version           |                    |
+|  api_version         | true       | string        | api_version           |                    |
 +----------------------+------------+---------------+-----------------------+--------------------+
-|  body_path           |true        | string        |                       |Path to request body|
+|  body_path           | true       | string        |                       |Path to request body|
 +----------------------+------------+---------------+-----------------------+--------------------+
-|  url                 |true        | string        |url                    |                    |
+|  url                 | true       | string        | url                   |                    |
 +----------------------+------------+---------------+-----------------------+--------------------+
 
+
+
+azure_loadbalancer
+-------
+
+With this role you can provision and configure the Azure Load Balancer
+
+* Example <workspaces/azure/Pinfile>`
+* azure_loadbalancer module <https://docs.ansible.com/ansible/latest/modules/azure_rm_loadbalancer_module.html?highlight=azure%20load%20balance>`_
+
+Topology Schema
+~~~~~~~~~~~~~~~
+
+Within Linchpin, the :term:`azure_availabilityset` :term:`resource_definition` has more
+options than what is shown in the examples above. For each :term:`azure_availabilityset`
+definition, the following options are available.
+
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+| Parameter                   | required   | type          | ansible value               | comments           |
++=============================+============+===============+=============================+====================+
+|  role                       | true       | string        | N/A                         |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  resource_group             | false      | string        | resource_group              |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  name                       | true       | string        |  name                       |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  frontend_ip_configuration  | false      | string        |  name                       |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  backend_address_pools      | false      | string        | sku                         |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  probes                     | false      | string        | sku                         |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  inbound_nat_pools          | false      | string        | sku                         |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  inbound_nat_rules          | false      | string        | sku                         |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  load_balacing_rules        | false      | string        | sku                         |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+
+
+
+azure_publicipaddress
+-------
+
+With this role, you can provision and manage Azure public ip address
+
+* Example <workspaces/azure/Pinfile>`
+* azure_publicipaddress module <https://docs.ansible.com/ansible/latest/modules/azure_rm_publicipaddress_module.html?highlight=azure%20public%20address>`_
+
+Topology Schema
+~~~~~~~~~~~~~~~
+
+Within Linchpin, the :term:`azure_availabilityset` :term:`resource_definition` has more
+options than what is shown in the examples above. For each :term:`azure_availabilityset`
+definition, the following options are available.
+
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+| Parameter                   | required   | type          | ansible value               | comments           |
++=============================+============+===============+=============================+====================+
+|  role                       | true       | string        | N/A                         |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  resource_group             | false      | string        | resource_group              |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  allocation_method          | true       | string        |  name                       |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  domain_name                | false      | string        |  name                       |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  sku                        | false      | string        | sku                         |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+
+
+azure_availabilityset
+-------
+
+Any Azure resources can be provisioned using this role, it supported by the Azure Api
+
+* Example <workspaces/azure/Pinfile>`
+* azure_availabilityset module <https://docs.ansible.com/ansible/latest/modules/azure_rm_availabilityset_module.html?highlight=azure%20avail>`_
+
+Topology Schema
+~~~~~~~~~~~~~~~
+
+Within Linchpin, the :term:`azure_availabilityset` :term:`resource_definition` has more
+options than what is shown in the examples above. For each :term:`azure_availabilityset`
+definition, the following options are available.
+
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+| Parameter                   | required   | type          | ansible value               | comments           |
++=============================+============+===============+=============================+====================+
+|  role                       | true       | string        | N/A                         |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  resource_group             | false      | string        | resource_group              |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  name                       | true       | string        |  name                       |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  location                   | false      | string        |  name                       |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+| platform_update_domain_count| false      | string        | platform_update_domain_count|                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+| platform_fault_domain_count | false      | string        | platform_fault_domain_count |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
+|  sku                        | false      | string        | sku                         |                    |
++-----------------------------+------------+---------------+-----------------------------+--------------------+
 
 
 Credentials Management

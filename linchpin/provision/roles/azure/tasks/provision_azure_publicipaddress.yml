@@ -1,0 +1,24 @@
+---
+- name: Create a public ip address
+  azure_rm_publicipaddress:
+    client_id: "{{ auth_var['client_id'] | default(omit) }}"
+    tenant: "{{ auth_var['tenant'] | default(omit) }}"
+    secret: "{{ auth_var['secret'] | default(omit) }}"
+    subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
+    resource_group: "{{res_def['resource_group']|default(omit)}}"
+    name: "{{res_def['name']|default(omit)}}"
+    sku: "{{ res_def['sku']|default(omit) }}"
+    allocation_method: "{{res_def['allocation_method']|default(omit)}}"
+    domain_name: "{{res_def['domain_name']|default(omit)}}"
+  register: res_def_output
+
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_azure_publicip: "{{ topology_outputs_azure_publicip + [res_def_output] }}"
+  when: res_def_output['changed'] == true
+
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_azure_publicip: "{{ topology_outputs_azure_publicip | add_res_data(res_grp_type, 'azure_publicip') }}"

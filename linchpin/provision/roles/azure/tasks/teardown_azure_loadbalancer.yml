@@ -1,0 +1,9 @@
+- name: Teardown Azure load balancer
+  azure_rm_loadbalancer:
+    client_id: "{{ auth_var['client_id'] | default(omit) }}"
+    tenant: "{{ auth_var['tenant'] | default(omit) }}"
+    secret: "{{ auth_var['secret'] | default(omit) }}"
+    subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
+    resource_group: "{{ res_def['resource_group'] }}"
+    name: "{{ res_def['name'] }}"
+    state: absent

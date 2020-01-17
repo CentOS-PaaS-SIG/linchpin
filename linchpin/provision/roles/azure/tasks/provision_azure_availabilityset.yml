@@ -1,0 +1,26 @@
+---
+- name: Create an availability set with advanced options
+  azure_rm_availabilityset:
+    client_id: "{{ auth_var['client_id'] | default(omit) }}"
+    tenant: "{{ auth_var['tenant'] | default(omit) }}"
+    secret: "{{ auth_var['secret'] | default(omit) }}"
+    subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
+    name: "{{ res_def['name']| default(omit)}}"
+    location: "{{ res_def['location']|default('centralus')}}"
+    resource_group: "{{ res_def['resource_group']| default(omit)}}"
+    platform_update_domain_count: "{{ res_def['platform_update_domain_count']| default(omit)}}"
+    platform_fault_domain_count: "{{ res_def['platform_fault_domain_count']| default(omit)}}"
+    sku: "{{ res_def['sku']}}"
+    state: present
+  register: res_def_output
+
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_azure_availabilityset: "{{ topology_outputs_azure_availabilityset + [res_def_output] }}"
+  when: res_def_output['changed'] == true
+
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_azure_availabilityset: "{{ topology_outputs_azure_availabilityset | add_res_data(res_grp_type, 'azure_availabilityset') }}"

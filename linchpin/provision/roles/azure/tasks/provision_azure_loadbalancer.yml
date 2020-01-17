@@ -1,0 +1,79 @@
+---
+- name: Set Default Variables
+  block:
+  - set_fact:
+      inbound_nat_rules: ["{{ res_def['inbound_nat_rules'] }}"]
+    when: res_def['inbound_nat_rules'] is defined
+
+  - set_fact:
+      inbound_nat_rules: []
+    when: res_def['inbound_nat_rules'] is not defined
+
+  - set_fact:
+      frontend_ip_configurations: ["{{ res_def['frontend_ip_configurations'] }}"]
+    when: res_def['frontend_ip_configurations'] is defined
+
+  - set_fact:
+      frontend_ip_configurations: []
+    when: res_def['frontend_ip_configurations'] is not defined
+
+  - set_fact:
+      backend_address_pools: ["{{ res_def['backend_address_pools'] }}"]
+    when: res_def['backend_address_pools'] is defined
+
+  - set_fact:
+      backend_address_pools: []
+    when: res_def['backend_address_pools'] is not defined
+
+  - set_fact:
+      probes: ["{{ res_def['probes'] }}"]
+    when: res_def['probes'] is defined
+
+  - set_fact:
+      probes: []
+    when: res_def['probes'] is not defined
+
+  - set_fact:
+      inbound_nat_pools: ["{{ res_def['inbound_nat_pools'] }}"]
+    when: res_def['inbound_nat_pools'] is defined
+
+  - set_fact:
+      inbound_nat_pools: []
+    when: res_def['inbound_nat_pools'] is not defined
+
+  - set_fact:
+      load_balancing_rules: ["{{ res_def['load_balancing_rules'] }}"]
+    when: res_def['load_balancing_rules'] is defined
+
+  - set_fact:
+      load_balancing_rules: []
+    when: res_def['load_balancing_rules'] is not defined
+
+- name: Provision Azure load balancer
+  azure_rm_loadbalancer:
+    client_id: "{{ auth_var['client_id'] | default(omit) }}"
+    tenant: "{{ auth_var['tenant'] | default(omit) }}"
+    secret: "{{ auth_var['secret'] | default(omit) }}"
+    subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
+    resource_group: "{{ res_def['resource_group']|default(omit)}}"
+    name: "{{ res_def['name']|default(omit)}}"
+    frontend_ip_configurations: "{{ frontend_ip_configurations }}"
+    backend_address_pools: "{{ backend_address_pools}}"
+    probes: "{{ probes }}"
+    inbound_nat_pools: "{{ inbound_nat_pools }}"
+    load_balancing_rules: "{{ load_balancing_rules }}"
+    inbound_nat_rules: "{{ inbound_nat_rules }}"
+    state: present
+    sku: "{{ res_def['sku']|default(omit)}}"
+  register: res_def_output
+
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_azure_loadbalancer: "{{ topology_outputs_azure_loadbalancer + [res_def_output] }}"
+  when: res_def_output['changed'] == true
+
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_azure_loadbalancer: "{{ topology_outputs_azure_loadbalancer | add_res_data(res_grp_type, 'azure_loadbalancer') }}"
