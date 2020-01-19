@@ -7,7 +7,7 @@ azure_api:
         resource_group_type: "azure"
         resource_definitions:
           - role: "azure_api"
-            resource_group: "{{ distro }}-LinchpinCreatedGroup"
+            resource_group: ccit
             body_path: {{body_path}}
             #You can specify the name and path of body.json
             url: "https://management.azure.com/subscriptions/{{subscriptionid}}/resourceGroups/{{resourcegroupname}}/providers/Microsoft.{{providers}}/virtualMachines/{{vmname}}?api-version=2019-03-01"
@@ -24,7 +24,7 @@ azure_vm_public_image:
         resource_definitions:
           - vm_name: "{{ distro }}-TEST-Azure"
             role: azure_vm
-            resource_group: "{{ distro }}-LinchpinCreatedGroup"
+            resource_group: ccit
             vm_size: "Standard_DS1_v2"
             public_image:
               offer: CentOS
@@ -55,7 +55,7 @@ azure_vn:
         resource_definitions:
           - virtual_network_name: "{{ distro }}-forLinchpinautomation"
             role: azure_virtual_network
-            resource_group: "{{ distro }}-LinchpinCreatedGroup"
+            resource_group: ccit
         credentials:
           filename: azure.key
           profile: "{{ profile | default('key') }}"
@@ -73,7 +73,7 @@ azure_res_group:
         credentials:
           filename: azure.key
           profile: "{{ profile | default('key') }}"
-          
+
 azure_nic:
   topology:
     topology_name: azure_nic
@@ -83,7 +83,7 @@ azure_nic:
         resource_definitions:
           - virtual_network_name: "{{ distro }}-forLinchpinautomation"
             role: azure_network_interface
-            resource_group: "{{ distro }}-LinchpinCreatedGroup"
+            resource_group: ccit
             subnet_name: "{{ distro }}-linchpincreated"
             network_interface_name: "{{ distro }}-forLinchpinautomation"
         credentials:
@@ -102,7 +102,7 @@ azure_vn_subnet:
             subnet_name: "{{ distro }}-linchpincreated"
             role: azure_virtual_subnet
             address_prefix: '10.1.0.0/24'
-            resource_group: "{{ distro }}-LinchpinCreatedGroup"
+            resource_group: ccit
         credentials:
           filename: azure.key
           profile: "{{ profile | default('key') }}"
@@ -115,7 +115,7 @@ azure_vm:
         resource_group_type: "azure"
         resource_definitions:
           - vm_name: "{{ distro }}-TestAzureAuto"
-            resource_group: "{{ distro }}-LinchpinCreatedGroup"
+            resource_group: ccit
             role: azure_vm
 # This part below is not required, but you can still specify it
             vm_size: "Standard_DS1_v2"
@@ -156,7 +156,7 @@ azure_vm_test:
         resource_group_type: "azure"
         resource_definitions:
           - vm_name: "{{ distro }}-TestAzureAuto"
-            resource_group: "{{ distro }}-LinchpinCreatedGroup"
+            resource_group: ccit
             role: azure_vm
         credentials:
           filename: azure.key
@@ -172,7 +172,7 @@ azure_multi_vm:
           - vm_name: "{{ distro }}-TestMultiVm"
             count: 4
             role: azure_vm
-            resource_group: "{{ distro }}-LinchpinCreatedGroup"
+            resource_group: ccit
         credentials:
           filename: azure.key
           profile: "{{ profile | default('key') }}"
@@ -195,7 +195,7 @@ azure_availabilityset:
         resource_definitions:
           - name: "{{ distro }}-Test_AV"
             role: azure_availabilityset
-            resource_group: "ccit"
+            resource_group: ccit
             sku: "Classic"
             platform_update_domain_count: 3
             platform_fault_domain_count: 3
@@ -213,7 +213,7 @@ azure_vm_with_av:
           - vm_name: "{{ distro }}-TEST-AV-vm"
             role: azure_vm
             count: 1
-            resource_group: "ccit"
+            resource_group: ccit
             availability_set: "Test_AV"
         credentials:
           filename: azure.key
@@ -228,7 +228,7 @@ azure_vm_ip:
         resource_definitions:
           - name: "{{ distro }}-Test-Ip-Auto"
             role: azure_publicipaddress
-            resource_group: "ccit"
+            resource_group: ccit
             allocation_method: dynamic  
             sku: Basic
         credentials:
@@ -289,7 +289,7 @@ azure_nsg:
         resource_definitions:
           - name: "{{ distro }}-Test-NSG-AUTO"
             role: azure_nsg
-            resource_group: "ccit"
+            resource_group: ccit
             purge_rules: True
             rules:
                name: DenySSH

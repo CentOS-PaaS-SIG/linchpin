@@ -10,3 +10,4 @@ PROVIDER=${2}
 TARGET="azure_res_group"
 pushd docs/source/examples/workspaces/${PROVIDER}
 linchpin -w . -vvv --template-data '{"profile": "key", "distro": '${DISTRO}""'}' up "${TARGET}"
+linchpin -w . -vvv --template-data '{"profile": "key", "distro": '${DISTRO}""'}' destroy "${TARGET}"
