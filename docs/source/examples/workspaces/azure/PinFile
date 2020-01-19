@@ -4,6 +4,21 @@ cfgs:
     __LOG__: properties.instanceView.bootDiagnostics.serialConsoleLogBlobUri
     __ID__: id
 
+azure_storage_account:
+  topology:
+    topology_name: azure_storage_account
+    resource_groups:
+      - resource_group_name: "azure_storage_account"
+        resource_group_type: "azure"
+        resource_definitions:
+          - role: "azure_storage_account"
+            resource_group: "ccit"
+            name: "{{ distro }}storageaccount"
+            account_type: Standard_LRS
+        credentials:
+          filename: azure.key
+          profile: "{{ profile | default('key') }}"
+
 azure_api:
   topology:
     topology_name: azure_api

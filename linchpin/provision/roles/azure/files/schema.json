@@ -323,6 +323,81 @@
                         "role": {
                             "type": "string",
                             "required": true,
+                            "allowed": [ "azure_storage_account" ]
+                        },
+                        "resource_group": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "name": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "custom_domain": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "location": {
+                            "type": "string",
+                            "required": false
+                        },
+                        "access_tier": {
+                            "type": "string",
+                            "required": false,
+                            "allowed": ["Hot", "Cool"]
+                        },
+                        "kind": {
+                            "type": "string",
+                            "required": false,
+                            "allowed":  ["Storage", "StorageV2", "BlobStorage"]
+                        },
+                        "account_type": {
+                            "type": "string",
+                            "required": false,
+                            "allowed":  [
+                              "Premium_LRS",
+                              "Standard_GRS",
+                              "Standard_LRS",
+                              "StandardSSD_LRS",
+                              "Standard_RAGRS",
+                              "Standard_ZRS",
+                              "Premium_ZRS"
+                            ]
+                        },
+                        "blob_cors": {
+                          "type": "dict",
+                          "required": false,
+                          "schema": {
+                            "allowed_headers": {
+                              "type": "list",
+                              "required": false
+                            },
+                            "allowed_methods": {
+                              "type": "list",
+                              "required": false
+                            },
+                            "allowed_origins": {
+                              "type": "list",
+                              "required": false
+                            },
+                            "exposed_headers": {
+                              "type": "list",
+                              "required": false
+                            },
+                            "max_age_in_seconds": {
+                              "type": "integer",
+                              "required": false
+                            }
+                          }
+                        }
+                    }
+                },
+                {
+                    "type": "dict",
+                    "schema": {
+                        "role": {
+                            "type": "string",
+                            "required": true,
                             "allowed": [
                                 "azure_loadbalancer"
                             ]
