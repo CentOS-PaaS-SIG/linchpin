@@ -80,6 +80,20 @@ pipeline {
                     }
                     writeFile file: 'changelog.txt', text: env.changeLogStr
                     archiveArtifacts allowEmptyArchive: true, artifacts: 'changelog.txt'
+                    build job: 'ci-linchpin-unittests',
+                        parameters: [
+                                string(name: 'ghprbActualCommit',
+                                       value: "${env.ghprbActualCommit}"),
+                                string(name: 'ghprbPullId',
+                                       value: "${env.ghprbPullId}"),
+                                string(name: 'ghprbGhRepository',
+                                       value: "${env.ghprbGhRepository}"),
+                                string(name: 'ghprbPullAuthorLogin',
+                                       value: "${env.ghprbPullAuthorLogin}"),
+                                string(name: 'sha1',
+                                       value: "${env.sha1}")
+                        ],
+                        wait: true
                     build job: 'ci-linchpin-container',
                         parameters: [
                                 string(name: 'ghprbActualCommit',
