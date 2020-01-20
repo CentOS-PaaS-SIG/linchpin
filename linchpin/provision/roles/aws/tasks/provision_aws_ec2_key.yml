@@ -9,11 +9,10 @@
   register: res_def_output
   no_log: "{{ not debug_mode }}"
 
-- name: "Generate keyfile "
-  copy: 
-    content: "{{ res_def_output['key']['private_key'] }}"
-    dest: "/{{ default_ssh_key_path | default('tmp') }}/{{ res_def['res_name'] | default(res_def['name']) }}.pem"
-  when: state=="present" and res_def_output['changed']==true
+- name: "write key to file"
+  debug:
+    msg: "{{ res_def_output['key']['private_key'] | write_to_file(default_ssh_key_path, '/'+res_def['name'], '.pem') }}"
+  when: state == "present" and res_def_output['changed']==true
 
 - name: "Append outputitem to topology_outputs"
   set_fact:

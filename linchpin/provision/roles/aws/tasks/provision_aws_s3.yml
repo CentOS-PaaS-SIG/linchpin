@@ -33,7 +33,6 @@
   no_log: "{{ not debug_mode }}"
   register: res_def_output
 
-
 - name: "Append outputitem to topology_outputs"
   set_fact:
     topology_outputs_aws_s3: "{{ topology_outputs_aws_s3 + [res_def] }}"

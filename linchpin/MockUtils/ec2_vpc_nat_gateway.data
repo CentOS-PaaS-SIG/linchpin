@@ -1,0 +1,1 @@
+{"msg": "", "success": true, "changed": true, "create_time": "2019-12-11T16:29:34+00:00", "nat_gateway_addresses": [{"allocation_id": "eipalloc-05c56e1e3d728d575"}], "nat_gateway_id": "nat-034fe427edc404010", "state": "pending", "subnet_id": "subnet-0a5334001ddf7eaa8", "vpc_id": "vpc-0fd860e1a4c3d9158", "failed": false}

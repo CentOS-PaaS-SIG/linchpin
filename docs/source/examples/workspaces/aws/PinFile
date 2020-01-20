@@ -48,9 +48,9 @@ aws-ec2-key-new:
       - resource_group_name: "aws"
         resource_group_type: "aws"
         resource_definitions:
-          - name: "ec2_keypair"
+          - name: "ec2_linchpin_keypair"
             role: "aws_ec2_key"
-            region: "{{ region | default('us-east-1') }}"
+            region: "{{ region | default('ca-central-1') }}"
         {% if credentials is defined %}
         credentials:
           filename: {{ credentials.filename }}
@@ -116,9 +116,9 @@ aws-s3-new:
       - resource_group_name: "aws_s3"
         resource_group_type: "aws"
         resource_definitions:
-          - name: "s3_bucket"
+          - name: "linchpins3bucket"
             role: "aws_s3"
-            region: "{{ region | default('us-east-1') }}"
+            region: "{{ region | default('ca-central-1') }}"
         {% if credentials is defined %}
         credentials:
           filename: {{ credentials.filename }}
@@ -408,14 +408,14 @@ aws-ec2-elb-lb:
           profile: default
         {% endif %}
 
-aws-ec2-vpc-gateway-test:
+aws-ec2-vpc-internet-gateway:
   topology:
     topology_name: ec2vpc
     resource_groups:
       - resource_group_name: "awsvpc-net"
         resource_group_type: "aws"
         resource_definitions:
-          - name: "{{ distro }}-vpc-test"
+          - name: "{{ distro | default('fedora') }}-vpc-test"
             role: aws_ec2_vpc_net
             region: ca-central-1
             cidr_block: 10.10.0.0/16
@@ -426,7 +426,7 @@ aws-ec2-vpc-gateway-test:
           - name: demo_vpc_internet_gateway
             role: aws_ec2_vpc_internet_gateway
             region: ca-central-1
-            vpc_name: "{{ distro }}-vpc-test"
+            vpc_name: "{{ distro | default('fedora') }}-vpc-test"
            #vpc_id is optional, normally you can choose put vpc_id or vpc_name, but not both
            # vpc_id: {{ vpc_id|default('vpc-0546ae7a407edb9a9') }}
         {% if credentials is defined %}
@@ -438,8 +438,6 @@ aws-ec2-vpc-gateway-test:
           filename: aws.key
           profile: default
         {% endif %}
-
-
 
 aws-ec2-template:
   topology:
