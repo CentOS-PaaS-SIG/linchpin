@@ -84,7 +84,6 @@ class ActionModule(ActionBase):
         done = False
         old_state = ''
         while not done:
-            print(result)
             facts_args = dict(instance_ids=result['instance_ids'],
                               aws_access_key=self._task.args['aws_access_key'],
                               aws_secret_key=self._task.args['aws_secret_key'],

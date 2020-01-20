@@ -14,11 +14,6 @@ class ActionModule(ActionBase):
         super(ActionModule, self).run(tmp, task_vars)
         # contains all the module arguments
         module_args = self._task.args.copy()
-        # task vars.keys() contains all the variable  required
-        # when passed a extra_var as key value pair task_vars
-        # would return mocked output of the named module.
-        # print(task_vars['vars'].keys())
-        # print(task_vars['vars'].get('linchpin_mock', False))
         linchpin_mock = task_vars['vars'].get('linchpin_mock',
                                               False)
         if linchpin_mock:

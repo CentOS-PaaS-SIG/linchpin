@@ -291,7 +291,6 @@ def write_to_file(data, path, filename, extn='.output'):
     
     filename = filename.replace(' ', '_').lower()
     path = os.path.expanduser(path)
-    print(path)
     fd = open(path + filename + extn, "w")
     fd.write(json.dumps(data))
     fd.close()
