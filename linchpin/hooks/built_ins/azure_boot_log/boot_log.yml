@@ -1,0 +1,37 @@
+---
+- hosts: all
+  gather_facts: false
+  tasks:
+  - name: "Get creds from auth driver"
+    auth_driver:
+      filename: "{{ credentials_filename }}"
+      cred_type: "azure"
+      cred_path: "{{ creds_path }}"
+      driver: "file"
+      vault_enc: "{{ vault_encryption }}"
+      vault_pass: "{{ vault_pass }}"
+    register: auth_var_out
+    delegate_to: localhost
+
+  - name: "set auth_var"
+    set_fact:
+      auth_var: "{{ auth_var_out['output'][credentials_profile] }}"
+
+  - set_fact:
+      blob: "{{ hostvars[inventory_hostname]['log_url'].split('/') | last }}"
+
+  - azure_rm_storageblob:
+      ad_user: "{{ auth_var['user'] | default(omit) }}"
+      password: "{{ auth_var['password'] | default(omit) }}"
+      client_id: "{{ auth_var['client_id'] | default(omit) }}"
+      tenant: "{{ auth_var['tenant'] | default(omit) }}"
+      secret: "{{ auth_var['secret'] | default(omit) }}"
+      subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
+      state: present
+      storage_account_name: "{{ (hostvars[inventory_hostname]['log_url'] | urlsplit('hostname')).split('.') | first }}"
+      resource_group: "{{ hostvars[inventory_hostname]['id'].split('/')[4] }}"
+      container: "{{ hostvars[inventory_hostname]['log_url'].split('/')[3] }}"
+      blob: "{{ blob }}"
+      dest: "{{ workspace }}/{{ blob }}"
+      force: true
+    delegate_to: localhost

@@ -41,6 +41,20 @@ GLOBAL_HOOKS = {
             }
         ]
     },
+    "azure_boot_log": {
+        "name": "azure_boot_log",
+        "context": True,
+        "type": "ansible",
+        "actions": [
+            {
+                "playbook": "boot_log.yml",
+                "extra_vars": {
+                    "ansible_ssh_user": "",
+                    "ansible_ssh_private_key": ""
+                }
+            }
+        ]
+    },
     "beaker_log": {
         "name": "beaker_log",
         "context": True,

@@ -1,4 +1,9 @@
----            
+---
+cfgs:
+  azure:
+    __LOG__: properties.instanceView.bootDiagnostics.serialConsoleLogBlobUri
+    __ID__: id
+
 azure_api:
   topology:
     topology_name: azure_api
@@ -73,7 +78,7 @@ azure_res_group:
         credentials:
           filename: azure.key
           profile: "{{ profile | default('key') }}"
-          
+
 azure_nic:
   topology:
     topology_name: azure_nic
@@ -89,7 +94,6 @@ azure_nic:
         credentials:
           filename: azure.key
           profile: "{{ profile | default('key') }}"
-
 
 azure_vn_subnet:
   topology:
@@ -145,6 +149,23 @@ azure_vm:
         credentials:
           filename: azure.key
           profile: "{{ profile | default('key') }}"
+
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+        log_url: __LOG__
+        id: __ID__
+        credentials_filename: azure.key
+        credentials_profile: key
+      hosts:
+        example-node:
+          count: 1
+          host_groups:
+            - example
+  hooks:
+    postup:
+      - name: azure_boot_log
 
 #This is the minimum viable input for azure_vm
 # Default setting use username and password, no public key
