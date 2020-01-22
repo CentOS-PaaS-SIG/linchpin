@@ -24,7 +24,6 @@
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
     state: absent
   when: res_def['deepclean'] is defined and res_def['deepclean'] == true
-  ignore_errors: true
 
 - name: "Teardown Azure Virtual Network when not async"
   azure_rm_virtualnetwork:
@@ -38,4 +37,3 @@
     name: "{{vn_name}}"
     state: 'absent'
   when: res_def['deepclean'] is defined and res_def['deepclean'] == true
-  ignore_errors: true
