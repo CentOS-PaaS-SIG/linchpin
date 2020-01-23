@@ -354,6 +354,8 @@ Linchpin supports `Ansible authentication options`_:
 Active Directory
 ~~~~~~~~~~~~~~~~
 
+Active Directory authentication works only with organization users (not guests).
+You can create a new user in the organization but do not invite users.
 The following keys are required in the credentials file for AD authentication:
 
 user
@@ -380,7 +382,6 @@ Example of credentials file with Azure Active directory:
   password: MySecretPassword
   subscription_id: 2q3d2d-ad3adw-adwa3d-dwade-awedawee
   tenant: 3rfawca-awd3daw-d3cc33-ASCEA-CAEESA-caceace
-
 
 Service Principal
 ~~~~~~~~~~~~~~~~~
