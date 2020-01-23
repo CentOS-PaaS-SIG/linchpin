@@ -18,9 +18,9 @@ python2 setup.py sdist -d "$resultdir"
 
 version="$(cat linchpin/version.py | awk -F "'" '{print $2}' | head -n1)"
 rpmvenv linchpin.json --core_version="${version}" --verbose --spec > "${resultdir}/linchpin.spec"
-sed -i -e "s#^Requires: .*#Requires: git, beaker-client, nanomsg#g" \
+sed -i -e "s#^Requires: .*#Requires: git, beaker-client#g" \
        -e '/^# Blocks/i %{?fc30:Requires: python2-lxml, python2-libvirt}' \
-       -e '/^# Blocks/i %{?rhel:Requires: python-lxml, libvirt-python}' \
+       -e '/^# Blocks/i %{?rhel7:Requires: python-lxml, libvirt-python}' \
        -e '/^# Blocks/i BuildRequires: python2-pip, python2-devel, gcc' \
        -e "s#^cd %{SOURCE0}#cd %{_builddir}/linchpin-${version}/#g" \
        -e "s#^Source0: .*#Source0: ${release_repo}/archive/v${version}.tar.gz#g" \
@@ -28,7 +28,7 @@ sed -i -e "s#^Requires: .*#Requires: git, beaker-client, nanomsg#g" \
        -e '/^%prep/a %setup -q' \
        -e '/^%prep/a touch %{_builddir}/linchpin.sh' \
        -e '/^%prep/a chmod +x %{_builddir}/linchpin.sh' \
-       -e '/^%prep/a cat << EOF > %{_builddir}/linchpin.sh\n#!/bin/bash\nPYTHONPATH="/usr/lib/python2.7/site-packages:/usr/lib64/python2.7/site-packages" /opt/linchpin/bin/linchpin \\$\@\nEOF' \
+       -e '/^%prep/a cat << EOF > %{_builddir}/linchpin.sh\n#!/bin/bash\nPATH="\\$PATH:/opt/linchpin/bin" PYTHONPATH="/opt/linchpin/lib64/python2.7/site-packages:/usr/lib/python2.7/site-packages:/usr/lib64/python2.7/site-packages" /opt/linchpin/bin/linchpin \\$\@\nEOF' \
        -e '/^%prep/a pip2 install --user rpmvenv virtualenv==16.1.0' \
        -e "/^%install/a cp %{_builddir}/linchpin.sh  %{_builddir}/linchpin-${version}/linchpin.sh" \
        -e '/^%install/a export PATH=$PATH:~/.local/bin' \
