@@ -19,11 +19,11 @@ Using ``linchpin fetch``
 
 .. include:: includes/fetch.rst
 
-Fetching a Remote Workspace
+Retrieve a Remote Workspace
 ---------------------------
 
 This document will cover how to use ``linchpin fetch`` to obtain a workspace
-from both a git repository. An example for fetching an http workspace can be
+from a git repository. An example for fetching an http workspace can be
 found :doc:`here <fetch_http>`.
 
 First, determine the destination. By default, the destination location
@@ -136,8 +136,8 @@ Take a moment and investigate each of these workspaces.
 Contents of a Workspace
 -----------------------
 
-Whether a workspace watch created, or pulled using ``linchpin fetch``, they
-all have should some common components.
+Whether a workspace watch was created, or pulled using ``linchpin fetch``, they
+all should have some common components.
 
 ``README.rst``
     A short description of the purpose for (or use case) the workspace
