@@ -19,7 +19,7 @@ install:
 
 script:
   # every scenario with a converge playbook should be linted
-  - molecule lint -s openstack
+  - molecule lint -s docker
   # flake8 is not guaranteed to run on lint, do that before testing
   - flake8 $(find . -name '*.py')
   - molecule test -s docker

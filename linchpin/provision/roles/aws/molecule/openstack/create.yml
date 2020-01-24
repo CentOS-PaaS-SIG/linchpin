@@ -1,9 +1,0 @@
-- name: Create
-  hosts: localhost
-  connection: local
-  gather_facts: false
-  roles:
-    - role: oasis_roles.molecule_openstack_ci
-      molecule_openstack_ci_state: prsent
-      molecule_openstack_ci_cloud: |-
-        {{ lookup('env', 'OS_CLOUD') | default('default', true) }}
