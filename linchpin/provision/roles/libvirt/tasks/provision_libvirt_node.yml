@@ -20,6 +20,15 @@
     loop_var: nodeinfo
   register: node_exists
 
+- name: set cloud config default
+  set_fact:
+    cloud_config: "{{ res_def['cloud_config'] }}"
+
+- name: "check cloud_config is used or not"
+  set_fact:
+    cloud_config_used: false
+  when: cloud_config['users'] == [] and cloud_config['run_commands'] == []
+
 - name: "set empty local_image_path"
   set_fact:
     local_image_path: ''
@@ -39,10 +48,6 @@
 - name: "set qemu_path"
   set_fact:
     qemu_path: "{{ (ansible_distribution in ['CentOS','RedHat']) | ternary('/usr/libexec/', '/usr/bin/') }}"
-
-- name: set cloud config default
-  set_fact:
-    cloud_config: "{{ res_def['cloud_config'] }}"
 
 - name: set cloud_config virt_type
   set_fact:
@@ -159,7 +164,7 @@
     loop_var: definition
   remote_user: "{{ res_def['remote_user'] }}"
   delegate_to: "{{ uri_hostname }}"
-  when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init" 
+  when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init" and cloud_config_used
 
 - name: "Create directories"
   file:
@@ -171,7 +176,7 @@
     - ["{{ res_def['name_separator'] }}"]
   loop_control:
     loop_var: definition
-  when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init"
+  when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init" and cloud_config_used
 
 - name: "Prepare cloud-config/user-data-local"
   template:
@@ -185,7 +190,7 @@
     loop_var: definition
   vars:
     cloudconfig_users: "{{ cloud_config['users'] | default([]) }}"
-  when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init"
+  when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init" and cloud_config_used
   
 - name: "Prepare cloud-config/user-data-remote"
   template:
@@ -199,7 +204,7 @@
     loop_var: definition
   remote_user: "{{ res_def['remote_user'] }}"
   delegate_to: "{{ uri_hostname }}"
-  when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init"
+  when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init" and cloud_config_used
 
 - name: "Prepare cloud-config/meta-data"
   template:
@@ -212,7 +217,7 @@
     - ["{{ res_def['domain'] }}"]
   loop_control:
     loop_var: definition
-  when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init"
+  when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init" and cloud_config_used
 
 - name: "Prepare cloud-config/meta-data remote"
   template:
@@ -227,7 +232,7 @@
     loop_var: definition
   remote_user: "{{ res_def['remote_user'] }}"
   delegate_to: "{{ uri_hostname }}"
-  when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init"
+  when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init" and cloud_config_used
 
 - name: "localhost: Generate ci data cd image for cloud-init when cloud config is defined"
   command: mkisofs -o /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}.iso -V cidata -r -J --quiet /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}/user-data /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}/meta-data
@@ -237,7 +242,7 @@
     - ["{{ res_def['name_separator'] }}"]
   loop_control:
     loop_var: definition
-  when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init" 
+  when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init" and cloud_config_used
 
 - name: "remote_host: Generate ci data cd image for cloud-init when cloud config is defined"
   command: mkisofs -o /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}.iso -V cidata -r -J --quiet /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}/user-data /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}/meta-data
@@ -249,7 +254,7 @@
     loop_var: definition
   remote_user: "{{ res_def['remote_user'] }}"
   delegate_to: "{{ uri_hostname }}"
-  when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init"
+  when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init" and cloud_config_used
 
 - set_fact:
     vm_xml: "{% if res_def.xml is defined %}{{workspace}}/{{res_def.xml}}{% else %}libvirt_node.xml.j2{%endif%}"
@@ -263,7 +268,7 @@
   with_nested:
     - ["{{ res_def }}"]
     - "{{ res_count }}"
-    - ["{{ local_image_path }}"]
+    - ["{{ local_image_path | default('') }}"]
     - ["{{ img_src_ext }}"]
     - ["{{ res_def['name_separator'] }}"]
     - ["{{ res_def['disk_cache'] }}"]
@@ -312,7 +317,6 @@
     loop_var: definition
   ignore_errors: no
 
-
 - name: wait for the vm to shut down (cloud-init)
   virt:
     name: "{{ definition[0] }}{{ definition[3] }}{{ definition[2] }}"
@@ -329,7 +333,7 @@
     - ["{{ res_def['name_separator'] }}"]
   loop_control:
     loop_var: definition
-  when: node_exists['failed'] is defined and virt_type == "cloud-init" and cloud_config != {}
+  when: node_exists['failed'] is defined and virt_type == "cloud-init" and cloud_config_used
 
 - name: "Remove cdrom (cloud-init)"
   command: virsh -c {{ definition[1] }} change-media {{ definition[0] }}{{ definition[3] }}{{ definition[2] }} hda --eject --config
@@ -341,7 +345,7 @@
   loop_control:
     loop_var: definition
   ignore_errors: yes
-  when: node_exists['failed'] is defined and virt_type == "cloud-init" and cloud_config != {}
+  when: node_exists['failed'] is defined and virt_type == "cloud-init" and cloud_config_used
 
 
 - name: sync memory data to disk
@@ -361,7 +365,7 @@
   loop_control:
     loop_var: definition
   ignore_errors: no
-  when: node_exists['failed'] is defined and virt_type == "cloud-init" and cloud_config != {}
+  when: node_exists['failed'] is defined and virt_type == "cloud-init" and cloud_config_used
 
 - name: "dump node data"
   virt:
