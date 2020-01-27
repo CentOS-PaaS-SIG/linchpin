@@ -1,38 +1,43 @@
----
 - name: Handle deprecated modules
   block:
-  # to be update after ansible 2.8 is deprecated
-  - name: "Fetch vpc details when vpc_name is defined"
-    ec2_vpc_net_facts:
-      aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
-      aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
-      region: "{{ res_def['region'] }}"
-      filters:
-        "tag:Name": "{{ res_def['vpc_name'] }}"
-    register: vpc_fact
-    when: res_def['vpc_name'] is defined
-  - name: fail when above task is skipped
-    fail:
-      msg: "fail when it is skipped or not available. failing back to deprecated module"
-    when: vpc_fact.skipped is defined
+    # to be update after ansible 2.8 is deprecated
+    - name: "Fetch vpc details when vpc_name is defined"
+      ec2_vpc_net_facts:
+        aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+        aws_secret_key: "{{ auth_var['aws_secret_access_key'] |
+                            default(omit) }}"
+        region: "{{ res_def['region'] }}"
+        filters:
+          "tag:Name": "{{ res_def['vpc_name'] }}"
+      register: vpc_fact
+      when: res_def['vpc_name'] is defined
+    - name: fail when above task is skipped
+      fail:
+        msg: >
+          "fail when it is skipped or not available. failing back to deprecated
+           module"
+      when: vpc_fact.skipped is defined
   rescue:
-  - name: "Fetch vpc details when vpc_name is defined"
-    ec2_vpc_net_info:
-      aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
-      aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
-      region: "{{ res_def['region'] }}"
-      filters:
-        "tag:Name": "{{ res_def['vpc_name'] }}"
-    register: vpc_fact
+    - name: "Fetch vpc details when vpc_name is defined"
+      ec2_vpc_net_info:
+        aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+        aws_secret_key: "{{ auth_var['aws_secret_access_key'] |
+                            default(omit) }}"
+        region: "{{ res_def['region'] }}"
+        filters:
+          "tag:Name": "{{ res_def['vpc_name'] }}"
+      register: vpc_fact
 
-- set_fact:
+- name: "set vpc_id"
+  set_fact:
     vpc_id: '{{ vpc_fact.vpcs[0].id }}'
 
 - name: Provision aws internet gateway
   ec2_vpc_igw:
     aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
     aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
-    debug_botocore_endpoint_logs: "{{ res_def['debug_botocore_endpoint_logs'] | default(omit)}}"
+    debug_botocore_endpoint_logs: "{{ res_def['debug_botocore_endpoint_logs'] |
+                                      default(omit) }}"
     ec2_url: "{{ res_def['ec2_url'] | default(omit) }}"
     region: "{{ res_def['region'] | default(omit) }}"
     state: "{{ res_def['state'] | default(omit) }}"
@@ -41,14 +46,18 @@
     vpc_id: "{{ res_def['vpc_id'] | default(vpc_id) }}"
   register: igw
 
-- set_fact:
-    topology_outputs_aws_internet_output: []
+- name: "Create topology_outputs variable for aws internet gateway"
+  set_fact:
+    topology_outputs_aws_internet: []
 
 - name: "Append output to topology_outputs"
   set_fact:
-    topology_outputs_aws_internet_output: "{{ topology_outputs_aws_internet_output + [igw] }}"
+    topology_outputs_aws_internet: "{{ topology_outputs_aws_internet +
+                                              [igw] }}"
   when: igw['gateway_id'] is defined
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_aws_ec2: "{{ topology_outputs_aws_internet_output | add_res_data(res_grp_type, res_def['role']) }}" 
+    topology_outputs_aws_ec2: "{{ topology_outputs_aws_internet |
+                                  add_res_data(lookup('vars', 'role_name'),
+                                               res_def['role']) }}"

@@ -1,4 +1,3 @@
----
 - name: "Unset the authvar from previous run"
   set_fact:
     auth_var: !!null
@@ -29,10 +28,12 @@
   no_log: "{{ not auth_debug }}"
 
 - name: "provisioning resource definitions of current group"
-  include: provision_res_defs.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }} res_grp_type={{ res_item.2 }}
+  include_tasks: provision_res_defs.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    res_grp_name: "{{ res_item.1 }}"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
-    - ["{{ res_grp['resource_group_name']}}"]
-    - ["{{ res_grp['resource_group_type']}}"]
+    - ["{{ res_grp['resource_group_name'] }}"]
   loop_control:
     loop_var: res_item

@@ -302,3 +302,13 @@ def convert_to_json(input_str):
         return json.loads(input_str)
     else:
         return input_str
+
+
+def path_relative_to(path, base_path):
+    """
+    If `path` is not an OS filesystem absolute or relative path then assume
+    it is relative to `base_path`.
+    """
+    if path.startswith(('/', './', '../', '~/')):
+        return path
+    return os.path.join(base_path, path)

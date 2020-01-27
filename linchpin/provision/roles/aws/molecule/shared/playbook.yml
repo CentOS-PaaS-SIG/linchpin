@@ -1,0 +1,5 @@
+- name: converge
+  hosts: all
+  roles:
+    - role: aws
+  post_tasks: []

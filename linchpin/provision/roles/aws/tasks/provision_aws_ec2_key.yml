@@ -3,7 +3,7 @@
     aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
     aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
     region: "{{ res_def['region'] }}"
-    name:  "{{ res_def['res_name'] | default(res_def['name']) }}"
+    name: "{{ res_def['res_name'] | default(res_def['name']) }}"
     state: "{{ state }}"
     wait: "yes"
   register: res_def_output
@@ -11,14 +11,19 @@
 
 - name: "write key to file"
   debug:
-    msg: "{{ res_def_output['key']['private_key'] | write_to_file(default_ssh_key_path, '/'+res_def['name'], '.pem') }}"
-  when: state == "present" and res_def_output['changed']==true
+    msg: "{{ res_def_output['key']['private_key'] |
+             write_to_file(default_ssh_key_path, '/'+res_def['name'],
+                           '.pem') }}"
+  when: state == "present" and res_def_output['changed']
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_aws_ec2_key: "{{ topology_outputs_aws_ec2_key + [res_def_output] }}"
-  when: res_def_output['changed'] == true
+    topology_outputs_aws_ec2_key: "{{ topology_outputs_aws_ec2_key +
+                                      [res_def_output] }}"
+  when: res_def_output['changed']
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_aws_ec2_key: "{{ topology_outputs_aws_ec2_key | add_res_data(res_grp_type, res_def['role']) }}"
+    topology_outputs_aws_ec2_key: "{{ topology_outputs_aws_ec2_key |
+                                      add_res_data(lookup('vars', 'role_name'),
+                                                   res_def['role']) }}"

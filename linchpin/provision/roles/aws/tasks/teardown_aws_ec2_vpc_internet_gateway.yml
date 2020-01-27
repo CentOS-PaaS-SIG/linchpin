@@ -1,38 +1,41 @@
----
 - name: Handle deprecated modules
   block:
-  # to be update after ansible 2.8 is deprecated
-  - name: "Fetch vpc details when vpc_name is defined"
-    ec2_vpc_net_facts:
-      aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
-      aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
-      region: "{{ res_def['region'] }}"
-      filters:
-        "tag:Name": "{{ res_def['vpc_name'] }}"
-    register: vpc_fact
-    when: res_def['vpc_name'] is defined
-  - name: fail when above task is skipped
-    fail:
-      msg: "fail when it is skipped or not available. failing back to deprecated module"
-    when: vpc_fact.skipped is defined
+    # to be update after ansible 2.8 is deprecated
+    - name: "Fetch vpc details when vpc_name is defined"
+      ec2_vpc_net_facts:
+        aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+        aws_secret_key: "{{ auth_var['aws_secret_access_key'] |
+                            default(omit) }}"
+        region: "{{ res_def['region'] }}"
+        filters:
+          "tag:Name": "{{ res_def['vpc_name'] }}"
+      register: vpc_fact
+      when: res_def['vpc_name'] is defined
+    - name: fail when above task is skipped
+      fail:
+        msg: >
+          fail when it is skipped or not available. failing back to deprecated
+          module
+      when: vpc_fact.skipped is defined
   rescue:
-  - name: "Fetch vpc details when vpc_name is defined"
-    ec2_vpc_net_info:
-      aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
-      aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
-      region: "{{ res_def['region'] }}"
-      filters:
-        "tag:Name": "{{ res_def['vpc_name'] }}"
-    register: vpc_fact
+    - name: "Fetch vpc details when vpc_name is defined"
+      ec2_vpc_net_info:
+        aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+        aws_secret_key: "{{ auth_var['aws_secret_access_key'] |
+                            default(omit) }}"
+        region: "{{ res_def['region'] }}"
+        filters:
+          "tag:Name": "{{ res_def['vpc_name'] }}"
+      register: vpc_fact
 
 - name: "Set vpc id"
   set_fact:
     vpc_id: '{{ vpc_fact.vpcs[0].id }}'
-    
+
 - name: Teardown aws internet gateway
   ec2_vpc_igw:
     aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
-    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
+    aws_secret_key: "{{ auth_var['aws_secret_access_key'] | default(omit) }}"
     state: "absent"
     region: "{{ res_def['region'] | default(omit) }}"
     vpc_id: "{{ res_def['vpc_id'] | default(vpc_id) }}"

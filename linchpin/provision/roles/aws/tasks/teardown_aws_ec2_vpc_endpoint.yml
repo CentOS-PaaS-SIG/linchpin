@@ -1,5 +1,5 @@
----
-- ec2_vpc_route_table_facts:
+- name: "set ec2_vpc_route_table facts"
+  ec2_vpc_route_table_facts:
     aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
     aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
     region: "{{ res_def['region'] }}"
@@ -10,7 +10,8 @@
 
 - name: get all route_table_ids when route_table_name is defined
   set_fact:
-    route_table_ids: "{{ register_route_table['route_tables'] | fetch_list_by_attr('id') }}"
+    route_table_ids: "{{ register_route_table['route_tables'] |
+                         fetch_list_by_attr('id') }}"
   when: res_def['route_table_name'] is defined
 
 - name: route_table_ids when route_table_name is not defined
@@ -20,33 +21,38 @@
 
 - name: Handle deprecated modules
   block:
-  # to be update after ansible 2.8 is deprecated
-  - name: "Fetch vpc details when vpc_name is defined"
-    ec2_vpc_net_facts:
-      aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
-      aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
-      region: "{{ res_def['region'] }}"
-      filters:
-        "tag:Name": "{{ res_def['vpc_name'] }}"
-    register: vpc_net_details
-    when: res_def['vpc_name'] is defined
-  - name: fail when above task is skipped
-    fail:
-      msg: "fail when it is skipped or not available. failing back to deprecated module"
-    when: vpc_net_details.skipped is defined
+    # to be update after ansible 2.8 is deprecated
+    - name: "Fetch vpc details when vpc_name is defined"
+      ec2_vpc_net_facts:
+        aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+        aws_secret_key: "{{ auth_var['aws_secret_access_key'] |
+                            default(omit) }}"
+        region: "{{ res_def['region'] }}"
+        filters:
+          "tag:Name": "{{ res_def['vpc_name'] }}"
+      register: vpc_net_details
+      when: res_def['vpc_name'] is defined
+    - name: fail when above task is skipped
+      fail:
+        msg: >
+          "fail when it is skipped or not available. failing back to
+           deprecated module"
+      when: vpc_net_details.skipped is defined
   rescue:
-  - name: "Fetch vpc details when vpc_name is defined"
-    ec2_vpc_net_info:
-      aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
-      aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
-      region: "{{ res_def['region'] }}"
-      filters:
-        "tag:Name": "{{ res_def['vpc_name'] }}"
-    register: vpc_net_details
+    - name: "Fetch vpc details when vpc_name is defined"
+      ec2_vpc_net_info:
+        aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+        aws_secret_key: "{{ auth_var['aws_secret_access_key'] |
+                            default(omit) }}"
+        region: "{{ res_def['region'] }}"
+        filters:
+          "tag:Name": "{{ res_def['vpc_name'] }}"
+      register: vpc_net_details
 
 - name: "Fetch vpc details when vpc_name is defined"
   set_fact:
-    vpc_id_fetched: "{{ vpc_net_details['vpcs'] | first | default({}) | fetch_attr('vpc_id', '')}}"
+    vpc_id_fetched: "{{ vpc_net_details['vpcs'] | first | default({}) |
+                        fetch_attr('vpc_id', '') }}"
   when: res_def['vpc_name'] is defined
 
 - name: Get all endpoints with specific filters
@@ -73,7 +79,7 @@
     route_table_ids: "{{ route_table_ids }}"
     validate_certs: "{{ res_def['validate_certs'] | default(false) }}"
     vpc_endpoint_id: "{{ ep_id['vpc_endpoint_id'] }}"
-    wait: yes
+    wait: false
     wait_timeout: 600
   with_items: "{{ vpc_endpoint_ids_fetched['vpc_endpoints'] | default([]) }}"
   loop_control:

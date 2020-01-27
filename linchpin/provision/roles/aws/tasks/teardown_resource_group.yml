@@ -1,4 +1,3 @@
----
 - name: "Set cred profile"
   set_fact:
     cred_profile: "{{ res_grp['credentials']['profile'] | default('default') }}"
@@ -26,7 +25,9 @@
 
 - name: "Get topology output data from resources file"
   output_parser:
-    output_file: "{{ default_resources_path + '/' + topo_data['topology_name'].replace(' ', '_').lower() + '.output' }}"
+    output_file: "{{ default_resources_path + '/' +
+                     topo_data['topology_name'].replace(' ', '_').lower() +
+                     '.output' }}"
   register: topo_output
   when: generate_resources
 
@@ -57,7 +58,10 @@
   when: not generate_resources
 
 - name: "teardown aws_ec2_vpc_internet_gateway resource def of current group"
-  include: teardown_aws_ec2_vpc_internet_gateway.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  include_tasks: teardown_aws_ec2_vpc_internet_gateway.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    res_grp_name: "{{ res_item.1 }}"
   when: res_item.0['role'] == "aws_ec2_vpc_internet_gateway"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -66,7 +70,11 @@
     loop_var: res_item
 
 - name: "teardown aws_ec2_vpc_nat_gateway resource def of current group"
-  include: teardown_aws_ec2_vpc_nat_gateway.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.2 }}
+  include_tasks: teardown_aws_ec2_vpc_nat_gateway.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    tp_out: "{{ res_item.1 }}"
+    res_grp_name: "{{ res_item.2 }}"
   when: res_item.0['role'] == "aws_ec2_vpc_nat_gateway"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -76,7 +84,11 @@
     loop_var: res_item
 
 - name: "teardown of ec2 resource definitions of current group"
-  include: teardown_aws_ec2.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.2 }}
+  include_tasks: teardown_aws_ec2.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    tp_out: "{{ res_item.1 }}"
+    res_grp_name: "{{ res_item.2 }}"
   when: res_item.0['role'] == "aws_ec2"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -86,7 +98,10 @@
     loop_var: res_item
 
 - name: "teardown of s3 resource def of current group"
-  include: teardown_aws_s3.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  include_tasks: teardown_aws_s3.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    res_grp_name: "{{ res_item.1 }}"
   when: res_item.0['role'] == "aws_s3"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -95,7 +110,10 @@
     loop_var: res_item
 
 - name: "teardown of aws_ec2_key resource def of current group"
-  include: teardown_aws_ec2_key.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  include_tasks: teardown_aws_ec2_key.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    res_grp_name: "{{ res_item.1 }}"
   when: res_item.0['role'] == "aws_ec2_key"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -104,7 +122,10 @@
     loop_var: res_item
 
 - name: "teardown cfn stack resource def of current group"
-  include: teardown_aws_cfn.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  include_tasks: teardown_aws_cfn.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    res_grp_name: "{{ res_item.1 }}"
   when: res_item.0['role'] == "aws_cfn"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -113,7 +134,11 @@
     loop_var: res_item
 
 - name: "teardown aws_ec2_eip resource def of current group"
-  include: teardown_aws_ec2_eip.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.1 }}
+  include_tasks: teardown_aws_ec2_eip.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    tp_out: "{{ res_item.1 }}"
+    res_grp_name: "{{ res_item.1 }}"
   when: res_item.0['role'] == "aws_ec2_eip"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -123,7 +148,11 @@
     loop_var: res_item
 
 - name: "teardown aws_ec2_vpc_endpoint resource def of current group"
-  include: teardown_aws_ec2_vpc_endpoint.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.2 }}
+  include_tasks: teardown_aws_ec2_vpc_endpoint.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    tp_out: "{{ res_item.1 }}"
+    res_grp_name: "{{ res_item.2 }}"
   when: res_item.0['role'] == "aws_ec2_vpc_endpoint"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -133,7 +162,11 @@
     loop_var: res_item
 
 - name: "teardown aws_ec2_vpc_routetable resource def of current group"
-  include: teardown_aws_ec2_vpc_routetable.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.2 }}
+  include_tasks: teardown_aws_ec2_vpc_routetable.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    tp_out: "{{ res_item.1 }}"
+    res_grp_name: "{{ res_item.2 }}"
   when: res_item.0['role'] == "aws_ec2_vpc_routetable"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -143,7 +176,11 @@
     loop_var: res_item
 
 - name: "teardown aws_ec2_vpc_subnet resource def of current group"
-  include: teardown_aws_ec2_vpc_subnet.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.2 }}
+  include_tasks: teardown_aws_ec2_vpc_subnet.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    tp_out: "{{ res_item.1 }}"
+    res_grp_name: "{{ res_item.2 }}"
   when: res_item.0['role'] == "aws_ec2_vpc_subnet"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -153,7 +190,11 @@
     loop_var: res_item
 
 - name: "teardown aws_ec2_vpc_net resource def of current group"
-  include: teardown_aws_ec2_vpc_net.yml res_def={{ res_item.0 }} tp_out={{ res_item.1 }} res_grp_name={{ res_item.2 }}
+  include_tasks: teardown_aws_ec2_vpc_net.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    tp_out: "{{ res_item.1 }}"
+    res_grp_name: "{{ res_item.2 }}"
   when: res_item.0['role'] == "aws_ec2_vpc_net"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -163,7 +204,10 @@
     loop_var: res_item
 
 - name: "teardown elb_lb resource def of current group"
-  include: teardown_aws_ec2_elb_lb.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  include_tasks: teardown_aws_ec2_elb_lb.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    res_grp_name: "{{ res_item.1 }}"
   when: res_item.0['role'] == "aws_ec2_elb_lb"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -172,7 +216,10 @@
     loop_var: res_item
 
 - name: "teardown security group resource def of current group"
-  include: teardown_aws_sg.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  include_tasks: teardown_aws_sg.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    res_grp_name: "{{ res_item.1 }}"
   when: res_item.0['role'] == "aws_sg"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
