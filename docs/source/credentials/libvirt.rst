@@ -14,11 +14,11 @@ on the target machine:
       $ getent group | grep libvirt
       $ groupadd -g 7777 libvirt
 
-#. Add user account to libvirt group
+#. Add user account to libvirt and qemu groups
 
    .. code-block:: bash
 
-      $ usermod -aG libvirt <user>
+      $ usermod -aG libvirt,qemu <user>
 
 #. Edit libvirtd configuration to add group
 
