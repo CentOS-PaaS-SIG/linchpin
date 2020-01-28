@@ -56,15 +56,6 @@
     suffix: yml
   register: parsed_defaults
 
-- name: "Parse default variable file"
-  template:
-    src: "../files/defaults.yml"
-    dest: "{{ parsed_defaults.path }}"
-
-- name: "Load default variables"
-  include_vars: "{{ parsed_defaults.path }}"
-
-
 - name: set public key
   set_fact:
     ssh_public_keys:

@@ -18,7 +18,6 @@
     vault_enc: "{{ vault_encryption }}"
     vault_pass: "{{ vault_pass }}"
   register: auth_variable
-  ignore_errors: true
   when: res_grp['credentials'] is defined
   no_log: "{{ not auth_debug }}"
 

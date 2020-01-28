@@ -11,13 +11,18 @@ TARGET="azure_nic"
 pushd docs/source/examples/workspaces/${PROVIDER}
 function clean_up {
     set +e
-    linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}'}' destroy ${TARGET}
-    linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' destroy "azure_vn"
+    linchpin -w . -vvv --template-data '{ "profile": "key", "distro": '${DISTRO}'}' destroy ${TARGET}
+    linchpin -w . -vvv --template-data '{ "profile": "key", "distro": '${DISTRO}""'}' destroy "azure_vn"
     rm -rf resources/ inventories/
 }
 
 trap clean_up EXIT
 
-linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' up "azure_vn"
-linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' up "azure_vn_subnet"
-linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}'}' up ${TARGET} 
+linchpin -w . -vvv --template-data '{ "profile": "key", "distro": '${DISTRO}""'}' up "azure_vn"
+linchpin -w . -vvv --template-data '{ "profile": "key", "distro": '${DISTRO}""'}' up "azure_vn_subnet"
+linchpin -w . -vvv --template-data '{ "profile": "key", "distro": '${DISTRO}'}' up ${TARGET} 
+clean_up
+
+linchpin -w . -vvv --template-data '{ "profile": "ad", "distro": '${DISTRO}""'}' up "azure_vn"
+linchpin -w . -vvv --template-data '{ "profile": "ad", "distro": '${DISTRO}""'}' up "azure_vn_subnet"
+linchpin -w . -vvv --template-data '{ "profile": "ad", "distro": '${DISTRO}'}' up ${TARGET} 

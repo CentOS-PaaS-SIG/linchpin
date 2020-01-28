@@ -21,14 +21,9 @@
     name_list: "{{ name_list + [vm_name+item|string] }}"
   loop: "{{ res_count }}"
 
-- name: "Get topology output data from resources file"
-  output_parser:
-    output_file: "{{ default_resources_path + '/' + topo_data['topology_name'].replace(' ', '_').lower() + '.output' }}"
-  register: topo_output
-
 - name: Get Virtual Network
   set_fact:
-    vn_name: "{{topo_output.output.content[-1].state.name}}"
+    vn_name: "{{topo_output_resources[-1].state.name}}"
 
 - name: Run Teardown
   include: teardownVM.yml nameOfvm={{nameOfvm}} vn_name={{vn_name}}

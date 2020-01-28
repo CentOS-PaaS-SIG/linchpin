@@ -13,14 +13,12 @@
     vault_enc: "{{ vault_encryption }}"
     vault_pass: "{{ vault_pass }}"
   register: auth_var
-  ignore_errors: true
   when: res_grp['credentials'] is defined
   no_log: "{{ not auth_debug }}"
 
 - name: "Set auth_var"
   set_fact:
     auth_var: "{{ auth_var['output'][cred_profile] | default('') }}"
-  ignore_errors: true
   when: auth_var is defined
   no_log: "{{ not auth_debug }}"
 
@@ -53,7 +51,7 @@
 
 - name: "set topo_output_resources fact rundb"
   set_fact:
-    topo_output_resources: "{{ topo_output_json[0]['resources'] }}"
+    topo_output_resources: "{{ topo_output_json[0]['resources'] | default([]) }}"
   when: not generate_resources
 
 - name: "Teardown resource definitions of current group"

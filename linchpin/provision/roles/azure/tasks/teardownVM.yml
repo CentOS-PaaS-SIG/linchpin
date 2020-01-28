@@ -1,6 +1,8 @@
 
 - name: "Teardown Azure VM"
   azure_rm_virtualmachine:
+    ad_user: "{{ auth_var['user'] | default(omit) }}"
+    password: "{{ auth_var['password'] | default(omit) }}"
     client_id: "{{ auth_var['client_id'] | default(omit) }}"
     tenant: "{{ auth_var['tenant'] | default(omit) }}"
     secret: "{{ auth_var['secret'] | default(omit) }}"
@@ -12,6 +14,8 @@
 
 - name: Delete managed disk
   azure_rm_manageddisk:
+    ad_user: "{{ auth_var['user'] | default(omit) }}"
+    password: "{{ auth_var['password'] | default(omit) }}"
     client_id: "{{ auth_var['client_id'] | default(omit) }}"
     tenant: "{{ auth_var['tenant'] | default(omit) }}"
     secret: "{{ auth_var['secret'] | default(omit) }}"
@@ -20,10 +24,11 @@
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
     state: absent
   when: res_def['deepclean'] is defined and res_def['deepclean'] == true
-  ignore_errors: true
 
 - name: "Teardown Azure Virtual Network when not async"
   azure_rm_virtualnetwork:
+    ad_user: "{{ auth_var['user'] | default(omit) }}"
+    password: "{{ auth_var['password'] | default(omit) }}"
     client_id: "{{ auth_var['client_id'] | default(omit) }}"
     tenant: "{{ auth_var['tenant'] | default(omit) }}"
     secret: "{{ auth_var['secret'] | default(omit) }}"
@@ -32,4 +37,3 @@
     name: "{{vn_name}}"
     state: 'absent'
   when: res_def['deepclean'] is defined and res_def['deepclean'] == true
-  ignore_errors: true

@@ -1,12 +1,14 @@
 ---
 - name: "Provisioning Azure VM when not async"
   azure_rm_virtualmachine:
+    ad_user: "{{ auth_var['user'] | default(omit) }}"
+    password: "{{ auth_var['password'] | default(omit) }}"
     client_id: "{{ auth_var['client_id'] | default(omit) }}"
     tenant: "{{ auth_var['tenant'] | default(omit) }}"
     secret: "{{ auth_var['secret'] | default(omit) }}"
     subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
-    admin_username: "{{ res_def['vm_username'] | default(linchpinUsername) }}"
-    admin_password: "{{ res_def['vm_password'] | default(linchpinPassword) }}"
+    admin_username: "{{ res_def['vm_username'] | default('linchpin') }}"
+    admin_password: "{{ res_def['vm_password'] | default('Linchpin!') }}"
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
     ssh_public_keys: "{{ssh_public_keys}}"
     vm_size: "{{ res_def['vm_size'] | default('Standard_DS1_v2') }}"
@@ -25,12 +27,14 @@
 
 - name: "Async:: Provisioning Azure VM"
   azure_rm_virtualmachine:
+    ad_user: "{{ auth_var['user'] | default(omit) }}"
+    password: "{{ auth_var['password'] | default(omit) }}"
     client_id: "{{ auth_var['client_id'] | default(omit) }}"
     tenant: "{{ auth_var['tenant'] | default(omit) }}"
     secret: "{{ auth_var['secret'] | default(omit) }}"
     subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
-    admin_username: "{{ res_def['vm_username'] | default(linchpinUsername) }}"
-    admin_password: "{{ res_def['vm_password'] | default(linchpinPassword) }}"
+    admin_username: "{{ res_def['vm_username'] | default('linchpin') }}"
+    admin_password: "{{ res_def['vm_password'] | default('Linchpin!') }}"
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
     vm_size: "{{ res_def['vm_size'] | default('Standard_DS1_v2') }}"
     availability_set: "{{ res_def['availability_set'] | default(omit) }}"
@@ -42,6 +46,7 @@
   register: res_def_output
   when: _async
   no_log: "{{ not debug_mode }}"
+
 
 - name: "Async:: Append outputitem to topology_outputs"
   set_fact:

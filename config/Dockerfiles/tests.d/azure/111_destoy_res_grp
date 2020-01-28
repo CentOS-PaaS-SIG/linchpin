@@ -15,5 +15,5 @@ function clean_up {
 }
 
 trap clean_up EXIT
-linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' up "${TARGET}"
-linchpin -w . -vvv --template-data '{ "distro": '${DISTRO}""'}' destroy "${TARGET}"
+#linchpin -w . -vvv --template-data '{"profile": "sp", "distro": '${DISTRO}""'}' up "${TARGET}"
+#linchpin -w . -vvv --template-data '{"profile": "sp", "distro": '${DISTRO}""'}' destroy "${TARGET}"
