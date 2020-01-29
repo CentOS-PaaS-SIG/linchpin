@@ -1,7 +1,7 @@
 #!/bin/bash -xe
 
 # Verify the AWS EC2 VPC NAT gateway provisioning
-# distros.exclude: fedora31 fedora30 centos7
+# distros.exclude: fedora31 fedora30 centos7 centos8
 # providers.include: aws
 
 DISTRO=${1}

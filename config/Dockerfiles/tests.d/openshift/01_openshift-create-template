@@ -1,7 +1,7 @@
 #!/bin/bash -xe
 
 # Verify os-server provisioning using inline template data
-# distros.exclude: centos7 fedora29 fedora30
+# distros.exclude: centos7 centos8 fedora29 fedora30
 # providers.include: openshift
 
 # Above makes sure that the openshift is ran only once avoiding 

@@ -11,7 +11,7 @@ RUN dnf -y install python3-pip ansible curl gcc python3-devel \
                    libvirt-daemon-kvm qemu-kvm libvirt-daemon-config-network \
                    python3-libvirt libvirt-devel redhat-rpm-config file \
                    openssh genisoimage libvirt-client virt-install net-tools \
-                   make libxslt-python krb5-workstation jq buildah \
+                   make libxslt-python krb5-workstation krb5-devel jq buildah \
                    python3-libselinux git \
     && dnf clean all; \
     (cd /lib/systemd/system/sysinit.target.wants/; for i in *; \

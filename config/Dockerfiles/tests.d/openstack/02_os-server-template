@@ -1,7 +1,7 @@
 #!/bin/bash -xe
 
 # Verify os-server provisioning using inline template data
-# distros.exclude: centos7 fedora29 fedora30 fedora31
+# distros.exclude: centos7 centos8 fedora29 fedora30 fedora31
 # providers.include: none
 
 DISTRO=${1}

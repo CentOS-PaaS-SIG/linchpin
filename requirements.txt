@@ -20,6 +20,7 @@ configparser>=3.5.0
 pyasn1>=0.1.9
 GitPython>=2.1.15,<3.1.0 
 gitdb>=0.6.4
+gitdb2>=3.0.1
 future
 openstacksdk>=0.37
 tqdm==4.36.1
