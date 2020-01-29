@@ -103,3 +103,69 @@
   delegate_to: "{{ uri_hostname }}"
   when: not _async
 
+- name: "Cleanup directories on remote_host"
+  become: "{{ libvirt_become }}"
+  file:
+    path: "/tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}"
+    state: absent
+  with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] }}"]
+  loop_control:
+    loop_var: definition
+  remote_user: "{{ res_def['remote_user'] }}"
+  delegate_to: "{{ uri_hostname }}"
+  when: uri_hostname != 'localhost'
+
+- name: "Cleanup directories on localhost"
+  become: "{{ libvirt_become }}"
+  file:
+    path: "/tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}"
+    state: absent
+  with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] }}"]
+  loop_control:
+    loop_var: definition
+  when: uri_hostname == 'localhost'
+
+- name: "localhost: cleanup ci data cd image"
+  become: "{{ libvirt_become }}"
+  file:
+    path: /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}.iso
+    state: absent
+  with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] }}"]
+  loop_control:
+    loop_var: definition
+  when: uri_hostname == 'localhost'
+
+- name: "remote_host: cleanup ci data cd image"
+  become: "{{ libvirt_become }}"
+  file:
+    path: /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}.iso
+    state: absent
+  with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] }}"]
+  loop_control:
+    loop_var: definition
+  remote_user: "{{ res_def['remote_user'] }}"
+  delegate_to: "{{ uri_hostname }}"
+  when: uri_hostname != 'localhost'
+
+- name: remove template dir
+  become: "{{ libvirt_become }}"
+  file:
+    dest: "/tmp/{{ libvirt_resource_name }}{{ res_def['name_separator'] }}"
+    state: absent
+  loop_control:
+    loop_var: definition
+  when:
+    - libvirt_resource_name is defined
+    - res_def is defined and res_def['name_separator'] is defined
