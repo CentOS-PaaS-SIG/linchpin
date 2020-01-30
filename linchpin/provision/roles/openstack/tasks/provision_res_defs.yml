@@ -20,9 +20,9 @@
   when:  unique_name
 
 - name: "provision/teardown resources "
-  include: "provision_{{ res_def['role'] }}.yml"
+  include_tasks: "provision_{{ res_def['role'] }}.yml"
   when: res_def['role'] != 'os_server'
 
 - name: "provision/teardown resources "
-  include: "provision_os_server.yml"
+  include_tasks: "provision_os_server.yml"
   when: res_def['role'] == 'os_server'

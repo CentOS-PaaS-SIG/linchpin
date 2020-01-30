@@ -1,1 +1,37 @@
-provision_os_sg.yml
+---
+- name: "provision/teardown security group with auth"
+  os_security_group:
+    auth: "{{ auth_var | omit_filter(omit) }}"
+    name: "{{ res_def['res_name'] | default(res_def['name']) }}"
+    description: "{{ res_def['description'] | default('Created by LinchPin') }}"
+    state: "{{ state }}"
+    wait: "yes"
+  no_log: "{{ not debug_mode }}"
+
+- name: "provision/teardown security group"
+  os_security_group_rule:
+    auth: "{{ group.0 }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
+    security_group: "{{ group.1 }}"
+    state: "{{ group.2 }}"
+    protocol: "{{ group.3['proto']  }}"
+    direction: "{{ group.3['rule_type'] | os_sg_rule_type }}"
+    port_range_min: "{{ group.3['from_port'] }}"
+    port_range_max: "{{ group.3['to_port'] }}"
+    remote_ip_prefix: "{{ group.3['cidr_ip']  }}"
+    wait: "yes"
+  with_nested:
+    - ["{{ auth_var | omit_filter(omit) }}"]
+    - ["{{ res_def['res_name'] | default(res_def['name']) }}"]
+    - ["{{ state }}"]
+    - "{{ res_def['rules'] }}"
+  loop_control:
+    loop_var: group
+  register: res_def_output
+  when: state == "present" 
+  no_log: "{{ not debug_mode }}"
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os_sg: "{{ topology_outputs_os_sg + [res_def_output] }}"
+  when: state == "present"
