@@ -1,9 +1,3 @@
----
-# This playbook will initiate provisioning for the openstack resources groups.
-#- name: "DEBUG:: Openstack resource group list"
-#  debug:
-#    msg: "Currently Provisioning/Deprovisioning the resources under list os_res_grps {{ os_res_grps }}"
-
 - name: "declaring output vars"
   set_fact:
     topology_outputs_os_server: []

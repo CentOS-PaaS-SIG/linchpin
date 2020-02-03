@@ -5,9 +5,10 @@
 
 - name: generate res_def_names
   set_fact:
-    res_def_names: "{{ res_def_names  + [os_resource_name + default_delimiter + inst_c] }}"
+    res_def_names: "{{ res_def_names  +
+                       [os_resource_name + default_delimiter + inst_c] }}"
   with_sequence: start=0 end={{ res_def['count']|int - 1 }}
-  when: 
+  when:
     - res_def['count'] > 1
     - state == "present"
   loop_control:
@@ -46,7 +47,7 @@
     api_timeout: 99999
     timeout: 3600
     flavor: "{{ res_def['flavor'] }}"
-    nics:  "{{ res_def['networks'] | default(None) | os_net }}"
+    nics: "{{ res_def['networks'] | default(None) | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
     userdata: "{{ res_def['userdata'] | default(omit) }}"
@@ -82,8 +83,8 @@
   set_fact:
     res_def_names: "{{ res_def_names  + [os_resource_name] }}"
   when:
-  - res_def['count'] == 1 
-  - state == "present"
+    - res_def['count'] == 1
+    - state == "present"
 
 - name: set_fact instance filters
   set_fact:
@@ -91,8 +92,10 @@
 
 - name: set_fact when addtional volumes
   set_fact:
-    res_def_add_vol: "{{ res_def_prov | selectattr('volumes') | sum(attribute='volumes', start=[])  }}"
-  when: 
+    res_def_add_vol: "{{ res_def_prov |
+                         selectattr('volumes') |
+                         sum(attribute='volumes', start=[])  }}"
+  when:
     - res_def_add_vol | length > 0
 
 - name: Provision additional volumes
@@ -128,7 +131,7 @@
     api_timeout: 99999
     timeout: 3600
     flavor: "{{ res_def['flavor'] }}"
-    nics:  "{{ res_def['networks'] | default(None) | os_net }}"
+    nics: "{{ res_def['networks'] | default(None) | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
     userdata: "{{ res_def['userdata'] | default(omit) }}"
@@ -175,14 +178,15 @@
 - name: "Transform outputs to match the distiller format"
   set_fact:
     res_def_output: "{{ res_def_output | transform_os_server_output  }}"
-  when: 
+  when:
     - not _async
     - state == "present"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_os_server: "{{ topology_outputs_os_server + [ res_def_output ] }}"
-  when: 
+    topology_outputs_os_server: "{{ topology_outputs_os_server +
+                                    [ res_def_output ] }}"
+  when:
     - not _async
     - state == "present"
     - res_def_output['skipped'] is not defined
@@ -197,7 +201,7 @@
     api_timeout: 99999
     timeout: 3600
     flavor: "{{ res_def['flavor'] }}"
-    nics:  "{{ res_def['networks'] | default(None) | os_net }}"
+    nics: "{{ res_def['networks'] | default(None) | os_net }}"
     floating_ip_pools: "{{ res_def['fip_pool'] | default(omit) }}"
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
     userdata: "{{ res_def['userdata'] | default(omit) }}"
@@ -233,7 +237,8 @@
 
 - name: "Async:: Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_os_server: "{{ topology_outputs_os_server  + [res_def_output] }}"
+    topology_outputs_os_server: "{{ topology_outputs_os_server +
+                                    [res_def_output] }}"
   when:
     - _async
     - res_def_output['skipped'] is not defined
@@ -241,7 +246,9 @@
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_os_server: "{{ topology_outputs_os_server | add_res_data(res_grp_type, res_def['role']) }}"
+    topology_outputs_os_server: "{{ topology_outputs_os_server |
+                                    add_res_data(res_grp_type,
+                                                 res_def['role']) }}"
   when:
     - state == "present"
     - not _async

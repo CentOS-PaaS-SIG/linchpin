@@ -4,7 +4,8 @@ env.ghprbGhRepository = env.ghprbGhRepository ?: 'CentOS-PaaS-SIG/linchpin'
 env.ghprbActualCommit = env.ghprbActualCommit ?: 'develop'
 env.ghprbSourceBranch = env.ghprbSourceBranch ?: 'develop'
 env.ghprbTargetBranch = env.ghprbTargetBranch ?: 'develop'
-env.ghprbPullAuthorLogin = env.ghprbPullAuthorLogin ?: '' env.ghprbPullId = env.ghprbPullId ?: ''
+env.ghprbPullAuthorLogin = env.ghprbPullAuthorLogin ?: ''
+env.ghprbPullId = env.ghprbPullId ?: ''
 
 env.TARGET_BRANCH = env.ghprbTargetBranch ?: 'develop'
 
@@ -13,7 +14,6 @@ env.SLAVE_TAG = env.SLAVE_TAG ?: 'stable-' + env.ghprbTargetBranch
 env.FEDORA30_TAG = env.FEDORA30_TAG ?: 'stable-' + env.ghprbTargetBranch
 env.FEDORA31_TAG = env.FEDORA31_TAG ?: 'stable-' + env.ghprbTargetBranch
 env.CENTOS7_TAG = env.CENTOS7_TAG ?: 'stable-' + env.ghprbTargetBranch
-env.CENTOS8_TAG = env.CENTOS8_TAG ?: 'stable-' + env.ghprbTargetBranch
 
 DOCKER_REPO_URL = env.DOCKER_REPO_URL ?: '172.30.254.79:5000'
 // if LINCHPIN_PROVIDERS is defined in jenkins global
@@ -37,7 +37,6 @@ executionID = UUID.randomUUID().toString()
 
 // Pod name to use
 c7podName = 'lp_centos7-' + executionID
-c8podName = 'lp_centos8-' + executionID
 f30podName = 'lp_fedora30-' + executionID
 f31podName = 'lp_fedora31-' + executionID
 
@@ -84,9 +83,6 @@ properties(
                 string(defaultValue: 'stable-' + env.ghprbTargetBranch,
                        description: 'Tag for centos7 image',
                        name: 'CENTOS7_TAG'),
-                string(defaultValue: 'stable-' + env.ghprbTargetBranch,
-                       description: 'Tag for centos8 image',
-                       name: 'CENTOS8_TAG'),
                 string(description: 'Providers to be tested',
                        name: 'TEST_PROVIDERS')
             ]
@@ -133,39 +129,6 @@ stage('Tests') {
                 )
                 {
                     execute_test(c7podName, "centos7")
-                }
-            }, "centos8" : {
-                pipelineUtils.clearTemplateNames()
-                podTemplate(name: c7podName,
-                            label: c7podName,
-                            cloud: 'openshift',
-                            serviceAccount: OPENSHIFT_SERVICE_ACCOUNT,
-                            idleMinutes: 0,
-                            namespace: OPENSHIFT_NAMESPACE,
-
-                        containers: [
-                            // This adds the custom slave container to the pod.
-                            // Must be first with name 'jnlp'
-                            containerTemplate(name: 'jnlp',
-                                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/jenkins-continuous-infra-slave:' + SLAVE_TAG,
-                                ttyEnabled: false,
-                                args: '${computer.jnlpmac} ${computer.name}',
-                                command: '',
-                                workingDir: '/workDir'),
-                            containerTemplate(name: 'centos8',
-                                alwaysPullImage: true,
-                                image: DOCKER_REPO_URL + '/' + OPENSHIFT_NAMESPACE + '/centos8:' + CENTOS7_TAG,
-                                ttyEnabled: false,
-                                command: '/usr/sbin/init',
-                                privileged: true,
-                                workingDir: '/workDir')
-                        ],
-                        volumes: [
-                            emptyDirVolume(memory: false, mountPath: '/sys/class/net')
-                        ]
-                )
-                {
-                    execute_test(c8podName, "centos8")
                 }
             }, fedora30: {
                 pipelineUtils.clearTemplateNames()
@@ -303,7 +266,7 @@ def execute_test(String podname, String container) {
             currentStage = container + "-install"
             stage(currentStage) {
                 dir('linchpin') {
-                  if (container == 'centos7' || container == 'centos8' || container == 'fedora30'){
+                  if (container == 'centos7' || container == 'fedora30'){
                   pipelineUtils.executeInContainer(currentStage,
                                                    container,
                                                    "./config/Dockerfiles/linchpin-install-centos7.sh")

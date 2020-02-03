@@ -10,21 +10,19 @@
 
 - name: "Generate keyfile"
   debug:
-    msg: "{{ res_def_output_nasync['key']['private_key'] | write_to_file(default_ssh_key_path+'/', res_def['name']+'.key') }}"
-  when: state == "present" and res_def_output_nasync['changed'] == true and not _async
-
-# commented due to selinux issues
-#- name: "Generate keyfile"
-#  copy: 
-#    content: "{{ res_def_output_nasync['key']['private_key'] }}"
-#    dest: "{{ default_ssh_key_path }}/{{ res_def['res_name'] | default(res_def['name']) }}.key"
-#  when: state == "present" and res_def_output_nasync['changed'] == true and not _async
-#  no_log: "{{ not debug_mode }}"
+    msg: "{{ res_def_output_nasync['key']['private_key'] |
+             write_to_file(default_ssh_key_path+'/', res_def['name']+'.key') }}"
+  when: state == "present" and
+        res_def_output_nasync['changed'] and
+        not _async
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_os_keypair: "{{ topology_outputs_os_keypair + [res_def_output_nasync] }}"
-  when: state == "present" and res_def_output_nasync['changed'] == true and not _async
+    topology_outputs_os_keypair: "{{ topology_outputs_os_keypair +
+                                     [res_def_output_nasync] }}"
+  when: state == "present"
+        res_def_output_nasync['changed']
+        and not _async
 
 - name: "Async:: provisioning/deprovisioning  keypair"
   os_keypair:
@@ -48,8 +46,11 @@
 - name: "Async:: Generate keyfile"
   copy:
     content: "{{ job_result['key']['private_key'] }}"
-    dest: "{{ default_ssh_key_path }}/{{ res_def['res_name'] | default(res_def['name']) }}.key"
-  when: state == "present" and res_def_output_async['changed'] == true and _async
+    dest: "{{ default_ssh_key_path }}/{{ res_def['res_name'] |
+              default(res_def['name']) }}.key"
+  when: state == "present" and
+        res_def_output_async['changed']
+        and _async
   no_log: "{{ not debug_mode }}"
 
 - name: "Async:: save the job id"
@@ -59,4 +60,6 @@
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_os_keypair: "{{ topology_outputs_os_keypair | add_res_data(res_grp_type, res_def['role']) }}"
+    topology_outputs_os_keypair: "{{ topology_outputs_os_keypair |
+                                     add_res_data(res_grp_type,
+                                                  res_def['role']) }}"

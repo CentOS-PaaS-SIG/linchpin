@@ -1,4 +1,3 @@
----
 - name: "provision/deprovision os_zone"
   os_zone:
     api_timeout: "{{ res_def['api_timeout'] | default(omit) }}"
@@ -18,13 +17,14 @@
     state: "{{ state }}"
     timeout: "{{ res_def['timeout'] | default(omit) }}"
     ttl: "{{ res_def['ttl'] | default(omit) }}"
-    validate_certs: no
-    wait: yes
+    validate_certs: false
+    wait: true
     zone_type: "{{ res_def['zone_type'] | default(omit) }}"
   register: res_def_output_auth
   no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_os_network: "{{ topology_outputs_os_network + [ res_def_output_auth ] }}"
+    topology_outputs_os_network: "{{ topology_outputs_os_network +
+                                     [ res_def_output_auth ] }}"
   when: state == "present"

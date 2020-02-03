@@ -1,10 +1,10 @@
----
 - name: "provision/deprovision os_port"
   os_port:
     admin_state_up: "{{ res_def['admin_state_up'] | default(omit) }}"
     api_timeout: "{{ res_def['api_timeout'] | default(omit) }}"
     auth: "{{ auth_var | omit_filter(omit) }}"
-    allowed_address_pairs: "{{ res_def['allowed_address_pairs'] | default(omit) }}"
+    allowed_address_pairs: "{{ res_def['allowed_address_pairs'] |
+                               default(omit) }}"
     auth_type: "{{ res_def['auth_type'] | default(omit) }}"
     availability_zone: "{{ res_def['availability_zone'] | default(omit) }}"
     ca_cert: "{{ res_def['ca_cert'] | default(omit) }}"
@@ -18,19 +18,22 @@
     interface: "{{ res_def['interface'] | default(omit) }}"
     mac_address: "{{ res_def['mac_address'] | default(omit) }}"
     name: "{{ res_def['name'] }}"
-    no_security_groups: "{{ res_def['no_security_groups'] | default(omit) }}"
-    port_security_enabled: "{{ res_def['port_security_enabled'] | default(omit) }}"
+    no_security_groups: "{{ res_def['no_security_groups'] |
+                            default(omit) }}"
+    port_security_enabled: "{{ res_def['port_security_enabled'] |
+                               default(omit) }}"
     region_name: "{{ res_def['region'] | default(omit) }}"
     security_groups: "{{ res_def['security_groups'] | default(omit) }}"
     state: "{{ state }}"
     timeout: "{{ res_def['timeout'] | default(omit) }}"
-    validate_certs: no
+    validate_certs: false
     vnic_type: "{{ res_def['vnic_type'] | default(omit) }}"
-    wait: yes
+    wait: true
   register: res_def_output_auth
   no_log: "{{ not debug_mode }}"
 
 - name: "Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_os_network: "{{ topology_outputs_os_network + [ res_def_output_auth ] }}"
+    topology_outputs_os_network: "{{ topology_outputs_os_network +
+                                     [ res_def_output_auth ] }}"
   when: state == "present"

@@ -1,5 +1,5 @@
 - name: converge
   hosts: all
   roles:
-    - role: docker
+    - role: openstack
   post_tasks: []

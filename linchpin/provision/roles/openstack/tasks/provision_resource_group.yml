@@ -1,4 +1,3 @@
----
 - name: "Unset the authvar from previous run"
   set_fact:
     auth_var: ""
