@@ -14,18 +14,10 @@ simple:
             flavor: {{ flavor | default('t2.micro') }}
             role: aws_ec2
             region: {{ region | default('ca-central-1') }}
-            image: {{ image | default('ami-0b85d4ff00de6a225') }}
-            {% if security_groups is defined %}
+            image: {{ image | default('ami-05927168596f8f271') }}
             security_group:
               - default
-              {% for group in security_groups %}
-              - {{ group }}
-              {% endfor %}
-            {% endif %}
             count: 1
-            {% if assign_public_ip is defined %}
-            assign_public_ip: {{ assign_public_ip }}
-            {% endif %}
             keypair: {{ keypair | default('ci-ops-central') }}
   layout:
     inventory_layout:
@@ -39,5 +31,7 @@ simple:
           host_groups:
             - example
   hooks:
+    preup:
+      - name: res_check
     postup:
       - name: ec2_boot_log

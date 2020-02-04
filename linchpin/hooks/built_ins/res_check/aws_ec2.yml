@@ -1,0 +1,59 @@
+---
+- local_action:
+    module: ec2_ami_info
+    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
+    image_ids: "{{ res_def['image'] }}"
+  when: res_def.image is defined
+  register: results
+  ignore_errors: true
+
+- assert:
+    that:
+      - results.images is defined
+      - results.images | length >0
+    fail_msg: "Image {{res_def.image}} was not found"
+    success_msg: "Image {{res_def.image}} exists"
+  when: res_def.image is defined
+
+- local_action:
+    module: aws_region_info
+    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
+    region: "{{ res_def['region'] }}"
+  when: res_def.region is defined
+  register: results
+  ignore_errors: true
+
+- assert:
+    that:
+      - results.regions is defined
+      - results.regions | length >0
+    fail_msg: "Region {{res_def.region}} was not found"
+    success_msg: "Region {{res_def.region}} exists"
+  when: res_def.region is defined
+
+- local_action:
+    module: ec2_group_info
+    aws_access_key: "{{ auth_var['aws_access_key_id'] | default(omit) }}"
+    aws_secret_key: "{{  auth_var['aws_secret_access_key'] | default(omit) }}"
+    filters:
+      group-name: "{{ item }}"
+  when: res_def.security_group is defined
+  register: results
+  ignore_errors: true
+  loop: "{{ res_def['security_group'] }}"
+
+- debug:
+    var: results
+
+- assert:
+    that:
+      - item.security_groups is defined
+      - item.security_groups | length >0
+    fail_msg: "Group {{item.item}} was not found"
+    success_msg: "Group {{item.item}} exists"
+  when: res_def.security_group is defined
+  loop: "{{ results.results }}"
+  loop_control:
+    index_var: index
