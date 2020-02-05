@@ -163,9 +163,9 @@ azure_vm:
           count: 1
           host_groups:
             - example
-  hooks:
-    postup:
-      - name: azure_boot_log
+  # hooks:
+  #   postup:
+  #     - name: azure_boot_log
 
 #This is the minimum viable input for azure_vm
 # Default setting use username and password, no public key
