@@ -52,9 +52,13 @@
     topo_output_json: "{{ topo_output_rundb.output | convert_to_json }}"
   when: not generate_resources
 
+- name: setfact to variable
+  set_fact:
+    topo_out_json: "{{ topo_output_rundb.output | convert_to_json }}"
+
 - name: "set topo_output_resources fact rundb"
   set_fact:
-    topo_output_resources: "{{ topo_output_rundb.output[0]['resources'] }}"
+    topo_output_resources: "{{ topo_out_json[0]['resources'] }}"
   when: not generate_resources
 
 - name: "teardown aws_ec2_vpc_internet_gateway resource def of current group"
