@@ -55,6 +55,7 @@
 - name: setfact to variable
   set_fact:
     topo_out_json: "{{ topo_output_rundb.output | convert_to_json }}"
+  when: not generate_resources
 
 - name: "set topo_output_resources fact rundb"
   set_fact:

@@ -1,0 +1,17 @@
+topo_data:
+  topology_name: "ec2-new"
+  resource_groups:
+    - resource_group_name: "aws"
+      resource_group_type: "aws"
+      resource_definitions:
+        - name: demo-day
+          role: aws_ec2
+          flavor: 't2.micro'
+          region: 'ca-central-1'
+          image: 'ami-0b85d4ff00de6a225'
+          count: 1
+          instance_tags:
+            color: blue
+            shape: oval
+          security_group:
+            - default

@@ -9,8 +9,12 @@ lint:
   options:
     config-file: tests/yamllint.yml
 platforms:
-  - name: aws
-    image: centos:7
+  - name: aws-f31
+    image: lp_fedora31:latest
+    pull: false
+  - name: aws-f30
+    image: lp_fedora30
+    pull: false
     ## Remove 'image' above and uncomment the following to run systemd in Docker
     # image: centos/systemd
     # privileged: true

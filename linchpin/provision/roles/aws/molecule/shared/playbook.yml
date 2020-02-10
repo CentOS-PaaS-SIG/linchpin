@@ -1,5 +1,48 @@
-- name: converge
+- name: Test EC2 Provision
   hosts: all
   roles:
     - role: aws
+  pre_tasks:
+    - include_vars:
+        file: topo_data.yml
+    - set_fact:
+        resources: "{{ topo_data.resource_groups }}"
+  vars:
+    state: "present"
+    debug_mode: true
+    auth_debug: true
+    _async: false
+    uhash: "111111"
+    linchpin_mock: true
+  post_tasks:
+    - name: "Create topology_outputs var"
+      set_fact:
+        topology_outputs: []
+        topology_name: "{{ topo_data.topology_name }}"
+    - name: "Aggregate topology outputs"
+      set_fact:
+        topology_outputs: "{{ topology_outputs }} + {{ lookup('vars', item) }}"
+      loop: "{{ lookup('varnames', '^topology_outputs_').split(',') }}"
+      when: item|length > 0
+    - name: "Generate resources file for destroy test"
+      copy:
+        content: "{{ topology_outputs }}"
+        dest: "/root/{{ topology_name }}.output"
+
+- name: Test EC2 Teardown
+  hosts: all
+  roles:
+    - role: aws
+  pre_tasks:
+    - include_vars:
+        file: topo_data.yml
+  vars:
+    state: "absent"
+    debug_mode: true
+    auth_debug: true
+    _async: false
+    uhash: "111111"
+    linchpin_mock: true
+    generate_resources: true
+    default_resources_path: "/root"
   post_tasks: []
