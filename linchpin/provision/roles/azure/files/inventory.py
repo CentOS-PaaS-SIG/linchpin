@@ -28,10 +28,14 @@ class Inventory(InventoryFilter):
         host_data = OrderedDict()
         if res['resource_group'] != 'azure'or res['role'] != 'azure_vm':
             return host_data
+        var_data = cfgs.get('azure', {})
+        if var_data is None:
+            var_data = {}
         networks = res['properties']['networkProfile']['networkInterfaces']
         for network in networks:
             mid = network['properties']['ipConfigurations'][0]
             # mid: this is a middle variable for flake test
             ip = mid['properties']['publicIPAddress']['properties']['ipAddress']
             host_data[ip] = {"__IP__": ip}
+            self.set_config_values(host_data[ip], res, var_data)
         return host_data

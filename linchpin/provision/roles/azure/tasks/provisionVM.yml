@@ -16,6 +16,8 @@
     virtual_network_name: "{{res_def['virtual_network_name']|default(vn_name)}}"
     image: "{{ image | default(omit) }}"
     availability_set: "{{ res_def['availability_set'] | default(omit) }}"
+    boot_diagnostics:
+      enabled: true
   register: res_def_output
   when: not _async
   no_log: "{{ not debug_mode }}"
@@ -41,6 +43,8 @@
     virtual_network_name: "{{res_def['virtual_network_name']|default(vn_name)}}"
     name: "{{  nameOfvm| default(omit) }}"
     image: "{{ image | default(omit) }}"
+    boot_diagnostics:
+      enabled: true
   async: "{{ async_timeout }}"
   poll: 0
   register: res_def_output
