@@ -1,1 +1,31 @@
-provision_os_floating_ip.yml
+- name: "provision/deprovision os_floating_ip"
+  os_floating_ip:
+    api_timeout: "{{ res_def['api_timeout'] | default(omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
+    auth_type: "{{ res_def['auth_type'] | default(omit) }}"
+    availability_zone: "{{ res_def['availability_zone'] | default(omit) }}"
+    ca_cert: "{{ res_def['ca_cert'] | default(omit) }}"
+    client_cert: "{{ res_def['client_cert'] | default(omit) }}"
+    client_key: "{{ res_def['client_key'] | default(omit) }}"
+    cloud: "{{ auth_var['profile'] | default(omit) }}"
+    fixed_address: "{{ res_def['fixed_address'] | default(omit) }}"
+    floating_ip_address: "{{ res_def['floating_ip_address'] | default(omit) }}"
+    interface: "{{ res_def['interface'] | default(omit) }}"
+    nat_destination: "{{ res_def['interface'] | default(omit) }}"
+    network: "{{ res_def['network'] | default(omit) }}"
+    purge: "{{ res_def['purge'] | default(omit) }}"
+    region_name: "{{ res_def['region_name'] | default(omit) }}"
+    reuse: "{{ res_def['reuse'] | default(omit) }}"
+    server: "{{ res_def['server'] }}"
+    state: "{{ state }}"
+    timeout: 9000
+    validate_certs: "{{ res_def['validate_certs'] | default(omit) }}"
+    wait: true
+  register: res_def_output_auth
+  no_log: "{{ not debug_mode }}"
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os_network: "{{ topology_outputs_os_network +
+                                     [ res_def_output_auth ] }}"
+  when: state == "present"

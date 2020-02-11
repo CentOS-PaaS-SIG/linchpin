@@ -1,4 +1,3 @@
----
 - name: "Set os_res_type value"
   set_fact:
     os_res_type: "{{ res_def['role'] }}"
@@ -17,12 +16,12 @@
 - name: "Create name using uhash value"
   set_fact:
     os_resource_name: "{{ os_resource_name + default_delimiter + uhash }}"
-  when:  unique_name
+  when: unique_name
 
 - name: "provision/teardown resources "
-  include: "provision_{{ res_def['role'] }}.yml"
+  include_tasks: "provision_{{ res_def['role'] }}.yml"
   when: res_def['role'] != 'os_server'
 
 - name: "provision/teardown resources "
-  include: "provision_os_server.yml"
+  include_tasks: "provision_os_server.yml"
   when: res_def['role'] == 'os_server'

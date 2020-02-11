@@ -1,1 +1,30 @@
-provision_os_zone.yml
+- name: "provision/deprovision os_zone"
+  os_zone:
+    api_timeout: "{{ res_def['api_timeout'] | default(omit) }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
+    auth_type: "{{ res_def['auth_type'] | default(omit) }}"
+    availability_zone: "{{ res_def['availability_zone'] | default(omit) }}"
+    ca_cert: "{{ res_def['ca_cert'] | default(omit) }}"
+    client_cert: "{{ res_def['client_cert'] | default(omit) }}"
+    client_key: "{{ res_def['client_key'] | default(omit) }}"
+    cloud: "{{ auth_var['profile'] | omit_filter(omit) }}"
+    description: "{{ res_def['description'] | default(omit) }}"
+    email: "{{ res_def['email'] | default(omit) }}"
+    interface: "{{ res_def['interface'] | default(omit) }}"
+    masters: "{{ res_def['masters'] | default(omit) }}"
+    name: "{{ res_def['name'] }}"
+    region_name: "{{ res_def['region'] }}"
+    state: "{{ state }}"
+    timeout: "{{ res_def['timeout'] | default(omit) }}"
+    ttl: "{{ res_def['ttl'] | default(omit) }}"
+    validate_certs: false
+    wait: true
+    zone_type: "{{ res_def['zone_type'] | default(omit) }}"
+  register: res_def_output_auth
+  no_log: "{{ not debug_mode }}"
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os_network: "{{ topology_outputs_os_network +
+                                     [ res_def_output_auth ] }}"
+  when: state == "present"

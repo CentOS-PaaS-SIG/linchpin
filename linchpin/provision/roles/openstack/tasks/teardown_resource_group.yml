@@ -1,4 +1,3 @@
----
 # Credentials
 - name: "Unset the authvar from previous run"
   set_fact:
@@ -47,7 +46,9 @@
 # Deployment information
 - name: "Get topology output data from resources file"
   output_parser:
-    output_file: "{{ default_resources_path + '/' + topo_data['topology_name'].replace(' ', '_').lower() + '.output' }}"
+    output_file: "{{ default_resources_path + '/' +
+                     topo_data['topology_name'].replace(' ', '_').lower() +
+                     '.output' }}"
   register: topo_output
   when: generate_resources
 
@@ -78,7 +79,10 @@
   when: not generate_resources
 
 - name: teardown os_recordset resource def of current group
-  include: teardown_os_recordsset.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  include_tasks: teardown_os_recordset.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    res_grp_name: "{{ res_item.1 }}"
   when: res_item.0['role'] == "os_recordset"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -88,7 +92,10 @@
 
 
 - name: teardown os_zone resource def of current group
-  include: teardown_os_zone.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  include_tasks: teardown_os_zone.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    res_grp_name: "{{ res_item.1 }}"
   when: res_item.0['role'] == "os_zone"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -97,7 +104,10 @@
     loop_var: res_item
 
 - name: teardown os_port resource def of current group
-  include: teardown_os_port.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  include_tasks: teardown_os_port.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    res_grp_name: "{{ res_item.1 }}"
   when: res_item.0['role'] == "os_port"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -106,7 +116,10 @@
     loop_var: res_item
 
 - name: teardown os_router resource def of current group
-  include: teardown_os_router.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  include_tasks: teardown_os_router.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    res_grp_name: "{{ res_item.1 }}"
   when: res_item.0['role'] == "os_router"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -115,7 +128,10 @@
     loop_var: res_item
 
 - name: teardown os_heat resource def of current group
-  include: teardown_os_heat.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  include_tasks: teardown_os_heat.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    res_grp_name: "{{ res_item.1 }}"
   when: res_item.0['role'] == "os_heat"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -124,7 +140,10 @@
     loop_var: res_item
 
 - name: teardown os_keypair resource def of current group
-  include: teardown_os_keypair.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  include_tasks: teardown_os_keypair.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    res_grp_name: "{{ res_item.1 }}"
   when: res_item.0['role'] == "os_keypair"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -133,7 +152,10 @@
     loop_var: res_item
 
 - name: teardown os_network resource def of current group
-  include: teardown_os_network.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  include_tasks: teardown_os_network.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    res_grp_name: "{{ res_item.1 }}"
   when: res_item.0['role'] == "os_network"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -142,7 +164,10 @@
     loop_var: res_item
 
 - name: teardown os_object resource def of current group
-  include: teardown_os_object.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  include_tasks: teardown_os_object.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    res_grp_name: "{{ res_item.1 }}"
   when: res_item.0['role'] == "os_object"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -151,7 +176,10 @@
     loop_var: res_item
 
 - name: teardown os_server resource def of current group
-  include: teardown_os_server.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  include_tasks: teardown_os_server.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    res_grp_name: "{{ res_item.1 }}"
   when: res_item.0['role'] == "os_server"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -160,7 +188,10 @@
     loop_var: res_item
 
 - name: teardown os_sg resource def of current group
-  include: teardown_os_sg.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  include_tasks: teardown_os_sg.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    res_grp_name: "{{ res_item.1 }}"
   when: res_item.0['role'] == "os_sg"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -169,7 +200,10 @@
     loop_var: res_item
 
 - name: teardown os_subnet resource def of current group
-  include: teardown_os_subnet.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  include_tasks: teardown_os_subnet.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    res_grp_name: "{{ res_item.1 }}"
   when: res_item.0['role'] == "os_subnet"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"
@@ -178,7 +212,10 @@
     loop_var: res_item
 
 - name: teardown os_volume resource def of current group
-  include: teardown_os_volume.yml res_def={{ res_item.0 }} res_grp_name={{ res_item.1 }}
+  include_tasks: teardown_os_volume.yml
+  vars:
+    res_def: "{{ res_item.0 }}"
+    res_grp_name: "{{ res_item.1 }}"
   when: res_item.0['role'] == "os_volume"
   with_nested:
     - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) }}"

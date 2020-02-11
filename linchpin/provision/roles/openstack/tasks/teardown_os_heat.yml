@@ -1,1 +1,66 @@
-provision_os_heat.yml
+- name: "provision/deprovision os_heat stack"
+  os_stack:
+    auth: "{{ auth_var | omit_filter(omit) }}"
+    name: "{{ res_def['name'] }}"
+    tag: "{{ res_def['tag'] | default(omit) }}"
+    state: "{{ state }}"
+    template: "{{ res_def['template_path'] }}"
+    environment: "{{ res_def['environment'] | default([]) }}"
+    interface: "{{ res_def['environment'] | default('public') }}"
+    key: "{{ res_def['key'] | default(omit) }}"
+    parameters: "{{ res_def['parameters'] | default(omit) }}"
+    region_name: "{{ res_def['region_name'] | default(omit) }}"
+    roll_back: "{{ res_def['roll_back'] | default(omit) }}"
+    verify: "{{ res_def['verify'] | default(omit) }}"
+    wait: "{{ res_def['wait'] | default(omit) }}"
+    api_timeout: 99999
+    timeout: 3600
+    cacert: "{{ res_def['cacert'] | default(omit) }}"
+    cert: "{{ res_def['cert'] | default(omit) }}"
+  register: res_def_output
+  when: not _async
+  no_log: "{{ not debug_mode }}"
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_os_heat: "{{ topology_outputs_os_heat +
+                                  [ res_def_output ] }}"
+  when: not _async and state == 'present'
+
+- name: "provision/deprovision os_heat stack"
+  os_stack:
+    auth: "{{ auth_var | omit_filter(omit) }}"
+    name: "{{ res_def['name'] }}"
+    tag: "{{ res_def['tag'] | default(omit) }}"
+    state: "{{ state }}"
+    template: "{{ res_def['template_path'] }}"
+    environment: "{{ res_def['environment'] | default([]) }}"
+    interface: "{{ res_def['environment'] | default('public') }}"
+    key: "{{ res_def['key'] | default(omit) }}"
+    parameters: "{{ res_def['parameters'] | default(omit) }}"
+    region_name: "{{ res_def['region_name'] | default(omit) }}"
+    roll_back: "{{ res_def['roll_back'] | default(omit) }}"
+    verify: "{{ res_def['verify'] | default(omit) }}"
+    wait: "{{ res_def['wait'] | default(omit) }}"
+    api_timeout: 99999
+    timeout: 3600
+    cacert: "{{ res_def['cacert'] | default(omit) }}"
+    cert: "{{ res_def['cert'] | default(omit) }}"
+  async: "{{ async_timeout }}"
+  poll: 0
+  register: res_def_output
+  when: _async
+  no_log: "{{ not debug_mode }}"
+
+- name: "Async:: save the job id"
+  set_fact:
+    topology_outputs_os_heat: "{{ topology_outputs_os_heat +
+                                  [ res_def_output ] }}"
+  when: _async and state == 'present'
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_os_heat: "{{ topology_outputs_os_heat |
+                                  add_res_data(res_grp_type,
+                                               res_def['role']) }}"
+  when: _async and state == 'present'
