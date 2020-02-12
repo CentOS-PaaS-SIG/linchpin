@@ -6,14 +6,10 @@
 # NOTE: If there's async or not, lets just use topology_outputs_<resource> values
 # and do the updating after all data collection is complete.
 # ^^ I don't know what this comment means because it seems like the updating is done first
-- name: "Get names of variables storing topology outputs from each res_def"
-  set_fact:
-    topology_outputs_vars: "{{ lookup('varnames', '^topology_outputs_').split(',') }}"
-
 - name: "Aggregate topology outputs"
   set_fact:
-    topology_outputs: "{{ lookup('vars', item) }}"
-  loop: "{{ topology_outputs_vars }}"
+    topology_outputs: "{{ topology_outputs }} + {{ lookup('vars', item) }}"
+  loop: "{{ lookup('varnames', '^topology_outputs_').split(',') }}"
   when: item|length > 0
 
 - name: "set value"
