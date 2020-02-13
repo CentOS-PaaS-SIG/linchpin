@@ -1,8 +1,23 @@
 ---
 cfgs:
   azure:
-    __LOG__: properties.instanceView.bootDiagnostics.serialConsoleLogBlobUri
-    __ID__: id
+    __log__: properties.instanceView.bootDiagnostics.serialConsoleLogBlobUri
+    __id__: id
+
+azure_storage_account:
+  topology:
+    topology_name: azure_storage_account
+    resource_groups:
+      - resource_group_name: "azure_storage_account"
+        resource_group_type: "azure"
+        resource_definitions:
+          - role: "azure_storage_account"
+            resource_group: "ccit"
+            name: "{{ distro }}storageaccount"
+            account_type: Standard_LRS
+        credentials:
+          filename: azure.key
+          profile: "{{ profile | default('key') }}"
 
 azure_api:
   topology:
@@ -153,9 +168,9 @@ azure_vm:
   layout:
     inventory_layout:
       vars:
-        hostname: __IP__
-        log_url: __LOG__
-        id: __ID__
+        hostname: __ip__
+        log_url: __log__
+        id: __id__
         credentials_filename: azure.key
         credentials_profile: key
       hosts:
@@ -163,9 +178,9 @@ azure_vm:
           count: 1
           host_groups:
             - example
-  # hooks:
-  #   postup:
-  #     - name: azure_boot_log
+  hooks:
+    postup:
+      - name: azure_boot_log
 
 #This is the minimum viable input for azure_vm
 # Default setting use username and password, no public key
@@ -200,7 +215,7 @@ azure_multi_vm:
   layout:
     inventory_layout:
       vars:
-        hostname: __IP__
+        hostname: __ip__
       hosts:
         example-node:
           count: 4

@@ -1,0 +1,26 @@
+---
+- name: Provision Azure storage account
+  azure_rm_storageaccount:
+    state: present
+    client_id: "{{ auth_var['client_id'] | default(omit) }}"
+    tenant: "{{ auth_var['tenant'] | default(omit) }}"
+    secret: "{{ auth_var['secret'] | default(omit) }}"
+    subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
+    resource_group: "{{ res_def['resource_group'] | default(omit) }}"
+    access_tier: "{{ res_def['access_tier'] | default(omit) }}"
+    account_type: "{{ res_def['account_type'] | default('Standard_LRS') }}"
+    kind: "{{ res_def['kind'] | default(omit) }}"
+    custom_domain: "{{ res_def['custom_domain'] | default(omit) }}"
+    location: "{{ res_def['location'] | default(omit) }}"
+    name: "{{ res_def['name'] | default(omit) }}"
+    blob_cors: "{{ res_def['blob_cors'] | default(omit) }}"
+  register: res_def_output
+
+- name: "Append outputitem to topology_outputs"
+  set_fact:
+    topology_outputs_azure_storage_account: "{{ topology_outputs_azure_storage_account + [res_def_output] }}"
+  when: res_def_output['changed'] == true
+
+- name: "Add type to resource"
+  set_fact:
+    topology_outputs_azure_api: "{{ topology_outputs_azure_api | add_res_data(lookup('vars', 'role_name'),'azure_storage_account') }}"
