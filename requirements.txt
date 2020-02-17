@@ -19,6 +19,7 @@ jinja2>=2.10
 configparser>=3.5.0
 pyasn1>=0.1.9
 gitpython==2.1.11
+gitdb>=0.6.4
 future
 openstacksdk>=0.37
 tqdm==4.36.1
