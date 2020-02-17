@@ -1,4 +1,4 @@
-- name: Test EC2 Provision
+- name: Test AWS Provision
   hosts: all
   roles:
     - role: aws
@@ -14,6 +14,7 @@
     _async: false
     uhash: "111111"
     linchpin_mock: true
+    default_ssh_key_path: "~"
   post_tasks:
     - name: "Create topology_outputs var"
       set_fact:
@@ -29,7 +30,7 @@
         content: "{{ topology_outputs }}"
         dest: "/root/{{ topology_name }}.output"
 
-- name: Test EC2 Teardown
+- name: Test AWS Teardown
   hosts: all
   roles:
     - role: aws
@@ -45,4 +46,5 @@
     linchpin_mock: true
     generate_resources: true
     default_resources_path: "/root"
+    default_ssh_key_path: "~"
   post_tasks: []
