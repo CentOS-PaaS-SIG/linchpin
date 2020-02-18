@@ -1,0 +1,1 @@
+{"name": "linchpinmockmanagedzone.com.", "type": "A", "ttl": 600, "rrdatas": ["10.1.2.3", "40.5.6.7"], "signatureRrdatas": [], "kind": "dns#resourceRecordSet", "changed": true, "failed": false}
