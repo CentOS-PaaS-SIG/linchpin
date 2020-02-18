@@ -116,7 +116,45 @@
                     "network_name": { "type": "string", "required": true },
                     "scopes": { "type": "list", "required": false }
                 }
+            },
+	    {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["gcloud_gcp_dns_managed_zone"]
+                    },
+                    "description": { "type": "string", "required": false },
+                    "name": { "type": "string", "required": true },
+                    "dns_name": { "type": "string", "required": true },
+                    "scopes": { "type": "list", "required": false },
+                    "dnssec_config": { "type": "dict", "required": false },
+                    "env_type": { "type": "string", "required": false },
+                    "name_server_set": { "type": "string", "required": false },
+                    "labels": { "type": "dict", "required": false },
+                    "private_visibility_config": { "type": "dict", "required": false },
+                    "visibility": { "type": "string", "required": false }
+                }
+            },
+	    {
+                "type": "dict",
+                "schema": {
+                    "role": {
+                        "type": "string",
+                        "required": true,
+                        "allowed": ["gcp_dns_resource_record_set"]
+                    },
+                    "env_type": { "type": "string", "required": false },
+                    "managed_zone_dns": { "type": "string", "required": true },
+                    "name": { "type": "string", "required": true },
+                    "scopes": { "type": "list", "required": false },
+                    "target": { "type": "list", "required": false },
+                    "ttl": { "type": "string", "required": false },
+                    "type": { "type": "string", "required": true }
+                }
             }
+
 	    ]
 	 }
     }
