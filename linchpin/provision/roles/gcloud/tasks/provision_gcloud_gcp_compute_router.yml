@@ -1,5 +1,5 @@
 - name: "Fetch network facts"
-  gcp_compute_network_facts:
+  gcp_compute_network_info:
     filters:
       - "name = {{ res_def['network_name'] }}"
     project: "{{ auth_var['output']['project_id'] | default(omit) }}"
