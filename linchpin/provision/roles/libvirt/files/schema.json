@@ -17,6 +17,7 @@
                     "memory": { "type": "integer", "required": true },
                     "count": { "type": "integer", "required": false },
                     "uri": { "type": "string", "required": false },
+                    "remote_python_interpretor": { "type": "string", "required": false },
                     "driver": {
                         "type": "string",
                         "allowed": ["kvm", "qemu"],
@@ -121,6 +122,7 @@
                         "allowed": ["libvirt_network"] },
                     "name": { "type": "string", "required": true },
                     "uri": { "type": "string", "required": false },
+                    "remote_python_interpreter": { "type": "string", "required": false },
                     "ip": { "type": "string", "required": false },
                     "prefix": { "type": "integer", "required": false },
                     "family": { "type": "string", "required": false },
@@ -202,6 +204,7 @@
                         "allowed": ["libvirt_storage"] },
                     "name": { "type": "string", "required": true },
                     "uri": { "type": "string", "required": false },
+                    "remote_python_interpreter": { "type": "string", "required": false },
                     "size": { "type": "integer", "required": true },
                     "path": { "type": "integer", "required": true }
                 }

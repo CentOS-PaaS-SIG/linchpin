@@ -1,7 +1,7 @@
-{% set vm = definition[1] %}
-{% set count = definition[2] %}
-{% set path = definition[3] %}
-{% set image_type = definition[4] %}
+{% set vm = definition[0] %}
+{% set count = definition[1] %}
+{% set path = definition[2] %}
+{% set image_type = definition[3] %}
 <domain type='{{ vm.driver | default('kvm') }}'>
   <name>{{ libvirt_resource_name }}_{{ count }}</name>
   <memory unit='KiB'>{{ vm.memory * 1024 | int }}</memory>

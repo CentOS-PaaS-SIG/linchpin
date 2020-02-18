@@ -23,6 +23,7 @@
 - name: set cloud config default
   set_fact:
     cloud_config: "{{ res_def['cloud_config'] }}"
+    cloud_config_used: true
 
 - name: "check cloud_config is used or not"
   set_fact:
@@ -87,6 +88,8 @@
   remote_user: "{{ res_def['remote_user'] }}"
   delegate_to: "{{ uri_hostname }}"
   when: uri_hostname != 'localhost'
+  vars:
+    ansible_python_interpreter: "{{ res_def['remote_python_interpreter'] | default('/usr/bin/python3') }}"
 
 - name: "local: Generate ssh keys when they don't exist"
   shell: "ssh-keygen -t rsa -f {{ ssh_key_path }} -N '';cat {{ ssh_key_path }}.pub >> ~/.ssh/authorized_keys"
@@ -301,7 +304,6 @@
 
 - name: sync memory data to disk
   command: sync
-
 
 - name: "Start VM"
   virt:
