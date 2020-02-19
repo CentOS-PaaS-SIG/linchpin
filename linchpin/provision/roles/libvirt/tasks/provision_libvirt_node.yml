@@ -27,8 +27,7 @@
 
 - name: "check cloud_config is used or not"
   set_fact:
-    cloud_config_used: false
-  when: cloud_config['users'] == [] and cloud_config['run_commands'] == []
+    cloud_config_used: "{{ true if (cloud_config['users'] }} == [] and cloud_config['run_commands'] == []) else false }}"
 
 - name: "set empty local_image_path"
   set_fact:
