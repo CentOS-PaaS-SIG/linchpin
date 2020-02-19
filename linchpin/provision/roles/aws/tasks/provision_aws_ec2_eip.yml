@@ -27,6 +27,6 @@
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_aws_ec2: "{{ topology_outputs_aws_net |
+    topology_outputs_aws_net: "{{ topology_outputs_aws_net |
                                   add_res_data(lookup('vars', 'role_name'),
                                                res_def['role']) }}"
