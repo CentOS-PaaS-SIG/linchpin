@@ -17,6 +17,6 @@ for hook in prev_hooks:
         print('Found PinFile')
         sys.exit(0)
 
-error = {'error': 'could not find \'PinFile\'', 'files': files}
+error = {'error': 'could not find \'PinFile\''}
 print(error, file=respipe)
 sys.exit(1)
