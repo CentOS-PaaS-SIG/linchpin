@@ -240,7 +240,7 @@ def test_do_validation():
         for target, data in six.iteritems(results):
             if not data.startswith("valid"):
                 print(("Validation for target '{0}': has failed with"
-                      " error '{1}'".format(target, msg)))
+                      " error '{1}'".format(target, data)))
 
     assert not failed
 

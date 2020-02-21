@@ -1,0 +1,34 @@
+name: "multicontainer testing: Testing container matrix"
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build on ${{matrix.container }}
+    runs-on: ubuntu-latest
+    container: ${{ matrix.container }}
+    strategy:
+      matrix:
+        container: ['centos:7', 'centos:8', 'fedora:30', 'fedora:31', 'fedora:32' ]
+    steps:
+    - uses: actions/checkout@v2
+    - run: cat /etc/os-release
+    - name: running a shell script file
+      run: |
+        chmod +x ./.github/install_dependencies.sh
+        ./.github/install_dependencies.sh
+    - name: Install dependencies
+      run: |
+        pip3 install -r requirements.txt
+        pip3 install pytest
+        pip3 install pytest-runner
+        pip3 install .[test]
+        pip3 install zipp>=0.5
+    - name: Run unit tests
+      run: |
+        python3 setup.py test
+    - name: Run mock tests
+      run: |
+        chmod +x ./.github/runmocktests.sh
+        ./.github/runmocktests.sh    
+
