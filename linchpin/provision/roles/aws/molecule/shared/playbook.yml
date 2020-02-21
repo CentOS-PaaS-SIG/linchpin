@@ -28,7 +28,7 @@
     - name: "Generate resources file for destroy test"
       copy:
         content: "{{ topology_outputs }}"
-        dest: "/root/{{ topology_name }}.output"
+        dest: "/tmp/{{ topology_name }}.output"
 
 - name: Test AWS Teardown
   hosts: all
@@ -45,6 +45,6 @@
     uhash: "111111"
     linchpin_mock: true
     generate_resources: true
-    default_resources_path: "/root"
+    default_resources_path: "/tmp"
     default_ssh_key_path: "~"
   post_tasks: []
