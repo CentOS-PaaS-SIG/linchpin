@@ -43,7 +43,12 @@ setup(
         [console_scripts]
         linchpin=linchpin.shell:runcli
     ''',
-    tests_require=["pytest<=4.4.0", "nose", "mock", "coverage", "flake8", "radon"],
+    tests_require=["pytest<=4.4.0",
+                   "nose",
+                   "mock",
+                   "coverage",
+                   "flake8",
+                   "radon"],
     extras_require={
         'krbV': ["python-krbV"],
         'beaker': ['beaker-client>=27.0', 'python-gssapi', 'bottle'],

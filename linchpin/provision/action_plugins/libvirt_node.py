@@ -4,6 +4,7 @@ __metaclass__ = type
 from ansible.plugins.action import ActionBase
 import linchpin.MockUtils.MockUtils as mock_utils
 
+
 class ActionModule(ActionBase):
     def run(self, tmp=None, task_vars=None):
         """

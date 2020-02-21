@@ -288,7 +288,6 @@ def get_os_server_names(topo_output):
 
 
 def write_to_file(data, path, filename, extn='.output', mode=0o600):
-    
     filename = filename.replace(' ', '_').lower()
     path = os.path.expanduser(path)
     fd = open(path + filename + extn, "w")

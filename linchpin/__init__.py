@@ -542,9 +542,12 @@ class LinchpinAPI(object):
             self.update_rundb(rundb_id, target, provision_data)
 
             # note : changing the state triggers the hooks
-            return_code, results[target]['task_results'] = (
-                    self.run_target(target, resources, action, run_id)
-            )
+            return_code, results[target]['task_results'] = (self.run_target(
+                                                            target,
+                                                            resources,
+                                                            action,
+                                                            run_id)
+                                                           )
 
             end = time.time()
 
@@ -592,7 +595,7 @@ class LinchpinAPI(object):
             self.ctx.set_evar('use_uhash', enable_uhash)
 
         # invoke the appropriate action
-        return_code, results =  self._invoke_playbooks(resources,
+        return_code, results = self._invoke_playbooks(resources,
                                                       action=action,
                                                       console=ansible_console)
 
@@ -720,46 +723,42 @@ class LinchpinAPI(object):
 
     def update_rundb(self, rundb_id, target, provision_data):
         self.rundb.update_record(target,
-                            rundb_id,
-                            'inputs',
-                            [
-                                {'topology_data':
-                                 provision_data[target]['topology']}
-                            ])
+                                 rundb_id,
+                                 'inputs',
+                                 [{'topology_data':
+                                   provision_data[target]['topology']}
+                                 ])
 
         if provision_data[target].get('layout', None):
             l_data = provision_data[target]['layout']
             provision_data[target]['layout'] = self._convert_layout(l_data)
             self.set_evar('layout_data', provision_data[target]['layout'])
             self.rundb.update_record(target,
-                                rundb_id,
-                                'inputs',
-                                [
-                                    {'layout_data':
-                                     provision_data[target]['layout']}
-                                ])
+                                     rundb_id,
+                                     'inputs',
+                                     [{'layout_data':
+                                       provision_data[target]['layout']}
+                                     ])
 
         if provision_data[target].get('hooks', None):
             hooks_data = provision_data[target].get('hooks')
             self.set_evar('hooks_data', hooks_data)
             self.rundb.update_record(target,
-                                rundb_id,
-                                'inputs',
-                                [
-                                    {'hooks_data':
-                                     provision_data[target]['hooks']}
-                                ])
+                                     rundb_id,
+                                     'inputs',
+                                     [{'hooks_data':
+                                       provision_data[target]['hooks']}
+                                     ])
 
         if provision_data.get('cfgs', None):
             vars_data = provision_data[target].get('cfgs')
             self.set_evar('cfgs_data', vars_data)
             self.rundb.update_record(target,
-                                rundb_id,
-                                'cfgs',
-                                [
-                                    {'user':
-                                     provision_data['cfgs']}
-                                ])
+                                     rundb_id,
+                                     'cfgs',
+                                     [{'user':
+                                      provision_data['cfgs']}
+                                     ])
 
 
     def do_validation(self, provision_data, old_schema=False):

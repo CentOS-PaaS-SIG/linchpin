@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from string import digits, ascii_letters
 
+
 def cpu_to_int(cpu):
     amount = ''.join(c for c in cpu if c in digits)
     amount = float(amount)
@@ -8,6 +9,7 @@ def cpu_to_int(cpu):
     if size == 'm':
         amount = amount / 1000
     return amount
+
 
 class FilterModule(object):
     ''' A filter to add_res_data '''
