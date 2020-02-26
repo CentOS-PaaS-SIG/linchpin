@@ -1,4 +1,4 @@
-name: "Lint testing: Testing container matrix [centos7, centos8]"
+name: "Lint testing: Testing container matrix [fedora31]"
 
 on: [push, pull_request]
 

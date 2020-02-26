@@ -9,7 +9,8 @@ jobs:
     container: ${{ matrix.container }}
     strategy:
       matrix:
-        container: ['centos:7', 'centos:8', 'fedora:30', 'fedora:31', 'fedora:32' ]
+        container: ['centos:7', 'centos:8', 'fedora:30', 'fedora:31', 'fedora:32']
+      fail-fast: false
     steps:
     - uses: actions/checkout@v2
     - run: cat /etc/os-release
