@@ -2,18 +2,15 @@
   block:
     - name: Install selinux dependencies
       package:
-        name: "libselinux-python"
+        name: "python3-libselinux"
+        use: dnf
       become: true
     - name: Create links for selinux libraries
       file:
         src: "{{ PYTHON_LIB64_PATH }}/selinux"
         dest: "{{ lookup('env','VIRTUAL_ENV') }}/{{ VENV_LIB_PATH }}/selinux"
         state: link
-    - name: Create links for selinux libraries
-      file:
-        src: "{{ PYTHON_LIB64_PATH }}/_selinux.so"
-        dest: "{{ lookup('env','VIRTUAL_ENV') }}/{{ VENV_LIB_PATH }}/_selinux.so"
-        state: link
+      when: use_venv
   rescue:
     - fail:
         msg: 'Error installing the package dependencies! Please try adding password less priviledged sudo user or with --ask-sudo-pass'

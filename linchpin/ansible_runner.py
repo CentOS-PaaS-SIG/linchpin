@@ -170,6 +170,10 @@ def ansible_runner_shell(playbook_path,
         base_command.append("--vault-password-file")
         base_command.append(vault_password_file)
 
+    # ask for a sudo password
+    if extra_vars.get('ask_sudo_pass', None):
+        base_command.append("--ask-become-pass")
+
     # enable checkmode if check mode is mentioned
     if check:
         base_command.append("-C")
@@ -278,11 +282,11 @@ def ansible_runner(playbook_path,
 class Options():
     def __init__(self, connection,
                  module_path,
-                 forks, become, become_method,
-                 become_user, listhosts, listtasks, listtags, syntax,
-                 remote_user, private_key_file, ssh_common_args,
-                 ssh_extra_args, sftp_extra_args, scp_extra_args,
-                 start_at_task, verbosity, check, diff, vault_password_files):
+                 forks, become, become_method, become_user, listhosts,
+                 listtasks, listtags, syntax, remote_user, private_key_file,
+                 ssh_common_args, ssh_extra_args, sftp_extra_args,
+                 scp_extra_args, start_at_task, verbosity, check, diff,
+                 vault_password_files):
         self.connection = connection
         self.module_path = module_path
         self.forks = forks

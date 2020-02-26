@@ -3,11 +3,13 @@
     set_fact:
      current_user: "{{ lookup('env','USER') }}"
 
-  - name: Gather facts
-    setup:
+  - name: The geerlingguy.role is present
+    shell: "{{ ansible_python_interpreter | dirname }}/ansible-galaxy install geerlingguy.docker"
+    when: use_venv
 
   - name: The geerlingguy.role is present
-    command: ansible-galaxy install geerlingguy.docker
+    shell: "ansible-galaxy install geerlingguy.docker"
+    when: not use_venv
 
   - name: Setup selinux
     include_tasks: setup_selinux_deps.yml
@@ -25,4 +27,3 @@
     pip:
       name: docker-py
       state: present
-  become: true

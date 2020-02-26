@@ -6,6 +6,7 @@
           - libvirt-devel
           - libguestfs-tools 
           - python-libguestfs
+        use: dnf
       become: true
     - name: Install pypi dependencies of libvirt
       pip:
