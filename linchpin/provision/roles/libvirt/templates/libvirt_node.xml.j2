@@ -25,7 +25,7 @@
     <emulator>{{ qemu_path }}qemu-kvm</emulator>
 {% endif %}
 
-{% if virt_type == 'cloud-init' and cloud_config_used %}
+{% if virt_type == 'cloud-init' and cloud_init_used %}
     <disk type='file' device='cdrom'>
       <driver name='qemu' type='raw'/>
       <source file='/tmp/vm-{{ libvirt_resource_name }}{{ definition[4] }}{{ definition[1] }}.iso'/>
