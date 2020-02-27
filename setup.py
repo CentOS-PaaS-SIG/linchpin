@@ -51,7 +51,7 @@ setup(
                    "radon"],
     extras_require={
         'krbV': ["python-krbV"],
-        'beaker': ['beaker-client>=27.0', 'python-gssapi', 'bottle'],
+        'beaker': ['beaker-client>=27.0', 'bottle'],
         'docs': ["docutils", "sphinx", "sphinx_rtd_theme", "sphinx-automodapi"],
         'tests': ["nose", "mock", "coverage", "flake8",
                   "pytest<=4.4.0", "pytest-runner"],
