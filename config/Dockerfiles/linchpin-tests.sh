@@ -10,10 +10,6 @@ rm -f ${base_dir}/${distro}_logs/*
 TESTS_DIR="./config/Dockerfiles/tests.d"
 
 
-if [ -z "${PROVIDERS}" ]; then
-    PROVIDERS="dummy libvirt beaker openstack azure aws"
-fi
-
 # this function checks the distros.exclude value within the test.
 # If none, false is returned and the disro hasn't been excluded.
 # If distros.exclude includes a distro name, it is chedked against

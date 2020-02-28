@@ -3,25 +3,27 @@ LABEL maintainer "https://github.com/CentOS-PaaS-SIG/linchpin"
 LABEL description "This container will verify linchpin works under Centos7"
 
 ENV HOME=/root
+ENV LC_ALL=en_US.utf8
+ENV LANG=en_US.utf8
 WORKDIR $HOME
 
 COPY centos7/centos7-pike.repo /etc/yum.repos.d/centos7-pike.repo
 RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-RUN yum -y install python-pip \
-    && pip install -U pip \
-    && pip install -U setuptools \
-    && pip install -U pygithub \
-    && pip install -U openstackclient boto>=2.49.0 \
-    && yum -y install curl \
-    && curl -o /etc/yum.repos.d/herlo-linchpin-epel7.repo \
-    https://copr.fedorainfracloud.org/coprs/herlo/linchpin-epel7/repo/epel-7/herlo-linchpin-epel7-epel-7.repo; \
-    yum -y install gcc python-devel openssl-devel ansible \
+RUN yum -y install python3-pip
+RUN curl -o /etc/yum.repos.d/herlo-linchpin-epel7.repo \
+    https://copr.fedorainfracloud.org/coprs/herlo/linchpin-epel7/repo/epel-7/herlo-linchpin-epel7-epel-7.repo
+RUN yum -y install gcc python3-devel openssl-devel ansible \
                     libvirt-daemon-driver-* libvirt-daemon libvirt-daemon-kvm \
-                    qemu-kvm libvirt-daemon-config-network libvirt-python \
+                    qemu-kvm libvirt-daemon-config-network libvirt-python3 \
                     libvirt-devel virt-install file openssh mkisofs \
-                    libvirt-client net-tools git python-krbV make \
-                    libxslt-python krb5-workstation \
-                    python-requests jq buildah git which; \
+                    libvirt-client net-tools git python3-krbV make \
+                    libxslt-python3 python3-libselinux krb5-workstation \
+                    python3-requests jq buildah git which; \
+    pip3 install -U pip \
+    && pip3 install -U setuptools \
+    && pip3 install -U pygithub \
+    && pip3 install -U openstackclient boto>=2.49.0 \
+    && pip3 install -U curl; \
     (cd /lib/systemd/system/sysinit.target.wants/; for i in *; \
      do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
     rm -f /lib/systemd/system/multi-user.target.wants/*;\
