@@ -13,7 +13,7 @@ lint:
   options:
     config-file: tests/yamllint.yml
 platforms:
-  - name: aws-delegated
+  - name: azure-delegated
 provisioner:
   name: ansible
   lint:

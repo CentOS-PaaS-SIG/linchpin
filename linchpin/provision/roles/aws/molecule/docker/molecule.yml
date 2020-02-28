@@ -9,10 +9,10 @@ lint:
   options:
     config-file: tests/yamllint.yml
 platforms:
-  - name: aws-f31
+  - name: azure-f31
     image: lp_fedora31:latest
     pull: false
-  - name: aws-f30
+  - name: azure-f30
     image: lp_fedora30
     pull: false
     ## Remove 'image' above and uncomment the following to run systemd in Docker
