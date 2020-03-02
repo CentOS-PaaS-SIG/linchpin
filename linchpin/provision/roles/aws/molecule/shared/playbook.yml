@@ -1,7 +1,7 @@
-- name: Test Azure Provision
+- name: Test AWS Provision
   hosts: all
   roles:
-    - role: azure
+    - role: aws
   pre_tasks:
     - include_vars:
         file: topo_data.yml
@@ -30,10 +30,10 @@
         content: "{{ topology_outputs }}"
         dest: "/tmp/{{ topology_name }}.output"
 
-- name: Test Azure Teardown
+- name: Test AWS Teardown
   hosts: all
   roles:
-    - role: azure
+    - role: aws
   pre_tasks:
     - include_vars:
         file: topo_data.yml
