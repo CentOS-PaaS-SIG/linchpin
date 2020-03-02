@@ -317,7 +317,7 @@ class LinchpinAPI(object):
         # role was successfully installed or if the role was previously
         # installed.  It will return false otherwise
         if not galaxy_runner.install(role):
-            raise LinchpinError("role '{0]' not found in path: {1}\n. It also"
+            raise LinchpinError("role '{0}' not found in path: {1}\n. It also"
                                 " could not be installed via Ansible"
                                 " Galaxy".format(role, self.role_path))
 
@@ -956,14 +956,16 @@ class LinchpinAPI(object):
         self._get_role(pb_name)
         use_shell = ast.literal_eval(str(self.ctx.get_cfg("ansible",
                                                           "use_shell")))
-        pb_path = self._find_playbook_path("linchpin.yml")
-        playbook_path = '{0}/{1}{2}'.format(pb_path, 'linchpin', self.pb_ext)
+        if pb_name == 'setup':
+            pb_path = self._find_playbook_path("setup.yml")
+            playbook_path = '{0}/{1}{2}'.format(pb_path, 'setup', self.pb_ext)
+        else:
+            pb_path = self._find_playbook_path("linchpin.yml")
+            playbook_path = '{0}/{1}{2}'.format(pb_path,
+                                                'linchpin',
+                                                self.pb_ext)
         extra_vars = self.get_evar()
         env_vars = self.ctx.get_env_vars()
-        res = extra_vars['resources']
-        group = res['resource_group_name']
-        self.pbar.postfix[0] = dict(group="resource group '%s'" % group)
-        self.pbar.refresh()
         if self.ctx.no_monitor:
             return_code, res = ansible_runner(playbook_path,
                                               self._get_module_path(),
@@ -976,6 +978,10 @@ class LinchpinAPI(object):
                                               use_shell=use_shell
                                              )
         else:
+            res = extra_vars['resources']
+            group = res['resource_group_name']
+            self.pbar.postfix[0] = dict(group="resource group '%s'" % group)
+            self.pbar.refresh()
             with ProcessPoolExecutor() as executor:
                 executor.submit(progress_monitor, self.disable_pbar, res)
                 ansible_thread = executor.submit(
@@ -1013,7 +1019,7 @@ class LinchpinAPI(object):
         self.set_evar('_action', action)
         self.set_evar('state', 'present')
 
-        if action == 'setup' or action == 'ask_sudo_setup':
+        if action == 'setup':
             self.set_evar('setup_providers', providers)
             return_code, res = self._find_n_run_pb(action,
                                                    "localhost",

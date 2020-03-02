@@ -672,9 +672,14 @@ It is suggested to update any of the following:
 @click.argument('providers', metavar='PROVIDERS', required=False,
                 nargs=-1)
 @click.option('--ask-sudo-pass', is_flag=True, default=False,
-              help='Prompts for sudo password for package installations')
+              help='Prompts for sudo password for package installations.  \
+                    Only works with --use-shell')
+@click.option('--use-venv', is_flag=True, default=False,
+              help='Set if running linchpin setup from a virtual environment')
+@click.option('--use-shell', '--us', metavar='USE_SHELL', default=False,
+              is_flag=True, help='Use subprocess for linchpin run')
 @pass_context
-def setup(ctx, providers, ask_sudo_pass):
+def setup(ctx, providers, ask_sudo_pass, use_venv, use_shell):
     """
     Install the dependencies needed for the given provider(s).
 
@@ -682,6 +687,12 @@ def setup(ctx, providers, ask_sudo_pass):
     the dependencies for ALL providers.
     """
     lpcli.ctx.set_evar("ask_sudo_pass", ask_sudo_pass)
+    lpcli.ctx.set_evar("use_venv", use_venv)
+    if use_shell:
+        ctx.set_cfg("ansible", "use_shell", use_shell)
+    lpcli.ctx.no_monitor = True
+    lpcli.ctx.set_evar('no_monitor', True)
+
     return_code, output = lpcli.lp_setup(providers)
     return sys.exit(return_code)
 

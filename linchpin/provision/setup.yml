@@ -1,9 +1,10 @@
 ---
 - hosts: localhost
-  gather_facts: False
+  gather_facts: True
+  connection: local
   vars:
-    VENV_LIB_PATH: "lib/python2.7/site-packages"
-    PYTHON_LIB_PATH: "/usr/lib/python2.7/site-packages"
-    PYTHON_LIB64_PATH: "/usr/lib64/python2.7/site-packages"
+    VENV_LIB_PATH: "lib/python{{ ansible_python.version.major }}.{{  ansible_python.version.minor }}/site-packages"
+    PYTHON_LIB_PATH: "/usr/lib/python{{ ansible_python.version.major }}.{{  ansible_python.version.minor }}/site-packages"
+    PYTHON_LIB64_PATH: "/usr/lib64/python{{ ansible_python.version.major }}.{{  ansible_python.version.minor }}/site-packages"
   roles:
-  - role: dependencies
+  - role: setup

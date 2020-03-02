@@ -1,9 +1,10 @@
 
 - name: Create links for selinux libraries
   file:
-    src: "{{ PYTHON_LIB_PATH }}/yum"
-    dest: "{{ lookup('env','VIRTUAL_ENV') }}/{{ VENV_LIB_PATH }}/yum"
+    src: "{{ PYTHON_LIB_PATH }}/dnf"
+    dest: "{{ lookup('env','VIRTUAL_ENV') }}/{{ VENV_LIB_PATH }}/dnf"
     state: link
+    force: yes
 
 # cp -r /usr/lib64/python2.7/site-packages/librepo ~/.virtualenvs/lpdep14/lib/python2.7/site-packages/
 # cp -r /usr/lib64/python2.7/site-packages/libcomp ~/.virtualenvs/lpdep14/lib/python2.7/site-packages/
@@ -17,9 +18,10 @@
 
 - name: Create links for librepo
   file:
-    src: "{{ PYTHON_LIB64_PATH }}/{{ yum_pkg }}"
-    dest: "{{ lookup('env','VIRTUAL_ENV') }}/{{ VENV_LIB_PATH }}/{{ yum_pkg }}"
+    src: "{{ PYTHON_LIB64_PATH }}/{{ dnf_pkg }}"
+    dest: "{{ lookup('env','VIRTUAL_ENV') }}/{{ VENV_LIB_PATH }}/{{ dnf_pkg }}"
     state: link
+    force: yes
   with_items:
     - "librepo"
     - "libcomps"
@@ -29,8 +31,9 @@
     - "gpg"
     - "lzma.so"
     - "rpm"
+    - "libdnf"
   loop_control:
-    loop_var: yum_pkg
+    loop_var: dnf_pkg
 
 - name: Install iniparse
   pip:

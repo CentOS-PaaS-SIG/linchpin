@@ -474,12 +474,8 @@ class LinchpinCli(LinchpinAPI):
         :param providers:
             A tuple of providers to install dependencies
         """
-        if self.ctx.get_evar("ask_sudo_pass"):
-            output = self._invoke_playbooks(providers=providers,
-                                            action="ask_sudo_setup")
-        else:
-            output = self._invoke_playbooks(providers=providers,
-                                            action="setup")
+        output = self._invoke_playbooks(providers=providers,
+                                        action="setup")
 
         return output
 
