@@ -3,18 +3,17 @@ dependency:
   options:
     role-file: molecule/shared/requirements.yml
 driver:
-  name: docker
+  name: delegated
+  options:
+    managed: False
+    ansible_connection_options:
+      ansible_connection: local
 lint:
   name: yamllint
   options:
     config-file: tests/yamllint.yml
 platforms:
-  - name: openstack-f31
-    image: lp_fedora31:latest
-    pull: false
-  - name: openstack-f30
-    image: lp_fedora30:latest
-    pull: false
+  - name: openstack-delegated
 provisioner:
   name: ansible
   lint:
@@ -31,7 +30,7 @@ verifier:
   options:
     # Add a -v so you see the individual test names,
     # particularly useful with parameterized tests
-    vvv: true
+    v: true
   lint:
     name: flake8
   # Using the shared directory is useful for sharing tests across scenarios,

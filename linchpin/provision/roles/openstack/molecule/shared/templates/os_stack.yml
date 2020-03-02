@@ -1,0 +1,25 @@
+heat_template_version: 2013-05-23
+
+description: Simple template to deploy a single compute instance
+
+parameters:
+  flavor:
+    type: string
+    label: Instance Type
+    description: Flavor to be used
+    default: m1.small
+  tags:
+    type: string
+    label: metadata
+    description: test tags
+    default: testinstancelinchpin
+
+resources:
+  my_instance:
+    type: OS::Nova::Server
+    properties:
+      image: cirros
+      flavor: { get_param: flavor }
+      key_name: linchpin
+      networks:
+        - network: provider_net_cci_6 

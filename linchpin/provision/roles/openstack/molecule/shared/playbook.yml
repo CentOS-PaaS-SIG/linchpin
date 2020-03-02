@@ -1,5 +1,52 @@
-- name: converge
+- name: Test OpenStack Provision
   hosts: all
   roles:
     - role: openstack
+  pre_tasks:
+    - include_vars:
+        file: topo_data.yml
+    - set_fact:
+        resources: "{{ topo_data.resource_groups }}"
+  vars:
+    state: "present"
+    debug_mode: true
+    auth_debug: true
+    _async: false
+    uhash: "111111"
+    use_uhash: true
+    linchpin_mock: true
+    default_delimiter: '-'
+    default_ssh_key_path: "~"
+  post_tasks:
+    - name: "Create topology_outputs var"
+      set_fact:
+        topology_outputs: []
+        topology_name: "{{ topo_data.topology_name }}"
+    - name: "Aggregate topology outputs"
+      set_fact:
+        topology_outputs: "{{ topology_outputs }} + {{ lookup('vars', item) }}"
+      loop: "{{ lookup('varnames', '^topology_outputs_').split(',') }}"
+      when: item|length > 0
+    - name: "Generate resources file for destroy test"
+      copy:
+        content: "{{ topology_outputs }}"
+        dest: "/tmp/{{ topology_name }}.output"
+
+- name: Test OpenStack Teardown
+  hosts: all
+  roles:
+    - role: openstack
+  pre_tasks:
+    - include_vars:
+        file: topo_data.yml
+  vars:
+    state: "absent"
+    debug_mode: true
+    auth_debug: true
+    _async: false
+    uhash: "111111"
+    linchpin_mock: true
+    generate_resources: true
+    default_resources_path: "/tmp"
+    default_ssh_key_path: "~"
   post_tasks: []

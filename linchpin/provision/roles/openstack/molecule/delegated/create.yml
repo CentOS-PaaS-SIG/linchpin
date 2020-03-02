@@ -1,0 +1,6 @@
+- name: Create
+  hosts: all
+  tasks:
+    - name: "Create molecule instances"
+      debug:
+        msg: "Creating..."
