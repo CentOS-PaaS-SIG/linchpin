@@ -113,6 +113,7 @@ class Validator(object):
             except SchemaError as e:
                 error = self._format_error(err_prefix, e)
                 results['layout'] = error + '\n'
+                return_code += 1
             else:
                 results['layout'] = "valid"
 
@@ -123,6 +124,7 @@ class Validator(object):
             except SchemaError as e:
                 error = self._format_error(err_prefix, e)
                 results['cfgs'] = error + '\n'
+                return_code += 1
             else:
                 results['cfgs'] = "valid"
 
