@@ -2,7 +2,7 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 from ansible.plugins.action import ActionBase
-import linchpin.MockUtils.MockUtils as mock_utils
+# import linchpin.MockUtils.MockUtils as mock_utils
 
 
 class ActionModule(ActionBase):
@@ -16,7 +16,7 @@ class ActionModule(ActionBase):
         linchpin_mock = task_vars['vars'].get('linchpin_mock',
                                               False)
 
-        up = task_vars['vars'].get('state', 'present') is 'present'
+        up = task_vars['vars'].get('state', 'present') == 'present'
         # return {} for now
         if up and linchpin_mock:
             return {}

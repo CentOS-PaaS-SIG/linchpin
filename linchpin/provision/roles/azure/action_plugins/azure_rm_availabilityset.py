@@ -15,8 +15,7 @@ class ActionModule(ActionBase):
         module_args = self._task.args.copy()
         linchpin_mock = task_vars['vars'].get('linchpin_mock',
                                               False)
-        
-        up = task_vars['vars'].get('state', 'present') is 'present'
+        up = task_vars['vars'].get('state', 'present') == 'present'
         if up and linchpin_mock:
             return mock_utils.get_mock_data(module_args,
                                             "azure_availabilityset.present")
