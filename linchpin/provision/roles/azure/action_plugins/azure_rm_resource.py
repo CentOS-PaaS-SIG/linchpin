@@ -17,12 +17,17 @@ class ActionModule(ActionBase):
                                               False)
 
         up = task_vars['vars'].get('state', 'present')
+
+
+        # return {} for now
         if up and linchpin_mock:
-            return mock_utils.get_mock_data(module_args,
-                                            "azure_api.present")
+            return {}
+            # return mock_utils.get_mock_data(module_args,
+            #                                 "azure_api.present")
         elif not up and linchpin_mock:
-            return mock_utils.get_mock_data(module_args,
-                                            "azure_api.absent")
+            return {}
+            # return mock_utils.get_mock_data(module_args,
+            #                                 "azure_api.absent")
 
         module_return = self._execute_module(module_args=module_args,
                                              task_vars=task_vars, tmp=tmp)
