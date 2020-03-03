@@ -16,7 +16,7 @@ class ActionModule(ActionBase):
         linchpin_mock = task_vars['vars'].get('linchpin_mock',
                                               False)
 
-        up = task_vars['vars'].get('state', 'present')
+        up = task_vars['vars'].get('state', 'present') is 'present'
         if up and linchpin_mock:
             return mock_utils.get_mock_data(module_args,
                                             "azure_resource_group.present")

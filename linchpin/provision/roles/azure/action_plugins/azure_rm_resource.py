@@ -16,9 +16,7 @@ class ActionModule(ActionBase):
         linchpin_mock = task_vars['vars'].get('linchpin_mock',
                                               False)
 
-        up = task_vars['vars'].get('state', 'present')
-
-
+        up = task_vars['vars'].get('state', 'present') is 'present'
         # return {} for now
         if up and linchpin_mock:
             return {}

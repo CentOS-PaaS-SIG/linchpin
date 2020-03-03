@@ -16,13 +16,13 @@ class ActionModule(ActionBase):
         linchpin_mock = task_vars['vars'].get('linchpin_mock',
                                               False)
 
-        up = task_vars['vars'].get('state', 'present')
+        up = task_vars['vars'].get('state', 'present') is 'present'
         if up and linchpin_mock:
             return mock_utils.get_mock_data(module_args,
-                                            "azure_publicipaddress.present")
+                                            "azure_publicaddress.present")
         elif not up and linchpin_mock:
             return mock_utils.get_mock_data(module_args,
-                                            "azure_publicipaddress.absent")
+                                            "azure_publicaddress.absent")
 
         module_return = self._execute_module(module_args=module_args,
                                              task_vars=task_vars, tmp=tmp)
