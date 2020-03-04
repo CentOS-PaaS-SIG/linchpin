@@ -266,7 +266,7 @@ def execute_test(String podname, String container) {
             currentStage = container + "-install"
             stage(currentStage) {
                 dir('linchpin') {
-                  if (container == 'centos7' || container == 'fedora30'){
+                  if (container == 'centos7'){
                   pipelineUtils.executeInContainer(currentStage,
                                                    container,
                                                    "./config/Dockerfiles/linchpin-install-centos7.sh")
