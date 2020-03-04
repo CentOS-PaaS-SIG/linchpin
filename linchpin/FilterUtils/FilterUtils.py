@@ -280,7 +280,7 @@ def fetch_beaker_job_ids(topo_out):
 def get_os_server_names(topo_output):
     names = []
     for item in topo_output:
-        if item["role"] == "os_server":
+        if item.get('role', None) == "os_server":
             openstack_res = item.get("openstack", [])
             for os_item in openstack_res:
                 names.append(os_item["name"])

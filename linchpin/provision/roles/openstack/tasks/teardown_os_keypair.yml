@@ -20,9 +20,9 @@
   set_fact:
     topology_outputs_os_keypair: "{{ topology_outputs_os_keypair +
                                      [res_def_output_nasync] }}"
-  when: state == "present"
-        res_def_output_nasync['changed']
-        and not _async
+  when: state == "present" and 
+        res_def_output_nasync['changed'] and
+        not _async
 
 - name: "Async:: provisioning/deprovisioning  keypair"
   os_keypair:

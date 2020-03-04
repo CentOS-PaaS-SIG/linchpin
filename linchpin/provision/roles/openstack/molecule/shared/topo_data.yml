@@ -1,0 +1,52 @@
+topo_data:
+  topology_name: "openstack-testdata"
+  resource_groups:
+    - resource_group_name: "openstack"
+      resource_group_type: "openstack"
+      resource_definitions:
+        - name: "ci-lp-cp-database"
+          role: os_server
+          flavor: m1.small
+          image: CentOS-7-x86_64-GenericCloud-1612
+          count: 1
+          keypair: linchpin
+          networks:
+            - provider_net_cci_6
+        - role: "os_heat"
+          name: ci-lp-test
+          template_path: "molecule/shared/templates/os_stack.yml"
+          tag: "testtag"
+        - name: lp-net
+          role: os_network
+        - name: lp-sub
+          role: os_subnet
+          network_name: lp-net
+          cidr: 172.16.180.0/24
+          dns_nameservers:
+            - 8.8.8.8
+        - name: lp-route
+          role: os_router
+          network: provider_net_cci_5
+          interfaces:
+            - net: lp-net
+              subnet: lp-sub
+              portip: 172.16.180.1
+        - name: "ci-lp-cp-security_group"
+          role: os_sg
+          description: Openstack Security Group with ssh access
+          rules:
+            - rule_type: "inbound"
+              from_port: 22
+              to_port: 22
+              proto: "tcp"
+              cidr_ip: "0.0.0.0/0"
+            - rule_type: "outbound"
+              from_port: 22
+              to_port: 22
+              proto: "tcp"
+              cidr_ip: "0.0.0.0/0"
+        - name: "ci-lp-cp-volume"
+          role: os_volume
+          size: 2
+        - name: "ci-lp-cp-key"
+          role: os_keypair
