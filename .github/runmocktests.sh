@@ -40,6 +40,13 @@ linchpin -vvvv up;
 linchpin -vvvv destroy;
 cd ..;
 
+echo "RUNNING Azure MOCK TESTS";
+linchpin init azure;
+cd azure;
+linchpin -vvvv up
+linchpin -vvvv destroy;
+cd ..;
+
 linchpin init gcloud;
 cd gcloud;
 linchpin -vvvv up
