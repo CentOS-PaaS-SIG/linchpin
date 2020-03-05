@@ -1,4 +1,4 @@
-name: "multicontainer testing: Testing container matrix"
+name: "multicontainer Testing on container matrix"
 
 on: [push, pull_request]
 
@@ -28,8 +28,23 @@ jobs:
     - name: Run unit tests
       run: |
         python3 setup.py test
-    - name: Run mock tests
+    - name: Run AWS mock tests
       run: |
-        chmod +x ./.github/runmocktests.sh
-        ./.github/runmocktests.sh    
+        chmod +x ./.github/run_aws_mocktests.sh
+        ./.github/run_aws_mocktests.sh
+    - name: Run Openstack mock tests
+      run: |
+        chmod +x ./.github/run_openstack_mocktests.sh
+        ./.github/run_openstack_mocktests.sh
+    - name: Run beaker mock tests
+      run: |
+         chmod +x ./.github/run_beaker_mocktests.sh
+         ./.github/run_beaker_mocktests.sh
+    - name: Run gcloud mock tests
+      run: |
+        chmod +x ./.github/run_gcloud_mocktests.sh
+        ./.github/run_gcloud_mocktests.sh
+
+
+
 

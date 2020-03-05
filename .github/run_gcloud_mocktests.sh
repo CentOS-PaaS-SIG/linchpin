@@ -27,35 +27,10 @@ locale -a;
 echo $LC_ALL;
 export $LANG;
 
-echo "RUNNING AWS MOCK TESTS";
-
-linchpin init aws;
-cd aws;
-linchpin -vvvv up;
-linchpin -vvvv destroy;
-cd ..;
-linchpin init openstack;
-cd openstack;
-linchpin -vvvv up;
-linchpin -vvvv destroy;
-cd ..;
-
-echo "RUNNING Azure MOCK TESTS";
-linchpin init azure;
-cd azure;
-linchpin -vvvv up
-linchpin -vvvv destroy;
-cd ..;
+echo "RUNNING Gcloud MOCK TESTS";
 
 linchpin init gcloud;
 cd gcloud;
-linchpin -vvvv up
-linchpin -vvvv destroy;
-cd ..;
-
-
-linchpin init beaker;
-cd beaker;
 linchpin -vvvv up
 linchpin -vvvv destroy;
 cd ..;
