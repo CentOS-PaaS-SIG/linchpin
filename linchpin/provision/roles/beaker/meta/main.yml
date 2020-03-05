@@ -13,9 +13,8 @@ galaxy_info:
       versions:
         - 30
         - 31
-  
+
   galaxy_tags:
     - oasis
     - linchpin
     - beaker
-

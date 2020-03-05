@@ -1,6 +1,4 @@
----
 # This playbook will provision beaker resources.
-
 - name: "allocate beaker outputs"
   set_fact:
     topology_outputs_beaker_server: []
@@ -12,7 +10,6 @@
   with_items:
     - "{{ resources }}"
   when: state == "present"
-  check_mode: "{{ _check_mode }}"
 
 - name: "Initiating Teardown of beaker resource group"
   include_tasks: teardown_resource_group.yml

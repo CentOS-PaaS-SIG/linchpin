@@ -6,5 +6,6 @@
 
 - name: "append beaker outputs"
   set_fact:
-    topology_outputs_beaker_server: "{{ topology_outputs_beaker_server + item.hosts }}"
+    topology_outputs_beaker_server: "{{ topology_outputs_beaker_server +
+                                        item.hosts }}"
   with_items: "{{ _topology_outputs_beaker_server.results }}"
