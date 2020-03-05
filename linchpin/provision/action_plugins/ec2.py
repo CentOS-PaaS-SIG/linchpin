@@ -23,6 +23,15 @@ class ActionModule(ActionBase):
 
     def run(self, tmp=None, task_vars=None):
 
+        module_args = self._task.args.copy()
+        if task_vars is None:
+            task_vars = dict()
+        linchpin_mock = task_vars['vars'].get('linchpin_mock',
+                                              False)
+        if linchpin_mock:
+            return mock_utils.get_mock_data(module_args,
+                                            "ec2")
+
         vm = self._task.get_variable_manager()
         if vm.extra_vars.get('no_monitor', False):
             def get_dict(context, key):
@@ -108,15 +117,6 @@ class ActionModule(ActionBase):
                     socket.recv_string()
 
             return result
-        module_args = self._task.args.copy()
-        if task_vars is None:
-            task_vars = dict()
-        linchpin_mock = task_vars['vars'].get('linchpin_mock',
-                                              False)
-        if linchpin_mock:
-            return mock_utils.get_mock_data(module_args,
-                                            "ec2")
-
         module_return = self._execute_module(module_args=module_args,
                                              task_vars=task_vars,
                                              tmp=tmp)

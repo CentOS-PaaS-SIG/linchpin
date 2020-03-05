@@ -17,6 +17,7 @@ fi
 linchpin --version;
 
 mkdir /tmp/workspace/;
+mkdir /root/.ssh/;
 
 cd /tmp/workspace/;
 
@@ -31,5 +32,44 @@ echo "RUNNING AWS MOCK TESTS";
 
 linchpin init aws;
 cd aws;
-linchpin -vvvv up;
-linchpin -vvvv destroy;
+linchpin -vvvv up aws-ec2-new;
+linchpin -vvvv destroy aws-ec2-new;
+
+linchpin -vvvv up aws-ec2-new;
+linchpin -vvvv destroy aws-ec2-new;
+
+linchpin -vvvv up aws-ec2-key-new;
+linchpin -vvvv destroy aws-ec2--key-new;
+
+linchpin -vvvv up aws-sg-new;
+linchpin -vvvv destroy aws-sg-new;
+
+linchpin -vvvv up aws-s3-new;
+linchpin -vvvv destroy aws-s3-new;
+
+linchpin -vvvv up aws-ec2-eip;
+linchpin -vvvv destroy aws-ec2-eip;
+
+linchpin -vvvv up aws-ec2-vpc-net;
+linchpin -vvvv destroy aws-ec2-vpc-net;
+
+linchpin -vvvv up aws-ec2-vpc-subnet;
+linchpin -vvvv destroy aws-ec2-vpc-subnet;
+
+linchpin -vvvv up aws-ec2-vpc-routetable;
+linchpin -vvvv destroy aws-ec2-vpc-routetable;
+
+
+linchpin -vvvv up aws-ec2-elb-lb;
+linchpin -vvvv destroy aws-ec2-elb-lb;
+
+
+linchpin -vvvv up aws-ec2-template;
+linchpin -vvvv destroy aws-ec2-template;
+
+
+
+
+
+
+
