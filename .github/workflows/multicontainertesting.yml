@@ -25,6 +25,7 @@ jobs:
         pip3 install pytest-runner
         pip3 install .[tests]
         pip3 install .[azure]
+        pip3 install .[libvirt]
         pip3 install zipp>=0.5
         yum install -y nodejs ruby
     - name: Run unit tests
@@ -36,6 +37,10 @@ jobs:
     - name: Run code complexity tests
       run: |
         radon cc -s --min C ./linchpin
+    - name: Run libvirt mock tests
+      run: |
+        chmod +x ./.github/run_libvirt_mocktests.sh
+        ./.github/run_libvirt_mocktests.sh
     - name: Run AWS mock tests
       run: |
         chmod +x ./.github/run_aws_mocktests.sh

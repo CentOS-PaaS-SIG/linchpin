@@ -73,10 +73,6 @@
   register: ismt
   when: lismt.stat.mimetype == "application/x-xz"
 
-  #- name: "DEBUG: ismt"
-  #  debug:
-  #    var: ismt
-
 - name: uncompress xz local_image_src
   command: "xz -d --keep --force {{ local_image_src }}"
   become: "{{ libvirt_become }}"
