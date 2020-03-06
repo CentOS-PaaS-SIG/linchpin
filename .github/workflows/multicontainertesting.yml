@@ -23,11 +23,14 @@ jobs:
         pip3 install -r requirements.txt
         pip3 install pytest
         pip3 install pytest-runner
-        pip3 install .[test]
+        pip3 install .[tests]
         pip3 install zipp>=0.5
     - name: Run unit tests
       run: |
-        python3 setup.py test
+        coverage run --include "linchpin/*" setup.py test
+    - name: Report on code coverage
+      run: |
+        coverage report
     - name: Run AWS mock tests
       run: |
         chmod +x ./.github/run_aws_mocktests.sh

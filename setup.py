@@ -54,7 +54,7 @@ setup(
         'beaker': ['beaker-client>=27.0', 'bottle'],
         'docs': ["docutils", "sphinx", "sphinx_rtd_theme", "sphinx-automodapi"],
         'tests': ["nose", "mock", "coverage", "flake8",
-                  "pytest<=4.4.0", "pytest-runner"],
+                  "pytest<=4.4.0", "pytest-runner", "coverage"],
         'libvirt': ["libvirt-python>=3.0.0", "lxml"],
         'vmware': ["PyVmomi>=6.7.1"],
         'docker': ["docker-py>=1.7.0"],
