@@ -50,3 +50,6 @@ docs/source/examples/workspace/dummy-data.yml
 
 # do not upload secure data
 docs/source/examples/workspaces/**/credentials
+
+# ignore results of coverage tests
+htmlcov
