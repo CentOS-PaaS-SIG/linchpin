@@ -1,9 +1,8 @@
 - name: "Provision/Teardown gcloud_gcdns_zone"
   gcp_dns_managed_zone:
-    auth_kind: "{{ res_def['auth_kind'] | default('service_account') }}"
     description: "{{ res_def['description'] }}"
     dns_name: "{{ res_def['dns_name'] }}"
-    dnssec_config: "{{ res_def['dnssec_config'] | default(omit) }}" 
+    dnssec_config: "{{ res_def['dnssec_config'] | default(omit) }}"
     env_type: "{{ res_def['env_type'] | default(omit) }}"
     labels: "{{ res_def['labels'] | default(omit) }}"
     name: "{{ res_def['name'] }}"

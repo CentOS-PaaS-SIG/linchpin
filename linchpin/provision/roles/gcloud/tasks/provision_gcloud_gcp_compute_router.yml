@@ -5,7 +5,7 @@
     project: "{{ auth_var['output']['project_id'] | default(omit) }}"
     auth_kind: "{{ auth_var['output']['auth_kind'] | default('serviceaccount')  }}"
     scopes: "{{ res_def['scopes'] | default(['https://www.googleapis.com/auth/compute']) }}"
-    service_account_file: "{{ auth_var['path'] | default(omit) }}/{{ auth_var['params']['filename'] | default(omit) }}" 
+    service_account_file: "{{ auth_var['path'] | default(omit) }}/{{ auth_var['params']['filename'] | default(omit) }}"
   register: network_facts_fetched
 
 - name: "Provision/Teardown gcloud_gcp_compute_router"

@@ -1,4 +1,3 @@
-
 - name: "Provision/Teardown resource by looping on count"
   gce:
     name: "{{ gce_resource_name }}"

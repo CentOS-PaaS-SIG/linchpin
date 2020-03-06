@@ -1,12 +1,11 @@
 - name: "Provision/Teardown gcloud_gcdns_zone"
   gcdns_zone:
     zone: "{{ res_def['zone'] | default(res_def['name']) }}"
-    pem_file:  "{{ auth_var['output']['pem_file'] | default(omit) }}"
+    pem_file: "{{ auth_var['output']['pem_file'] | default(omit) }}"
     project_id: "{{ auth_var['output']['project_id'] | default(omit) }}"
     credentials_file: "{{ auth_var['path'] | default(omit) }}/{{ auth_var['params']['filename'] | default(omit) }}"
     state: "{{ state }}"
     service_account_email: "{{ auth_var['output']['client_email'] | default(omit) }}"
-    state: "{{ state }}"
     description: "{{ res_def['description'] | default(omit) }}"
   register: res_def_output
   no_log: "{{ not debug_mode }}"

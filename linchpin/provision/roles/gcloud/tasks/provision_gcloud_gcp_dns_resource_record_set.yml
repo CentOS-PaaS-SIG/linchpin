@@ -15,7 +15,6 @@
     env_type: "{{ res_def['env_type'] | default(omit) }}"
     project: "{{ auth_var['output']['project_id'] | default(omit) }}"
     scopes: "{{ res_def['scopes'] | default(omit) }}"
-    name: "{{ res_def['name'] }}"
     service_account_email: "{{ auth_var['output']['service_account_email'] | default(omit) }}"
     service_account_file: "{{ auth_var['path'] | default(omit) }}/{{ auth_var['params']['filename'] | default(omit) }}"
     state: "{{ state }}"
