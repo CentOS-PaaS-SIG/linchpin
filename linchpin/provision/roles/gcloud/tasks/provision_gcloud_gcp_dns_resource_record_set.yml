@@ -3,20 +3,25 @@
   gcp_dns_managed_zone_info:
     dns_name: "{{ res_def['managed_zone_dns'] }}"
     project: "{{ auth_var['output']['project_id'] | default(omit) }}"
-    auth_kind: "{{ auth_var['output']['auth_kind'] | default('serviceaccount') }}"
-    service_account_file: "{{ auth_var['path'] | default(omit) }}/{{ auth_var['params']['filename'] | default(omit) }}"
+    auth_kind: "{{ auth_var['output']['auth_kind'] |\
+                default('serviceaccount') }}"
+    service_account_file: "{{ auth_var['path'] | default(omit) }}/\
+                           {{ auth_var['params']['filename'] | default(omit) }}"
   register: managed_zone_info
 
 - name: "Provision/Teardown gcp_dns_resource_record_set"
   gcp_dns_resource_record_set:
     name: "{{ res_def['name'] }}"
     managed_zone: "{{ managed_zone_info['resources'][0] }}"
-    auth_kind: "{{ auth_var['output']['auth_kind'] | default('serviceaccount') }}"
+    auth_kind: "{{ auth_var['output']['auth_kind'] |\
+                default('serviceaccount') }}"
     env_type: "{{ res_def['env_type'] | default(omit) }}"
     project: "{{ auth_var['output']['project_id'] | default(omit) }}"
     scopes: "{{ res_def['scopes'] | default(omit) }}"
-    service_account_email: "{{ auth_var['output']['service_account_email'] | default(omit) }}"
-    service_account_file: "{{ auth_var['path'] | default(omit) }}/{{ auth_var['params']['filename'] | default(omit) }}"
+    service_account_email: "{{ auth_var['output']['service_account_email'] |\
+                            default(omit) }}"
+    service_account_file: "{{ auth_var['path'] | default(omit) }}/\
+                           {{ auth_var['params']['filename'] | default(omit) }}"
     state: "{{ state }}"
     ttl: "{{ res_def['ttl'] | default(omit) }}"
     target: "{{ res_def['target'] | default(omit) }}"
@@ -26,10 +31,13 @@
 
 - name: "Appending outputitem to topology_outputs"
   set_fact:
-    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce + [res_def_output] }}"
+    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce +\
+                                  [res_def_output] }}"
   when: not _async and state == 'present'
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce | add_res_data(res_grp_type, res_def['role']) }}"
+    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce |\
+                                  add_res_data(res_grp_type,\
+                                  res_def['role']) }}"
   when: state == 'present'

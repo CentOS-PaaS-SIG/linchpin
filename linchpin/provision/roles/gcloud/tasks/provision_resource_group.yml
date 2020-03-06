@@ -50,7 +50,8 @@
     res_grp_name: "{{ res_item.1 }}"
     res_grp_type: "{{ res_item.2 }}"
   with_nested:
-    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) | filter_list_by_attr_val('role', 'gcloud_gce_eip') }}"
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) |\
+       filter_list_by_attr_val('role', 'gcloud_gce_eip') }}"
     - ["{{ res_grp['resource_group_name'] }}"]
     - ["{{ res_grp['resource_group_type'] }}"]
   loop_control:
@@ -63,7 +64,8 @@
     res_def: "{{ res_item.0 }}"
     res_grp_name: "{{ res_item.1 }}"
   with_nested:
-    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) | filter_list_by_attr_val('role', 'gcloud_gcdns_record') }}"
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) |\
+       filter_list_by_attr_val('role', 'gcloud_gcdns_record') }}"
     - ["{{ res_grp['resource_group_name'] }}"]
   loop_control:
     loop_var: res_item
@@ -79,7 +81,8 @@
     res_def: "{{ res_item.0 }}"
     res_grp_name: "{{ res_item.1 }}"
   with_nested:
-    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) | filter_list_by_attr_val('role', 'gcloud_gcdns_zone') }}"
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) |\
+       filter_list_by_attr_val('role', 'gcloud_gcdns_zone') }}"
     - ["{{ res_grp['resource_group_name'] }}"]
   loop_control:
     loop_var: res_item
@@ -91,7 +94,8 @@
     res_def: "{{ res_item.0 }}"
     res_grp_name: "{{ res_item.1 }}"
   with_nested:
-    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) | filter_list_by_attr_val('role', 'gcloud_gcp_compute_router') }}"
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) |\
+       filter_list_by_attr_val('role', 'gcloud_gcp_compute_router') }}"
     - ["{{ res_grp['resource_group_name'] }}"]
   loop_control:
     loop_var: res_item
@@ -103,7 +107,8 @@
     res_def: "{{ res_item.0 }}"
     res_grp_name: "{{ res_item.1 }}"
   with_nested:
-    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) | filter_list_by_attr_val('role', 'gcloud_gce_net') }}"
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) |\
+       filter_list_by_attr_val('role', 'gcloud_gce_net') }}"
     - ["{{ res_grp['resource_group_name'] }}"]
   loop_control:
     loop_var: res_item
@@ -115,7 +120,8 @@
     res_def: "{{ res_item.0 }}"
     res_grp_name: "{{ res_item.1 }}"
   with_nested:
-    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) | filter_list_by_attr_val('role', 'gcloud_gce') }}"
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) |\
+       filter_list_by_attr_val('role', 'gcloud_gce') }}"
     - ["{{ res_grp['resource_group_name'] }}"]
   loop_control:
     loop_var: res_item
@@ -127,7 +133,8 @@
     res_def: "{{ res_item.0 }}"
     res_grp_name: "{{ res_item.1 }}"
   with_nested:
-    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) | filter_list_by_attr_val('role', 'gcloud_gcp_compute_network') }}"
+    - "{{ res_grp['res_defs'] | default(res_grp['resource_definitions']) |\
+       filter_list_by_attr_val('role', 'gcloud_gcp_compute_network') }}"
     - ["{{ res_grp['resource_group_name'] }}"]
   loop_control:
     loop_var: res_item

@@ -2,17 +2,22 @@
   gcp_dns_managed_zone:
     description: "{{ res_def['description'] }}"
     dns_name: "{{ res_def['dns_name'] }}"
-    dnssec_config: "{{ res_def['dnssec_config'] | default(omit) }}"
+    dnssec_config: "{{ res_def['dnssec_config'] |\
+                    default(omit) }}"
     env_type: "{{ res_def['env_type'] | default(omit) }}"
     labels: "{{ res_def['labels'] | default(omit) }}"
     name: "{{ res_def['name'] }}"
     name_server_set: "{{ res_def['name_server_set'] | default(omit) }}"
-    private_visibility_config: "{{ res_def['private_visibility_config'] | default(omit) }}"
+    private_visibility_config: "{{ res_def['private_visibility_config'] |\
+                                default(omit) }}"
     scopes: "{{ res_def['scopes'] | default(omit) }}"
-    service_account_email: "{{ auth_var['output']['service_account_email'] | default(omit) }}"
+    service_account_email: "{{ auth_var['output']['service_account_email'] |\
+                            default(omit) }}"
     project: "{{ auth_var['output']['project_id'] | default(omit) }}"
-    auth_kind: "{{ auth_var['output']['auth_kind'] | default('serviceaccount') }}"
-    service_account_file: "{{ auth_var['path'] | default(omit) }}/{{ auth_var['params']['filename'] | default(omit) }}"
+    auth_kind: "{{ auth_var['output']['auth_kind'] |\
+                default('serviceaccount') }}"
+    service_account_file: "{{ auth_var['path'] | default(omit) }}/\
+                           {{ auth_var['params']['filename'] | default(omit) }}"
     state: "{{ state }}"
     visibility: "{{ res_def['visibility'] | default(omit) }}"
   register: res_def_output
@@ -20,10 +25,13 @@
 
 - name: "Appending outputitem to topology_outputs"
   set_fact:
-    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce + [res_def_output] }}"
+    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce +\
+                                  [res_def_output] }}"
   when: not _async and state == 'present'
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce | add_res_data(res_grp_type, res_def['role']) }}"
+    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce |\
+                                  add_res_data(res_grp_type,\
+                                  res_def['role']) }}"
   when: state == 'present'
