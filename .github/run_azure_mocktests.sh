@@ -26,11 +26,9 @@ locale -a;
 
 echo $LC_ALL;
 export $LANG;
-
-echo "RUNNING Openstack MOCK TESTS";
-
-linchpin init openstack;
-cd openstack;
-linchpin -vvvv up;
+echo "RUNNING Azure MOCK TESTS";
+linchpin init azure;
+cd azure;
+linchpin -vvvv up
 linchpin -vvvv destroy;
 cd ..;

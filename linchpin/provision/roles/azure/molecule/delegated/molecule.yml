@@ -1,0 +1,40 @@
+dependency:
+  name: galaxy
+  options:
+    role-file: molecule/shared/requirements.yml
+driver:
+  name: delegated
+  options:
+    managed: False
+    ansible_connection_options:
+      ansible_connection: local
+lint:
+  name: yamllint
+  options:
+    config-file: tests/yamllint.yml
+platforms:
+  - name: azure-delegated
+provisioner:
+  name: ansible
+  lint:
+    name: ansible-lint
+  playbooks:
+    prepare: ../shared/prepare.yml
+    converge: ../shared/playbook.yml
+    cleanup: ../shared/cleanup.yml
+  config_options:
+    defaults:
+      stdout_callback: yaml
+verifier:
+  name: testinfra
+  options:
+    # Add a -v so you see the individual test names,
+    # particularly useful with parameterized tests
+    v: true
+  lint:
+    name: flake8
+  # Using the shared directory is useful for sharing tests across scenarios,
+  # but is not a requirement. For scenario specific tests, add the appropriate
+  # file path to the test or test directory below
+  additional_files_or_dirs:
+    - ../../shared/tests

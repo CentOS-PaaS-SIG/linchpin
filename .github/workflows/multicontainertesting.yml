@@ -47,7 +47,10 @@ jobs:
       run: |
         chmod +x ./.github/run_gcloud_mocktests.sh
         ./.github/run_gcloud_mocktests.sh
-
+    - name: Run azure mock tests
+      run: |
+        chmod +x ./.github/run_azure_mocktests.sh
+        ./.github/run_azure_mocktests.sh
 
 
 
