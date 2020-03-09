@@ -3,9 +3,11 @@
   roles:
     - role: openstack
   pre_tasks:
-    - include_vars:
+    - name: include resource data
+      include_vars:
         file: topo_data.yml
-    - set_fact:
+    - name: set topo_data to resources variable
+      set_fact:
         resources: "{{ topo_data.resource_groups }}"
   vars:
     state: "present"
@@ -37,7 +39,8 @@
   roles:
     - role: openstack
   pre_tasks:
-    - include_vars:
+    - name: include resource data for teardown
+      include_vars:
         file: topo_data.yml
   vars:
     state: "absent"

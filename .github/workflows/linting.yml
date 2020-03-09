@@ -30,3 +30,7 @@ jobs:
       run: |
         cd ./linchpin/provision/roles/aws
         molecule lint -s delegated
+    - name: "Execute linting for OpenStack role"
+      run: |
+        cd ./linchpin/provision/roles/openstack
+        molecule lint -s delegated
