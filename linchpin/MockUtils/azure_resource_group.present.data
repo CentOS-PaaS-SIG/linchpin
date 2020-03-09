@@ -1,1 +1,0 @@
-{"changed": true, "contains_resources": false, "state": {"id": "/subscriptions/dcc74c29-4db6-4c49-9a0f-ac0ee03fa17e/resourceGroups/linchpin-mock-resgrp", "name": "linchpin-mock-resgrp", "location": "centralus", "tags": null, "provisioning_state": "Succeeded"}, "failed": false}

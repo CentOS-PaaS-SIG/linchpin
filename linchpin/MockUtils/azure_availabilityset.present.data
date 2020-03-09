@@ -1,1 +1,0 @@
-{"changed": true, "state": {"id": "/subscriptions/dcc74c29-4db6-4c49-9a0f-ac0ee03fa17e/resourceGroups/linchpin-mock-resgrp/providers/Microsoft.Compute/availabilitySets/linchpin-mock-avset", "name": "linchpin-mock-avset", "location": "centralus", "platform_update_domain_count": 3, "platform_fault_domain_count": 3, "tags": null, "sku": "Classic"}, "failed": false}
