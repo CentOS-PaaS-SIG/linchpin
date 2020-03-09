@@ -31,6 +31,9 @@ jobs:
     - name: Report on code coverage
       run: |
         coverage report
+    - name: Run code complexity tests
+      run: |
+        radon cc -s --min C ./linchpin
     - name: Run AWS mock tests
       run: |
         chmod +x ./.github/run_aws_mocktests.sh
