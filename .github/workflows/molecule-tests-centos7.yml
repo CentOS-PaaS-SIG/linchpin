@@ -1,0 +1,35 @@
+name: "Molecule tests: testing ansible roles"
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build on ${{ matrix.container }}
+    runs-on: ubuntu-latest
+    container: ${{ matrix.container }}
+    strategy:
+      matrix:
+        container: ['centos:7',]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          chmod +x ./.github/install_dependencies.sh
+          ./.github/install_dependencies.sh
+      - name: Install pip dependencies
+        run: |
+          pip3 install -r requirements.txt
+          pip3 install .[tests]
+          pip3 install molecule[delegated]
+          pip3 install zipp>=0.5
+      - name: "Execute AWS molecule tests"
+        env:
+          LC_ALL: en_US.utf8
+          LANG: en_US.utf8
+        run: |
+          # make sure we're using python 3
+          ln -sf /usr/bin/python3 /usr/bin/python
+          cd ./linchpin/provision/roles/aws
+          molecule converge -s delegated
+          molecule destroy -s delegated

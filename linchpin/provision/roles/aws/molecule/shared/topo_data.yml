@@ -69,29 +69,30 @@ topo_data:
             this: alsoworks
           subnets:
             - 'demo_vpc_subnet_r'
-#        - name: demo_ec2_vpc_ep
-#          role: aws_ec2_vpc_endpoint
-#          region: ca-central-1
-#          vpc_name: demo_vpc_net_ep
-#          service: com.amazonaws.ca-central-1.s3
-#          route_table_name: demo_routetable_ep
-#        - name: demo_vpc_nat_gateway_ci_lp
-#          role: aws_ec2_vpc_nat_gateway
-#          region: ca-central-1
-#          subnet_filters:
-#            "tag:module": ec2vpcnatgateway_demo
-#            "tag:distro": fedora
+        #        - name: demo_ec2_vpc_ep
+        #          role: aws_ec2_vpc_endpoint
+        #          region: ca-central-1
+        #          vpc_name: demo_vpc_net_ep
+        #          service: com.amazonaws.ca-central-1.s3
+        #          route_table_name: demo_routetable_ep
+        #        - name: demo_vpc_nat_gateway_ci_lp
+        #          role: aws_ec2_vpc_nat_gateway
+        #          region: ca-central-1
+        #          subnet_filters:
+        #            "tag:module": ec2vpcnatgateway_demo
+        #            "tag:distro": fedora
         - name: "fedora-demoec2elblbcilp"
           role: aws_ec2_elb_lb
           region: "ca-central-1'"
           zones:
-          - ca-central-1a
-          - ca-central-1b
+            - ca-central-1a
+            - ca-central-1b
           listeners:
-          - protocol: http # options are http, https, ssl, tcp
-            load_balancer_port: 80
-            instance_port: 80
-            proxy_protocol: True
+            # options are http, https, ssl, tcp
+            - protocol: http
+              load_balancer_port: 80
+              instance_port: 80
+              proxy_protocol: true
         - name: demo_vpc_internet_gateway
           role: aws_ec2_vpc_internet_gateway
           region: ca-central-1
