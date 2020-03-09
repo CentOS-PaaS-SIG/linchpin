@@ -1,0 +1,65 @@
+name: "Build packages"
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+  pull_request:
+  release:
+    types:
+      - published
+
+jobs:
+  rpm:
+    name: Build RPM package
+    runs-on: ubuntu-latest
+    container: fedora:31
+    steps:
+      - uses: actions/checkout@v2
+      - run: dnf install -y python3-pip rpmdevtools rpm-build git gcc krb5-devel python3-devel
+      - run: pip install --user rpmvenv
+      - run: rpmdev-setuptree
+      - run: python3 setup.py sdist -d "${HOME}/rpmbuild/SOURCES"
+      - run: |
+          version="$(cat linchpin/version.py | awk -F "'" '{print $2}' | head -n1)"
+          mv "${HOME}/rpmbuild/SOURCES/linchpin-${version}.tar.gz" "${HOME}/rpmbuild/SOURCES/v${version}.tar.gz"
+          "${HOME}/.local/bin/rpmvenv" rpm/linchpin.json --core_version="${version}" --verbose --spec | tee "${HOME}/rpmbuild/SPECS/linchpin.spec"
+          sed -i -e "s#^Requires: .*#Requires: git, python3.6#g" \
+                 -e '/^# Blocks/i BuildRequires: python3-pip, krb5-devel, python3-devel, gcc' \
+                 -e "s#^cd %{SOURCE0}#cd %{_builddir}/linchpin-${version}/#g" \
+                 -e "s#^Source0: .*#Source0: ${release_repo}/archive/v${version}.tar.gz#g" \
+                 -e "s#%{SOURCE0}#%{_builddir}/linchpin-${version}#g" \
+                 -e '/^%prep/a %setup -q' \
+                 -e '/^%prep/a touch %{_builddir}/linchpin.sh' \
+                 -e '/^%prep/a chmod +x %{_builddir}/linchpin.sh' \
+                 -e '/^%prep/a cat << EOF > %{_builddir}/linchpin.sh\n#!/bin/bash\nPATH="\\$PATH:/opt/linchpin/bin" PYTHONPATH="/opt/linchpin/lib64/python3.6/site-packages:/usr/lib/python3.6/site-packages:/usr/lib64/python3.6/site-packages" /opt/linchpin/bin/linchpin \\$\@\nEOF' \
+                 -e '/^%prep/a pip3 install --user rpmvenv virtualenv' \
+                 -e "/^%install/a cp %{_builddir}/linchpin.sh  %{_builddir}/linchpin-${version}/linchpin.sh" \
+                 -e '/^%install/a export PATH=$PATH:~/.local/bin' \
+                 -e '/^%post/i find %{buildroot} -name "*.pyc" -exec rm -rf {} \\\;' \
+                 -e '/^%post/i find %{buildroot} -type f -print0 | xargs -0 sed -i "s|${RPM_BUILD_ROOT}||g"' \
+                 -e '/^# Macros/i %undefine __brp_mangle_shebangs' \
+                 -e '/^# Macros/i %global _build_id_links none' \
+                 -e '/^# Macros/i %global debug_package %{nil}' \
+                 -e '/^%post/i unlink %{buildroot}/opt/linchpin/lib64 || true' \
+                 -e '/^%post/i ln -s /opt/linchpin/lib %{buildroot}/opt/linchpin/lib64 || true' \
+           "${HOME}/rpmbuild/SPECS/linchpin.spec"
+      - run: |
+          rpmbuild -ba "${HOME}/rpmbuild/SPECS/linchpin.spec"
+          mv ~/rpmbuild/RPMS/x86_64/*.x86_64.rpm linchpin.fc31.x86_64.rpm
+      - uses: actions/upload-artifact@v1
+        with:
+          name: linchpin.fc31.x86_64.rpm
+          path: linchpin.fc31.x86_64.rpm
+      - name: Upload Release Asset
+        if: github.event_name == 'release'
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: linchpin.fc31.x86_64.rpm
+          asset_name: linchpin.fc31.x86_64.rpm
+          asset_content_type: application/rpm
