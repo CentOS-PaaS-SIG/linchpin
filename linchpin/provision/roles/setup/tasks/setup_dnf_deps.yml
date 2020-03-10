@@ -5,6 +5,7 @@
     dest: "{{ lookup('env','VIRTUAL_ENV') }}/{{ VENV_LIB_PATH }}/dnf"
     state: link
     force: yes
+  ignore_errors: true
 
 # cp -r /usr/lib64/python2.7/site-packages/librepo ~/.virtualenvs/lpdep14/lib/python2.7/site-packages/
 # cp -r /usr/lib64/python2.7/site-packages/libcomp ~/.virtualenvs/lpdep14/lib/python2.7/site-packages/

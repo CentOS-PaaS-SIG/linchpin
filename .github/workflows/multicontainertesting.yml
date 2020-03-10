@@ -26,12 +26,13 @@ jobs:
         pip3 install .[tests]
         pip3 install .[azure]
         pip3 install zipp>=0.5
+        yum install -y nodejs ruby
     - name: Run unit tests
       run: |
         coverage run --include "linchpin/*" setup.py test
     - name: Report on code coverage
       run: |
-        coverage report
+        coverage report -m --fail-under 70
     - name: Run code complexity tests
       run: |
         radon cc -s --min C ./linchpin

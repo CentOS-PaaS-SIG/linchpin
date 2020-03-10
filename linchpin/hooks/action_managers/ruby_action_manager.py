@@ -82,7 +82,7 @@ class RubyActionManager(ActionManager):
         params = hook_path
         if context:
             for key in self.target_data:
-                params += " {0}={1} ".format(key, self.target_data[key])
+                params += " {0}={1}".format(key, self.target_data[key])
         params += " -- '{0}' {1}".format(results, data_path)
         return params
 
@@ -112,24 +112,25 @@ class RubyActionManager(ActionManager):
                                           context)
             run_data = run_rb(command, arguments=res_str)
 
-            print(run_data.stdout)
-
             try:
                 data_file = open(data_path, 'r')
                 data = data_file.read()
                 if data:
                     result['data'] = json.loads(data)
+                data_file.close()
             except IOError:
                 # if an IOError is thrown, the file does not exist
-                continue
+                result['data'] = ''
             except ValueError:
                 print("Warning: '{0}' is not a valid JSON object.  "
                       "Data from this hook will be discarded".format(data))
 
-            result['return_code'] = run_data.exitcode
+            if not run_data:
+                result['return_code'] = 1
+            else:
+                result['return_code'] = 0
             result['state'] = str(self.state)
             results.append(result)
-            data_file.close()
 
         shutil.rmtree(tmpdir)
         return results

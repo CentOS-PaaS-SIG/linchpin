@@ -9,3 +9,4 @@
 dummy:
   topology: dummy-cluster.yml
   layout: dummy-layout.yml
+  hooks: dummy-hooks.yml

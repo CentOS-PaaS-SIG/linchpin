@@ -82,7 +82,7 @@ class NodejsActionManager(ActionManager):
         params = hook_path
         if context:
             for key in self.target_data:
-                params += " {0}={1} ".format(key, self.target_data[key])
+                params += " {0}={1}".format(key, self.target_data[key])
         params += " -- '{0}' {1}".format(results, data_path)
         return params
 
@@ -109,16 +109,18 @@ class NodejsActionManager(ActionManager):
             run_data = muterun_js(command, arguments=res_str)
 
             print(run_data.stdout)
+            print(run_data.stderr)
 
             try:
                 data_file = open(data_path, 'r')
                 data = data_file.read()
                 if data:
                     result['data'] = json.loads(data)
+                data_file.close()
             except IOError:
                 # if an IOError is thrown, the file was not created because
                 # the hook passed no data back
-                continue
+                result['data'] = ''
             except ValueError:
                 print("Warning: '{0}' is not a valid JSON object.  "
                       "Data from this hook will be discarded".format(data))
@@ -126,8 +128,6 @@ class NodejsActionManager(ActionManager):
             result['return_code'] = run_data.exitcode
             result['state'] = str(self.state)
             results.append(result)
-
-            data_file.close()
 
         shutil.rmtree(tmpdir)
         return results

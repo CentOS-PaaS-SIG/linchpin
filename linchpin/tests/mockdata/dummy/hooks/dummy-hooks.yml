@@ -1,0 +1,7 @@
+postup:
+  - name: success_hook
+    type: ansible
+    context: True
+    actions:
+      - playbook: success_hook.yaml
+
