@@ -37,4 +37,7 @@ jobs:
     - name: "Execute linting for Docker role"
       run: |
         cd ./linchpin/provision/roles/docker
+    - name: "Execute linting for Openshift role"
+      run: |
+        cd ./linchpin/provision/roles/openshift
         molecule lint -s delegated

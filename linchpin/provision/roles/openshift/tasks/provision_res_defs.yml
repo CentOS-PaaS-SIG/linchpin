@@ -1,6 +1,5 @@
----
 - name: "provision/teardown resources }}"
-  # The following include might change to role if 
+  # The following include might change to role if
   # multiple openshift resources come in
   #include: "provision_{{ res_def['role'] }}.yml"
-  include: "provision_openshift.yml"
+  include_tasks: "provision_openshift.yml"
