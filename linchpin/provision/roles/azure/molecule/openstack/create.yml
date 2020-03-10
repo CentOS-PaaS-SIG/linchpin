@@ -1,0 +1,6 @@
+- name: Create
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - role: oasis_roles.molecule_openstack_ci
