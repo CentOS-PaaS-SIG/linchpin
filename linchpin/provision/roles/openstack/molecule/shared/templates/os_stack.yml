@@ -19,7 +19,7 @@ resources:
     type: OS::Nova::Server
     properties:
       image: cirros
-      flavor: { get_param: flavor }
+      flavor: {get_param: flavor}
       key_name: linchpin
       networks:
-        - network: provider_net_cci_6 
+        - network: provider_net_cci_6
