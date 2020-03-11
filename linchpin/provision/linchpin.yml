@@ -3,18 +3,21 @@
 
 - name:  "schema check and Pre Provisioning Activities on topology_file"
   hosts: localhost
+  connection: local
   gather_facts: False
   roles:
     - { role: 'common' }
 
 - name:  "Provisioning resources based on resource group type"
   hosts: localhost
+  connection: local
   gather_facts: True
   roles:
     - { role: "{{ resources['resource_group_type'] }}" }
 
 - name: "Writing contents to file"
   hosts: localhost
+  connection: local
   gather_facts: False
   roles:
     - { role: 'gather_resources' }
