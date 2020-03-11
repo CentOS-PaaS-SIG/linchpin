@@ -1,0 +1,2 @@
+gcloud_become: true
+gcloud_become_user: root

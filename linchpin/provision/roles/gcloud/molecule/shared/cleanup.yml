@@ -1,0 +1,22 @@
+- name: unregister systems
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: wait for host
+      wait_for_connection:
+        timeout: 1
+      register: waiting
+      ignore_errors: true
+
+    - block:
+        - name: fetch facts
+          setup: {}
+
+        - name: do unregistration
+          include_role:
+            name: oasis_roles.rhsm
+          when: ansible_distribution == 'RedHat'
+      when: waiting is success
+  vars:
+    rhsm_unregister: true
+    rhsm_username: "{{ omit }}"

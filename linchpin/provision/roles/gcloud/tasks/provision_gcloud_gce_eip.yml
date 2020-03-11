@@ -3,17 +3,22 @@
     name: "{{ gce_resource_name }}"
     state: "{{ state }}"
     region: "{{ res_def['region'] }}"
-    service_account_email: "{{ auth_var['output']['client_email'] | default(omit) }}"
-    credentials_file: "{{ auth_var['path'] | default(omit) }}/{{ auth_var['params']['filename'] | default(omit) }}"
+    service_account_email: "{{ auth_var['output']['client_email'] |\
+                            default(omit) }}"
+    credentials_file: "{{ auth_var['path'] | default(omit) }}/\
+                       {{ auth_var['params']['filename'] | default(omit) }}"
     project_id: "{{ auth_var['output']['project_id'] | default(omit) }}"
   register: res_def_output
   no_log: "{{ not debug_mode }}"
 
 - name: "Appending outputitem to topology_outputs"
   set_fact:
-    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce + [res_def_output] }}"
+    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce +\
+                                  [res_def_output] }}"
   when: not _async
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce | add_res_data(res_grp_type, res_def['role']) }}"
+    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce |\
+                                  add_res_data(res_grp_type,\
+                                  res_def['role']) }}"
