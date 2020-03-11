@@ -30,3 +30,15 @@
   loop: "{{ name_list}}"
   loop_control:
     loop_var: nameOfvm
+
+- name: Run Teardown managed disk
+  include: teardownManageddisk.yml nameOfvm={{nameOfvm}} vn_name={{vn_name}}
+  loop: "{{ name_list}}"
+  loop_control:
+    loop_var: nameOfvm
+
+- name: Run Teardown virtual network
+  include: teardownVirtualnetwork.yml nameOfvm={{nameOfvm}} vn_name={{vn_name}}
+  loop: "{{ name_list}}"
+  loop_control:
+    loop_var: nameOfvm

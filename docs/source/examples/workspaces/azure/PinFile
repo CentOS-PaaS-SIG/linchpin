@@ -53,6 +53,7 @@ azure_vm_public_image:
               version: latest
             vm_username: linchpin
             vm_password: IloveLinchpin!
+            deepclean: True
         credentials:
           filename: azure.key
           profile: "{{ profile | default('key') }}"
@@ -209,6 +210,7 @@ azure_multi_vm:
             count: 4
             role: azure_vm
             resource_group: ccit
+            deepclean: True
         credentials:
           filename: azure.key
           profile: "{{ profile | default('key') }}"

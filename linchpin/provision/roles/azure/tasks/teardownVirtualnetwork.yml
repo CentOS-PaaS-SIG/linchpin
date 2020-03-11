@@ -1,6 +1,5 @@
-
-- name: "Teardown Azure VM"
-  azure_rm_virtualmachine:
+- name: "Teardown Azure Virtual Network when not async"
+  azure_rm_virtualnetwork:
     ad_user: "{{ auth_var['user'] | default(omit) }}"
     password: "{{ auth_var['password'] | default(omit) }}"
     client_id: "{{ auth_var['client_id'] | default(omit) }}"
@@ -8,6 +7,7 @@
     secret: "{{ auth_var['secret'] | default(omit) }}"
     subscription_id: "{{ auth_var['subscription_id'] | default(omit) }}"
     resource_group: "{{ res_def['resource_group'] | default(omit) }}"
-    remove_on_absent: "{{res_def['delete_all_attached']|default('all_autocreated')}}"
-    name: "{{ nameOfvm | default(omit) }}"
+    name: "{{vn_name}}"
     state: 'absent'
+  when: res_def['deepclean'] is defined and res_def['deepclean'] == true
+  ignore_errors: yes
