@@ -17,7 +17,8 @@ fi
 linchpin --version;
 
 mkdir /tmp/workspace/;
-
+mkdir -p /github/home/.azure/
+echo "{}" > /github/home/.azure/azureProfile.json
 cd /tmp/workspace/;
 
 echo $PWD;
