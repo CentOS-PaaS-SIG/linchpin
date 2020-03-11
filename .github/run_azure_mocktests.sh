@@ -29,6 +29,22 @@ export $LANG;
 echo "RUNNING Azure MOCK TESTS";
 linchpin init azure;
 cd azure;
-linchpin -vvvv up
+linchpin -vvvv up;
+if [ $? -ne 0 ]
+then
+    echo "Azure tests failed on linchpin up"
+    exit 1
+else
+    echo "Azure tests succeed on linchpin up"
+fi
+
 linchpin -vvvv destroy;
-cd ..;
+if [ $? -ne 0 ]
+then
+    echo failed
+    echo "Azure tests failed on linchpin destroy"
+    exit 1
+else
+    echo "Azure tests succeed on linchpin up"
+    
+fi

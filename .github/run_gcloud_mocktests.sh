@@ -31,6 +31,20 @@ echo "RUNNING Gcloud MOCK TESTS";
 
 linchpin init gcloud;
 cd gcloud;
-linchpin -vvvv up
+linchpin -vvvv up;
+if [ $? -ne 0 ]
+then
+    echo "Google cloud tests failed on linchpin up"
+    exit 1
+else
+    echo "Google cloud tests succeed on linchpin up"
+fi
 linchpin -vvvv destroy;
+if [ $? -ne 0 ]
+then
+    echo "Google cloud tests failed on linchpin up"
+    exit 1
+else
+    echo "Google cloud tests succeed on linchpin up"
+fi
 cd ..;

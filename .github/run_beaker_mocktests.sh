@@ -31,6 +31,20 @@ echo "RUNNING beaker MOCK TESTS";
 
 linchpin init beaker;
 cd beaker;
-linchpin -vvvv up
+linchpin -vvvv up;
+if [ $? -ne 0 ]
+then
+    echo "Beaker tests failed on linchpin up"
+    exit 1
+else
+    echo "Beaker tests succeed on linchpin up"
+fi
 linchpin -vvvv destroy;
+if [ $? -ne 0 ]
+then
+    echo "Beaker tests failed on linchpin up"
+    exit 1
+else
+    echo "Beaker tests succeed on linchpin up"
+fi
 cd ..;
