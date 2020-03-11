@@ -15,18 +15,22 @@
         "release": "2%{?dist}",
         "url": "https://linchpin.readthedocs.io",
         "requires": [
-          "python2-lxml",
+          "python3-lxml",
           "git",
-          "beaker-client",
-          "python2-libvirt"
+          "python3",
+          "krb5-workstation"
         ]
     },
     "python_venv": {
         "name": "linchpin",
         "path": "/opt",
-        "python": "python2.7",
+        "python": "python3",
         "strip_binaries": false,
-        "requirements": ["requirements.txt", "/dev/null 'ansible<2.9.0'"]
+        "requirements": [
+          "requirements.txt",
+          "/dev/null 'ansible'",
+          "/dev/null 'beaker-client>=27.0' 'bottle'"
+        ]
 
     },
     "file_permissions": {
