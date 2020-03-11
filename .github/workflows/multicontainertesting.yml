@@ -24,6 +24,7 @@ jobs:
         pip3 install pytest
         pip3 install pytest-runner
         pip3 install .[tests]
+        pip3 install .[azure]
         pip3 install zipp>=0.5
     - name: Run unit tests
       run: |
