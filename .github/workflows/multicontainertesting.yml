@@ -1,6 +1,6 @@
 name: "multicontainer Testing on container matrix"
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   build:
@@ -54,6 +54,4 @@ jobs:
       run: |
         chmod +x ./.github/run_azure_mocktests.sh
         ./.github/run_azure_mocktests.sh
-
-
 
