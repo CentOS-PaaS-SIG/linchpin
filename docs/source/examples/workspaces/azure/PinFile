@@ -207,7 +207,7 @@ azure_multi_vm:
         resource_group_type: "azure"
         resource_definitions:
           - vm_name: "{{ distro }}-TestMultiVm"
-            count: 4
+            count: 3
             role: azure_vm
             resource_group: ccit
             deepclean: True
