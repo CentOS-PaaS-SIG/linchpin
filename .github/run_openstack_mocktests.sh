@@ -32,5 +32,20 @@ echo "RUNNING Openstack MOCK TESTS";
 linchpin init openstack;
 cd openstack;
 linchpin -vvvv up;
+if [ $? -ne 0 ]
+then
+    echo "Openstack tests failed on linchpin up"
+    exit 1
+else
+    echo "Openstack tests succeed on linchpin up"
+fi
 linchpin -vvvv destroy;
+if [ $? -ne 0 ]
+then
+    echo "Openstack tests failed on linchpin up"
+    exit 1
+else
+    echo "Openstack tests succeed on linchpin up"
+fi
 cd ..;
+
