@@ -154,6 +154,13 @@ def test_fetch_beaker_job_ids():
     assert_equals(expected,
                   filter_utils.fetch_beaker_job_ids(test_input))
 
+
+def test_fetch_beaker_job_ids_count():
+    test_input = [{"id": "3124"}, {"id": "3124"}, {"id": "3214"}]
+    expected = [{'ids': ['J:3124']}, {'ids': ['J:3214']}]
+    assert_equals(expected,
+                  filter_utils.fetch_beaker_job_ids(test_input))
+
 def test_fetch_os_server_names():
     test_input = [ {"resource_group": "openstack",
                     "role": "os_server",
