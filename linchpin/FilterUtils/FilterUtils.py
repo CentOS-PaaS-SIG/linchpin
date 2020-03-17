@@ -271,7 +271,12 @@ def fetch_beaker_job_ids(topo_out):
     for entry in topo_out:
         entry_dict = {}
         entry_dict["ids"] = []
-        if "id" in list(entry):
+        # filter out if the resource's job id has already
+        # been added. Workaround for Beaker server xmlrpc
+        # issue on python2
+        if "id" in list(entry) and not \
+                [id for ed in output
+                 for id in ed.get("ids", []) if entry.get("id") == id[2:]]:
             entry_dict["ids"].append("J:" + entry["id"])
             output.append(entry_dict)
     return output
