@@ -21,8 +21,10 @@ jobs:
       - run: pip install --user rpmvenv
       - run: rpmdev-setuptree
       - run: python3 setup.py sdist -d "${HOME}/rpmbuild/SOURCES"
-      - run: |
+      - id: rpm
+        run: |
           version="$(cat linchpin/version.py | awk -F "'" '{print $2}' | head -n1)"
+          echo "::set-output name=version::${version}"
           mv "${HOME}/rpmbuild/SOURCES/linchpin-${version}.tar.gz" "${HOME}/rpmbuild/SOURCES/v${version}.tar.gz"
           "${HOME}/.local/bin/rpmvenv" rpm/linchpin.json --core_version="${version}" --verbose --spec | tee "${HOME}/rpmbuild/SPECS/linchpin.spec"
           sed -i -e "s#^Requires: .*#Requires: git, python3.6#g" \
@@ -45,13 +47,17 @@ jobs:
                  -e '/^%post/i unlink %{buildroot}/opt/linchpin/lib64 || true' \
                  -e '/^%post/i ln -s /opt/linchpin/lib %{buildroot}/opt/linchpin/lib64 || true' \
            "${HOME}/rpmbuild/SPECS/linchpin.spec"
-      - run: |
+      - id: result
+        run: |
           rpmbuild -ba "${HOME}/rpmbuild/SPECS/linchpin.spec"
-          mv ~/rpmbuild/RPMS/x86_64/*.x86_64.rpm linchpin.fc31.x86_64.rpm
+          rpm_path="$(readlink -f $HOME/rpmbuild/RPMS/x86_64/*.rpm)"
+          rpm_name="$(basename $rpm_path)"
+          mv $rpm_path ./
+          echo "::set-output name=name::${rpm_name}"
       - uses: actions/upload-artifact@v1
         with:
-          name: linchpin.fc31.x86_64.rpm
-          path: linchpin.fc31.x86_64.rpm
+          name: ${{steps.result.outputs.name}}
+          path: ${{steps.result.outputs.name}}
       - name: Upload Release Asset
         if: github.event_name == 'release'
         id: upload-release-asset
@@ -60,6 +66,50 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: linchpin.fc31.x86_64.rpm
-          asset_name: linchpin.fc31.x86_64.rpm
+          asset_path: ${{steps.result.outputs.name}}
+          asset_name: ${{steps.result.outputs.name}}
           asset_content_type: application/rpm
+  appimage:
+    name: Build AppImage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Docker image
+        id: cache
+        uses: actions/cache@v1
+        with:
+          path: appimage
+          key: ${{ hashFiles('appimage/Dockerfile') }}
+      - name: Build Docker image
+        if: steps.cache.outputs['cache-hit'] != 'true'
+        run: |
+          docker build -t appimage-build appimage
+          docker save appimage-build > appimage/buildimage.tar
+      - name: Load Docker image
+        if: steps.cache.outputs['cache-hit'] == 'true'
+        run: |
+          docker load < appimage/buildimage.tar
+      - id: version
+        run: |
+          version="$(cat linchpin/version.py | awk -F "'" '{print $2}' | head -n1)"
+          echo "::set-output name=version::${version}"
+      - id: appimage
+        run: |
+          cd appimage
+          ./pkg2appimage-with-docker appimage.yml 2>&1
+      - uses: actions/upload-artifact@v1
+        with:
+          name: Linchpin-${{ steps.version.outputs.version }}.glibc2.17-x86_64.AppImage
+          path: appimage/out/Linchpin-${{ steps.version.outputs.version }}.glibc2.17-x86_64.AppImage
+      - name: Upload Release Asset
+        if: github.event_name == 'release'
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: Linchpin-${{ steps.version.outputs.version }}.glibc2.17-x86_64.AppImage
+          asset_name: Linchpin-${{ steps.version.outputs.version }}.glibc2.17-x86_64.AppImage
+          asset_content_type: application/appimage
+

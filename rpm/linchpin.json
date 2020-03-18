@@ -12,7 +12,7 @@
         "license": "GPLv3+",
         "name": "linchpin",
         "summary": "Ansible based multicloud orchestrator",
-        "release": "2%{?dist}",
+        "release": "1",
         "url": "https://linchpin.readthedocs.io",
         "requires": [
           "python3-lxml",

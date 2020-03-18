@@ -1,0 +1,34 @@
+app: Linchpin
+binpatch: true
+ingredients:
+  dist: xenial
+  sources:
+    - deb http://us.archive.ubuntu.com/ubuntu/ xenial main universe
+    - deb http://ppa.launchpad.net/deadsnakes/ppa/ubuntu xenial main 
+  packages:
+    - python3.7
+script:
+  - wget -nc -q -O linchpin.png https://linchpinjobs.com/img/linchpinjobs_logo.png
+  - virtualenv usr -p $(which python3.7) --always-copy
+  - ./usr/bin/pip3 install linchpin gitdb2==3.0.1 gitdb==0.6.4
+  - ./usr/bin/pip3 install linchpin[libvirt]
+  - rm -rf usr/lib/python3/dist-packages/
+  - ln -s ../python3.7/site-packages/ usr/lib/python3/dist-packages
+  - cat > usr/bin/linchpin-wrapper <<\EOF
+  - HERE="$(dirname "$(readlink -f "${0}")")"
+  - cd $OWD
+  - "${HERE}/bin/python3" "${HERE}/bin/linchpin" "$@"
+  - EOF
+  - cat > linchpin.desktop <<\EOF
+  - [Desktop Entry]
+  - Type=Application
+  - Name=Linchpin
+  - Comment=Provisioning
+  - Icon=linchpin
+  - Exec=bash linchpin-wrapper
+  - Terminal=true
+  - Categories=Application;Development;
+  - StartupWMClass=linchpin
+  - MimeType=text/x-python3;text/x-python3;
+  - EOF
+  - usr/bin/pip3 freeze | grep "linchpin" | cut -d "=" -f 3 >> ../VERSION
