@@ -1,0 +1,15 @@
+name: "libvirt ci testing"
+
+on: [pull_request]
+
+jobs:
+  build:
+    name: Build libvirt machine
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: running a shell script file
+      run: |
+        sudo apt install cpu-checker;
+      sudo kvm-ok;
+
