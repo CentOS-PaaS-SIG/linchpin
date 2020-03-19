@@ -56,7 +56,7 @@ jobs:
           echo "::set-output name=name::${rpm_name}"
       - uses: actions/upload-artifact@v1
         with:
-          name: ${{steps.result.outputs.name}}
+          name: linchpin.rpm
           path: ${{steps.result.outputs.name}}
       - name: Upload Release Asset
         if: github.event_name == 'release'
@@ -69,6 +69,31 @@ jobs:
           asset_path: ${{steps.result.outputs.name}}
           asset_name: ${{steps.result.outputs.name}}
           asset_content_type: application/rpm
+
+  test_rpm:
+    name: Test RPM package
+    container: fedora:31
+    runs-on: ubuntu-latest
+    needs: rpm
+    steps:
+      - name: Download RPM
+        uses: actions/download-artifact@v1
+        with:
+          name: linchpin.rpm
+          path: linchpin.rpm
+      - name: Install Linchpin
+        run: |
+          dnf install -y findutils
+          find . -name '*.rpm' -exec dnf install -y {} \; 
+      - name: Testing Beaker
+        run: |
+          cd /tmp
+          linchpin init beaker
+          pushd beaker
+          linchpin -vvvv up --env-vars linchpin_mock True
+          linchpin -vvvv destroy --env-vars  linchpin_mock True
+          popd
+
   appimage:
     name: Build AppImage
     runs-on: ubuntu-latest
