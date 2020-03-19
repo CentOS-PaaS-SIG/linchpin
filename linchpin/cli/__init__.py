@@ -220,7 +220,8 @@ class LinchpinCli(LinchpinAPI):
         This function finds the template data path, or returns the data.
         If the file is a full path, it is expanded and used.
         If not found, the workspace is prepended. If still not found, it
-        is assumed what is passed in is data and returned to the caller.
+        is assumed what is passed in is data and an appropriate error is
+        returned.
 
         :param data_path:
             Consists of either a absolute path, relative path, or the actual
@@ -336,6 +337,11 @@ class LinchpinCli(LinchpinAPI):
             f.write(json.dumps(dist_data))
 
     def _write_latest_run(self):
+        """
+        This function gets the latest run data from the rundb and writes it to
+        the linchpin context file
+        """
+        # import pdb; pdb.set_trace()
         latest_run_data = self._get_run_data_by_txid()
         resources_path = self.get_evar('resources_folder')
         context_path = '{0}/{1}'.format(self.workspace, resources_path)
@@ -344,26 +350,6 @@ class LinchpinCli(LinchpinAPI):
         context_file = '{0}/{1}'.format(context_path, 'linchpin.latest')
         with open(context_file, 'w+') as f:
             f.write(json.dumps(latest_run_data))
-
-
-    def lp_down(self, pinfile, targets=(), run_id=None):
-        """
-        This function takes a list of targets, and performs a shutdown on
-        nodes in the target's topology. Only providers which support shutdown
-        from their API (Ansible) will support this option.
-
-        CURRENTLY UNIMPLEMENTED
-
-        .. seealso:: lp_destroy
-
-        :param pinfile:
-            Provided PinFile, with available targets,
-
-        :param targets:
-            A tuple of targets to provision.
-        """
-
-        pass
 
 
     def lp_up(self, targets=(), run_id=None, tx_id=None, inv_f="cfg",
@@ -770,8 +756,8 @@ class LinchpinCli(LinchpinAPI):
                             of the given remote will be used.
 
         :param fetch_type:  Specifies which component(s) of a workspace the
-                            user wants to fetch. Types include: topology,
-                            layout, resources, hooks, workspace.
+                            user wants to fetch. Types include: topologies,
+                            layouts, resources, hooks, workspace.
                             (default: workspace)
 
         :param fetch_protocol:  The protocol to use to fetch the workspace.

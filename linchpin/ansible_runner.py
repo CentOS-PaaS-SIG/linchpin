@@ -1,3 +1,8 @@
+# The ansible_runner file contains all of the functions used to call ansible
+# playbooks.  The runner can call playbooks via the Ansible API or the CLI,
+# and supports the three most recent versions of Ansible (just as the Ansible
+# team itself does)
+
 from __future__ import absolute_import
 import os
 import sys
@@ -144,7 +149,6 @@ def ansible_runner_shell(playbook_path,
                          console=True,
                          env_vars=(),
                          check=False):
-
     # set verbosity to >=2
     # since -v in subprocess command fails
     if verbosity >= 2:
@@ -178,7 +182,6 @@ def ansible_runner_shell(playbook_path,
     if check:
         base_command.append("-C")
 
-    base_command.append(playbook_path)
 
     # extravars to be passed into ansible.
 
@@ -193,6 +196,7 @@ def ansible_runner_shell(playbook_path,
         base_command.append("@" + tmp_file_path)
 
     base_command.append(verbosity)
+    base_command.append(playbook_path)
     return_code, stdout, stderr = subprocess_runner(base_command,
                                                     shell=console)
     return return_code, stdout, stderr
