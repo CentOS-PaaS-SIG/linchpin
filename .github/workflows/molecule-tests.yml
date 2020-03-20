@@ -23,6 +23,7 @@ jobs:
           pip3 install .[tests]
           pip3 install molecule[delegated]
           pip3 install zipp>=0.5
+          pip3 install -r requirements-azure.txt
       - name: "Execute AWS molecule tests"
         env:
           LC_ALL: C.utf8
@@ -43,5 +44,15 @@ jobs:
           # make sure we're using python 3
           ln -sf /usr/bin/python3 /usr/bin/python
           cd ./linchpin/provision/roles/openstack
+          molecule converge -s delegated
+          molecule destroy -s delegated
+      - name: "Execute Azure molecule tests"
+        env:
+          LC_ALL: C.utf8
+          LANG: C.utf8
+        run: |
+          # make sure we're using python 3
+          ln -sf /usr/bin/python3 /usr/bin/python
+          cd ./linchpin/provision/roles/azure
           molecule converge -s delegated
           molecule destroy -s delegated

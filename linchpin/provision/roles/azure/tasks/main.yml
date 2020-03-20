@@ -13,6 +13,10 @@
     topology_outputs_azure_nsg: []
     topology_outputs_azure_storage_account: []
 
+- set_fact:
+    _check_mode: no
+  when: _check_mode is not defined
+
 - name: "Initiating Provisioning of Azure resource group"
   include: provision_resource_group.yml res_grp={{ item }}
   with_items:
