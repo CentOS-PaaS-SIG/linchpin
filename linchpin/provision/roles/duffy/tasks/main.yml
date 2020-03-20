@@ -1,4 +1,3 @@
----
 # This playbook will initiate provisioning for the duffy resources groups.
 - name: debug duffy resources
   debug:
@@ -16,13 +15,17 @@
   when: creds_path is not defined or creds_path == default_credentials_path
 
 - name: "Initiating Provisioning of duffy resource group"
-  include: provision_resource_group.yml res_grp={{ item }}
+  include_tasks: provision_resource_group.yml
+  vars:
+    res_grp: "{{ item }}"
   with_items:
     - "{{ resources }}"
   when: state == "present"
 
 - name: "Initiating Teardown of duffy resource group"
-  include: teardown_resource_group.yml res_grp={{ item }}
+  include_tasks: teardown_resource_group.yml
+  vars:
+    res_grp: "{{ item }}"
   with_items:
     - "{{ resources }}"
   when: state == "absent"

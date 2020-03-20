@@ -1,0 +1,1 @@
+../../../filter_plugins/get_provider_resources.py

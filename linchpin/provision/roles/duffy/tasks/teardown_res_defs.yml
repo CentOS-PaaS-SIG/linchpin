@@ -1,4 +1,3 @@
----
 - name: "Teardown Duffy Resources"
   duffy:
     ssid: "{{ ssid }}"

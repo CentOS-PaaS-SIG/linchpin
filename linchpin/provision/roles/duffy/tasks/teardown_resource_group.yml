@@ -1,4 +1,3 @@
----
 - name: "Get topology output data"
   rundb:
     conn_str: "{{ rundb_conn }}"
@@ -15,9 +14,9 @@
   when: not generate_resources
 
 - name: "set topo_output_resources fact rundb"
-   set_fact:
-     topo_output_resources: "{{ topo_output_json[0]['resources'] }}"
-   when: not generate_resources
+  set_fact:
+    topo_output_resources: "{{ topo_output_json[0]['resources'] }}"
+  when: not generate_resources
 
 - name: "debug res_grp"
   debug:
@@ -34,9 +33,12 @@
 
 - name: "Build duffy teardown list"
   set_fact:
-    duffy_output_resources: "{{ topo_output_resources | get_provider_resources('duffy') }}"
+    duffy_output_resources: "{{ topo_output_resources |
+                                get_provider_resources('duffy') }}"
 
 
 - name: "Teardown resource definitions of current group"
-  include: teardown_res_defs.yml ssid="{{ item['ssid'] }}"
+  include_tasks: teardown_res_defs.yml
+  vars:
+    ssid: "{{ item['ssid'] }}"
   with_items: "{{ duffy_output_resources }}"

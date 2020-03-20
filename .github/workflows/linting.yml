@@ -40,4 +40,7 @@ jobs:
     - name: "Execute linting for Openshift role"
       run: |
         cd ./linchpin/provision/roles/openshift
+    - name: "Execute linting for Duffy role"
+      run: |
+        cd ./linchpin/provision/roles/duffy
         molecule lint -s delegated
