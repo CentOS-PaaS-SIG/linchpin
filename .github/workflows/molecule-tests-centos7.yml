@@ -34,16 +34,6 @@ jobs:
           cd ./linchpin/provision/roles/aws
           molecule converge -s delegated
           molecule destroy -s delegated
-      - name: "Execute OpenStack molecule tests"
-        env:
-          LC_ALL: en_US.utf8
-          LANG: en_US.utf8
-        run: |
-          # make sure we're using python 3
-          ln -sf /usr/bin/python3 /usr/bin/python
-          cd ./linchpin/provision/roles/openstack
-          molecule converge -s delegated
-          molecule destroy -s delegated
       - name: "Execute Azure molecule tests"
         env:
           LC_ALL: en_US.utf8
@@ -52,5 +42,25 @@ jobs:
           # make sure we're using python 3
           ln -sf /usr/bin/python3 /usr/bin/python
           cd ./linchpin/provision/roles/azure
+          molecule converge -s delegated
+          molecule destroy -s delegated
+      - name: "Execute Dummy molecule tests"
+        env:
+          LC_ALL: en_US.utf8
+          LANG: en_US.utf8
+        run: |
+          # make sure we're using python 3
+          ln -sf /usr/bin/python3 /usr/bin/python
+          cd ./linchpin/provision/roles/dummy
+          molecule converge -s delegated
+          molecule destroy -s delegated
+      - name: "Execute OpenStack molecule tests"
+        env:
+          LC_ALL: en_US.utf8
+          LANG: en_US.utf8
+        run: |
+          # make sure we're using python 3
+          ln -sf /usr/bin/python3 /usr/bin/python
+          cd ./linchpin/provision/roles/openstack
           molecule converge -s delegated
           molecule destroy -s delegated
