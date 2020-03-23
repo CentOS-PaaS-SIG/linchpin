@@ -3,13 +3,17 @@ dependency:
   options:
     role-file: molecule/shared/requirements.yml
 driver:
-  name: openstack
+  name: delegated
+  options:
+    managed: false
+    ansible_connection_options:
+      ansible_connection: local
 lint:
   name: yamllint
   options:
     config-file: tests/yamllint.yml
 platforms:
-  - name: test-oasis-dummy
+  - name: aws-delegated
 provisioner:
   name: ansible
   lint:
