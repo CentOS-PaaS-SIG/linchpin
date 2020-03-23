@@ -1,4 +1,3 @@
----
 - name: "Get topology output data from RunDB"
   rundb:
     conn_str: "{{ rundb_conn }}"
@@ -16,7 +15,8 @@
 
 - name: Filter list for resources
   set_fact:
-    topo_output_resources: "{{ topo_output_json | filter_list_by_attr('resources') }}"
+    topo_output_resources: "{{ topo_output_json |
+                               filter_list_by_attr('resources') }}"
 
 - name: "set topo_output_resources fact"
   set_fact:

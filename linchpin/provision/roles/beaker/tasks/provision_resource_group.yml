@@ -1,123 +1,143 @@
----
 - name: Set default ssh keys path
   set_fact:
-    default_ssh_keys_path: "{{ creds_path | default(default_credentials_path) }}"
+    default_ssh_keys_path: "{{ creds_path |
+                               default(default_credentials_path) }}"
 
 - name: Provision beaker systems
   block:
-  - name: "provision beaker systems"
-    bkr_server:
-      recipesets: "{{ res.recipesets }}"
-      state: present
-      # these values have defaults set in the bkr_server module
-      # if omitted, or they are not required
-      whiteboard: "{{ res.whiteboard | default('Provisioned by LinchPin') }}"
-      job_group: "{{ res.job_group | default(omit) }}"
-      cancel_message: "{{ res.cancel_message | default(omit) }}"
-      max_attempts: "{{ res.max_attempts | default(omit) }}"
-      attempt_wait_time: "{{ attempt_wait_time | default(omit) }}"
-      ssh_keys_path: "{{ res.ssh_keys_path | default(default_ssh_keys_path) }}"
-    with_items: "{{ res_defs['resource_definitions'] }}"
-    # loop over res_defs even though there should be only one for beaker
-    loop_control:
-      loop_var: res
-    register: bkr
+    - name: "provision beaker systems"
+      bkr_server:
+        recipesets: "{{ res.recipesets }}"
+        state: present
+        # these values have defaults set in the bkr_server module
+        # if omitted, or they are not required
+        whiteboard: "{{ res.whiteboard | default('Provisioned by LinchPin') }}"
+        job_group: "{{ res.job_group | default(omit) }}"
+        cancel_message: "{{ res.cancel_message | default(omit) }}"
+        max_attempts: "{{ res.max_attempts | default(omit) }}"
+        attempt_wait_time: "{{ attempt_wait_time | default(omit) }}"
+        ssh_keys_path: "{{ res.ssh_keys_path |
+                           default(default_ssh_keys_path) }}"
+      with_items: "{{ res_defs['resource_definitions'] }}"
+      # loop over res_defs even though there should be only one for beaker
+      loop_control:
+        loop_var: res
+      register: bkr
   rescue:
-  - fail:
-      msg: 'Error caught in beaker module execution. Might be because of unresolved beaker dependencies. Please run `linchpin setup beaker` or pip install linchpin[beaker] to install beaker dependencies'
+    - name: "Handle module execution failure"
+      fail:
+        msg: >
+          'Error caught in beaker module execution. Might be because of
+           unresolved beaker dependencies. Please run `linchpin setup beaker` or
+           pip install linchpin[beaker] to install beaker dependencies'
 
 - name: "set bkr_rsets"
   set_fact:
-      bkr_rsets: "{{ bkr_rsets | default([]) }} + {{ rd.recipesets }}"
+    bkr_rsets: "{{ bkr_rsets | default([]) }} + {{ rd.recipesets }}"
   with_items: "{{ res_defs['resource_definitions'] }}"
   loop_control:
     loop_var: rd
 
 - name: "set bkr_names"
   set_fact:
-      bkr_names: "{{ bkr_names | default([]) }} + {{ [{'name': brs['name'] | default(ansible_date_time.iso8601_micro | to_uuid)}] }}"
+    bkr_names: "{{ bkr_names | default([]) }} +
+                {{ [{'name': brs['name'] |
+                   default(ansible_date_time.iso8601_micro | to_uuid)}] }}"
   with_items: "{{ bkr_rsets }}"
   loop_control:
     loop_var: brs
 
 - block:
-  - name: debug bkr ids
-    debug:
-      msg: "{{ bkr.results }}"
+    - name: debug bkr ids
+      debug:
+        msg: "{{ bkr.results }}"
 
-  - name: "set bkr ids from results"
-    set_fact:
-      bkr_ids: "{{ bkr_ids | default({}) | combine(result['ids']) }}"
-    with_items: "{{ bkr.results }}"
-    loop_control:
-      loop_var: result
+    - name: "set bkr ids from results"
+      set_fact:
+        bkr_ids: "{{ bkr_ids | default({}) | combine(result['ids']) }}"
+      with_items: "{{ bkr.results }}"
+      loop_control:
+        loop_var: result
 
-  - name: "set bkr_hosts from results"
-    set_fact:
-      bkr_hosts: "{{ bkr_hosts | default([]) }} + {{ bh['hosts'] }}"
-    with_items: "{{ bkr.results }}"
-    loop_control:
-      loop_var: bh
+    - name: "set bkr_hosts from results"
+      set_fact:
+        bkr_hosts: "{{ bkr_hosts | default([]) }} + {{ bh['hosts'] }}"
+      with_items: "{{ bkr.results }}"
+      loop_control:
+        loop_var: bh
 
-  - name: "count bkr_hosts"
-    set_fact:
-      bkr_host_count: "{{ (bkr_hosts | length, 'count', 'rid') }}"
+    - name: "count bkr_hosts"
+      set_fact:
+        bkr_host_count: "{{ (bkr_hosts | length, 'count', 'rid') }}"
 
-  - name: "set bkr_host_values to an empty list"
-    set_fact:
-      bkr_host_values: []
+    - name: "set bkr_host_values to an empty list"
+      set_fact:
+        bkr_host_values: []
 
-  - name: "combine bkr_hosts and bkr_names"
-    set_fact:
-      bkr_host_values: "{{ bkr_hosts | combine_hosts_names(bkr_names) }}"
+    - name: "combine bkr_hosts and bkr_names"
+      set_fact:
+        bkr_host_values: "{{ bkr_hosts | combine_hosts_names(bkr_names) }}"
 
-  - name: "split id and url into separate components"
-    set_fact:
-      bkr_id_values: "{{ bkr_id_values | default([]) + [{ 'id': bids.key, 'url': bids.value }] }}"
-    with_dict: "{{ bkr_ids }}"
-    loop_control:
-      loop_var: bids
+    - name: "split id and url into separate components"
+      set_fact:
+        bkr_id_values: "{{ bkr_id_values |
+                           default([]) +
+                           [{ 'id': bids.key, 'url': bids.value }] }}"
+      with_dict: "{{ bkr_ids }}"
+      loop_control:
+        loop_var: bids
 
-  - name: "combine bkr_id_values with bkr_hosts"
-    set_fact:
-      tmp_hosts: "{{ bhv | combine(bkr_id_values | selectattr('id', 'match', '^' + bhv.id + '$') | first) }}"
-    with_items: "{{ bkr_host_values }}"
-    register: tmp_info
-    loop_control:
-      loop_var: bhv
+    - name: "combine bkr_id_values with bkr_hosts"
+      set_fact:
+        tmp_hosts: "{{ bhv |
+                       combine(bkr_id_values |
+                       selectattr('id', 'match', '^' + bhv.id + '$') |
+                       first) }}"
+      with_items: "{{ bkr_host_values }}"
+      register: tmp_info
+      loop_control:
+        loop_var: bhv
 
-  - name: "Set topology_outputs_beaker_server to the current job(s) data"
-    set_fact:
-      topology_outputs_beaker_server: "{{ tmp_info.results | map(attribute='ansible_facts.tmp_hosts') | list }}"
+    - name: "Set topology_outputs_beaker_server to the current job(s) data"
+      set_fact:
+        topology_outputs_beaker_server: "{{ tmp_info.results |
+                                            map(attribute=
+                                                'ansible_facts.tmp_hosts') |
+                                            list }}"
 
-  - name: "Add beaker job info to the rundb"
-    rundb:
-      conn_str: "{{ rundb_conn }}"
-      operation: update
-      table: "{{ target }}"
-      key: "outputs"
-      value: "[{{ {'bkr_id_values': bkr_id_values} }}]"
-      run_id: "{{ rundb_id }}"
-      db_schema: "{{ rundb_schema }}"
-    when: not generate_resources
+    - name: "Add beaker job info to the rundb"
+      rundb:
+        conn_str: "{{ rundb_conn }}"
+        operation: update
+        table: "{{ target }}"
+        key: "outputs"
+        value: "[{{ {'bkr_id_values': bkr_id_values} }}]"
+        run_id: "{{ rundb_id }}"
+        db_schema: "{{ rundb_schema }}"
+      when: not generate_resources
 
 - name: Provision beaker systems
   block:
-  - name: "fetch beaker details"
-    bkr_info:
-      ids: "{{ bkr_ids }}"
-  # pull provision params from the first (should be only) result
-      provision_params: "{{ bkr.results[0].provision_params }}"
-    register: _topo_out_bkr_server
+    - name: "fetch beaker details"
+      bkr_info:
+        ids: "{{ bkr_ids }}"
+        # pull provision params from the first (should be only) result
+        provision_params: "{{ bkr.results[0].provision_params }}"
+      register: _topo_out_bkr_server
   rescue:
-  - bkr_server:
-      recipesets: "{{ topology_outputs_beaker_server | fetch_beaker_job_ids }}"
-      state: absent
-      cancel_message: "cancelled provisioning on timeout"
+    - name: "Cancel provisioning"
+      bkr_server:
+        recipesets: "{{ topology_outputs_beaker_server |
+                        fetch_beaker_job_ids }}"
+        state: absent
+        cancel_message: "cancelled provisioning on timeout"
 
 - name: "set topology_outputs_beaker_server using recipe id"
   set_fact:
-    tmp_topo_bkr_srvc: "{{ ttbs | combine(_topo_out_bkr_server['hosts'] | selectattr('rid', 'match', '^' + ttbs.rid + '$') | first) }}"
+    tmp_topo_bkr_srvc: "{{ ttbs |
+                           combine(_topo_out_bkr_server['hosts'] |
+                           selectattr('rid', 'match', '^' + ttbs.rid + '$') |
+                           first) }}"
   when:
     - state == 'present'
   with_items: "{{ topology_outputs_beaker_server }}"
@@ -127,10 +147,18 @@
 
 - name: "Set topology_outputs_beaker_server to the current job(s) data"
   set_fact:
-    topology_outputs_beaker_server: "{{ tmp_bkr.results | map_results('ansible_facts', 'tmp_topo_bkr_srvc') }}"
+    topology_outputs_beaker_server: "{{ tmp_bkr.results |
+                                        map_results('ansible_facts',
+                                                    'tmp_topo_bkr_srvc') }}"
   when:
     - state == 'present'
 
+- name: "Set role fact"
+  set_fact:
+    beaker_role: "{{ res_defs['resource_definitions'][0]['role'] }}"
+
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_beaker_server: "{{ topology_outputs_beaker_server | add_res_data(vars['role_name'], res_defs['resource_definitions'][0]['role']) }}"
+    topology_outputs_beaker_server: "{{ topology_outputs_beaker_server |
+                                        add_res_data(vars['role_name'],
+                                        beaker_role) }}"

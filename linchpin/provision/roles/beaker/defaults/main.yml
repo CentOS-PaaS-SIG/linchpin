@@ -1,0 +1,2 @@
+beaker_become: true
+beaker_become_user: root
