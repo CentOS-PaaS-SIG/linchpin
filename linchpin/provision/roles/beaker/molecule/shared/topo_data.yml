@@ -1,0 +1,42 @@
+topo_data:
+  topology_name: "beaker-testdata"
+  resource_groups:
+    - resource_group_name: "beaker"
+      resource_group_type: "beaker"
+      resource_definitions:
+        - role: bkr_server
+          # option to set job whiteboard message
+          whiteboard: 'Provisioned with linchpin'
+          # options to configure amount of time spent polling beaker:
+          # 60 attempts with 60 seconds wait time between them,
+          # provisioning timeout is roughly 3600 seconds
+          max_attempts: 240
+          attempt_wait_time: 60
+          # option to set cancellation message if linchpin cancels provisioning
+          cancel_message: 'Job cancelled on account of rain'
+          recipesets:
+            - distro: 'RHEL-7.5'
+              arch: 'x86_64'
+              count: 2
+              name: 'rhel75'
+              variant: 'Server'
+              hostrequires:
+                - rawxml: '<key_value key="model" op="=" value="KVM"/>'
+        - role: bkr_server
+          # option to set job whiteboard message
+          whiteboard: 'Provisioned with linchpin'
+          # options to configure amount of time spent polling beaker:
+          # 60 attempts with 60 seconds wait time between them,
+          # provisioning timeout is roughly 3600 seconds
+          max_attempts: '240'
+          attempt_wait_time: '60'
+          # option to set cancellation message if linchpin cancels provisioning
+          cancel_message: 'Job cancelled on account of rain'
+          recipesets:
+            - family: 'RedHatEnterpriseLinux7'
+              arch: 'x86_64'
+              count: 1
+              name: 'rhel75'
+              variant: 'Server'
+              hostrequires:
+                - rawxml: '<key_value key="model" op="=" value="KVM"/>'

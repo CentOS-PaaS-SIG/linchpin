@@ -44,6 +44,16 @@ jobs:
           cd ./linchpin/provision/roles/azure
           molecule converge -s delegated
           molecule destroy -s delegated
+      - name: "Execute Beaker molecule tests"
+        env:
+          LC_ALL: en_US.utf8
+          LANG: en_US.utf8
+        run: |
+          # make sure we're using python 3
+          ln -sf /usr/bin/python3 /usr/bin/python
+          cd ./linchpin/provision/roles/beaker
+          molecule converge -s delegated
+          molecule destroy -s delegated
       - name: "Execute Dummy molecule tests"
         env:
           LC_ALL: en_US.utf8
