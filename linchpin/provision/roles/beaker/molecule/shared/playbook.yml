@@ -1,5 +1,58 @@
-- name: converge
+- name: Test Beaker Provision
   hosts: all
   roles:
     - role: beaker
+  pre_tasks:
+    - name: include resource data
+      include_vars:
+        file: topo_data.yml
+    - name: set topo_data to resources variable
+      set_fact:
+        resources: "{{ topo_data.resource_groups }}"
+  vars:
+    state: "present"
+    debug_mode: true
+    auth_debug: true
+    _async: false
+    generate_resources: true
+    uhash: "111111"
+    use_uhash: true
+    linchpin_mock: true
+    default_delimiter: '-'
+    default_ssh_key_path: "~"
+    default_credentials_path: "credentials"
+  post_tasks:
+    - name: "Create topology_outputs var"
+      set_fact:
+        topology_outputs: []
+        topology_name: "{{ topo_data.topology_name }}"
+    - name: "Aggregate topology outputs"
+      set_fact:
+        topology_outputs: "{{ topology_outputs }} + {{ lookup('vars', item) }}"
+      loop: "{{ lookup('varnames', '^topology_outputs_').split(',') }}"
+      when: item|length > 0
+    - name: "Generate resources file for destroy test"
+      copy:
+        content: "{{ topology_outputs }}"
+        dest: "/tmp/{{ topology_name }}.output"
+
+- name: Test Beaker Teardown
+  hosts: all
+  roles:
+    - role: beaker
+  pre_tasks:
+    - name: include resource data for teardown
+      include_vars:
+        file: topo_data.yml
+  vars:
+    state: "absent"
+    debug_mode: true
+    auth_debug: true
+    _async: false
+    uhash: "111111"
+    linchpin_mock: true
+    generate_resources: true
+    default_resources_path: "/tmp"
+    default_ssh_key_path: "~"
+    default_credentials_path: "credentials"
   post_tasks: []
