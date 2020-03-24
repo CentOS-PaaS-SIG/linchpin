@@ -1,0 +1,47 @@
+topo_data:
+  topology_name: "gcloud-testdata"
+  resource_groups:
+    - resource_group_name: "gcloud"
+      resource_group_type: "gcloud"
+      resource_definitions:
+        - name: gce-webserver
+          role: gcloud_gce
+          flavor: 'f1-micro'
+          region: 'us-central1-a'
+          image: 'centos-7'
+          count: 1
+        - name: "testgcloudeiplinchpin"
+          role: gcloud_gce_eip
+          region: us-east1
+        - name: "testgcloudlinchpinautonet"
+          role: gcloud_gce_net
+          mode: auto
+        - zone: "testlpgcdnszone.com"
+          name: "testlpgcdnszonecom"
+          role: gcloud_gcdns_zone
+          description: test
+        - zone: "testlpgcdnszone.com"
+          name: "testlsomerecord"
+          role: gcloud_gcdns_record
+          record: www1.testlpgcdnszone.com
+          type: A
+          record_data:           # NOTE: All of the values must match exactly
+            - '192.0.2.23'
+            - '192.0.2.42'
+            - '198.51.100.5'
+            - '203.0.113.10'
+        - name: "testgcpcomputenetwork"
+          role: gcloud_gcp_compute_network
+          description: test_gcp_compute_network_linchpin
+        - name: "tcomputerouter"
+          role: gcloud_gcp_compute_router
+          bgp:
+            asn: 64514
+            advertise_mode: CUSTOM
+            advertised_groups:
+              - ALL_SUBNETS
+            advertised_ip_ranges:
+              - range: 1.2.3.4
+              - range: 6.7.0.0/16
+          network_name: tcomputenetwork
+          region: us-central1

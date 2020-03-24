@@ -30,17 +30,21 @@ jobs:
       run: |
         cd ./linchpin/provision/roles/aws
         molecule lint -s delegated
-    - name: "Execute linting for OpenStack role"
-      run: |
-        cd ./linchpin/provision/roles/openstack
-        molecule lint -s delegated
     - name: "Execute linting for Docker role"
       run: |
         cd ./linchpin/provision/roles/docker
-    - name: "Execute linting for Openshift role"
-      run: |
-        cd ./linchpin/provision/roles/openshift
     - name: "Execute linting for Duffy role"
       run: |
         cd ./linchpin/provision/roles/duffy
+        molecule lint -s delegated
+    - name: "Execute linting for Google Cloud role"
+      run: |
+        cd ./linchpin/provision/roles/gcloud
+        molecule lint -s delegated
+    - name: "Execute linting for Openshift role"
+      run: |
+        cd ./linchpin/provision/roles/openshift
+    - name: "Execute linting for OpenStack role"
+      run: |
+        cd ./linchpin/provision/roles/openstack
         molecule lint -s delegated

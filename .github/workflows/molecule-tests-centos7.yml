@@ -64,6 +64,16 @@ jobs:
           cd ./linchpin/provision/roles/dummy
           molecule converge -s delegated
           molecule destroy -s delegated
+      - name: "Execute Google Cloud molecule tests"
+        env:
+          LC_ALL: en_US.utf8
+          LANG: en_US.utf8
+        run: |
+          # make sure we're using python 3
+          ln -sf /usr/bin/python3 /usr/bin/python
+          cd ./linchpin/provision/roles/gcloud
+          molecule converge -s delegated
+          molecule destroy -s delegated
       - name: "Execute OpenStack molecule tests"
         env:
           LC_ALL: en_US.utf8
