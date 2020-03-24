@@ -1,0 +1,1 @@
+{"status": "running", "invocation": {"module_args": {"name": "centos71_0", "command": "status", "uri": "qemu:///system", "state": null, "autostart": null, "xml": null}}, "failed": true, "attempts": 5, "changed": false, "definition": ["centos71", "qemu:///system", 0, "_"], "ansible_loop_var": "definition"}

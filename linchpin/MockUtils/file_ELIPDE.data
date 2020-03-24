@@ -1,0 +1,1 @@
+{"path": "/var/lib/libvirt/images/linchpin/", "changed": false, "data":"mock", "diff": {"before": {"path": "/var/lib/libvirt/images/linchpin/"}, "after": {"path": "/var/lib/libvirt/images/linchpin/"}}, "uid": 0, "gid": 0, "owner": "root", "group": "root", "mode": "0755", "state": "directory", "secontext": "unconfined_u:object_r:virt_image_t:s0", "size": 4096, "failed": false}

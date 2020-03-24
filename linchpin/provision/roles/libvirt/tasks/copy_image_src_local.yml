@@ -3,12 +3,13 @@
   set_fact:
     local_image_path: "{{ libvirt_image_path | expanduser }}"
 
-- name: "delegate_to localhost :ensure local_image_path directory exists"
+- name: "ELIPDE ensure local_image_path directory exists"
   file:
     path: "{{ local_image_path }}"
     state: directory
     mode: 0755
   become: "{{ libvirt_become }}"
+  register: file_ensure
 
 - name: "set image_src_basename"
   set_fact:
@@ -18,22 +19,22 @@
   set_fact:
     local_image_src: "{{ local_image_path }}/{{ image_src_basename }}"
 
-
-- name: "does a local copy of image_src exist?"
+- name: "DLCIE does a local copy of image_src exist?"
   # find the image_src, copy it to /var/lib/libvirt/linchpin/<res_name>
   stat:
     path: "{{ local_image_src }}"
   register: lis_local
 
-- name: "download image_src"
+- name: "DIS download image_src"
   get_url:
     url: "{{ res_def['image_src'] }}"
     dest: "{{ local_image_src }}"
   become: "{{ libvirt_become }}"
   when: lis_local.stat.exists == false
   ignore_errors: yes
+  register: get_url_download_img_src
 
-- name: "determine image_src mime_type"
+- name: "DISMT determine image_src mime_type"
   # identify file type
   stat:
     path: "{{ local_image_src }}"
@@ -78,7 +79,7 @@
   become: "{{ libvirt_become }}"
   when: lismt_local.stat.mimetype == "application/x-xz" and ismt.stat.exists == false
 
-- name: "cp img_src to match node name"
+- name: "CISTMNN cp img_src to match node name"
   copy:
     src: "{{ img_src }}"
     dest: "{{ img_item[0] }}{{ img_item[1] }}{{img_item[4]}}{{ img_item[2] }}.{{ img_item[3] }}"
@@ -92,4 +93,11 @@
   loop_control:
     loop_var: img_item
   become: "{{ libvirt_become }}"
-  #when: ismt.stat.exists == false (if there's an option at some point to reuse disk, this would be helpful)
+  register: copy_img_to_match
+  ignore_errors: yes
+
+- name: "FWICF:Fail when imaged copy failed"
+  fail:
+    msg: "{{ copy_img_to_match }}"
+  when: copy_img_to_match['failed'] is defined and linchpin_mock != false
+  register: test_failure

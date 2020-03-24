@@ -63,7 +63,7 @@
   delegate_to: "{{ uri_hostname }}"
   when: not _async
 
-- name: "get XML definition of vm"
+- name: "GXMLDOV: get XML definition of vm"
   command: "virsh -c {{ instance[1]  }} dumpxml {{ instance[0] }}{{ instance[3] }}{{ instance[2] }}"
   with_nested:
     - ["{{  libvirt_resource_name }}"]

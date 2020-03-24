@@ -1,11 +1,13 @@
-- set_fact:
+- name: "Create res_count list"
+  set_fact:
       res_count: '{{ (res_count | default([])) + [item | int] }}'
   with_sequence: "start=0 end={{ res_def['count'] | int - 1 }}"
 
-- set_fact:
+- name: "Make sure the res_count is unique list"
+  set_fact:
     res_count: "{{ res_count | unique }}"
 
-- name: "does node already exist"
+- name: "DNAE does node already exist"
   virt:
     name: "{{ nodeinfo[0] }}{{ nodeinfo[2] }}{{ nodeinfo[1] }}"
     command: status
@@ -20,14 +22,14 @@
     loop_var: nodeinfo
   register: node_exists
 
-- name: set cloud config default
+- name: "set cloud config default"
   set_fact:
     cloud_config: "{{ res_def['cloud_config'] }}"
     cloud_init_used: true
 
 - name: "check cloud_config is used or not"
   set_fact:
-    cloud_init_used: "{{ true if (cloud_config['users'] != [] and cloud_config['run_commands'] is not defined ) else false }}"
+    cloud_init_used: "{{ true if (cloud_config['users'] != []) else false }}"
 
 - name: "set empty local_image_path"
   set_fact:
@@ -49,7 +51,7 @@
   set_fact:
     qemu_path: "{{ (ansible_distribution in ['CentOS','RedHat']) | ternary('/usr/libexec/', '/usr/bin/') }}"
 
-- name: set cloud_config virt_type
+- name: "set cloud_config virt_type"
   set_fact:
     virt_type: "{{ cloud_config['virt_type'] | default('cloud-init') }}"
 
@@ -74,7 +76,7 @@
   set_fact:
     ssh_key_path: "{{ default_ssh_key_path | default('~/.ssh/') }}/{{ res_def['ssh_key'] }}"
 
-- name: "local: does ssh key already exists ?"
+- name: "LDSKAE: local: does ssh key already exists ?"
   stat:
     path: "{{ ssh_key_path }}"
   register: ssh_key_stat_local
@@ -116,9 +118,9 @@
   delegate_to: "{{ uri_hostname }}"
   when: uri_hostname != 'localhost'
 
-- name: Add additional storage
+- name: "Add additional storage"
   block:
-  - name: "Add additional storage"
+  - name: "AAS: Add additional storage"
     command: "qemu-img resize {{ definition[1] }}/{{ definition[0] }}{{ definition[5] }}{{ definition[4] }}.{{ definition[2] }} +{{ definition[3] }}"
     with_nested:
     - ["{{ libvirt_resource_name }}"]
@@ -193,7 +195,7 @@
   vars:
     cloudconfig_users: "{{ cloud_config['users'] | default([]) }}"
   when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init" and cloud_init_used
-  
+
 - name: "Prepare cloud-config/user-data-remote"
   template:
     src: "templates/cloud-config/user-data"
@@ -236,8 +238,8 @@
   delegate_to: "{{ uri_hostname }}"
   when: node_exists['failed'] is defined and uri_hostname != 'localhost' and virt_type == "cloud-init" and cloud_init_used
 
-- name: "localhost: Generate ci data cd image for cloud-init when cloud config is defined"
-  command: mkisofs -file-mode 0666 -o /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}.iso -V cidata -r -J --quiet /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}/user-data /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}/meta-data
+- name: "MKISOFS: localhost: Generate ci data cd image for cloud-init when cloud config is defined"
+  command: "mkisofs -file-mode 0666 -o /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}.iso -V cidata -r -J --quiet /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}/user-data /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}/meta-data"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - "{{ res_count }}"
@@ -247,7 +249,7 @@
   when: node_exists['failed'] is defined and uri_hostname == 'localhost' and virt_type == "cloud-init" and cloud_init_used
 
 - name: "remote_host: Generate ci data cd image for cloud-init when cloud config is defined"
-  command: mkisofs -file-mode 0666 -o /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}.iso -V cidata -r -J --quiet /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}/user-data /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}/meta-data
+  command: "mkisofs -file-mode 0666 -o /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}.iso -V cidata -r -J --quiet /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}/user-data /tmp/vm-{{ definition[0] }}{{ definition[2] }}{{ definition[1] }}/meta-data"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - "{{ res_count }}"
@@ -261,7 +263,7 @@
 - set_fact:
     vm_xml: "{% if res_def.xml is defined %}{{workspace}}/{{res_def.xml}}{% else %}libvirt_node.xml.j2{%endif%}"
 
-- name: "define node"
+- name: "DN : define node"
   virt:
     name: "{{ libvirt_resource_name }}"
     command: define
@@ -300,11 +302,10 @@
   - fail:
       msg: 'Error running command qemu-img. Please make sure the dependencies are installed correctly. Try running `linchpin setup libvirt` to reinstall dependencies'
 
-
-- name: sync memory data to disk
+- name: "sync memory data to disk"
   command: sync
 
-- name: "Start VM"
+- name: "SVM: Start VM"
   virt:
     name: "{{ definition[0] }}{{ definition[3] }}{{ definition[2] }}"
     state: "running"
@@ -318,14 +319,14 @@
     loop_var: definition
   ignore_errors: no
 
-- name: wait for the vm to shut down (cloud-init)
+- name: "WFVMTSD: wait for the vm to shut down (cloud-init)"
   virt:
     name: "{{ definition[0] }}{{ definition[3] }}{{ definition[2] }}"
     command: status
     uri: "{{ definition[1] }}"
   register: vmstatus
   until: vmstatus.status == 'shutdown'
-  retries: 1500
+  retries: 5
   delay: 10
   with_nested:
     - ["{{ libvirt_resource_name }}"]
@@ -335,9 +336,25 @@
   loop_control:
     loop_var: definition
   when: node_exists['failed'] is defined and virt_type == "cloud-init" and cloud_init_used
+  ignore_errors: yes
 
-- name: "Remove cdrom (cloud-init)"
-  command: virsh -c {{ definition[1] }} change-media {{ definition[0] }}{{ definition[3] }}{{ definition[2] }} hda --eject --config
+- name: "MSVMISD: Make sure vm is shutdown"
+  virt:
+    name: "{{ definition[0] }}{{ definition[3] }}{{ definition[2] }}"
+    state: shutdown
+    command: shutdown
+    uri: "{{ definition[1] }}"
+  with_nested:
+    - ["{{ libvirt_resource_name }}"]
+    - ["{{ res_def['uri'] }}"]
+    - "{{ res_count }}"
+    - ["{{ res_def['name_separator'] }}"]
+  loop_control:
+    loop_var: definition
+  when: node_exists['failed'] is defined and virt_type == "cloud-init" and cloud_init_used
+
+- name: "RCDR: Remove cdrom (cloud-init)"
+  command: "virsh -c {{ definition[1] }} change-media {{ definition[0] }}{{ definition[3] }}{{ definition[2] }} hda --eject --config"
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - ["{{ res_def['uri'] }}"]
@@ -348,12 +365,10 @@
   ignore_errors: yes
   when: node_exists['failed'] is defined and virt_type == "cloud-init" and cloud_init_used
 
-
-- name: sync memory data to disk
+- name: "sync memory data to disk"
   command: sync
 
-
-- name: "Start VM again (post cloud-init)"
+- name: "SVMA: Start VM again (post cloud-init)"
   virt:
     name: "{{ definition[0] }}{{ definition[3] }}{{ definition[2] }}"
     state: "running"
@@ -368,7 +383,7 @@
   ignore_errors: no
   when: node_exists['failed'] is defined and virt_type == "cloud-init" and cloud_init_used
 
-- name: "dump node data"
+- name: "DND: dump node data"
   virt:
     name: "{{ data[0] }}{{ data[3] }}{{ data[2] }}"
     command: get_xml
@@ -383,13 +398,13 @@
   when: not _async
   register: node_data
 
-- set_fact:
+- name: "Initialize empty lists"
+  set_fact:
     networks: []
-
-- set_fact:
     macs: []
 
-- set_fact:
+- name: "Set values for networks"
+  set_fact:
     networks: "{{ networks + [net] }}"
   loop: "{{ res_def['networks'] }}"
   loop_control:
@@ -398,7 +413,8 @@
     - res_def['networks'] is defined
     - net.dhcp is not defined or net.dhcp == true
 
-- set_fact:
+- name: "Initialize empty lists"
+  set_fact:
     network_names: []
     nets: []
     vm_names: []
@@ -414,7 +430,6 @@
   loop_control:
     loop_var: data
 
-
 - name: Build a network name list
   set_fact: 
     network_names: "{{ network_names + [item[0]['name']] }}"
@@ -423,33 +438,33 @@
       - "{{ networks }}"
       - "{{ res_count }}"
 
-- virt_net:
+- name: "VNF: virt_net facts"
+  virt_net:
     command: facts
   register: net_fact
 
-- set_fact:
+- name: "Set fact for network information"
+  set_fact:
     netInfo: "{{net_fact.ansible_facts.ansible_libvirt_networks}}"
-
-
-- set_fact:
     forward_modes: []
+    IP_TYPE: []
 
-- set_fact:
+- name: "Set forward mode"
+  set_fact:
     forward_modes: "{{forward_modes + [netInfo[name]['forward_mode']] }}"
   loop: "{{ network_names }}"
   loop_control:
     loop_var: name
 
-- set_fact:
-    IP_TYPE: []
-
-- name: Differentiate IPs
+- name: "Differentiate IPs"
   set_fact:
     IP_TYPE: "{{ IP_TYPE + [mode|ip_filter]}}"
   loop: "{{forward_modes}}"
   loop_control:
     loop_var: mode
-- xml:
+
+- name: "SXML: set xml"
+  xml:
     xmlstring: "{{ node_data.results[net.1].get_xml }}"
     xpath: "//interface[@type='network' and ./source[@network='{{net.0.name}}']]/mac"
     content: attribute
@@ -458,17 +473,23 @@
   loop_control:
     loop_var: net
   loop: "{{ networks|product(res_count)|list }}"
-- set_fact:
+
+- name: "Set mac length"
+  set_fact:
     mac_length: "{{ networks|length*res_count|length }}"
 
+- name: debug
+  debug:
+    msg: "{{ mac_addresses }}"
 
-- set_fact:
+- name: "set mac addresses in a list"
+  set_fact:
     macs: "{{ macs + [mac_addresses.results[node].matches[0].mac.address] }}"
   loop: '{{ range(0,mac_length|int,1)|list }}'
   loop_control:
     loop_var: node
 
-- name: "Make sure the VMs are running"
+- name: "MSVAR: Make sure the VMs are running"
   virt:
     name: "{{ definition[0] }}{{ definition[3] }}{{ definition[2] }}"
     state: "running"
@@ -482,7 +503,7 @@
     loop_var: definition
   ignore_errors: no
 
-- name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
+- name: "MAIP: mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
     /usr/sbin/ip n | grep -F {{ mac }} | awk {'print $1'} | grep -v ^fe80
   with_items:
@@ -494,17 +515,23 @@
   retries: 30
   delay: 10
   when: uri_hostname == 'localhost'
+  ignore_errors: true
 
-- set_fact:
+- name: "fail when previous task fails"
+  fail:
+  when: extract_ip_address_result.failed is defined and linchpin_mock != True
+
+- name: "Intialize ip_set variable"
+  set_fact:
     ip_set: []
 
-- set_fact: 
+- name: "Intialize ip_set to ipaddress"
+  set_fact: 
     ip_set: "{{ip_set + [extract_ip_address_result.results[num]['stdout']|omit_filter(omit)]}}"
   loop: "{{ range(0,mac_length|int, 1)|list}}"
   loop_control:
     loop_var: num
-  when: uri_hostname == 'localhost'
-
+  when: uri_hostname == 'localhost' and linchpin_mock != True
 
 - name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
@@ -521,7 +548,8 @@
   delegate_to: "{{ uri_hostname }}"
   when: uri_hostname != 'localhost'
 
-- set_fact: 
+- name: "remote: set ip_set"
+  set_fact: 
     ip_set: "{{ip_set + [extract_ip_address_result_remote.results[num]['stdout']|omit_filter(omit)]}}"
   loop: "{{ range(0,mac_length|int, 1)|list}}"
   loop_control:
@@ -537,6 +565,7 @@
   when:
     - not _async and uri_hostname == 'localhost'
     - extract_ip_address_result is defined and extract_ip_address_result.changed == true
+    - linchpin_mock !=True
 
 - name: "remote: Append ip_addresses and node_data to topology_outputs_libvirt_nodes"
   set_fact:
@@ -573,8 +602,8 @@
   loop: '{{ range(0,mac_length|int,1)|list }}'
   loop_control:
     loop_var: num
- 
-- name: "Make sure the vms are running when play ends"
+
+- name: "MSVARWPE: Make sure the vms are running when play ends"
   virt:
     name: "{{ definition[0] }}{{ definition[3] }}{{ definition[2] }}"
     state: "running"

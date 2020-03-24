@@ -1,0 +1,1 @@
+{"results": [{"changed": true, "msg": 0, "invocation": {"module_args": {"name": "centos71_0", "state": "running", "uri": "qemu:///system", "autostart": null, "command": null, "xml": null}}, "failed": false, "definition": ["centos71", "qemu:///system", 0, "_"], "ansible_loop_var": "definition"}], "changed": true, "msg": "All items completed"}
