@@ -9,7 +9,7 @@
     gateway_ipv4: "{{ res_def['gateway_ipv4'] | default(omit) }}"
     ipv4_range: "{{ res_def['ipv4_range'] | default(omit) }}"
     project: "{{ auth_var['output']['project_id'] | default(omit) }}"
-    scopes: "{{ res_def['scopes'] | 
+    scopes: "{{ res_def['scopes'] |
                 default(['https://www.googleapis.com/auth/compute']) }}"
     service_account_file: "{{ auth_var['path'] | default(omit) }}/\
                            {{ auth_var['params']['filename'] | default(omit) }}"
@@ -19,7 +19,8 @@
 
 - name: "Appending outputitem to topology_outputs"
   set_fact:
-    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce + [res_def_output] }}"
+    topology_outputs_gcloud_gce: "{{ topology_outputs_gcloud_gce +
+                                     [res_def_output] }}"
   when: not _async and state == "present"
 
 - name: "Add type to resource"

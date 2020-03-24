@@ -1,7 +1,7 @@
 - name: "Provision/Teardown resource by looping on count"
   gce:
     name: "{{ gce_resource_name }}"
-    num_instances: "{{ res_def['count'] | default(omit)}}"
+    num_instances: "{{ res_def['count'] | default(omit) }}"
     zone: "{{ res_def['region'] }}"
     machine_type: "{{ res_def['flavor']  }}"
     image: "{{ res_def['image']  }}"
@@ -25,7 +25,7 @@
 - name: "Async:: Provision/Teardown resource by looping on count"
   gce:
     name: "{{ gce_resource_name }}"
-    num_instances: "{{ res_def['count'] | default(omit)}}"
+    num_instances: "{{ res_def['count'] | default(omit) }}"
     zone: "{{ res_def['region'] }}"
     machine_type: "{{ res_def['flavor']  }}"
     image: "{{ res_def['image']  }}"
