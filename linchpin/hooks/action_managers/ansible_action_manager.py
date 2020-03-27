@@ -106,6 +106,7 @@ class AnsibleActionManager(ActionManager):
         ctx_params["layout_file"] = self.target_data.get("layout_file", None)
         ctx_params["inventory_file"] = (
             self.target_data.get("inventory_file", None))
+        ctx_params['no_monitor'] = self.target_data.get("no_monitor", False)
 
         return ctx_params
 
@@ -140,6 +141,9 @@ class AnsibleActionManager(ActionManager):
             vault_pass_file = self.action_data.get("vault_password_file", None)
             extra_vars.update(e_vars)
             extra_vars['hook_data'] = results
+            # some applications need no_monitor disabled for ansible hooks
+            if 'no_monitor' in self.target_data:
+                extra_vars['no_monitor'] = self.target_data.get('no_monitor')
             verbosity = self.kwargs.get('verbosity', 1)
 
             if self.context:
