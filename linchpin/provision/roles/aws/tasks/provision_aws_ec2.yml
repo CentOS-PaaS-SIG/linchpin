@@ -23,7 +23,7 @@
     region: "{{ res_def['region'] }}"
     wait: false
     group: "{{ res_def['security_group']| default('default') }}"
-    count: "{{ res_def['count'] }}"
+    count: "{{ res_def['count'] | default('1') }}"
     vpc_subnet_id: "{{ res_def['vpc_subnet_id']| default(omit) }}"
     assign_public_ip: "{{ res_def['assign_public_ip']| default(omit) }}"
     instance_tags: "{{ instance_tags }}"
