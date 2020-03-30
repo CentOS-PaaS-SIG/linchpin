@@ -52,3 +52,6 @@ jobs:
       run: |
         cd ./linchpin/provision/roles/vmware
         molecule lint -s delegated
+    - name: "Execute linting for Ovirt role"
+      run: |
+        cd ./linchpin/provision/roles/ovirt
