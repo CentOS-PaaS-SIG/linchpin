@@ -1,0 +1,2 @@
+vmware_become: true
+vmware_become_user: root

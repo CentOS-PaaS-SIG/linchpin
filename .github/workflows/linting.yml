@@ -48,3 +48,7 @@ jobs:
       run: |
         cd ./linchpin/provision/roles/openstack
         molecule lint -s delegated
+    - name: "Execute linting for VMware role"
+      run: |
+        cd ./linchpin/provision/roles/vmware
+        molecule lint -s delegated
