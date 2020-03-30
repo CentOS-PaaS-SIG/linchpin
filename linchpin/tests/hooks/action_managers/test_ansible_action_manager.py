@@ -49,7 +49,8 @@ def test_get_ctx_params():
     params = manager.get_ctx_params()
     assert_equal(list(params.keys()), ['resource_file',
                                      'layout_file',
-                                     'inventory_file'])
+                                     'inventory_file',
+                                       'no_monitor'])
 
 @with_setup(setup_ansible_action_manager)
 def test_execute():

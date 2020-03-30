@@ -136,6 +136,8 @@ class LinchpinHooks(object):
         uhash = self.api.get_evar('uhash')
         uhash_enabled = self.api.get_evar('enable_uhash', False)
         ext = self.api.get_cfg('extensions', 'inventory')
+        # some applications need no_monitor disabled for ansible hooks
+        no_monitor = self.api.get_evar('no_monitor')
 
         inv_file = '{0}/{1}/{2}{3}'.format(workspace,
                                            inv_folder,
@@ -151,6 +153,7 @@ class LinchpinHooks(object):
         self.api.target_data['extra_vars'] = {}
         self.api.target_data['extra_vars']['inventory_dir'] = inv_folder
         self.api.target_data['extra_vars']['inventory_file'] = inv_file
+        self.api.target_data['extra_vars']['no_monitor'] = no_monitor
 
 
     def prepare_inv_params(self):
