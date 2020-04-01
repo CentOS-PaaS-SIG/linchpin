@@ -162,10 +162,11 @@ def runcli(ctx, config, pinfile, template_data, outfile, workspace, verbose,
         ctx.log_state('linchpin version {0}'.format(ctx.version))
         sys.exit(0)
 
-    ctx.no_monitor = False
     if no_monitor:
         ctx.no_monitor = True
         ctx.set_evar('no_monitor', True)
+    else:
+        ctx.no_monitor = ctx.get_evar('no_monitor')
 
     if creds_path is not None:
         ctx.set_evar('creds_path',
