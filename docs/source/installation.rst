@@ -51,13 +51,11 @@ If the system installed version of Python is older than 2.6, many systems will p
 Minimal Software Requirements
 -----------------------------
 
-As LinchPin is heavily dependent on Ansible 2.3.1 or newer, this is a core requirement. Beyond installing Ansible, there are several packages that need to be installed::
+As LinchPin is heavily dependent on Ansible 2.9.0 or newer, this is a core requirement. Beyond installing Ansible, there are several packages that need to be installed::
 
 * libffi-devel
-* openssl-devel
 * libyaml-devel
-* gmp-devel
-* libselinux-python
+* python3-libselinux
 * make
 * gcc
 * redhat-rpm-config
@@ -68,18 +66,18 @@ For CentOS or RHEL the following packages should be installed:
 
 .. code-block:: bash
 
-    $ sudo yum install python-pip python-virtualenv libffi-devel \
+    $ sudo yum install python3-pip python3-virtualenv libffi-devel \
     openssl-devel libyaml-devel gmp-devel libselinux-python make \
-    gcc redhat-rpm-config libxml2-python libxslt-python git
+    gcc redhat-rpm-config git
 
 .. attention:: CentOS 6 (and likely RHEL 6) require special care during installation. See :doc:`centos6_install` for more detail.
 
-For Fedora 26+ the following packages should be installed:
+For Fedora 30+ the following packages should be installed:
 
 .. code-block:: bash
 
-    $ sudo dnf install python-virtualenv libffi-devel \
-    openssl-devel libyaml-devel gmp-devel libselinux-python make \
+    $ sudo dnf install python3-virtualenv libffi-devel \
+    openssl-devel libyaml-devel gmp-devel python3-libselinux make \
     gcc redhat-rpm-config libxml2-python libxslt-python
 
 .. _installing_linchpin:
@@ -95,16 +93,7 @@ Create a virtualenv to install the package using the following sequence of comma
 
     $ mkvirtualenv linchpin
     ..snip..
-    (linchpin) $ pip install linchpin
-    ..snip..
-
-Using mkvirtualenv with Python 3 (now default on some Linux systems) will attempt to link to the `python3` binary. LinchPin isn't fully compatible with Python 3 yet. However, mkvirtualenv provides the ``-p`` option for specifying the `python2` binary.
-
-.. code-block:: bash
-
-    $ mkvirtualenv linchpin -p $(which python2)
-    ..snip..
-    (linchpin) $ pip install linchpin
+    (linchpin) $ pip3 install linchpin
     ..snip..
 
 .. note:: mkvirtualenv is optional dependency you can install from `here <http://virtualenvwrapper.readthedocs.io/en/latest/install.html>`_. An alternative, virtualenv, also exists. Please refer to the `virtualenv documentation <https://virtualenv.pypa.io/en/stable/>`_ for more details.
@@ -128,35 +117,35 @@ If testing or docs is desired, additional steps are required
 
 .. code-block:: bash
 
-    (linchpin) $ pip install linchpin[docs]
-    (linchpin) $ pip install linchpin[tests]
+    (linchpin) $ pip3 install linchpin[docs]
+    (linchpin) $ pip3 install linchpin[tests]
 
 Virtual Environments and SELinux
 ````````````````````````````````
 
-When using a virtualenv with SELinux enabled, LinchPin may fail due to an error related to the libselinux-python libraries. This is because the libselinux-python binary needs to be enabled in the Virtual Environment. Because this library affects the filesystem, it isn't provided as a standard python module via pip. The RPM must be installed, then a symlink must occur.
+When using a virtualenv with SELinux enabled, LinchPin may fail due to an error related to the python3-libselinux libraries. This is because the python3-libselinux binary needs to be enabled in the Virtual Environment. Because this library affects the filesystem, it isn't provided as a standard python module via pip. The RPM must be installed, then a symlink must occur.
 
 .. code-block:: bash
 
-    (linchpin) $ sudo dnf install libselinux-python
+    (linchpin) $ sudo dnf install python3-libselinux
     .. snip ..
     (linchpin) $ echo ${VIRTUAL_ENV}
     /path/to/virtualenvs/linchpin
-    (linchpin) $ export VENV_LIB_PATH=lib/python2.7/site-packages
-    (linchpin) $ export LIBSELINUX_PATH=/usr/lib64/python2.7/site-packages # make sure to verify this location
+    (linchpin) $ export VENV_LIB_PATH=lib/python3.x/site-packages
+    (linchpin) $ export LIBSELINUX_PATH=/usr/lib64/python3.x/site-packages # make sure to verify this location
     (linchpin) $ ln -s ${LIBSELINUX_PATH}/selinux ${VIRTUAL_ENV}/${VENV_LIB_PATH}
     (linchpin) $ ln -s ${LIBSELINUX_PATH}/_selinux.so ${VIRTUAL_ENV}/${VENV_LIB_PATH}
 
 .. note:: A script is provided to do this work at :code1.5:`scripts/install_selinux_venv.sh`
 
-Installing on Fedora 26
+Installing on Fedora 30+
 -----------------------
 
 Install RPM pre-reqs
 
 .. code-block:: bash
 
-    $ sudo dnf -y install python-virtualenv libffi-devel openssl-devel libyaml-devel gmp-devel libselinux-python make gcc redhat-rpm-config libxml2-python
+    $ sudo dnf -y install python3-virtualenv libffi-devel openssl-devel libyaml-devel python3-libselinux make gcc redhat-rpm-config libxml2-python
 
 
 Create a working-directory
@@ -172,7 +161,7 @@ Create linchpin directory, make a virtual environment, activate the virtual envi
 
     $ mkvirtualenv linchpin
     ..snip..
-    (linchpin) $ pip install linchpin
+    (linchpin) $ pip3 install linchpin
 
 Make a workspace, and initialize it to prove that linchpin itself works
 
@@ -206,19 +195,8 @@ Install pre-req RPMs via YUM:
 
 .. code-block:: bash
 
-    $ sudo yum install -y libffi-devel openssl-devel libyaml-devel gmp-devel libselinux-python make gcc redhat-rpm-config libxml2-devel libxslt-devel libxslt-python libxslt-python
+    $ sudo yum install -y libffi-devel openssl-devel libyaml-devel gmp-devel python3-libselinux make gcc redhat-rpm-config libxml2-devel libxslt-devel libxslt-python libxslt-python
 
-To get a working python 2.7 pip and virtualenv either use EPEL
-
-.. code-block:: bash
-
-    $ sudo rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-
-Install python pip and virtualenv:
-
-.. code-block:: bash
-
-    $ sudo yum install -y python2-pip python-virtualenv
 
 Create a working-directory
 
@@ -233,20 +211,19 @@ Create linchpin directory, make a virtual environment, activate the virtual envi
 
     $ mkvirtualenv linchpin
     ..snip..
-    (linchpin) $ pip install linchpin
+    (linchpin) $ pip3 install linchpin
 
 Inside the virtualenv, upgrade pip and setuptools because the EPEL versions are too old.
 
 .. code-block:: bash
 
-    (linchpin) $ pip install -U pip
-    (linchpin) $ pip install -U setuptools
+    (linchpin) $ pip3 install -U setuptools
 
 Install linchpin
 
 .. code-block:: bash
 
-    (linchpin) $ pip install linchpin
+    (linchpin) $ pip3 install linchpin
 
 Make a workspace, and initialize it to prove that linchpin itself works
 
@@ -269,7 +246,7 @@ As an alternative, LinchPin can be installed via github. This may be done in ord
     $ cd linchpin
     $ mkvirtualenv linchpin
     ..snip..
-    (linchpin) $ pip install file://$PWD/linchpin
+    (linchpin) $ pip3 install file://$PWD/linchpin
 
 linchpin setup : Automatic Dependency installation:
 ---------------------------------------------------
