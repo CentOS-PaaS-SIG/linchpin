@@ -1,4 +1,13 @@
 ---
+- set_fact:
+    network_interface_names: []
+  when: network_interface_names is not defined
+
+- set_fact:
+    network_interface_names: res_def['network_interface_names']
+  when: network_interface_names is defined
+
+
 - name: "Provisioning Azure VM when not async"
   azure_rm_virtualmachine:
     ad_user: "{{ auth_var['user'] | default(omit) }}"
@@ -13,6 +22,7 @@
     ssh_public_keys: "{{ssh_public_keys}}"
     vm_size: "{{ res_def['vm_size'] | default('Standard_DS1_v2') }}"
     name: "{{ nameOfvm | default(omit) }}"
+    network_interface_names: "{{ network_interface_names }}"
     virtual_network_name: "{{res_def['virtual_network_name']|default(vn_name)}}"
     image: "{{ image | default(omit) }}"
     availability_set: "{{ res_def['availability_set'] | default(omit) }}"

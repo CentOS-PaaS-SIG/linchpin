@@ -143,6 +143,8 @@ azure_vm:
             private_image: "TestingImageAzure"
             # If you have both private and public images
             # Linchpin will take the private one
+            # network_interface_names:
+            #   yourresourcegroupname: nic_name
             public_image:
               offer: CentOS
               publisher: OpenLogic
