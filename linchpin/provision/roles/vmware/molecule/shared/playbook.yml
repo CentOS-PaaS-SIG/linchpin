@@ -1,0 +1,5 @@
+- name: converge
+  hosts: all
+  roles:
+    - role: vmware
+  post_tasks: []

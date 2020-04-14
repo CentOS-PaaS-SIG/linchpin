@@ -1,10 +1,11 @@
----
 - name: "declaring output vars"
   set_fact:
     topology_outputs_vmware_guest: []
 
-- name: "Initiating Provisioning/Deprovisioning of resources VMware resource group"
-  include: provision_resource_group.yml res_grp={{ item }}
+- name: "Initiating Provisioning/Deprovisioning of VMware resource group"
+  include_tasks: provision_resource_group.yml
+  vars:
+    res_grp: "{{ item }}"
   with_items:
     - "{{ resources }}"
   register: resource_grps_output
