@@ -1,4 +1,3 @@
----
 # oVirt credentials example
 default:
   url: https://ovirt.exampl.com/ovirt-engine/api

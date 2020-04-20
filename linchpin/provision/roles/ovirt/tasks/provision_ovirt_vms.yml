@@ -1,7 +1,5 @@
----
-
 - name: "Provision ovirt_disk resources"
-  ovirt_disks:
+  ovirt_disk:
     state: "{{ state }}"
     auth: "{{ ovirt_auth }}"
     name: "{{ ovirt_resource_name }}-{{ disk_item['name'] }}"
@@ -14,17 +12,20 @@
     loop_var: disk_item
   register: disk
 
-- set_fact:
+- name: "create disks variable"
+  set_fact:
     disks: []
-    
-- set_fact:
-    disks: "{{ disks | default([]) }} + {{ [{ 'name': disks_item['disk']['alias'] }] }}"
+
+- name: "add results to disks"
+  set_fact:
+    disks: "{{ disks | default([]) }} +
+            {{ [{ 'name': disks_item['disk']['alias'] }] }}"
   with_items: "{{ disk.results }}"
   loop_control:
     loop_var: disks_item
-    
+
 - name: "Provision/deprovision ovirt_vms resources"
-  ovirt_vms:
+  ovirt_vm:
     state: "{{ state }}"
     auth: "{{ ovirt_auth }}"
     name: "{{ ovirt_resource_name }}"
@@ -48,34 +49,38 @@
   when: not _async
 
 # If the machine isn't powered on and the guest agent has not reported the
-# IP address fetch_nested will not be able to retrieve the nested_attributes: ips
+# IP address fetch_nested will not be able to retrieve the nested_attributes:
+# ips
 # - After the machine has been created start the vm
 # - Wait for an IPv4 address
 # - Use ovirt_vms to fetch variables
-  
+
 - name: "Start Ovirt VMs"
-  ovirt_vms:
+  ovirt_vm:
     state: "running"
     auth: "{{ ovirt_auth }}"
     name: "{{ ovirt_resource_name }}"
   when: not _async
-  
+
 - name: Wait for IPv4 address
-  ovirt_nics_facts:
+  ovirt_nic_facts:
     auth: "{{ ovirt_auth }}"
     vm: "{{ ovirt_resource_name }}"
     name: "nic1"
   register: nics
   when: not _async
-  until: 
+  until:
     - ovirt_nics | length > 0
     - ovirt_nics[0].reported_devices | length > 0
-    - ovirt_nics[0].reported_devices[0].ips | selectattr('version', 'match', 'v4') | list | length > 0
+    - ovirt_nics[0].reported_devices[0].ips |
+      selectattr('version', 'match', 'v4') |
+      list |
+      length > 0
   retries: 12
   delay: 30
-  
+
 - name: "Retrieve Nested Attributes for Ovirt VM"
-  ovirt_vms:
+  ovirt_vm:
     state: "{{ state }}"
     auth: "{{ ovirt_auth }}"
     name: "{{ ovirt_resource_name }}"
@@ -83,14 +88,15 @@
     nested_attributes: ips
   when: not _async
   register: res_def_output
-    
+
 - name: "Append outputitem to topology_outputs"
   set_fact:
-    topology_outputs_ovirt_vms: "{{ topology_outputs_ovirt_vms + [ res_def_output ] }}"
+    topology_outputs_ovirt_vms: "{{ topology_outputs_ovirt_vms +
+                                    [ res_def_output ] }}"
   when: not _async
 
 - name: "Provision/deprovision ovirt_vms resources"
-  ovirt_vms:
+  ovirt_vm:
     state: "{{ state }}"
     auth: "{{ ovirt_auth }}"
     name: "{{ ovirt_resource_name }}"
@@ -119,9 +125,12 @@
 # following tasks saves the async job details
 - name: "Async:: save the job id"
   set_fact:
-    topology_outputs_ovirt_vms: "{{ topology_outputs_ovirt_vms + [ res_def_output ] }}"
+    topology_outputs_ovirt_vms: "{{ topology_outputs_ovirt_vms +
+                                    [ res_def_output ] }}"
   when: _async
 
 - name: "Add type to resource"
   set_fact:
-    topology_outputs_ovirt_vms: "{{ topology_outputs_ovirt_vms | add_res_data(res_grp_type, res_def['role']) }}"
+    topology_outputs_ovirt_vms: "{{ topology_outputs_ovirt_vms |
+                                    add_res_data(res_grp_type,
+                                                 res_def['role']) }}"
