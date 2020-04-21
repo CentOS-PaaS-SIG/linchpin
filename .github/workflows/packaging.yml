@@ -1,14 +1,21 @@
 name: "Build packages"
 
+
 on:
   push:
-    branches:
-      - develop
-      - master
-  pull_request:
-  release:
-    types:
-      - published
+    branches-ignore:
+       - '**'
+
+# disabled until app image builds are fixed and tested
+#on:
+#  push:
+#    branches:
+#      - develop
+#      - master
+#  pull_request:
+#  release:
+#    types:
+#      - published
 
 jobs:
   rpm:
