@@ -93,6 +93,10 @@
                                 "azure_vm"
                             ]
                         },
+                        "network_interface_names": {
+                            "type": "list",
+                            "required": false
+                        },
                         "count": {
                             "type": "integer",
                             "required": false
