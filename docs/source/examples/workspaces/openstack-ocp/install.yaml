@@ -1,0 +1,43 @@
+---
+- hosts: all
+  gather_facts: no
+  become: false
+  tasks:
+    - name: Install git
+      shell: sudo yum install git -y
+    - name: Git clone
+      git:
+        repo: 'https://github.com/JunqiZhang0/linchpin.git'
+        dest: '~/linchpin'
+    - name: Install python
+      shell: sudo yum install python3 -y
+      args:
+        chdir: ~/linchpin/
+    - name: Install pip
+      shell: curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+      args:
+        chdir: ~/linchpin/
+    - name: Install pip 
+      shell: sudo python3 get-pip.py
+      args:
+        chdir: ~/linchpin/
+    - name: Install gcc
+      shell: sudo yum install gcc -y
+    - name: Install python devel
+      shell: sudo yum install python3-devel -y
+        #yum install gcc
+        # yum install python3-devel
+        #yum install libvirt
+        # sudo pip install linchpin[libvirt]
+    - name: checkout
+      shell: git checkout add-ocp
+      args:
+        chdir: ~/linchpin/
+    - name: Install linchpin
+      shell: sudo pip install .
+      args:
+        chdir: ~/linchpin/
+    - name: linchpin version
+      shell: sudo /usr/local/bin/linchpin --version
+
+                

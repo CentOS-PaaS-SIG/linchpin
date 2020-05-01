@@ -1,0 +1,13 @@
+#jinja2:lstrip_blocks: True
+---
+libvirt-network:
+  topology: libvirt-network.yml
+
+cfgs:
+  libvirt:
+    __IP__: name
+    __ADDRESS__: ip
+
+libvirt-new:
+  topology: libvirt-new.yml
+  layout: libvirt-new.yml

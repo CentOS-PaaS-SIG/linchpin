@@ -1,0 +1,40 @@
+---
+os-server-new:
+  hooks:
+    postup:
+      - name: install_linchpin
+        type: ansible
+        context: True
+        actions:
+          - playbook: install.yaml
+          - playbook: run_tests.yml
+  topology:
+    topology_name: os-server-new
+    resource_groups:
+      - resource_group_name: os-server-new
+        resource_group_type: openstack
+        resource_definitions:
+          - name: "test-linchpin1"
+            role: os_server
+            flavor: {{ flavor | default('ci.nested.virt.m1.small') }}
+            image: {{ image | default('Fedora 31') }}
+            count: 1
+            keypair: {{ keypair | default('OCP') }}
+            networks:
+              - {{ networks | default('provider_net_cci_8') }}
+        credentials:
+          filename: clouds.yaml
+          profile: test
+
+  layout:
+    inventory_layout:
+      vars:
+        hostname: __IP__
+        ansible_ssh_user: fedora
+        ansible_ssh_private_key_file: './OCP.pem'
+        ansible_ssh_extra_args: '"-o identitiesOnly=yes -o StrictHostKeyChecking=no"'
+      hosts:
+        OCP-test-node:
+          count: 1
+          host_groups:
+            - test

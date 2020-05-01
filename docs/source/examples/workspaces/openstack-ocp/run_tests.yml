@@ -1,0 +1,38 @@
+#jinja2:lstrip_blocks: True
+---
+- hosts: all
+  gather_facts: no
+  become: false
+  tasks:
+    - name: intall libvirt
+      shell: sudo yum install libvirt -y
+    - name: Start libvirtd
+      shell: sudo systemctl start libvirtd
+    - name: install selinux
+      shell: sudo pip install selinux
+    - name: Install dependency
+      shell: sudo yum install -y libvirt-devel libguestfs-tools python-libguestfs
+    - name: Install linchpin[libvirt]
+      shell: sudo pip install linchpin[libvirt]
+    - name: clone testing repo
+      shell: git -c http.sslVerify=false clone https://gitlab.cee.redhat.com/ocp-edge-qe/ocp-edge.git
+      args:
+        chdir: ~/
+    - name: init test workplace
+      shell: /usr/local/bin/linchpin init ocpusecase
+      args:
+        chdir: ~/
+    - name: Copy Pinfile
+      shell: sudo cp ~/linchpin/docs/source/examples/workspaces/openstack-ocp/ocp-run.yml ~/ocpusecase/ 
+    - name: make dir 
+      shell: sudo mkdir -p ~/ocpusecase/topologies/ ~/ocpusecase/layouts/
+    - name: Copy file linvirt-new topo
+      shell: sudo cp ~/ocp-edge/linchpin-workspace/topologies/libvirt-new.yml ~/ocpusecase/topologies/
+    - name: Copy file linvirt-new layout
+      shell: sudo cp ~/ocp-edge/linchpin-workspace/layouts/libvirt-new.yml ~/ocpusecase/layouts/
+    - name: Copy file linvirt-network topo
+      shell: sudo cp ~/ocp-edge/linchpin-workspace/topologies/libvirt-network.yml ~/ocpusecase/topologies/
+    - name: run tests
+      shell: sudo /usr/local/bin/linchpin -vvv -p ocp-run.yml up
+      args:
+        chdir: ~/ocpusecase
