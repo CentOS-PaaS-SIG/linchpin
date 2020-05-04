@@ -1,0 +1,15 @@
+name: "Autobump tag on develop branch when version changes"
+
+on: [push]
+
+jobs:
+  tag-new-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - uses: salsify/action-detect-and-tag-new-version@v1
+        with:
+          version-command: |
+            grep -o "'.*'" ./linchpin/version.py | sed "s/'//g" | tail -n 1
