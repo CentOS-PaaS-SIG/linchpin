@@ -1,5 +1,4 @@
 from __future__ import absolute_import
-
 from tinydb import TinyDB
 from tinydb.storages import JSONStorage
 from tinydb.operations import add
@@ -10,20 +9,27 @@ from six.moves import range
 from . import usedb
 from .basedb import BaseDB
 
+import tinydb
+
 
 class TinyRunDB(BaseDB):
 
     def __init__(self, conn_str):
         self.name = 'TinyRunDB'
         self.conn_str = conn_str
-        self.default_table = 'linchpin'
+        self.default_table_name = 'linchpin'
 
 
     def _opendb(self):
         self.middleware = CachingMiddleware(JSONStorage)
         self.middleware.WRITE_CACHE_SIZE = 4096
-        self.db = TinyDB(self.conn_str, storage=self.middleware,
-                         default_table=self.default_table)
+        tinydb_version = tinydb.version.__version__
+        if int(tinydb_version.split(".")[0]) == 3:
+            self.db = TinyDB(self.conn_str, storage=self.middleware,
+                             default_table=self.default_table_name)
+        else:
+            self.db = TinyDB(self.conn_str, storage=self.middleware)
+            self.db.default_table_name = self.default_table_name
 
 
     def __str__(self):
@@ -102,7 +108,7 @@ class TinyRunDB(BaseDB):
         run_id = len(t.all())
 
         for rid in range(int(run_id), 0, -1):
-            record = t.get(eid=int(rid))
+            record = t.get(doc_id=int(rid))
             if record and record['action'] == action:
                 return rid
         return run_id
@@ -113,14 +119,14 @@ class TinyRunDB(BaseDB):
 
         t = self.db.table(name=table)
         if run_id:
-            record = t.get(eid=int(run_id))
+            record = t.get(doc_id=int(run_id))
             if record:
                 return(record, int(run_id))
         if action:
             run_id = self.get_run_id(table, action)
             if not run_id:
                 return (None, 0)
-            record = t.get(eid=int(run_id))
+            record = t.get(doc_id=int(run_id))
             if record and record['action'] == action:
                 return (record, int(run_id))
         else:
