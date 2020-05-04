@@ -16,6 +16,7 @@ then
     yum install -y python3 epel-release which git wget;
     yum install -y python3-pip python3-flake8 python3-devel gcc;
     yum install -y python3-pytest;
+    yum install -y openssl-devel;
     yum install libvirt-devel -y;
     yum install libguestfs-tools python-libguestfs -y;
     mkdir -p /github/home/.ssh/;
@@ -25,6 +26,7 @@ then
     export LC_ALL="en_US";
     export LANG="en_US";
     yum install libvirt-devel -y;
+    yum install -y openssl-devel;
     yum install libguestfs-tools python-libguestfs -y;
     yum install -y python3 epel-release which git wget;
     yum install -y python-pip python3-pip python3-devel gcc;
@@ -36,6 +38,7 @@ else
     export LC_ALL=C.UTF-8;
     export LANG=C.UTF-8;
     yum install libvirt-devel -y;
+    yum install -y openssl-devel;
     yum install libguestfs-tools python-libguestfs -y;
     dnf install -y --nogpgcheck python3 git python3-pip python3-flake8 python3-devel gcc which wget;
     dnf install -y --nogpgcheck python3-pytest;
