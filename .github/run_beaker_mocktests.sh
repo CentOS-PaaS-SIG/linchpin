@@ -9,8 +9,8 @@ echo $VERSION_ID
 if [ $VERSION_ID = "7" ]
 then
     echo "This is centos7";
-    export LC_ALL="en_US";
-    export LANG="en_US";
+    export LC_ALL="en_US.utf8";
+    export LANG="en_US.utf8";
 fi
 
 
