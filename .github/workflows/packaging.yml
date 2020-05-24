@@ -1,21 +1,14 @@
 name: "Build packages"
 
-
 on:
   push:
-    branches-ignore:
-       - '**'
-
-# disabled until app image builds are fixed and tested
-#on:
-#  push:
-#    branches:
-#      - develop
-#      - master
-#  pull_request:
-#  release:
-#    types:
-#      - published
+    branches:
+      - develop
+      - master
+  pull_request:
+  release:
+    types:
+      - published
 
 jobs:
   rpm:
@@ -141,7 +134,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: Linchpin-${{ steps.version.outputs.version }}.glibc2.17-x86_64.AppImage
+          asset_path: appimage/out/Linchpin-${{ steps.version.outputs.version }}.glibc2.17-x86_64.AppImage
           asset_name: Linchpin-${{ steps.version.outputs.version }}.glibc2.17-x86_64.AppImage
           asset_content_type: application/appimage
 
