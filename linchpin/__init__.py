@@ -108,17 +108,17 @@ class LinchpinAPI(object):
         self.set_evar('role_path', self.role_path)
         self.set_evar('from_api', True)
         self.set_evar('no_monitor', self.ctx.no_monitor)
-        self.disable_pbar = 'True'
+        self.disable_pbar = True
         self.workspace = self.get_evar('workspace')
 
 
     def setup_pbar(self):
         if (eval(self.get_cfg('progress_bar', 'no_progress')) or
            self.ctx.verbosity or self.ctx.no_monitor):
-            self.disable_pbar = 'True'
+            self.disable_pbar = True
         else:
-            self.disable_pbar = 'False'
-        self.pbar = tqdm_or_mock(disable=self.disable_pbar,
+            self.disable_pbar = False
+        self.pbar = tqdm_or_mock(disable=str(self.disable_pbar),
                                  bar_format="[{bar:10}] {desc:<30}|" +
                                             "{postfix[0][group]}",
                                  postfix=[dict(group='initializing')],
