@@ -18,12 +18,12 @@ From within the config/Dockerfiles/linchpin directory:
 
    $ sudo buildah bud -t linchpin .
 
-Finally, to run the linchpin container:
+Finally, to run the linchpin container with podman/docker:
 
 .. code::
 
-   $ sudo buildah run linchpin -v /path/to/workspace:/workdir -- linchpin -w /wordir up
-   $ sudo buildah run linchpin -v /path/to/workspace:/workdir -- linchpin -w /workdir -vv destroy
+   $ sudo podman run linchpin -v /path/to/workspace:/workdir -- linchpin -w /wordir up
+   $ sudo podman run linchpin -v /path/to/workspace:/workdir -- linchpin -w /workdir -vv destroy
 
 .. note::
    Setting the CREDS_PATH environment variable pointing the /workdir is recommended.
