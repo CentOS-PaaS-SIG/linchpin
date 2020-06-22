@@ -103,8 +103,10 @@ jobs:
         id: cache
         uses: actions/cache@v1
         with:
-          path: appimage
-          key: ${{ hashFiles('appimage/Dockerfile') }}
+          path: |
+            appimage
+            !appimage/out
+          key: ${{ hashFiles('appimage/*') }}
       - name: Build Docker image
         if: steps.cache.outputs['cache-hit'] != 'true'
         run: |
