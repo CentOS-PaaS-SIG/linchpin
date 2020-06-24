@@ -10,8 +10,8 @@ ingredients:
 script:
   - wget -nc -q -O linchpin.png https://linchpinjobs.com/img/linchpinjobs_logo.png
   - virtualenv usr -p $(which python3.7) --always-copy
-  - ./usr/bin/pip3 install linchpin gitdb2==3.0.1 gitdb==0.6.4
-  - ./usr/bin/pip3 install linchpin[libvirt]
+  - ./usr/bin/pip3 install LINCHPIN gitdb2==3.0.1 gitdb==0.6.4
+  - ./usr/bin/pip3 install "linchpin[libvirt] @ LINCHPIN"
   - rm -rf usr/lib/python3/dist-packages/
   - ln -s ../python3.7/site-packages/ usr/lib/python3/dist-packages
   - cat > usr/bin/linchpin-wrapper <<\EOF
@@ -31,4 +31,4 @@ script:
   - StartupWMClass=linchpin
   - MimeType=text/x-python3;text/x-python3;
   - EOF
-  - usr/bin/pip3 freeze | grep "linchpin" | cut -d "=" -f 3 >> ../VERSION
+  - echo LVER >> ../VERSION
