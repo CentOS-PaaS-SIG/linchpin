@@ -48,6 +48,7 @@
     content: "{{ job_result['key']['private_key'] }}"
     dest: "{{ default_ssh_key_path }}/{{ res_def['res_name'] |
               default(res_def['name']) }}.key"
+    mode: 0644
   when: state == "present" and
         res_def_output_async['changed']
         and _async
