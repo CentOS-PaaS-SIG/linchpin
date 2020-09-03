@@ -16,8 +16,6 @@ try:
 except ImportError:
     from six.moves.configparser import ConfigParser
 
-from ipaddress import ip_interface
-
 
 class CFGInventoryFormatter(InventoryFormatter):
 
@@ -32,15 +30,6 @@ class CFGInventoryFormatter(InventoryFormatter):
         # adding a default section all
         if "all" not in self.config.sections():
             self.config.add_section("all")
-
-    def is_ipv6(self, ipaddr):
-        try:
-            if ip_interface(ipaddr).ip.version == 6:
-                return True
-            return False
-        except Exception as e:
-            print(e)
-            return False
 
     def set_children(self, inv):
         if 'host_groups' not in list(inv.keys()):
@@ -105,32 +94,11 @@ class CFGInventoryFormatter(InventoryFormatter):
                             continue
                         if common_vars[var] in list(cfg_item[item].keys()):
                             value = common_vars[var]
-                            ip_addr = str(cfg_item[item][value])
-                            if ((var == "ansible_ssh_host") or
-                                    (var == "ansible_host"))\
-                                    and self.is_ipv6(ip_addr):
-                                host_string += " " + \
-                                               var + \
-                                               "=" + \
-                                               "[" + \
-                                               str(cfg_item[item][value]) + "]"
-                            else:
-                                host_string += " " + \
-                                               var + \
-                                               "=" + \
-                                               str(cfg_item[item][value])
+                            host_string += " " + var + "=" +\
+                                           str(cfg_item[item][value])
                         else:
-                            if ((var == "ansible_ssh_host") or
-                                    (var == "ansible_host")) and\
-                                    self.is_ipv6(str(common_vars[var])):
-                                host_string += " " + \
-                                               var + \
-                                               "=" + \
-                                               "[" + str(common_vars[var]) + "]"
-                            else:
-                                host_string += " " + \
-                                               var + \
-                                               "=" + str(common_vars[var])
+                            host_string += " " + var + "=" +\
+                                           str(common_vars[var])
                 self.config.set(group, host_string)
 
     def generate_inventory(self):

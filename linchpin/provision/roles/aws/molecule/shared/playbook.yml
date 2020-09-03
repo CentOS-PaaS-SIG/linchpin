@@ -31,6 +31,7 @@
       copy:
         content: "{{ topology_outputs }}"
         dest: "/tmp/{{ topology_name }}.output"
+        mode: 0644
 
 - name: Test AWS Teardown
   hosts: all

@@ -33,6 +33,7 @@
       copy:
         content: "{{ topology_outputs }}"
         dest: "/tmp/{{ topology_name }}.output"
+        mode: 0644
 
 - name: Test OpenStack Teardown
   hosts: all
