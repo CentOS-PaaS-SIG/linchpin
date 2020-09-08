@@ -53,12 +53,14 @@
   <domain name="{{ res_def['domain'] }}" localOnly="yes"/>
 {% endif %}
 {% if res_def['ip'] is defined %}
-  <ip address="{{ res_def['ip'] }}" {% if res_def['netmask'] is defined %} netmask="{{ res_def['netmask'] }}" {% endif %} {% if res_def['family'] is defined %}family="{{ res_def['family'] }}"{% endif %} {% if res_def['prefix'] is defined %}prefix="{{ res_def['prefix'] }}"{% endif %}>
-{% if res_def['dhcp_start'] is defined %}
+  {% for ip in res_def['ip'] %}
+  <ip address="{{ ip['address'] }}" {% if ip['netmask'] is defined %} netmask="{{ ip['netmask'] }}" {% endif %} {% if ip['family'] is defined %}family="{{ ip['family'] }}"{% endif %} {% if ip['prefix'] is defined %}prefix="{{ ip['prefix'] }}"{% endif %}>
+{% if ip['dhcp_start'] is defined %}
     <dhcp>
-      <range start="{{ res_def['dhcp_start'] }}" end="{{ res_def['dhcp_end'] }}"/>
+      <range start="{{ ip['dhcp_start'] }}" end="{{ ip['dhcp_end'] }}"/>
     </dhcp>
 {% endif %}
   </ip>
+  {% endfor %}
 {% endif %}
 </network>
