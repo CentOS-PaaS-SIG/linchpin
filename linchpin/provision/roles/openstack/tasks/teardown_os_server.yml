@@ -19,6 +19,23 @@
     res_def_names: "{{ topo_output_resources | fetch_os_server_names }}"
   when: state == "absent"
 
+- name: collect the additional info about the server
+  os_server_info:
+    auth: "{{ auth_var | omit_filter(omit) }}"
+    server: "{{ prov_inst }}"
+  register: info
+  loop: "{{ res_def_names }}"
+  loop_control:
+    loop_var: prov_inst
+
+- name: Get volumes
+  set_fact:
+    server_volumes: "{{info['results'][0]['openstack_servers'][0]['volumes']}}"
+
+- name: output volumes
+  debug:
+    msg: "{{ server_volumes }}"
+
 
 - name: "teardown os_server resources with provided auth"
   os_server:
@@ -251,3 +268,13 @@
   when:
     - state == "present"
     - not _async
+
+
+- name: Delete additional volumes
+  os_volume:
+    state: "{{ state }}"
+    auth: "{{ auth_var | omit_filter(omit) }}"
+    name: "{{ del_vol['id'] }}"
+  loop: "{{ server_volumes }}"
+  loop_control:
+    loop_var: del_vol
