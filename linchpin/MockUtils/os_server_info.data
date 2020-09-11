@@ -1,0 +1,198 @@
+{
+    "ansible_loop_var": "prov_inst",
+    "changed": false,
+    "invocation": {
+        "module_args": {
+            "all_projects": false,
+            "api_timeout": null,
+            "auth": {
+                "auth_url": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
+                "domain_name": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
+                "password": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
+                "project_name": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
+                "username": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER"
+            },
+            "auth_type": null,
+            "availability_zone": null,
+            "ca_cert": null,
+            "client_cert": null,
+            "client_key": null,
+            "detailed": false,
+            "filters": null,
+            "interface": "public",
+            "region_name": null,
+            "server": "test_linchpin_volume",
+            "timeout": 180,
+            "validate_certs": null,
+            "wait": true
+        }
+    },
+    "openstack_servers": [
+        {
+            "OS-DCF:diskConfig": "MANUAL",
+            "OS-EXT-AZ:availability_zone": "nova",
+            "OS-EXT-SRV-ATTR:host": null,
+            "OS-EXT-SRV-ATTR:hostname": null,
+            "OS-EXT-SRV-ATTR:hypervisor_hostname": null,
+            "OS-EXT-SRV-ATTR:instance_name": null,
+            "OS-EXT-SRV-ATTR:kernel_id": null,
+            "OS-EXT-SRV-ATTR:launch_index": null,
+            "OS-EXT-SRV-ATTR:ramdisk_id": null,
+            "OS-EXT-SRV-ATTR:reservation_id": null,
+            "OS-EXT-SRV-ATTR:root_device_name": null,
+            "OS-EXT-SRV-ATTR:user_data": null,
+            "OS-EXT-STS:power_state": 1,
+            "OS-EXT-STS:task_state": null,
+            "OS-EXT-STS:vm_state": "active",
+            "OS-SCH-HNT:scheduler_hints": null,
+            "OS-SRV-USG:launched_at": "2020-09-10T22:35:05.000000",
+            "OS-SRV-USG:terminated_at": null,
+            "accessIPv4": "10.0.92.127",
+            "accessIPv6": "",
+            "addresses": {
+                "provider_net_quicklab": [
+                    {
+                        "OS-EXT-IPS-MAC:mac_addr": "fa:16:3e:e3:5d:3f",
+                        "OS-EXT-IPS:type": "fixed",
+                        "addr": "10.0.92.127",
+                        "version": 4
+                    }
+                ]
+            },
+            "adminPass": null,
+            "az": "nova",
+            "block_device_mapping": null,
+            "cloud": "defaults",
+            "config_drive": "",
+            "created": "2020-09-10T22:34:38Z",
+            "created_at": "2020-09-10T22:34:38Z",
+            "description": "test_linchpin_volume",
+            "disk_config": "MANUAL",
+            "flavor": {
+                "disk": 40,
+                "ephemeral": 0,
+                "extra_specs": {
+                    "aggregate_instance_extra_specs:server_type:aggregate": "general"
+                },
+                "original_name": "m1.medium",
+                "ram": 4096,
+                "swap": 0,
+                "vcpus": 2
+            },
+            "has_config_drive": false,
+            "host": null,
+            "hostId": "e0d00312ff562cf28b57d3e5314b690740fde3fc04db3f55e64db21c",
+            "host_id": "e0d00312ff562cf28b57d3e5314b690740fde3fc04db3f55e64db21c",
+            "host_status": null,
+            "hostname": null,
+            "hypervisor_hostname": null,
+            "id": "d7a54bc2-b5f3-4d03-8639-be6220dd7008",
+            "image": {
+                "id": "8ec44202-7718-4d50-a943-cfc6d771864d"
+            },
+            "instance_name": null,
+            "interface_ip": "10.0.92.127",
+            "kernel_id": null,
+            "key_name": "el8build",
+            "launch_index": null,
+            "launched_at": "2020-09-10T22:35:05.000000",
+            "location": {
+                "cloud": "defaults",
+                "project": {
+                    "domain_id": null,
+                    "domain_name": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
+                    "id": "d2d61e61ae864706b96d7f19ce7b0eab",
+                    "name": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER"
+                },
+                "region_name": "",
+                "zone": "nova"
+            },
+            "locked": false,
+            "metadata": {},
+            "name": "test_linchpin_volume",
+            "networks": {},
+            "os-extended-volumes:volumes_attached": [
+                {
+                    "delete_on_termination": true,
+                    "id": "e773b644-7328-495b-bdd0-fa1956781357"
+                },
+                {
+                    "delete_on_termination": false,
+                    "id": "09f60897-dee4-471c-ad58-11ce6e5403c9"
+                }
+            ],
+            "personality": null,
+            "power_state": 1,
+            "private_v4": "",
+            "progress": 0,
+            "project_id": "d2d61e61ae864706b96d7f19ce7b0eab",
+            "properties": {
+                "OS-DCF:diskConfig": "MANUAL",
+                "OS-EXT-AZ:availability_zone": "nova",
+                "OS-EXT-SRV-ATTR:host": null,
+                "OS-EXT-SRV-ATTR:hostname": null,
+                "OS-EXT-SRV-ATTR:hypervisor_hostname": null,
+                "OS-EXT-SRV-ATTR:instance_name": null,
+                "OS-EXT-SRV-ATTR:kernel_id": null,
+                "OS-EXT-SRV-ATTR:launch_index": null,
+                "OS-EXT-SRV-ATTR:ramdisk_id": null,
+                "OS-EXT-SRV-ATTR:reservation_id": null,
+                "OS-EXT-SRV-ATTR:root_device_name": null,
+                "OS-EXT-SRV-ATTR:user_data": null,
+                "OS-EXT-STS:power_state": 1,
+                "OS-EXT-STS:task_state": null,
+                "OS-EXT-STS:vm_state": "active",
+                "OS-SCH-HNT:scheduler_hints": null,
+                "OS-SRV-USG:launched_at": "2020-09-10T22:35:05.000000",
+                "OS-SRV-USG:terminated_at": null,
+                "host_status": null,
+                "locked": false,
+                "os-extended-volumes:volumes_attached": [
+                    {
+                        "delete_on_termination": true,
+                        "id": "e773b644-7328-495b-bdd0-fa1956781357"
+                    },
+                    {
+                        "delete_on_termination": false,
+                        "id": "09f60897-dee4-471c-ad58-11ce6e5403c9"
+                    }
+                ],
+                "trusted_image_certificates": null
+            },
+            "public_v4": "10.0.92.127",
+            "public_v6": "",
+            "ramdisk_id": null,
+            "region": "",
+            "reservation_id": null,
+            "root_device_name": null,
+            "scheduler_hints": null,
+            "security_groups": [
+                {
+                    "name": "default"
+                }
+            ],
+            "server_groups": null,
+            "status": "ACTIVE",
+            "tags": [],
+            "task_state": null,
+            "tenant_id": "d2d61e61ae864706b96d7f19ce7b0eab",
+            "terminated_at": null,
+            "trusted_image_certificates": null,
+            "updated": "2020-09-10T22:35:05Z",
+            "user_data": null,
+            "user_id": "6a503e11600202f9eb737f4559283ef41ddfe96369fbc04d94e6dcb2281127a6",
+            "vm_state": "active",
+            "volumes": [
+                {
+                    "delete_on_termination": true,
+                    "id": "e773b644-7328-495b-bdd0-fa1956781357"
+                },
+                {
+                    "delete_on_termination": false,
+                    "id": "09f60897-dee4-471c-ad58-11ce6e5403c9"
+                }
+            ]
+        }
+    ],
+    "prov_inst": "test_linchpin_volume"
+}
