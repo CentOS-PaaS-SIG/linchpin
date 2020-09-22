@@ -18,6 +18,9 @@ jobs:
         chmod +x ./.github/install_dependencies.sh
         ./.github/install_dependencies.sh
         pip3 install -e .[tests]
+    - name: install flake8
+      run: |
+        pip install radon['flake8']
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
