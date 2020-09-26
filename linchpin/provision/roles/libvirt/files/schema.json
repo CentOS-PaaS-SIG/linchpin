@@ -123,11 +123,20 @@
                     "name": { "type": "string", "required": true },
                     "uri": { "type": "string", "required": false },
                     "remote_python_interpreter": { "type": "string", "required": false },
-                    "ip": { "type": "string", "required": false },
-                    "prefix": { "type": "integer", "required": false },
-                    "family": { "type": "string", "required": false },
-                    "dhcp_start": { "type": "string", "required": false, "dependencies": ["dhcp_end"] },
-                    "dhcp_end": { "type": "string", "required": false, "dependencies": ["dhcp_start"] },
+                    "ip": {
+                        "type": "list",
+                        "required": false,
+                        "schema": {
+                            "type": "dict",
+                            "schema": {
+                                "address": { "type": "string", "required": false },
+                                "prefix": { "type": "integer", "required": false },
+                                "family": { "type": "string", "required": false },
+                                "dhcp_start": { "type": "string", "required": false, "dependencies": ["dhcp_end"] },
+                                "dhcp_end": { "type": "string", "required": false, "dependencies": ["dhcp_start"] }
+                             }
+                         }
+                    },
                     "bridge": { "type": "string", "required": false },
                     "domain": { "type": "string", "required": false },
                     "forward_mode": { "type": "string", "required": false },
