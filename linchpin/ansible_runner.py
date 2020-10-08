@@ -11,9 +11,12 @@ import ansible
 import subprocess
 import tempfile
 from contextlib import contextmanager
+from .utils import ansible_version_recognizer as avr
 
-ansible24 = float(ansible.__version__[0:3]) >= 2.4
-ansible_version = float(ansible.__version__[0:3])
+ansible_ver_firstdigit = int(ansible.__version__.split('.')[:2][0])
+ansible_ver_seconddigit = int(ansible.__version__.split('.')[:2][1])
+ansible24 = avr.ansibleverisgreaterthan(2.3)
+ansible_version = [ansible_ver_firstdigit,ansible_ver_seconddigit]
 
 # CentOS 6 EPEL provides an alternate Jinja2 package
 # used by the imports below - Ansible uses Jinja2 here
@@ -34,7 +37,7 @@ else:
     from ansible.inventory import Inventory
     from ansible.vars import VariableManager
 
-if ansible_version >= 2.8:
+if avr.ansibleverisgreaterthan(2.8):
     from ansible import context
 
 
@@ -237,13 +240,13 @@ def ansible_runner(playbook_path,
                           None, None, None, verbosity, False, False,
                           [vault_password_file])
 
-        if ansible_version >= 2.8:
+        if avr.ansibleverisgreaterthan(2.7):
             pbex = ansible_runner_28x(playbook_path,
                                       extra_vars,
                                       options,
                                       inventory_src=inventory_src,
                                       console=console)
-        elif ansible_version < 2.8:
+        elif not avr.ansibleverisgreaterthan(2.8):
             pbex = ansible_runner_24x(playbook_path,
                                       extra_vars,
                                       options,
@@ -251,8 +254,7 @@ def ansible_runner(playbook_path,
                                       console=console)
 
         # ansible should be >=2.6 to run this statement
-        cb = PlaybookCallback(options=options,
-                              ansible_version=ansible_version)
+        cb = PlaybookCallback(options=options)
 
         if not console:
             results = {}
