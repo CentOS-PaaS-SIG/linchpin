@@ -3,6 +3,18 @@ from __future__ import print_function
 import os
 import json
 from six.moves import range
+import ansible.parsing.yaml.objects
+
+
+def ansiblemapping2dict(mappings):
+    if type(mappings) is dict:
+        return
+    mappings = dict(mappings)
+    for mapping in mappings.items():
+        if type(mapping[1]) is not dict and type(mapping[1]) \
+                is ansible.parsing.yaml.objects.AnsibleMapping:
+            mappings[mapping[0]] = ansiblemapping2dict(mapping[1])
+    return mappings
 
 
 def add_res_data(hosts, res_grp, role):

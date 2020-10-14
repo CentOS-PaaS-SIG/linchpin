@@ -21,7 +21,7 @@
 
 - name: get default values
   set_fact:
-    defaults: "{{ vars[resource_type + '_defaults'] }}"
+    defaults: "{{ vars[resource_type + '_defaults']|ansiblemapping2dict }}"
 
 - name: info
   debug:

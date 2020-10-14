@@ -18,6 +18,7 @@ jobs:
         chmod +x ./.github/install_dependencies.sh
         ./.github/install_dependencies.sh
         pip3 install -e .[tests]
+        pip3 install flake8-polyfill
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
