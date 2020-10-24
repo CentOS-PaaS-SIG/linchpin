@@ -23,6 +23,7 @@ jobs:
       - run: python3 setup.py sdist -d "${HOME}/rpmbuild/SOURCES"
       - id: rpm
         run: |
+          echo "This is a test"
           version="$(cat linchpin/version.py | awk -F "'" '{print $2}' | head -n1)"
           echo "::set-output name=version::${version}"
           mv "${HOME}/rpmbuild/SOURCES/linchpin-${version}.tar.gz" "${HOME}/rpmbuild/SOURCES/v${version}.tar.gz"
