@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: dnf install -y python3-pip rpmdevtools rpm-build git gcc krb5-devel python3-devel
-      - run: pip install --user rpmvenv
+      - run: pip install --user rpmvenv==0.24.0
       - run: rpmdev-setuptree
       - run: python3 setup.py sdist -d "${HOME}/rpmbuild/SOURCES"
       - id: rpm
