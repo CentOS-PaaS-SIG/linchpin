@@ -16,7 +16,7 @@ from .utils import ansible_version_recognizer as avr
 ansible_ver_firstdigit = int(ansible.__version__.split('.')[:2][0])
 ansible_ver_seconddigit = int(ansible.__version__.split('.')[:2][1])
 ansible24 = avr.ansibleverisgreaterthan(2.3)
-ansible_version = [ansible_ver_firstdigit,ansible_ver_seconddigit]
+ansible_version = [ansible_ver_firstdigit, ansible_ver_seconddigit]
 
 # CentOS 6 EPEL provides an alternate Jinja2 package
 # used by the imports below - Ansible uses Jinja2 here

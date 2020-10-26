@@ -31,10 +31,12 @@
 - name: Get volumes
   set_fact:
     server_volumes: "{{info['results'][0]['openstack_servers'][0]['volumes']}}"
+  when: info['results'][0]['openstack_servers'][0]['volumes'] is defined
 
 - name: output volumes
   debug:
     msg: "{{ server_volumes }}"
+  when: server_volumes is defined
 
 
 - name: "teardown os_server resources with provided auth"
@@ -278,3 +280,5 @@
   loop: "{{ server_volumes }}"
   loop_control:
     loop_var: del_vol
+  when: server_volumes is defined
+  ignore_errors: true
