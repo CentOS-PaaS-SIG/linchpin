@@ -326,24 +326,8 @@
     uri: "{{ definition[1] }}"
   register: vmstatus
   until: vmstatus.status == 'shutdown'
-  retries: 5
-  delay: 10
-  with_nested:
-    - ["{{ libvirt_resource_name }}"]
-    - ["{{ res_def['uri'] }}"]
-    - "{{ res_count }}"
-    - ["{{ res_def['name_separator'] }}"]
-  loop_control:
-    loop_var: definition
-  when: node_exists['failed'] is defined and virt_type == "cloud-init" and cloud_init_used
-  ignore_errors: yes
-
-- name: "MSVMISD: Make sure vm is shutdown"
-  virt:
-    name: "{{ definition[0] }}{{ definition[3] }}{{ definition[2] }}"
-    state: shutdown
-    command: shutdown
-    uri: "{{ definition[1] }}"
+  retries: 20
+  delay: 15
   with_nested:
     - ["{{ libvirt_resource_name }}"]
     - ["{{ res_def['uri'] }}"]
