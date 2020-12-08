@@ -489,7 +489,7 @@
 
 - name: "MAIP: mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
-    /usr/sbin/ip n | grep -F {{ mac }} | awk {'print $1'} | grep -v ^fe80
+    /usr/sbin/ip n | grep -F {{ mac }} | awk {'print $1'} | grep -v ^fe80 | head -1
   with_items:
     - "{{ macs }}"
   loop_control:
@@ -519,7 +519,7 @@
 
 - name: "mac_and_ip | wait up to 5 mins for dhcp ip address"
   shell: |
-    /usr/sbin/ip n | grep -F {{ mac }} | awk {'print $1'} | grep -v ^fe80
+    /usr/sbin/ip n | grep -F {{ mac }} | awk {'print $1'} | grep -v ^fe80 | head -1
   with_items:
     - "{{ macs }}"
   loop_control:
