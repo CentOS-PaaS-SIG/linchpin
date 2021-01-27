@@ -57,7 +57,11 @@
   <ip address="{{ ip['address'] }}" {% if ip['netmask'] is defined %} netmask="{{ ip['netmask'] }}" {% endif %} {% if ip['family'] is defined %}family="{{ ip['family'] }}"{% endif %} {% if ip['prefix'] is defined %}prefix="{{ ip['prefix'] }}"{% endif %}>
 {% if ip['dhcp_start'] is defined %}
     <dhcp>
-      <range start="{{ ip['dhcp_start'] }}" end="{{ ip['dhcp_end'] }}"/>
+      <range start="{{ ip['dhcp_start'] }}" end="{{ ip['dhcp_end'] }}">
+      {% if ip['dhcp_lease_time'] is defined %}
+        <lease expiry='{{ ip['dhcp_lease_time'] }}'/>
+      {% endif %}
+      </range>
     </dhcp>
 {% endif %}
   </ip>
