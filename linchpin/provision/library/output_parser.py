@@ -56,7 +56,7 @@ def main():
 
     check_file_paths(module, data_file_path)
     content = open(data_file_path, "r").read()
-    c = yaml.load(content)
+    c = yaml.safe_load(content)
     resp = {"path": data_file_path, "content": c}
     if resp["content"] or resp["content"] == []:
         changed = True

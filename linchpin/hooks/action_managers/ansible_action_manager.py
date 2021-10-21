@@ -133,7 +133,7 @@ class AnsibleActionManager(ActionManager):
                 extra_vars = open(var_file, "r").read()
 
                 if ("yaml" in ext) or ("yml" in ext):
-                    extra_vars = yaml.load(extra_vars)
+                    extra_vars = yaml.safe_load(extra_vars)
                 else:
                     extra_vars = json.loads(extra_vars)
 

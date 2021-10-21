@@ -37,7 +37,7 @@ class Workspace(object):
         :param path: path to workspace directory
         """
 
-        self.pindict = yaml.load(open(path).read())
+        self.pindict = yaml.safe_load(open(path).read())
         return self.pindict
 
     def validate(self):
