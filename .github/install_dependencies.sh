@@ -19,12 +19,13 @@ then
     yum install -y openssl-devel;
     yum install libvirt-devel -y;
     yum install libguestfs-tools python-libguestfs -y;
+    pip3 install --upgrade pip 
     mkdir -p /github/home/.ssh/;
 elif [ $VERSION_ID = "7" ]
 then
     echo "This is centos7";
-    export LC_ALL="en_US";
-    export LANG="en_US";
+    export LC_ALL="en_US.UTF-8";
+    export LANG="en_US.UTF-8";
     yum install libvirt-devel -y;
     yum install -y openssl-devel;
     yum install libguestfs-tools python-libguestfs -y;
@@ -32,6 +33,7 @@ then
     yum install -y python-pip python3-pip python3-devel gcc;
     pip install flake8;
     yum install -y pytest;
+    pip3 install --upgrade pip
     mkdir -p /github/home/.ssh/;
 else
     echo "This is fedora";
@@ -42,6 +44,7 @@ else
     yum install libguestfs-tools python-libguestfs -y;
     dnf install -y --nogpgcheck python3 git python3-pip python3-flake8 python3-devel gcc which wget;
     dnf install -y --nogpgcheck python3-pytest;
+    pip3 install --upgrade pips
     mkdir -p /github/home/.ssh/;
 
 fi

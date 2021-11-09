@@ -19,11 +19,11 @@ jobs:
           ./.github/install_dependencies.sh
       - name: Install pip dependencies
         run: |
-          pip3 install -r requirements.txt
-          pip3 install .[tests]
-          pip3 install molecule[delegated]
-          pip3 install zipp>=0.5
-          pip3 install -r requirements-azure.txt
+          python3 -m pip install -r requirements.txt
+          python3 -m pip install .[tests]
+          python3 -m pip install molecule[delegated]
+          python3 -m pip install zipp>=0.5
+          python3 -m pip install -r requirements-azure.txt
       - name: "Execute AWS molecule tests"
         env:
           LC_ALL: C.utf8
