@@ -29,7 +29,7 @@ LinchPin has some very useful features, including inventory generation, hooks, a
    community
    glossary
 
-.. note:: Releases are formatted using `semanting versioning <https://semver.org>`_. If the release shown above is a pre-release version, the content listed may not be supported. Use `latest </en/latest>`_ for the most up-to-date documentation.
+.. note:: Releases are formatted using `semantic versioning <https://semver.org>`_. If the release shown above is a pre-release version, the content listed may not be supported. Use `latest </en/latest>`_ for the most up-to-date documentation.
 
 .. |link-pre| raw:: html
 
