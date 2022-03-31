@@ -152,6 +152,11 @@ chmod go-w /root /root/.ssh /root/.ssh/authorized_keys
             # Create Base Recipe
             recipe_template = BeakerRecipe(*args, **kwargs)
 
+            # Add <watchdog panic="ignore"/> to the job XML
+            ignore_panic = kwargs.get("ignore_panic", False)
+            if ignore_panic:
+                recipe_template.add_ignore_panic()
+
             # Add Host Requirements
             for requirement in hostrequires:
                 if 'force' in requirement:

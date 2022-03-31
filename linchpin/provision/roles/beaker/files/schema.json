@@ -40,6 +40,7 @@
                                 "kernel_options": { "type": "string", "required": false },
                                 "kernel_options_post": { "type": "string", "required": false },
                                 "reserve_duration": { "type": "integer", "required": false },
+                                "ignore_panic": { "type": "boolean", "required": false },
                                 "taskparam": {
                                     "type": "list",
                                     "required": false,
