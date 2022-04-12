@@ -120,6 +120,8 @@ describes the available recipesets options.
 |                     |            |          | fs        | false        | string       |
 |                     |            |          | type      | false        | string       |
 +---------------------+------------+----------+-----------------------------------------+
+| ignore_panic        | false      | boolean  | N/A                                     |
++---------------------+------------+----------+-----------------------------------------+
 
 Additional Dependencies
 -----------------------
